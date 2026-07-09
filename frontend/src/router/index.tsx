@@ -55,6 +55,7 @@ import InstancePortalPage from '../pages/instances/InstancePortalPage';
 import TeamListPage from '../pages/teams/TeamListPage';
 import CreateTeamPage from '../pages/teams/CreateTeamPage';
 import TeamDetailPage from '../pages/teams/TeamDetailPage';
+import SkillHubPage from '../pages/skill-hub/SkillHubPage';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -236,6 +237,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <OpenClawConfigCenterPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/skill-hub"
+        element={
+          <ProtectedRoute>
+            <SkillHubPage />
           </ProtectedRoute>
         }
       />
