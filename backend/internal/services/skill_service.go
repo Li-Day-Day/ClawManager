@@ -1670,6 +1670,9 @@ func (s *skillService) resolveContentMD5(blob *models.SkillBlob) string {
 	if len(contentHash) == 32 {
 		return contentHash
 	}
+	if s.storage == nil || strings.TrimSpace(blob.ObjectKey) == "" {
+		return contentHash
+	}
 	content, err := s.storage.GetObject(context.Background(), blob.ObjectKey)
 	if err != nil {
 		return contentHash
@@ -1919,6 +1922,9 @@ func severityRank(value string) int {
 }
 
 func (s *skillService) findInstanceRefs(skillID int) (int, error) {
+	if s.instanceRepo == nil {
+		return 0, nil
+	}
 	all, err := s.repo.ListAllSkills()
 	if err != nil {
 		return 0, err

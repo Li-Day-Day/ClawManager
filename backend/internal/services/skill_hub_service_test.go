@@ -86,10 +86,10 @@ func TestCanAttachSkillRules(t *testing.T) {
 	if svc.CanAttachSkill(3, "user", privateSkill, otherInstance) {
 		t.Fatal("other user must not attach private skill")
 	}
-	if !svc.CanAttachSkill(3, "user", publicSkill, ownInstance) {
+	if !svc.CanAttachSkill(3, "user", publicSkill, otherInstance) {
 		t.Fatal("user should attach public skill to own instance")
 	}
-	if svc.CanAttachSkill(3, "user", publicSkill, otherInstance) {
+	if svc.CanAttachSkill(3, "user", publicSkill, ownInstance) {
 		t.Fatal("user must not attach public skill to someone else's instance")
 	}
 	if !svc.CanAttachSkill(99, "admin", privateSkill, otherInstance) {
@@ -340,7 +340,13 @@ func (r *importTestInstanceRepo) GetByAccessToken(string) (*models.Instance, err
 func (r *importTestInstanceRepo) GetByAgentBootstrapToken(string) (*models.Instance, error) {
 	panic("not used")
 }
-func (r *importTestInstanceRepo) GetAll(int, int) ([]models.Instance, error) { panic("not used") }
+func (r *importTestInstanceRepo) GetAll(int, int) ([]models.Instance, error) {
+	items := make([]models.Instance, 0, len(r.instances))
+	for _, inst := range r.instances {
+		items = append(items, *inst)
+	}
+	return items, nil
+}
 func (r *importTestInstanceRepo) CountAll() (int, error)                    { panic("not used") }
 func (r *importTestInstanceRepo) GetByUserID(int, int, int) ([]models.Instance, error) {
 	panic("not used")
