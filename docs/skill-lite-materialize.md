@@ -46,7 +46,7 @@ recomputes from workspace and self-heals stale blob hashes instead of failing wi
 ## Backfill
 
 On worker start, pending Lite blobs with `workspace_dir` set are enqueued automatically.
-Migration `036_add_skill_package_materialize.sql` also cancels stale Lite
+Migration `039_add_skill_package_materialize.sql` also cancels stale Lite
 `collect_skill_package` commands and backfills `workspace_dir` from `install_path`.
 
 ## Hub UI blocked reasons
