@@ -822,6 +822,9 @@ func writeSkillDirectoryAtomically(targetRoot, relativePath string, files map[st
 	if !isPathWithin(targetRoot, targetPath) {
 		return fmt.Errorf("runtime skill target escapes root")
 	}
+	if err := os.MkdirAll(filepath.Dir(targetPath), 0750); err != nil {
+		return fmt.Errorf("failed to prepare lite skill target parent: %w", err)
+	}
 	backupPath := targetPath + ".old"
 	_ = os.RemoveAll(backupPath)
 	if _, err := os.Stat(targetPath); err == nil {

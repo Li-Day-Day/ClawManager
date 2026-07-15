@@ -145,10 +145,10 @@ func TestRuntimeSkillInstallRootOpenClawAndHermes(t *testing.T) {
 
 	hermesRoot := runtimeSkillInstallRoot(hermes)
 	openclawRoot := runtimeSkillInstallRoot(openclaw)
-	if !strings.HasSuffix(filepath.ToSlash(hermesRoot), "home/.hermes/skills") {
+	if hermesRoot != filepath.Join(workspace, ".hermes", "skills") {
 		t.Fatalf("hermes root = %q", hermesRoot)
 	}
-	if !strings.HasSuffix(filepath.ToSlash(openclawRoot), "home/.openclaw/workspace/skills") {
+	if openclawRoot != filepath.Join(workspace, "home", ".openclaw", "workspace", "skills") {
 		t.Fatalf("openclaw root = %q", openclawRoot)
 	}
 }

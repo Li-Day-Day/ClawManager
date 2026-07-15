@@ -3,6 +3,8 @@ package services
 import (
 	"strings"
 	"testing"
+
+	"clawreef/internal/models"
 )
 
 func TestValidateManagedRuntimeEnvironmentOverridesRejectsProtectedKeys(t *testing.T) {
