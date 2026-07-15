@@ -252,7 +252,7 @@ func (r *skillRepository) ListActiveInstanceSkillsBySkillID(skillID int) ([]mode
 	var items []models.InstanceSkill
 	if err := r.sess.Collection("instance_skills").Find(db.Cond{
 		"skill_id": skillID,
-		"status":   db.NotEq("removed"),
+		"status NOT IN": []string{"removed", "missing"},
 	}).OrderBy("-updated_at", "-id").All(&items); err != nil {
 		return nil, fmt.Errorf("failed to list active instance skills by skill id: %w", err)
 	}
@@ -455,7 +455,8 @@ func workspaceDeleteTargetsSkillKey(deletedPath string, skillKey string) bool {
 }
 
 func isRemovedInstanceSkillRecord(item models.InstanceSkill) bool {
-	return strings.EqualFold(strings.TrimSpace(item.Status), "removed") || item.RemovedAt != nil
+	status := strings.ToLower(strings.TrimSpace(item.Status))
+	return status == "removed" || status == "missing"
 }
 
 func (r *skillRepository) MarkMissingInstanceSkills(instanceID int, activeSkillIDs []int, observedAt time.Time) error {
@@ -468,11 +469,14 @@ func (r *skillRepository) MarkMissingInstanceSkills(instanceID int, activeSkillI
 		return fmt.Errorf("failed to list stale instance skills: %w", err)
 	}
 	for _, item := range items {
-		item.Status = "removed"
+		if strings.EqualFold(strings.TrimSpace(item.Status), "removed") {
+			continue
+		}
+		item.Status = "missing"
 		item.RemovedAt = &observedAt
 		item.UpdatedAt = observedAt
 		if err := r.sess.Collection("instance_skills").Find(db.Cond{"id": item.ID}).Update(item); err != nil {
-			return fmt.Errorf("failed to mark instance skill removed: %w", err)
+			return fmt.Errorf("failed to mark instance skill missing: %w", err)
 		}
 	}
 	return nil

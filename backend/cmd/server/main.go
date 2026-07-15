@@ -1,4 +1,4 @@
-package main
+﻿package main
 
 import (
 	"context"
@@ -178,7 +178,7 @@ func main() {
 	aiObservabilityHandler := handlers.NewAIObservabilityHandler(aiObservabilityService)
 	riskRuleHandler := handlers.NewRiskRuleHandler(riskRuleService)
 	clusterResourceHandler := handlers.NewClusterResourceHandler(clusterResourceService)
-	egressProxyHandler := handlers.NewEgressProxyHandler()
+	egressProxyHandler := handlers.NewEgressProxyHandler(auditEventService)
 	openClawConfigHandler := handlers.NewOpenClawConfigHandler(openClawConfigService)
 	skillHandler := handlers.NewSkillHandler(skillService, instanceService)
 	skillHubHandler := handlers.NewSkillHubHandler(skillService, instanceService)
@@ -370,6 +370,8 @@ func main() {
 			instances.POST("/:id/restart", instanceHandler.RestartInstance)
 			instances.GET("/:id/status", instanceHandler.GetInstanceStatus)
 			instances.GET("/:id/runtime", instanceHandler.GetRuntimeDetails)
+			instances.GET("/:id/session-usage", instanceHandler.GetInstanceSessionUsage)
+			instances.GET("/:id/session-usage/detail", instanceHandler.GetInstanceSessionUsageDetail)
 			instances.POST("/:id/runtime/:command", instanceHandler.CreateRuntimeCommand)
 			instances.GET("/:id/config/revisions", instanceHandler.ListConfigRevisions)
 			instances.POST("/:id/config/revisions/publish", instanceHandler.PublishConfigRevision)
@@ -403,7 +405,7 @@ func main() {
 		}
 
 		// Admin console: cross-user instance listing. Gated by admin
-		// middleware — non-admin callers get 403. The workspace
+		// middleware 鈥?non-admin callers get 403. The workspace
 		// /instances endpoint above stays caller-scoped regardless of
 		// role; admin status only unlocks this dedicated surface.
 		adminInstances := api.Group("/admin/instances")
@@ -569,6 +571,14 @@ func main() {
 			adminLLMGovernance.GET("/overview", aiObservabilityHandler.GetLLMGovernanceOverview)
 		}
 
+		adminSessionUsage := api.Group("/admin/session-usage")
+		adminSessionUsage.Use(middleware.Auth())
+		adminSessionUsage.Use(middleware.SetUserInfo(userRepo))
+		adminSessionUsage.Use(middleware.NewAdminAuth(userRepo))
+		{
+			adminSessionUsage.GET("/overview", aiObservabilityHandler.GetSessionUsageOverview)
+		}
+
 		adminRiskRules := api.Group("/admin/risk-rules")
 		adminRiskRules.Use(middleware.Auth())
 		adminRiskRules.Use(middleware.SetUserInfo(userRepo))
@@ -619,7 +629,7 @@ func main() {
 			agent.POST("/state/report", agentHandler.ReportState)
 			agent.POST("/skills/inventory", agentHandler.ReportSkillInventory)
 			agent.POST("/skills/upload", agentHandler.UploadSkillPackage)
-			agent.GET("/skills/versions/:skillVersion/download", skillHandler.DownloadSkillVersionForAgent)
+			agent.GET("/skills/versions/:skillVersion/download", agentHandler.DownloadSkillVersion)
 			agent.GET("/config/revisions/:id", agentHandler.GetConfigRevision)
 		}
 

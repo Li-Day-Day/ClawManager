@@ -17,6 +17,7 @@ import InstanceManagementPage from '../pages/admin/InstanceManagementPage';
 import AIGatewayPage from '../pages/admin/AIGatewayPage';
 import AIAuditPage from '../pages/admin/AIAuditPage';
 import CostsPage from '../pages/admin/CostsPage';
+import SessionUsageOverviewPage from '../pages/admin/SessionUsageOverviewPage';
 import AdminSecurityDashboardPage from '../pages/admin/security/AdminSecurityDashboardPage';
 import AdminSecurityReportsPage from '../pages/admin/security/AdminSecurityReportsPage';
 import AdminSecurityScannerConfigPage from '../pages/admin/security/AdminSecurityScannerConfigPage';
@@ -343,6 +344,14 @@ function AppRoutes() {
         element={
           <AdminRoute>
             <CostsPage />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/session-usage"
+        element={
+          <AdminRoute>
+            <SessionUsageOverviewPage />
           </AdminRoute>
         }
       />

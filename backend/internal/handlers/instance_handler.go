@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"clawreef/internal/models"
+	"clawreef/internal/repository"
 	"clawreef/internal/services"
 	"clawreef/internal/utils"
 
@@ -1029,6 +1030,111 @@ func (h *InstanceHandler) GetRuntimeDetails(c *gin.Context) {
 	}
 
 	utils.Success(c, http.StatusOK, "Instance runtime details retrieved successfully", response)
+}
+
+type SessionUsageQueryRequest struct {
+	Page   int    `form:"page,default=1"`
+	Limit  int    `form:"limit,default=20"`
+	Search string `form:"search"`
+	Since  string `form:"since"`
+	Until  string `form:"until"`
+}
+
+type SessionUsageDetailQueryRequest struct {
+	SessionID string `form:"session_id" binding:"required"`
+	Since     string `form:"since"`
+	Until     string `form:"until"`
+}
+
+func (h *InstanceHandler) GetInstanceSessionUsage(c *gin.Context) {
+	id, _, ok := h.resolveOwnedInstance(c)
+	if !ok {
+		return
+	}
+	if h.aiObservabilityService == nil {
+		utils.Error(c, http.StatusInternalServerError, "Session usage service is not configured")
+		return
+	}
+
+	var req SessionUsageQueryRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		utils.ValidationError(c, err)
+		return
+	}
+	since, err := parseOptionalRFC3339(req.Since)
+	if err != nil {
+		utils.Error(c, http.StatusBadRequest, "Invalid since timestamp")
+		return
+	}
+	until, parseUntilErr := parseOptionalRFC3339(req.Until)
+	if parseUntilErr != nil {
+		utils.Error(c, http.StatusBadRequest, "Invalid until timestamp")
+		return
+	}
+	if err := validateSessionUsageTimeRange(since, until); err != nil {
+		utils.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	result, err := h.aiObservabilityService.GetInstanceSessionUsage(id, services.InstanceSessionUsageQuery{
+		Page:   req.Page,
+		Limit:  req.Limit,
+		Search: req.Search,
+		Since:  since,
+		Until:  until,
+	})
+	if err != nil {
+		utils.HandleError(c, err)
+		return
+	}
+
+	utils.Success(c, http.StatusOK, "Instance session usage retrieved successfully", result)
+}
+
+func (h *InstanceHandler) GetInstanceSessionUsageDetail(c *gin.Context) {
+	id, _, ok := h.resolveOwnedInstance(c)
+	if !ok {
+		return
+	}
+	if h.aiObservabilityService == nil {
+		utils.Error(c, http.StatusInternalServerError, "Session usage service is not configured")
+		return
+	}
+
+	var req SessionUsageDetailQueryRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
+		utils.ValidationError(c, err)
+		return
+	}
+	since, err := parseOptionalRFC3339(req.Since)
+	if err != nil {
+		utils.Error(c, http.StatusBadRequest, "Invalid since timestamp")
+		return
+	}
+	until, parseUntilErr := parseOptionalRFC3339(req.Until)
+	if parseUntilErr != nil {
+		utils.Error(c, http.StatusBadRequest, "Invalid until timestamp")
+		return
+	}
+	if err := validateSessionUsageTimeRange(since, until); err != nil {
+		utils.Error(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	detail, err := h.aiObservabilityService.GetInstanceSessionUsageDetail(id, req.SessionID, repository.SessionUsageFilter{
+		Since: since,
+		Until: until,
+	})
+	if err != nil {
+		if strings.Contains(strings.ToLower(err.Error()), "not found") {
+			utils.Error(c, http.StatusNotFound, "Session usage not found")
+			return
+		}
+		utils.HandleError(c, err)
+		return
+	}
+
+	utils.Success(c, http.StatusOK, "Instance session usage detail retrieved successfully", detail)
 }
 
 func (h *InstanceHandler) CreateRuntimeCommand(c *gin.Context) {

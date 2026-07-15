@@ -25,7 +25,7 @@ type CostRecordRepository interface {
 	ListByTraceID(traceID string) ([]models.CostRecord, error)
 	ListByUserID(userID, limit int) ([]models.CostRecord, error)
 	ListRecent(limit int) ([]models.CostRecord, error)
-	AggregateCostByInstanceSession(instanceID int) ([]InstanceSessionCostAggregate, error)
+	AggregateCostByInstanceSession(instanceID int, filter SessionUsageFilter) ([]InstanceSessionCostAggregate, error)
 }
 
 type costRecordRepository struct {
@@ -122,20 +122,27 @@ func (r *costRecordRepository) ListRecent(limit int) ([]models.CostRecord, error
 	return items, nil
 }
 
-func (r *costRecordRepository) AggregateCostByInstanceSession(instanceID int) ([]InstanceSessionCostAggregate, error) {
-	rows, err := r.sess.SQL().Query(`
-SELECT session_id,
-       COALESCE(SUM(prompt_tokens), 0),
-       COALESCE(SUM(completion_tokens), 0),
-       COALESCE(SUM(total_tokens), 0),
-       COALESCE(SUM(estimated_cost), 0),
-       COALESCE(MAX(currency), 'USD')
-FROM cost_records
-WHERE instance_id = ?
-  AND session_id IS NOT NULL
-  AND session_id != ''
-GROUP BY session_id
-`, instanceID)
+func (r *costRecordRepository) AggregateCostByInstanceSession(instanceID int, filter SessionUsageFilter) ([]InstanceSessionCostAggregate, error) {
+	query := `
+SELECT cr.session_id,
+       COALESCE(SUM(cr.prompt_tokens), 0),
+       COALESCE(SUM(cr.completion_tokens), 0),
+       COALESCE(SUM(cr.total_tokens), 0),
+       COALESCE(SUM(cr.estimated_cost), 0),
+       COALESCE(MAX(cr.currency), 'USD')
+FROM cost_records cr
+INNER JOIN model_invocations mi
+  ON mi.trace_id = cr.trace_id
+ AND mi.instance_id = cr.instance_id
+ AND mi.status != ?
+WHERE cr.instance_id = ?
+  AND cr.session_id IS NOT NULL
+  AND cr.session_id != ''`
+	args := []interface{}{models.ModelInvocationStatusBlocked, instanceID}
+	query, args = appendTimeFilter(query, args, filter, "mi.created_at")
+	query += `
+GROUP BY cr.session_id`
+	rows, err := r.sess.SQL().Query(query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to aggregate cost records by instance session: %w", err)
 	}

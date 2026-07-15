@@ -49,6 +49,9 @@ func (s *instanceService) ValidateCreateRequests(userID int, requests []CreateIn
 		if err != nil {
 			return err
 		}
+		if err := validateManagedRuntimeEnvironmentOverrides(requests[idx].Type, environmentOverrides); err != nil {
+			return err
+		}
 		if _, err := marshalEnvironmentOverrides(environmentOverrides); err != nil {
 			return err
 		}
@@ -281,6 +284,9 @@ func (s *instanceService) Create(userID int, req CreateInstanceRequest) (*models
 	req.Type = strings.ToLower(strings.TrimSpace(req.Type))
 	environmentOverrides, err := normalizeEnvironmentOverrides(req.EnvironmentOverrides)
 	if err != nil {
+		return nil, err
+	}
+	if err := validateManagedRuntimeEnvironmentOverrides(req.Type, environmentOverrides); err != nil {
 		return nil, err
 	}
 	if profile, ok := normalizeDesktopStreamProfile(req.DesktopStreamProfile); !ok {
@@ -518,15 +524,14 @@ func (s *instanceService) Create(userID int, req CreateInstanceRequest) (*models
 		return nil, fmt.Errorf("failed to resolve PVC node selector: %w", err)
 	}
 
-	// Ensure any legacy per-instance network policy is removed before creating pod.
-	// This keeps new pods unrestricted even if older versions created netpols.
-	if err := s.networkPolicyService.DeletePolicy(ctx, userID, instance.ID, instance.Name); err != nil {
+	// Managed runtime network policy: optional egress lock when enabled.
+	if err := s.syncInstanceNetworkPolicy(ctx, userID, instance); err != nil {
 		s.pvcService.DeletePVC(ctx, userID, instance.ID)
 		if bootstrapSnapshot != nil {
 			_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 		}
 		s.instanceRepo.Delete(instance.ID)
-		return nil, fmt.Errorf("failed to delete network policy: %w", err)
+		return nil, err
 	}
 
 	// Create Pod
@@ -1198,6 +1203,29 @@ func (s *instanceService) createRuntimeBootstrapSnapshot(userID int, instance *m
 	return nil, nil
 }
 
+func (s *instanceService) syncInstanceNetworkPolicy(ctx context.Context, userID int, instance *models.Instance) error {
+	if instance == nil {
+		return nil
+	}
+	if isLiteRuntimeInstance(instance) {
+		// Lite/gateway-pool instances share runtime pods; per-instance NetworkPolicy does not apply.
+		if err := s.networkPolicyService.DeletePolicy(ctx, userID, instance.ID, instance.Name); err != nil {
+			return fmt.Errorf("failed to delete network policy: %w", err)
+		}
+		return nil
+	}
+	if isInstanceNetworkLockEnabled() && supportsManagedRuntimeIntegration(instance.Type) {
+		if err := s.networkPolicyService.EnsureDefaultPolicy(ctx, userID, instance.ID, instance.Name); err != nil {
+			return fmt.Errorf("failed to ensure network policy: %w", err)
+		}
+		return nil
+	}
+	if err := s.networkPolicyService.DeletePolicy(ctx, userID, instance.ID, instance.Name); err != nil {
+		return fmt.Errorf("failed to delete network policy: %w", err)
+	}
+	return nil
+}
+
 func supportsRuntimeConfigInjection(instanceType string) bool {
 	switch strings.ToLower(strings.TrimSpace(instanceType)) {
 	case "openclaw", "hermes":
@@ -1812,6 +1840,9 @@ func (s *instanceService) Update(instanceID int, req UpdateInstanceRequest) erro
 			return err
 		}
 		environmentOverrides = applyDesktopStreamProfileEnv(environmentOverrides, profile)
+		if err := validateManagedRuntimeEnvironmentOverrides(instance.Type, environmentOverrides); err != nil {
+			return err
+		}
 		environmentOverridesJSON, err := marshalEnvironmentOverrides(environmentOverrides)
 		if err != nil {
 			return err

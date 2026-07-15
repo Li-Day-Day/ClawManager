@@ -258,19 +258,26 @@ func TestPublishToHubRejectsEmptyTags(t *testing.T) {
 	}
 }
 
-func TestPublishToHubRejectsAdminForOtherUsersSkill(t *testing.T) {
+func TestPublishToHubAllowsAdminForOtherUsersSkill(t *testing.T) {
 	svc, _ := newPublishTestStub(&models.SkillBlob{ScanStatus: "completed", RiskLevel: skillRiskNone, ObjectKey: "key.zip"})
-	_, err := svc.PublishToHub(99, "admin", 1, []int{1})
-	if err == nil || err.Error() != "skill not found" {
-		t.Fatalf("expected skill not found for non-owner publish, got %v", err)
+	item, err := svc.PublishToHub(99, "admin", 1, []int{1})
+	if err != nil {
+		t.Fatalf("PublishToHub() error = %v", err)
+	}
+	if item == nil || !strings.EqualFold(item.Visibility, skillVisibilityPublic) {
+		t.Fatalf("expected admin publish to succeed, got %#v", item)
 	}
 }
 
-func TestUnpublishRejectsAdminForOtherUsersSkill(t *testing.T) {
-	svc, _ := newPublishTestStub(&models.SkillBlob{ScanStatus: "completed", RiskLevel: skillRiskNone, ObjectKey: "key.zip"})
-	_, err := svc.UnpublishFromHub(99, "admin", 1)
-	if err == nil || err.Error() != "skill not found" {
-		t.Fatalf("expected skill not found for non-owner unpublish, got %v", err)
+func TestUnpublishAllowsAdminForOtherUsersSkill(t *testing.T) {
+	svc, stub := newPublishTestStub(&models.SkillBlob{ScanStatus: "completed", RiskLevel: skillRiskNone, ObjectKey: "key.zip"})
+	stub.skills[1].Visibility = skillVisibilityPublic
+	item, err := svc.UnpublishFromHub(99, "admin", 1)
+	if err != nil {
+		t.Fatalf("UnpublishFromHub() error = %v", err)
+	}
+	if item == nil || !strings.EqualFold(item.Visibility, skillVisibilityPrivate) {
+		t.Fatalf("expected admin unpublish to succeed, got %#v", item)
 	}
 }
 
@@ -646,8 +653,10 @@ func TestSyncAgentSkillsCreatesDiscoveredSkillWithPrivateVisibility(t *testing.T
 
 type capturingSkillRepoStub struct {
 	skillRepoStub
-	createdSkills []*models.Skill
-	nextSkillID   int
+	createdSkills         []*models.Skill
+	nextSkillID           int
+	markMissingCalls      int
+	lastMarkMissingActive []int
 }
 
 func (s *capturingSkillRepoStub) CreateSkill(skill *models.Skill) error {
@@ -685,8 +694,64 @@ func (s *capturingSkillRepoStub) CreateVersion(version *models.SkillVersion) err
 	return nil
 }
 
-func (s *capturingSkillRepoStub) UpsertInstanceSkill(*models.InstanceSkill) error { return nil }
-func (s *capturingSkillRepoStub) MarkMissingInstanceSkills(int, []int, time.Time) error {
+func (s *capturingSkillRepoStub) GetBlobByContentHash(hash string) (*models.SkillBlob, error) {
+	for _, blob := range s.blobs {
+		if blob != nil && blob.ContentHash == hash {
+			copy := *blob
+			return &copy, nil
+		}
+	}
+	return nil, nil
+}
+
+func (s *capturingSkillRepoStub) GetVersionBySkillAndBlob(skillID, blobID int) (*models.SkillVersion, error) {
+	for _, version := range s.versions {
+		if version != nil && version.SkillID == skillID && version.BlobID == blobID {
+			copy := *version
+			return &copy, nil
+		}
+	}
+	return nil, nil
+}
+
+func (s *capturingSkillRepoStub) UpsertInstanceSkill(item *models.InstanceSkill) error {
+	copy := *item
+	updated := false
+	for i, existing := range s.instanceSkills {
+		if existing.InstanceID == item.InstanceID && existing.SkillID == item.SkillID {
+			s.instanceSkills[i] = copy
+			updated = true
+			break
+		}
+	}
+	if !updated {
+		s.instanceSkills = append(s.instanceSkills, copy)
+	}
+	return nil
+}
+
+func (s *capturingSkillRepoStub) MarkMissingInstanceSkills(instanceID int, activeSkillIDs []int, observedAt time.Time) error {
+	s.markMissingCalls++
+	s.lastMarkMissingActive = append([]int(nil), activeSkillIDs...)
+	active := map[int]struct{}{}
+	for _, id := range activeSkillIDs {
+		active[id] = struct{}{}
+	}
+	for i := range s.instanceSkills {
+		item := &s.instanceSkills[i]
+		if item.InstanceID != instanceID {
+			continue
+		}
+		if _, ok := active[item.SkillID]; ok {
+			continue
+		}
+		if strings.EqualFold(item.Status, "removed") {
+			continue
+		}
+		item.Status = "missing"
+		item.RemovedAt = &observedAt
+		item.UpdatedAt = observedAt
+	}
 	return nil
 }
 
@@ -754,5 +819,139 @@ func TestDeleteSkillReleasesSkillKey(t *testing.T) {
 	}
 	if active != nil {
 		t.Fatal("original skill_key should be released for re-import")
+	}
+}
+
+func TestSyncAgentSkillsIncrementalDoesNotMarkMissing(t *testing.T) {
+	contentHash := "abc123def456789012345678901234"
+	versionID := 1
+	stub := &capturingSkillRepoStub{
+		skillRepoStub: skillRepoStub{
+			skills: map[int]*models.Skill{
+				10: {
+					ID: 10, UserID: 1, SkillKey: "weather", Name: "weather",
+					SourceType: skillSourceDiscovered, Status: skillStatusActive,
+					Visibility: skillVisibilityPrivate, CurrentVersionID: &versionID,
+				},
+			},
+			blobs: map[int]*models.SkillBlob{
+				1: {ID: 1, ContentHash: contentHash, ObjectKey: "discovered/weather.zip", ScanStatus: "completed"},
+			},
+			versions: map[int]*models.SkillVersion{
+				1: {ID: 1, SkillID: 10, BlobID: 1, VersionNo: 1},
+			},
+			instanceSkills: []models.InstanceSkill{
+				{InstanceID: 1, SkillID: 10, Status: "active", SourceType: "discovered_in_instance"},
+			},
+		},
+	}
+	instRepo := &importTestInstanceRepo{instances: map[int]*models.Instance{1: {ID: 1, UserID: 1}}}
+	svc := &skillService{repo: stub, instanceRepo: instRepo, commandService: &noopInstanceCommandService{}}
+
+	if err := svc.SyncAgentSkills(1, AgentSkillInventoryReportRequest{Mode: "incremental", Skills: nil}); err != nil {
+		t.Fatalf("incremental SyncAgentSkills() error = %v", err)
+	}
+	if stub.markMissingCalls != 0 {
+		t.Fatalf("markMissingCalls = %d, want 0 for incremental", stub.markMissingCalls)
+	}
+	if stub.instanceSkills[0].Status != "active" {
+		t.Fatalf("status = %q, want active after incremental empty report", stub.instanceSkills[0].Status)
+	}
+
+	if err := svc.SyncAgentSkills(1, AgentSkillInventoryReportRequest{Mode: "full", Skills: nil}); err != nil {
+		t.Fatalf("full SyncAgentSkills() error = %v", err)
+	}
+	if stub.markMissingCalls != 1 {
+		t.Fatalf("markMissingCalls = %d, want 1 for full", stub.markMissingCalls)
+	}
+	if stub.instanceSkills[0].Status != "missing" {
+		t.Fatalf("status = %q, want missing after full empty report", stub.instanceSkills[0].Status)
+	}
+}
+
+func TestSyncAgentSkillsReactivatesMissingButNotRemoved(t *testing.T) {
+	contentHash := "abc123def456789012345678901234"
+	versionID := 1
+	removedAt := time.Now().UTC().Add(-time.Hour)
+	stub := &capturingSkillRepoStub{
+		skillRepoStub: skillRepoStub{
+			skills: map[int]*models.Skill{
+				10: {
+					ID: 10, UserID: 1, SkillKey: "weather", Name: "weather",
+					SourceType: skillSourceDiscovered, Status: skillStatusActive,
+					Visibility: skillVisibilityPrivate, CurrentVersionID: &versionID,
+				},
+				11: {
+					ID: 11, UserID: 1, SkillKey: "calendar", Name: "calendar",
+					SourceType: skillSourceDiscovered, Status: skillStatusActive,
+					Visibility: skillVisibilityPrivate, CurrentVersionID: &versionID,
+				},
+			},
+			blobs: map[int]*models.SkillBlob{
+				1: {ID: 1, ContentHash: contentHash, ObjectKey: "discovered/weather.zip", ScanStatus: "completed"},
+				2: {ID: 2, ContentHash: "def456abc123789012345678901234", ObjectKey: "discovered/calendar.zip", ScanStatus: "completed"},
+			},
+			versions: map[int]*models.SkillVersion{
+				1: {ID: 1, SkillID: 10, BlobID: 1, VersionNo: 1},
+				2: {ID: 2, SkillID: 11, BlobID: 2, VersionNo: 1},
+			},
+			instanceSkills: []models.InstanceSkill{
+				{InstanceID: 1, SkillID: 10, Status: "missing", SourceType: "discovered_in_instance", RemovedAt: &removedAt},
+				{InstanceID: 1, SkillID: 11, Status: "removed", SourceType: "discovered_in_instance", RemovedAt: &removedAt},
+			},
+		},
+	}
+	instRepo := &importTestInstanceRepo{instances: map[int]*models.Instance{1: {ID: 1, UserID: 1}}}
+	svc := &skillService{repo: stub, instanceRepo: instRepo, commandService: &noopInstanceCommandService{}}
+
+	err := svc.SyncAgentSkills(1, AgentSkillInventoryReportRequest{
+		Mode: "full",
+		Skills: []AgentSkillRecord{
+			{Identifier: "weather", ContentMD5: contentHash, Source: "discovered_in_instance"},
+			{Identifier: "calendar", ContentMD5: "def456abc123789012345678901234", Source: "discovered_in_instance"},
+		},
+	})
+	if err != nil {
+		t.Fatalf("SyncAgentSkills() error = %v", err)
+	}
+
+	var missing, removed *models.InstanceSkill
+	for i := range stub.instanceSkills {
+		item := &stub.instanceSkills[i]
+		switch item.SkillID {
+		case 10:
+			missing = item
+		case 11:
+			removed = item
+		}
+	}
+	if missing == nil || missing.Status != "active" || missing.RemovedAt != nil {
+		t.Fatalf("missing skill revive = %#v, want active with nil RemovedAt", missing)
+	}
+	if removed == nil || removed.Status != "removed" {
+		t.Fatalf("removed skill = %#v, want status removed", removed)
+	}
+}
+
+func TestDownloadSkillNilSafe(t *testing.T) {
+	missingVersionID := 999
+	versionID := 7
+	stub := &skillRepoStub{
+		skills: map[int]*models.Skill{
+			1: {ID: 1, UserID: 1, Status: skillStatusActive, Visibility: skillVisibilityPrivate, CurrentVersionID: &missingVersionID},
+			2: {ID: 2, UserID: 1, Status: skillStatusActive, Visibility: skillVisibilityPrivate, CurrentVersionID: &versionID},
+		},
+		versions: map[int]*models.SkillVersion{
+			7: {ID: 7, SkillID: 2, BlobID: 99},
+		},
+		blobs: map[int]*models.SkillBlob{},
+	}
+	svc := &skillService{repo: stub, storage: &importTestObjectStorage{objects: map[string][]byte{}}}
+
+	if _, _, err := svc.DownloadSkill(1, "user", 1); err == nil {
+		t.Fatal("expected error when current version is missing")
+	}
+	if _, _, err := svc.DownloadSkill(1, "user", 2); err == nil {
+		t.Fatal("expected error when blob is missing")
 	}
 }

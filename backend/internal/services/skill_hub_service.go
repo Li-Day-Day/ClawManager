@@ -368,8 +368,8 @@ func (s *skillService) ListHubCatalog(_ int, _ string, query SkillHubCatalogQuer
 	if query.PageSize <= 0 {
 		query.PageSize = 20
 	}
-	if query.PageSize > 100 {
-		query.PageSize = 100
+	if query.PageSize > 1000 {
+		query.PageSize = 1000
 	}
 
 	items, err := s.repo.ListPublicHubSkills()
@@ -527,7 +527,7 @@ func (s *skillService) PublishToHub(actorUserID int, actorRole string, skillID i
 	if skill == nil || isDeletedSkill(skill) {
 		return nil, fmt.Errorf("skill not found")
 	}
-	if skill.UserID != actorUserID {
+	if skill.UserID != actorUserID && !isAdminRole(actorRole) {
 		return nil, fmt.Errorf("skill not found")
 	}
 	if err := s.validateHubTagSelection(actorRole, tagIDs); err != nil {
@@ -571,7 +571,7 @@ func (s *skillService) UnpublishFromHub(actorUserID int, actorRole string, skill
 	if skill == nil {
 		return nil, fmt.Errorf("skill not found")
 	}
-	if skill.UserID != actorUserID {
+	if skill.UserID != actorUserID && !isAdminRole(actorRole) {
 		return nil, fmt.Errorf("skill not found")
 	}
 	skill.Visibility = skillVisibilityPrivate
@@ -590,7 +590,7 @@ func (s *skillService) UpdateHubTags(actorUserID int, actorRole string, skillID 
 	if skill == nil {
 		return nil, fmt.Errorf("skill not found")
 	}
-	if skill.UserID != actorUserID {
+	if skill.UserID != actorUserID && !isAdminRole(actorRole) {
 		return nil, fmt.Errorf("skill not found")
 	}
 	if !strings.EqualFold(strings.TrimSpace(skill.Visibility), skillVisibilityPublic) {

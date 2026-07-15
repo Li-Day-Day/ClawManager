@@ -87,10 +87,17 @@ func (s *skillService) RequestLiteSkillInventorySync(instanceID int) error {
 	}
 
 	if SupportsServerWorkspaceSkillScan(instance) {
-		if err := s.syncRuntimeSkillsFromWorkspace(instanceID); err != nil {
+		workspaceMode := "full"
+		willResyncAgent := isLiteRuntimeInstance(instance) && s.runtimeSkillSync != nil
+		if willResyncAgent {
+			workspaceMode = "incremental"
+		}
+		if err := s.syncRuntimeSkillsFromWorkspace(instanceID, workspaceMode); err != nil {
 			return err
 		}
-		s.completePendingSkillInventorySync(instanceID)
+		if !willResyncAgent {
+			s.completePendingSkillInventorySync(instanceID)
+		}
 	}
 
 	if !isLiteRuntimeInstance(instance) || s.runtimeSkillSync == nil {
@@ -120,12 +127,14 @@ func (s *skillService) RequestLiteSkillInventorySync(instanceID int) error {
 		return fmt.Errorf("failed to resolve runtime pod: %w", err)
 	}
 	if runtimePod != nil && runtimePod.AgentEndpoint != nil && strings.TrimSpace(*runtimePod.AgentEndpoint) != "" {
-		_ = deps.runtimeAgentClient.ResyncInstanceSkills(ctx, strings.TrimSpace(*runtimePod.AgentEndpoint), instanceID, "full")
+		if err := deps.runtimeAgentClient.ResyncInstanceSkills(ctx, strings.TrimSpace(*runtimePod.AgentEndpoint), instanceID, "full"); err != nil {
+			return fmt.Errorf("failed to request runtime skill inventory resync: %w", err)
+		}
 	}
 	return nil
 }
 
-func (s *skillService) syncRuntimeSkillsFromWorkspace(instanceID int) error {
+func (s *skillService) syncRuntimeSkillsFromWorkspace(instanceID int, mode string) error {
 	if s == nil || s.instanceRepo == nil {
 		return fmt.Errorf("skill service is not configured")
 	}
@@ -151,7 +160,7 @@ func (s *skillService) syncRuntimeSkillsFromWorkspace(instanceID int) error {
 	records := make([]AgentSkillRecord, 0)
 	if _, err := os.Stat(root); err != nil {
 		if os.IsNotExist(err) {
-			return s.SyncAgentSkills(instanceID, runtimeWorkspaceSkillInventoryRequest(instanceID, records))
+			return s.SyncAgentSkills(instanceID, runtimeWorkspaceSkillInventoryRequest(instanceID, mode, records))
 		}
 		return fmt.Errorf("failed to inspect runtime skill directory: %w", err)
 	}
@@ -177,26 +186,30 @@ func (s *skillService) syncRuntimeSkillsFromWorkspace(instanceID int) error {
 		})
 	}
 
-	return s.SyncAgentSkills(instanceID, runtimeWorkspaceSkillInventoryRequest(instanceID, records))
+	return s.SyncAgentSkills(instanceID, runtimeWorkspaceSkillInventoryRequest(instanceID, mode, records))
 }
 
 func (s *skillService) syncLiteSkillsFromWorkspace(instanceID int) error {
-	return s.syncRuntimeSkillsFromWorkspace(instanceID)
+	return s.syncRuntimeSkillsFromWorkspace(instanceID, "full")
 }
 
-func runtimeWorkspaceSkillInventoryRequest(instanceID int, records []AgentSkillRecord) AgentSkillInventoryReportRequest {
+func runtimeWorkspaceSkillInventoryRequest(instanceID int, mode string, records []AgentSkillRecord) AgentSkillInventoryReportRequest {
 	now := time.Now().UTC()
+	normalizedMode := strings.TrimSpace(mode)
+	if normalizedMode == "" {
+		normalizedMode = "full"
+	}
 	return AgentSkillInventoryReportRequest{
 		AgentID:    fmt.Sprintf("workspace-scan-instance-%d", instanceID),
 		ReportedAt: &now,
-		Mode:       "full",
+		Mode:       normalizedMode,
 		Trigger:    "runtime_workspace_scan",
 		Skills:     records,
 	}
 }
 
 func liteWorkspaceSkillInventoryRequest(instanceID int, records []AgentSkillRecord) AgentSkillInventoryReportRequest {
-	return runtimeWorkspaceSkillInventoryRequest(instanceID, records)
+	return runtimeWorkspaceSkillInventoryRequest(instanceID, "full", records)
 }
 
 func liteSkillInstallRelativePath(instance *models.Instance, skillName string) string {
@@ -293,6 +306,10 @@ func normalizeRuntimeSkillSource(value string) string {
 	default:
 		return normalizeSkillSource(value)
 	}
+}
+
+func (s *skillService) CompletePendingSkillInventorySync(instanceID int) {
+	s.completePendingSkillInventorySync(instanceID)
 }
 
 func (s *skillService) completePendingSkillInventorySync(instanceID int) {

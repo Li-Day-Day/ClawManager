@@ -101,8 +101,9 @@ Runtime 内的应用和 agent 如果需要调用模型，优先使用这些变�
 | --- | --- |
 | Header | `x-openclaw-session-key: {sessionKey}` |
 | 示例 | `main` 会归一化为 `agent:openclaw:main` |
+| 托管实例 Gateway Token 默认 | 未显式传 key 时，ClawManager 默认使用 `main` |
 | 备选 | 请求体 `session_id` 或 OpenAI `user` 字段 |
-| 禁止 | 长期依赖 Gateway 自动生成的 `sess_{traceID}` |
+| 禁止 | 长期依赖 Gateway 自动生成的 `sess_{traceID}`（用户 JWT 等非托管调用仍会 fallback） |
 
 Agent state report 可选上报 LLM 配置指纹，便于平台检测配置漂移：
 

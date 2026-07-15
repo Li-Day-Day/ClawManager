@@ -210,6 +210,7 @@ type SkillService interface {
 	ImportHubArchiveWithDecisions(ctx context.Context, userID int, fileHeader *multipart.FileHeader, decisions []SkillImportDecision) ([]SkillImportResultItem, error)
 	SyncRuntimeAgentSkillsReport(payload map[string]any) error
 	RequestLiteSkillInventorySync(instanceID int) error
+	CompletePendingSkillInventorySync(instanceID int)
 }
 
 type skillService struct {
@@ -392,9 +393,15 @@ func (s *skillService) DownloadSkill(actorUserID int, actorRole string, skillID 
 	if err != nil {
 		return nil, "", err
 	}
+	if version == nil {
+		return nil, "", fmt.Errorf("skill version not found")
+	}
 	blob, err := s.repo.GetBlobByID(version.BlobID)
 	if err != nil {
 		return nil, "", err
+	}
+	if blob == nil || strings.TrimSpace(blob.ObjectKey) == "" {
+		return nil, "", fmt.Errorf("skill blob not found")
 	}
 	content, err := s.storage.GetObject(context.Background(), blob.ObjectKey)
 	if err != nil {
@@ -925,7 +932,15 @@ func isBlockedSkillRisk(value string) bool {
 }
 
 func isRemovedInstanceSkill(item *models.InstanceSkill) bool {
-	return item != nil && (strings.EqualFold(strings.TrimSpace(item.Status), "removed") || item.RemovedAt != nil)
+	if item == nil {
+		return false
+	}
+	status := strings.ToLower(strings.TrimSpace(item.Status))
+	return status == "removed" || status == "missing"
+}
+
+func isUserRemovedInstanceSkill(item *models.InstanceSkill) bool {
+	return item != nil && strings.EqualFold(strings.TrimSpace(item.Status), "removed")
 }
 
 func (s *skillService) SyncAgentSkills(instanceID int, req AgentSkillInventoryReportRequest) error {
@@ -1083,7 +1098,7 @@ func (s *skillService) SyncAgentSkills(instanceID int, req AgentSkillInventoryRe
 		if err != nil {
 			return err
 		}
-		if isRemovedInstanceSkill(existingInstanceSkill) {
+		if isUserRemovedInstanceSkill(existingInstanceSkill) {
 			continue
 		}
 
@@ -1093,7 +1108,7 @@ func (s *skillService) SyncAgentSkills(instanceID int, req AgentSkillInventoryRe
 		instanceSkill := &models.InstanceSkill{
 			InstanceID: instanceID, SkillID: skill.ID, SkillVersionID: optionalVersionID(version), SourceType: resolvedSource,
 			InstallPath: optionalString(strings.TrimSpace(record.InstallPath)), ObservedHash: optionalString(hash),
-			Status: "active", LastSeenAt: &reportedAt, UpdatedAt: reportedAt,
+			Status: "active", LastSeenAt: &reportedAt, UpdatedAt: reportedAt, RemovedAt: nil,
 		}
 		if workspaceDir != "" {
 			instanceSkill.WorkspaceDir = optionalString(workspaceDir)
@@ -1116,7 +1131,7 @@ func (s *skillService) SyncAgentSkills(instanceID int, req AgentSkillInventoryRe
 			})
 		}
 	}
-	if strings.EqualFold(strings.TrimSpace(req.Mode), "full") || !strings.EqualFold(strings.TrimSpace(req.Mode), "incremental") {
+	if strings.EqualFold(strings.TrimSpace(req.Mode), "full") {
 		if err := s.repo.MarkMissingInstanceSkills(instanceID, active, reportedAt); err != nil {
 			return err
 		}
@@ -1922,34 +1937,14 @@ func severityRank(value string) int {
 }
 
 func (s *skillService) findInstanceRefs(skillID int) (int, error) {
-	if s.instanceRepo == nil {
+	if s.repo == nil {
 		return 0, nil
 	}
-	all, err := s.repo.ListAllSkills()
+	items, err := s.repo.ListActiveInstanceSkillsBySkillID(skillID)
 	if err != nil {
 		return 0, err
 	}
-	_ = all
-	count := 0
-	for instanceID := 1; instanceID <= 0; instanceID++ {
-		_ = instanceID
-	}
-	instances, err := s.instanceRepo.GetAll(0, 100000)
-	if err != nil {
-		return 0, err
-	}
-	for _, instance := range instances {
-		items, err := s.repo.ListInstanceSkills(instance.ID)
-		if err != nil {
-			return 0, err
-		}
-		for _, item := range items {
-			if item.SkillID == skillID && item.Status != "removed" {
-				count++
-			}
-		}
-	}
-	return count, nil
+	return len(items), nil
 }
 
 func normalizeSkillSource(value string) string {

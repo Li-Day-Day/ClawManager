@@ -1,6 +1,8 @@
 package services
 
 import (
+	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -318,5 +320,153 @@ func TestSyncAgentSkillsReusesUploadedSkillOnWorkspaceScan(t *testing.T) {
 	}
 	if len(stub.upserted) != 1 || stub.upserted[0].SkillID != 10 {
 		t.Fatalf("upserted = %#v, want instance skill for uploaded skill id 10", stub.upserted)
+	}
+}
+
+type recordingSkillResyncAgentClient struct {
+	fakeRuntimeAgentClient
+	calls []struct {
+		instanceID int
+		mode       string
+	}
+	err error
+}
+
+func (c *recordingSkillResyncAgentClient) ResyncInstanceSkills(_ context.Context, _ string, instanceID int, mode string) error {
+	c.calls = append(c.calls, struct {
+		instanceID int
+		mode       string
+	}{instanceID: instanceID, mode: mode})
+	return c.err
+}
+
+type inventorySyncCommandRepo struct {
+	commands []models.InstanceCommand
+}
+
+func (r *inventorySyncCommandRepo) Create(*models.InstanceCommand) error { return nil }
+func (r *inventorySyncCommandRepo) Update(command *models.InstanceCommand) error {
+	for i := range r.commands {
+		if r.commands[i].ID == command.ID {
+			r.commands[i] = *command
+			return nil
+		}
+	}
+	r.commands = append(r.commands, *command)
+	return nil
+}
+func (r *inventorySyncCommandRepo) GetByID(int) (*models.InstanceCommand, error) { return nil, nil }
+func (r *inventorySyncCommandRepo) GetByInstanceIdempotencyKey(int, string) (*models.InstanceCommand, error) {
+	return nil, nil
+}
+func (r *inventorySyncCommandRepo) GetNextPendingByInstance(int) (*models.InstanceCommand, error) {
+	return nil, nil
+}
+func (r *inventorySyncCommandRepo) ListByInstanceID(int, int) ([]models.InstanceCommand, error) {
+	return append([]models.InstanceCommand(nil), r.commands...), nil
+}
+func (r *inventorySyncCommandRepo) FindLatestFailedCollectSkillPackage(string) (*models.InstanceCommand, error) {
+	return nil, nil
+}
+
+func TestRequestLiteSkillInventorySyncUsesIncrementalWhenAgentResyncFollows(t *testing.T) {
+	workspace := t.TempDir()
+	skillsRoot := filepath.Join(workspace, "home", ".hermes", "skills")
+	if err := os.MkdirAll(skillsRoot, 0o750); err != nil {
+		t.Fatal(err)
+	}
+
+	stub := &capturingSkillRepoStub{
+		skillRepoStub: skillRepoStub{
+			skills: map[int]*models.Skill{
+				10: {ID: 10, UserID: 1, SkillKey: "weather", Name: "weather", SourceType: skillSourceDiscovered, Status: skillStatusActive},
+			},
+			blobs:    map[int]*models.SkillBlob{},
+			versions: map[int]*models.SkillVersion{},
+			instanceSkills: []models.InstanceSkill{
+				{InstanceID: 1, SkillID: 10, Status: "active", SourceType: "discovered_in_instance"},
+			},
+		},
+	}
+	instRepo := &importTestInstanceRepo{instances: map[int]*models.Instance{
+		1: {
+			ID: 1, UserID: 1, Type: RuntimeTypeHermes, InstanceMode: InstanceModeLite,
+			RuntimeType: RuntimeBackendGateway, WorkspacePath: &workspace, RuntimeGeneration: 1,
+		},
+	}}
+	cmdRepo := &inventorySyncCommandRepo{commands: []models.InstanceCommand{{
+		ID: 44, InstanceID: 1, CommandType: InstanceCommandTypeSyncSkillInventory, Status: instanceCommandStatusPending,
+	}}}
+	agent := &recordingSkillResyncAgentClient{}
+	endpoint := "http://runtime-agent"
+	bindingRepo := newFakeRuntimeBindingRepo()
+	bindingRepo.bindings[1] = &models.InstanceRuntimeBinding{
+		InstanceID: 1, RuntimePodID: 9, State: "running", Generation: 1,
+	}
+	podRepo := &fakeRuntimePodRepo{pods: map[int64]*models.RuntimePod{
+		9: {ID: 9, AgentEndpoint: &endpoint},
+	}}
+
+	svc := &skillService{
+		repo:         stub,
+		instanceRepo: instRepo,
+		commandRepo:  cmdRepo,
+		commandService: &noopInstanceCommandService{},
+	}
+	svc.ConfigureRuntimeSkillSync(bindingRepo, podRepo, agent)
+
+	if err := svc.RequestLiteSkillInventorySync(1); err != nil {
+		t.Fatalf("RequestLiteSkillInventorySync() error = %v", err)
+	}
+	if stub.markMissingCalls != 0 {
+		t.Fatalf("markMissingCalls = %d, want 0 when workspace sync is incremental", stub.markMissingCalls)
+	}
+	if stub.instanceSkills[0].Status != "active" {
+		t.Fatalf("status = %q, want active", stub.instanceSkills[0].Status)
+	}
+	if len(agent.calls) != 1 || agent.calls[0].mode != "full" {
+		t.Fatalf("resync calls = %#v, want one full resync", agent.calls)
+	}
+	if cmdRepo.commands[0].Status != instanceCommandStatusPending {
+		t.Fatalf("command status = %q, want pending until agent inventory arrives", cmdRepo.commands[0].Status)
+	}
+}
+
+func TestRequestLiteSkillInventorySyncPropagatesResyncError(t *testing.T) {
+	workspace := t.TempDir()
+	skillsRoot := filepath.Join(workspace, "home", ".hermes", "skills")
+	if err := os.MkdirAll(skillsRoot, 0o750); err != nil {
+		t.Fatal(err)
+	}
+
+	stub := &capturingSkillRepoStub{
+		skillRepoStub: skillRepoStub{
+			skills:         map[int]*models.Skill{},
+			blobs:          map[int]*models.SkillBlob{},
+			versions:       map[int]*models.SkillVersion{},
+			instanceSkills: nil,
+		},
+	}
+	instRepo := &importTestInstanceRepo{instances: map[int]*models.Instance{
+		1: {
+			ID: 1, UserID: 1, Type: RuntimeTypeHermes, InstanceMode: InstanceModeLite,
+			RuntimeType: RuntimeBackendGateway, WorkspacePath: &workspace, RuntimeGeneration: 1,
+		},
+	}}
+	agent := &recordingSkillResyncAgentClient{err: errors.New("resync failed")}
+	endpoint := "http://runtime-agent"
+	bindingRepo := newFakeRuntimeBindingRepo()
+	bindingRepo.bindings[1] = &models.InstanceRuntimeBinding{
+		InstanceID: 1, RuntimePodID: 9, State: "running", Generation: 1,
+	}
+	podRepo := &fakeRuntimePodRepo{pods: map[int64]*models.RuntimePod{
+		9: {ID: 9, AgentEndpoint: &endpoint},
+	}}
+	svc := &skillService{repo: stub, instanceRepo: instRepo, commandService: &noopInstanceCommandService{}}
+	svc.ConfigureRuntimeSkillSync(bindingRepo, podRepo, agent)
+
+	err := svc.RequestLiteSkillInventorySync(1)
+	if err == nil || !strings.Contains(err.Error(), "resync") {
+		t.Fatalf("error = %v, want resync failure", err)
 	}
 }

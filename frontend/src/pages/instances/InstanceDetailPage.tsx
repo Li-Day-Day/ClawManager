@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import InstanceSkillHubPanel from "../../components/InstanceSkillHubPanel";
+import InstanceSessionUsagePanel from "../../components/InstanceSessionUsagePanel";
 import { InstanceServiceFrame } from "../../components/InstanceServiceFrame";
 import UserLayout from "../../components/UserLayout";
 import { WorkspaceFileManager } from "../../components/WorkspaceFileManager";
@@ -313,6 +314,10 @@ const InstanceDetailPage: React.FC = () => {
     useState<DesktopStreamProfile | "">("");
   const [desktopStreamMessage, setDesktopStreamMessage] = useState<string | null>(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [skillPanelExpanded, setSkillPanelExpanded] = useState(false);
+  const [sessionPanelExpanded, setSessionPanelExpanded] = useState(false);
+  const [workspaceHeightPx, setWorkspaceHeightPx] = useState<number | null>(null);
+  const workspaceSectionRef = useRef<HTMLElement>(null);
 
   const fetchMeta = useCallback(
     async (targetInstanceId: number, options?: { background?: boolean }) => {
@@ -441,6 +446,72 @@ const InstanceDetailPage: React.FC = () => {
 
     return () => window.clearInterval(timer);
   }, [fetchRuntimeDetails, instanceId, isDedicatedInstance]);
+
+  useEffect(() => {
+    if (isDedicatedInstance) {
+      return;
+    }
+    const section = workspaceSectionRef.current;
+    if (!section) {
+      return;
+    }
+
+    const syncWorkspaceHeight = () => {
+      if (skillPanelExpanded || sessionPanelExpanded) {
+        return;
+      }
+      const nextHeight = section.getBoundingClientRect().height;
+      if (nextHeight > 0) {
+        setWorkspaceHeightPx(nextHeight);
+      }
+    };
+
+    syncWorkspaceHeight();
+    const observer = new ResizeObserver(syncWorkspaceHeight);
+    observer.observe(section);
+    window.addEventListener("resize", syncWorkspaceHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncWorkspaceHeight);
+    };
+  }, [isDedicatedInstance, sessionPanelExpanded, skillPanelExpanded]);
+
+  const bottomPanelExpanded = skillPanelExpanded || sessionPanelExpanded;
+
+  useLayoutEffect(() => {
+    if (isDedicatedInstance || !bottomPanelExpanded || workspaceHeightPx !== null) {
+      return;
+    }
+    const section = workspaceSectionRef.current;
+    if (!section) {
+      return;
+    }
+    const nextHeight = section.getBoundingClientRect().height;
+    if (nextHeight > 0) {
+      setWorkspaceHeightPx(nextHeight);
+    }
+  }, [bottomPanelExpanded, isDedicatedInstance, workspaceHeightPx]);
+
+  const handleSkillPanelExpandedChange = useCallback((expanded: boolean) => {
+    if (expanded && workspaceSectionRef.current) {
+      const nextHeight = workspaceSectionRef.current.getBoundingClientRect().height;
+      if (nextHeight > 0) {
+        setWorkspaceHeightPx(nextHeight);
+      }
+    }
+    setSkillPanelExpanded(expanded);
+  }, []);
+
+  const handleSessionPanelExpandedChange = useCallback((expanded: boolean) => {
+    if (expanded && workspaceSectionRef.current) {
+      const nextHeight = workspaceSectionRef.current.getBoundingClientRect().height;
+      if (nextHeight > 0) {
+        setWorkspaceHeightPx(nextHeight);
+      }
+    }
+    setSessionPanelExpanded(expanded);
+  }, []);
 
   const availability = useMemo<InstanceAvailability>(() => {
     if (status?.availability) {
@@ -932,31 +1003,61 @@ const InstanceDetailPage: React.FC = () => {
     </div>
   );
 
-  const renderLiteWorkspace = () => (
-    <div className="flex min-h-0 flex-col gap-4">
+  const renderLiteWorkspace = () => {
+    const pinnedWorkspaceHeight = workspaceHeightPx ?? 360;
+
+    return (
+    <div
+      className={`flex flex-col gap-2 ${
+        bottomPanelExpanded ? "min-h-0" : "min-h-0 flex-1 overflow-hidden"
+      }`}
+    >
       {renderHeaderSection(shareLinkControl)}
       {renderActionMessage()}
-      <section className="grid min-h-0 flex-1 gap-4 overflow-hidden max-xl:overflow-y-auto xl:grid-cols-[minmax(0,1fr)_minmax(360px,28rem)] md:min-h-[420px] md:max-h-[calc(100vh-12rem)]">
-        <InstanceServiceFrame
-          instanceId={instance.id}
-          instanceName={instance.name}
-          instanceType={instance.type}
-          availability={availability}
-        />
+      <section
+        ref={workspaceSectionRef}
+        style={
+          bottomPanelExpanded
+            ? { height: pinnedWorkspaceHeight, minHeight: pinnedWorkspaceHeight, flexShrink: 0 }
+            : undefined
+        }
+        className={`grid shrink-0 gap-4 overflow-hidden max-xl:h-auto max-xl:min-h-[420px] max-xl:overflow-y-auto xl:grid-cols-[minmax(0,1fr)_minmax(360px,28rem)] xl:grid-rows-[minmax(0,1fr)] ${
+          bottomPanelExpanded ? "" : "min-h-0 flex-1"
+        }`}
+      >
+        <div className="h-full min-h-0 min-w-0">
+          <InstanceServiceFrame
+            instanceId={instance.id}
+            instanceName={instance.name}
+            instanceType={instance.type}
+            availability={availability}
+          />
+        </div>
         {supportsWorkspace(instance) ? (
-          <WorkspaceFileManager instanceId={instance.id} />
+          <div className="h-full min-h-0 min-w-0">
+            <WorkspaceFileManager instanceId={instance.id} />
+          </div>
         ) : (
-          <div className="cm-surface flex h-full min-h-[420px] items-center justify-center text-sm text-slate-500 xl:min-h-0">
+          <div className="cm-surface flex h-full min-h-[420px] items-center justify-center text-sm text-slate-500">
             No workspace
           </div>
         )}
       </section>
-      <InstanceSkillHubPanel
-        instance={instance}
-        onRuntimeDetailsChange={setRuntimeDetails}
-      />
+      <div className="flex shrink-0 flex-col gap-2">
+        <InstanceSkillHubPanel
+          instance={instance}
+          onRuntimeDetailsChange={setRuntimeDetails}
+          onPanelExpandedChange={handleSkillPanelExpandedChange}
+        />
+        <InstanceSessionUsagePanel
+          instanceId={instance.id}
+          instanceType={instance.type}
+          onPanelExpandedChange={handleSessionPanelExpandedChange}
+        />
+      </div>
     </div>
-  );
+    );
+  };
 
   const runtime = runtimeDetails?.runtime;
   const agent = runtimeDetails?.agent;
@@ -1122,6 +1223,8 @@ const InstanceDetailPage: React.FC = () => {
         </section>
       </section>
 
+      <InstanceSessionUsagePanel instanceId={instance.id} instanceType={instance.type} />
+
       <section className="cm-surface px-4 py-4">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -1161,7 +1264,11 @@ const InstanceDetailPage: React.FC = () => {
   );
 
   return (
-    <UserLayout title={instance.name}>
+    <UserLayout
+      title={isDedicatedInstance ? instance.name : undefined}
+      fillHeight={!isDedicatedInstance}
+      scrollableMain={!isDedicatedInstance && (skillPanelExpanded || sessionPanelExpanded)}
+    >
       <ConfirmDialog
         open={showDeleteDialog}
         title={t("common.delete")}

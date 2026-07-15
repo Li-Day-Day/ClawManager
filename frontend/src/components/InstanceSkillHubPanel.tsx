@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { KeyRound, Plus, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useI18n } from "../contexts/I18nContext";
+import InstanceCollapsiblePanel from "./InstanceCollapsiblePanel";
 import { instanceService } from "../services/instanceService";
 import { skillHubService } from "../services/skillHubService";
 import { skillService } from "../services/skillService";
@@ -255,11 +256,13 @@ function InstanceSkillCard({
 interface InstanceSkillHubPanelProps {
   instance: Instance;
   onRuntimeDetailsChange: (details: InstanceRuntimeDetails) => void;
+  onPanelExpandedChange?: (expanded: boolean) => void;
 }
 
 const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
   instance,
   onRuntimeDetailsChange,
+  onPanelExpandedChange,
 }) => {
   const { t, locale } = useI18n();
   const { user } = useAuth();
@@ -281,22 +284,32 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
   const [instanceSkillPage, setInstanceSkillPage] = useState(1);
   const [nativeSkillSearch, setNativeSkillSearch] = useState("");
   const [hubCatalogSearch, setHubCatalogSearch] = useState("");
+  const [panelExpanded, setPanelExpanded] = useState(false);
+
+  const handlePanelExpandedChange = useCallback(
+    (expanded: boolean) => {
+      setPanelExpanded(expanded);
+      onPanelExpandedChange?.(expanded);
+    },
+    [onPanelExpandedChange],
+  );
 
   const skillsPollInterval =
     skillsBurstUntil > Date.now() ? SKILLS_BURST_POLL_INTERVAL_MS : SKILLS_POLL_INTERVAL_MS;
 
   const reloadSkillSection = useCallback(async () => {
-    const [instanceSkillItems, reusableSkills, tagItems] = await Promise.all([
+    const [instanceSkillItems, catalog, tagItems] = await Promise.all([
       skillService.listInstanceSkills(instanceId),
-      skillHubService.listAttachable(),
+      skillHubService.listCatalog({ page: 1, page_size: 1000 }),
       skillHubService.listTags(),
     ]);
     setInstanceSkills(instanceSkillItems);
     setHubTags(tagItems);
     setAvailableSkills(
-      reusableSkills.filter(
+      (catalog.items || []).filter(
         (item) =>
           item.status === "active" &&
+          (item.visibility || "").toLowerCase() === "public" &&
           item.risk_level !== "medium" &&
           item.risk_level !== "high",
       ),
@@ -345,13 +358,16 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
   }, [instanceId]);
 
   useEffect(() => {
+    if (!panelExpanded) {
+      return;
+    }
     const skillsTimer = window.setInterval(() => {
       if (!document.hidden) {
         void refreshSkills();
       }
     }, skillsPollInterval);
     return () => window.clearInterval(skillsTimer);
-  }, [refreshSkills, skillsPollInterval]);
+  }, [panelExpanded, refreshSkills, skillsPollInterval]);
 
   useEffect(() => {
     setInstanceSkillPage(1);
@@ -665,19 +681,25 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
     }
   };
 
+  const hubInstalledCount = useMemo(
+    () => hubCatalogRows.filter((row) => row.installed).length,
+    [hubCatalogRows],
+  );
+
+  const skillPanelSummary = t("instances.skillPanelSummary", {
+    native: countNativeSkills(instanceSkills),
+    installed: hubInstalledCount,
+  });
+
   return (
     <>
-      <section className="cm-surface px-4 py-4">
-        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <KeyRound className="h-4 w-4 text-indigo-600" />
-              <h2 className="text-sm font-semibold text-slate-950">{t("instances.skillManagement")}</h2>
-            </div>
-            <Link to="/skill-hub" className="mt-1 inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">
-              {t("skillHubPage.goToHub")}
-            </Link>
-          </div>
+      <InstanceCollapsiblePanel
+        storageKey={`clawmanager.instance-panel.skills.${instanceId}`}
+        title={t("instances.skillManagement")}
+        icon={<KeyRound className="h-4 w-4 text-indigo-600" />}
+        summary={skillPanelSummary}
+        onExpandedChange={handlePanelExpandedChange}
+        headerActions={
           <button
             type="button"
             onClick={() => void handleSyncInstanceSkills()}
@@ -686,12 +708,16 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
           >
             {skillSyncPhase === "syncing" ? t("instances.syncSkillsInProgress") : t("instances.syncSkills")}
           </button>
-        </div>
+        }
+      >
+        <Link to="/skill-hub" className="inline-block text-xs font-medium text-indigo-600 hover:text-indigo-800">
+          {t("skillHubPage.goToHub")}
+        </Link>
 
-        {skillError ? <div className="mb-3 text-xs text-red-600">{skillError}</div> : null}
+        {skillError ? <div className="mt-3 text-xs text-red-600">{skillError}</div> : null}
         {(skillSyncPhase !== "idle" || lastSkillSyncAt) && (
           <div
-            className={`mb-4 rounded-md border px-3 py-2 text-xs ${
+            className={`mt-3 rounded-md border px-3 py-2 text-xs ${
               skillSyncPhase === "success"
                 ? "border-emerald-200 bg-emerald-50 text-emerald-900"
                 : skillSyncPhase === "failed"
@@ -712,7 +738,7 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="mt-4 space-y-4">
           <div>
             <h3 className="text-sm font-semibold text-slate-900">{t("instances.nativeSkillsTitle")}</h3>
             <p className="mt-1 text-xs text-slate-500">{t("instances.nativeSkillsDesc")}</p>
@@ -886,7 +912,7 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
             </div>
           </div>
         </div>
-      </section>
+      </InstanceCollapsiblePanel>
 
       {publishSkillId !== null ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">

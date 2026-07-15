@@ -140,7 +140,7 @@ func (s *skillRepoStub) ListActiveInstanceSkillsBySkillID(skillID int) ([]models
 	}
 	items := make([]models.InstanceSkill, 0)
 	for _, item := range s.instanceSkills {
-		if item.SkillID == skillID && item.Status != "removed" {
+		if item.SkillID == skillID && item.Status != "removed" && item.Status != "missing" {
 			items = append(items, item)
 		}
 	}
@@ -150,7 +150,7 @@ func (s *skillRepoStub) ListActiveInstanceSkillsBySkillID(skillID int) ([]models
 func filterActiveInstanceSkills(items []models.InstanceSkill) []models.InstanceSkill {
 	active := make([]models.InstanceSkill, 0, len(items))
 	for _, item := range items {
-		if item.Status != "removed" {
+		if item.Status != "removed" && item.Status != "missing" {
 			active = append(active, item)
 		}
 	}

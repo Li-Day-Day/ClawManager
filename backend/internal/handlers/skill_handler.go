@@ -123,17 +123,6 @@ func (h *SkillHandler) DownloadSkill(c *gin.Context) {
 	c.Data(http.StatusOK, "application/zip", content)
 }
 
-func (h *SkillHandler) DownloadSkillVersionForAgent(c *gin.Context) {
-	content, fileName, err := h.service.DownloadSkillVersionByExternalID(c.Param("skillVersion"))
-	if err != nil {
-		utils.HandleError(c, err)
-		return
-	}
-	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
-	c.Data(http.StatusOK, "application/octet-stream", content)
-}
-
 func (h *SkillHandler) ListVersions(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	userRole, _ := c.Get("userRole")
