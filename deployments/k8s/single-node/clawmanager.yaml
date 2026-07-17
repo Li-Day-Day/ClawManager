@@ -1260,9 +1260,7 @@ spec:
       serviceAccountName: clawmanager-app
       containers:
         - name: clawmanager-app
-          image: clawmanager:local-dev
-          # image: ghcr.io/yuan-lab-llm/clawmanager:latest  # production
-          # image: ghcr.io/yuan-lab-llm/clawmanager:v2026.4.11
+          image: ghcr.io/yuan-lab-llm/clawmanager:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: https

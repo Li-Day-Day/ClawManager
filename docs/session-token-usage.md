@@ -171,7 +171,6 @@ Exclude (do not stage for session-usage PR):
 - `backend/internal/egresspolicy/**`
 - `backend/internal/handlers/egress_proxy_handler*.go`
 - `deployments/k8s/**/instance-egress-networkpolicy.yaml`
-- `deployments/k8s/single-node/clawmanager.yaml` (local image overrides)
 - `deployments/scripts/**`
 - `e2e/tests/instances/llm-governance.spec.ts` (unless bundled intentionally)
 - Root `_*.json`, `pr138.patch`, debug artifacts
