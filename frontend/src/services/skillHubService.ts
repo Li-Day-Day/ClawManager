@@ -89,7 +89,6 @@ export const skillHubService = {
     const response = await api.post(`/skill-hub/skills/${skillId}/install-batch`, { instance_ids: instanceIds });
     return response.data.data;
   },
-
   publishFromInstance: async (instanceId: number, skillId: number, tagIds: number[]): Promise<Skill> => {
     const response = await api.post(`/instances/${instanceId}/skills/${skillId}/publish-to-hub`, { tag_ids: tagIds });
     return response.data.data;

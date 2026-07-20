@@ -258,7 +258,6 @@ func (h *SkillHubHandler) BatchInstallSkill(c *gin.Context) {
 	}
 	utils.Success(c, status, "Skill batch installation completed", items)
 }
-
 func (h *SkillHubHandler) ListAdminSkills(c *gin.Context) {
 	items, err := h.service.ListAllHubSkillsAdmin()
 	if err != nil {

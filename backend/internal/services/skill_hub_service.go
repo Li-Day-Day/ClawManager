@@ -63,7 +63,6 @@ type BatchInstallHubSkillResult struct {
 	InstanceSkill *InstanceSkillPayload `json:"instance_skill,omitempty"`
 	Error         string                `json:"error,omitempty"`
 }
-
 func isAdminRole(role string) bool {
 	return strings.EqualFold(strings.TrimSpace(role), "admin")
 }
@@ -644,7 +643,6 @@ func (s *skillService) BatchInstallHubSkill(actorUserID int, actorRole string, s
 	}
 	return results
 }
-
 func (s *skillService) ImportInstanceSkillToLibrary(actorUserID int, actorRole string, instanceID, skillID int) (*SkillPayload, error) {
 	instance, err := s.instanceRepo.GetByID(instanceID)
 	if err != nil {

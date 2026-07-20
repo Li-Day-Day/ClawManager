@@ -523,7 +523,6 @@ const InstanceSkillHubPanel: React.FC<InstanceSkillHubPanelProps> = ({
       setActionLoading(null);
     }
   };
-
   const handleRemoveSkill = async (skillId: number) => {
     try {
       setActionLoading(`remove-skill-${skillId}`);
