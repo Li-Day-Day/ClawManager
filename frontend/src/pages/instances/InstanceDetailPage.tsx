@@ -354,10 +354,13 @@ const InstanceDetailPage: React.FC = () => {
   const [workspaceHeightPx, setWorkspaceHeightPx] = useState<number | null>(null);
   const [collapsedBottomHeightPx, setCollapsedBottomHeightPx] = useState<number | null>(null);
   const workspaceSectionRef = useRef<HTMLElement>(null);
+<<<<<<< HEAD
   const liteRootRef = useRef<HTMLDivElement>(null);
   const liteHeaderRef = useRef<HTMLDivElement>(null);
   const liteBottomRef = useRef<HTMLDivElement>(null);
   const bottomPanelExpandedRef = useRef(false);
+=======
+>>>>>>> 60d6b70 (feat(instance): support restarting instances with environment overrides)
   const restartMenuRef = useRef<HTMLDivElement>(null);
 
   const fetchMeta = useCallback(
