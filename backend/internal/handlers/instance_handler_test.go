@@ -23,6 +23,7 @@ type blockingBatchInstanceService struct {
 	release <-chan struct{}
 }
 
+<<<<<<< HEAD
 type restartRecordingInstanceService struct {
 	fakeWorkspaceHandlerInstanceService
 	restartCalls        int
@@ -46,6 +47,8 @@ func (s *restartRecordingInstanceService) RestartWithEnvironment(instanceID int,
 	return s.restartErr
 }
 
+=======
+>>>>>>> 83ea700 (feat: add research team template and optimize Lite instance batch creation)
 func (s *blockingBatchInstanceService) CreatePrevalidated(userID int, req services.CreateInstanceRequest) (*models.Instance, error) {
 	s.started <- req.Name
 	<-s.release
@@ -121,6 +124,7 @@ func TestBatchCreateLiteInstancesUsesBoundedConcurrencyAndPreservesOrder(t *test
 	}
 }
 
+<<<<<<< HEAD
 func TestRestartInstanceAcceptsOptionalEnvironmentOverrides(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
@@ -321,6 +325,8 @@ func TestGetInstanceEnvironmentOverridesReturnsNamesOnly(t *testing.T) {
 	}
 }
 
+=======
+>>>>>>> 83ea700 (feat: add research team template and optimize Lite instance batch creation)
 func TestWorkspaceArchiveMaxMiB(t *testing.T) {
 	t.Setenv(workspaceArchiveMaxMiBEnv, "")
 	if got := workspaceArchiveMaxMiB(); got != defaultWorkspaceArchiveMaxMiB {
