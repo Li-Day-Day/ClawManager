@@ -2410,29 +2410,126 @@ func (s *teamService) writeLiteTeamMemberIdentityFiles(instance *models.Instance
 		}
 	}
 	if strings.EqualFold(member.RuntimeType, "hermes") {
-		hermesPromptRoots := []string{
-			filepath.Join(workspacePath, "home", ".hermes"),
-			filepath.Join(workspacePath, "home", ".clawmanager-team-worker", ".hermes"),
+		hermesPromptRoots, err := prepareHermesLitePromptRoots(instance)
+		if err != nil {
+			return err
 		}
 		for _, promptRoot := range hermesPromptRoots {
-			if err := os.MkdirAll(promptRoot, 0755); err != nil {
-				return fmt.Errorf("failed to prepare Hermes identity directory %s: %w", promptRoot, err)
-			}
-			chownTeamWorkspacePath(promptRoot)
 			for name, content := range identityFiles {
 				target := filepath.Join(promptRoot, name)
+				if err := validateHermesLiteManagedFileTarget(target); err != nil {
+					return fmt.Errorf("invalid Hermes Lite identity file target %s: %w", target, err)
+				}
 				if err := writeManagedTeamWorkspaceOverlay(target, content); err != nil {
 					return fmt.Errorf("failed to write Hermes Lite identity file %s: %w", target, err)
 				}
-				chownTeamWorkspacePath(target)
+				if err := repairHermesLiteManagedPathOwnership(instance, target); err != nil {
+					return fmt.Errorf("failed to set Hermes Lite identity file ownership %s: %w", target, err)
+				}
 			}
 			if strings.TrimSpace(rosterJSON) != "" {
 				target := filepath.Join(promptRoot, teamConfigFileName)
+				if err := validateHermesLiteManagedFileTarget(target); err != nil {
+					return fmt.Errorf("invalid Hermes Lite roster file target %s: %w", target, err)
+				}
 				if err := writeManagedTeamContextFile(target, []byte(rosterJSON), 0o644); err != nil {
 					return fmt.Errorf("failed to write Hermes Lite roster file %s: %w", target, err)
 				}
+				if err := repairHermesLiteManagedPathOwnership(instance, target); err != nil {
+					return fmt.Errorf("failed to set Hermes Lite roster file ownership %s: %w", target, err)
+				}
 			}
 		}
+	}
+	return nil
+}
+
+func prepareHermesLitePromptRoots(instance *models.Instance) ([]string, error) {
+	if instance == nil || instance.ID <= 0 || instance.WorkspacePath == nil {
+		return nil, fmt.Errorf("Hermes Lite Team member requires a persisted instance workspace")
+	}
+	workspaceRoot := filepath.Clean(strings.TrimSpace(*instance.WorkspacePath))
+	if workspaceRoot == "" || workspaceRoot == "." || workspaceRoot == string(filepath.Separator) {
+		return nil, fmt.Errorf("Hermes Lite Team member has an invalid instance workspace")
+	}
+	homeRoot := filepath.Join(workspaceRoot, "home")
+	workerRoot := filepath.Join(homeRoot, ".clawmanager-team-worker")
+	promptRoots := []string{
+		filepath.Join(homeRoot, ".hermes"),
+		filepath.Join(workerRoot, ".hermes"),
+	}
+	for _, directory := range append([]string{workerRoot}, promptRoots...) {
+		if err := prepareHermesLiteManagedDirectory(instance, workspaceRoot, directory); err != nil {
+			return nil, fmt.Errorf("failed to prepare Hermes Lite managed directory %s: %w", directory, err)
+		}
+	}
+	return promptRoots, nil
+}
+
+func prepareHermesLiteManagedDirectory(instance *models.Instance, workspaceRoot, directory string) error {
+	relative, err := filepath.Rel(workspaceRoot, directory)
+	if err != nil || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) || filepath.IsAbs(relative) {
+		return fmt.Errorf("managed directory escaped the instance workspace")
+	}
+	if err := os.MkdirAll(directory, 0o750); err != nil {
+		return err
+	}
+	info, err := os.Lstat(directory)
+	if err != nil {
+		return err
+	}
+	if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+		return fmt.Errorf("managed path must be a real directory")
+	}
+	realWorkspace, err := filepath.EvalSymlinks(workspaceRoot)
+	if err != nil {
+		return fmt.Errorf("resolve instance workspace: %w", err)
+	}
+	realDirectory, err := filepath.EvalSymlinks(directory)
+	if err != nil {
+		return fmt.Errorf("resolve managed directory: %w", err)
+	}
+	realRelative, err := filepath.Rel(realWorkspace, realDirectory)
+	if err != nil || realRelative == "." || realRelative == ".." ||
+		strings.HasPrefix(realRelative, ".."+string(filepath.Separator)) || filepath.IsAbs(realRelative) {
+		return fmt.Errorf("managed directory real path escaped the instance workspace")
+	}
+	if err := chownLitePromptWorkspacePath(directory, RuntimeLinuxID(instance.ID), teamSharedGID); err != nil {
+		return fmt.Errorf("set runtime owner: %w", err)
+	}
+	if err := os.Chmod(directory, 0o750); err != nil {
+		return fmt.Errorf("set managed directory mode: %w", err)
+	}
+	return nil
+}
+
+func validateHermesLiteManagedFileTarget(path string) error {
+	info, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if info.Mode()&os.ModeSymlink != 0 || info.IsDir() {
+		return fmt.Errorf("managed identity target must be a regular file")
+	}
+	return nil
+}
+
+func repairHermesLiteManagedPathOwnership(instance *models.Instance, path string) error {
+	if instance == nil || instance.ID <= 0 {
+		return fmt.Errorf("persisted instance identity is required")
+	}
+	info, err := os.Lstat(path)
+	if err != nil {
+		return err
+	}
+	if info.Mode()&os.ModeSymlink != 0 || info.IsDir() {
+		return fmt.Errorf("managed identity path must be a regular file")
+	}
+	if err := chownLitePromptWorkspacePath(path, RuntimeLinuxID(instance.ID), teamSharedGID); err != nil {
+		return err
 	}
 	return nil
 }
