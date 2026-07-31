@@ -6387,12 +6387,31 @@ func isTrustedLateTeamNarrative(payload map[string]interface{}) bool {
 		strings.EqualFold(eventString(payload, "stateEffect", "state_effect"), "none")
 }
 
+func isStructurallySuppressedTeamNarrative(payload map[string]interface{}) bool {
+	if payload == nil {
+		return false
+	}
+	eventKind := strings.ToLower(strings.TrimSpace(eventString(payload, "eventKind", "event_kind", "kind")))
+	return eventKind == "agent_narrative" &&
+		eventBool(payload, "suppressedAfterTerminal", "suppressed_after_terminal") &&
+		eventBool(payload, "lateProjection", "late_projection") &&
+		!eventBool(payload, "terminalDelivery", "terminal_delivery") &&
+		eventBool(payload, "nonAuthoritative", "non_authoritative") &&
+		strings.EqualFold(eventString(payload, "stateEffect", "state_effect"), "none")
+}
+
 func applyTeamChatPolicy(eventType string, payload map[string]interface{}, task *models.TeamTask, member *models.TeamMember) {
 	if payload == nil {
 		return
 	}
 	automaticTurnResult := eventBool(payload, "automaticTurnResult", "automatic_turn_result")
 	eventKind := strings.ToLower(strings.TrimSpace(eventString(payload, "eventKind", "event_kind", "kind")))
+	if isStructurallySuppressedTeamNarrative(payload) {
+		payload["chatPolicy"] = "hidden"
+		payload["visibleToChat"] = false
+		payload["visible_to_chat"] = false
+		return
+	}
 	if automaticTurnResult {
 		decision := eventString(payload, "completionDecision", "completion_decision")
 		if decision != "" && decision != teamCompletionDecisionAccepted {
@@ -6548,7 +6567,7 @@ func teamChatAssignmentIdentity(payload map[string]interface{}) string {
 }
 
 func teamChatEventIsBusinessContent(eventType, eventKind string, payload map[string]interface{}) bool {
-	if payload == nil || teamChatEventIsTransportNoise(eventType, eventKind, payload) {
+	if payload == nil || isStructurallySuppressedTeamNarrative(payload) || teamChatEventIsTransportNoise(eventType, eventKind, payload) {
 		return false
 	}
 	switch eventKind {
