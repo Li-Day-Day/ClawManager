@@ -225,6 +225,13 @@ func TestBuildTeamMemberInstanceRequestMountsHermesSoul(t *testing.T) {
 	if req.Team.PersonaConfigKey != "hermes-soul-worker.md" {
 		t.Fatalf("expected Hermes persona config key, got %q", req.Team.PersonaConfigKey)
 	}
+	if req.Type != "hermes" || req.Mode != InstanceModeLite || req.RuntimeType != RuntimeBackendGateway {
+		t.Fatalf("expected Hermes Lite gateway request, got type=%q mode=%q runtime=%q", req.Type, req.Mode, req.RuntimeType)
+	}
+	if req.EnvironmentOverrides["CLAWMANAGER_TEAM_RUNTIME_TYPE"] != "hermes" ||
+		req.EnvironmentOverrides["CLAWMANAGER_TEAM_PROTOCOL_VERSION"] != "4" {
+		t.Fatalf("expected Hermes Team runtime contract env, got %#v", req.EnvironmentOverrides)
+	}
 }
 
 func TestBuildTeamMemberInstanceRequestSupportsLiteMode(t *testing.T) {
@@ -458,7 +465,7 @@ func TestPlanTeamMembersRequiresExactlyOneLeader(t *testing.T) {
 func TestPlanTeamMembersSupportsHermesRuntime(t *testing.T) {
 	plans, err := planTeamMembers("team", []CreateTeamMemberRequest{
 		{MemberID: "lead", Role: "leader"},
-		{MemberID: "hermes-writer", Role: "writer", RuntimeType: "Hermes", InstanceMode: "Pro"},
+		{MemberID: "hermes-writer", Role: "writer", RuntimeType: "Hermes", InstanceMode: "Lite"},
 	})
 	if err != nil {
 		t.Fatalf("planTeamMembers returned error: %v", err)
@@ -466,8 +473,24 @@ func TestPlanTeamMembersSupportsHermesRuntime(t *testing.T) {
 	if plans[1].RuntimeType != "hermes" {
 		t.Fatalf("expected Hermes runtime to be normalized, got %#v", plans[1])
 	}
-	if plans[1].InstanceMode != InstanceModePro {
-		t.Fatalf("expected Pro instance mode to be normalized, got %#v", plans[1])
+	if plans[1].InstanceMode != InstanceModeLite {
+		t.Fatalf("expected Lite instance mode to be normalized, got %#v", plans[1])
+	}
+
+	_, err = planTeamMembers("team", []CreateTeamMemberRequest{
+		{MemberID: "lead", Role: "leader"},
+		{MemberID: "hermes-writer", Role: "writer", RuntimeType: "Hermes", InstanceMode: "Pro"},
+	})
+	if err == nil || !strings.Contains(err.Error(), "Hermes team workers must use Lite mode") {
+		t.Fatalf("expected Hermes Pro rejection, got %v", err)
+	}
+
+	_, err = planTeamMembers("team", []CreateTeamMemberRequest{
+		{MemberID: "lead", Role: "leader", RuntimeType: "Hermes", InstanceMode: "Lite"},
+		{MemberID: "worker", Role: "developer"},
+	})
+	if err == nil || !strings.Contains(err.Error(), "team leader must use OpenClaw Lite") {
+		t.Fatalf("expected Hermes Leader rejection, got %v", err)
 	}
 
 	_, err = planTeamMembers("team", []CreateTeamMemberRequest{
@@ -849,9 +872,9 @@ func TestResearchProfilesInheritGenericTeamCapabilities(t *testing.T) {
 				}
 			}
 			for _, expected := range []string{
-				"Browser is available to every OpenClaw Team worker",
+				"Browser is available to every supported Team worker",
 				"team_artifact_preview",
-				"Use team_complete_task only when the assigned task is actually complete",
+				"A substantive final response is submitted automatically by current Lite Runtimes",
 				"Prefer SOUL.md for your member identity",
 			} {
 				if !strings.Contains(agents, expected) {
@@ -902,7 +925,12 @@ func TestWriteLiteTeamMemberIdentityFiles(t *testing.T) {
 		teamAgentsFileName,
 		teamSoulFileName,
 		teamConfigFileName,
-		filepath.Join(".hermes", teamSoulFileName),
+		filepath.Join("home", ".hermes", teamAgentsFileName),
+		filepath.Join("home", ".hermes", teamSoulFileName),
+		filepath.Join("home", ".hermes", teamConfigFileName),
+		filepath.Join("home", ".clawmanager-team-worker", ".hermes", teamAgentsFileName),
+		filepath.Join("home", ".clawmanager-team-worker", ".hermes", teamSoulFileName),
+		filepath.Join("home", ".clawmanager-team-worker", ".hermes", teamConfigFileName),
 	} {
 		if _, err := os.Stat(filepath.Join(workspace, name)); err != nil {
 			t.Fatalf("expected Lite identity file %s: %v", name, err)
@@ -929,6 +957,9 @@ func TestWriteLiteTeamMemberIdentityFiles(t *testing.T) {
 	}
 	if !strings.Contains(string(agentsBytes), "SOUL.md as the member-specific identity") {
 		t.Fatalf("AGENTS.md missing identity source guidance: %s", string(agentsBytes))
+	}
+	if !strings.Contains(string(agentsBytes), "substantive final response is submitted automatically") {
+		t.Fatalf("AGENTS.md missing tolerant completion guidance: %s", string(agentsBytes))
 	}
 	rosterBytes, err := os.ReadFile(filepath.Join(workspace, teamConfigFileName))
 	if err != nil {

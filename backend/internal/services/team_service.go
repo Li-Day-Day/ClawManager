@@ -1161,6 +1161,8 @@ func (s *teamService) teamMemberEnv(team *models.Team, member plannedTeamMember)
 		"CLAWMANAGER_TEAM_MEMBER_ID":          member.MemberKey,
 		"CLAWMANAGER_TEAM_ROLE":               effectiveTeamMemberRole(member),
 		"CLAWMANAGER_TEAM_EFFECTIVE_ROLE":     effectiveTeamMemberRole(member),
+		"CLAWMANAGER_TEAM_RUNTIME_TYPE":       member.RuntimeType,
+		"CLAWMANAGER_TEAM_PROTOCOL_VERSION":   "4",
 		"CLAWMANAGER_TEAM_COMMUNICATION_MODE": communicationMode,
 		"CLAWMANAGER_TEAM_SHARED_DIR":         team.SharedMountPath,
 		"CLAWMANAGER_TEAM_SHARED_UID":         strconv.Itoa(teamSharedUID),
@@ -2285,8 +2287,8 @@ func buildTeamMemberAgentsMarkdown(team *models.Team, member plannedTeamMember) 
 		"- Use the available runtime tools normally, but coordinate Team work through the ClawManager Team channel.",
 		"- Use team_send for assignments, handoffs, clarifying questions, blockers, and final delivery messages.",
 		"- Use team_status / progress updates to report work state when available.",
-		"- Browser is available to every OpenClaw Team worker. Open Team files with team_artifact_preview when that tool is exposed; on an older Runtime without it, use static file inspection. Do not use file:// or start a temporary file server.",
-		"- Use team_complete_task only when the assigned task is actually complete and evidence has been reported.",
+		"- Browser is available to every supported Team worker. Open Team files with team_artifact_preview when that tool is exposed; on an older Runtime without it, use static file inspection. Do not use file:// or start a temporary file server.",
+		"- A substantive final response is submitted automatically by current Lite Runtimes. Use team_complete_task for explicit failure/cancellation, review metadata, or structured final fields; do not emit a second close-only message.",
 		"- In an active Team turn, task and assignment identity is inherited by the Runtime. Reuse IDs supplied by ClawManager when present, but omit optional IDs rather than inventing replacements.",
 		"",
 		"## Workspace Contract",
@@ -2408,16 +2410,29 @@ func (s *teamService) writeLiteTeamMemberIdentityFiles(instance *models.Instance
 		}
 	}
 	if strings.EqualFold(member.RuntimeType, "hermes") {
-		hermesDir := filepath.Join(workspacePath, ".hermes")
-		if err := os.MkdirAll(hermesDir, 0755); err != nil {
-			return fmt.Errorf("failed to prepare Hermes identity directory: %w", err)
+		hermesPromptRoots := []string{
+			filepath.Join(workspacePath, "home", ".hermes"),
+			filepath.Join(workspacePath, "home", ".clawmanager-team-worker", ".hermes"),
 		}
-		chownTeamWorkspacePath(hermesDir)
-		target := filepath.Join(hermesDir, teamSoulFileName)
-		if err := os.WriteFile(target, []byte(files[teamSoulFileName]), 0644); err != nil {
-			return fmt.Errorf("failed to write Hermes Lite SOUL.md: %w", err)
+		for _, promptRoot := range hermesPromptRoots {
+			if err := os.MkdirAll(promptRoot, 0755); err != nil {
+				return fmt.Errorf("failed to prepare Hermes identity directory %s: %w", promptRoot, err)
+			}
+			chownTeamWorkspacePath(promptRoot)
+			for name, content := range identityFiles {
+				target := filepath.Join(promptRoot, name)
+				if err := writeManagedTeamWorkspaceOverlay(target, content); err != nil {
+					return fmt.Errorf("failed to write Hermes Lite identity file %s: %w", target, err)
+				}
+				chownTeamWorkspacePath(target)
+			}
+			if strings.TrimSpace(rosterJSON) != "" {
+				target := filepath.Join(promptRoot, teamConfigFileName)
+				if err := writeManagedTeamContextFile(target, []byte(rosterJSON), 0o644); err != nil {
+					return fmt.Errorf("failed to write Hermes Lite roster file %s: %w", target, err)
+				}
+			}
 		}
-		chownTeamWorkspacePath(target)
 	}
 	return nil
 }
@@ -11717,6 +11732,12 @@ func planTeamMembers(teamName string, members []CreateTeamMemberRequest) ([]plan
 		if isLeader {
 			leaderCount++
 			role = "leader"
+		}
+		if isLeader && (runtimeType != "openclaw" || instanceMode != InstanceModeLite) {
+			return nil, fmt.Errorf("team leader must use OpenClaw Lite")
+		}
+		if runtimeType == "hermes" && instanceMode != InstanceModeLite {
+			return nil, fmt.Errorf("Hermes team workers must use Lite mode")
 		}
 		profile := teamMemberProfileFromEnv(memberReq.EnvironmentOverrides)
 		effectiveRole := role
