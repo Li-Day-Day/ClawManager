@@ -890,6 +890,9 @@ func TestResearchProfilesInheritGenericTeamCapabilities(t *testing.T) {
 
 func TestWriteLiteTeamMemberIdentityFiles(t *testing.T) {
 	workspace := t.TempDir()
+	originalChown := chownLitePromptWorkspacePath
+	t.Cleanup(func() { chownLitePromptWorkspacePath = originalChown })
+	chownLitePromptWorkspacePath = func(string, int, int) error { return nil }
 	profileEnv := map[string]string{
 		"CLAWMANAGER_AGENT_PERSONA_JSON": `{"profileKey":"agency.senior-developer","name":"Senior Developer","roleHint":"senior-developer","summary":"Implements scoped engineering tasks.","systemPrompt":"You are a senior implementation specialist."}`,
 	}
@@ -912,6 +915,7 @@ func TestWriteLiteTeamMemberIdentityFiles(t *testing.T) {
 		t.Fatalf("buildTeamRosterConfig returned error: %v", err)
 	}
 	instance := &models.Instance{
+		ID:            31,
 		Type:          "hermes",
 		RuntimeType:   RuntimeBackendGateway,
 		InstanceMode:  InstanceModeLite,
