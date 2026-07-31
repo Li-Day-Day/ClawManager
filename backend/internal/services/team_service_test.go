@@ -3906,6 +3906,52 @@ func TestTeamChatPolicyKeepsTransportAcknowledgementHidden(t *testing.T) {
 	}
 }
 
+func TestTeamChatPolicyHonorsStructuredTerminalNarrativeSuppression(t *testing.T) {
+	suppressed := map[string]interface{}{
+		"eventKind":               "agent_narrative",
+		"text":                    "Internal post-completion bookkeeping.",
+		"chatPolicy":              "visible",
+		"visibleToChat":           true,
+		"lateProjection":          true,
+		"suppressedAfterTerminal": true,
+		"nonAuthoritative":        true,
+		"stateEffect":             "none",
+	}
+	applyTeamChatPolicy("reply", suppressed, nil, &models.TeamMember{MemberKey: "developer"})
+	if suppressed["chatPolicy"] != "hidden" || suppressed["visibleToChat"] != false {
+		t.Fatalf("structured post-terminal runtime bookkeeping must remain hidden: %#v", suppressed)
+	}
+
+	terminalDelivery := map[string]interface{}{
+		"eventKind":               "agent_narrative",
+		"text":                    "Final verified implementation report.",
+		"chatPolicy":              "hidden",
+		"visibleToChat":           false,
+		"lateProjection":          true,
+		"terminalDelivery":        true,
+		"suppressedAfterTerminal": true,
+		"nonAuthoritative":        true,
+		"stateEffect":             "none",
+	}
+	applyTeamChatPolicy("reply", terminalDelivery, nil, &models.TeamMember{MemberKey: "developer"})
+	if terminalDelivery["chatPolicy"] != "visible" || terminalDelivery["visibleToChat"] != true {
+		t.Fatalf("the canonical post-ACK Worker delivery must remain visible: %#v", terminalDelivery)
+	}
+}
+
+func TestTeamEventPayloadsFilterStructuredTerminalNarrativeSuppression(t *testing.T) {
+	suppressedJSON := `{"event":"reply","eventKind":"agent_narrative","text":"Internal bookkeeping","chatPolicy":"hidden","visibleToChat":false,"lateProjection":true,"suppressedAfterTerminal":true,"nonAuthoritative":true,"stateEffect":"none"}`
+	deliveryJSON := `{"event":"reply","eventKind":"agent_narrative","text":"Final verified delivery","chatPolicy":"visible","visibleToChat":true,"lateProjection":true,"terminalDelivery":true,"nonAuthoritative":true,"stateEffect":"none"}`
+	events := []models.TeamEvent{
+		{ID: 41, EventType: "reply", PayloadJSON: &suppressedJSON},
+		{ID: 42, EventType: "reply", PayloadJSON: &deliveryJSON},
+	}
+	payloads := teamEventPayloads(events)
+	if len(payloads) != 1 || payloads[0].ID != 42 {
+		t.Fatalf("only the canonical terminal delivery should cross the public chat boundary: %#v", payloads)
+	}
+}
+
 func TestTeamEventPayloadsFilterOnlyHiddenTransportFacts(t *testing.T) {
 	hiddenJSON := `{"event":"member_result_confirmed","chatPolicy":"hidden","visibleToChat":false}`
 	progressJSON := `{"event":"task_progress","eventKind":"worker_progress","chatPolicy":"replaceable","visibleToChat":true,"summary":"正在实现核心模块"}`
