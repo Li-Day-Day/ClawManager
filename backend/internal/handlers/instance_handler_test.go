@@ -23,10 +23,6 @@ type blockingBatchInstanceService struct {
 	release <-chan struct{}
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 60d6b70 (feat(instance): support restarting instances with environment overrides)
 type restartRecordingInstanceService struct {
 	fakeWorkspaceHandlerInstanceService
 	restartCalls        int
@@ -50,11 +46,6 @@ func (s *restartRecordingInstanceService) RestartWithEnvironment(instanceID int,
 	return s.restartErr
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> 83ea700 (feat: add research team template and optimize Lite instance batch creation)
-=======
->>>>>>> 60d6b70 (feat(instance): support restarting instances with environment overrides)
 func (s *blockingBatchInstanceService) CreatePrevalidated(userID int, req services.CreateInstanceRequest) (*models.Instance, error) {
 	s.started <- req.Name
 	<-s.release
@@ -130,10 +121,6 @@ func TestBatchCreateLiteInstancesUsesBoundedConcurrencyAndPreservesOrder(t *test
 	}
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 60d6b70 (feat(instance): support restarting instances with environment overrides)
 func TestRestartInstanceAcceptsOptionalEnvironmentOverrides(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
@@ -334,11 +321,6 @@ func TestGetInstanceEnvironmentOverridesReturnsNamesOnly(t *testing.T) {
 	}
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> 83ea700 (feat: add research team template and optimize Lite instance batch creation)
-=======
->>>>>>> 60d6b70 (feat(instance): support restarting instances with environment overrides)
 func TestWorkspaceArchiveMaxMiB(t *testing.T) {
 	t.Setenv(workspaceArchiveMaxMiBEnv, "")
 	if got := workspaceArchiveMaxMiB(); got != defaultWorkspaceArchiveMaxMiB {
