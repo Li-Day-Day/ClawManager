@@ -156,6 +156,12 @@ func main() {
 	securityScanService := services.NewSecurityScanService(securityScanRepo, skillRepo, objectStorageService, skillScannerClient)
 	externalAccessService := services.NewInstanceExternalAccessService(instanceExternalAccessRepo)
 	aiGatewayService := aigateway.NewService(llmModelRepo, modelInvocationService, auditEventService, costRecordService, riskDetectionService, riskHitService, chatSessionService, chatMessageService)
+	skillSummaryService := services.NewSkillSummaryService(
+		skillRepo,
+		objectStorageService,
+		aigateway.NewSkillSummaryCompleter(aiGatewayService, llmModelRepo),
+	)
+	services.ConfigureSkillSummary(skillService, skillSummaryService)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(authService)
@@ -509,6 +515,7 @@ func main() {
 			skillHub.GET("/skills/:id/download", skillHubHandler.DownloadSkill)
 			skillHub.POST("/skills/:id/install", skillHubHandler.InstallSkill)
 			skillHub.POST("/skills/:id/install-batch", skillHubHandler.BatchInstallSkill)
+			skillHub.POST("/skills/:id/regenerate-summary", skillHubHandler.RegenerateSkillSummary)
 		}
 
 		adminSkillHub := api.Group("/admin/skill-hub")

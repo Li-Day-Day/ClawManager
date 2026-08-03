@@ -8,6 +8,8 @@ type Skill struct {
 	SkillKey         string     `db:"skill_key" json:"skill_key"`
 	Name             string     `db:"name" json:"name"`
 	Description      *string    `db:"description" json:"description,omitempty"`
+	SummaryStatus    string     `db:"summary_status" json:"summary_status"`
+	SummaryError     *string    `db:"summary_error" json:"summary_error,omitempty"`
 	CurrentVersionID *int       `db:"current_version_id" json:"current_version_id,omitempty"`
 	SourceType       string     `db:"source_type" json:"source_type"`
 	Status           string     `db:"status" json:"status"`

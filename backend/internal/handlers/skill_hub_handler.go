@@ -144,6 +144,22 @@ func (h *SkillHubHandler) PublishSkill(c *gin.Context) {
 	utils.Success(c, http.StatusOK, "Skill published to hub successfully", item)
 }
 
+func (h *SkillHubHandler) RegenerateSkillSummary(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	userRole, _ := c.Get("userRole")
+	skillID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		utils.Error(c, http.StatusBadRequest, "invalid skill ID")
+		return
+	}
+	item, err := h.service.RegenerateSkillSummary(userID.(int), userRole.(string), skillID)
+	if err != nil {
+		utils.HandleHubError(c, err)
+		return
+	}
+	utils.Success(c, http.StatusAccepted, "Skill summary regeneration queued", item)
+}
+
 func (h *SkillHubHandler) PublishSkillAsNew(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	userRole, _ := c.Get("userRole")

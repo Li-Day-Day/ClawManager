@@ -291,6 +291,7 @@ func (s *skillService) importDirectory(ctx context.Context, userID int, dir extr
 }
 
 func (s *skillService) importDirectoryWithOptions(ctx context.Context, userID int, dir extractedSkillDirectory, originalName string, opts ImportDirectoryOptions) (*SkillImportResultItem, error) {
+	_ = originalName
 	baseSkillKey := sanitizeSkillKey(dir.Name)
 	if baseSkillKey == "" {
 		return nil, fmt.Errorf("skill directory name %q is invalid", dir.Name)
@@ -363,9 +364,9 @@ func (s *skillService) importDirectoryWithOptions(ctx context.Context, userID in
 	skill := existingBefore
 	created := false
 	if skill == nil {
-		description := fmt.Sprintf("Imported from %s", originalName)
 		skill = &models.Skill{
-			UserID: userID, SkillKey: targetSkillKey, Name: dir.Name, Description: &description,
+			UserID: userID, SkillKey: targetSkillKey, Name: dir.Name, Description: nil,
+			SummaryStatus: skillSummaryStatusPending, SummaryError: nil,
 			SourceType: skillSourceUploaded, Status: "active", Visibility: skillVisibilityPrivate, RiskLevel: blob.RiskLevel,
 			LastScannedAt: blob.LastScannedAt, LastScanResultID: blob.LastScanResultID,
 		}
@@ -434,6 +435,12 @@ func (s *skillService) importDirectoryWithOptions(ctx context.Context, userID in
 	}
 	if action == skillImportResultVersioned && previousVersionNo != nil {
 		result.PreviousVersionNo = previousVersionNo
+	}
+	if action == skillImportResultCreated || action == skillImportResultVersioned || action == skillImportResultSavedAsNew {
+		s.enqueueSkillSummary(skill.ID)
+		if refreshed, refreshErr := s.loadSkillPayloadByID(skill.ID); refreshErr == nil && refreshed != nil {
+			result.Skill = *refreshed
+		}
 	}
 	return result, nil
 }

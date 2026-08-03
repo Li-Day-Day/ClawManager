@@ -20,6 +20,23 @@ func TestPreviewImportDirectoryNone(t *testing.T) {
 	}
 }
 
+func TestPreviewImportDirectoryAcceptsChineseName(t *testing.T) {
+	svc := &skillService{repo: &skillRepoStub{skills: map[int]*models.Skill{}}}
+	item, err := svc.previewImportDirectory(1, extractedSkillDirectory{
+		Name:  "股票价值投资分析",
+		Files: map[string][]byte{"SKILL.md": []byte("# 股票价值投资分析")},
+	})
+	if err != nil {
+		t.Fatalf("previewImportDirectory() error = %v", err)
+	}
+	if item.SkillKey != "股票价值投资分析" {
+		t.Fatalf("SkillKey = %q, want 股票价值投资分析", item.SkillKey)
+	}
+	if item.ConflictType != skillImportConflictNone {
+		t.Fatalf("conflict_type = %q, want %q", item.ConflictType, skillImportConflictNone)
+	}
+}
+
 func TestPreviewImportDirectoryUnchanged(t *testing.T) {
 	versionID := 10
 	blobID := 20
