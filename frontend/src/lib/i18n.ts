@@ -2444,6 +2444,10 @@ export const translations: Record<Locale, TranslationTree> = {
           label: "Hermes Runtime",
           description: "Hermes runtime built on the webtop desktop base",
         },
+        workbuddy: {
+          label: "Workbuddy",
+          description: "Managed Workbuddy runtime on a webtop desktop base",
+        },
         custom: {
           label: "Custom Image",
           description: "Use your own custom image",
@@ -3963,6 +3967,10 @@ export const translations: Record<Locale, TranslationTree> = {
           label: "Hermes Runtime",
           description: "基于 Webtop 桌面基础镜像构建的 Hermes 运行时",
         },
+        workbuddy: {
+          label: "Workbuddy",
+          description: "基于 Webtop 桌面基础镜像构建的托管 Workbuddy 运行时",
+        },
         custom: {
           label: "自定义镜像",
           description: "使用你自己的自定义镜像",
@@ -5423,6 +5431,11 @@ export const translations: Record<Locale, TranslationTree> = {
           description:
             "Webtop デスクトップベースで構築された Hermes ランタイム",
         },
+        workbuddy: {
+          label: "Workbuddy",
+          description:
+            "Webtop デスクトップベースで動作する管理対象 Workbuddy ランタイム",
+        },
         custom: {
           label: "カスタムイメージ",
           description: "独自のカスタムイメージを使用",
@@ -6846,6 +6859,10 @@ export const translations: Record<Locale, TranslationTree> = {
         hermes: {
           label: "Hermes Runtime",
           description: "Webtop 데스크톱 기반으로 빌드된 Hermes 런타임",
+        },
+        workbuddy: {
+          label: "Workbuddy",
+          description: "Webtop 데스크톱 기반의 관리형 Workbuddy 런타임",
         },
         custom: {
           label: "사용자 지정 이미지",
@@ -8293,6 +8310,11 @@ export const translations: Record<Locale, TranslationTree> = {
           label: "Hermes Runtime",
           description:
             "Hermes-Runtime auf Basis des Webtop-Desktop-Images",
+        },
+        workbuddy: {
+          label: "Workbuddy",
+          description:
+            "Verwaltete Workbuddy-Runtime auf Basis des Webtop-Desktop-Images",
         },
         custom: {
           label: "Benutzerdefiniertes Image",
