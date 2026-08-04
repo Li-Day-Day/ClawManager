@@ -52,8 +52,6 @@ type SkillPayload struct {
 	SkillKey         string                `json:"skill_key"`
 	Name             string                `json:"name"`
 	Description      *string               `json:"description,omitempty"`
-	SummaryStatus    string                `json:"summary_status"`
-	SummaryError     *string               `json:"summary_error,omitempty"`
 	Status           string                `json:"status"`
 	SourceType       string                `json:"source_type"`
 	RiskLevel        string                `json:"risk_level"`
@@ -214,7 +212,7 @@ type SkillService interface {
 	SaveBackInstanceSkillToLibrary(actorUserID int, actorRole string, instanceID, skillID int) (*SkillPayload, error)
 	SaveForeignInstanceSkillToMyLibrary(actorUserID int, actorRole string, instanceID, skillID int) (*SkillPayload, error)
 	PublishSkillAsNew(actorUserID int, actorRole string, skillID int, tagIDs []int) (*SkillPayload, error)
-	RegenerateSkillSummary(actorUserID int, actorRole string, skillID int) (*SkillPayload, error)
+	GetSkillMarkdown(actorUserID int, actorRole string, skillID int) (string, error)
 	RetrySkillPackageCollection(actorUserID int, actorRole string, instanceID, skillID int) error
 	ListAttachableSkills(actorUserID int, actorRole string) ([]SkillPayload, error)
 	ImportHubArchive(ctx context.Context, userID int, fileHeader *multipart.FileHeader) ([]SkillPayload, error)
@@ -235,7 +233,6 @@ type skillService struct {
 	scanner            SkillScannerClient
 	runtimeSkillSync   *runtimeSkillSyncDeps
 	materializeService *SkillPackageMaterializeService
-	summaryService     *SkillSummaryService
 }
 
 func NewSkillService(repo repository.SkillRepository, instanceRepo repository.InstanceRepository, userRepo repository.UserRepository, commandService InstanceCommandService, commandRepo repository.InstanceCommandRepository, storage ObjectStorageService, scanner SkillScannerClient) SkillService {
@@ -1932,7 +1929,6 @@ func (s *skillService) toSkillPayloads(items []models.Skill, actorUserID int, ac
 func (s *skillService) toSkillPayload(item models.Skill) (*SkillPayload, error) {
 	payload := &SkillPayload{
 		ID: item.ID, ExternalSkillID: formatExternalSkillID(item.ID), UserID: item.UserID, SkillKey: item.SkillKey, Name: item.Name, Description: item.Description,
-		SummaryStatus: normalizeSkillSummaryStatus(item.SummaryStatus), SummaryError: item.SummaryError,
 		Status: item.Status, SourceType: item.SourceType, RiskLevel: item.RiskLevel, ScanStatus: "pending",
 		Visibility: skillVisibilityPrivate,
 		LastScannedAt: item.LastScannedAt, CurrentVersionID: item.CurrentVersionID, CreatedAt: item.CreatedAt, UpdatedAt: item.UpdatedAt,

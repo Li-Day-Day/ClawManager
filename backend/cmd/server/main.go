@@ -63,6 +63,7 @@ func main() {
 	chatMessageRepo := repository.NewChatMessageRepository(database)
 	riskRuleRepo := repository.NewRiskRuleRepository(database)
 	riskHitRepo := repository.NewRiskHitRepository(database)
+	egressPrivateExceptionRepo := repository.NewEgressPrivateExceptionRepository(database)
 	openClawConfigRepo := repository.NewOpenClawConfigRepository(database)
 	instanceAgentRepo := repository.NewInstanceAgentRepository(database)
 	instanceRuntimeStatusRepo := repository.NewInstanceRuntimeStatusRepository(database)
@@ -98,6 +99,7 @@ func main() {
 	riskDetectionService := services.NewRiskDetectionService(riskRuleRepo)
 	riskHitService := services.NewRiskHitService(riskHitRepo)
 	riskRuleService := services.NewRiskRuleService(riskRuleRepo)
+	egressPrivateExceptionService := services.NewEgressPrivateExceptionService(egressPrivateExceptionRepo, instanceRepo, userRepo)
 	openClawConfigService := services.NewOpenClawConfigService(openClawConfigRepo, skillRepo)
 	objectStorageService, err := services.NewObjectStorageService(cfg.ObjectStorage)
 	if err != nil {
@@ -156,12 +158,6 @@ func main() {
 	securityScanService := services.NewSecurityScanService(securityScanRepo, skillRepo, objectStorageService, skillScannerClient)
 	externalAccessService := services.NewInstanceExternalAccessService(instanceExternalAccessRepo)
 	aiGatewayService := aigateway.NewService(llmModelRepo, modelInvocationService, auditEventService, costRecordService, riskDetectionService, riskHitService, chatSessionService, chatMessageService)
-	skillSummaryService := services.NewSkillSummaryService(
-		skillRepo,
-		objectStorageService,
-		aigateway.NewSkillSummaryCompleter(aiGatewayService, llmModelRepo),
-	)
-	services.ConfigureSkillSummary(skillService, skillSummaryService)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(authService)
@@ -183,6 +179,7 @@ func main() {
 	aiGatewayHandler := handlers.NewAIGatewayHandler(aiGatewayService)
 	aiObservabilityHandler := handlers.NewAIObservabilityHandler(aiObservabilityService)
 	riskRuleHandler := handlers.NewRiskRuleHandler(riskRuleService)
+	egressPrivateExceptionHandler := handlers.NewEgressPrivateExceptionHandler(egressPrivateExceptionService)
 	clusterResourceHandler := handlers.NewClusterResourceHandler(clusterResourceService)
 	teamPreviewSecretService := k8s.NewSecretService()
 	teamPreviewOrigin, _ := services.DefaultTeamPreviewOrigin()
@@ -201,6 +198,7 @@ func main() {
 			},
 		),
 		handlers.WithTeamArtifactPreviewOrigin(teamPreviewOrigin),
+		handlers.WithEgressPrivateExceptions(egressPrivateExceptionService, instanceRepo),
 	)
 	openClawConfigHandler := handlers.NewOpenClawConfigHandler(openClawConfigService)
 	skillHandler := handlers.NewSkillHandler(skillService, instanceService)
@@ -545,7 +543,7 @@ func main() {
 			skillHub.GET("/skills/:id/download", skillHubHandler.DownloadSkill)
 			skillHub.POST("/skills/:id/install", skillHubHandler.InstallSkill)
 			skillHub.POST("/skills/:id/install-batch", skillHubHandler.BatchInstallSkill)
-			skillHub.POST("/skills/:id/regenerate-summary", skillHubHandler.RegenerateSkillSummary)
+			skillHub.GET("/skills/:id/skill-md", skillHubHandler.GetSkillMarkdown)
 		}
 
 		adminSkillHub := api.Group("/admin/skill-hub")
@@ -632,6 +630,17 @@ func main() {
 			adminRiskRules.POST("/bulk-status", riskRuleHandler.BulkUpdateStatus)
 			adminRiskRules.PUT("", riskRuleHandler.UpsertRule)
 			adminRiskRules.DELETE("/:ruleId", riskRuleHandler.DeleteRule)
+		}
+
+		adminEgressPrivateExceptions := api.Group("/admin/egress-private-exceptions")
+		adminEgressPrivateExceptions.Use(middleware.Auth())
+		adminEgressPrivateExceptions.Use(middleware.SetUserInfo(userRepo))
+		adminEgressPrivateExceptions.Use(middleware.NewAdminAuth(userRepo))
+		{
+			adminEgressPrivateExceptions.GET("", egressPrivateExceptionHandler.ListExceptions)
+			adminEgressPrivateExceptions.POST("", egressPrivateExceptionHandler.CreateException)
+			adminEgressPrivateExceptions.PUT("/:id", egressPrivateExceptionHandler.UpdateException)
+			adminEgressPrivateExceptions.DELETE("/:id", egressPrivateExceptionHandler.DeleteException)
 		}
 
 		adminSkills := api.Group("/admin/skills")

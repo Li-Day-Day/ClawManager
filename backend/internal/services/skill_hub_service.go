@@ -531,26 +531,41 @@ func (s *skillService) GetSkillHubDetail(actorUserID int, actorRole string, skil
 	return payload, nil
 }
 
-func (s *skillService) enqueueSkillSummary(skillID int) {
-	if s == nil || s.summaryService == nil || skillID <= 0 {
-		return
+func (s *skillService) descriptionFromBlob(blob *models.SkillBlob) *string {
+	if s == nil || s.storage == nil || blob == nil || strings.TrimSpace(blob.ObjectKey) == "" {
+		return nil
 	}
-	s.summaryService.Enqueue(skillID)
+	content, err := s.storage.GetObject(context.Background(), blob.ObjectKey)
+	if err != nil {
+		return nil
+	}
+	desc, err := descriptionFromArchive(blob.FileName, content)
+	if err != nil {
+		return nil
+	}
+	return desc
 }
 
-func (s *skillService) RegenerateSkillSummary(actorUserID int, actorRole string, skillID int) (*SkillPayload, error) {
+func (s *skillService) GetSkillMarkdown(actorUserID int, actorRole string, skillID int) (string, error) {
 	skill, err := s.repo.GetSkillByID(skillID)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	if skill == nil || isDeletedSkill(skill) {
-		return nil, fmt.Errorf("skill not found")
+	if skill == nil || !s.CanViewSkill(actorUserID, actorRole, skill) {
+		return "", fmt.Errorf("skill not found")
 	}
-	if skill.UserID != actorUserID && !isAdminRole(actorRole) {
-		return nil, fmt.Errorf("skill not found")
+	blob, err := s.skillBlobForPublish(skill)
+	if err != nil {
+		return "", err
 	}
-	s.enqueueSkillSummary(skillID)
-	return s.GetSkillHubDetail(actorUserID, actorRole, skillID)
+	if blob == nil || strings.TrimSpace(blob.ObjectKey) == "" {
+		return "", fmt.Errorf("skill_package_pending")
+	}
+	content, err := s.storage.GetObject(context.Background(), blob.ObjectKey)
+	if err != nil {
+		return "", err
+	}
+	return skillMarkdownFromArchive(blob.FileName, content)
 }
 
 func (s *skillService) PublishToHub(actorUserID int, actorRole string, skillID int, tagIDs []int) (*SkillPayload, error) {
@@ -730,11 +745,11 @@ func (s *skillService) ImportInstanceSkillToLibrary(actorUserID int, actorRole s
 		skill.RiskLevel = blob.RiskLevel
 		skill.LastScannedAt = blob.LastScannedAt
 		skill.LastScanResultID = blob.LastScanResultID
+		skill.Description = s.descriptionFromBlob(blob)
 	}
 	if err := s.promoteSkillToUploadedLibrary(skill); err != nil {
 		return nil, err
 	}
-	s.enqueueSkillSummary(skillID)
 	return s.GetSkillHubDetail(actorUserID, actorRole, skillID)
 }
 
@@ -1143,6 +1158,7 @@ func (s *skillService) SaveBackInstanceSkillToLibrary(actorUserID int, actorRole
 	skill.RiskLevel = blob.RiskLevel
 	skill.LastScannedAt = blob.LastScannedAt
 	skill.LastScanResultID = blob.LastScanResultID
+	skill.Description = s.descriptionFromBlob(blob)
 	skill.UpdatedAt = now
 	if err := s.repo.UpdateSkill(skill); err != nil {
 		return nil, err
@@ -1155,7 +1171,6 @@ func (s *skillService) SaveBackInstanceSkillToLibrary(actorUserID int, actorRole
 	if err := s.rebindInstanceSkill(instanceID, skillID, skillID, &version.ID, blob.ContentHash); err != nil {
 		return nil, err
 	}
-	s.enqueueSkillSummary(skillID)
 	return s.GetSkillHubDetail(actorUserID, actorRole, skillID)
 }
 
@@ -1192,10 +1207,8 @@ func (s *skillService) SaveForeignInstanceSkillToMyLibrary(actorUserID int, acto
 	if err != nil {
 		return nil, err
 	}
-	description := skill.Description
 	newSkill := &models.Skill{
-		UserID: actorUserID, SkillKey: newKey, Name: skill.Name, Description: description,
-		SummaryStatus: skillSummaryStatusPending, SummaryError: nil,
+		UserID: actorUserID, SkillKey: newKey, Name: skill.Name, Description: s.descriptionFromBlob(blob),
 		SourceType: skillSourceUploaded, Status: "active", Visibility: skillVisibilityPrivate,
 		RiskLevel: blob.RiskLevel, LastScannedAt: blob.LastScannedAt, LastScanResultID: blob.LastScanResultID,
 	}
@@ -1215,7 +1228,6 @@ func (s *skillService) SaveForeignInstanceSkillToMyLibrary(actorUserID int, acto
 	if err := s.rebindInstanceSkill(instanceID, skillID, newSkill.ID, &version.ID, blob.ContentHash); err != nil {
 		return nil, err
 	}
-	s.enqueueSkillSummary(newSkill.ID)
 	return s.GetSkillHubDetail(actorUserID, actorRole, newSkill.ID)
 }
 
@@ -1248,8 +1260,7 @@ func (s *skillService) PublishSkillAsNew(actorUserID int, actorRole string, skil
 		return nil, err
 	}
 	newSkill := &models.Skill{
-		UserID: actorUserID, SkillKey: newKey, Name: skill.Name, Description: skill.Description,
-		SummaryStatus: skillSummaryStatusPending, SummaryError: nil,
+		UserID: actorUserID, SkillKey: newKey, Name: skill.Name, Description: s.descriptionFromBlob(blob),
 		SourceType: skillSourceUploaded, Status: "active", Visibility: skillVisibilityPrivate,
 		RiskLevel: blob.RiskLevel, LastScannedAt: blob.LastScannedAt, LastScanResultID: blob.LastScanResultID,
 	}
@@ -1266,7 +1277,6 @@ func (s *skillService) PublishSkillAsNew(actorUserID int, actorRole string, skil
 	if err := s.repo.UpdateSkill(newSkill); err != nil {
 		return nil, err
 	}
-	s.enqueueSkillSummary(newSkill.ID)
 	return s.PublishToHub(actorUserID, actorRole, newSkill.ID, tagIDs)
 }
 

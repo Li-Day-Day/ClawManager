@@ -2025,6 +2025,9 @@ func (r *fakeRuntimeInstanceRepo) Create(instance *models.Instance) error { retu
 func (r *fakeRuntimeInstanceRepo) GetByID(id int) (*models.Instance, error) {
 	return r.byID[id], nil
 }
+func (r *fakeRuntimeInstanceRepo) FindByPodIP(string) (*models.Instance, error) {
+	return nil, nil
+}
 func (r *fakeRuntimeInstanceRepo) GetByAccessToken(accessToken string) (*models.Instance, error) {
 	return nil, nil
 }

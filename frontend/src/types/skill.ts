@@ -4,8 +4,6 @@ export interface Skill {
   skill_key: string;
   name: string;
   description?: string;
-  summary_status?: string;
-  summary_error?: string;
   status: string;
   source_type: string;
   risk_level: string;

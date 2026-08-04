@@ -3,10 +3,7 @@ import SkillImportConflictDialog from '../../components/SkillImportConflictDialo
 import UserLayout from '../../components/UserLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import { useI18n } from '../../contexts/I18nContext';
-import {
-  parseSkillDescriptionSections,
-  shortSkillSummary,
-} from '../../lib/parseSkillDescriptionMarkdown';
+import { displaySkillDescription } from '../../lib/skillDescription';
 import { instanceService } from '../../services/instanceService';
 import { skillHubService } from '../../services/skillHubService';
 import type { Instance } from '../../types/instance';
@@ -17,8 +14,6 @@ import type {
   SkillImportPreviewItem,
   SkillImportResultItem,
 } from '../../types/skill';
-
-const SUMMARY_IN_FLIGHT = new Set(['pending', 'generating']);
 
 type HubTab = 'catalog' | 'mine' | 'admin';
 type InstallProgress = { instanceId: number; status: 'pending' | 'success' | 'failed'; error?: string };
@@ -50,6 +45,9 @@ const SkillHubPage: React.FC = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [pendingUploadFile, setPendingUploadFile] = useState<File | null>(null);
   const [detailSkill, setDetailSkill] = useState<Skill | null>(null);
+  const [detailMarkdown, setDetailMarkdown] = useState('');
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
 
   const tagLabel = useCallback(
     (tag: SkillHubTag) => t(`skillHubPage.tags.${tag.tag_key}`) || tag.name,
@@ -152,31 +150,38 @@ const SkillHubPage: React.FC = () => {
   const currentSkills = tab === 'catalog' ? catalogSkills : tab === 'mine' ? mySkills : adminSkills;
 
   useEffect(() => {
-    const hasInFlight = currentSkills.some((skill) => SUMMARY_IN_FLIGHT.has((skill.summary_status || '').toLowerCase()));
-    if (!hasInFlight) {
+    if (!detailSkill) {
+      setDetailMarkdown('');
+      setDetailError(null);
+      setDetailLoading(false);
       return undefined;
     }
-    const timer = window.setInterval(() => {
-      if (tab === 'catalog') {
-        void loadCatalog();
-      } else if (tab === 'mine') {
-        void loadMine();
-      } else if (tab === 'admin') {
-        void loadAdmin();
-      }
-    }, 7000);
-    return () => window.clearInterval(timer);
-  }, [currentSkills, loadAdmin, loadCatalog, loadMine, tab]);
-
-  useEffect(() => {
-    if (!detailSkill) {
-      return;
-    }
-    const latest = currentSkills.find((item) => item.id === detailSkill.id);
-    if (latest) {
-      setDetailSkill(latest);
-    }
-  }, [currentSkills, detailSkill?.id]);
+    let cancelled = false;
+    setDetailLoading(true);
+    setDetailError(null);
+    void skillHubService
+      .getSkillMarkdown(detailSkill.id)
+      .then((content) => {
+        if (!cancelled) {
+          setDetailMarkdown(content);
+        }
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          const message = err instanceof Error ? err.message : t('skillHubPage.errors.loadSkillMd');
+          setDetailError(message);
+          setDetailMarkdown('');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setDetailLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detailSkill?.id, t]);
 
   const toggleTag = (tagId: number) => {
     setSelectedTagIds((current) =>
@@ -448,59 +453,20 @@ const SkillHubPage: React.FC = () => {
     return label === key ? reason : label;
   };
 
-  const handleRegenerateSummary = async (skillId: number) => {
-    setActionLoading(`summary-${skillId}`);
-    setError(null);
-    try {
-      const updated = await skillHubService.regenerateSkillSummary(skillId);
-      const merge = (items: Skill[]) => items.map((item) => (item.id === updated.id ? { ...item, ...updated } : item));
-      setMySkills((items) => merge(items));
-      setCatalogSkills((items) => merge(items));
-      setAdminSkills((items) => merge(items));
-      setDetailSkill((current) => (current?.id === updated.id ? { ...current, ...updated } : current));
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : t('skillHubPage.errors.regenerateSummary');
-      setError(message);
-    } finally {
-      setActionLoading('');
-    }
-  };
-
-  const renderSkillSummaryLine = (skill: Skill, canManage: boolean) => {
-    const status = (skill.summary_status || 'idle').toLowerCase();
-    if (SUMMARY_IN_FLIGHT.has(status)) {
-      return <p className="mt-2 text-sm text-[#8f776b]">{t('skillHubPage.summaryGenerating')}</p>;
-    }
-    if (status === 'failed') {
-      return (
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <p className="text-sm text-amber-800">{skill.summary_error || t('skillHubPage.summaryNone')}</p>
-          {canManage ? (
-            <button
-              type="button"
-              className="text-sm font-medium text-[#8a5a3b] underline underline-offset-2"
-              disabled={actionLoading === `summary-${skill.id}`}
-              onClick={() => void handleRegenerateSummary(skill.id)}
-            >
-              {t('skillHubPage.summaryRegenerate')}
-            </button>
-          ) : null}
-        </div>
-      );
-    }
-    const summary = shortSkillSummary(skill.description);
+  const renderSkillSummaryLine = (skill: Skill) => {
+    const summary = displaySkillDescription(skill.description);
     return (
-      <div className="mt-2 flex flex-wrap items-center gap-2">
-        <p className="text-sm text-[#6f6158]">{summary || t('skillHubPage.summaryNone')}</p>
-        {summary ? (
-          <button
-            type="button"
-            className="text-sm font-medium text-[#8a5a3b] underline underline-offset-2"
-            onClick={() => setDetailSkill(skill)}
-          >
-            {t('skillHubPage.summaryDetail')}
-          </button>
-        ) : null}
+      <div className="mt-2 flex flex-wrap items-start gap-2">
+        <p className="line-clamp-2 min-w-0 flex-1 text-sm text-[#6f6158]">
+          {summary || t('skillHubPage.summaryNone')}
+        </p>
+        <button
+          type="button"
+          className="shrink-0 text-sm font-medium text-[#8a5a3b] underline underline-offset-2"
+          onClick={() => setDetailSkill(skill)}
+        >
+          {t('skillHubPage.summaryDetail')}
+        </button>
       </div>
     );
   };
@@ -532,7 +498,7 @@ const SkillHubPage: React.FC = () => {
                 </span>
               ) : null}
             </div>
-            {renderSkillSummaryLine(skill, canPublishManage || (options?.adminView === true && user?.role === 'admin'))}
+            {renderSkillSummaryLine(skill)}
             <p className="mt-2 text-sm text-[#6f6158]">{skill.skill_key}</p>
             {options?.showOwner && skill.owner_username ? (
               <p className="mt-1 text-sm text-[#6f6158]">{t('skillHubPage.owner')}: {skill.owner_username}</p>
@@ -851,39 +817,37 @@ const SkillHubPage: React.FC = () => {
 
       {detailSkill ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-2xl rounded-[24px] bg-white p-6 shadow-xl">
+          <div className="flex max-h-[85vh] w-full max-w-3xl flex-col rounded-[24px] bg-white p-6 shadow-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-lg font-semibold text-[#1d1713]">{detailSkill.name}</h2>
-                <p className="mt-1 text-sm text-[#6f6158]">{detailSkill.skill_key}</p>
+                <p className="mt-1 text-sm text-[#6f6158]">{t('skillHubPage.skillMdTitle')}</p>
               </div>
-              <button type="button" className="app-button-secondary" onClick={() => setDetailSkill(null)}>
+              <button
+                type="button"
+                className="app-button-secondary"
+                onClick={() => {
+                  setDetailSkill(null);
+                  setDetailMarkdown('');
+                  setDetailError(null);
+                }}
+              >
                 {t('common.close')}
               </button>
             </div>
-            {(() => {
-              const sections = parseSkillDescriptionSections(detailSkill.description);
-              const entries: Array<{ key: 'intro' | 'features' | 'trigger' | 'output'; body: string }> = [
-                { key: 'intro', body: sections.intro },
-                { key: 'features', body: sections.features },
-                { key: 'trigger', body: sections.trigger },
-                { key: 'output', body: sections.output },
-              ];
-              return (
-                <div className="mt-5 space-y-4">
-                  {entries.map((entry) => (
-                    <section key={entry.key}>
-                      <h3 className="text-sm font-semibold text-[#1d1713]">
-                        {t(`skillHubPage.summarySections.${entry.key}`)}
-                      </h3>
-                      <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-[#6f6158]">
-                        {entry.body || t('skillHubPage.summaryEmptySection')}
-                      </p>
-                    </section>
-                  ))}
-                </div>
-              );
-            })()}
+            <div className="mt-5 min-h-0 flex-1 overflow-y-auto rounded-xl border border-[#ead8cf] bg-[#fffaf7] p-4">
+              {detailLoading ? (
+                <p className="text-sm text-[#6f6158]">{t('common.loading')}</p>
+              ) : null}
+              {!detailLoading && detailError ? (
+                <p className="text-sm text-red-700">{detailError}</p>
+              ) : null}
+              {!detailLoading && !detailError ? (
+                <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-6 text-[#3f3a36]">
+                  {detailMarkdown || t('skillHubPage.summaryEmptySection')}
+                </pre>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : null}

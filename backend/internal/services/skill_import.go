@@ -363,10 +363,10 @@ func (s *skillService) importDirectoryWithOptions(ctx context.Context, userID in
 
 	skill := existingBefore
 	created := false
+	packageDescription := descriptionFromSkillFiles(dir.Files)
 	if skill == nil {
 		skill = &models.Skill{
-			UserID: userID, SkillKey: targetSkillKey, Name: dir.Name, Description: nil,
-			SummaryStatus: skillSummaryStatusPending, SummaryError: nil,
+			UserID: userID, SkillKey: targetSkillKey, Name: dir.Name, Description: packageDescription,
 			SourceType: skillSourceUploaded, Status: "active", Visibility: skillVisibilityPrivate, RiskLevel: blob.RiskLevel,
 			LastScannedAt: blob.LastScannedAt, LastScanResultID: blob.LastScanResultID,
 		}
@@ -405,6 +405,9 @@ func (s *skillService) importDirectoryWithOptions(ctx context.Context, userID in
 	skill.RiskLevel = blob.RiskLevel
 	skill.LastScannedAt = blob.LastScannedAt
 	skill.LastScanResultID = blob.LastScanResultID
+	if created || versionCreated {
+		skill.Description = packageDescription
+	}
 	skill.UpdatedAt = time.Now().UTC()
 	if err := s.repo.UpdateSkill(skill); err != nil {
 		return nil, err
@@ -435,12 +438,6 @@ func (s *skillService) importDirectoryWithOptions(ctx context.Context, userID in
 	}
 	if action == skillImportResultVersioned && previousVersionNo != nil {
 		result.PreviousVersionNo = previousVersionNo
-	}
-	if action == skillImportResultCreated || action == skillImportResultVersioned || action == skillImportResultSavedAsNew {
-		s.enqueueSkillSummary(skill.ID)
-		if refreshed, refreshErr := s.loadSkillPayloadByID(skill.ID); refreshErr == nil && refreshed != nil {
-			result.Skill = *refreshed
-		}
 	}
 	return result, nil
 }

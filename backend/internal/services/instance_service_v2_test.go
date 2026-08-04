@@ -1020,6 +1020,10 @@ func (r *v2LifecycleInstanceRepo) GetByID(id int) (*models.Instance, error) {
 	return r.byID[id], nil
 }
 
+func (r *v2LifecycleInstanceRepo) FindByPodIP(string) (*models.Instance, error) {
+	return nil, nil
+}
+
 func (r *v2LifecycleInstanceRepo) GetByAccessToken(string) (*models.Instance, error) {
 	return nil, nil
 }
