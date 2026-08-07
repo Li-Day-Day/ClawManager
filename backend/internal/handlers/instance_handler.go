@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -18,6 +19,7 @@ import (
 	"clawreef/internal/models"
 	"clawreef/internal/repository"
 	"clawreef/internal/services"
+	"clawreef/internal/services/k8s"
 	"clawreef/internal/utils"
 
 	"github.com/gin-gonic/gin"
@@ -70,7 +72,7 @@ func (h *InstanceHandler) desktopAccessUpstream(c *gin.Context, instance *models
 	if usesRuntimeGateway(instance) {
 		return "", false
 	}
-	if !h.proxyService.IsWebtopInstanceType(instance.Type) {
+	if !h.proxyService.IsWebtopInstance(instance) {
 		fmt.Printf("Desktop direct proxy fallback: unsupported desktop instance type instance=%d user=%d type=%s target_port=%d\n",
 			instance.ID, instance.UserID, instance.Type, targetPort)
 		return "", true
@@ -142,6 +144,11 @@ type InstanceHandler struct {
 	skillService                  services.SkillService
 	externalAccessService         services.InstanceExternalAccessService
 	aiObservabilityService        services.AIObservabilityService
+	resourceUsageReader           instanceResourceUsageReader
+}
+
+type instanceResourceUsageReader interface {
+	GetInstanceUsage(ctx context.Context, userID, instanceID int) (*k8s.InstanceResourceUsage, error)
 }
 
 // NewInstanceHandler creates a new instance handler
@@ -161,6 +168,7 @@ func NewInstanceHandler(instanceService services.InstanceService, instanceAgentS
 		skillService:                  skillService,
 		externalAccessService:         externalAccessService,
 		aiObservabilityService:        aiObservabilityService,
+		resourceUsageReader:           k8s.NewPodMetricsService(),
 	}
 }
 
@@ -205,6 +213,7 @@ type CreateInstanceRequest struct {
 	Name                 string                       `json:"name" binding:"required,min=3,max=50"`
 	Description          *string                      `json:"description,omitempty"`
 	Type                 string                       `json:"type" binding:"required,oneof=openclaw ubuntu debian centos custom webtop hermes workbuddy"`
+	RuntimeVariant       string                       `json:"runtime_variant,omitempty" binding:"omitempty,oneof=linux windows"`
 	Mode                 string                       `json:"mode" binding:"omitempty,oneof=lite pro"`
 	InstanceMode         string                       `json:"instance_mode" binding:"omitempty,oneof=lite pro"`
 	RuntimeType          string                       `json:"runtime_type" binding:"omitempty,oneof=gateway desktop shell"`
@@ -404,6 +413,7 @@ func instanceCreateRequestToService(req CreateInstanceRequest) services.CreateIn
 		Name:                 req.Name,
 		Description:          req.Description,
 		Type:                 req.Type,
+		RuntimeVariant:       req.RuntimeVariant,
 		Mode:                 req.Mode,
 		InstanceMode:         req.InstanceMode,
 		RuntimeType:          req.RuntimeType,
@@ -1115,6 +1125,32 @@ func (h *InstanceHandler) GetRuntimeDetails(c *gin.Context) {
 	if err != nil {
 		utils.HandleError(c, err)
 		return
+	}
+	if h.resourceUsageReader != nil && instance != nil {
+		if usage, usageErr := h.resourceUsageReader.GetInstanceUsage(c.Request.Context(), instance.UserID, id); usageErr == nil && usage != nil {
+			if runtime == nil {
+				runtime = &services.InstanceRuntimeStatusPayload{
+					InstanceID:     id,
+					InfraStatus:    instance.Status,
+					AgentStatus:    "unavailable",
+					OpenClawStatus: "not_applicable",
+				}
+			}
+			if runtime.SystemInfo == nil {
+				runtime.SystemInfo = map[string]interface{}{}
+			}
+			runtime.SystemInfo["cpu"] = map[string]interface{}{
+				"usage_percent":    usage.CPUUsagePercent,
+				"used_millicores":  usage.CPUMilli,
+				"limit_millicores": usage.CPULimitMilli,
+			}
+			runtime.SystemInfo["memory"] = map[string]interface{}{
+				"used_bytes":  usage.MemoryBytes,
+				"total_bytes": usage.MemoryLimitBytes,
+			}
+			reportedAt := usage.Timestamp
+			runtime.LastReportedAt = &reportedAt
+		}
 	}
 	agent, err := h.instanceAgentService.GetPayloadByInstanceID(id)
 	if err != nil {

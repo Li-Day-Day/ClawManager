@@ -36,7 +36,7 @@ var defaultSystemImageSettings = map[string]string{
 	"ubuntu":    "lscr.io/linuxserver/webtop:ubuntu-xfce",
 	"webtop":    "lscr.io/linuxserver/webtop:ubuntu-xfce",
 	"hermes":    "ghcr.io/yuan-lab-llm/agentsruntime/hermes:latest",
-	"workbuddy": "ghcr.io/yuan-lab-llm/agentsruntime/workbuddy-linux:latest",
+	"workbuddy": "ghcr.io/yuan-lab-llm/agentsruntime/windows-vm-workbuddy:latest",
 	"debian":    "docker.io/clawreef/debian-desktop:12",
 	"centos":    "docker.io/clawreef/centos-desktop:9",
 	"custom":    "registry.example.com/your-custom-image:latest",

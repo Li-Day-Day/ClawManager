@@ -68,7 +68,7 @@ func (s *openClawConfigService) EnsurePlatformLLMGatewayResource(userID int) (*m
 }
 
 func (s *openClawConfigService) CreateDefaultLLMGovernanceSnapshot(userID int, instance *models.Instance) (*models.OpenClawInjectionSnapshot, error) {
-	if instance == nil || !supportsManagedRuntimeIntegration(instance.Type) {
+	if instance == nil || !supportsManagedRuntimeIntegrationForInstance(instance) {
 		return nil, nil
 	}
 

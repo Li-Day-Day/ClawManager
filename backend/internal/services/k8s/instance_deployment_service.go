@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -279,9 +280,20 @@ func instanceDeploymentAnnotations(config PodConfig) map[string]string {
 }
 
 func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeType string) corev1.PodSpec {
-	pvcName := client.GetPVCName(config.InstanceID)
+	pvcName := strings.TrimSpace(config.PVCName)
+	if pvcName == "" {
+		pvcName = client.GetPVCName(config.InstanceID)
+	}
 	if config.ContainerPort == 0 {
 		config.ContainerPort = 3001
+	}
+	probePort := config.ProbePort
+	if probePort == 0 {
+		probePort = config.ContainerPort
+	}
+	startupProbeFailures := config.StartupProbeFailures
+	if startupProbeFailures <= 0 {
+		startupProbeFailures = 30
 	}
 	pullPolicy := config.ImagePullPolicy
 	if pullPolicy == "" {
@@ -312,20 +324,20 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			Name:          "http",
 		}},
 		StartupProbe: &corev1.Probe{
-			ProbeHandler:     corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(config.ContainerPort)}},
-			FailureThreshold: 30,
+			ProbeHandler:     corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(probePort)}},
+			FailureThreshold: startupProbeFailures,
 			PeriodSeconds:    5,
 			TimeoutSeconds:   2,
 		},
 		ReadinessProbe: &corev1.Probe{
-			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(config.ContainerPort)}},
+			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(probePort)}},
 			InitialDelaySeconds: 3,
 			PeriodSeconds:       5,
 			TimeoutSeconds:      2,
 			FailureThreshold:    6,
 		},
 		LivenessProbe: &corev1.Probe{
-			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(config.ContainerPort)}},
+			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(probePort)}},
 			InitialDelaySeconds: 15,
 			PeriodSeconds:       10,
 			TimeoutSeconds:      2,
@@ -341,6 +353,12 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			{Name: "INSTANCE_ID", Value: fmt.Sprintf("%d", config.InstanceID)},
 			{Name: "USER_ID", Value: fmt.Sprintf("%d", config.UserID)},
 		},
+	}
+	if probePort != config.ContainerPort {
+		container.Ports = append(container.Ports, corev1.ContainerPort{
+			ContainerPort: probePort,
+			Name:          "ready",
+		})
 	}
 	if runtimeType == "shell" {
 		container.Ports = nil
@@ -371,6 +389,10 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{ClaimName: pvcName},
 			},
 		}},
+	}
+	if config.TerminationGrace > 0 {
+		grace := config.TerminationGrace
+		spec.TerminationGracePeriodSeconds = &grace
 	}
 
 	for _, mount := range config.ExtraPVCMounts {

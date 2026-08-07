@@ -268,6 +268,7 @@ func main() {
 		log.Printf("runtime scheduler disabled by configuration")
 	}
 	runtimePoolHandler := handlers.NewRuntimePoolHandler(runtimePodRepo, bindingRepo, rolloutRepo, runtimeScheduler, runtimeEvents)
+	workbuddyPrewarmController := k8s.NewWorkbuddyPrewarmController()
 
 	leaderCtx, leaderCancel := context.WithCancel(context.Background())
 	defer leaderCancel()
@@ -277,6 +278,7 @@ func main() {
 		syncService.Start()
 		materializeWorker.Start()
 		teamService.StartBackground(ctx)
+		go workbuddyPrewarmController.Run(ctx)
 		if runtimeScheduler != nil {
 			runtimeSchedulerMu.Lock()
 			if runtimeSchedulerCancel == nil {

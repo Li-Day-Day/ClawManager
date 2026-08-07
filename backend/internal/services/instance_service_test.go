@@ -62,7 +62,7 @@ func TestBuildGatewayEnvInjectsGatewayModelCatalog(t *testing.T) {
 	t.Setenv("CLAWMANAGER_LLM_GATEWAY_BASE_URL", "http://gateway.example/api/v1/gateway/llm")
 
 	token := "igt_test_token"
-	for _, instanceType := range []string{"openclaw", "hermes", "workbuddy"} {
+	for _, instanceType := range []string{"openclaw", "hermes"} {
 		t.Run(instanceType, func(t *testing.T) {
 			service := &instanceService{
 				llmModelRepo: &stubLLMModelRepository{
@@ -294,7 +294,7 @@ func TestBuildAgentEnvInjectsHermesAgentConfig(t *testing.T) {
 }
 
 func TestPersistentVolumeMountPathNormalizesManagedDesktopRuntimes(t *testing.T) {
-	for _, instanceType := range []string{"openclaw", "ubuntu", "webtop", "hermes", "workbuddy"} {
+	for _, instanceType := range []string{"openclaw", "ubuntu", "webtop", "hermes"} {
 		t.Run(instanceType, func(t *testing.T) {
 			got := persistentVolumeMountPath(&models.Instance{
 				Type:      instanceType,
@@ -304,6 +304,10 @@ func TestPersistentVolumeMountPathNormalizesManagedDesktopRuntimes(t *testing.T)
 				t.Fatalf("expected %s PVC mount path /config, got %q", instanceType, got)
 			}
 		})
+	}
+	got := persistentVolumeMountPath(&models.Instance{Type: "workbuddy", MountPath: "/storage"})
+	if got != "/storage" {
+		t.Fatalf("expected Workbuddy PVC mount path /storage, got %q", got)
 	}
 }
 
@@ -317,12 +321,12 @@ func TestManagedRuntimePersistentDirKeepsHermesSubdirectory(t *testing.T) {
 	}
 }
 
-func TestWorkbuddySupportsManagedRuntimeInjection(t *testing.T) {
-	if !supportsManagedRuntimeIntegration("workbuddy") {
-		t.Fatal("expected Workbuddy to support managed runtime integration")
+func TestWindowsWorkbuddySkipsGuestOnlyManagedIntegration(t *testing.T) {
+	if supportsManagedRuntimeIntegration("workbuddy") {
+		t.Fatal("Windows Workbuddy must not receive Linux runtime integration")
 	}
-	if !supportsRuntimeConfigInjection("workbuddy") {
-		t.Fatal("expected Workbuddy to support runtime config injection")
+	if supportsRuntimeConfigInjection("workbuddy") {
+		t.Fatal("Windows Workbuddy must not receive Linux runtime config injection")
 	}
 
 	t.Setenv("CLAWMANAGER_AGENT_CONTROL_BASE_URL", "http://agent-control.example")
@@ -330,18 +334,62 @@ func TestWorkbuddySupportsManagedRuntimeInjection(t *testing.T) {
 	env, err := (&instanceService{}).buildAgentEnv(&models.Instance{
 		ID:                  923,
 		Type:                "workbuddy",
+		RuntimeVariant:      WorkbuddyRuntimeWindows,
 		DiskGB:              20,
-		MountPath:           "/config",
+		MountPath:           "/storage",
 		AgentBootstrapToken: &token,
 	})
 	if err != nil {
 		t.Fatalf("buildAgentEnv returned error: %v", err)
 	}
-	if env["CLAWMANAGER_AGENT_RUNTIME_TYPE"] != "workbuddy" {
-		t.Fatalf("expected Workbuddy agent runtime type, got %q", env["CLAWMANAGER_AGENT_RUNTIME_TYPE"])
+	if len(env) != 0 {
+		t.Fatalf("expected no guest agent environment for Windows MVP, got %#v", env)
 	}
-	if env["CLAWMANAGER_AGENT_PERSISTENT_DIR"] != "/config" {
-		t.Fatalf("expected Workbuddy agent persistent dir /config, got %q", env["CLAWMANAGER_AGENT_PERSISTENT_DIR"])
+}
+
+func TestValidateWindowsWorkbuddyRequest(t *testing.T) {
+	valid := CreateInstanceRequest{Type: "workbuddy", Mode: InstanceModePro, CPUCores: 6, MemoryGB: 12, DiskGB: 80}
+	if err := validateWindowsWorkbuddyRequest(valid); err != nil {
+		t.Fatalf("valid Workbuddy request rejected: %v", err)
+	}
+
+	cases := []CreateInstanceRequest{
+		{Type: "workbuddy", Mode: InstanceModeLite, CPUCores: 6, MemoryGB: 12, DiskGB: 80},
+		{Type: "workbuddy", Mode: InstanceModePro, CPUCores: 4, MemoryGB: 12, DiskGB: 80},
+		{Type: "workbuddy", Mode: InstanceModePro, CPUCores: 6, MemoryGB: 8, DiskGB: 80},
+		{Type: "workbuddy", Mode: InstanceModePro, CPUCores: 6, MemoryGB: 12, DiskGB: 64},
+	}
+	for _, request := range cases {
+		if err := validateWindowsWorkbuddyRequest(request); err == nil {
+			t.Fatalf("expected invalid Workbuddy request to be rejected: %#v", request)
+		}
+	}
+}
+
+func TestWindowsWorkbuddyInstanceEnvReservesHostMemory(t *testing.T) {
+	env := windowsWorkbuddyInstanceEnv(map[string]string{"DISK_SIZE": "64G"}, &models.Instance{
+		Type:     "workbuddy",
+		CPUCores: 6,
+		MemoryGB: 10,
+	})
+	if env["RAM_SIZE"] != "8G" || env["CPU_CORES"] != "6" || env["DISK_SIZE"] != "64G" {
+		t.Fatalf("unexpected Windows Workbuddy environment: %#v", env)
+	}
+}
+
+func TestRuntimeNodeSelectorPinsWindowsWorkbuddyNodes(t *testing.T) {
+	existing := map[string]string{"storage-node": "node-a"}
+	selector := runtimeNodeSelector("workbuddy", existing)
+	if selector[workbuddyWindowsNodeLabel] != "true" || selector["storage-node"] != "node-a" {
+		t.Fatalf("unexpected Windows Workbuddy node selector: %#v", selector)
+	}
+	if _, ok := existing[workbuddyWindowsNodeLabel]; ok {
+		t.Fatalf("runtimeNodeSelector mutated the existing selector: %#v", existing)
+	}
+
+	linuxSelector := runtimeNodeSelector("openclaw", existing)
+	if _, ok := linuxSelector[workbuddyWindowsNodeLabel]; ok {
+		t.Fatalf("non-Windows runtime received Windows node label: %#v", linuxSelector)
 	}
 }
 
@@ -377,6 +425,9 @@ func TestSecurityModeForInstance(t *testing.T) {
 	}
 	if got := service.securityModeForInstance("ubuntu"); got != "default" {
 		t.Fatalf("expected ubuntu to use default security mode, got %q", got)
+	}
+	if got := service.securityModeForInstance("workbuddy"); got != "privileged" {
+		t.Fatalf("expected Workbuddy to use privileged mode for KVM, got %q", got)
 	}
 
 	service.allowPrivilegedPods = true

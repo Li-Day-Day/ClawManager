@@ -3,6 +3,7 @@ package k8s
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -54,8 +55,12 @@ type PodConfig struct {
 	GPUEnabled           bool
 	GPUCount             int
 	Image                string
+	PVCName              string
 	MountPath            string
 	ContainerPort        int32
+	ProbePort            int32
+	StartupProbeFailures int32
+	TerminationGrace     int64
 	ImagePullPolicy      corev1.PullPolicy
 	ExtraEnv             map[string]string
 	EnvFromSecretNames   []string
@@ -108,7 +113,10 @@ func (s *PodService) CreatePod(ctx context.Context, config PodConfig) (*corev1.P
 
 	deploymentName := s.client.GetDeploymentName(config.InstanceID, config.InstanceName)
 	namespace := s.client.GetNamespace(config.UserID)
-	pvcName := s.client.GetPVCName(config.InstanceID)
+	pvcName := strings.TrimSpace(config.PVCName)
+	if pvcName == "" {
+		pvcName = s.client.GetPVCName(config.InstanceID)
+	}
 	runtimeType := normalizePodRuntimeType(config.RuntimeType)
 
 	// Build resource requirements

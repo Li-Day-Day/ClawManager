@@ -2446,7 +2446,7 @@ export const translations: Record<Locale, TranslationTree> = {
         },
         workbuddy: {
           label: "Workbuddy",
-          description: "Managed Workbuddy runtime on a webtop desktop base",
+          description: "Managed Workbuddy runtime on a persistent Windows desktop",
         },
         custom: {
           label: "Custom Image",
@@ -3969,7 +3969,7 @@ export const translations: Record<Locale, TranslationTree> = {
         },
         workbuddy: {
           label: "Workbuddy",
-          description: "基于 Webtop 桌面基础镜像构建的托管 Workbuddy 运行时",
+          description: "运行在持久化 Windows 桌面中的托管 Workbuddy 运行时",
         },
         custom: {
           label: "自定义镜像",
@@ -5434,7 +5434,7 @@ export const translations: Record<Locale, TranslationTree> = {
         workbuddy: {
           label: "Workbuddy",
           description:
-            "Webtop デスクトップベースで動作する管理対象 Workbuddy ランタイム",
+            "永続 Windows デスクトップで動作する管理対象 Workbuddy ランタイム",
         },
         custom: {
           label: "カスタムイメージ",
@@ -6862,7 +6862,7 @@ export const translations: Record<Locale, TranslationTree> = {
         },
         workbuddy: {
           label: "Workbuddy",
-          description: "Webtop 데스크톱 기반의 관리형 Workbuddy 런타임",
+          description: "영구 Windows 데스크톱에서 실행되는 관리형 Workbuddy 런타임",
         },
         custom: {
           label: "사용자 지정 이미지",
@@ -8314,7 +8314,7 @@ export const translations: Record<Locale, TranslationTree> = {
         workbuddy: {
           label: "Workbuddy",
           description:
-            "Verwaltete Workbuddy-Runtime auf Basis des Webtop-Desktop-Images",
+            "Verwaltete Workbuddy-Runtime auf einem persistenten Windows-Desktop",
         },
         custom: {
           label: "Benutzerdefiniertes Image",

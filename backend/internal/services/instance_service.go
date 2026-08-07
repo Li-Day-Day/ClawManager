@@ -62,6 +62,9 @@ func (s *instanceService) ValidateCreateRequests(userID int, requests []CreateIn
 		if _, ok := normalizeDesktopStreamProfile(requests[idx].DesktopStreamProfile); !ok {
 			return fmt.Errorf("invalid desktop stream profile")
 		}
+		if err := validateWindowsWorkbuddyRequest(requests[idx]); err != nil {
+			return err
+		}
 	}
 
 	quota, err := s.quotaRepo.GetByUserID(userID)
@@ -169,6 +172,7 @@ type CreateInstanceRequest struct {
 	Name                 string              `json:"name" validate:"required,min=3,max=50"`
 	Description          *string             `json:"description,omitempty"`
 	Type                 string              `json:"type" validate:"required,oneof=openclaw ubuntu debian centos custom webtop hermes workbuddy"`
+	RuntimeVariant       string              `json:"runtime_variant,omitempty" validate:"omitempty,oneof=linux windows"`
 	Mode                 string              `json:"mode" validate:"omitempty,oneof=lite pro"`
 	InstanceMode         string              `json:"instance_mode" validate:"omitempty,oneof=lite pro"`
 	RuntimeType          string              `json:"runtime_type" validate:"omitempty,oneof=gateway desktop shell"`
@@ -252,6 +256,11 @@ type instanceService struct {
 const (
 	defaultGatewayTokenAliasTTL = 7 * 24 * time.Hour
 	gatewayTokenAliasTTLEnv     = "CLAWMANAGER_GATEWAY_TOKEN_ALIAS_TTL_HOURS"
+	workbuddyGoldenPVCEnv       = "CLAWMANAGER_WORKBUDDY_GOLDEN_PVC"
+	workbuddyWindowsPVCSizeGB   = 80
+	workbuddyWindowsMinCPUCores = 6
+	workbuddyWindowsMinMemoryGB = 12
+	workbuddyWindowsNodeLabel   = "clawmanager.io/windows-runtime"
 )
 
 type gatewayTokenAliasRecorder interface {
@@ -318,6 +327,7 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	ctx := context.Background()
 	req.Name = strings.TrimSpace(req.Name)
 	req.Type = strings.ToLower(strings.TrimSpace(req.Type))
+	req.RuntimeVariant = resolveWorkbuddyRuntimeVariantForRequest(req)
 	environmentOverrides, err := normalizeEnvironmentOverrides(req.EnvironmentOverrides)
 	if err != nil {
 		return nil, err
@@ -336,6 +346,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	}
 
 	instanceMode := resolveCreateInstanceMode(req)
+	if err := validateWindowsWorkbuddyRequest(req); err != nil {
+		return nil, err
+	}
 	modeRuntimeType, _ := RuntimeTypeForInstanceMode(instanceMode)
 	if !hasExplicitCreateInstanceMode(req) && normalizeInstanceRuntimeType(req.RuntimeType) == RuntimeBackendShell {
 		modeRuntimeType = RuntimeBackendShell
@@ -423,7 +436,11 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		return s.createV2Instance(ctx, userID, req, runtimeType, environmentOverridesJSON)
 	}
 
-	runtimeConfig := buildRuntimeConfig(req.Type, req.OSType, req.OSVersion, req.ImageRegistry, req.ImageTag)
+	runtimeConfig := applyWorkbuddyRuntimeVariant(
+		buildRuntimeConfig(req.Type, req.OSType, req.OSVersion, req.ImageRegistry, req.ImageTag),
+		req.RuntimeVariant,
+		req.ImageRegistry == nil,
+	)
 	runtimeType := normalizeInstanceRuntimeType(req.RuntimeType)
 	if modeRuntimeType != "" {
 		runtimeType = modeRuntimeType
@@ -436,7 +453,11 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 			if modeRuntimeType == "" {
 				runtimeType = normalizeInstanceRuntimeType(selection.RuntimeType)
 			}
-			runtimeConfig = buildRuntimeConfig(req.Type, req.OSType, req.OSVersion, req.ImageRegistry, req.ImageTag)
+			runtimeConfig = applyWorkbuddyRuntimeVariant(
+				buildRuntimeConfig(req.Type, req.OSType, req.OSVersion, req.ImageRegistry, req.ImageTag),
+				req.RuntimeVariant,
+				false,
+			)
 		}
 	} else if req.ImageRegistry != nil {
 		if selection, ok := runtimeImageOverrideForImage(req.Type, *req.ImageRegistry); ok {
@@ -458,6 +479,7 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		Description:              req.Description,
 		Type:                     req.Type,
 		RuntimeType:              runtimeType,
+		RuntimeVariant:           req.RuntimeVariant,
 		InstanceMode:             InstanceModeForRuntimeType(runtimeType),
 		Status:                   "creating",
 		CPUCores:                 req.CPUCores,
@@ -499,6 +521,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		s.instanceRepo.Delete(instance.ID)
 		return nil, fmt.Errorf("failed to build instance agent config: %w", err)
 	}
+	if isWindowsWorkbuddyInstance(instance) {
+		runtimeConfig.Env = windowsWorkbuddyInstanceEnv(runtimeConfig.Env, instance)
+	}
 	extraEnv, err := buildInstancePodEnv(instance, runtimeConfig.Env, gatewayEnv, agentEnv)
 	if err != nil {
 		s.instanceRepo.Delete(instance.ID)
@@ -534,18 +559,46 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	// If storage class is not specified in request, use empty string
 	// PVCService will use the default from K8s client config
 	storageClass := req.StorageClass
+	var instancePVC *corev1.PersistentVolumeClaim
 
-	_, err = s.pvcService.CreatePVC(ctx, userID, instance.ID, req.DiskGB, storageClass)
+	if isWindowsWorkbuddyInstance(instance) {
+		sourcePVC := strings.TrimSpace(os.Getenv(workbuddyGoldenPVCEnv))
+		if sourcePVC == "" {
+			err = fmt.Errorf("%s is required for Windows Workbuddy instances", workbuddyGoldenPVCEnv)
+		} else {
+			instancePVC, err = s.pvcService.ClaimWorkbuddyPrewarmPVC(ctx, userID, instance.ID, req.DiskGB, storageClass, sourcePVC)
+			if err == nil && instancePVC == nil {
+				instancePVC, err = s.pvcService.CreatePVCFromSource(ctx, userID, instance.ID, req.DiskGB, storageClass, sourcePVC)
+			}
+		}
+	} else {
+		instancePVC, err = s.pvcService.CreatePVC(ctx, userID, instance.ID, req.DiskGB, storageClass)
+	}
 	if err != nil {
 		// Rollback: delete instance record
+		if instancePVC != nil && strings.TrimSpace(instancePVC.Name) != "" {
+			_ = s.pvcService.DeletePVCByName(ctx, userID, instance.ID, instancePVC.Name)
+		}
 		if bootstrapSnapshot != nil {
 			_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 		}
 		s.instanceRepo.Delete(instance.ID)
 		return nil, fmt.Errorf("failed to create PVC: %w", err)
 	}
+	if instancePVC == nil || strings.TrimSpace(instancePVC.Name) == "" {
+		s.instanceRepo.Delete(instance.ID)
+		return nil, fmt.Errorf("failed to create PVC: empty PVC result")
+	}
+	pvcName := strings.TrimSpace(instancePVC.Name)
+	instance.PVCName = &pvcName
+	instance.UpdatedAt = time.Now()
+	if err := s.instanceRepo.Update(instance); err != nil {
+		_ = s.pvcService.DeletePVCByName(ctx, userID, instance.ID, pvcName)
+		s.instanceRepo.Delete(instance.ID)
+		return nil, fmt.Errorf("failed to persist instance PVC name: %w", err)
+	}
 	if err := EnsureInstanceWorkspacePathForServerScan(ctx, s.instanceRepo, instance); err != nil {
-		s.pvcService.DeletePVC(ctx, userID, instance.ID)
+		s.deleteInstancePVC(ctx, instance)
 		if bootstrapSnapshot != nil {
 			_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 		}
@@ -553,19 +606,20 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		return nil, err
 	}
 
-	nodeSelector, err := s.pvcService.NodeSelectorForPVC(ctx, userID, instance.ID, storageClass)
+	nodeSelector, err := s.pvcService.NodeSelectorForPVCName(ctx, userID, pvcName, storageClass)
 	if err != nil {
 		if bootstrapSnapshot != nil {
 			_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 		}
-		s.pvcService.DeletePVC(ctx, userID, instance.ID)
+		s.deleteInstancePVC(ctx, instance)
 		s.instanceRepo.Delete(instance.ID)
 		return nil, fmt.Errorf("failed to resolve PVC node selector: %w", err)
 	}
+	nodeSelector = runtimeNodeSelectorForInstance(instance, nodeSelector)
 
 	// Managed runtime network policy: optional egress lock when enabled.
 	if err := s.syncInstanceNetworkPolicy(ctx, userID, instance); err != nil {
-		s.pvcService.DeletePVC(ctx, userID, instance.ID)
+		s.deleteInstancePVC(ctx, instance)
 		if bootstrapSnapshot != nil {
 			_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 		}
@@ -640,8 +694,12 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		GPUEnabled:           instance.GPUEnabled,
 		GPUCount:             instance.GPUCount,
 		Image:                runtimeConfig.Image,
+		PVCName:              pvcName,
 		MountPath:            runtimeConfig.MountPath,
 		ContainerPort:        runtimeConfig.Port,
+		ProbePort:            runtimeProbePortForInstance(instance, runtimeConfig.Port),
+		StartupProbeFailures: runtimeStartupProbeFailuresForInstance(instance),
+		TerminationGrace:     runtimeTerminationGraceForInstance(instance),
 		ImagePullPolicy:      corev1.PullPolicy(defaultImagePullPolicy()),
 		ExtraEnv:             extraEnv,
 		EnvFromSecretNames:   envFromSecretNames,
@@ -652,14 +710,14 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		NodeSelector:         nodeSelector,
 		VolumeOwnershipFixes: volumeOwnershipFixes,
 		SHMSizeGB:            shmSizeGB,
-		SecurityMode:         s.securityModeForInstance(instance.Type),
+		SecurityMode:         s.securityModeForRuntime(instance),
 	}
 
 	var workloadNamespace string
 	var workloadName string
 	if instanceUsesDesktopRuntime(instance) {
 		if s.deploymentService == nil {
-			s.pvcService.DeletePVC(ctx, userID, instance.ID)
+			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, fmt.Errorf("instance deployment service is not configured"))
 			}
@@ -668,7 +726,7 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		}
 		deployment, err := s.deploymentService.EnsureDeployment(ctx, podConfig, 1)
 		if err != nil {
-			s.pvcService.DeletePVC(ctx, userID, instance.ID)
+			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 			}
@@ -684,14 +742,14 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 			InstanceName:    instance.Name,
 			UserID:          userID,
 			ContainerPort:   runtimeConfig.Port,
-			AdditionalPorts: additionalServicePorts(runtimeConfig.Port),
+			AdditionalPorts: additionalServicePortsForInstance(instance, runtimeConfig.Port),
 		}
 
 		serviceInfo, err := s.serviceService.CreateService(ctx, serviceConfig)
 		if err != nil {
 			// Rollback: delete Deployment, PVC and instance record.
 			_ = s.deploymentService.DeleteDeployment(ctx, userID, instance.ID)
-			s.pvcService.DeletePVC(ctx, userID, instance.ID)
+			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 			}
@@ -704,7 +762,7 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		pod, err := s.podService.CreatePod(ctx, podConfig)
 		if err != nil {
 			// Rollback: delete PVC and instance record.
-			s.pvcService.DeletePVC(ctx, userID, instance.ID)
+			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
 			}
@@ -925,9 +983,12 @@ func (s *instanceService) Start(instanceID int) error {
 	if err != nil {
 		return fmt.Errorf("failed to build instance agent config: %w", err)
 	}
-	runtimeConfig := buildRuntimeConfig(instance.Type, instance.OSType, instance.OSVersion, instance.ImageRegistry, instance.ImageTag)
+	runtimeConfig := buildRuntimeConfigForInstance(instance)
 	mountPath := persistentVolumeMountPath(instance)
 	instance.MountPath = mountPath
+	if isWindowsWorkbuddyInstance(instance) {
+		runtimeConfig.Env = windowsWorkbuddyInstanceEnv(runtimeConfig.Env, instance)
+	}
 	extraEnv, err := buildInstancePodEnv(instance, runtimeConfig.Env, gatewayEnv, agentEnv)
 	if err != nil {
 		return fmt.Errorf("failed to resolve instance environment: %w", err)
@@ -937,7 +998,7 @@ func (s *instanceService) Start(instanceID int) error {
 	}
 
 	bootstrapSecretName := ""
-	if supportsRuntimeConfigInjection(instance.Type) && s.openClawConfigService != nil && instance.OpenClawConfigSnapshotID != nil && *instance.OpenClawConfigSnapshotID > 0 {
+	if supportsRuntimeConfigInjectionForInstance(instance) && s.openClawConfigService != nil && instance.OpenClawConfigSnapshotID != nil && *instance.OpenClawConfigSnapshotID > 0 {
 		bootstrapSecretName, err = s.openClawConfigService.EnsureSnapshotSecret(ctx, instance.UserID, instance, *instance.OpenClawConfigSnapshotID)
 		if err != nil {
 			return fmt.Errorf("failed to restore runtime bootstrap secret: %w", err)
@@ -951,30 +1012,36 @@ func (s *instanceService) Start(instanceID int) error {
 
 	runtimeType := normalizeInstanceRuntimeType(instance.RuntimeType)
 	shmSizeGB := popSHMSizeGB(extraEnv, runtimeType, instance.MemoryGB)
-	nodeSelector, err := s.pvcService.NodeSelectorForPVC(ctx, instance.UserID, instance.ID, instance.StorageClass)
+	pvcName := instancePVCName(instance, s.pvcService.GetClient())
+	nodeSelector, err := s.pvcService.NodeSelectorForPVCName(ctx, instance.UserID, pvcName, instance.StorageClass)
 	if err != nil {
 		return fmt.Errorf("failed to resolve PVC node selector: %w", err)
 	}
+	nodeSelector = runtimeNodeSelectorForInstance(instance, nodeSelector)
 	podConfig := k8s.PodConfig{
-		InstanceID:         instance.ID,
-		InstanceName:       instance.Name,
-		UserID:             instance.UserID,
-		Type:               instance.Type,
-		RuntimeType:        runtimeType,
-		CPUCores:           instance.CPUCores,
-		MemoryGB:           instance.MemoryGB,
-		GPUEnabled:         instance.GPUEnabled,
-		GPUCount:           instance.GPUCount,
-		Image:              runtimeConfig.Image,
-		MountPath:          mountPath,
-		ContainerPort:      runtimeConfig.Port,
-		ImagePullPolicy:    corev1.PullPolicy(defaultImagePullPolicy()),
-		ExtraEnv:           extraEnv,
-		EnvFromSecretNames: []string{bootstrapSecretName},
-		VolumeInitScripts:  runtimeVolumeInitScripts(instance.Type, mountPath),
-		NodeSelector:       nodeSelector,
-		SHMSizeGB:          shmSizeGB,
-		SecurityMode:       s.securityModeForInstance(instance.Type),
+		InstanceID:           instance.ID,
+		InstanceName:         instance.Name,
+		UserID:               instance.UserID,
+		Type:                 instance.Type,
+		RuntimeType:          runtimeType,
+		CPUCores:             instance.CPUCores,
+		MemoryGB:             instance.MemoryGB,
+		GPUEnabled:           instance.GPUEnabled,
+		GPUCount:             instance.GPUCount,
+		Image:                runtimeConfig.Image,
+		PVCName:              pvcName,
+		MountPath:            mountPath,
+		ContainerPort:        runtimeConfig.Port,
+		ProbePort:            runtimeProbePortForInstance(instance, runtimeConfig.Port),
+		StartupProbeFailures: runtimeStartupProbeFailuresForInstance(instance),
+		TerminationGrace:     runtimeTerminationGraceForInstance(instance),
+		ImagePullPolicy:      corev1.PullPolicy(defaultImagePullPolicy()),
+		ExtraEnv:             extraEnv,
+		EnvFromSecretNames:   []string{bootstrapSecretName},
+		VolumeInitScripts:    runtimeVolumeInitScripts(instance.Type, mountPath),
+		NodeSelector:         nodeSelector,
+		SHMSizeGB:            shmSizeGB,
+		SecurityMode:         s.securityModeForRuntime(instance),
 	}
 
 	var workloadNamespace string
@@ -998,7 +1065,7 @@ func (s *instanceService) Start(instanceID int) error {
 				InstanceName:    instance.Name,
 				UserID:          instance.UserID,
 				ContainerPort:   runtimeConfig.Port,
-				AdditionalPorts: additionalServicePorts(runtimeConfig.Port),
+				AdditionalPorts: additionalServicePortsForInstance(instance, runtimeConfig.Port),
 			}
 			_, err = s.serviceService.CreateService(ctx, serviceConfig)
 			if err != nil {
@@ -1036,10 +1103,29 @@ func (s *instanceService) Start(instanceID int) error {
 }
 
 func (s *instanceService) securityModeForInstance(instanceType string) k8s.PodSecurityMode {
+	if isWindowsWorkbuddy(instanceType) {
+		return k8s.PodSecurityPrivileged
+	}
 	if s != nil && s.allowPrivilegedPods {
 		return k8s.PodSecurityPrivileged
 	}
 	if strings.EqualFold(strings.TrimSpace(instanceType), "openclaw") {
+		return k8s.PodSecurityChromiumCompat
+	}
+	return k8s.PodSecurityDefault
+}
+
+func (s *instanceService) securityModeForRuntime(instance *models.Instance) k8s.PodSecurityMode {
+	if isWindowsWorkbuddyInstance(instance) {
+		return k8s.PodSecurityPrivileged
+	}
+	if instance == nil {
+		return k8s.PodSecurityDefault
+	}
+	if s != nil && s.allowPrivilegedPods {
+		return k8s.PodSecurityPrivileged
+	}
+	if strings.EqualFold(strings.TrimSpace(instance.Type), "openclaw") {
 		return k8s.PodSecurityChromiumCompat
 	}
 	return k8s.PodSecurityDefault
@@ -1096,7 +1182,7 @@ func (s *instanceService) buildGatewayEnv(instance *models.Instance) (map[string
 	if instance == nil || instance.AccessToken == nil || strings.TrimSpace(*instance.AccessToken) == "" {
 		return map[string]string{}, nil
 	}
-	if !supportsManagedRuntimeIntegration(instance.Type) {
+	if !supportsManagedRuntimeIntegrationForInstance(instance) {
 		return map[string]string{}, nil
 	}
 
@@ -1126,7 +1212,7 @@ func (s *instanceService) buildGatewayEnv(instance *models.Instance) (map[string
 }
 
 func (s *instanceService) BuildGatewayEnv(instance *models.Instance) (map[string]string, error) {
-	if instance == nil || !supportsManagedRuntimeIntegration(instance.Type) {
+	if instance == nil || !supportsManagedRuntimeIntegrationForInstance(instance) {
 		return s.buildGatewayEnv(instance)
 	}
 	if instance.AccessToken == nil || strings.TrimSpace(*instance.AccessToken) == "" {
@@ -1198,7 +1284,7 @@ func (s *instanceService) ensureAgentBootstrapToken(instance *models.Instance) (
 }
 
 func (s *instanceService) buildAgentEnv(instance *models.Instance) (map[string]string, error) {
-	if instance == nil || !supportsManagedRuntimeIntegration(instance.Type) {
+	if instance == nil || !supportsManagedRuntimeIntegrationForInstance(instance) {
 		return map[string]string{}, nil
 	}
 	if instance.AgentBootstrapToken == nil || strings.TrimSpace(*instance.AgentBootstrapToken) == "" {
@@ -1226,7 +1312,7 @@ func (s *instanceService) buildAgentEnv(instance *models.Instance) (map[string]s
 
 func supportsManagedRuntimeIntegration(instanceType string) bool {
 	switch strings.ToLower(strings.TrimSpace(instanceType)) {
-	case "openclaw", "hermes", "workbuddy":
+	case "openclaw", "hermes":
 		return true
 	default:
 		return false
@@ -1234,13 +1320,13 @@ func supportsManagedRuntimeIntegration(instanceType string) bool {
 }
 
 func (s *instanceService) createRuntimeBootstrapSnapshot(userID int, instance *models.Instance, plan *OpenClawConfigPlan) (*models.OpenClawInjectionSnapshot, error) {
-	if !supportsRuntimeConfigInjection(instance.Type) || s.openClawConfigService == nil {
+	if !supportsRuntimeConfigInjectionForInstance(instance) || s.openClawConfigService == nil {
 		return nil, nil
 	}
 	if plan != nil && hasOpenClawConfigSelections(*plan) {
 		return s.openClawConfigService.CreateSnapshotForInstance(userID, instance, plan)
 	}
-	if supportsManagedRuntimeIntegration(instance.Type) {
+	if supportsManagedRuntimeIntegrationForInstance(instance) {
 		return s.openClawConfigService.CreateDefaultLLMGovernanceSnapshot(userID, instance)
 	}
 	return nil, nil
@@ -1257,7 +1343,7 @@ func (s *instanceService) syncInstanceNetworkPolicy(ctx context.Context, userID 
 		}
 		return nil
 	}
-	if isInstanceNetworkLockEnabled() && supportsManagedRuntimeIntegration(instance.Type) {
+	if isInstanceNetworkLockEnabled() && supportsManagedRuntimeIntegrationForInstance(instance) {
 		if err := s.networkPolicyService.EnsureDefaultPolicy(ctx, userID, instance.ID, instance.Name); err != nil {
 			return fmt.Errorf("failed to ensure network policy: %w", err)
 		}
@@ -1271,7 +1357,7 @@ func (s *instanceService) syncInstanceNetworkPolicy(ctx context.Context, userID 
 
 func supportsRuntimeConfigInjection(instanceType string) bool {
 	switch strings.ToLower(strings.TrimSpace(instanceType)) {
-	case "openclaw", "hermes", "workbuddy":
+	case "openclaw", "hermes":
 		return true
 	default:
 		return false
@@ -1298,11 +1384,14 @@ func persistentVolumeMountPath(instance *models.Instance) string {
 	if instance == nil {
 		return "/config"
 	}
-	if defaultPath := defaultMountPathForInstanceType(instance.Type); defaultPath == "/config" {
-		return defaultPath
+	if !strings.EqualFold(strings.TrimSpace(instance.Type), "workbuddy") && defaultMountPathForInstanceType(instance.Type) == "/config" {
+		return "/config"
 	}
 	if strings.TrimSpace(instance.MountPath) != "" {
 		return strings.TrimSpace(instance.MountPath)
+	}
+	if strings.EqualFold(strings.TrimSpace(instance.Type), "workbuddy") {
+		return buildRuntimeConfigForInstance(instance).MountPath
 	}
 	return defaultMountPathForInstanceType(instance.Type)
 }
@@ -2220,12 +2309,147 @@ func (s *instanceService) forceSyncDeploymentInstance(ctx context.Context, insta
 	return nil
 }
 
-func additionalServicePorts(primaryPort int32) []int32 {
+func additionalServicePorts(instanceType string, primaryPort int32) []int32 {
+	if isWindowsWorkbuddy(instanceType) {
+		return []int32{3389}
+	}
 	if primaryPort == 3000 || primaryPort == 8082 {
 		return []int32{3000, 8082}
 	}
 
 	return nil
+}
+
+func additionalServicePortsForInstance(instance *models.Instance, primaryPort int32) []int32 {
+	if isWindowsWorkbuddyInstance(instance) {
+		return []int32{3389}
+	}
+	if primaryPort == 3000 || primaryPort == 8082 {
+		return []int32{3000, 8082}
+	}
+	return nil
+}
+
+func isWindowsWorkbuddy(instanceType string) bool {
+	return strings.EqualFold(strings.TrimSpace(instanceType), "workbuddy")
+}
+
+func instancePVCName(instance *models.Instance, client *k8s.Client) string {
+	if instance != nil && instance.PVCName != nil && strings.TrimSpace(*instance.PVCName) != "" {
+		return strings.TrimSpace(*instance.PVCName)
+	}
+	if instance != nil && client != nil {
+		return client.GetPVCName(instance.ID)
+	}
+	return ""
+}
+
+func (s *instanceService) deleteInstancePVC(ctx context.Context, instance *models.Instance) {
+	if s == nil || s.pvcService == nil || instance == nil {
+		return
+	}
+	_ = s.pvcService.DeletePVCByName(ctx, instance.UserID, instance.ID, instancePVCName(instance, s.pvcService.GetClient()))
+}
+
+func validateWindowsWorkbuddyRequest(req CreateInstanceRequest) error {
+	if !strings.EqualFold(strings.TrimSpace(req.Type), "workbuddy") {
+		return nil
+	}
+	if strings.TrimSpace(req.RuntimeVariant) != "" && normalizeWorkbuddyRuntimeVariant(req.RuntimeVariant) == "" {
+		return fmt.Errorf("invalid Workbuddy runtime variant")
+	}
+	if resolveWorkbuddyRuntimeVariantForRequest(req) != WorkbuddyRuntimeWindows {
+		return nil
+	}
+	if resolveCreateInstanceMode(req) != InstanceModePro {
+		return fmt.Errorf("Windows Workbuddy is available only in Pro mode")
+	}
+	if req.CPUCores < workbuddyWindowsMinCPUCores {
+		return fmt.Errorf("Windows Workbuddy requires at least %d CPU cores", workbuddyWindowsMinCPUCores)
+	}
+	if req.MemoryGB < workbuddyWindowsMinMemoryGB {
+		return fmt.Errorf("Windows Workbuddy requires at least %dGB memory", workbuddyWindowsMinMemoryGB)
+	}
+	if req.DiskGB != workbuddyWindowsPVCSizeGB {
+		return fmt.Errorf("Windows Workbuddy requires an %dGB disk to match the golden PVC", workbuddyWindowsPVCSizeGB)
+	}
+	return nil
+}
+
+func windowsWorkbuddyInstanceEnv(base map[string]string, instance *models.Instance) map[string]string {
+	env := mergeEnvMaps(base, nil)
+	if instance == nil {
+		return env
+	}
+	guestMemoryGB := instance.MemoryGB - 2
+	if guestMemoryGB < 4 {
+		guestMemoryGB = 4
+	}
+	cpuCores := int(instance.CPUCores)
+	if cpuCores < workbuddyWindowsMinCPUCores {
+		cpuCores = workbuddyWindowsMinCPUCores
+	}
+	env["RAM_SIZE"] = fmt.Sprintf("%dG", guestMemoryGB)
+	env["CPU_CORES"] = strconv.Itoa(cpuCores)
+	return env
+}
+
+func runtimeProbePort(instanceType string, primaryPort int32) int32 {
+	if isWindowsWorkbuddy(instanceType) {
+		return 3389
+	}
+	return primaryPort
+}
+
+func runtimeProbePortForInstance(instance *models.Instance, primaryPort int32) int32 {
+	if isWindowsWorkbuddyInstance(instance) {
+		return 3389
+	}
+	return primaryPort
+}
+
+func runtimeStartupProbeFailures(instanceType string) int32 {
+	if isWindowsWorkbuddy(instanceType) {
+		return 120
+	}
+	return 30
+}
+
+func runtimeStartupProbeFailuresForInstance(instance *models.Instance) int32 {
+	if isWindowsWorkbuddyInstance(instance) {
+		return 120
+	}
+	return 30
+}
+
+func runtimeTerminationGrace(instanceType string) int64 {
+	if isWindowsWorkbuddy(instanceType) {
+		return 120
+	}
+	return 0
+}
+
+func runtimeTerminationGraceForInstance(instance *models.Instance) int64 {
+	if isWindowsWorkbuddyInstance(instance) {
+		return 120
+	}
+	return 0
+}
+
+func runtimeNodeSelector(instanceType string, existing map[string]string) map[string]string {
+	selector := mergeEnvMaps(existing, nil)
+	if isWindowsWorkbuddy(instanceType) {
+		selector[workbuddyWindowsNodeLabel] = "true"
+	}
+	return selector
+}
+
+func runtimeNodeSelectorForInstance(instance *models.Instance, existing map[string]string) map[string]string {
+	selector := mergeEnvMaps(existing, nil)
+	if isWindowsWorkbuddyInstance(instance) {
+		selector[workbuddyWindowsNodeLabel] = "true"
+	}
+	return selector
 }
 
 func normalizeInstanceRuntimeType(runtimeType string) string {

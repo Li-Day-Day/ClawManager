@@ -1336,6 +1336,12 @@ spec:
               value: "/data/clawreef"
             - name: CLAWMANAGER_WORKSPACE_ARCHIVE_MAX_MIB
               value: "500"
+            - name: CLAWMANAGER_WORKBUDDY_GOLDEN_PVC
+              value: "workbuddy-golden-v1"
+            - name: CLAWMANAGER_WORKBUDDY_PREWARM_POOL_SIZE
+              value: "2"
+            - name: CLAWMANAGER_WORKBUDDY_PREWARM_IMAGE
+              value: "ghcr.io/yuan-lab-llm/agentsruntime/windows-vm-workbuddy:latest"
             - name: PLATFORM_REDIS_URL
               value: "redis://clawmanager-redis.clawmanager-system.svc.cluster.local:6379/0"
             - name: TEAM_REDIS_URL

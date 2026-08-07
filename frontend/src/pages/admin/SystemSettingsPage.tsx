@@ -52,7 +52,7 @@ const PRO_BASE_RUNTIME_CARDS: RuntimeCardDefinition[] = [
     instance_type: 'workbuddy',
     runtime_type: 'desktop',
     display_name: 'Workbuddy Pro',
-    image: 'ghcr.io/yuan-lab-llm/agentsruntime/workbuddy-linux:latest',
+    image: 'ghcr.io/yuan-lab-llm/agentsruntime/windows-vm-workbuddy:latest',
   },
 ];
 

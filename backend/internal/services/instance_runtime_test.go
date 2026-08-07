@@ -61,28 +61,34 @@ func TestBuildRuntimeConfig_OpenClawEnablesDesktopClipboardSync(t *testing.T) {
 	assertSelkiesClipboardEnabled(t, config.Env)
 }
 
-func TestBuildRuntimeConfig_WorkbuddyUsesManagedWebtopDefaults(t *testing.T) {
+func TestBuildRuntimeConfig_WorkbuddyUsesWindowsDefaults(t *testing.T) {
 	config := buildRuntimeConfig("workbuddy", "workbuddy", "latest", nil, nil)
 
 	if config.Image != defaultSystemImageSettings["workbuddy"] {
 		t.Fatalf("expected Workbuddy default image %q, got %q", defaultSystemImageSettings["workbuddy"], config.Image)
 	}
-	if config.Port != 3001 {
-		t.Fatalf("expected Workbuddy port 3001, got %d", config.Port)
+	if config.Port != 8006 {
+		t.Fatalf("expected Workbuddy port 8006, got %d", config.Port)
 	}
-	if config.MountPath != "/config" {
-		t.Fatalf("expected Workbuddy mount path /config, got %q", config.MountPath)
+	if config.MountPath != "/storage" {
+		t.Fatalf("expected Workbuddy mount path /storage, got %q", config.MountPath)
 	}
-	if config.Env["TITLE"] != "Workbuddy" || config.Env["SUBFOLDER"] != "/" {
-		t.Fatalf("expected Workbuddy Webtop environment, got %#v", config.Env)
+	for key, want := range map[string]string{
+		"VERSION":   "10l",
+		"DISK_SIZE": "64G",
+		"DISK_FMT":  "qcow2",
+		"SHUTDOWN":  "Y",
+	} {
+		if got := config.Env[key]; got != want {
+			t.Fatalf("expected Workbuddy %s=%q, got %q", key, want, got)
+		}
 	}
-	if !usesWebtopImage("workbuddy") {
-		t.Fatalf("expected Workbuddy to use Webtop proxy behavior")
+	if usesWebtopImage("workbuddy") {
+		t.Fatalf("expected Workbuddy to use Windows proxy behavior")
 	}
-	if !usesHTTPSUpstream("workbuddy") {
-		t.Fatalf("expected Workbuddy to use HTTPS upstream proxying")
+	if usesHTTPSUpstream("workbuddy", 8006) {
+		t.Fatalf("expected Workbuddy to use HTTP upstream proxying")
 	}
-	assertSelkiesClipboardEnabled(t, config.Env)
 }
 
 func assertSelkiesClipboardEnabled(t *testing.T, env map[string]string) {

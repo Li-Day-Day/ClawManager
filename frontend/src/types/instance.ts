@@ -16,6 +16,7 @@ export interface Instance {
     | "hermes"
     | "workbuddy";
   runtime_type: "desktop" | "shell" | "gateway";
+  runtime_variant?: "linux" | "windows";
   instance_mode: "lite" | "pro";
   status: "creating" | "running" | "stopped" | "error" | "deleting";
   cpu_cores: number;
@@ -182,6 +183,7 @@ export interface CreateInstanceRequest {
     | "webtop"
     | "hermes"
     | "workbuddy";
+  runtime_variant?: "linux" | "windows";
   mode?: InstanceMode;
   instance_mode?: InstanceMode;
   runtime_type?: "desktop" | "shell" | "gateway";
@@ -324,7 +326,7 @@ export const INSTANCE_TYPES: InstanceType[] = [
   {
     id: "workbuddy",
     name: "Workbuddy",
-    description: "Managed Workbuddy runtime on a webtop desktop base",
+    description: "Managed Workbuddy runtime on a persistent Windows desktop",
     icon: "workbuddy",
     defaultOs: "workbuddy",
     defaultVersion: "latest",

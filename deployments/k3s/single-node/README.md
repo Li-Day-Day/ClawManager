@@ -146,6 +146,73 @@ If pods stay `ContainerCreating`, check recent events:
 kubectl -n clawmanager-system get events --sort-by=.lastTimestamp | tail -n 80
 ```
 
+## In-Place Upgrade
+
+Use `clawmanager-upgrade.yaml` for an existing single-node installation. Do not
+apply the full install manifest over an older installation: the full manifest
+contains the credential Secret and the existing MySQL/MinIO storage resources.
+
+The upgrade manifest intentionally preserves:
+
+- `Secret/clawmanager-secrets`
+- `ConfigMap/clawmanager-mysql-init`
+- the existing MySQL and MinIO PVs, PVCs, Deployments, and Services
+
+It updates the ClawManager control plane and creates the Redis/workspace
+storage, runtime RBAC, and OpenClaw/Hermes runtime Deployments introduced by the
+new single-node profile. Database schema upgrades are applied by the embedded
+migration runner in the new `clawmanager-app` image.
+
+Regenerate the upgrade manifest after changing the install manifest:
+
+```powershell
+pwsh ./New-UpgradeManifest.ps1
+```
+
+Before the first upgrade, merge the new runtime tokens into the existing
+Secret. Use deployment-specific random values and keep them stable across
+subsequent upgrades:
+
+```sh
+kubectl patch secret clawmanager-secrets \
+  -n clawmanager-system \
+  --type merge \
+  -p '{"stringData":{"runtime-agent-control-token":"REPLACE_WITH_RANDOM_CONTROL_TOKEN","runtime-agent-report-token":"REPLACE_WITH_RANDOM_REPORT_TOKEN","openclaw-gateway-token":"REPLACE_WITH_RANDOM_GATEWAY_TOKEN"}}'
+```
+
+This merge patch adds the runtime keys without replacing the existing MySQL,
+MinIO, or JWT credentials. Do not apply a replacement Secret containing default
+credentials.
+
+Back up MySQL, label the storage node, and validate the upgrade before applying
+it:
+
+```sh
+kubectl label node <node> clawmanager.io/storage-node=true --overwrite
+kubectl apply --dry-run=server -f clawmanager-upgrade.yaml
+kubectl diff -f clawmanager-upgrade.yaml
+kubectl apply -f clawmanager-upgrade.yaml
+```
+
+`kubectl diff` exits with status `1` when differences exist; that is expected.
+Stop if validation reports an immutable field, missing Secret key, or invalid
+resource.
+
+Wait for the upgraded workloads:
+
+```sh
+kubectl -n clawmanager-system rollout status deployment/clawmanager-team-redis --timeout=15m
+kubectl -n clawmanager-system rollout status deployment/clawmanager-app --timeout=15m
+kubectl -n clawmanager-system rollout status deployment/openclaw-runtime --timeout=15m
+kubectl -n clawmanager-system rollout status deployment/hermes-runtime --timeout=15m
+kubectl -n clawmanager-system get deploy,pod,pvc -o wide
+```
+
+For an offline node, load every image referenced by the upgrade manifest before
+applying it. The generated upgrade profile changes the OpenClaw runtime pull
+policy to `IfNotPresent` so a preloaded image can be used without registry
+access.
+
 ## Uninstall
 
 Use this order for a disposable single-node test deployment.

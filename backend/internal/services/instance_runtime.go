@@ -67,9 +67,9 @@ func buildRuntimeConfig(instanceType, osType, osVersion string, registry, tag *s
 		config.Env["HERMES_HOME"] = "/config/.hermes"
 	case "workbuddy":
 		config.Image = defaultSystemImageSettings["workbuddy"]
-		config.Port = 3001
-		config.MountPath = "/config"
-		config.Env = defaultWebtopDesktopEnv("Workbuddy")
+		config.Port = 8006
+		config.MountPath = "/storage"
+		config.Env = defaultWindowsWorkbuddyEnv()
 	case "openclaw":
 		config.MountPath = "/config"
 		if (registry == nil || strings.TrimSpace(*registry) == "") && (tag == nil || strings.TrimSpace(*tag) == "") {
@@ -90,6 +90,8 @@ func buildRuntimeConfig(instanceType, osType, osVersion string, registry, tag *s
 
 func defaultPortForInstanceType(instanceType string) int32 {
 	switch instanceType {
+	case "workbuddy":
+		return 8006
 	case "ubuntu", "webtop", "hermes":
 		return 3001
 	default:
@@ -99,8 +101,10 @@ func defaultPortForInstanceType(instanceType string) int32 {
 
 func defaultMountPathForInstanceType(instanceType string) string {
 	switch instanceType {
-	case "ubuntu", "webtop", "openclaw", "workbuddy":
+	case "ubuntu", "webtop", "openclaw":
 		return "/config"
+	case "workbuddy":
+		return "/storage"
 	case "hermes":
 		return "/config"
 	default:
@@ -113,13 +117,23 @@ func defaultEnvForInstanceType(instanceType string) map[string]string {
 	case "ubuntu", "webtop", "openclaw":
 		return defaultWebtopDesktopEnv("ClawManager Desktop")
 	case "workbuddy":
-		return defaultWebtopDesktopEnv("Workbuddy")
+		return defaultWindowsWorkbuddyEnv()
 	case "hermes":
 		env := defaultWebtopDesktopEnv("Hermes Runtime")
 		env["HERMES_HOME"] = "/config/.hermes"
 		return env
 	default:
 		return map[string]string{}
+	}
+}
+
+func defaultWindowsWorkbuddyEnv() map[string]string {
+	return map[string]string{
+		"VERSION":      "10l",
+		"DISK_SIZE":    "64G",
+		"DISK_FMT":     "qcow2",
+		"SHUTDOWN":     "Y",
+		"QEMU_TIMEOUT": "120",
 	}
 }
 
@@ -161,7 +175,7 @@ func withInstanceProxyEnv(instanceType string, instanceID int, env map[string]st
 
 func usesWebtopImage(instanceType string) bool {
 	switch instanceType {
-	case "ubuntu", "webtop", "hermes", "openclaw", "workbuddy":
+	case "ubuntu", "webtop", "hermes", "openclaw":
 		return true
 	default:
 		return false

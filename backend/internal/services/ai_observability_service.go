@@ -226,18 +226,18 @@ type InstanceSessionTrace struct {
 
 // InstanceSessionUsageDetail is the drill-down payload for one session on an instance.
 type InstanceSessionUsageDetail struct {
-	SessionID        string               `json:"session_id"`
-	SessionKey       string               `json:"session_key"`
-	Title            *string              `json:"title,omitempty"`
-	PromptTokens     int                  `json:"prompt_tokens"`
-	CompletionTokens int                  `json:"completion_tokens"`
-	TotalTokens      int                  `json:"total_tokens"`
-	EstimatedCost    float64              `json:"estimated_cost"`
-	Currency         string               `json:"currency"`
-	InvocationCount  int                  `json:"invocation_count"`
-	FirstSeenAt      time.Time            `json:"first_seen_at"`
-	LastSeenAt       time.Time            `json:"last_seen_at"`
-	ModelBreakdown   []CostBreakdownItem  `json:"model_breakdown"`
+	SessionID        string                 `json:"session_id"`
+	SessionKey       string                 `json:"session_key"`
+	Title            *string                `json:"title,omitempty"`
+	PromptTokens     int                    `json:"prompt_tokens"`
+	CompletionTokens int                    `json:"completion_tokens"`
+	TotalTokens      int                    `json:"total_tokens"`
+	EstimatedCost    float64                `json:"estimated_cost"`
+	Currency         string                 `json:"currency"`
+	InvocationCount  int                    `json:"invocation_count"`
+	FirstSeenAt      time.Time              `json:"first_seen_at"`
+	LastSeenAt       time.Time              `json:"last_seen_at"`
+	ModelBreakdown   []CostBreakdownItem    `json:"model_breakdown"`
 	RecentTraces     []InstanceSessionTrace `json:"recent_traces"`
 }
 
@@ -291,11 +291,11 @@ type InstanceSessionUsageOverviewItem struct {
 
 // InstanceSessionUsageOverview aggregates session usage across managed runtime instances.
 type InstanceSessionUsageOverview struct {
-	Summary InstanceSessionUsageSummary          `json:"summary"`
-	Items   []InstanceSessionUsageOverviewItem   `json:"items"`
-	Total   int                                  `json:"total"`
-	Page    int                                  `json:"page"`
-	Limit   int                                  `json:"limit"`
+	Summary InstanceSessionUsageSummary        `json:"summary"`
+	Items   []InstanceSessionUsageOverviewItem `json:"items"`
+	Total   int                                `json:"total"`
+	Page    int                                `json:"page"`
+	Limit   int                                `json:"limit"`
 }
 
 // AIObservabilityService provides read APIs for audit and cost reporting.
@@ -311,16 +311,16 @@ type AIObservabilityService interface {
 }
 
 type aiObservabilityService struct {
-	invocationRepo  repository.ModelInvocationRepository
-	auditRepo       repository.AuditEventRepository
-	costRepo        repository.CostRecordRepository
-	riskHitRepo     repository.RiskHitRepository
-	chatMessageRepo repository.ChatMessageRepository
-	chatSessionRepo repository.ChatSessionRepository
-	llmModelRepo    repository.LLMModelRepository
-	instanceRepo        repository.InstanceRepository
-	userRepo            repository.UserRepository
-	runtimeStatusRepo   repository.InstanceRuntimeStatusRepository
+	invocationRepo    repository.ModelInvocationRepository
+	auditRepo         repository.AuditEventRepository
+	costRepo          repository.CostRecordRepository
+	riskHitRepo       repository.RiskHitRepository
+	chatMessageRepo   repository.ChatMessageRepository
+	chatSessionRepo   repository.ChatSessionRepository
+	llmModelRepo      repository.LLMModelRepository
+	instanceRepo      repository.InstanceRepository
+	userRepo          repository.UserRepository
+	runtimeStatusRepo repository.InstanceRuntimeStatusRepository
 }
 
 // NewAIObservabilityService creates a new observability reporting service.
@@ -2160,7 +2160,7 @@ func (s *aiObservabilityService) GetLLMGovernanceOverview() (*LLMGovernanceOverv
 		Items: make([]LLMGovernanceOverviewItem, 0),
 	}
 	for _, instance := range instances {
-		if !supportsManagedRuntimeIntegration(instance.Type) {
+		if !supportsManagedRuntimeIntegrationForInstance(&instance) {
 			continue
 		}
 		systemInfo := decodeRuntimeSystemInfo(s.runtimeStatusRepo, instance.ID)
@@ -2216,7 +2216,7 @@ func (s *aiObservabilityService) GetAdminSessionUsageOverview(query InstanceSess
 	globalSummary := InstanceSessionUsageSummary{Currency: "USD"}
 	globalCurrencyCounts := map[string]int{}
 	for _, instance := range instances {
-		if !supportsManagedRuntimeIntegration(instance.Type) {
+		if !supportsManagedRuntimeIntegrationForInstance(&instance) {
 			continue
 		}
 		if search != "" {
