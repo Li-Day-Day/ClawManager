@@ -235,6 +235,15 @@ type skillService struct {
 	materializeService *SkillPackageMaterializeService
 }
 
+type skillScannerFailureError struct {
+	cause error
+}
+
+func (e *skillScannerFailureError) Error() string {
+	return fmt.Sprintf("skill scanner failed: %v", e.cause)
+}
+func (e *skillScannerFailureError) Unwrap() error { return e.cause }
+
 func NewSkillService(repo repository.SkillRepository, instanceRepo repository.InstanceRepository, userRepo repository.UserRepository, commandService InstanceCommandService, commandRepo repository.InstanceCommandRepository, storage ObjectStorageService, scanner SkillScannerClient) SkillService {
 	return &skillService{repo: repo, instanceRepo: instanceRepo, userRepo: userRepo, commandService: commandService, commandRepo: commandRepo, storage: storage, scanner: scanner}
 }
@@ -581,9 +590,6 @@ func (s *skillService) AttachSkillToInstance(actorUserID int, actorRole string, 
 	}
 	if skill.Status != "active" {
 		return nil, fmt.Errorf("skill is not active")
-	}
-	if isBlockedSkillRisk(skill.RiskLevel) {
-		return nil, fmt.Errorf("skill is blocked by risk policy")
 	}
 
 	versionID := skill.CurrentVersionID
@@ -944,11 +950,6 @@ func (s *skillService) removeRuntimeInstanceSkillDirectory(instanceID int, item 
 func (s *skillService) removeLiteInstanceSkillDirectory(instanceID int, item *models.InstanceSkill) error {
 	return s.removeRuntimeInstanceSkillDirectory(instanceID, item)
 }
-func isBlockedSkillRisk(value string) bool {
-	value = strings.TrimSpace(value)
-	return strings.EqualFold(value, skillRiskMedium) || strings.EqualFold(value, skillRiskHigh)
-}
-
 func isRemovedInstanceSkill(item *models.InstanceSkill) bool {
 	if item == nil {
 		return false
@@ -1548,7 +1549,7 @@ func extractArchiveFileMap(filename string, raw []byte) (map[string][]byte, erro
 			if err != nil {
 				return nil, fmt.Errorf("failed to read zip entry: %w", err)
 			}
-			fileMap[entry.Name] = content
+			fileMap[decodeZipEntryName(entry)] = content
 		}
 	default:
 		return nil, fmt.Errorf("only .zip skill archives are supported")
@@ -1698,7 +1699,7 @@ func (s *skillService) promoteSkillToUploadedLibrary(skill *models.Skill) error 
 
 func (s *skillService) recordScan(blob *models.SkillBlob, dir *extractedSkillDirectory) error {
 	if s.scanner == nil {
-		return fmt.Errorf("skill scanner is not configured")
+		return s.markSkillScanFailed(blob, fmt.Errorf("skill scanner is not configured"))
 	}
 	if dir == nil {
 		return fmt.Errorf("skill scanner requires real skill package content")
@@ -1709,7 +1710,7 @@ func (s *skillService) recordScan(blob *models.SkillBlob, dir *extractedSkillDir
 	}
 	riskLevel, findings, summary, err := s.scanner.ScanArchive(context.Background(), blob.FileName, archiveBytes, nil)
 	if err != nil {
-		return fmt.Errorf("skill scanner failed: %w", err)
+		return s.markSkillScanFailed(blob, err)
 	}
 	if strings.TrimSpace(summary) == "" {
 		summary = "Skill scanned by external skill-scanner service"
@@ -1731,6 +1732,19 @@ func (s *skillService) recordScan(blob *models.SkillBlob, dir *extractedSkillDir
 		return err
 	}
 	return nil
+}
+
+func (s *skillService) markSkillScanFailed(blob *models.SkillBlob, cause error) error {
+	if blob == nil {
+		return fmt.Errorf("skill scanner failed: %w", cause)
+	}
+	blob.ScanStatus = "failed"
+	blob.RiskLevel = skillRiskUnknown
+	blob.UpdatedAt = time.Now().UTC()
+	if err := s.repo.UpdateBlob(blob); err != nil {
+		return fmt.Errorf("failed to record skill scan failure: %w", err)
+	}
+	return &skillScannerFailureError{cause: cause}
 }
 
 func buildNormalizedZip(dir extractedSkillDirectory) ([]byte, string, error) {

@@ -73,11 +73,21 @@ const DESKTOP_STREAM_PROFILES: Array<{
   },
 ];
 
-const runtimeWorkspaceDirectory = (type: string) =>
-  type === "hermes" ? ".hermes" : ".openclaw";
+const runtimeWorkspaceDirectory = (type: string) => {
+  if (type === "hermes") return ".hermes";
+  if (type === "opencode") return ".opencode";
+  if (type === "codex") return ".codex";
+  if (type === "claude-code") return ".claude";
+  return ".openclaw";
+};
 
-const runtimeProductName = (type: string) =>
-  type === "hermes" ? "Hermes" : "OpenClaw";
+const runtimeProductName = (type: string) => {
+  if (type === "hermes") return "Hermes";
+  if (type === "opencode") return "OpenCode";
+  if (type === "codex") return "Codex";
+  if (type === "claude-code") return "Claude Code";
+  return "OpenClaw";
+};
 
 const INSTANCE_TYPE_I18N_KEYS: Record<
   string,
@@ -107,6 +117,18 @@ const INSTANCE_TYPE_I18N_KEYS: Record<
     label: "instances.typeOptions.hermes.label",
     description: "instances.typeOptions.hermes.description",
   },
+  opencode: {
+    label: "instances.typeOptions.opencode.label",
+    description: "instances.typeOptions.opencode.description",
+  },
+  codex: {
+    label: "instances.typeOptions.codex.label",
+    description: "instances.typeOptions.codex.description",
+  },
+  "claude-code": {
+    label: "instances.typeOptions.claudeCode.label",
+    description: "instances.typeOptions.claudeCode.description",
+  },
   custom: {
     label: "instances.typeOptions.custom.label",
     description: "instances.typeOptions.custom.description",
@@ -114,7 +136,7 @@ const INSTANCE_TYPE_I18N_KEYS: Record<
 };
 
 const CREATE_INSTANCE_TYPES = INSTANCE_TYPES.filter((type) =>
-  ["openclaw", "hermes"].includes(type.id),
+  ["openclaw", "hermes", "opencode", "codex", "claude-code"].includes(type.id),
 );
 
 const INSTANCE_MODE_OPTIONS: {
@@ -133,6 +155,8 @@ const INSTANCE_MODE_OPTIONS: {
     descriptionKey: "instances.instanceModeProDescription",
   },
 ];
+
+const requiresProMode = (type: string) => type === "codex" || type === "claude-code";
 
 const PRESET_I18N_KEYS: Record<string, { label: string; description: string }> =
   {
@@ -156,7 +180,16 @@ const getBuiltInEnvTemplates = (
   diskGb: number,
 ): BuiltInEnvTemplate[] => {
   const templates: BuiltInEnvTemplate[] = [];
-  const persistentDir = type === "hermes" ? "/config/.hermes" : "/config";
+  const persistentDir =
+    type === "hermes"
+      ? "/config/.hermes"
+      : type === "opencode"
+        ? "/config/.opencode"
+        : type === "codex"
+          ? "/config/.codex"
+          : type === "claude-code"
+            ? "/config/.claude"
+            : "/config";
 
   if (type === "ubuntu") {
     templates.push(
@@ -529,7 +562,7 @@ const CreateInstancePage: React.FC = () => {
         {t("instances.instanceMode")}
       </h3>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {INSTANCE_MODE_OPTIONS.map((mode) => {
+        {INSTANCE_MODE_OPTIONS.filter((mode) => !requiresProMode(formData.type) || mode.id === "pro").map((mode) => {
           const selected = selectedMode === mode.id;
           return (
             <button
@@ -699,6 +732,8 @@ const CreateInstancePage: React.FC = () => {
       setFormData({
         ...formData,
         type: typeId as CreateInstanceRequest["type"],
+        mode: requiresProMode(typeId) ? "pro" : formData.mode,
+        instance_mode: requiresProMode(typeId) ? "pro" : formData.instance_mode,
         os_type: instanceType.defaultOs,
         os_version: instanceType.defaultVersion,
         storage_class: "",
@@ -1097,6 +1132,24 @@ const CreateInstancePage: React.FC = () => {
           className="h-10 w-10 object-contain"
         />
       );
+    }
+
+    if (typeId === "opencode") {
+      return (
+        <img
+          src="/opencode.png"
+          alt="OpenCode"
+          className="h-10 w-10 object-contain"
+        />
+      );
+    }
+
+    if (typeId === "codex") {
+      return <span className="text-lg font-bold text-slate-900">C</span>;
+    }
+
+    if (typeId === "claude-code") {
+      return <span className="text-lg font-bold text-orange-700">AI</span>;
     }
 
     return (

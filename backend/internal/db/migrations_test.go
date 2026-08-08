@@ -217,3 +217,46 @@ func TestMigration042AddsImmutableReviewContractTarget(t *testing.T) {
 		}
 	}
 }
+
+func TestMigration045AddsOpenCodeInstanceType(t *testing.T) {
+	raw, err := embeddedMigrations.ReadFile("migrations/045_add_opencode_instance_type.sql")
+	if err != nil {
+		t.Fatalf("read migration 045: %v", err)
+	}
+	sql := string(raw)
+	for _, required := range []string{
+		"MODIFY COLUMN type ENUM",
+		"'opencode'",
+		"'gateway'",
+		"'desktop'",
+		"OpenCode Lite",
+		"OpenCode Pro",
+		"agentsruntime/opencode-lite:latest",
+		"agentsruntime/opencode:latest",
+	} {
+		if !strings.Contains(sql, required) {
+			t.Fatalf("migration 045 must contain %s", required)
+		}
+	}
+}
+
+func TestMigration046AddsCodexAndClaudeCodeInstanceTypes(t *testing.T) {
+	raw, err := embeddedMigrations.ReadFile("migrations/046_add_codex_and_claude_code_instance_types.sql")
+	if err != nil {
+		t.Fatalf("read migration 046: %v", err)
+	}
+	sql := string(raw)
+	for _, required := range []string{
+		"MODIFY COLUMN type ENUM",
+		"'codex'",
+		"'claude-code'",
+		"Codex Pro",
+		"Claude Code Pro",
+		"agentsruntime/codex:latest",
+		"agentsruntime/claude-code:latest",
+	} {
+		if !strings.Contains(sql, required) {
+			t.Fatalf("migration 046 must contain %s", required)
+		}
+	}
+}

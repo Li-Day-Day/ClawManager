@@ -9,6 +9,7 @@ func TestLoadRuntimeDefaults(t *testing.T) {
 	for _, key := range []string{
 		"HERMES_RUNTIME_IMAGE",
 		"OPENCLAW_RUNTIME_IMAGE",
+		"OPENCODE_RUNTIME_IMAGE",
 		"RUNTIME_NAMESPACE",
 		"K8S_NAMESPACE",
 		"HOSTNAME",
@@ -29,6 +30,9 @@ func TestLoadRuntimeDefaults(t *testing.T) {
 	}
 	if got, want := cfg.Runtime.OpenClawImage, "ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest"; got != want {
 		t.Fatalf("expected OpenClaw default image %q, got %q", want, got)
+	}
+	if got, want := cfg.Runtime.OpenCodeImage, "ghcr.io/yuan-lab-llm/agentsruntime/opencode-lite:latest"; got != want {
+		t.Fatalf("expected OpenCode default image %q, got %q", want, got)
 	}
 }
 

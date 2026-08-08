@@ -13,7 +13,10 @@ export interface Instance {
     | "centos"
     | "custom"
     | "webtop"
-    | "hermes";
+    | "hermes"
+    | "opencode"
+    | "codex"
+    | "claude-code";
   runtime_type: "desktop" | "shell" | "gateway";
   instance_mode: "lite" | "pro";
   status: "creating" | "running" | "stopped" | "error" | "deleting";
@@ -44,7 +47,7 @@ export interface Instance {
   stopped_at?: string;
 }
 
-export type V2InstanceType = "openclaw" | "hermes";
+export type V2InstanceType = "openclaw" | "hermes" | "opencode" | "codex" | "claude-code";
 export type InstanceMode = "lite" | "pro";
 export type InstanceAvailability = "available" | "starting" | "unavailable";
 
@@ -179,7 +182,10 @@ export interface CreateInstanceRequest {
     | "centos"
     | "custom"
     | "webtop"
-    | "hermes";
+    | "hermes"
+    | "opencode"
+    | "codex"
+    | "claude-code";
   mode?: InstanceMode;
   instance_mode?: InstanceMode;
   runtime_type?: "desktop" | "shell" | "gateway";
@@ -317,6 +323,30 @@ export const INSTANCE_TYPES: InstanceType[] = [
     description: "Hermes runtime built on the webtop desktop base",
     icon: "hermes",
     defaultOs: "hermes",
+    defaultVersion: "latest",
+  },
+  {
+    id: "opencode",
+    name: "OpenCode Runtime",
+    description: "OpenCode coding agent runtime",
+    icon: "opencode",
+    defaultOs: "opencode",
+    defaultVersion: "latest",
+  },
+  {
+    id: "codex",
+    name: "Codex",
+    description: "OpenAI Codex coding agent runtime",
+    icon: "codex",
+    defaultOs: "codex",
+    defaultVersion: "latest",
+  },
+  {
+    id: "claude-code",
+    name: "Claude Code",
+    description: "Anthropic Claude Code agent runtime",
+    icon: "claude-code",
+    defaultOs: "claude-code",
     defaultVersion: "latest",
   },
   {
