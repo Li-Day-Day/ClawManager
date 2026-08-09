@@ -104,7 +104,17 @@ function availabilityClass(availability: InstanceAvailability) {
 }
 
 function typeLabel(type: string) {
-  return type === "hermes" ? "Hermes" : type === "openclaw" ? "OpenClaw" : type;
+  return type === "hermes"
+    ? "Hermes"
+    : type === "openclaw"
+      ? "OpenClaw"
+      : type === "opencode"
+        ? "OpenCode"
+        : type === "codex"
+          ? "Codex"
+          : type === "claude-code"
+            ? "Claude Code"
+        : type;
 }
 
 function formatBytes(value?: number) {
@@ -122,10 +132,13 @@ function formatBytes(value?: number) {
 }
 
 function supportsWorkspace(instance: Instance) {
-	return (
-		instance.type === "openclaw" ||
-		instance.type === "hermes" ||
-		Boolean(instance.workspace_path)
+  return (
+    instance.type === "openclaw" ||
+    instance.type === "hermes" ||
+    instance.type === "opencode" ||
+    instance.type === "codex" ||
+    instance.type === "claude-code" ||
+    Boolean(instance.workspace_path)
   );
 }
 

@@ -2448,6 +2448,18 @@ export const translations: Record<Locale, TranslationTree> = {
           label: "Workbuddy",
           description: "Managed Workbuddy runtime on a persistent Windows desktop",
         },
+        opencode: {
+          label: "OpenCode Runtime",
+          description: "Official OpenCode coding agent (Lite web / Pro desktop)",
+        },
+        codex: {
+          label: "Codex",
+          description: "OpenAI Codex coding agent (Pro desktop)",
+        },
+        claudeCode: {
+          label: "Claude Code",
+          description: "Anthropic Claude Code agent (Pro desktop)",
+        },
         custom: {
           label: "Custom Image",
           description: "Use your own custom image",
@@ -3971,6 +3983,18 @@ export const translations: Record<Locale, TranslationTree> = {
           label: "Workbuddy",
           description: "运行在持久化 Windows 桌面中的托管 Workbuddy 运行时",
         },
+        opencode: {
+          label: "OpenCode Runtime",
+          description: "官方 OpenCode 编码助手（Lite Web / Pro 桌面）",
+        },
+        codex: {
+          label: "Codex",
+          description: "OpenAI Codex 编码智能体（Pro 桌面）",
+        },
+        claudeCode: {
+          label: "Claude Code",
+          description: "Anthropic Claude Code 智能体（Pro 桌面）",
+        },
         custom: {
           label: "自定义镜像",
           description: "使用你自己的自定义镜像",
@@ -5436,6 +5460,11 @@ export const translations: Record<Locale, TranslationTree> = {
           description:
             "永続 Windows デスクトップで動作する管理対象 Workbuddy ランタイム",
         },
+        opencode: {
+          label: "OpenCode Runtime",
+          description:
+            "公式 OpenCode コーディングエージェント（Lite Web / Pro デスクトップ）",
+        },
         custom: {
           label: "カスタムイメージ",
           description: "独自のカスタムイメージを使用",
@@ -6863,6 +6892,10 @@ export const translations: Record<Locale, TranslationTree> = {
         workbuddy: {
           label: "Workbuddy",
           description: "영구 Windows 데스크톱에서 실행되는 관리형 Workbuddy 런타임",
+        },
+        opencode: {
+          label: "OpenCode Runtime",
+          description: "공식 OpenCode 코딩 에이전트 (Lite Web / Pro 데스크톱)",
         },
         custom: {
           label: "사용자 지정 이미지",
@@ -8315,6 +8348,11 @@ export const translations: Record<Locale, TranslationTree> = {
           label: "Workbuddy",
           description:
             "Verwaltete Workbuddy-Runtime auf einem persistenten Windows-Desktop",
+        },
+        opencode: {
+          label: "OpenCode Runtime",
+          description:
+            "Offizieller OpenCode-Coding-Agent (Lite Web / Pro Desktop)",
         },
         custom: {
           label: "Benutzerdefiniertes Image",

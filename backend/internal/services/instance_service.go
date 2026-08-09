@@ -171,7 +171,7 @@ func (s *instanceService) ValidateCreateRequests(userID int, requests []CreateIn
 type CreateInstanceRequest struct {
 	Name                 string              `json:"name" validate:"required,min=3,max=50"`
 	Description          *string             `json:"description,omitempty"`
-	Type                 string              `json:"type" validate:"required,oneof=openclaw ubuntu debian centos custom webtop hermes workbuddy"`
+	Type                 string              `json:"type" validate:"required,oneof=openclaw ubuntu debian centos custom webtop hermes workbuddy opencode codex claude-code"`
 	RuntimeVariant       string              `json:"runtime_variant,omitempty" validate:"omitempty,oneof=linux windows"`
 	Mode                 string              `json:"mode" validate:"omitempty,oneof=lite pro"`
 	InstanceMode         string              `json:"instance_mode" validate:"omitempty,oneof=lite pro"`
@@ -267,8 +267,9 @@ type gatewayTokenAliasRecorder interface {
 	UpsertGatewayTokenAlias(ctx context.Context, instanceID int, accessToken string, expiresAt time.Time) error
 }
 type gatewayModelInjection struct {
-	defaultModel string
-	modelsJSON   string
+	defaultModel            string
+	codingAgentDefaultModel string
+	modelsJSON              string
 }
 
 type InstanceServiceOption func(*instanceService)
@@ -348,6 +349,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	instanceMode := resolveCreateInstanceMode(req)
 	if err := validateWindowsWorkbuddyRequest(req); err != nil {
 		return nil, err
+	}
+	if requiresProInstanceMode(req.Type) && instanceMode != InstanceModePro {
+		return nil, fmt.Errorf("%s is only available in pro mode", req.Type)
 	}
 	modeRuntimeType, _ := RuntimeTypeForInstanceMode(instanceMode)
 	if !hasExplicitCreateInstanceMode(req) && normalizeInstanceRuntimeType(req.RuntimeType) == RuntimeBackendShell {
@@ -1109,7 +1113,10 @@ func (s *instanceService) securityModeForInstance(instanceType string) k8s.PodSe
 	if s != nil && s.allowPrivilegedPods {
 		return k8s.PodSecurityPrivileged
 	}
-	if strings.EqualFold(strings.TrimSpace(instanceType), "openclaw") {
+	if strings.EqualFold(strings.TrimSpace(instanceType), "openclaw") ||
+		strings.EqualFold(strings.TrimSpace(instanceType), "opencode") ||
+		strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeCodex) ||
+		strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeClaudeCode) {
 		return k8s.PodSecurityChromiumCompat
 	}
 	return k8s.PodSecurityDefault
@@ -1198,7 +1205,7 @@ func (s *instanceService) buildGatewayEnv(instance *models.Instance) (map[string
 
 	token := strings.TrimSpace(*instance.AccessToken)
 	s.refreshGatewayTokenAlias(instance.ID, token)
-	return map[string]string{
+	env := map[string]string{
 		"CLAWMANAGER_LLM_BASE_URL":   baseURL,
 		"CLAWMANAGER_LLM_API_KEY":    token,
 		"CLAWMANAGER_LLM_MODEL":      modelInjection.modelsJSON,
@@ -1208,7 +1215,22 @@ func (s *instanceService) buildGatewayEnv(instance *models.Instance) (map[string
 		"OPENAI_API_BASE":            baseURL,
 		"OPENAI_API_KEY":             token,
 		"OPENAI_MODEL":               modelInjection.defaultModel,
-	}, nil
+	}
+	if (strings.EqualFold(strings.TrimSpace(instance.Type), RuntimeTypeCodex) || strings.EqualFold(strings.TrimSpace(instance.Type), RuntimeTypeClaudeCode)) && modelInjection.codingAgentDefaultModel != "" {
+		env["OPENAI_MODEL"] = modelInjection.codingAgentDefaultModel
+	}
+	if strings.EqualFold(strings.TrimSpace(instance.Type), RuntimeTypeOpenCode) {
+		env["OPENCODE_SERVER_PASSWORD"] = token
+		env["OPENCODE_SERVER_USERNAME"] = "opencode"
+	}
+	if strings.EqualFold(strings.TrimSpace(instance.Type), RuntimeTypeClaudeCode) {
+		// Claude Code uses the Anthropic Messages protocol. Its endpoint is the
+		// ClawManager compatibility route under the same governed gateway base.
+		env["ANTHROPIC_BASE_URL"] = baseURL
+		env["ANTHROPIC_API_KEY"] = token
+		env["ANTHROPIC_MODEL"] = env["OPENAI_MODEL"]
+	}
+	return env, nil
 }
 
 func (s *instanceService) BuildGatewayEnv(instance *models.Instance) (map[string]string, error) {
@@ -1312,7 +1334,7 @@ func (s *instanceService) buildAgentEnv(instance *models.Instance) (map[string]s
 
 func supportsManagedRuntimeIntegration(instanceType string) bool {
 	switch strings.ToLower(strings.TrimSpace(instanceType)) {
-	case "openclaw", "hermes":
+	case "openclaw", "hermes", "opencode", "codex", "claude-code":
 		return true
 	default:
 		return false
@@ -1373,12 +1395,33 @@ func managedRuntimePersistentDir(instance *models.Instance) string {
 		if strings.EqualFold(instance.Type, "hermes") {
 			return path.Join(workspacePath, "home", ".hermes")
 		}
+		if strings.EqualFold(instance.Type, "opencode") {
+			return path.Join(workspacePath, "home", ".opencode")
+		}
 		return path.Join(workspacePath, "home", ".openclaw")
 	}
 	if strings.EqualFold(instance.Type, "hermes") {
 		return "/config/.hermes"
 	}
+	if strings.EqualFold(instance.Type, "opencode") {
+		return "/config/.opencode"
+	}
+	if strings.EqualFold(instance.Type, RuntimeTypeCodex) {
+		return "/config/.codex"
+	}
+	if strings.EqualFold(instance.Type, RuntimeTypeClaudeCode) {
+		return "/config/.claude"
+	}
 	return persistentVolumeMountPath(instance)
+}
+
+func requiresProInstanceMode(instanceType string) bool {
+	switch strings.ToLower(strings.TrimSpace(instanceType)) {
+	case RuntimeTypeCodex, RuntimeTypeClaudeCode:
+		return true
+	default:
+		return false
+	}
 }
 func persistentVolumeMountPath(instance *models.Instance) string {
 	if instance == nil {
@@ -1469,7 +1512,13 @@ func (s *instanceService) resolveGatewayModelInjection() (*gatewayModelInjection
 
 	return &gatewayModelInjection{
 		defaultModel: "auto",
-		modelsJSON:   string(rawModels),
+		codingAgentDefaultModel: func() string {
+			if len(modelsForInjection) > 1 {
+				return modelsForInjection[1]
+			}
+			return ""
+		}(),
+		modelsJSON: string(rawModels),
 	}, nil
 }
 

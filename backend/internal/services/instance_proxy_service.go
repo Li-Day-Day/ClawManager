@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -148,6 +150,7 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 	managedGatewayToken := s.managedRuntimeGatewayBearerToken(ctx, instanceID, accessToken.InstanceType)
 	proxyPrefix := hermesProxyPrefix(instanceID)
 	hermesLite := s.isHermesLiteProxyInstance(instanceID, accessToken.InstanceType)
+	opencodeLite := s.isOpenCodeLiteProxyInstance(instanceID, accessToken.InstanceType)
 	bootstrapPath := stripInstanceProxyPrefix(targetPath, instanceID)
 
 	// Copy query parameters, excluding ClawManager-owned proxy/gateway tokens.
@@ -204,7 +207,9 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 	proxyReq.Header.Set("X-Forwarded-Host", r.Host)
 	proxyReq.Header.Set("X-Forwarded-Proto", requestScheme(r))
 	proxyReq.Header.Set("X-Forwarded-Prefix", proxyPrefix)
-	if !isHermesDashboardPublicAuthPath(bootstrapPath) {
+	if opencodeLite {
+		setOpenCodeServerBasicAuthHeaders(proxyReq.Header, managedGatewayToken)
+	} else if !isHermesDashboardPublicAuthPath(bootstrapPath) {
 		setManagedRuntimeGatewayAuthHeaders(proxyReq.Header, managedGatewayToken)
 	}
 	if shouldRewriteHTML {
@@ -241,6 +246,10 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 		modifiedBody := injectProxyBase(string(body), proxyBaseForRequestPath(effectiveRequestPath, instanceID))
 		if hermesLite {
 			modifiedBody = injectHermesAbsolutePathPatch(modifiedBody, proxyPrefix)
+		}
+		if opencodeLite {
+			modifiedBody = rewriteOpenCodeHTMLRootAssets(modifiedBody, proxyPrefix)
+			modifiedBody = injectOpenCodeAbsolutePathPatch(modifiedBody, proxyPrefix)
 		}
 		resp.Body = io.NopCloser(bytes.NewReader([]byte(modifiedBody)))
 		resp.ContentLength = int64(len(modifiedBody))
@@ -314,6 +323,7 @@ func (s *InstanceProxyService) ProxyWebSocket(ctx context.Context, instanceID in
 	managedGatewayToken := s.managedRuntimeGatewayBearerToken(ctx, instanceID, accessToken.InstanceType)
 	upstreamPath := stripInstanceProxyPrefix(targetPath, instanceID)
 	hermesLite := s.isHermesLiteProxyInstance(instanceID, accessToken.InstanceType)
+	opencodeLite := s.isOpenCodeLiteProxyInstance(instanceID, accessToken.InstanceType)
 	skipManagedWSAuth := hermesLite && isHermesDashboardTicketWebSocket(upstreamPath, r.URL.Query())
 
 	// Copy query parameters, excluding ClawManager-owned proxy/gateway tokens.
@@ -348,6 +358,8 @@ func (s *InstanceProxyService) ProxyWebSocket(ctx context.Context, instanceID in
 		upstreamHeader.Del("OpenAI-Api-Key")
 		upstreamHeader.Del("X-ClawManager-Instance-Token")
 		upstreamHeader.Del("X-ClawManager-LLM-API-Key")
+	} else if opencodeLite {
+		setOpenCodeServerBasicAuthHeaders(upstreamHeader, managedGatewayToken)
 	} else {
 		setManagedRuntimeGatewayAuthHeaders(upstreamHeader, managedGatewayToken)
 		if managedGatewayToken != "" {
@@ -472,8 +484,36 @@ func setManagedRuntimeGatewayAuthHeaders(header http.Header, token string) {
 	header.Set("X-ClawManager-LLM-API-Key", token)
 }
 
+func setOpenCodeServerBasicAuthHeaders(header http.Header, token string) {
+	token = strings.TrimSpace(token)
+	if header == nil || token == "" {
+		return
+	}
+	username := strings.TrimSpace(os.Getenv("OPENCODE_SERVER_USERNAME"))
+	if username == "" {
+		username = "opencode"
+	}
+	encoded := base64.StdEncoding.EncodeToString([]byte(username + ":" + token))
+	header.Set("Authorization", "Basic "+encoded)
+	header.Del("X-Api-Key")
+	header.Del("X-OpenAI-Api-Key")
+	header.Del("OpenAI-Api-Key")
+}
+
 func hermesProxyPrefix(instanceID int) string {
 	return fmt.Sprintf("/api/v1/instances/%d/proxy", instanceID)
+}
+
+func (s *InstanceProxyService) isOpenCodeLiteProxyInstance(instanceID int, instanceType string) bool {
+	if s == nil || s.instanceRepo == nil || !strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeOpenCode) {
+		return false
+	}
+	instance, err := s.instanceRepo.GetByID(instanceID)
+	if err != nil || instance == nil {
+		return false
+	}
+	runtimeType, ok := v2RuntimeTypeForInstance(instance)
+	return ok && runtimeType == RuntimeTypeOpenCode
 }
 
 func (s *InstanceProxyService) isHermesLiteProxyInstance(instanceID int, instanceType string) bool {
@@ -725,6 +765,49 @@ func injectHermesAbsolutePathPatch(html, proxyPrefix string) string {
 		return html
 	}
 	script := `<script>(function(p){if(!p)return;function fix(u){if(typeof u!=="string")return u;if(!u||u.charAt(0)!=="/"||u.indexOf("//")===0)return u;if(u===p||u.indexOf(p+"/")===0)return u;return p+u;}var of=window.fetch;if(typeof of==="function"){window.fetch=function(input,init){if(typeof input==="string"){input=fix(input);}else if(input&&typeof input.url==="string"){try{input=new Request(fix(input.url),input);}catch(e){}}return of.call(this,input,init);};}if(window.XMLHttpRequest&&XMLHttpRequest.prototype){var oo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(method,url){if(typeof url==="string"){arguments[1]=fix(url);}return oo.apply(this,arguments);};}function wrap(fn){return function(url){if(typeof url==="string"){url=fix(url);}return fn.call(this,url);};}try{var la=window.location.assign.bind(window.location);window.location.assign=wrap(la);}catch(e){}try{var lr=window.location.replace.bind(window.location);window.location.replace=wrap(lr);}catch(e){}})(` + string(prefixJSON) + `);</script>`
+
+	for _, tag := range []string{"<head>", "<Head>", "<HEAD>"} {
+		if idx := strings.Index(html, tag); idx != -1 {
+			insertAt := idx + len(tag)
+			return html[:insertAt] + script + html[insertAt:]
+		}
+	}
+	return script + html
+}
+
+var openCodeHTMLRootAssetPattern = regexp.MustCompile(`(?i)(\b(?:href|src)\s*=\s*["'])(/[^"']*)`)
+
+func rewriteOpenCodeHTMLRootAssets(html, proxyPrefix string) string {
+	prefix := strings.TrimRight(strings.TrimSpace(proxyPrefix), "/")
+	if prefix == "" || html == "" {
+		return html
+	}
+	return openCodeHTMLRootAssetPattern.ReplaceAllStringFunc(html, func(match string) string {
+		sub := openCodeHTMLRootAssetPattern.FindStringSubmatch(match)
+		if len(sub) != 3 {
+			return match
+		}
+		attr, path := sub[1], sub[2]
+		if strings.HasPrefix(path, "//") {
+			return match
+		}
+		if path == prefix || strings.HasPrefix(path, prefix+"/") {
+			return match
+		}
+		return attr + prefix + path
+	})
+}
+
+func injectOpenCodeAbsolutePathPatch(html, proxyPrefix string) string {
+	prefix := strings.TrimRight(strings.TrimSpace(proxyPrefix), "/")
+	if prefix == "" || html == "" {
+		return html
+	}
+	prefixJSON, err := json.Marshal(prefix)
+	if err != nil {
+		return html
+	}
+	script := `<script>(function(p){if(!p)return;function fix(u){if(u&&typeof u.url==="string")u=u.url;if(typeof URL!=="undefined"&&u instanceof URL)u=u.toString();if(typeof u!=="string"||!u)return u;if(u.charAt(0)==="/"){if(u.indexOf("//")===0||u===p||u.indexOf(p+"/")===0)return u;return p+u;}try{var a=new URL(u,window.location.href);if(a.host===window.location.host&&a.pathname.charAt(0)==="/"&&a.pathname!==p&&a.pathname.indexOf(p+"/")!==0)return p+a.pathname+a.search+a.hash;}catch(e){}return u;}if(window.history){["pushState","replaceState"].forEach(function(n){var oh=window.history[n];if(typeof oh==="function"){window.history[n]=function(a,b,u){return oh.call(window.history,a,b,fix(u));};}});}var of=window.fetch;if(typeof of==="function"){window.fetch=function(input,init){if(typeof input==="string"||(typeof URL!=="undefined"&&input instanceof URL)){input=fix(input);}else if(input&&typeof input.url==="string"){try{input=new Request(fix(input.url),input);}catch(e){}}return of.call(this,input,init);};}if(window.XMLHttpRequest&&XMLHttpRequest.prototype){var oo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(method,url){arguments[1]=fix(url);return oo.apply(this,arguments);};}if(typeof window.EventSource==="function"){var OE=window.EventSource;window.EventSource=function(url,config){return new OE(fix(url),config);};window.EventSource.prototype=OE.prototype;try{Object.setPrototypeOf(window.EventSource,OE);}catch(e){}}if(typeof window.WebSocket==="function"){var OW=window.WebSocket;window.WebSocket=function(url,protocols){url=fix(url);return protocols===undefined?new OW(url):new OW(url,protocols);};window.WebSocket.prototype=OW.prototype;try{Object.setPrototypeOf(window.WebSocket,OW);}catch(e){}}function wrap(fn){return function(url){return fn.call(this,fix(url));};}try{var la=window.location.assign.bind(window.location);window.location.assign=wrap(la);}catch(e){}try{var lr=window.location.replace.bind(window.location);window.location.replace=wrap(lr);}catch(e){}})(` + string(prefixJSON) + `);</script>`
 
 	for _, tag := range []string{"<head>", "<Head>", "<HEAD>"} {
 		if idx := strings.Index(html, tag); idx != -1 {
@@ -1094,6 +1177,9 @@ func (s *InstanceProxyService) shouldRewriteHTMLForProxy(instanceID int, instanc
 				return true
 			}
 		}
+	}
+	if s.isOpenCodeLiteProxyInstance(instanceID, instanceType) {
+		return true
 	}
 	return s.shouldRewriteHTML(instanceType, targetPort)
 }

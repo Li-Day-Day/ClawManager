@@ -212,7 +212,7 @@ type ExternalAccessRequest struct {
 type CreateInstanceRequest struct {
 	Name                 string                       `json:"name" binding:"required,min=3,max=50"`
 	Description          *string                      `json:"description,omitempty"`
-	Type                 string                       `json:"type" binding:"required,oneof=openclaw ubuntu debian centos custom webtop hermes workbuddy"`
+	Type                 string                       `json:"type" binding:"required,oneof=openclaw ubuntu debian centos custom webtop hermes workbuddy opencode codex claude-code"`
 	RuntimeVariant       string                       `json:"runtime_variant,omitempty" binding:"omitempty,oneof=linux windows"`
 	Mode                 string                       `json:"mode" binding:"omitempty,oneof=lite pro"`
 	InstanceMode         string                       `json:"instance_mode" binding:"omitempty,oneof=lite pro"`
@@ -591,8 +591,8 @@ func buildLiteBatchCreateRequests(req BatchCreateLiteInstancesRequest) ([]servic
 	if template.Type == "" {
 		template.Type = "openclaw"
 	}
-	if template.Type != "openclaw" && template.Type != "hermes" {
-		return nil, nil, fmt.Errorf("lite batch create supports openclaw or hermes instances")
+	if template.Type != "openclaw" && template.Type != "hermes" && template.Type != "opencode" {
+		return nil, nil, fmt.Errorf("lite batch create supports openclaw, hermes, or opencode instances")
 	}
 	if template.CPUCores <= 0 {
 		template.CPUCores = 2
@@ -1169,7 +1169,7 @@ func (h *InstanceHandler) GetRuntimeDetails(c *gin.Context) {
 		Commands: commands,
 	}
 	if h.aiObservabilityService != nil && instance != nil &&
-		(instance.Type == "openclaw" || instance.Type == "hermes") {
+		(instance.Type == "openclaw" || instance.Type == "hermes" || instance.Type == "opencode") {
 		var systemInfo map[string]interface{}
 		if runtime != nil {
 			systemInfo = runtime.SystemInfo
