@@ -7,20 +7,20 @@ const source = fs.readFileSync(
   "utf8",
 );
 
-for (const marker of [
-  'const LEADER_RUNTIME_TYPE: RuntimeType = "openclaw"',
-  'item.instance_type === "hermes"',
+  for (const marker of [
+    'const LEADER_RUNTIME_TYPE: RuntimeType = "openclaw"',
+    'item.instance_type === "hermes"',
   'runtime_type: runtimeType',
   'image_registry: imageForRuntime(runtimeType)',
   'updateWorkerRuntime(member.id, runtimeType)',
-  'OpenClaw Leader · Lite Worker 可选',
-  'Hermes Lite',
+    'OpenClaw Leader · Lite Worker 可选',
+    'Hermes Lite',
 ]) {
   assert.ok(source.includes(marker), `CreateTeamPage missing ${marker}`);
 }
 
-assert.ok(
-  source.includes('member.isLeader ? LEADER_RUNTIME_TYPE : member.runtimeType'),
+  assert.ok(
+    source.includes('member.isLeader ? LEADER_RUNTIME_TYPE : member.runtimeType'),
   "Leader runtime must remain fixed while Worker runtime stays selectable",
 );
 assert.ok(

@@ -26,13 +26,13 @@ interface PreparedPortalFrame {
 }
 
 function supportsWorkspace(instance: Instance) {
-  return (
-    instance.type === "openclaw" ||
-    instance.type === "hermes" ||
-    instance.type === "opencode" ||
-    instance.type === "codex" ||
-    instance.type === "claude-code" ||
-    Boolean(instance.workspace_path)
+    return (
+      instance.type === "openclaw" ||
+      instance.type === "hermes" ||
+      instance.type === "opencode" ||
+      instance.type === "codex" ||
+      instance.type === "claude-code" ||
+      Boolean(instance.workspace_path)
   );
 }
 

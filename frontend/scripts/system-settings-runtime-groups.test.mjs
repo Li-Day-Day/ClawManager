@@ -53,7 +53,7 @@ assert(
 assert(
   pageSource.includes("instance_type: 'workbuddy'") &&
     pageSource.includes("display_name: 'Workbuddy Pro'") &&
-    pageSource.includes("agentsruntime/workbuddy-linux:latest"),
+    pageSource.includes("agentsruntime/windows-vm-workbuddy:latest"),
   "System settings page must expose Workbuddy as a fixed Pro runtime card.",
 );
 assert(

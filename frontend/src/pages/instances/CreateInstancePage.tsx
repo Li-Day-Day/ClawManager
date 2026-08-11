@@ -331,12 +331,13 @@ const getBuiltInEnvTemplates = (
     );
   }
 
-  if (type === "openclaw") {
+  if (type === "openclaw" || type === "workbuddy") {
     templates.push(
       {
         key: "TITLE",
         description: t("instances.envDescDesktopTitleOpenClaw"),
-        defaultValue: "ClawManager Desktop",
+        defaultValue:
+          type === "workbuddy" ? "Workbuddy" : "ClawManager Desktop",
       },
       {
         key: "SUBFOLDER",
@@ -1223,7 +1224,6 @@ const CreateInstancePage: React.FC = () => {
     if (typeId === "claude-code") {
       return <span className="text-lg font-bold text-orange-700">AI</span>;
     }
-
     return (
       <svg
         className="h-6 w-6 text-indigo-600"

@@ -109,9 +109,38 @@ assert(
 );
 
 assert(
-  !proRender.includes("h-[560px]") &&
-    (proRender.includes("aspect-video") || proRender.includes("aspect-[16/9]")),
-  "Pro desktop frame must use a stable 16:9 desktop ratio instead of the old fixed height.",
+  detailSource.includes("workspaceVisible") &&
+    proRender.includes("workspaceVisible={supportsWorkspace(instance) ? workspaceVisible : undefined}") &&
+    proRender.includes("onWorkspaceVisibilityChange={supportsWorkspace(instance) ? setWorkspaceVisible : undefined}") &&
+    frameSource.includes("PanelRightOpen") &&
+    frameSource.includes("PanelRightClose"),
+  "Lite and Pro service frames must expose one shared workspace visibility control.",
+);
+
+assert(
+  proRender.includes("xl:grid-cols-[minmax(0,7fr)_minmax(380px,3fr)]") &&
+    proRender.includes('workspaceVisible ? "xl:grid-cols-[minmax(0,7fr)_minmax(380px,3fr)]" : "xl:grid-cols-1"') &&
+    proRender.includes("supportsWorkspace(instance) ?"),
+  "Expanded Pro desktop and workspace browser must remain side by side at a stable 70/30 ratio.",
+);
+
+const liteRender = sliceBetween(
+  detailSource,
+  "const renderLiteWorkspace = () => {",
+  "\n  const renderProWorkspace = () => (",
+);
+
+assert(
+  liteRender.includes("workspaceVisible={supportsWorkspace(instance) ? workspaceVisible : undefined}") &&
+    liteRender.includes("onWorkspaceVisibilityChange={supportsWorkspace(instance) ? setWorkspaceVisible : undefined}") &&
+    liteRender.includes('workspaceVisible ? "xl:grid-cols-[minmax(0,1fr)_minmax(360px,28rem)]" : "xl:grid-cols-1"'),
+  "Lite instance detail must keep the workspace visible by default and expand the service frame when hidden.",
+);
+
+assert(
+  !proRender.includes("aspect-video") &&
+    proRender.split("h-[clamp(520px,calc(100vh-10rem),760px)]").length >= 3,
+  "Pro desktop and workspace browser must share a bounded height so aspect ratio cannot force cross-column overlap.",
 );
 
 assert(
@@ -122,7 +151,9 @@ assert(
 assert(
   frameSource.includes("requestFullscreen") &&
     frameSource.includes("Maximize2") &&
-    frameSource.includes("Minimize2"),
+    frameSource.includes("Minimize2") &&
+    !frameSource.includes("toolbarActions") &&
+    frameSource.includes('aria-label={isFullscreen ? t("instances.exitFullscreen")'),
   "Instance service frame must expose a fullscreen control.",
 );
 
