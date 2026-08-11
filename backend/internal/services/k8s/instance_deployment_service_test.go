@@ -122,6 +122,9 @@ func TestBuildInstanceDeploymentConfiguresWindowsWorkbuddy(t *testing.T) {
 	}, 1)
 
 	spec := deployment.Spec.Template.Spec
+	if deployment.Spec.Strategy.Type != appsv1.RecreateDeploymentStrategyType {
+		t.Fatalf("Windows deployment strategy = %q, want Recreate", deployment.Spec.Strategy.Type)
+	}
 	if spec.TerminationGracePeriodSeconds == nil || *spec.TerminationGracePeriodSeconds != 120 {
 		t.Fatalf("termination grace = %#v, want 120", spec.TerminationGracePeriodSeconds)
 	}
@@ -140,6 +143,38 @@ func TestBuildInstanceDeploymentConfiguresWindowsWorkbuddy(t *testing.T) {
 	}
 	if len(container.VolumeMounts) == 0 || container.VolumeMounts[0].MountPath != "/storage" {
 		t.Fatalf("unexpected Windows storage mount: %#v", container.VolumeMounts)
+	}
+}
+
+func TestBuildInstanceDeploymentMountsSecretDirectory(t *testing.T) {
+	client := &Client{Clientset: fake.NewSimpleClientset(), Namespace: "clawreef"}
+	deployment := BuildInstanceDeployment(client, PodConfig{
+		InstanceID: 46, InstanceName: "Codex Windows", UserID: 7,
+		Type: "codex", RuntimeType: "desktop", CPUCores: 6, MemoryGB: 12,
+		Image: "registry/windows-codex:v1", MountPath: "/storage", ContainerPort: 8006,
+		SecretDirectoryMounts: []SecretDirectoryMount{{
+			Name: "codex-bootstrap", SecretName: "clawreef-46-codex-bootstrap", MountPath: "/shared/.clawmanager",
+		}},
+	}, 1)
+
+	spec := deployment.Spec.Template.Spec
+	foundVolume := false
+	for _, volume := range spec.Volumes {
+		if volume.Name == "codex-bootstrap" && volume.Secret != nil && volume.Secret.SecretName == "clawreef-46-codex-bootstrap" {
+			foundVolume = true
+		}
+	}
+	if !foundVolume {
+		t.Fatalf("expected Codex bootstrap Secret volume, got %#v", spec.Volumes)
+	}
+	foundMount := false
+	for _, mount := range spec.Containers[0].VolumeMounts {
+		if mount.Name == "codex-bootstrap" && mount.MountPath == "/shared/.clawmanager" && mount.ReadOnly {
+			foundMount = true
+		}
+	}
+	if !foundMount {
+		t.Fatalf("expected read-only Codex bootstrap mount, got %#v", spec.Containers[0].VolumeMounts)
 	}
 }
 

@@ -132,13 +132,19 @@ function formatBytes(value?: number) {
 }
 
 function supportsWorkspace(instance: Instance) {
-    return (
-      instance.type === "openclaw" ||
-      instance.type === "hermes" ||
-      instance.type === "opencode" ||
-      instance.type === "codex" ||
-      instance.type === "claude-code" ||
-      Boolean(instance.workspace_path)
+  if (instance.type === "workbuddy" || instance.type === "codex") {
+    const image = instance.image_registry?.trim().toLowerCase() ?? "";
+    const inferredLinux = instance.type === "workbuddy"
+      ? image.includes("workbuddy-linux")
+      : image.includes("agentsruntime/codex");
+    return instance.runtime_variant === "linux" || (!instance.runtime_variant && inferredLinux);
+  }
+  return (
+    instance.type === "openclaw" ||
+    instance.type === "hermes" ||
+    instance.type === "opencode" ||
+    instance.type === "claude-code" ||
+    Boolean(instance.workspace_path)
   );
 }
 

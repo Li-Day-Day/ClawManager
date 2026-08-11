@@ -79,11 +79,9 @@ func buildRuntimeConfig(instanceType, osType, osVersion string, registry, tag *s
 		config.Env["CLAWMANAGER_PROJECT_PATH"] = "/config/workspace"
 	case "codex":
 		config.Image = defaultSystemImageSettings["codex"]
-		config.Port = 3001
-		config.MountPath = "/config"
-		config.Env = defaultWebtopDesktopEnv("Codex")
-		config.Env["CODEX_HOME"] = "/config/.codex"
-		config.Env["CLAWMANAGER_PROJECT_PATH"] = "/config/workspace"
+		config.Port = 8006
+		config.MountPath = "/storage"
+		config.Env = defaultWindowsCodexEnv()
 	case "claude-code":
 		config.Image = defaultSystemImageSettings["claude-code"]
 		config.Port = 3001
@@ -111,9 +109,9 @@ func buildRuntimeConfig(instanceType, osType, osVersion string, registry, tag *s
 
 func defaultPortForInstanceType(instanceType string) int32 {
 	switch instanceType {
-	case "workbuddy":
+	case "workbuddy", "codex":
 		return 8006
-	case "ubuntu", "webtop", "hermes", "opencode", "codex", "claude-code":
+	case "ubuntu", "webtop", "hermes", "opencode", "claude-code":
 		return 3001
 	default:
 		return 3001
@@ -122,9 +120,9 @@ func defaultPortForInstanceType(instanceType string) int32 {
 
 func defaultMountPathForInstanceType(instanceType string) string {
 	switch instanceType {
-	case "ubuntu", "webtop", "openclaw", "hermes", "opencode", "codex", "claude-code":
+	case "ubuntu", "webtop", "openclaw", "hermes", "opencode", "claude-code":
 		return "/config"
-	case "workbuddy":
+	case "workbuddy", "codex":
 		return "/storage"
 	default:
 		return "/home/user/data"
@@ -137,6 +135,8 @@ func defaultEnvForInstanceType(instanceType string) map[string]string {
 		return defaultWebtopDesktopEnv("ClawManager Desktop")
 	case "workbuddy":
 		return defaultWindowsWorkbuddyEnv()
+	case "codex":
+		return defaultWindowsCodexEnv()
 	case "hermes":
 		env := defaultWebtopDesktopEnv("Hermes Runtime")
 		env["HERMES_HOME"] = "/config/.hermes"
@@ -144,11 +144,6 @@ func defaultEnvForInstanceType(instanceType string) map[string]string {
 	case "opencode":
 		env := defaultWebtopDesktopEnv("OpenCode Runtime")
 		env["OPENCODE_CONFIG_DIR"] = "/config/.opencode"
-		env["CLAWMANAGER_PROJECT_PATH"] = "/config/workspace"
-		return env
-	case "codex":
-		env := defaultWebtopDesktopEnv("Codex")
-		env["CODEX_HOME"] = "/config/.codex"
 		env["CLAWMANAGER_PROJECT_PATH"] = "/config/workspace"
 		return env
 	case "claude-code":
@@ -165,6 +160,19 @@ func defaultWindowsWorkbuddyEnv() map[string]string {
 	return map[string]string{
 		"VERSION":      "10l",
 		"DISK_SIZE":    "64G",
+		"DISK_FMT":     "qcow2",
+		"SHUTDOWN":     "Y",
+		"QEMU_TIMEOUT": "120",
+	}
+}
+
+func defaultWindowsCodexEnv() map[string]string {
+	return map[string]string{
+		"VERSION":      "11",
+		"LANGUAGE":     "Chinese",
+		"REGION":       "zh-CN",
+		"KEYBOARD":     "zh-CN",
+		"DISK_SIZE":    "80G",
 		"DISK_FMT":     "qcow2",
 		"SHUTDOWN":     "Y",
 		"QEMU_TIMEOUT": "120",
@@ -209,7 +217,7 @@ func withInstanceProxyEnv(instanceType string, instanceID int, env map[string]st
 
 func usesWebtopImage(instanceType string) bool {
 	switch instanceType {
-	case "ubuntu", "webtop", "hermes", "openclaw", "opencode", "codex", "claude-code":
+	case "ubuntu", "webtop", "hermes", "openclaw", "opencode", "claude-code":
 		return true
 	default:
 		return false

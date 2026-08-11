@@ -91,6 +91,32 @@ func TestBuildRuntimeConfig_WorkbuddyUsesWindowsDefaults(t *testing.T) {
 	}
 }
 
+func TestBuildRuntimeConfig_CodexUsesWindowsDefaults(t *testing.T) {
+	config := buildRuntimeConfig("codex", "codex", "latest", nil, nil)
+
+	if config.Image != defaultSystemImageSettings["codex"] {
+		t.Fatalf("expected Codex default image %q, got %q", defaultSystemImageSettings["codex"], config.Image)
+	}
+	if config.Port != 8006 || config.MountPath != "/storage" {
+		t.Fatalf("unexpected Windows Codex config: %#v", config)
+	}
+	for key, want := range map[string]string{
+		"VERSION":   "11",
+		"LANGUAGE":  "Chinese",
+		"REGION":    "zh-CN",
+		"KEYBOARD":  "zh-CN",
+		"DISK_SIZE": "80G",
+		"DISK_FMT":  "qcow2",
+	} {
+		if got := config.Env[key]; got != want {
+			t.Fatalf("expected Codex %s=%q, got %q", key, want, got)
+		}
+	}
+	if usesWebtopImage("codex") || usesHTTPSUpstream("codex", 8006) {
+		t.Fatal("Windows Codex must use noVNC HTTP proxy behavior")
+	}
+}
+
 func assertSelkiesClipboardEnabled(t *testing.T, env map[string]string) {
 	t.Helper()
 	for _, key := range []string{

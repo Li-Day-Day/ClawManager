@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 	"testing"
 	"time"
@@ -321,6 +322,10 @@ func TestPersistentVolumeMountPathNormalizesManagedDesktopRuntimes(t *testing.T)
 	if got != "/storage" {
 		t.Fatalf("expected Workbuddy PVC mount path /storage, got %q", got)
 	}
+	got = persistentVolumeMountPath(&models.Instance{Type: RuntimeTypeCodex, MountPath: "/storage"})
+	if got != "/storage" {
+		t.Fatalf("expected Codex PVC mount path /storage, got %q", got)
+	}
 }
 
 func TestManagedRuntimePersistentDirKeepsHermesSubdirectory(t *testing.T) {
@@ -378,6 +383,19 @@ func TestValidateWindowsWorkbuddyRequest(t *testing.T) {
 	}
 }
 
+func TestValidateWindowsCodexRequest(t *testing.T) {
+	valid := CreateInstanceRequest{Type: RuntimeTypeCodex, Mode: InstanceModePro, CPUCores: 6, MemoryGB: 12, DiskGB: 80}
+	if err := validateWindowsWorkbuddyRequest(valid); err != nil {
+		t.Fatalf("valid Windows Codex request rejected: %v", err)
+	}
+
+	invalid := valid
+	invalid.DiskGB = 64
+	if err := validateWindowsWorkbuddyRequest(invalid); err == nil {
+		t.Fatal("expected Windows Codex request with a non-golden disk size to be rejected")
+	}
+}
+
 func TestWindowsWorkbuddyInstanceEnvReservesHostMemory(t *testing.T) {
 	env := windowsWorkbuddyInstanceEnv(map[string]string{"DISK_SIZE": "64G"}, &models.Instance{
 		Type:     "workbuddy",
@@ -397,6 +415,9 @@ func TestRuntimeNodeSelectorPinsWindowsWorkbuddyNodes(t *testing.T) {
 	}
 	if _, ok := existing[workbuddyWindowsNodeLabel]; ok {
 		t.Fatalf("runtimeNodeSelector mutated the existing selector: %#v", existing)
+	}
+	if selector := runtimeNodeSelector(RuntimeTypeCodex, nil); selector[workbuddyWindowsNodeLabel] != "true" {
+		t.Fatalf("Windows Codex did not receive the Windows node label: %#v", selector)
 	}
 
 	linuxSelector := runtimeNodeSelector("openclaw", existing)
@@ -429,6 +450,62 @@ func TestResolveGatewayModelInjectionRequiresActiveModels(t *testing.T) {
 	}
 }
 
+func TestRenderWindowsCodexBootstrapFiles(t *testing.T) {
+	files, err := renderWindowsCodexBootstrapFiles(
+		"http://clawmanager-gateway.system.svc:9001/api/v1/gateway/llm",
+		"gpt-5.4",
+		"igt_instance_token",
+	)
+	if err != nil {
+		t.Fatalf("renderWindowsCodexBootstrapFiles returned error: %v", err)
+	}
+	config := files[windowsCodexConfigKey]
+	for _, expected := range []string{
+		`model_provider = "clawmanager"`,
+		`model = "gpt-5.4"`,
+		`review_model = "gpt-5.4"`,
+		`base_url = "http://clawmanager-gateway.system.svc:9001/api/v1/gateway/llm/v1"`,
+		`wire_api = "responses"`,
+		`requires_openai_auth = true`,
+		`sandbox_mode = "danger-full-access"`,
+		`approval_policy = "never"`,
+	} {
+		if !strings.Contains(config, expected) {
+			t.Fatalf("config missing %q:\n%s", expected, config)
+		}
+	}
+	if strings.Contains(config, "igt_instance_token") {
+		t.Fatal("config.toml must not contain the instance token")
+	}
+	if strings.Contains(config, "default_permissions") || strings.Contains(config, "[sandbox_workspace_write]") {
+		t.Fatal("full-access sandbox config must not include a permission profile or workspace-write settings")
+	}
+
+	var auth map[string]string
+	if err := json.Unmarshal([]byte(files[windowsCodexAuthKey]), &auth); err != nil {
+		t.Fatalf("auth.json is invalid JSON: %v", err)
+	}
+	if got := auth["OPENAI_API_KEY"]; got != "igt_instance_token" {
+		t.Fatalf("auth OPENAI_API_KEY = %q", got)
+	}
+}
+
+func TestRenderWindowsCodexBootstrapFilesDoesNotDuplicateVersionPath(t *testing.T) {
+	files, err := renderWindowsCodexBootstrapFiles(
+		"http://clawmanager-gateway.system.svc:9001/api/v1/gateway/llm/v1/",
+		"gpt-5.4",
+		"igt_instance_token",
+	)
+	if err != nil {
+		t.Fatalf("renderWindowsCodexBootstrapFiles returned error: %v", err)
+	}
+
+	config := files[windowsCodexConfigKey]
+	if !strings.Contains(config, `base_url = "http://clawmanager-gateway.system.svc:9001/api/v1/gateway/llm/v1"`) {
+		t.Fatalf("config has unexpected base URL:\n%s", config)
+	}
+}
+
 func TestSecurityModeForInstance(t *testing.T) {
 	service := &instanceService{}
 
@@ -440,6 +517,9 @@ func TestSecurityModeForInstance(t *testing.T) {
 	}
 	if got := service.securityModeForInstance("workbuddy"); got != "privileged" {
 		t.Fatalf("expected Workbuddy to use privileged mode for KVM, got %q", got)
+	}
+	if got := service.securityModeForInstance(RuntimeTypeCodex); got != "privileged" {
+		t.Fatalf("expected Codex to use privileged mode for KVM, got %q", got)
 	}
 
 	service.allowPrivilegedPods = true

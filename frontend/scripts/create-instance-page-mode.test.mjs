@@ -79,5 +79,19 @@ assert(
   source.includes('src="/workbuddy.png"') && source.includes('alt="Workbuddy"'),
   "Create page must render the Workbuddy runtime icon.",
 );
+assert(
+  source.includes("resolveManagedRuntimeVariant") &&
+    source.includes("setting?.runtime_variant") &&
+    source.includes("runtime_variant: selectedRuntimeVariant") &&
+    source.includes('type === "codex"'),
+  "Create page must send the configured Linux/Windows variant for Workbuddy and Codex.",
+);
+assert(
+  !source.includes("? PRESET_CONFIGS.medium") &&
+    source.includes("cpu_cores: PRESET_CONFIGS.medium.cpu_cores") &&
+    source.includes("memory_gb: PRESET_CONFIGS.medium.memory_gb") &&
+    source.includes("disk_gb: PRESET_CONFIGS.medium.disk_gb"),
+  "Selecting a managed Linux runtime must copy only resource fields and never overwrite the instance name or description.",
+);
 
 console.log("Create instance mode selector placement is valid.");

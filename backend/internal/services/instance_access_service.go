@@ -218,7 +218,7 @@ func (s *InstanceAccessService) GetAccessURL(instanceID int, instanceType string
 		if podIP != "" {
 			return fmt.Sprintf("https://%s:3001/", podIP)
 		}
-	case "workbuddy":
+	case "workbuddy", "codex":
 		if podIP != "" {
 			return fmt.Sprintf("http://%s:8006/", podIP)
 		}
@@ -253,7 +253,7 @@ func (s *InstanceAccessService) GetAccessURLWithEndpoint(instanceID int, instanc
 	case "openclaw", "hermes", "webtop":
 		// OpenClaw desktop typically uses VNC or web interface
 		return fmt.Sprintf("https://%s/", endpoint)
-	case "workbuddy":
+	case "workbuddy", "codex":
 		return fmt.Sprintf("http://%s/", endpoint)
 	case "ubuntu", "debian", "centos":
 		// Linux desktops typically use noVNC or similar

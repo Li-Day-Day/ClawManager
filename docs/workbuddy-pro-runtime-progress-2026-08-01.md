@@ -1,5 +1,13 @@
 # Workbuddy Pro Windows Runtime Progress
 
+> 2026-08-11 update: Workbuddy Pro now supports an explicit `linux` or `windows`
+> runtime variant from the same system-image card. This document keeps the
+> Windows VM implementation and validation history below. The Linux variant
+> uses Webtop on port `3001`, mounts its PVC at `/config`, and exposes the
+> workspace browser; the Windows variant continues to use port `8006` and
+> `/storage`, without Linux-side workspace browsing. Codex Pro follows the same
+> variant contract.
+
 ## Scope
 
 Workbuddy is a Pro-only Windows desktop runtime backed by `dockur/windows`. Each instance uses a dedicated Deployment, Service, and Longhorn PVC cloned from a prepared golden PVC.

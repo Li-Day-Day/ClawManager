@@ -70,6 +70,7 @@ func (s *InstanceDeploymentService) EnsureDeployment(ctx context.Context, config
 		updated.Labels[key] = value
 	}
 	updated.Spec.Replicas = desired.Spec.Replicas
+	updated.Spec.Strategy = desired.Spec.Strategy
 	updated.Spec.Template = desired.Spec.Template
 
 	result, updateErr := deployments.Update(ctx, updated, metav1.UpdateOptions{})
@@ -255,6 +256,7 @@ func BuildInstanceDeployment(client *Client, config PodConfig, replicas int32) *
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: &replicas,
+			Strategy: instanceDeploymentStrategy(config),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app":         "clawreef",
@@ -270,6 +272,14 @@ func BuildInstanceDeployment(client *Client, config PodConfig, replicas int32) *
 			},
 		},
 	}
+}
+
+func instanceDeploymentStrategy(config PodConfig) appsv1.DeploymentStrategy {
+	instanceType := strings.ToLower(strings.TrimSpace(config.Type))
+	if strings.TrimSpace(config.MountPath) == "/storage" && (instanceType == "workbuddy" || instanceType == "codex") {
+		return appsv1.DeploymentStrategy{Type: appsv1.RecreateDeploymentStrategyType}
+	}
+	return appsv1.DeploymentStrategy{}
 }
 
 func instanceDeploymentAnnotations(config PodConfig) map[string]string {
@@ -437,6 +447,21 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			volumeMount.SubPath = mount.Key
 		}
 		spec.Containers[0].VolumeMounts = append(spec.Containers[0].VolumeMounts, volumeMount)
+	}
+
+	for _, mount := range config.SecretDirectoryMounts {
+		if mount.Name == "" || mount.SecretName == "" || mount.MountPath == "" {
+			continue
+		}
+		spec.Volumes = append(spec.Volumes, corev1.Volume{
+			Name: mount.Name,
+			VolumeSource: corev1.VolumeSource{Secret: &corev1.SecretVolumeSource{
+				SecretName: mount.SecretName,
+			}},
+		})
+		spec.Containers[0].VolumeMounts = append(spec.Containers[0].VolumeMounts, corev1.VolumeMount{
+			Name: mount.Name, MountPath: mount.MountPath, ReadOnly: true,
+		})
 	}
 
 	if config.SHMSizeGB > 0 {

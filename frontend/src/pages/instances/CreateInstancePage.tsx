@@ -45,14 +45,35 @@ const BYTES_PER_GIB = 1024 * 1024 * 1024;
 const AGENT_PROTOCOL_VERSION = "v1";
 const CUSTOM_RESOURCE_PRESET = "custom";
 const SKILLS_PER_PAGE = 6;
-const inferWorkbuddyRuntimeVariant = (
+type ManagedRuntimeVariant = "linux" | "windows";
+const inferManagedRuntimeVariant = (
+  type: string,
   image?: string,
-): "linux" | "windows" =>
-  image?.toLowerCase().includes("workbuddy-linux") ? "linux" : "windows";
-const supportsRuntimeInjection = (type: string, image?: string) =>
+): ManagedRuntimeVariant => {
+  const normalizedImage = image?.trim().toLowerCase() ?? "";
+  if (type === "workbuddy" && normalizedImage.includes("workbuddy-linux")) {
+    return "linux";
+  }
+  if (type === "codex" && normalizedImage.includes("agentsruntime/codex")) {
+    return "linux";
+  }
+  return "windows";
+};
+const resolveManagedRuntimeVariant = (
+  type: string,
+  setting?: SystemImageSetting | null,
+): ManagedRuntimeVariant | undefined =>
+  type === "workbuddy" || type === "codex"
+    ? setting?.runtime_variant ?? inferManagedRuntimeVariant(type, setting?.image)
+    : undefined;
+const supportsRuntimeInjection = (
+  type: string,
+  image?: string,
+  runtimeVariant?: ManagedRuntimeVariant,
+) =>
   type === "openclaw" ||
   type === "hermes" ||
-  (type === "workbuddy" && inferWorkbuddyRuntimeVariant(image) === "linux");
+  (type === "workbuddy" && (runtimeVariant ?? inferManagedRuntimeVariant(type, image)) === "linux");
 const isProOnlyInstanceType = (type: string) =>
   type === "custom" || type === "workbuddy";
 const DESKTOP_STREAM_PROFILES: Array<{
@@ -570,9 +591,11 @@ const CreateInstancePage: React.FC = () => {
     runtimeImageOptions.find(
       (item) => getRuntimeImageOptionKey(item) === selectedRuntimeImageKey,
     ) ?? runtimeImageOptions[0] ?? null;
-  const isWindowsWorkbuddy =
-    formData.type === "workbuddy" &&
-    inferWorkbuddyRuntimeVariant(selectedRuntimeImage?.image) === "windows";
+  const selectedRuntimeVariant = resolveManagedRuntimeVariant(
+    formData.type,
+    selectedRuntimeImage,
+  );
+  const isWindowsVM = selectedRuntimeVariant === "windows";
   const primaryCustomProRuntimeImage =
     runtimeImageSettings.find(
       (item) =>
@@ -771,7 +794,14 @@ const CreateInstancePage: React.FC = () => {
   const handleTypeSelect = (typeId: string) => {
     const instanceType = availableTypesForMode.find((t) => t.id === typeId);
     if (instanceType) {
-      if (!supportsRuntimeInjection(typeId)) {
+      const configuredRuntimeImage = runtimeImageSettings.find(
+        (item) =>
+          item.is_enabled !== false &&
+          item.instance_type === typeId &&
+          normalizeRuntimeImageType(item.runtime_type) === "desktop",
+      );
+      const runtimeVariant = resolveManagedRuntimeVariant(typeId, configuredRuntimeImage);
+      if (!supportsRuntimeInjection(typeId, configuredRuntimeImage?.image, runtimeVariant)) {
         setOpenClawImportFile(null);
         setOpenClawInjectionMode("none");
         setOpenClawBundleId(undefined);
@@ -780,22 +810,28 @@ const CreateInstancePage: React.FC = () => {
         setOpenClawPreviewError(null);
         setSelectedSkillIds([]);
       }
-      const workbuddyResources = typeId === "workbuddy"
+      const windowsVMResources = runtimeVariant === "windows"
         ? { cpu_cores: 6, memory_gb: 12, disk_gb: 80 }
-        : {};
+        : typeId === "workbuddy" || typeId === "codex"
+          ? {
+              cpu_cores: PRESET_CONFIGS.medium.cpu_cores,
+              memory_gb: PRESET_CONFIGS.medium.memory_gb,
+              disk_gb: PRESET_CONFIGS.medium.disk_gb,
+            }
+          : {};
       setFormData({
         ...formData,
         type: typeId as CreateInstanceRequest["type"],
-        runtime_variant: typeId === "workbuddy" ? "windows" : undefined,
+        runtime_variant: runtimeVariant,
         mode: requiresProMode(typeId) ? "pro" : formData.mode,
         instance_mode: requiresProMode(typeId) ? "pro" : formData.instance_mode,
         os_type: instanceType.defaultOs,
         os_version: instanceType.defaultVersion,
         storage_class: "",
-        ...workbuddyResources,
+        ...windowsVMResources,
       });
-      if (typeId === "workbuddy") {
-        setResourcePresetMode(CUSTOM_RESOURCE_PRESET);
+      if (runtimeVariant) {
+        setResourcePresetMode(runtimeVariant === "windows" ? CUSTOM_RESOURCE_PRESET : "medium");
       }
     }
   };
@@ -809,7 +845,7 @@ const CreateInstancePage: React.FC = () => {
         ...current,
         cpu_cores: PRESET_CONFIGS.medium.cpu_cores,
         memory_gb: PRESET_CONFIGS.medium.memory_gb,
-        disk_gb: isWindowsWorkbuddy ? 80 : PRESET_CONFIGS.medium.disk_gb,
+        disk_gb: isWindowsVM ? 80 : PRESET_CONFIGS.medium.disk_gb,
       }));
       return;
     }
@@ -818,9 +854,9 @@ const CreateInstancePage: React.FC = () => {
     setResourcePresetMode(preset);
     setFormData((current) => ({
       ...current,
-      cpu_cores: isWindowsWorkbuddy ? Math.max(6, config.cpu_cores) : config.cpu_cores,
-      memory_gb: isWindowsWorkbuddy ? Math.max(12, config.memory_gb) : config.memory_gb,
-      disk_gb: isWindowsWorkbuddy ? 80 : config.disk_gb,
+      cpu_cores: isWindowsVM ? Math.max(6, config.cpu_cores) : config.cpu_cores,
+      memory_gb: isWindowsVM ? Math.max(12, config.memory_gb) : config.memory_gb,
+      disk_gb: isWindowsVM ? 80 : config.disk_gb,
     }));
   };
 
@@ -934,10 +970,7 @@ const CreateInstancePage: React.FC = () => {
       setError(null);
       const createPayload: CreateInstanceRequest = {
         ...formData,
-        runtime_variant:
-          formData.type === "workbuddy"
-            ? inferWorkbuddyRuntimeVariant(selectedRuntimeImage?.image)
-            : undefined,
+        runtime_variant: selectedRuntimeVariant,
         mode: selectedMode,
         instance_mode: selectedMode,
         runtime_type: selectedRuntimeType,
@@ -957,15 +990,15 @@ const CreateInstancePage: React.FC = () => {
         image_registry: selectedRuntimeImage?.image,
         image_tag: selectedRuntimeImage ? undefined : formData.image_tag,
         environment_overrides: overrides,
-        skill_ids: supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image)
+        skill_ids: supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant)
           ? selectedSkillIds
           : undefined,
         openclaw_config_plan:
-          supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) &&
+          supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
           openClawInjectionMode === "bundle" &&
           openClawBundleId
             ? { mode: "bundle", bundle_id: openClawBundleId }
-            : supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) &&
+            : supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
                 openClawInjectionMode === "manual" &&
                 openClawResourceIds.length > 0
               ? { mode: "manual", resource_ids: openClawResourceIds }
@@ -976,7 +1009,7 @@ const CreateInstancePage: React.FC = () => {
         await instanceService.createInstance(createPayload);
 
       if (
-        supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) &&
+        supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
         openClawInjectionMode === "archive" &&
         openClawImportFile
       ) {
@@ -1123,7 +1156,7 @@ const CreateInstancePage: React.FC = () => {
   const exceededQuotaItems = quotaChecks.filter((item) => item.exceeded);
   const quotaExceeded = exceededQuotaItems.length > 0;
   const openClawPlanInvalid =
-    supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) &&
+    supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
     ((openClawInjectionMode === "bundle" &&
       (!openClawBundleId ||
         !!openClawPreviewError ||
@@ -1726,14 +1759,14 @@ const CreateInstancePage: React.FC = () => {
                               <input
                                 type="number"
                                 id="custom_disk"
-                                min={isWindowsWorkbuddy ? 80 : 10}
-                                max={isWindowsWorkbuddy ? 80 : 1000}
+                                min={isWindowsVM ? 80 : 10}
+                                max={isWindowsVM ? 80 : 1000}
                                 value={formData.disk_gb}
                                 onChange={(e) =>
                                   setFormData((current) => ({
                                     ...current,
                                     disk_gb:
-                                      isWindowsWorkbuddy
+                                      isWindowsVM
                                         ? 80
                                         : parseInt(e.target.value) || 10,
                                   }))
@@ -2080,7 +2113,7 @@ const CreateInstancePage: React.FC = () => {
                       {quotaLoading
                         ? t("instances.checkingQuota")
                         : loading
-                          ? supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) &&
+                          ? supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
                             openClawInjectionMode === "archive" &&
                             openClawImportFile
                             ? t("instances.creatingAndImporting")
@@ -2090,7 +2123,7 @@ const CreateInstancePage: React.FC = () => {
                   </div>
                 </div>
 
-                {supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) && (
+                {supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) && (
                   <div className="app-panel order-2 p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -2500,7 +2533,7 @@ const CreateInstancePage: React.FC = () => {
                         )
                       )}
                     </div>
-                    {supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image) && (
+                    {supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) && (
                       <>
                         <div className="sm:col-span-2">
                           <dt className="text-sm font-medium text-gray-500">

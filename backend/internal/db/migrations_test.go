@@ -352,3 +352,24 @@ func TestMigration047AddsAndBackfillsInstanceRuntimeVariant(t *testing.T) {
 		}
 	}
 }
+
+func TestMigration048AddsAndBackfillsSystemImageRuntimeVariant(t *testing.T) {
+	raw, err := embeddedMigrations.ReadFile("migrations/048_add_system_image_runtime_variant.sql")
+	if err != nil {
+		t.Fatalf("read migration 048: %v", err)
+	}
+	sql := string(raw)
+	for _, required := range []string{
+		"system_image_settings",
+		"runtime_variant",
+		"workbuddy-linux",
+		"windows-vm-workbuddy",
+		"windows-vm-codex",
+		"agentsruntime/codex",
+		"WHERE type = 'codex'",
+	} {
+		if !strings.Contains(sql, required) {
+			t.Fatalf("migration 048 must contain %s", required)
+		}
+	}
+}

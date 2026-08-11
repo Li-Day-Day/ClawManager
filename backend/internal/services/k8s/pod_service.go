@@ -45,33 +45,34 @@ func (s *PodService) GetClient() *Client {
 
 // PodConfig holds configuration for creating a pod
 type PodConfig struct {
-	InstanceID           int
-	InstanceName         string
-	UserID               int
-	Type                 string
-	RuntimeType          string
-	CPUCores             float64
-	MemoryGB             int
-	GPUEnabled           bool
-	GPUCount             int
-	Image                string
-	PVCName              string
-	MountPath            string
-	ContainerPort        int32
-	ProbePort            int32
-	StartupProbeFailures int32
-	TerminationGrace     int64
-	ImagePullPolicy      corev1.PullPolicy
-	ExtraEnv             map[string]string
-	EnvFromSecretNames   []string
-	ExtraPVCMounts       []PVCMount
-	ConfigMapFileMounts  []ConfigMapFileMount
-	VolumeInitScripts    []VolumeInitScript
-	FSGroup              *int64
-	NodeSelector         map[string]string
-	VolumeOwnershipFixes []VolumeOwnershipFix
-	SHMSizeGB            int
-	SecurityMode         PodSecurityMode
+	InstanceID            int
+	InstanceName          string
+	UserID                int
+	Type                  string
+	RuntimeType           string
+	CPUCores              float64
+	MemoryGB              int
+	GPUEnabled            bool
+	GPUCount              int
+	Image                 string
+	PVCName               string
+	MountPath             string
+	ContainerPort         int32
+	ProbePort             int32
+	StartupProbeFailures  int32
+	TerminationGrace      int64
+	ImagePullPolicy       corev1.PullPolicy
+	ExtraEnv              map[string]string
+	EnvFromSecretNames    []string
+	ExtraPVCMounts        []PVCMount
+	ConfigMapFileMounts   []ConfigMapFileMount
+	SecretDirectoryMounts []SecretDirectoryMount
+	VolumeInitScripts     []VolumeInitScript
+	FSGroup               *int64
+	NodeSelector          map[string]string
+	VolumeOwnershipFixes  []VolumeOwnershipFix
+	SHMSizeGB             int
+	SecurityMode          PodSecurityMode
 }
 
 type PVCMount struct {
@@ -88,6 +89,14 @@ type ConfigMapFileMount struct {
 	MountPath     string
 	ReadOnly      bool
 	AsDirectory   bool
+}
+
+// SecretDirectoryMount projects every key in a Secret into a read-only directory.
+// Use this instead of EnvFrom when the consumer expects credential/config files.
+type SecretDirectoryMount struct {
+	Name       string
+	SecretName string
+	MountPath  string
 }
 
 type VolumeOwnershipFix struct {
@@ -328,6 +337,21 @@ func (s *PodService) CreatePod(ctx context.Context, config PodConfig) (*corev1.P
 			volumeMount.SubPath = mount.Key
 		}
 		pod.Spec.Containers[0].VolumeMounts = append(pod.Spec.Containers[0].VolumeMounts, volumeMount)
+	}
+
+	for _, mount := range config.SecretDirectoryMounts {
+		if mount.Name == "" || mount.SecretName == "" || mount.MountPath == "" {
+			continue
+		}
+		pod.Spec.Volumes = append(pod.Spec.Volumes, corev1.Volume{
+			Name: mount.Name,
+			VolumeSource: corev1.VolumeSource{Secret: &corev1.SecretVolumeSource{
+				SecretName: mount.SecretName,
+			}},
+		})
+		pod.Spec.Containers[0].VolumeMounts = append(pod.Spec.Containers[0].VolumeMounts, corev1.VolumeMount{
+			Name: mount.Name, MountPath: mount.MountPath, ReadOnly: true,
+		})
 	}
 
 	if config.SHMSizeGB > 0 {

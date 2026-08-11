@@ -252,16 +252,21 @@ type instanceService struct {
 	pvcService            *k8s.PVCService
 	serviceService        *k8s.ServiceService
 	networkPolicyService  *k8s.NetworkPolicyService
+	secretService         *k8s.SecretService
 }
 
 const (
 	defaultGatewayTokenAliasTTL = 7 * 24 * time.Hour
 	gatewayTokenAliasTTLEnv     = "CLAWMANAGER_GATEWAY_TOKEN_ALIAS_TTL_HOURS"
 	workbuddyGoldenPVCEnv       = "CLAWMANAGER_WORKBUDDY_GOLDEN_PVC"
+	codexGoldenPVCEnv           = "CLAWMANAGER_CODEX_GOLDEN_PVC"
 	workbuddyWindowsPVCSizeGB   = 80
 	workbuddyWindowsMinCPUCores = 6
 	workbuddyWindowsMinMemoryGB = 12
 	workbuddyWindowsNodeLabel   = "clawmanager.io/windows-runtime"
+	windowsCodexBootstrapMount  = "/shared/.clawmanager"
+	windowsCodexConfigKey       = "config.toml"
+	windowsCodexAuthKey         = "auth.json"
 )
 
 type gatewayTokenAliasRecorder interface {
@@ -307,6 +312,7 @@ func NewInstanceService(instanceRepo repository.InstanceRepository, quotaRepo re
 		pvcService:            k8s.NewPVCService(),
 		serviceService:        k8s.NewServiceService(),
 		networkPolicyService:  k8s.NewNetworkPolicyService(),
+		secretService:         k8s.NewSecretService(),
 	}
 	for _, option := range options {
 		if option != nil {
@@ -331,7 +337,7 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	ctx := context.Background()
 	req.Name = strings.TrimSpace(req.Name)
 	req.Type = strings.ToLower(strings.TrimSpace(req.Type))
-	req.RuntimeVariant = resolveWorkbuddyRuntimeVariantForRequest(req)
+	req.RuntimeVariant = resolveManagedRuntimeVariantForRequest(req)
 	environmentOverrides, err := normalizeEnvironmentOverrides(req.EnvironmentOverrides)
 	if err != nil {
 		return nil, err
@@ -443,8 +449,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		return s.createV2Instance(ctx, userID, req, runtimeType, environmentOverridesJSON)
 	}
 
-	runtimeConfig := applyWorkbuddyRuntimeVariant(
+	runtimeConfig := applyManagedRuntimeVariant(
 		buildRuntimeConfig(req.Type, req.OSType, req.OSVersion, req.ImageRegistry, req.ImageTag),
+		req.Type,
 		req.RuntimeVariant,
 		req.ImageRegistry == nil,
 	)
@@ -460,8 +467,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 			if modeRuntimeType == "" {
 				runtimeType = normalizeInstanceRuntimeType(selection.RuntimeType)
 			}
-			runtimeConfig = applyWorkbuddyRuntimeVariant(
+			runtimeConfig = applyManagedRuntimeVariant(
 				buildRuntimeConfig(req.Type, req.OSType, req.OSVersion, req.ImageRegistry, req.ImageTag),
+				req.Type,
 				req.RuntimeVariant,
 				false,
 			)
@@ -528,7 +536,7 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		s.instanceRepo.Delete(instance.ID)
 		return nil, fmt.Errorf("failed to build instance agent config: %w", err)
 	}
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		runtimeConfig.Env = windowsWorkbuddyInstanceEnv(runtimeConfig.Env, instance)
 	}
 	extraEnv, err := buildInstancePodEnv(instance, runtimeConfig.Env, gatewayEnv, agentEnv)
@@ -568,10 +576,18 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	storageClass := req.StorageClass
 	var instancePVC *corev1.PersistentVolumeClaim
 
-	if isWindowsWorkbuddyInstance(instance) {
-		sourcePVC := strings.TrimSpace(os.Getenv(workbuddyGoldenPVCEnv))
+	if isWindowsVMInstance(instance) {
+		goldenPVCEnv := workbuddyGoldenPVCEnv
+		goldenRuntimeName := "Windows Workbuddy"
+		if isWindowsCodexInstance(instance) {
+			goldenPVCEnv = codexGoldenPVCEnv
+			goldenRuntimeName = "Windows Codex"
+		}
+		sourcePVC := strings.TrimSpace(os.Getenv(goldenPVCEnv))
 		if sourcePVC == "" {
-			err = fmt.Errorf("%s is required for Windows Workbuddy instances", workbuddyGoldenPVCEnv)
+			err = fmt.Errorf("%s is required for %s instances", goldenPVCEnv, goldenRuntimeName)
+		} else if isWindowsCodexInstance(instance) {
+			instancePVC, err = s.pvcService.CreatePVCFromSource(ctx, userID, instance.ID, req.DiskGB, storageClass, sourcePVC)
 		} else {
 			instancePVC, err = s.pvcService.ClaimWorkbuddyPrewarmPVC(ctx, userID, instance.ID, req.DiskGB, storageClass, sourcePVC)
 			if err == nil && instancePVC == nil {
@@ -639,8 +655,22 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	envFromSecretNames := []string{bootstrapSecretName}
 	extraPVCMounts := []k8s.PVCMount{}
 	configMapFileMounts := []k8s.ConfigMapFileMount{}
+	secretDirectoryMounts := []k8s.SecretDirectoryMount{}
+	codexBootstrapSecretName := ""
 	volumeOwnershipFixes := []k8s.VolumeOwnershipFix{}
 	var fsGroup *int64
+	if isWindowsCodexInstance(instance) {
+		codexSecretName, secretErr := s.ensureWindowsCodexBootstrapSecret(ctx, instance)
+		if secretErr != nil {
+			s.deleteInstancePVC(ctx, instance)
+			s.instanceRepo.Delete(instance.ID)
+			return nil, fmt.Errorf("failed to provision Windows Codex bootstrap: %w", secretErr)
+		}
+		secretDirectoryMounts = append(secretDirectoryMounts, k8s.SecretDirectoryMount{
+			Name: "codex-bootstrap", SecretName: codexSecretName, MountPath: windowsCodexBootstrapMount,
+		})
+		codexBootstrapSecretName = codexSecretName
+	}
 	if req.Team != nil {
 		if strings.TrimSpace(req.Team.SecretName) != "" {
 			envFromSecretNames = append(envFromSecretNames, strings.TrimSpace(req.Team.SecretName))
@@ -691,39 +721,43 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 	}
 
 	podConfig := k8s.PodConfig{
-		InstanceID:           instance.ID,
-		InstanceName:         instance.Name,
-		UserID:               userID,
-		Type:                 instance.Type,
-		RuntimeType:          runtimeType,
-		CPUCores:             instance.CPUCores,
-		MemoryGB:             instance.MemoryGB,
-		GPUEnabled:           instance.GPUEnabled,
-		GPUCount:             instance.GPUCount,
-		Image:                runtimeConfig.Image,
-		PVCName:              pvcName,
-		MountPath:            runtimeConfig.MountPath,
-		ContainerPort:        runtimeConfig.Port,
-		ProbePort:            runtimeProbePortForInstance(instance, runtimeConfig.Port),
-		StartupProbeFailures: runtimeStartupProbeFailuresForInstance(instance),
-		TerminationGrace:     runtimeTerminationGraceForInstance(instance),
-		ImagePullPolicy:      corev1.PullPolicy(defaultImagePullPolicy()),
-		ExtraEnv:             extraEnv,
-		EnvFromSecretNames:   envFromSecretNames,
-		ExtraPVCMounts:       extraPVCMounts,
-		ConfigMapFileMounts:  configMapFileMounts,
-		VolumeInitScripts:    runtimeVolumeInitScripts(instance.Type, runtimeConfig.MountPath),
-		FSGroup:              fsGroup,
-		NodeSelector:         nodeSelector,
-		VolumeOwnershipFixes: volumeOwnershipFixes,
-		SHMSizeGB:            shmSizeGB,
-		SecurityMode:         s.securityModeForRuntime(instance),
+		InstanceID:            instance.ID,
+		InstanceName:          instance.Name,
+		UserID:                userID,
+		Type:                  instance.Type,
+		RuntimeType:           runtimeType,
+		CPUCores:              instance.CPUCores,
+		MemoryGB:              instance.MemoryGB,
+		GPUEnabled:            instance.GPUEnabled,
+		GPUCount:              instance.GPUCount,
+		Image:                 runtimeConfig.Image,
+		PVCName:               pvcName,
+		MountPath:             runtimeConfig.MountPath,
+		ContainerPort:         runtimeConfig.Port,
+		ProbePort:             runtimeProbePortForInstance(instance, runtimeConfig.Port),
+		StartupProbeFailures:  runtimeStartupProbeFailuresForInstance(instance),
+		TerminationGrace:      runtimeTerminationGraceForInstance(instance),
+		ImagePullPolicy:       corev1.PullPolicy(defaultImagePullPolicy()),
+		ExtraEnv:              extraEnv,
+		EnvFromSecretNames:    envFromSecretNames,
+		ExtraPVCMounts:        extraPVCMounts,
+		ConfigMapFileMounts:   configMapFileMounts,
+		SecretDirectoryMounts: secretDirectoryMounts,
+		VolumeInitScripts:     runtimeVolumeInitScripts(instance.Type, runtimeConfig.MountPath),
+		FSGroup:               fsGroup,
+		NodeSelector:          nodeSelector,
+		VolumeOwnershipFixes:  volumeOwnershipFixes,
+		SHMSizeGB:             shmSizeGB,
+		SecurityMode:          s.securityModeForRuntime(instance),
 	}
 
 	var workloadNamespace string
 	var workloadName string
 	if instanceUsesDesktopRuntime(instance) {
 		if s.deploymentService == nil {
+			if codexBootstrapSecretName != "" {
+				_ = s.secretService.DeleteSecret(ctx, userID, codexBootstrapSecretName)
+			}
 			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, fmt.Errorf("instance deployment service is not configured"))
@@ -733,6 +767,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		}
 		deployment, err := s.deploymentService.EnsureDeployment(ctx, podConfig, 1)
 		if err != nil {
+			if codexBootstrapSecretName != "" {
+				_ = s.secretService.DeleteSecret(ctx, userID, codexBootstrapSecretName)
+			}
 			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
@@ -756,6 +793,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		if err != nil {
 			// Rollback: delete Deployment, PVC and instance record.
 			_ = s.deploymentService.DeleteDeployment(ctx, userID, instance.ID)
+			if codexBootstrapSecretName != "" {
+				_ = s.secretService.DeleteSecret(ctx, userID, codexBootstrapSecretName)
+			}
 			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
@@ -769,6 +809,9 @@ func (s *instanceService) create(userID int, req CreateInstanceRequest, validate
 		pod, err := s.podService.CreatePod(ctx, podConfig)
 		if err != nil {
 			// Rollback: delete PVC and instance record.
+			if codexBootstrapSecretName != "" {
+				_ = s.secretService.DeleteSecret(ctx, userID, codexBootstrapSecretName)
+			}
 			s.deleteInstancePVC(ctx, instance)
 			if bootstrapSnapshot != nil {
 				_ = s.openClawConfigService.MarkSnapshotFailed(bootstrapSnapshot, err)
@@ -996,7 +1039,7 @@ func (s *instanceService) Start(instanceID int) error {
 	runtimeConfig := buildRuntimeConfigForInstance(instance)
 	mountPath := persistentVolumeMountPath(instance)
 	instance.MountPath = mountPath
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		runtimeConfig.Env = windowsWorkbuddyInstanceEnv(runtimeConfig.Env, instance)
 	}
 	extraEnv, err := buildInstancePodEnv(instance, runtimeConfig.Env, gatewayEnv, agentEnv)
@@ -1028,30 +1071,41 @@ func (s *instanceService) Start(instanceID int) error {
 		return fmt.Errorf("failed to resolve PVC node selector: %w", err)
 	}
 	nodeSelector = runtimeNodeSelectorForInstance(instance, nodeSelector)
+	secretDirectoryMounts := []k8s.SecretDirectoryMount{}
+	if isWindowsCodexInstance(instance) {
+		codexSecretName, secretErr := s.ensureWindowsCodexBootstrapSecret(ctx, instance)
+		if secretErr != nil {
+			return fmt.Errorf("failed to provision Windows Codex bootstrap: %w", secretErr)
+		}
+		secretDirectoryMounts = append(secretDirectoryMounts, k8s.SecretDirectoryMount{
+			Name: "codex-bootstrap", SecretName: codexSecretName, MountPath: windowsCodexBootstrapMount,
+		})
+	}
 	podConfig := k8s.PodConfig{
-		InstanceID:           instance.ID,
-		InstanceName:         instance.Name,
-		UserID:               instance.UserID,
-		Type:                 instance.Type,
-		RuntimeType:          runtimeType,
-		CPUCores:             instance.CPUCores,
-		MemoryGB:             instance.MemoryGB,
-		GPUEnabled:           instance.GPUEnabled,
-		GPUCount:             instance.GPUCount,
-		Image:                runtimeConfig.Image,
-		PVCName:              pvcName,
-		MountPath:            mountPath,
-		ContainerPort:        runtimeConfig.Port,
-		ProbePort:            runtimeProbePortForInstance(instance, runtimeConfig.Port),
-		StartupProbeFailures: runtimeStartupProbeFailuresForInstance(instance),
-		TerminationGrace:     runtimeTerminationGraceForInstance(instance),
-		ImagePullPolicy:      corev1.PullPolicy(defaultImagePullPolicy()),
-		ExtraEnv:             extraEnv,
-		EnvFromSecretNames:   []string{bootstrapSecretName},
-		VolumeInitScripts:    runtimeVolumeInitScripts(instance.Type, mountPath),
-		NodeSelector:         nodeSelector,
-		SHMSizeGB:            shmSizeGB,
-		SecurityMode:         s.securityModeForRuntime(instance),
+		InstanceID:            instance.ID,
+		InstanceName:          instance.Name,
+		UserID:                instance.UserID,
+		Type:                  instance.Type,
+		RuntimeType:           runtimeType,
+		CPUCores:              instance.CPUCores,
+		MemoryGB:              instance.MemoryGB,
+		GPUEnabled:            instance.GPUEnabled,
+		GPUCount:              instance.GPUCount,
+		Image:                 runtimeConfig.Image,
+		PVCName:               pvcName,
+		MountPath:             mountPath,
+		ContainerPort:         runtimeConfig.Port,
+		ProbePort:             runtimeProbePortForInstance(instance, runtimeConfig.Port),
+		StartupProbeFailures:  runtimeStartupProbeFailuresForInstance(instance),
+		TerminationGrace:      runtimeTerminationGraceForInstance(instance),
+		ImagePullPolicy:       corev1.PullPolicy(defaultImagePullPolicy()),
+		ExtraEnv:              extraEnv,
+		EnvFromSecretNames:    []string{bootstrapSecretName},
+		SecretDirectoryMounts: secretDirectoryMounts,
+		VolumeInitScripts:     runtimeVolumeInitScripts(instance.Type, mountPath),
+		NodeSelector:          nodeSelector,
+		SHMSizeGB:             shmSizeGB,
+		SecurityMode:          s.securityModeForRuntime(instance),
 	}
 
 	var workloadNamespace string
@@ -1113,7 +1167,7 @@ func (s *instanceService) Start(instanceID int) error {
 }
 
 func (s *instanceService) securityModeForInstance(instanceType string) k8s.PodSecurityMode {
-	if isWindowsWorkbuddy(instanceType) {
+	if isWindowsVMInstanceType(instanceType) {
 		return k8s.PodSecurityPrivileged
 	}
 	if s != nil && s.allowPrivilegedPods {
@@ -1129,7 +1183,7 @@ func (s *instanceService) securityModeForInstance(instanceType string) k8s.PodSe
 }
 
 func (s *instanceService) securityModeForRuntime(instance *models.Instance) k8s.PodSecurityMode {
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		return k8s.PodSecurityPrivileged
 	}
 	if instance == nil {
@@ -1138,7 +1192,10 @@ func (s *instanceService) securityModeForRuntime(instance *models.Instance) k8s.
 	if s != nil && s.allowPrivilegedPods {
 		return k8s.PodSecurityPrivileged
 	}
-	if strings.EqualFold(strings.TrimSpace(instance.Type), "openclaw") {
+	if strings.EqualFold(strings.TrimSpace(instance.Type), "openclaw") ||
+		strings.EqualFold(strings.TrimSpace(instance.Type), "opencode") ||
+		strings.EqualFold(strings.TrimSpace(instance.Type), RuntimeTypeCodex) ||
+		strings.EqualFold(strings.TrimSpace(instance.Type), RuntimeTypeClaudeCode) {
 		return k8s.PodSecurityChromiumCompat
 	}
 	return k8s.PodSecurityDefault
@@ -1191,6 +1248,99 @@ func gatewayTokenAliasTTL() time.Duration {
 	}
 	return time.Duration(*value) * time.Hour
 }
+
+func (s *instanceService) ensureWindowsCodexBootstrapSecret(ctx context.Context, instance *models.Instance) (string, error) {
+	if !isWindowsCodexInstance(instance) {
+		return "", nil
+	}
+	if s == nil || s.secretService == nil {
+		return "", fmt.Errorf("secret service is not configured")
+	}
+
+	token, err := s.ensureGatewayToken(instance)
+	if err != nil {
+		return "", err
+	}
+	baseURL, ok := defaultGatewayBaseURL()
+	if !ok {
+		return "", fmt.Errorf("gateway base URL is not configured")
+	}
+	modelInjection, err := s.resolveGatewayModelInjection()
+	if err != nil {
+		return "", err
+	}
+	model := strings.TrimSpace(modelInjection.codingAgentDefaultModel)
+	if model == "" {
+		model = strings.TrimSpace(modelInjection.defaultModel)
+	}
+	files, err := renderWindowsCodexBootstrapFiles(baseURL, model, token)
+	if err != nil {
+		return "", err
+	}
+
+	client := k8s.GetClient()
+	if client == nil {
+		return "", fmt.Errorf("k8s client not initialized")
+	}
+	secretName := client.GetCodexBootstrapSecretName(instance.ID, instance.Name)
+	if err := s.secretService.UpsertSecret(ctx, instance.UserID, secretName, files, map[string]string{
+		"app":           "clawreef",
+		"instance-id":   fmt.Sprintf("%d", instance.ID),
+		"instance-name": instance.Name,
+		"user-id":       fmt.Sprintf("%d", instance.UserID),
+		"managed-by":    "clawreef",
+		"resource-type": "codex-windows-bootstrap",
+	}); err != nil {
+		return "", err
+	}
+
+	s.refreshGatewayTokenAlias(instance.ID, token)
+	return secretName, nil
+}
+
+func renderWindowsCodexBootstrapFiles(baseURL, model, token string) (map[string]string, error) {
+	baseURL = strings.TrimSpace(baseURL)
+	model = strings.TrimSpace(model)
+	token = strings.TrimSpace(token)
+	if baseURL == "" || model == "" || token == "" {
+		return nil, fmt.Errorf("base URL, model, and instance token are required")
+	}
+	// Codex appends /responses to the provider base URL. The ClawManager
+	// Responses-compatible endpoint is exposed under /v1/responses.
+	baseURL = strings.TrimRight(baseURL, "/")
+	if !strings.HasSuffix(baseURL, "/v1") {
+		baseURL += "/v1"
+	}
+
+	config := fmt.Sprintf(`model_provider = "clawmanager"
+model = %s
+review_model = %s
+windows_wsl_setup_acknowledged = true
+sandbox_mode = "danger-full-access"
+approval_policy = "never"
+web_search = "live"
+cli_auth_credentials_store = "file"
+
+[features]
+goals = true
+
+[model_providers.clawmanager]
+name = "ClawManager"
+base_url = %s
+wire_api = "responses"
+requires_openai_auth = true
+`, strconv.Quote(model), strconv.Quote(model), strconv.Quote(baseURL))
+	authJSON, err := json.MarshalIndent(map[string]string{"OPENAI_API_KEY": token}, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode Codex auth file: %w", err)
+	}
+
+	return map[string]string{
+		windowsCodexConfigKey: config,
+		windowsCodexAuthKey:   string(authJSON) + "\n",
+	}, nil
+}
+
 func (s *instanceService) buildGatewayEnv(instance *models.Instance) (map[string]string, error) {
 	if instance == nil || instance.AccessToken == nil || strings.TrimSpace(*instance.AccessToken) == "" {
 		return map[string]string{}, nil
@@ -1435,13 +1585,13 @@ func persistentVolumeMountPath(instance *models.Instance) string {
 	if instance == nil {
 		return "/config"
 	}
-	if !strings.EqualFold(strings.TrimSpace(instance.Type), "workbuddy") && defaultMountPathForInstanceType(instance.Type) == "/config" {
+	if !isWindowsVMInstance(instance) && defaultMountPathForInstanceType(instance.Type) == "/config" {
 		return "/config"
 	}
 	if strings.TrimSpace(instance.MountPath) != "" {
 		return strings.TrimSpace(instance.MountPath)
 	}
-	if strings.EqualFold(strings.TrimSpace(instance.Type), "workbuddy") {
+	if isWindowsVMInstance(instance) {
 		return buildRuntimeConfigForInstance(instance).MountPath
 	}
 	return defaultMountPathForInstanceType(instance.Type)
@@ -2413,7 +2563,7 @@ func (s *instanceService) forceSyncDeploymentInstance(ctx context.Context, insta
 }
 
 func additionalServicePorts(instanceType string, primaryPort int32) []int32 {
-	if isWindowsWorkbuddy(instanceType) {
+	if isWindowsVMInstanceType(instanceType) {
 		return []int32{3389}
 	}
 	if primaryPort == 3000 || primaryPort == 8082 {
@@ -2424,7 +2574,7 @@ func additionalServicePorts(instanceType string, primaryPort int32) []int32 {
 }
 
 func additionalServicePortsForInstance(instance *models.Instance, primaryPort int32) []int32 {
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		return []int32{3389}
 	}
 	if primaryPort == 3000 || primaryPort == 8082 {
@@ -2435,6 +2585,10 @@ func additionalServicePortsForInstance(instance *models.Instance, primaryPort in
 
 func isWindowsWorkbuddy(instanceType string) bool {
 	return strings.EqualFold(strings.TrimSpace(instanceType), "workbuddy")
+}
+
+func isWindowsVMInstanceType(instanceType string) bool {
+	return isWindowsWorkbuddy(instanceType) || strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeCodex)
 }
 
 func instancePVCName(instance *models.Instance, client *k8s.Client) string {
@@ -2455,26 +2609,32 @@ func (s *instanceService) deleteInstancePVC(ctx context.Context, instance *model
 }
 
 func validateWindowsWorkbuddyRequest(req CreateInstanceRequest) error {
-	if !strings.EqualFold(strings.TrimSpace(req.Type), "workbuddy") {
+	isWorkbuddy := strings.EqualFold(strings.TrimSpace(req.Type), "workbuddy")
+	isCodex := strings.EqualFold(strings.TrimSpace(req.Type), RuntimeTypeCodex)
+	if !isWorkbuddy && !isCodex {
 		return nil
 	}
 	if strings.TrimSpace(req.RuntimeVariant) != "" && normalizeWorkbuddyRuntimeVariant(req.RuntimeVariant) == "" {
-		return fmt.Errorf("invalid Workbuddy runtime variant")
+		return fmt.Errorf("invalid %s runtime variant", req.Type)
 	}
-	if resolveWorkbuddyRuntimeVariantForRequest(req) != WorkbuddyRuntimeWindows {
+	if resolveManagedRuntimeVariantForRequest(req) != WorkbuddyRuntimeWindows {
 		return nil
 	}
+	runtimeName := "Windows Workbuddy"
+	if isCodex {
+		runtimeName = "Windows Codex"
+	}
 	if resolveCreateInstanceMode(req) != InstanceModePro {
-		return fmt.Errorf("Windows Workbuddy is available only in Pro mode")
+		return fmt.Errorf("%s is available only in Pro mode", runtimeName)
 	}
 	if req.CPUCores < workbuddyWindowsMinCPUCores {
-		return fmt.Errorf("Windows Workbuddy requires at least %d CPU cores", workbuddyWindowsMinCPUCores)
+		return fmt.Errorf("%s requires at least %d CPU cores", runtimeName, workbuddyWindowsMinCPUCores)
 	}
 	if req.MemoryGB < workbuddyWindowsMinMemoryGB {
-		return fmt.Errorf("Windows Workbuddy requires at least %dGB memory", workbuddyWindowsMinMemoryGB)
+		return fmt.Errorf("%s requires at least %dGB memory", runtimeName, workbuddyWindowsMinMemoryGB)
 	}
 	if req.DiskGB != workbuddyWindowsPVCSizeGB {
-		return fmt.Errorf("Windows Workbuddy requires an %dGB disk to match the golden PVC", workbuddyWindowsPVCSizeGB)
+		return fmt.Errorf("%s requires an %dGB disk to match the golden PVC", runtimeName, workbuddyWindowsPVCSizeGB)
 	}
 	return nil
 }
@@ -2498,42 +2658,42 @@ func windowsWorkbuddyInstanceEnv(base map[string]string, instance *models.Instan
 }
 
 func runtimeProbePort(instanceType string, primaryPort int32) int32 {
-	if isWindowsWorkbuddy(instanceType) {
+	if isWindowsVMInstanceType(instanceType) {
 		return 3389
 	}
 	return primaryPort
 }
 
 func runtimeProbePortForInstance(instance *models.Instance, primaryPort int32) int32 {
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		return 3389
 	}
 	return primaryPort
 }
 
 func runtimeStartupProbeFailures(instanceType string) int32 {
-	if isWindowsWorkbuddy(instanceType) {
+	if isWindowsVMInstanceType(instanceType) {
 		return 120
 	}
 	return 30
 }
 
 func runtimeStartupProbeFailuresForInstance(instance *models.Instance) int32 {
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		return 120
 	}
 	return 30
 }
 
 func runtimeTerminationGrace(instanceType string) int64 {
-	if isWindowsWorkbuddy(instanceType) {
+	if isWindowsVMInstanceType(instanceType) {
 		return 120
 	}
 	return 0
 }
 
 func runtimeTerminationGraceForInstance(instance *models.Instance) int64 {
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		return 120
 	}
 	return 0
@@ -2541,7 +2701,7 @@ func runtimeTerminationGraceForInstance(instance *models.Instance) int64 {
 
 func runtimeNodeSelector(instanceType string, existing map[string]string) map[string]string {
 	selector := mergeEnvMaps(existing, nil)
-	if isWindowsWorkbuddy(instanceType) {
+	if isWindowsVMInstanceType(instanceType) {
 		selector[workbuddyWindowsNodeLabel] = "true"
 	}
 	return selector
@@ -2549,7 +2709,7 @@ func runtimeNodeSelector(instanceType string, existing map[string]string) map[st
 
 func runtimeNodeSelectorForInstance(instance *models.Instance, existing map[string]string) map[string]string {
 	selector := mergeEnvMaps(existing, nil)
-	if isWindowsWorkbuddyInstance(instance) {
+	if isWindowsVMInstance(instance) {
 		selector[workbuddyWindowsNodeLabel] = "true"
 	}
 	return selector

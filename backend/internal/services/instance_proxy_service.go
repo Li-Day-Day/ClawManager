@@ -1199,7 +1199,8 @@ func (s *InstanceProxyService) IsWebtopInstance(instance *models.Instance) bool 
 
 func usesWebtopRuntime(instanceType string, targetPort int32) bool {
 	return usesWebtopImage(instanceType) ||
-		(strings.EqualFold(strings.TrimSpace(instanceType), "workbuddy") && targetPort == 3001)
+		((strings.EqualFold(strings.TrimSpace(instanceType), "workbuddy") ||
+			strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeCodex)) && targetPort == 3001)
 }
 
 func (s *InstanceProxyService) getCachedService(key serviceCacheKey) *k8s.ServiceInfo {

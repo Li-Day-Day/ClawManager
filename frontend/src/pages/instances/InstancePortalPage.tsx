@@ -26,13 +26,19 @@ interface PreparedPortalFrame {
 }
 
 function supportsWorkspace(instance: Instance) {
-    return (
-      instance.type === "openclaw" ||
-      instance.type === "hermes" ||
-      instance.type === "opencode" ||
-      instance.type === "codex" ||
-      instance.type === "claude-code" ||
-      Boolean(instance.workspace_path)
+  if (instance.type === "workbuddy" || instance.type === "codex") {
+    const image = instance.image_registry?.trim().toLowerCase() ?? "";
+    const inferredLinux = instance.type === "workbuddy"
+      ? image.includes("workbuddy-linux")
+      : image.includes("agentsruntime/codex");
+    return instance.runtime_variant === "linux" || (!instance.runtime_variant && inferredLinux);
+  }
+  return (
+    instance.type === "openclaw" ||
+    instance.type === "hermes" ||
+    instance.type === "opencode" ||
+    instance.type === "claude-code" ||
+    Boolean(instance.workspace_path)
   );
 }
 
@@ -45,6 +51,7 @@ function workspaceInitialPath(instance: Instance, isPro: boolean) {
     return isPro ? ".opencode" : "home/.opencode";
   }
   if (type === "codex") return ".codex";
+  if (type === "workbuddy") return "/config";
   if (type === "claude-code") return ".claude";
   if (type === "openclaw" && !isPro) {
     return "home/.openclaw";
