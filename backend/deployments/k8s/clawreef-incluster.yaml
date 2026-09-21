@@ -13,6 +13,7 @@ stringData:
   mysql-root-password: root123
   mysql-password: clawreef123
   jwt-secret: clawreef-dev-secret-key-change-in-production
+  auth-config-encryption-key: clawmanager-auth-key-dev-32byte!
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -482,6 +483,38 @@ data:
       WHERE instance_type = 'hermes'
         AND is_enabled = FALSE
     );
+  047_add_deepseek_harness_runtime.sql: |
+    USE clawreef;
+    ALTER TABLE instances
+    MODIFY COLUMN type ENUM('openclaw', 'ubuntu', 'debian', 'centos', 'custom', 'webtop', 'hermes', 'workbuddy', 'deepseek-harness') DEFAULT 'ubuntu';
+
+    INSERT INTO system_image_settings (instance_type, runtime_type, display_name, image, is_enabled)
+    SELECT
+      'deepseek-harness',
+      'desktop',
+      'DeepSeek Harness Pro',
+      'ghcr.io/yuan-lab-llm/agentsruntime/deepseek-harness:latest',
+      TRUE
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM system_image_settings
+      WHERE instance_type = 'deepseek-harness'
+        AND runtime_type = 'desktop'
+    );
+
+    INSERT INTO system_image_settings (instance_type, runtime_type, display_name, image, is_enabled)
+    SELECT
+      'deepseek-harness',
+      'gateway',
+      'DeepSeek Harness Lite',
+      'ghcr.io/yuan-lab-llm/agentsruntime/deepseek-harness-lite:latest',
+      TRUE
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM system_image_settings
+      WHERE instance_type = 'deepseek-harness'
+        AND runtime_type IN ('shell', 'gateway')
+    );
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -514,6 +547,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.4
+          args:
+            - "--binlog-expire-logs-seconds=259200"
+            - "--max-binlog-size=134217728"
           ports:
             - containerPort: 3306
           env:
@@ -626,6 +662,55 @@ spec:
                 secretKeyRef:
                   name: clawreef-secrets
                   key: jwt-secret
+            - name: AUTH_CONFIG_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: clawreef-secrets
+                  key: auth-config-encryption-key
+            - name: AUTH_ENTERPRISE_ENABLED
+              value: "false"
+            - name: AUTH_ENTERPRISE_ALLOW_LOCAL_FALLBACK
+              value: "true"
+            - name: AUTH_ENTERPRISE_SYNC_ROLE
+              value: "false"
+            - name: LDAP_HOST
+              value: ""
+            - name: LDAP_PORT
+              value: "389"
+            - name: LDAP_USE_TLS
+              value: "false"
+            - name: LDAP_START_TLS
+              value: "false"
+            - name: LDAP_SKIP_TLS_VERIFY
+              value: "false"
+            - name: LDAP_TLS_CA_FILE
+              value: ""
+            - name: LDAP_TLS_SERVER_NAME
+              value: ""
+            - name: LDAP_BIND_DN
+              value: ""
+            - name: LDAP_BIND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: clawreef-secrets
+                  key: ldap-bind-password
+                  optional: true
+            - name: LDAP_BASE_DN
+              value: ""
+            - name: LDAP_USER_FILTER
+              value: "(&(objectClass=person)(uid=%s))"
+            - name: LDAP_USERNAME_ATTRIBUTE
+              value: "uid"
+            - name: LDAP_EMAIL_ATTRIBUTE
+              value: "mail"
+            - name: LDAP_GROUP_BASE_DN
+              value: ""
+            - name: LDAP_GROUP_FILTER
+              value: "(member=%s)"
+            - name: LDAP_ADMIN_GROUP_DNS
+              value: ""
+            - name: LDAP_DEFAULT_ROLE
+              value: "user"
             - name: K8S_MODE
               value: "incluster"
             - name: K8S_NAMESPACE

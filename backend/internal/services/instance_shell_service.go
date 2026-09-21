@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 
+	"clawreef/internal/models"
 	"clawreef/internal/services/k8s"
 
 	"github.com/gorilla/websocket"
@@ -50,7 +52,7 @@ func NewInstanceShellService() *InstanceShellService {
 	}
 }
 
-func (s *InstanceShellService) Stream(ctx context.Context, userID, instanceID int, w http.ResponseWriter, r *http.Request) error {
+func (s *InstanceShellService) Stream(ctx context.Context, instance *models.Instance, w http.ResponseWriter, r *http.Request) error {
 	if s.podService == nil || s.podService.GetClient() == nil || s.podService.GetClient().Clientset == nil {
 		return fmt.Errorf("k8s client not initialized")
 	}
@@ -78,9 +80,9 @@ func (s *InstanceShellService) Stream(ctx context.Context, userID, instanceID in
 
 	go readShellWebSocket(streamCtx, cancel, conn, stdinWriter, sizeQueue)
 
-	pod, err := s.podService.GetPod(streamCtx, userID, instanceID)
+	pod, container, command, err := s.execTarget(streamCtx, instance)
 	if err != nil {
-		_ = writeShellBytes(conn, writeMu, done, []byte(fmt.Sprintf("\r\nfailed to get pod: %v\r\n", err)))
+		_ = writeShellBytes(conn, writeMu, done, []byte(fmt.Sprintf("\r\nfailed to start terminal: %v\r\n", err)))
 		return fmt.Errorf("failed to get pod: %w", err)
 	}
 
@@ -91,8 +93,8 @@ func (s *InstanceShellService) Stream(ctx context.Context, userID, instanceID in
 		SubResource("exec")
 
 	req.VersionedParams(&corev1.PodExecOptions{
-		Container: "desktop",
-		Command:   defaultShellCommand(),
+		Container: container,
+		Command:   command,
 		Stdin:     true,
 		Stdout:    true,
 		Stderr:    false,
@@ -117,6 +119,21 @@ func (s *InstanceShellService) Stream(ctx context.Context, userID, instanceID in
 	}
 
 	return nil
+}
+
+func (s *InstanceShellService) execTarget(ctx context.Context, instance *models.Instance) (*corev1.Pod, string, []string, error) {
+	if instance == nil {
+		return nil, "", nil, fmt.Errorf("instance is required")
+	}
+	if !strings.EqualFold(strings.TrimSpace(instance.RuntimeType), RuntimeBackendShell) {
+		return nil, "", nil, fmt.Errorf("shell access is only available for shell instances")
+	}
+
+	pod, err := s.podService.GetPod(ctx, instance.UserID, instance.ID)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	return pod, "desktop", defaultShellCommand(), nil
 }
 
 func defaultShellCommand() []string {

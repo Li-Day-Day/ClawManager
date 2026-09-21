@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useI18n } from '../contexts/I18nContext';
+import AppVersion from './AppVersion';
 import LanguageSwitcher from './LanguageSwitcher';
 
 interface UserLayoutProps {
@@ -61,9 +62,14 @@ const UserLayout: React.FC<UserLayoutProps> = ({
     return location.pathname === item.path || location.pathname.startsWith(`${item.path}/`);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // The login page displays the auth store's incomplete-revocation notice.
+    } finally {
+      navigate('/login', { replace: true });
+    }
   };
 
   const renderNavItem = (item: UserNavItem) => {
@@ -92,7 +98,12 @@ const UserLayout: React.FC<UserLayoutProps> = ({
                   alt="ClawManager logo"
                   className="h-9 w-9 object-contain"
                 />
-                <span className="text-lg font-semibold">{t('app.name')}</span>
+                <span className="min-w-0">
+                  <span className="block text-lg font-semibold">{t('app.name')}</span>
+                  <span className="mt-1 block max-w-40">
+                    <AppVersion />
+                  </span>
+                </span>
               </Link>
 
               <div className="flex items-center gap-2">
@@ -136,9 +147,12 @@ const UserLayout: React.FC<UserLayoutProps> = ({
                   alt="ClawManager logo"
                   className="h-9 w-9 object-contain"
                 />
-                <div>
+                <div className="min-w-0">
                   <div className="text-xs font-medium text-slate-500">User</div>
                   <div className="text-lg font-semibold leading-tight">{t('app.name')}</div>
+                  <div className="mt-1 max-w-40">
+                    <AppVersion />
+                  </div>
                 </div>
               </Link>
             </div>

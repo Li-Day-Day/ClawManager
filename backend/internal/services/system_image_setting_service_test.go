@@ -215,6 +215,28 @@ func TestSystemImageSettingServiceListIncludesHermesLiteDefault(t *testing.T) {
 	}
 }
 
+func TestSystemImageSettingServiceListIncludesDeepSeekHarnessProAndLite(t *testing.T) {
+	service := NewSystemImageSettingService(&stubSystemImageSettingRepository{})
+	items, err := service.List()
+	if err != nil {
+		t.Fatalf("List returned error: %v", err)
+	}
+
+	found := map[string]bool{}
+	for _, item := range items {
+		if item.InstanceType != RuntimeTypeDeepSeekHarness {
+			continue
+		}
+		found[item.RuntimeType] = true
+		if !item.IsEnabled {
+			t.Fatalf("DeepSeek Harness preset must be enabled: %#v", item)
+		}
+	}
+	if !found[RuntimeBackendDesktop] || !found[RuntimeBackendGateway] {
+		t.Fatalf("expected DeepSeek Harness Pro and Lite presets, got %#v", found)
+	}
+}
+
 func TestSystemImageSettingServiceListIncludesWorkbuddyProDefault(t *testing.T) {
 	service := NewSystemImageSettingService(&stubSystemImageSettingRepository{})
 
@@ -350,6 +372,40 @@ func TestSystemImageSettingServiceGetRuntimeImageForImageUsesCardRuntimeType(t *
 	}
 	if selection.Image != "registry/openclaw-lite:latest" {
 		t.Fatalf("expected gateway image to resolve, got %q", selection.Image)
+	}
+}
+
+func TestSystemImageSettingServiceGetRuntimeImageForRuntimeTypeSelectsSavedDesktopImage(t *testing.T) {
+	repo := &stubSystemImageSettingRepository{
+		items: []models.SystemImageSetting{
+			{ID: 1, InstanceType: "opencode", RuntimeType: "gateway", DisplayName: "OpenCode Lite", Image: "registry/opencode-lite:saved", IsEnabled: true},
+			{ID: 2, InstanceType: "opencode", RuntimeType: "desktop", DisplayName: "OpenCode Pro", Image: "registry/opencode-pro:saved", IsEnabled: true},
+		},
+		nextID: 2,
+	}
+	service := NewSystemImageSettingService(repo)
+
+	selection, ok := service.GetRuntimeImageForRuntimeType("opencode", RuntimeBackendDesktop)
+	if !ok {
+		t.Fatal("expected saved OpenCode Pro image to resolve")
+	}
+	if selection.RuntimeType != RuntimeBackendDesktop || selection.Image != "registry/opencode-pro:saved" {
+		t.Fatalf("unexpected Pro image selection: %+v", selection)
+	}
+}
+
+func TestSystemImageSettingServiceGetRuntimeImageForRuntimeTypeRejectsDisabledDesktopImage(t *testing.T) {
+	repo := &stubSystemImageSettingRepository{
+		items: []models.SystemImageSetting{
+			{ID: 1, InstanceType: "hermes", RuntimeType: "desktop", DisplayName: "Hermes Pro", Image: "registry/hermes-pro:disabled", IsEnabled: false},
+			{ID: 2, InstanceType: "hermes", RuntimeType: "gateway", DisplayName: "Hermes Lite", Image: "registry/hermes-lite:saved", IsEnabled: true},
+		},
+		nextID: 2,
+	}
+	service := NewSystemImageSettingService(repo)
+
+	if selection, ok := service.GetRuntimeImageForRuntimeType("hermes", RuntimeBackendDesktop); ok {
+		t.Fatalf("disabled Pro image must not resolve: %+v", selection)
 	}
 }
 

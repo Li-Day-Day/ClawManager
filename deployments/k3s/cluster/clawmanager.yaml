@@ -5022,6 +5022,7 @@ stringData:
   mysql-root-password: root123
   mysql-password: clawreef123
   jwt-secret: change-me-in-production
+  auth-config-encryption-key: clawmanager-auth-key-dev-32byte!
   runtime-agent-control-token: change-me-runtime-control-token
   runtime-agent-report-token: change-me-runtime-report-token
   openclaw-gateway-token: change-me-openclaw-gateway-token
@@ -5794,6 +5795,8 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - "--innodb-use-native-aio=0"
+            - "--binlog-expire-logs-seconds=259200"
+            - "--max-binlog-size=134217728"
           ports:
             - containerPort: 3306
           env:
@@ -6123,6 +6126,8 @@ spec:
             - name: proxy
               containerPort: 9001
           env:
+            - name: TZ
+              value: "Asia/Shanghai"
             - name: SERVER_ADDRESS
               value: ":9001"
             - name: SERVER_MODE
@@ -6145,6 +6150,55 @@ spec:
                 secretKeyRef:
                   name: clawmanager-secrets
                   key: jwt-secret
+            - name: AUTH_CONFIG_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: auth-config-encryption-key
+            - name: AUTH_ENTERPRISE_ENABLED
+              value: "false"
+            - name: AUTH_ENTERPRISE_ALLOW_LOCAL_FALLBACK
+              value: "true"
+            - name: AUTH_ENTERPRISE_SYNC_ROLE
+              value: "false"
+            - name: LDAP_HOST
+              value: ""
+            - name: LDAP_PORT
+              value: "389"
+            - name: LDAP_USE_TLS
+              value: "false"
+            - name: LDAP_START_TLS
+              value: "false"
+            - name: LDAP_SKIP_TLS_VERIFY
+              value: "false"
+            - name: LDAP_TLS_CA_FILE
+              value: ""
+            - name: LDAP_TLS_SERVER_NAME
+              value: ""
+            - name: LDAP_BIND_DN
+              value: ""
+            - name: LDAP_BIND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: ldap-bind-password
+                  optional: true
+            - name: LDAP_BASE_DN
+              value: ""
+            - name: LDAP_USER_FILTER
+              value: "(&(objectClass=person)(uid=%s))"
+            - name: LDAP_USERNAME_ATTRIBUTE
+              value: "uid"
+            - name: LDAP_EMAIL_ATTRIBUTE
+              value: "mail"
+            - name: LDAP_GROUP_BASE_DN
+              value: ""
+            - name: LDAP_GROUP_FILTER
+              value: "(member=%s)"
+            - name: LDAP_ADMIN_GROUP_DNS
+              value: ""
+            - name: LDAP_DEFAULT_ROLE
+              value: "user"
             - name: OBJECT_STORAGE_ENDPOINT
               value: "minio.clawmanager-system.svc.cluster.local:9000"
             - name: OBJECT_STORAGE_REGION
@@ -6193,8 +6247,20 @@ spec:
               value: "redis://clawmanager-redis.clawmanager-system.svc.cluster.local:6379/0"
             - name: TEAM_REDIS_URL
               value: "redis://clawmanager-redis.clawmanager-system.svc.cluster.local:6379/0"
+            - name: CLAWMANAGER_HERMES_DESKTOP_WEB_ENABLED
+              value: "true"
+            - name: CLAWMANAGER_CONTROL_UI_ORIGIN
+              value: "http://clawmanager-gateway.clawmanager-system.svc.cluster.local:9001"
             - name: CLAWMANAGER_DESKTOP_DIRECT_PROXY
               value: "true"
+            # Required for the OpenCode Lite root-origin UI. The {instance_id}
+            # placeholder is required; see docs/deployment.md.
+            - name: CLAWMANAGER_OPENCODE_PUBLIC_URL_TEMPLATE
+              value: ""
+            # Required for the DeepSeek Harness Lite root-origin UI. The
+            # {instance_id} placeholder is required; see docs/deployment.md.
+            - name: CLAWMANAGER_DEEPSEEK_HARNESS_PUBLIC_URL_TEMPLATE
+              value: ""
             - name: CLAWMANAGER_TEAM_REDIS_URL
               value: "redis://clawmanager-redis.clawmanager-system.svc.cluster.local:6379/0"
             - name: CLAWMANAGER_TEAM_MANAGER_BASE_URL
@@ -6380,17 +6446,25 @@ spec:
     spec:
       containers:
         - name: runtime
-          image: ghcr.io/yuan-lab-llm/agentsruntime/hermes-lite:latest
+          image: ghcr.io/yuan-lab-llm/agentsruntime/hermes-lite@sha256:4fd519962d0afe796b36dade6f8e66379e7030a2c6f3c62b4a6574352b2eac44
           imagePullPolicy: IfNotPresent
           env:
             - name: CLAWMANAGER_RUNTIME_TYPE
               value: hermes
             - name: CLAWMANAGER_BACKEND_URL
               value: "http://clawmanager-gateway.clawmanager-system.svc.cluster.local:9001"
+            - name: CLAWMANAGER_HERMES_DESKTOP_WEB_ENABLED
+              value: "true"
+            - name: CLAWMANAGER_CONTROL_UI_ORIGIN
+              value: "http://clawmanager-gateway.clawmanager-system.svc.cluster.local:9001"
+            # k3s uses 10.42.0.0/16 by default. Update this value when the
+            # cluster was installed with a different Pod CIDR.
+            - name: CLAWMANAGER_TRUSTED_PROXY_CIDRS
+              value: "10.42.0.0/16"
             - name: CLAWMANAGER_RUNTIME_DEPLOYMENT_NAME
               value: hermes-runtime
             - name: CLAWMANAGER_RUNTIME_IMAGE_REF
-              value: ghcr.io/yuan-lab-llm/agentsruntime/hermes-lite:latest
+              value: ghcr.io/yuan-lab-llm/agentsruntime/hermes-lite@sha256:4fd519962d0afe796b36dade6f8e66379e7030a2c6f3c62b4a6574352b2eac44
             - name: CLAWMANAGER_AGENT_PORT
               value: "19090"
             - name: CLAWMANAGER_GATEWAY_PORT_START
@@ -6419,6 +6493,88 @@ spec:
               value: "20000"
             - name: RUNTIME_GATEWAY_PORT_END
               value: "20299"
+            - name: RUNTIME_AGENT_CONTROL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: runtime-agent-control-token
+            - name: RUNTIME_AGENT_REPORT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: runtime-agent-report-token
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - name: agent
+              containerPort: 19090
+          volumeMounts:
+            - name: workspaces
+              mountPath: /workspaces
+      volumes:
+        - name: workspaces
+          persistentVolumeClaim:
+            claimName: clawmanager-workspaces
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencode-runtime
+  namespace: clawmanager-system
+  labels:
+    app: opencode-runtime
+    clawmanager.io/runtime-type: opencode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opencode-runtime
+      clawmanager.io/runtime-type: opencode
+  template:
+    metadata:
+      labels:
+        app: opencode-runtime
+        clawmanager.io/runtime-type: opencode
+    spec:
+      containers:
+        - name: runtime
+          image: ghcr.io/yuan-lab-llm/agentsruntime/opencode-lite:latest
+          imagePullPolicy: Always
+          env:
+            - name: CLAWMANAGER_RUNTIME_TYPE
+              value: opencode
+            - name: CLAWMANAGER_BACKEND_URL
+              value: "http://clawmanager-gateway.clawmanager-system.svc.cluster.local:9001"
+            - name: CLAWMANAGER_RUNTIME_DEPLOYMENT_NAME
+              value: opencode-runtime
+            - name: CLAWMANAGER_RUNTIME_IMAGE_REF
+              value: ghcr.io/yuan-lab-llm/agentsruntime/opencode-lite:latest
+            - name: RUNTIME_WORKSPACE_ROOT
+              value: /workspaces
+            - name: RUNTIME_GATEWAY_PORT_START
+              value: "20000"
+            - name: RUNTIME_GATEWAY_PORT_END
+              value: "20299"
+            - name: RUNTIME_AGENT_LISTEN_ADDR
+              value: "0.0.0.0:19090"
+            - name: RUNTIME_AGENT_PUBLIC_PORT
+              value: "19090"
+            - name: RUNTIME_GATEWAY_COMMAND
+              value: "start-opencode-web"
             - name: RUNTIME_AGENT_CONTROL_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -6498,3 +6654,101 @@ spec:
     - name: proxy
       port: 3128
       targetPort: 9001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deepseek-harness-runtime
+  namespace: clawmanager-system
+  labels:
+    app: deepseek-harness-runtime
+    clawmanager.io/runtime-type: deepseek-harness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deepseek-harness-runtime
+      clawmanager.io/runtime-type: deepseek-harness
+  template:
+    metadata:
+      labels:
+        app: deepseek-harness-runtime
+        clawmanager.io/runtime-type: deepseek-harness
+    spec:
+      containers:
+        - name: runtime
+          image: ghcr.io/yuan-lab-llm/agentsruntime/deepseek-harness-lite:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CLAWMANAGER_RUNTIME_TYPE
+              value: deepseek-harness
+            - name: CLAWMANAGER_BACKEND_URL
+              value: "http://clawmanager-gateway.clawmanager-system.svc.cluster.local:9001"
+            - name: CLAWMANAGER_RUNTIME_DEPLOYMENT_NAME
+              value: deepseek-harness-runtime
+            - name: CLAWMANAGER_RUNTIME_IMAGE_REF
+              value: ghcr.io/yuan-lab-llm/agentsruntime/deepseek-harness-lite:latest
+            - name: CLAWMANAGER_AGENT_PORT
+              value: "19090"
+            - name: CLAWMANAGER_GATEWAY_PORT_START
+              value: "20300"
+            - name: CLAWMANAGER_GATEWAY_PORT_END
+              value: "20599"
+            - name: CLAWMANAGER_AGENT_CONTROL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: runtime-agent-control-token
+            - name: CLAWMANAGER_AGENT_REPORT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: runtime-agent-report-token
+            - name: RUNTIME_WORKSPACE_ROOT
+              value: /workspaces
+            - name: RUNTIME_AGENT_LISTEN_ADDR
+              value: "0.0.0.0:19090"
+            - name: RUNTIME_AGENT_PUBLIC_PORT
+              value: "19090"
+            - name: RUNTIME_GATEWAY_PORT_START
+              value: "20300"
+            - name: RUNTIME_GATEWAY_PORT_END
+              value: "20599"
+            - name: RUNTIME_GATEWAY_COMMAND
+              value: /usr/local/bin/start-deepseek-harness-gateway
+            - name: RUNTIME_AGENT_CONTROL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: runtime-agent-control-token
+            - name: RUNTIME_AGENT_REPORT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: clawmanager-secrets
+                  key: runtime-agent-report-token
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - name: agent
+              containerPort: 19090
+          volumeMounts:
+            - name: workspaces
+              mountPath: /workspaces
+      volumes:
+        - name: workspaces
+          persistentVolumeClaim:
+            claimName: clawmanager-workspaces

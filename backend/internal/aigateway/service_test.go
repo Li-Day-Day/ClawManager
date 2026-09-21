@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -12,6 +13,116 @@ import (
 
 	"clawreef/internal/models"
 )
+
+type availableModelRepositoryStub struct {
+	active []models.LLMModel
+}
+
+type availableExpandedModelCatalogStub struct {
+	active []models.LLMModel
+}
+
+func (s *availableExpandedModelCatalogStub) ListExpandedActiveModels() ([]models.LLMModel, error) {
+	return append([]models.LLMModel(nil), s.active...), nil
+}
+
+func (r *availableModelRepositoryStub) List() ([]models.LLMModel, error) {
+	return append([]models.LLMModel(nil), r.active...), nil
+}
+
+func (r *availableModelRepositoryStub) ListActive() ([]models.LLMModel, error) {
+	return append([]models.LLMModel(nil), r.active...), nil
+}
+
+func (r *availableModelRepositoryStub) GetByID(int) (*models.LLMModel, error) {
+	return nil, nil
+}
+
+func (r *availableModelRepositoryStub) GetByDisplayName(string) (*models.LLMModel, error) {
+	return nil, nil
+}
+
+func (r *availableModelRepositoryStub) Save(*models.LLMModel) error { return nil }
+
+func (r *availableModelRepositoryStub) Delete(int) error { return nil }
+
+func TestListAvailableModelsIncludesEntireActiveCatalog(t *testing.T) {
+	description := "Fast coding model"
+	service := &service{modelRepo: &availableModelRepositoryStub{active: []models.LLMModel{
+		{ID: 11, DisplayName: "GPT-5.4", ProviderType: models.ProviderTypeOpenAI, Description: &description},
+		{ID: 12, DisplayName: "Claude Sonnet 4.6", ProviderType: models.ProviderTypeAnthropic, IsSecure: true},
+		{ID: 13, ProviderModelName: "deepseek-v4", ProviderType: models.ProviderTypeOpenAICompatible},
+		{ID: 14, DisplayName: "AUTO", ProviderType: models.ProviderTypeLocal},
+		{ID: 15, DisplayName: "  gpt-5.4  ", ProviderType: models.ProviderTypeOpenAI},
+		{ID: 16, DisplayName: "   ", ProviderModelName: "   ", ProviderType: models.ProviderTypeLocal},
+	}}}
+
+	items, err := service.ListAvailableModels()
+	if err != nil {
+		t.Fatalf("ListAvailableModels returned error: %v", err)
+	}
+	if len(items) != 4 {
+		t.Fatalf("available model count = %d, want Auto plus 3 configured models: %#v", len(items), items)
+	}
+
+	wantNames := []string{"Auto", "GPT-5.4", "Claude Sonnet 4.6", "deepseek-v4"}
+	for index, want := range wantNames {
+		if items[index].DisplayName != want {
+			t.Fatalf("available model %d display name = %q, want %q", index, items[index].DisplayName, want)
+		}
+	}
+	if items[1].ID != 11 || items[1].Description == nil || *items[1].Description != description {
+		t.Fatalf("configured model metadata was not preserved: %#v", items[1])
+	}
+	if items[2].ID != 12 || !items[2].IsSecure || items[2].Provider != models.ProviderTypeAnthropic {
+		t.Fatalf("secure model metadata was not preserved: %#v", items[2])
+	}
+}
+
+func TestListAvailableModelsReturnsEmptyCatalogWhenNoModelsAreActive(t *testing.T) {
+	service := &service{modelRepo: &availableModelRepositoryStub{}}
+
+	items, err := service.ListAvailableModels()
+	if err != nil {
+		t.Fatalf("ListAvailableModels returned error: %v", err)
+	}
+	if len(items) != 0 {
+		t.Fatalf("available models = %#v, want empty list", items)
+	}
+}
+
+func TestGatewayListsAndResolvesEveryExpandedProviderModel(t *testing.T) {
+	expanded := make([]models.LLMModel, 0, 7)
+	for index := 1; index <= 7; index++ {
+		expanded = append(expanded, models.LLMModel{
+			ID:                index,
+			DisplayName:       fmt.Sprintf("model-%d", index),
+			ProviderModelName: fmt.Sprintf("provider-model-%d", index),
+			ProviderType:      models.ProviderTypeOpenAICompatible,
+			IsActive:          true,
+		})
+	}
+	service := &service{
+		modelRepo:            &availableModelRepositoryStub{active: expanded[:1]},
+		expandedModelCatalog: &availableExpandedModelCatalogStub{active: expanded},
+	}
+
+	items, err := service.ListAvailableModels()
+	if err != nil {
+		t.Fatalf("ListAvailableModels returned error: %v", err)
+	}
+	if len(items) != 8 {
+		t.Fatalf("available model count = %d, want Auto plus 7 provider models: %#v", len(items), items)
+	}
+
+	selected, err := service.resolveRequestedModel("model-7")
+	if err != nil {
+		t.Fatalf("resolveRequestedModel returned error: %v", err)
+	}
+	if selected.ProviderModelName != "provider-model-7" {
+		t.Fatalf("resolved provider model = %q, want provider-model-7", selected.ProviderModelName)
+	}
+}
 
 type stubModelInvocationService struct {
 	items []models.ModelInvocation
@@ -166,6 +277,60 @@ func TestBuildProviderRequestEnforcesDeepSeekThinkingSetting(t *testing.T) {
 				}
 			} else if _, exists := payload["reasoning_effort"]; exists {
 				t.Fatalf("disabled DeepSeek request retained reasoning_effort")
+			}
+		})
+	}
+}
+
+func TestBuildProviderRequestFromStructuredInternalCallPreservesMessagesAndModelThinking(t *testing.T) {
+	t.Parallel()
+	temperature := 0.2
+	maxTokens := 6000
+	tests := []struct {
+		name    string
+		enabled bool
+		want    string
+	}{
+		{name: "thinking disabled by model config", enabled: false, want: "disabled"},
+		{name: "thinking enabled by model config", enabled: true, want: "enabled"},
+	}
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			req := ChatCompletionRequest{
+				Model: "auto",
+				Messages: []ChatMessage{
+					{Role: "system", Content: "Return JSON."},
+					{Role: "user", Content: "Create a team."},
+				},
+				Temperature: &temperature,
+				MaxTokens:   &maxTokens,
+			}
+			model := &models.LLMModel{
+				ProviderType: models.ProviderTypeOpenAICompatible, ProtocolType: models.ProtocolTypeOpenAICompatible,
+				BaseURL: "https://api.deepseek.com", ProviderModelName: "deepseek-v4-flash", ReasoningEnabled: tc.enabled,
+			}
+			body, err := buildProviderRequestBody(req, model)
+			if err != nil {
+				t.Fatalf("buildProviderRequestBody returned error: %v", err)
+			}
+			var payload map[string]json.RawMessage
+			if err := json.Unmarshal(body, &payload); err != nil {
+				t.Fatalf("decode provider request: %v", err)
+			}
+			var messages []ChatMessage
+			if err := json.Unmarshal(payload["messages"], &messages); err != nil || len(messages) != 2 {
+				t.Fatalf("messages = %#v, err=%v, want 2 messages", messages, err)
+			}
+			if string(payload["max_tokens"]) != "6000" || string(payload["temperature"]) != "0.2" {
+				t.Fatalf("generation parameters missing: %s", body)
+			}
+			var thinking struct {
+				Type string `json:"type"`
+			}
+			if err := json.Unmarshal(payload["thinking"], &thinking); err != nil || thinking.Type != tc.want {
+				t.Fatalf("thinking = %#v, err=%v, want %q", thinking, err, tc.want)
 			}
 		})
 	}

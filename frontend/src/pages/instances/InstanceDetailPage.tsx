@@ -1,4 +1,10 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -36,35 +42,58 @@ import { useI18n } from "../../contexts/I18nContext";
 import { useInstanceStatusWebSocket } from "../../hooks/useWebSocket";
 import type { InstanceStatusUpdate } from "../../hooks/useWebSocket";
 import { instanceService } from "../../services/instanceService";
-import type {
-  ExternalAccessExpirationMode,
-  ExternalAccessExpirationPreset,
-  ExternalAccessRequest,
-  Instance,
-  InstanceAvailability,
-  InstanceExternalAccess,
-  InstanceRuntimeCommand,
-  InstanceRuntimeDetails,
-  InstanceStatus,
-  DesktopStreamProfile,
+import {
+  formatInstanceType,
+  type ExternalAccessExpirationMode,
+  type ExternalAccessExpirationPreset,
+  type ExternalAccessRequest,
+  type Instance,
+  type InstanceAvailability,
+  type InstanceExternalAccess,
+  type InstanceRuntimeCommand,
+  type InstanceRuntimeDetails,
+  type InstanceStatus,
+  type DesktopStreamProfile,
 } from "../../types/instance";
 
 const META_POLL_INTERVAL_MS = 5000;
 const RUNTIME_POLL_INTERVAL_MS = 5000;
+const RESTART_NOTICE_AUTO_DISMISS_MS = 6000;
 const LITE_COLLAPSED_BOTTOM_FALLBACK_PX = 120;
 const LITE_COLLAPSED_BOTTOM_MAX_PX = 220;
 const LITE_ROOT_GAP_TOTAL_PX = 16; // two gap-2 rows between header / workspace / bottom
+type ExternalAccessAction =
+  | "share-link"
+  | "password"
+  | "reset-url"
+  | "reset-password"
+  | "disable";
 const DESKTOP_STREAM_PROFILES: Array<{
   id: DesktopStreamProfile;
   labelKey: string;
   detail: string;
 }> = [
-  { id: "low", labelKey: "instances.desktopStreamLow", detail: "30 FPS / CRF 42" },
-  { id: "standard", labelKey: "instances.desktopStreamStandard", detail: "35 FPS / CRF 34" },
-  { id: "high", labelKey: "instances.desktopStreamHigh", detail: "40 FPS / CRF 24" },
+  {
+    id: "low",
+    labelKey: "instances.desktopStreamLow",
+    detail: "30 FPS / CRF 42",
+  },
+  {
+    id: "standard",
+    labelKey: "instances.desktopStreamStandard",
+    detail: "35 FPS / CRF 34",
+  },
+  {
+    id: "high",
+    labelKey: "instances.desktopStreamHigh",
+    detail: "40 FPS / CRF 24",
+  },
 ];
 
-function readPanelExpanded(panel: "skills" | "session-usage", instanceId: number | null): boolean {
+function readPanelExpanded(
+  panel: "skills" | "session-usage",
+  instanceId: number | null,
+): boolean {
   if (!instanceId || Number.isNaN(instanceId)) {
     return false;
   }
@@ -103,10 +132,6 @@ function availabilityClass(availability: InstanceAvailability) {
   }
 }
 
-function typeLabel(type: string) {
-  return type === "hermes" ? "Hermes" : type === "openclaw" ? "OpenClaw" : type;
-}
-
 function formatBytes(value?: number) {
   if (!value || value <= 0) {
     return "0 B";
@@ -122,16 +147,24 @@ function formatBytes(value?: number) {
 }
 
 function supportsWorkspace(instance: Instance) {
+  if (instance.type === "workbuddy" || instance.type === "codex") {
+    return (
+      instance.runtime_variant === "linux" ||
+      (!instance.runtime_variant && instance.mount_path?.trim() === "/config")
+    );
+  }
   return (
     instance.type === "openclaw" ||
     instance.type === "hermes" ||
-    instance.type === "workbuddy" ||
+    instance.type === "opencode" ||
+    instance.type === "deepseek-harness" ||
     Boolean(instance.workspace_path)
   );
 }
 
 function getErrorMessage(err: unknown, fallback: string) {
-  const responseError = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+  const responseError = (err as { response?: { data?: { error?: string } } })
+    ?.response?.data?.error;
   if (responseError) {
     return responseError;
   }
@@ -208,7 +241,10 @@ function resourcePercent(used: number | null, total: number | null) {
   return (used / total) * 100;
 }
 
-function resourceRows(runtimeDetails: InstanceRuntimeDetails | null, instance: Instance) {
+function resourceRows(
+  runtimeDetails: InstanceRuntimeDetails | null,
+  instance: Instance,
+) {
   const systemInfo = asRecord(runtimeDetails?.runtime?.system_info);
   const cpuInfo = asRecord(systemInfo?.cpu);
   const memoryInfo = asRecord(systemInfo?.memory);
@@ -238,7 +274,10 @@ function resourceRows(runtimeDetails: InstanceRuntimeDetails | null, instance: I
   return [
     {
       label: "CPU",
-      value: cpuPercent === null ? `${instance.cpu_cores} cores` : formatPercent(cpuPercent),
+      value:
+        cpuPercent === null
+          ? `${instance.cpu_cores} cores`
+          : formatPercent(cpuPercent),
       detail: cpuPercent === null ? "Requested capacity" : "Runtime usage",
       percent: cpuPercent,
       icon: Cpu,
@@ -283,7 +322,12 @@ function resourceRows(runtimeDetails: InstanceRuntimeDetails | null, instance: I
 }
 
 function eventTime(command: InstanceRuntimeCommand) {
-  return command.finished_at || command.started_at || command.dispatched_at || command.issued_at;
+  return (
+    command.finished_at ||
+    command.started_at ||
+    command.dispatched_at ||
+    command.issued_at
+  );
 }
 
 function eventTone(status: string) {
@@ -327,12 +371,16 @@ const InstanceDetailPage: React.FC = () => {
     useState(false);
   const [restartEnvironmentNamesError, setRestartEnvironmentNamesError] =
     useState<string | null>(null);
-  const [externalAccess, setExternalAccess] = useState<InstanceExternalAccess | null>(null);
+  const [externalAccess, setExternalAccess] =
+    useState<InstanceExternalAccess | null>(null);
   const [externalShareURL, setExternalShareURL] = useState("");
   const [externalPassword, setExternalPassword] = useState("");
   const [externalPasswordVisible, setExternalPasswordVisible] = useState(false);
   const [externalAccessPanelOpen, setExternalAccessPanelOpen] = useState(false);
-  const [externalActionLoading, setExternalActionLoading] = useState<string | null>(null);
+  const [externalActionLoading, setExternalActionLoading] = useState<
+    string | null
+  >(null);
+  const [externalResetTarget, setExternalResetTarget] = useState<"url" | "password" | null>(null);
   const [externalError, setExternalError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<string | null>(null);
   const [externalExpiresMode, setExternalExpiresMode] =
@@ -340,31 +388,95 @@ const InstanceDetailPage: React.FC = () => {
   const [externalExpiresPreset, setExternalExpiresPreset] =
     useState<ExternalAccessExpirationPreset>("24h");
   const [externalCustomExpiresAt, setExternalCustomExpiresAt] = useState("");
-  const [externalWorkspaceAccess, setExternalWorkspaceAccess] =
-    useState<"none" | "read" | "write">("write");
-  const [runtimeDetails, setRuntimeDetails] = useState<InstanceRuntimeDetails | null>(null);
+  const [externalWorkspaceAccess, setExternalWorkspaceAccess] = useState<
+    "none" | "read" | "write"
+  >("write");
+  const [runtimeDetails, setRuntimeDetails] =
+    useState<InstanceRuntimeDetails | null>(null);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [desktopStreamProfile, setDesktopStreamProfile] =
     useState<DesktopStreamProfile>("standard");
-  const [desktopStreamSavedProfile, setDesktopStreamSavedProfile] =
-    useState<DesktopStreamProfile | "">("");
-  const [desktopStreamMessage, setDesktopStreamMessage] = useState<string | null>(null);
+  const [desktopStreamSavedProfile, setDesktopStreamSavedProfile] = useState<
+    DesktopStreamProfile | ""
+  >("");
+  const [desktopStreamMessage, setDesktopStreamMessage] = useState<
+    string | null
+  >(null);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [serviceFrameReloadToken, setServiceFrameReloadToken] = useState(0);
+  const [openCodeProjectRestartPending, setOpenCodeProjectRestartPending] =
+    useState(false);
+  const [
+    openCodeProjectRestartSawTransition,
+    setOpenCodeProjectRestartSawTransition,
+  ] = useState(false);
   const [skillPanelExpanded, setSkillPanelExpanded] = useState(() =>
     readPanelExpanded("skills", instanceId),
   );
   const [sessionPanelExpanded, setSessionPanelExpanded] = useState(() =>
     readPanelExpanded("session-usage", instanceId),
   );
-  const [workspaceHeightPx, setWorkspaceHeightPx] = useState<number | null>(null);
+  const [workspaceHeightPx, setWorkspaceHeightPx] = useState<number | null>(
+    null,
+  );
   const [workspaceVisible, setWorkspaceVisible] = useState(true);
-  const [collapsedBottomHeightPx, setCollapsedBottomHeightPx] = useState<number | null>(null);
+  const [collapsedBottomHeightPx, setCollapsedBottomHeightPx] = useState<
+    number | null
+  >(null);
   const workspaceSectionRef = useRef<HTMLElement>(null);
   const liteRootRef = useRef<HTMLDivElement>(null);
   const liteHeaderRef = useRef<HTMLDivElement>(null);
   const liteBottomRef = useRef<HTMLDivElement>(null);
   const bottomPanelExpandedRef = useRef(false);
   const restartMenuRef = useRef<HTMLDivElement>(null);
+  const restartNoticeTimerRef = useRef<number | null>(null);
+
+  const cancelRestartNoticeTimer = useCallback(() => {
+    if (restartNoticeTimerRef.current !== null) {
+      window.clearTimeout(restartNoticeTimerRef.current);
+      restartNoticeTimerRef.current = null;
+    }
+  }, []);
+
+  const dismissRestartNotice = useCallback(() => {
+    cancelRestartNoticeTimer();
+    setActionMessage(null);
+  }, [cancelRestartNoticeTimer]);
+
+  const showRestartNotice = useCallback(
+    (message: string) => {
+      cancelRestartNoticeTimer();
+      setActionMessage(message);
+    },
+    [cancelRestartNoticeTimer],
+  );
+
+  const markRestartSubmitted = useCallback(
+    (message: string) => {
+      showRestartNotice(message);
+      restartNoticeTimerRef.current = window.setTimeout(() => {
+        restartNoticeTimerRef.current = null;
+        setActionMessage((current) => (current === message ? null : current));
+      }, RESTART_NOTICE_AUTO_DISMISS_MS);
+      setServiceFrameReloadToken((current) => current + 1);
+    },
+    [showRestartNotice],
+  );
+
+  useEffect(() => {
+    return () => cancelRestartNoticeTimer();
+  }, [cancelRestartNoticeTimer]);
+
+  const openCodeInitialDirectory = (() => {
+    if (instance?.type !== "opencode" || instance.instance_mode !== "lite") {
+      return undefined;
+    }
+    const workspacePath = instance?.workspace_path?.trim().replaceAll("\\", "/");
+    if (!workspacePath?.startsWith("/")) {
+      return undefined;
+    }
+    return `${workspacePath.replace(/\/+$/gu, "")}/starter`;
+  })();
 
   const fetchMeta = useCallback(
     async (targetInstanceId: number, options?: { background?: boolean }) => {
@@ -395,10 +507,16 @@ const InstanceDetailPage: React.FC = () => {
       const result = await instanceService.getExternalAccess(targetInstanceId);
       const access = result.external_access ?? null;
       setExternalAccess(access);
-      setExternalShareURL(access?.enabled ? absoluteExternalURL(result.share_url) : "");
-      setExternalPassword(access?.enabled && access.auth_mode === "password" ? result.password ?? "" : "");
+      setExternalShareURL(
+        access?.enabled ? absoluteExternalURL(result.share_url) : "",
+      );
+      setExternalPassword(
+        access?.enabled && access.auth_mode === "password"
+          ? (result.password ?? "")
+          : "",
+      );
       setExternalWorkspaceAccess(
-        access?.enabled ? access.workspace_access ?? "none" : "write",
+        access?.enabled ? (access.workspace_access ?? "none") : "write",
       );
       setExternalPasswordVisible(false);
       setExternalError(null);
@@ -459,12 +577,42 @@ const InstanceDetailPage: React.FC = () => {
           availability: availabilityForStatus(update.status),
         }));
         setInstance((current) =>
-          current ? { ...current, status: update.status as Instance["status"] } : current,
+          current
+            ? { ...current, status: update.status as Instance["status"] }
+            : current,
         );
       },
       [instanceId],
     ),
   );
+
+  useEffect(() => {
+    if (!openCodeProjectRestartPending) {
+      return;
+    }
+
+    const currentStatus = status?.status ?? instance?.status;
+    if (!currentStatus) {
+      return;
+    }
+    if (currentStatus !== "running") {
+      setOpenCodeProjectRestartSawTransition(true);
+      return;
+    }
+    if (!openCodeProjectRestartSawTransition) {
+      return;
+    }
+
+    dismissRestartNotice();
+    setOpenCodeProjectRestartPending(false);
+    setOpenCodeProjectRestartSawTransition(false);
+  }, [
+    dismissRestartNotice,
+    instance?.status,
+    openCodeProjectRestartPending,
+    openCodeProjectRestartSawTransition,
+    status?.status,
+  ]);
 
   useEffect(() => {
     if (!restartMenuOpen) {
@@ -495,7 +643,8 @@ const InstanceDetailPage: React.FC = () => {
     () =>
       Boolean(
         instance &&
-          (instance.instance_mode === "pro" || instance.runtime_type !== "gateway"),
+        (instance.instance_mode === "pro" ||
+          instance.runtime_type !== "gateway"),
       ),
     [instance],
   );
@@ -552,10 +701,14 @@ const InstanceDetailPage: React.FC = () => {
         return;
       }
 
-      let bottomReserve = collapsedBottomHeightPx ?? LITE_COLLAPSED_BOTTOM_FALLBACK_PX;
+      let bottomReserve =
+        collapsedBottomHeightPx ?? LITE_COLLAPSED_BOTTOM_FALLBACK_PX;
       if (bottom) {
         const measuredBottom = bottom.offsetHeight;
-        if (measuredBottom > 0 && measuredBottom <= LITE_COLLAPSED_BOTTOM_MAX_PX) {
+        if (
+          measuredBottom > 0 &&
+          measuredBottom <= LITE_COLLAPSED_BOTTOM_MAX_PX
+        ) {
           bottomReserve = measuredBottom;
           setCollapsedBottomHeightPx(measuredBottom);
         }
@@ -566,7 +719,11 @@ const InstanceDetailPage: React.FC = () => {
         (Number.parseFloat(parentStyle.paddingTop) || 0) +
         (Number.parseFloat(parentStyle.paddingBottom) || 0);
       const nextHeight =
-        parent.clientHeight - padY - header.offsetHeight - bottomReserve - LITE_ROOT_GAP_TOTAL_PX;
+        parent.clientHeight -
+        padY -
+        header.offsetHeight -
+        bottomReserve -
+        LITE_ROOT_GAP_TOTAL_PX;
       if (nextHeight > 0) {
         setWorkspaceHeightPx(nextHeight);
       }
@@ -646,7 +803,9 @@ const InstanceDetailPage: React.FC = () => {
     return instance ? availabilityForStatus(instance.status) : "unavailable";
   }, [instance, status]);
 
-  const handleAction = async (action: "start" | "stop" | "restart" | "delete") => {
+  const handleAction = async (
+    action: "start" | "stop" | "restart" | "delete",
+  ) => {
     if (!instance) {
       return;
     }
@@ -654,9 +813,9 @@ const InstanceDetailPage: React.FC = () => {
     try {
       setActionLoading(action);
       if (action === "restart") {
-        setActionMessage(t("instances.restartInProgress"));
+        showRestartNotice(t("instances.restartInProgress"));
       } else {
-        setActionMessage(null);
+        dismissRestartNotice();
       }
       switch (action) {
         case "start":
@@ -667,7 +826,7 @@ const InstanceDetailPage: React.FC = () => {
           break;
         case "restart":
           await instanceService.restartInstance(instance.id);
-          setActionMessage(t("instances.restartSubmitted"));
+          markRestartSubmitted(t("instances.restartSubmitted"));
           break;
         case "delete":
           await instanceService.deleteInstance(instance.id);
@@ -677,6 +836,7 @@ const InstanceDetailPage: React.FC = () => {
       }
       await fetchMeta(instance.id, { background: true });
     } catch (err: unknown) {
+      dismissRestartNotice();
       alert(getErrorMessage(err, t("instances.failedToLoad")));
     } finally {
       setActionLoading(null);
@@ -694,7 +854,7 @@ const InstanceDetailPage: React.FC = () => {
     try {
       setActionLoading("restart-environment");
       setRestartEnvironmentError(null);
-      setActionMessage(t("instances.restartInProgress"));
+      showRestartNotice(t("instances.restartInProgress"));
       await instanceService.restartInstance(instance.id, {
         environment_overrides: environmentOverrides,
         environment_override_removals: environmentOverrideRemovals,
@@ -703,18 +863,66 @@ const InstanceDetailPage: React.FC = () => {
         const next = new Set(current);
         environmentOverrideRemovals.forEach((name) => next.delete(name));
         Object.keys(environmentOverrides).forEach((name) => next.add(name));
-        return Array.from(next).sort((left, right) => left.localeCompare(right));
+        return Array.from(next).sort((left, right) =>
+          left.localeCompare(right),
+        );
       });
       setShowRestartEnvironmentDialog(false);
-      setActionMessage(t("instances.restartEnvironmentSaved"));
+      markRestartSubmitted(t("instances.restartEnvironmentSaved"));
       await fetchMeta(instance.id, { background: true });
     } catch (restartError) {
-      setActionMessage(null);
+      dismissRestartNotice();
       setRestartEnvironmentError(
-        getErrorMessage(
-          restartError,
-          t("instances.restartEnvironmentFailed"),
-        ),
+        getErrorMessage(restartError, t("instances.restartEnvironmentFailed")),
+      );
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleSelectOpenCodeProject = async (relativePath: string) => {
+    if (
+      !instance ||
+      instance.type !== "opencode" ||
+      instance.instance_mode !== "pro"
+    ) {
+      return;
+    }
+
+    const normalized = relativePath
+      .replaceAll("\\", "/")
+      .split("/")
+      .filter(Boolean);
+    if (
+      normalized[0] !== "workspace" ||
+      normalized.some((part) => part === "." || part === "..")
+    ) {
+      alert("Invalid project directory");
+      return;
+    }
+
+    const projectPath = ["/config", ...normalized].join("/");
+    try {
+      setOpenCodeProjectRestartPending(false);
+      setOpenCodeProjectRestartSawTransition(false);
+      setActionLoading("select-opencode-project");
+      showRestartNotice("Saving OpenCode project and restarting…");
+      await instanceService.restartInstance(instance.id, {
+        environment_overrides: {
+          CLAWMANAGER_DEFAULT_PROJECT_PATH: projectPath,
+        },
+      });
+      markRestartSubmitted(
+        "OpenCode project saved. The instance is restarting.",
+      );
+      setOpenCodeProjectRestartPending(true);
+      await fetchMeta(instance.id, { background: true });
+    } catch (selectProjectError) {
+      setOpenCodeProjectRestartPending(false);
+      setOpenCodeProjectRestartSawTransition(false);
+      dismissRestartNotice();
+      alert(
+        getErrorMessage(selectProjectError, "Failed to set OpenCode project"),
       );
     } finally {
       setActionLoading(null);
@@ -779,7 +987,9 @@ const InstanceDetailPage: React.FC = () => {
     };
   };
 
-  const handleExternalAction = async (action: "share-link" | "password" | "disable") => {
+  const handleExternalAction = async (
+    action: ExternalAccessAction,
+  ) => {
     if (!instance) {
       return;
     }
@@ -791,7 +1001,10 @@ const InstanceDetailPage: React.FC = () => {
         if (!request) {
           return;
         }
-        const result = await instanceService.enableExternalShareLink(instance.id, request);
+        const result = await instanceService.enableExternalShareLink(
+          instance.id,
+          request,
+        );
         setExternalAccess(result.access);
         setExternalShareURL(absoluteExternalURL(result.share_url));
         setExternalPassword("");
@@ -802,11 +1015,28 @@ const InstanceDetailPage: React.FC = () => {
         if (!request) {
           return;
         }
-        const result = await instanceService.createExternalAccessPassword(instance.id, request);
+        const result = await instanceService.createExternalAccessPassword(
+          instance.id,
+          request,
+        );
         setExternalAccess(result.access);
         setExternalPassword(result.password);
         setExternalPasswordVisible(false);
         setExternalShareURL(absoluteExternalURL(result.share_url));
+        setExternalAccessPanelOpen(true);
+      } else if (action === "reset-url") {
+        const result = await instanceService.resetExternalShareURL(instance.id);
+        setExternalAccess(result.access);
+        setExternalShareURL(absoluteExternalURL(result.share_url));
+        setExternalResetTarget(null);
+        setExternalAccessPanelOpen(true);
+      } else if (action === "reset-password") {
+        const result = await instanceService.resetExternalAccessPassword(instance.id);
+        setExternalAccess(result.access);
+        setExternalPassword(result.password);
+        setExternalPasswordVisible(false);
+        setExternalShareURL(absoluteExternalURL(result.share_url));
+        setExternalResetTarget(null);
         setExternalAccessPanelOpen(true);
       } else {
         await instanceService.disableExternalAccess(instance.id);
@@ -834,7 +1064,8 @@ const InstanceDetailPage: React.FC = () => {
     });
     const updatedInstance = await instanceService.getInstance(instance.id);
     setInstance(updatedInstance);
-    const savedProfile = updatedInstance.desktop_stream_profile || desktopStreamProfile;
+    const savedProfile =
+      updatedInstance.desktop_stream_profile || desktopStreamProfile;
     setDesktopStreamSavedProfile(savedProfile);
     setDesktopStreamProfile(savedProfile);
     return true;
@@ -848,7 +1079,7 @@ const InstanceDetailPage: React.FC = () => {
     try {
       setActionLoading("desktop-stream-profile");
       setDesktopStreamMessage(null);
-      setActionMessage(null);
+      dismissRestartNotice();
       await saveDesktopStreamProfile();
       setDesktopStreamMessage(t("instances.desktopStreamSavedRestartRequired"));
     } catch (streamError) {
@@ -867,14 +1098,15 @@ const InstanceDetailPage: React.FC = () => {
     try {
       setActionLoading("desktop-stream-restart");
       setDesktopStreamMessage(t("instances.restartInProgress"));
-      setActionMessage(t("instances.restartInProgress"));
+      showRestartNotice(t("instances.restartInProgress"));
       await saveDesktopStreamProfile();
       await instanceService.restartInstance(instance.id);
       setDesktopStreamMessage(t("instances.restartSubmitted"));
-      setActionMessage(t("instances.restartSubmitted"));
+      markRestartSubmitted(t("instances.restartSubmitted"));
       await fetchMeta(instance.id, { background: true });
     } catch (streamError) {
       console.error("Failed to apply desktop stream profile", streamError);
+      dismissRestartNotice();
       setDesktopStreamMessage(t("instances.desktopStreamSaveFailed"));
     } finally {
       setActionLoading(null);
@@ -888,7 +1120,10 @@ const InstanceDetailPage: React.FC = () => {
     try {
       await navigator.clipboard.writeText(value);
       setCopyState(key);
-      window.setTimeout(() => setCopyState((current) => (current === key ? null : current)), 1800);
+      window.setTimeout(
+        () => setCopyState((current) => (current === key ? null : current)),
+        1800,
+      );
     } catch (err: unknown) {
       setExternalError(getErrorMessage(err, "Copy failed"));
     }
@@ -925,7 +1160,9 @@ const InstanceDetailPage: React.FC = () => {
           {t("instances.back")}
         </Link>
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="truncate text-2xl font-semibold text-slate-950">{instance.name}</h1>
+          <h1 className="truncate text-2xl font-semibold text-slate-950">
+            {instance.name}
+          </h1>
           <span
             className={`inline-flex rounded-md border px-2 py-1 text-xs font-medium ${availabilityClass(
               availability,
@@ -935,10 +1172,14 @@ const InstanceDetailPage: React.FC = () => {
           </span>
         </div>
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
-          <span>{typeLabel(instance.type)}</span>
+          <span>{formatInstanceType(instance.type)}</span>
           <span>Mode {instance.instance_mode === "pro" ? "Pro" : "Lite"}</span>
           <span>Runtime {instance.runtime_type}</span>
-          <span>{formatBytes(status?.workspace_usage_bytes ?? instance.workspace_usage_bytes)}</span>
+          <span>
+            {formatBytes(
+              status?.workspace_usage_bytes ?? instance.workspace_usage_bytes,
+            )}
+          </span>
           <span>{formatDateTime(instance.updated_at, locale)}</span>
         </div>
       </div>
@@ -1046,7 +1287,9 @@ const InstanceDetailPage: React.FC = () => {
       <button
         type="button"
         data-share-enabled={externalAccess?.enabled ? "true" : "false"}
-        data-share-auth={externalAccess?.enabled ? externalAccess.auth_mode : "disabled"}
+        data-share-auth={
+          externalAccess?.enabled ? externalAccess.auth_mode : "disabled"
+        }
         className={`app-button-secondary ${
           externalAccess?.enabled
             ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100 hover:text-emerald-800"
@@ -1060,7 +1303,11 @@ const InstanceDetailPage: React.FC = () => {
         {externalAccess?.enabled && (
           <span
             className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded bg-white/80 px-1.5 py-0.5 text-[11px] font-semibold"
-            title={externalAccess.auth_mode === "password" ? "Key authentication enabled" : "Share link enabled"}
+            title={
+              externalAccess.auth_mode === "password"
+                ? "Key authentication enabled"
+                : "Share link enabled"
+            }
           >
             {externalAccess.auth_mode === "password" ? (
               <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1078,7 +1325,9 @@ const InstanceDetailPage: React.FC = () => {
           <div className="mb-3 flex items-center justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <div className="text-sm font-semibold text-slate-950">Share Link</div>
+                <div className="text-sm font-semibold text-slate-950">
+                  Share Link
+                </div>
               </div>
               <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
                 {externalAccess?.enabled && (
@@ -1089,7 +1338,12 @@ const InstanceDetailPage: React.FC = () => {
                   </span>
                 )}
                 {externalAccess?.last_used_at && (
-                  <span>Last used {new Date(externalAccess.last_used_at).toLocaleString(locale)}</span>
+                  <span>
+                    Last used{" "}
+                    {new Date(externalAccess.last_used_at).toLocaleString(
+                      locale,
+                    )}
+                  </span>
                 )}
               </div>
             </div>
@@ -1102,7 +1356,9 @@ const InstanceDetailPage: React.FC = () => {
               <X className="h-4 w-4" />
             </button>
           </div>
-          {externalError && <div className="mb-2 text-xs text-red-600">{externalError}</div>}
+          {externalError && (
+            <div className="mb-2 text-xs text-red-600">{externalError}</div>
+          )}
           <div className="grid gap-3 text-xs">
             <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
               <select
@@ -1124,7 +1380,9 @@ const InstanceDetailPage: React.FC = () => {
                     return;
                   }
                   setExternalExpiresMode("preset");
-                  setExternalExpiresPreset(value as ExternalAccessExpirationPreset);
+                  setExternalExpiresPreset(
+                    value as ExternalAccessExpirationPreset,
+                  );
                 }}
                 className="h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                 disabled={externalActionLoading !== null}
@@ -1140,7 +1398,9 @@ const InstanceDetailPage: React.FC = () => {
                 <input
                   type="datetime-local"
                   value={externalCustomExpiresAt}
-                  onChange={(event) => setExternalCustomExpiresAt(event.target.value)}
+                  onChange={(event) =>
+                    setExternalCustomExpiresAt(event.target.value)
+                  }
                   className="h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                   disabled={externalActionLoading !== null}
                   aria-label="Custom share link expiration"
@@ -1167,7 +1427,8 @@ const InstanceDetailPage: React.FC = () => {
                 <option value="none">Do not share files</option>
               </select>
               <span className="text-xs text-slate-500">
-                Existing links keep their current scope until you create a replacement link.
+                Existing links keep their current scope until you create a
+                replacement link.
               </span>
             </label>
             <div className="flex flex-wrap gap-2">
@@ -1189,6 +1450,28 @@ const InstanceDetailPage: React.FC = () => {
                 <KeyRound className="h-4 w-4" />
                 Create Password
               </button>
+              {externalAccess?.enabled && (
+                <button
+                  type="button"
+                  className="app-button-secondary"
+                  disabled={externalActionLoading !== null}
+                  onClick={() => setExternalResetTarget("url")}
+                >
+                  <RotateCw className="h-4 w-4" />
+                  Reset URL
+                </button>
+              )}
+              {externalAccess?.enabled && externalAccess.auth_mode === "password" && (
+                <button
+                  type="button"
+                  className="app-button-secondary"
+                  disabled={externalActionLoading !== null}
+                  onClick={() => setExternalResetTarget("password")}
+                >
+                  <KeyRound className="h-4 w-4" />
+                  Reset Password
+                </button>
+              )}
               {externalAccess?.enabled && (
                 <button
                   type="button"
@@ -1219,57 +1502,80 @@ const InstanceDetailPage: React.FC = () => {
                     className="cm-icon-button h-7 w-7 shrink-0"
                     title="Copy share link"
                     aria-label="Copy share link"
-                    onClick={() => void copyExternalValue("share-url", externalShareURL)}
+                    onClick={() =>
+                      void copyExternalValue("share-url", externalShareURL)
+                    }
                   >
                     <Copy className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
             )}
-            {externalAccess?.enabled && externalAccess.auth_mode === "password" && externalPassword && (
-              <div className="grid gap-1.5">
-                <label className="text-xs font-semibold uppercase text-slate-500">
-                  Password
-                </label>
-                <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5">
-                  <input
-                    type={externalPasswordVisible ? "text" : "password"}
-                    readOnly
-                    aria-label="Share link password"
-                    value={externalPassword}
-                    className="min-w-0 flex-1 truncate bg-transparent font-mono text-xs text-slate-700 outline-none"
-                  />
-                  <button
-                    type="button"
-                    className="cm-icon-button h-7 w-7 shrink-0"
-                    title="Copy password"
-                    aria-label="Copy password"
-                    onClick={() => void copyExternalValue("password", externalPassword)}
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    className="cm-icon-button h-7 w-7 shrink-0"
-                    title={externalPasswordVisible ? "Hide password" : "Show password"}
-                    aria-label={externalPasswordVisible ? "Hide password" : "Show password"}
-                    onClick={() => setExternalPasswordVisible((visible) => !visible)}
-                  >
-                    {externalPasswordVisible ? (
-                      <EyeOff className="h-3.5 w-3.5" />
-                    ) : (
-                      <Eye className="h-3.5 w-3.5" />
-                    )}
-                  </button>
+            {externalAccess?.enabled &&
+              externalAccess.auth_mode === "password" &&
+              externalPassword && (
+                <div className="grid gap-1.5">
+                  <label className="text-xs font-semibold uppercase text-slate-500">
+                    Password
+                  </label>
+                  <div className="flex min-w-0 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5">
+                    <input
+                      type={externalPasswordVisible ? "text" : "password"}
+                      readOnly
+                      aria-label="Share link password"
+                      value={externalPassword}
+                      className="min-w-0 flex-1 truncate bg-transparent font-mono text-xs text-slate-700 outline-none"
+                    />
+                    <button
+                      type="button"
+                      className="cm-icon-button h-7 w-7 shrink-0"
+                      title="Copy password"
+                      aria-label="Copy password"
+                      onClick={() =>
+                        void copyExternalValue("password", externalPassword)
+                      }
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      className="cm-icon-button h-7 w-7 shrink-0"
+                      title={
+                        externalPasswordVisible
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      aria-label={
+                        externalPasswordVisible
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      onClick={() =>
+                        setExternalPasswordVisible((visible) => !visible)
+                      }
+                    >
+                      {externalPasswordVisible ? (
+                        <EyeOff className="h-3.5 w-3.5" />
+                      ) : (
+                        <Eye className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
+            {!externalAccess?.enabled &&
+              !externalShareURL &&
+              !externalPassword &&
+              !externalError && (
+                <div className="rounded-md border border-dashed border-slate-200 px-3 py-4 text-center text-sm text-slate-500">
+                  Create a share link or password to view access details.
+                </div>
+              )}
+            {copyState && (
+              <span className="text-xs font-medium text-emerald-700">
+                Copied
+              </span>
             )}
-            {!externalAccess?.enabled && !externalShareURL && !externalPassword && !externalError && (
-              <div className="rounded-md border border-dashed border-slate-200 px-3 py-4 text-center text-sm text-slate-500">
-                Create a share link or password to view access details.
-              </div>
-            )}
-            {copyState && <span className="text-xs font-medium text-emerald-700">Copied</span>}
           </div>
         </div>
       )}
@@ -1280,60 +1586,74 @@ const InstanceDetailPage: React.FC = () => {
     const pinnedWorkspaceHeight = workspaceHeightPx;
 
     return (
-    <div
-      ref={liteRootRef}
-      className={`flex min-h-0 flex-1 flex-col gap-2 ${
-        bottomPanelExpanded ? "" : "overflow-hidden"
-      }`}
-    >
-      <div ref={liteHeaderRef} className="flex shrink-0 flex-col gap-2">
-        {renderHeaderSection(shareLinkControl)}
-        {renderActionMessage()}
-      </div>
-      <section
-        ref={workspaceSectionRef}
-        style={
-          pinnedWorkspaceHeight
-            ? { height: pinnedWorkspaceHeight, minHeight: pinnedWorkspaceHeight, flexShrink: 0 }
-            : { minHeight: 420, flex: 1 }
-        }
-        className={`grid shrink-0 grid-cols-1 grid-rows-[minmax(0,1fr)] gap-4 overflow-hidden min-h-[420px] ${
-          workspaceVisible ? "xl:grid-cols-[minmax(0,1fr)_minmax(360px,28rem)]" : "xl:grid-cols-1"
+      <div
+        ref={liteRootRef}
+        className={`flex min-h-0 flex-1 flex-col gap-2 ${
+          bottomPanelExpanded ? "" : "overflow-hidden"
         }`}
       >
-        <div className="h-full min-h-0 min-w-0">
-          <InstanceServiceFrame
+        <div ref={liteHeaderRef} className="flex shrink-0 flex-col gap-2">
+          {renderHeaderSection(shareLinkControl)}
+          {renderActionMessage()}
+        </div>
+        <section
+          ref={workspaceSectionRef}
+          style={
+            pinnedWorkspaceHeight
+              ? {
+                  height: pinnedWorkspaceHeight,
+                  minHeight: pinnedWorkspaceHeight,
+                  flexShrink: 0,
+                }
+              : { minHeight: 420, flex: 1 }
+          }
+          className={`grid shrink-0 grid-cols-1 grid-rows-[minmax(0,1fr)] gap-4 overflow-hidden min-h-[420px] ${workspaceVisible ? "xl:grid-cols-[minmax(0,1fr)_minmax(360px,28rem)]" : "xl:grid-cols-1"}`}
+        >
+          <div className="h-full min-h-0 min-w-0">
+            <InstanceServiceFrame
+              instanceId={instance.id}
+              instanceName={instance.name}
+              instanceType={instance.type}
+              instanceMode={instance.instance_mode}
+              availability={availability}
+              reloadToken={serviceFrameReloadToken}
+              openCodeInitialDirectory={openCodeInitialDirectory}
+              workspaceVisible={supportsWorkspace(instance) ? workspaceVisible : undefined}
+              onWorkspaceVisibilityChange={supportsWorkspace(instance) ? setWorkspaceVisible : undefined}
+            />
+          </div>
+          {workspaceVisible &&
+            (supportsWorkspace(instance) ? (
+              <div className="h-full min-h-0 min-w-0">
+                <WorkspaceFileManager
+                  instanceId={instance.id}
+                  initialPath={
+                    instance.type === "opencode" &&
+                    instance.instance_mode === "lite"
+                      ? "starter"
+                      : undefined
+                  }
+                />
+              </div>
+            ) : (
+              <div className="cm-surface flex h-full min-h-[420px] items-center justify-center text-sm text-slate-500">
+                No workspace
+              </div>
+            ))}
+        </section>
+        <div ref={liteBottomRef} className="flex shrink-0 flex-col gap-2">
+          <InstanceSkillHubPanel
+            instance={instance}
+            onRuntimeDetailsChange={setRuntimeDetails}
+            onPanelExpandedChange={handleSkillPanelExpandedChange}
+          />
+          <InstanceSessionUsagePanel
             instanceId={instance.id}
-            instanceName={instance.name}
             instanceType={instance.type}
-            availability={availability}
-            workspaceVisible={supportsWorkspace(instance) ? workspaceVisible : undefined}
-            onWorkspaceVisibilityChange={supportsWorkspace(instance) ? setWorkspaceVisible : undefined}
+            onPanelExpandedChange={handleSessionPanelExpandedChange}
           />
         </div>
-        {workspaceVisible && (supportsWorkspace(instance) ? (
-          <div className="h-full min-h-0 min-w-0">
-            <WorkspaceFileManager instanceId={instance.id} />
-          </div>
-        ) : (
-          <div className="cm-surface flex h-full min-h-[420px] items-center justify-center text-sm text-slate-500">
-            No workspace
-          </div>
-        ))}
-      </section>
-      <div ref={liteBottomRef} className="flex shrink-0 flex-col gap-2">
-        <InstanceSkillHubPanel
-          instance={instance}
-          onRuntimeDetailsChange={setRuntimeDetails}
-          onPanelExpandedChange={handleSkillPanelExpandedChange}
-        />
-        <InstanceSessionUsagePanel
-          instanceId={instance.id}
-          instanceType={instance.type}
-          onPanelExpandedChange={handleSessionPanelExpandedChange}
-        />
       </div>
-    </div>
     );
   };
 
@@ -1342,15 +1662,33 @@ const InstanceDetailPage: React.FC = () => {
   const commands = [...(runtimeDetails?.commands ?? [])].sort((left, right) => {
     const leftTime = new Date(eventTime(left)).getTime();
     const rightTime = new Date(eventTime(right)).getTime();
-    return (Number.isFinite(rightTime) ? rightTime : 0) - (Number.isFinite(leftTime) ? leftTime : 0);
+    return (
+      (Number.isFinite(rightTime) ? rightTime : 0) -
+      (Number.isFinite(leftTime) ? leftTime : 0)
+    );
   });
-  const overviewResourceRows = resourceRows(runtimeDetails, instance).filter((row) =>
-    ["CPU", "Memory", "Disk"].includes(row.label),
+  const overviewResourceRows = resourceRows(runtimeDetails, instance).filter(
+    (row) => ["CPU", "Memory", "Disk"].includes(row.label),
   );
   const runtimeOverviewRows = [
-    { label: "Infra", value: runtime?.infra_status || instance.status, detail: "Infrastructure", percent: null },
-    { label: "Agent", value: agent?.status || runtime?.agent_status || "-", detail: "Runtime agent", percent: null },
-    { label: "OpenClaw", value: runtime?.openclaw_status || "-", detail: "Process", percent: null },
+    {
+      label: "Infra",
+      value: runtime?.infra_status || instance.status,
+      detail: "Infrastructure",
+      percent: null,
+    },
+    {
+      label: "Agent",
+      value: agent?.status || runtime?.agent_status || "-",
+      detail: "Runtime agent",
+      percent: null,
+    },
+    {
+      label: "OpenClaw",
+      value: runtime?.openclaw_status || "-",
+      detail: "Process",
+      percent: null,
+    },
     ...overviewResourceRows,
   ];
   const desktopStreamDirty = desktopStreamProfile !== desktopStreamSavedProfile;
@@ -1362,8 +1700,18 @@ const InstanceDetailPage: React.FC = () => {
   const renderActionMessage = () =>
     actionMessage ? (
       <div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-        <RotateCw className={`h-4 w-4 ${restartActionActive ? "animate-spin" : ""}`} />
-        <span>{actionMessage}</span>
+        <RotateCw
+          className={`h-4 w-4 ${restartActionActive ? "animate-spin" : ""}`}
+        />
+        <span className="min-w-0 flex-1">{actionMessage}</span>
+        <button
+          type="button"
+          className="rounded p-0.5 text-amber-700 hover:bg-amber-100 hover:text-amber-900"
+          aria-label={t("common.close")}
+          onClick={dismissRestartNotice}
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
     ) : null;
 
@@ -1373,30 +1721,41 @@ const InstanceDetailPage: React.FC = () => {
       {renderActionMessage()}
       <section
         data-layout="pro-desktop-workspace"
-        className={`grid items-start gap-4 ${
-          workspaceVisible ? "xl:grid-cols-[minmax(0,7fr)_minmax(380px,3fr)]" : "xl:grid-cols-1"
-        }`}
+        className={`grid items-start gap-4 ${workspaceVisible ? "xl:grid-cols-[minmax(0,7fr)_minmax(380px,3fr)]" : "xl:grid-cols-1"}`}
       >
         <div className="h-[clamp(520px,calc(100vh-10rem),760px)] min-w-0 overflow-hidden">
           <InstanceServiceFrame
             instanceId={instance.id}
             instanceName={instance.name}
             instanceType={instance.type}
+            instanceMode={instance.instance_mode}
             availability={availability}
+            reloadToken={serviceFrameReloadToken}
             workspaceVisible={supportsWorkspace(instance) ? workspaceVisible : undefined}
             onWorkspaceVisibilityChange={supportsWorkspace(instance) ? setWorkspaceVisible : undefined}
           />
         </div>
 
-        {workspaceVisible && (supportsWorkspace(instance) ? (
-          <div className="h-[clamp(520px,calc(100vh-10rem),760px)] min-w-0 overflow-hidden">
-            <WorkspaceFileManager instanceId={instance.id} initialPath="/config" />
-          </div>
-        ) : (
-          <div className="cm-surface flex h-[clamp(520px,calc(100vh-10rem),760px)] min-w-0 items-center justify-center text-sm text-slate-500">
-            No workspace
-          </div>
-        ))}
+        {workspaceVisible &&
+          (supportsWorkspace(instance) ? (
+            <div className="h-[clamp(520px,calc(100vh-10rem),760px)] min-w-0 overflow-hidden">
+              <WorkspaceFileManager
+                instanceId={instance.id}
+                initialPath="/config"
+                onSelectDirectory={
+                  instance.type === "opencode" &&
+                  instance.instance_mode === "pro"
+                    ? handleSelectOpenCodeProject
+                    : undefined
+                }
+                selectingDirectory={actionLoading === "select-opencode-project"}
+              />
+            </div>
+          ) : (
+            <div className="cm-surface flex h-[clamp(520px,calc(100vh-10rem),760px)] min-w-0 items-center justify-center text-sm text-slate-500">
+              No workspace
+            </div>
+          ))}
       </section>
 
       {(instance.runtime_type || "desktop") === "desktop" && (
@@ -1421,15 +1780,22 @@ const InstanceDetailPage: React.FC = () => {
                 }
                 className="app-button-secondary disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {actionLoading === "desktop-stream-profile" ? t("common.saving") : t("common.save")}
+                {actionLoading === "desktop-stream-profile"
+                  ? t("common.saving")
+                  : t("common.save")}
               </button>
               <button
                 type="button"
                 onClick={handleApplyDesktopStreamProfile}
-                disabled={actionLoading === "desktop-stream-profile" || actionLoading === "desktop-stream-restart"}
+                disabled={
+                  actionLoading === "desktop-stream-profile" ||
+                  actionLoading === "desktop-stream-restart"
+                }
                 className="app-button-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <RotateCw className={`h-4 w-4 ${actionLoading === "desktop-stream-restart" ? "animate-spin" : ""}`} />
+                <RotateCw
+                  className={`h-4 w-4 ${actionLoading === "desktop-stream-restart" ? "animate-spin" : ""}`}
+                />
                 {actionLoading === "desktop-stream-restart"
                   ? t("instances.restarting")
                   : desktopStreamDirty
@@ -1452,8 +1818,12 @@ const InstanceDetailPage: React.FC = () => {
                       : "border-slate-200 bg-white hover:border-indigo-200"
                   }`}
                 >
-                  <div className="text-sm font-semibold text-slate-950">{t(profile.labelKey)}</div>
-                  <div className="mt-2 font-mono text-xs text-slate-500">{profile.detail}</div>
+                  <div className="text-sm font-semibold text-slate-950">
+                    {t(profile.labelKey)}
+                  </div>
+                  <div className="mt-2 font-mono text-xs text-slate-500">
+                    {profile.detail}
+                  </div>
                 </button>
               );
             })}
@@ -1470,17 +1840,24 @@ const InstanceDetailPage: React.FC = () => {
           onRuntimeDetailsChange={setRuntimeDetails}
         />
 
-        <section data-section="runtime-overview" className="cm-surface px-3 py-3">
+        <section
+          data-section="runtime-overview"
+          className="cm-surface px-3 py-3"
+        >
           <div className="mb-2 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-indigo-600" />
-              <h2 className="text-sm font-semibold text-slate-950">Runtime Overview</h2>
+              <h2 className="text-sm font-semibold text-slate-950">
+                Runtime Overview
+              </h2>
             </div>
             <span className="text-xs text-slate-500">
               {formatDateTime(runtime?.last_reported_at, locale)}
             </span>
           </div>
-          {runtimeError && <div className="mb-2 text-xs text-red-600">{runtimeError}</div>}
+          {runtimeError && (
+            <div className="mb-2 text-xs text-red-600">{runtimeError}</div>
+          )}
           {runtimeDetails?.llm_governance && (
             <div className="mb-2">
               <span
@@ -1502,21 +1879,34 @@ const InstanceDetailPage: React.FC = () => {
           )}
           <div className="grid gap-1.5">
             {runtimeOverviewRows.map((row) => (
-              <Metric key={row.label} label={row.label} value={row.value} detail={row.detail} percent={row.percent} />
+              <Metric
+                key={row.label}
+                label={row.label}
+                value={row.value}
+                detail={row.detail}
+                percent={row.percent}
+              />
             ))}
           </div>
         </section>
       </section>
 
-      <InstanceSessionUsagePanel instanceId={instance.id} instanceType={instance.type} />
+      <InstanceSessionUsagePanel
+        instanceId={instance.id}
+        instanceType={instance.type}
+      />
 
       <section className="cm-surface px-4 py-4">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Clock3 className="h-4 w-4 text-indigo-600" />
-            <h2 className="text-sm font-semibold text-slate-950">Runtime Events</h2>
+            <h2 className="text-sm font-semibold text-slate-950">
+              Runtime Events
+            </h2>
           </div>
-          <span className="text-xs text-slate-500">{commands.length} events</span>
+          <span className="text-xs text-slate-500">
+            {commands.length} events
+          </span>
         </div>
         <div className="max-h-[280px] overflow-y-auto pr-1">
           {commands.length === 0 ? (
@@ -1526,10 +1916,17 @@ const InstanceDetailPage: React.FC = () => {
           ) : (
             <div className="space-y-2">
               {commands.slice(0, 12).map((command) => (
-                <div key={command.id} className="rounded-md border border-slate-200 px-3 py-2">
+                <div
+                  key={command.id}
+                  className="rounded-md border border-slate-200 px-3 py-2"
+                >
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-slate-900">{command.command_type}</span>
-                    <span className={`rounded-md border px-2 py-0.5 text-xs font-medium ${eventTone(command.status)}`}>
+                    <span className="text-sm font-medium text-slate-900">
+                      {command.command_type}
+                    </span>
+                    <span
+                      className={`rounded-md border px-2 py-0.5 text-xs font-medium ${eventTone(command.status)}`}
+                    >
                       {command.status}
                     </span>
                   </div>
@@ -1537,7 +1934,9 @@ const InstanceDetailPage: React.FC = () => {
                     {formatDateTime(eventTime(command), locale)}
                   </div>
                   {command.error_message && (
-                    <div className="mt-1 text-xs text-red-600">{command.error_message}</div>
+                    <div className="mt-1 text-xs text-red-600">
+                      {command.error_message}
+                    </div>
                   )}
                 </div>
               ))}
@@ -1552,8 +1951,36 @@ const InstanceDetailPage: React.FC = () => {
     <UserLayout
       title={isDedicatedInstance ? instance.name : undefined}
       fillHeight={!isDedicatedInstance}
-      scrollableMain={!isDedicatedInstance && (skillPanelExpanded || sessionPanelExpanded)}
+      scrollableMain={
+        !isDedicatedInstance && (skillPanelExpanded || sessionPanelExpanded)
+      }
     >
+      <ConfirmDialog
+        open={externalResetTarget !== null}
+        title={externalResetTarget === "password" ? "Reset share password" : "Reset share URL"}
+        message={
+          externalResetTarget === "password"
+            ? "The old password and existing authenticated share sessions will stop working immediately. The share URL, expiration, and workspace permissions will stay unchanged."
+            : "The old share URL will stop working immediately. Password, expiration, and workspace permissions will stay unchanged."
+        }
+        confirmLabel={externalResetTarget === "password" ? "Reset Password" : "Reset URL"}
+        cancelLabel={t("common.cancel")}
+        destructive
+        loading={
+          externalActionLoading ===
+          (externalResetTarget === "password" ? "reset-password" : "reset-url")
+        }
+        onCancel={() => {
+          if (externalActionLoading === null) {
+            setExternalResetTarget(null);
+          }
+        }}
+        onConfirm={() =>
+          void handleExternalAction(
+            externalResetTarget === "password" ? "reset-password" : "reset-url",
+          )
+        }
+      />
       <ConfirmDialog
         open={showDeleteDialog}
         title={t("common.delete")}
@@ -1610,9 +2037,13 @@ function Metric({
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <div className="text-xs text-slate-500">{label}</div>
-          <div className="truncate text-sm font-semibold text-slate-950">{value}</div>
+          <div className="truncate text-sm font-semibold text-slate-950">
+            {value}
+          </div>
         </div>
-        <div className="shrink-0 text-right text-[11px] text-slate-400">{detail}</div>
+        <div className="shrink-0 text-right text-[11px] text-slate-400">
+          {detail}
+        </div>
       </div>
       {percent !== null && (
         <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-slate-100">

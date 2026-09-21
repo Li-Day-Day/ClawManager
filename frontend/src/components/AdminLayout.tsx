@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Bot,
@@ -9,6 +9,7 @@ import {
   Home,
   LogOut,
   Monitor,
+  Network,
   Server,
   Settings,
   Shield,
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useI18n } from '../contexts/I18nContext';
+import AppVersion from './AppVersion';
 import LanguageSwitcher from './LanguageSwitcher';
 import { CATEGORIES } from '../pages/admin/protection/_data';
 
@@ -38,6 +40,7 @@ const appLogoSrc = '/lobster_logo.png';
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { t } = useI18n();
   const [profileExpanded, setProfileExpanded] = useState(false);
@@ -51,6 +54,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
     { path: '/admin/users', label: t('nav.users'), icon: Users },
     { path: '/admin/instances', label: t('nav.instances'), icon: Monitor },
     { path: '/admin/runtime-pods', label: t('nav.runtime'), icon: Server },
+    { path: '/admin/northbound', label: '北向接口', icon: Network },
     {
       path: '/admin/secplane',
       label: t('nav.secplane'),
@@ -87,9 +91,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
     return candidates.some((path) => location.pathname === path || location.pathname.startsWith(`${path}/`));
   };
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // Keep the auth store's notice visible; do not abort logout by reloading.
+    } finally {
+      navigate('/login', { replace: true });
+    }
   };
 
   const renderNavItem = (item: NavItem) => {
@@ -187,7 +196,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
                   alt="ClawManager logo"
                   className="h-9 w-9 object-contain"
                 />
-                <span className="text-lg font-semibold">{t('app.name')}</span>
+                <span className="min-w-0">
+                  <span className="block text-lg font-semibold">{t('app.name')}</span>
+                  <span className="mt-1 block max-w-40">
+                    <AppVersion />
+                  </span>
+                </span>
               </Link>
 
               <div className="flex items-center gap-2">
@@ -228,12 +242,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
                   alt="ClawManager logo"
                   className="h-9 w-9 object-contain"
                 />
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-1 text-xs font-medium text-slate-500">
                     <Gauge className="h-3.5 w-3.5" />
                     {t('adminLayout.admin')}
                   </div>
                   <div className="text-lg font-semibold leading-tight">{t('app.name')}</div>
+                  <div className="mt-1 max-w-40">
+                    <AppVersion />
+                  </div>
                 </div>
               </Link>
             </div>

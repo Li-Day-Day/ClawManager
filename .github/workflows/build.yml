@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 'codex/**'
       - 'feature/**'
       - 'fix/**'
   pull_request:
@@ -27,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -36,6 +35,30 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+      - name: Test Hermes iframe boundaries
+        run: node --test src/lib/hermesDesktopFrame.test.mjs src/services/authService.test.mjs ../e2e/desktop-proxy-edge.test.mjs
+
+  hermes-desktop:
+    name: Hermes Desktop Web Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install renderer dependencies
+        run: npm ci --prefix hermes-desktop-web --ignore-scripts
+
+      - name: Build pinned Desktop renderer
+        run: node hermes-desktop-web/scripts/build.mjs
+
+      - name: Test browser bridge
+        run: npm test --prefix hermes-desktop-web
 
   backend:
     name: Backend Build
@@ -68,6 +91,7 @@ jobs:
     needs:
       - frontend
       - backend
+      - hermes-desktop
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -85,6 +109,9 @@ jobs:
           file: ./Dockerfile
           push: false
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            VERSION=ci-${{ github.sha }}
+            VCS_REF=${{ github.sha }}
           tags: clawmanager:ci
 
   k8s-smoke:
@@ -101,7 +128,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build local application image
-        run: docker build -t clawmanager:ci .
+        run: docker build --build-arg VERSION=ci-${GITHUB_SHA} --build-arg VCS_REF=${GITHUB_SHA} -t clawmanager:ci .
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.12.0
@@ -207,6 +234,9 @@ jobs:
 
       - name: Verify health endpoint
         run: curl --fail --insecure https://127.0.0.1:8443/healthz
+
+      - name: Verify version endpoint
+        run: curl --fail --insecure https://127.0.0.1:8443/api/v1/version | grep -F "ci-${GITHUB_SHA}"
 
       - name: Verify web page is reachable
         run: curl --fail --insecure https://127.0.0.1:8443/ | grep -i "<!doctype html>"

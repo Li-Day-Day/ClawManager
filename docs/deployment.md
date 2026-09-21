@@ -1,3 +1,5 @@
+[← Back to README](../README.md)
+
 # Deployment Guide
 
 ClawManager is packaged as a Kubernetes-first platform. This guide is the operational entry point for deploying the control plane, locating the relevant manifests in the repository, and understanding which services are expected to come up in a working environment.
@@ -20,6 +22,8 @@ The cluster profile is validated with Longhorn as the example CSI implementation
 - MySQL for application state
 - MinIO for object storage-backed features
 - `skill-scanner` for skill analysis workflows
+- Team Redis and shared workspace storage services
+- Shared Lite Runtime pools for OpenClaw, Hermes, OpenCode, and DeepSeek Harness
 - Kubernetes Services used for portal, gateway, and supporting traffic paths
 
 ## Repository Entry Points
@@ -28,6 +32,7 @@ The cluster profile is validated with Longhorn as the example CSI implementation
 - Kubernetes cluster manifest: [`deployments/k8s/cluster/clawmanager.yaml`](../deployments/k8s/cluster/clawmanager.yaml)
 - K3s single-node manifest: [`deployments/k3s/single-node/clawmanager.yaml`](../deployments/k3s/single-node/clawmanager.yaml)
 - K3s cluster manifest: [`deployments/k3s/cluster/clawmanager.yaml`](../deployments/k3s/cluster/clawmanager.yaml)
+- Optional Northbound API add-on: [`deployments/k8s/northbound/`](../deployments/k8s/northbound/README.md)
 - Container startup script: [`deployments/container/start.sh`](../deployments/container/start.sh)
 - Nginx config: [`deployments/nginx/nginx.conf`](../deployments/nginx/nginx.conf)
 
@@ -39,7 +44,7 @@ The cluster profile is validated with Longhorn as the example CSI implementation
 4. Review the bundled manifest and adjust secrets, images, StorageClass names, and ingress exposure for your environment.
 5. Deploy the platform components into the cluster.
 6. Wait for the core services to become ready.
-7. Validate frontend access, AI Gateway management pages, Security Center connectivity, and runtime creation flows.
+7. Validate frontend access, AI Gateway management pages, Security Protection connectivity, and OpenClaw/Hermes/OpenCode/DeepSeek Harness runtime creation flows.
 
 Single-node example:
 
@@ -59,6 +64,101 @@ kubectl apply -f deployments/k8s/cluster/clawmanager.yaml
 kubectl get pvc -n clawmanager-system
 kubectl get pods -n clawmanager-system
 ```
+
+## Optional Northbound API
+
+The base deployment profiles do not expose the Northbound API. To enable it,
+upgrade the ClawManager Core first, then apply the separate
+[Northbound Kubernetes add-on](../deployments/k8s/northbound/README.md). The
+Northbound Gateway is the only public API endpoint; keep the Core service
+private and preserve the documented mTLS, credential, and network-policy
+boundaries. The external port may be published through a NodePort, load
+balancer, or Ingress and is not part of the API contract.
+
+Follow the [Northbound upgrade guide](./northbound-upgrade-guide.md) for an
+existing installation and use the
+[OpenAPI 3.1 specification](./northbound-openapi.yaml) as the client contract.
+
+## OpenCode Lite Public-Origin Strategy
+
+OpenCode Lite serves its web application and APIs from absolute root paths such
+as `/assets` and `/global/health`. Each logical OpenCode instance therefore
+needs a dedicated browser origin even though the runtime Pod is shared. Set:
+
+```text
+CLAWMANAGER_OPENCODE_PUBLIC_URL_TEMPLATE
+```
+
+The value must be an absolute HTTP(S) URL containing `{instance_id}`. The
+bundled manifests expose the variable with an empty value; installers must set
+it to a hostname covered by wildcard DNS and TLS, for example:
+
+```text
+CLAWMANAGER_OPENCODE_PUBLIC_URL_TEMPLATE=https://opencode-{instance_id}.172-16-1-12.nip.io:39443/
+```
+
+For an offline installation, use a deployment-owned wildcard DNS zone:
+
+```text
+CLAWMANAGER_OPENCODE_PUBLIC_URL_TEMPLATE=https://opencode-{instance_id}.clawmanager.test:39443/
+```
+
+The wildcard record must resolve to the ClawManager gateway, and the gateway
+certificate must cover the generated hostnames. Apply and verify the setting:
+
+```bash
+kubectl -n clawmanager-system set env deployment/clawmanager-app \
+  'CLAWMANAGER_OPENCODE_PUBLIC_URL_TEMPLATE=https://opencode-{instance_id}.clawmanager.test:39443/'
+kubectl -n clawmanager-system rollout status deployment/clawmanager-app
+nslookup opencode-123.clawmanager.test
+curl -I https://opencode-123.clawmanager.test:39443/
+```
+
+The first browser navigation carries a short-lived access token. Nginx and the
+control plane validate it, promote it to an origin-scoped HttpOnly cookie, and
+redirect to a clean root-relative URL. Existing instances do not need to be
+recreated. An empty or invalid template falls back to the legacy path proxy,
+which is not compatible with current OpenCode root-relative web assets and
+should be treated as a deployment error when OpenCode Lite is enabled.
+
+## DeepSeek Harness Runtime
+
+DeepSeek Harness is available in both runtime modes:
+
+- Lite runs `dsh web` as an isolated process in the shared
+  `deepseek-harness-runtime` pool. Its persistent home is
+  `<workspace>/home/.dsh`.
+- Pro runs a dedicated Webtop Deployment on port `3001`; `dsh web` listens on
+  loopback port `3080` inside the desktop and Chromium opens it automatically.
+  Its persistent home is `/config/.dsh`.
+
+The runtime image source is owned by the
+[AgentsRuntime repository](https://github.com/Iamlovingit/AgentsRuntime/tree/main/deepseek-harness)
+under `deepseek-harness/`, not by ClawManager. It pins `@deepseek-ai/dsh` to an
+explicit release candidate and publishes the `deepseek-harness` and
+`deepseek-harness-lite` images. Both modes receive the ClawManager-managed
+OpenAI-compatible base URL, instance credential, and model list. The bundled
+Cordis patch exposes only that managed provider and disables the direct public
+DeepSeek web-search provider.
+
+The DeepSeek Harness browser uses root-relative HTTP and websocket routes. Lite
+therefore requires a dedicated origin template:
+
+```text
+CLAWMANAGER_DEEPSEEK_HARNESS_PUBLIC_URL_TEMPLATE=https://deepseek-harness-{instance_id}.172-16-1-12.nip.io:39443/
+```
+
+For an offline deployment, use the same wildcard DNS and certificate strategy
+described above, for example:
+
+```text
+CLAWMANAGER_DEEPSEEK_HARNESS_PUBLIC_URL_TEMPLATE=https://deepseek-harness-{instance_id}.clawmanager.test:39443/
+```
+
+The `{instance_id}` placeholder is required. The bundled Nginx configuration
+authenticates the short-lived bootstrap token, promotes it to an origin-scoped
+cookie, and forwards HTTP and websocket traffic through the control plane to
+the assigned Lite process.
 
 ## Storage Profiles
 
@@ -91,19 +191,30 @@ Unsupported combinations:
 - durable MySQL, Redis, MinIO, workspace, or object data on `emptyDir`
 - cluster profile with implicit HostPath fallback
 
+## ARM64 Deployment
+
+The official ClawManager and Skill Scanner images are published for `linux/arm64`, but a complete installation also uses MySQL, Redis, MinIO/workspace services, and the selected OpenClaw, Hermes, OpenCode, or DeepSeek Harness Runtime images. Verify the manifest of **every pinned image** before deploying to ARM nodes; platform support does not make a custom Runtime image ARM64-compatible.
+
+For mixed-architecture clusters, use architecture-compatible tags together with node selectors or affinity. The shared Lite profiles include OpenClaw, Hermes, OpenCode, and DeepSeek Harness pools, so validate every enabled pool image even when users initially see only one Runtime. Use SSD-backed persistent storage, sufficient memory, and reproducible tags rather than `latest`, then perform the same PVC, Runtime creation, desktop, and model acceptance checks as on amd64.
+
 ## Operational Notes
 
 - ClawManager is designed around in-cluster services and platform-mediated access rather than direct pod exposure.
 - Resource Management features depend on object storage and `skill-scanner` being available.
+- The deployment profiles include first-start MySQL initialization through the `clawmanager-mysql-init` ConfigMap. Existing database volumes do not re-run those initialization scripts.
+- Lite instances are processes/workspaces inside the corresponding shared Runtime Pod; they do not create one Pod per user instance.
 - Runtime workspace `.openclaw` and `.hermes` archive import/export size is controlled by `CLAWMANAGER_WORKSPACE_ARCHIVE_MAX_MIB`. The default is `500` MiB; set the env var on the ClawManager app deployment when a larger or smaller limit is needed.
 - For install issues, collect `kubectl get storageclass`, `kubectl get pvc -n clawmanager-system`, `kubectl get pods -n clawmanager-system`, `kubectl get events -n clawmanager-system --sort-by=.lastTimestamp`, and `kubectl describe pvc -n clawmanager-system <pvc-name>` output before filing an issue.
 - Production environments should review images, credentials, TLS, persistence, and networking policies before rollout.
 
 ## Related Guides
 
-- [Admin and User Guide](./admin-user-guide.md)
-- [Agent Control Plane Guide](./agent-control-plane.md)
+- [User Manual](./use_guide_en.md)
 - [AI Gateway Guide](./aigateway.md)
-- [Security / Skill Scanner Guide](./security-skill-scanner.md)
+- [Security Protection Platform](./security-platform.md)
 - [Resource Management Guide](./resource-management.md)
-- [Developer Guide](./developer-guide.md)
+- [Skill Hub Guide](./skill-hub-guide_en.md)
+- [Northbound API Deployment Add-on](../deployments/k8s/northbound/README.md)
+- [Northbound API Guide (Chinese)](./northbound-api-guide.md)
+- [Northbound API Upgrade Guide (Chinese)](./northbound-upgrade-guide.md)
+- [Northbound OpenAPI 3.1 Specification](./northbound-openapi.yaml)

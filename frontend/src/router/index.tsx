@@ -24,6 +24,7 @@ import AdminSecurityScannerConfigPage from '../pages/admin/security/AdminSecurit
 import RiskRulesPage from '../pages/admin/RiskRulesPage';
 import ModelManagementPage from '../pages/admin/ModelManagementPage';
 import SystemSettingsPage from '../pages/admin/SystemSettingsPage';
+import NorthboundSettingsPage from '../pages/admin/NorthboundSettingsPage';
 import RuntimePodsPage from '../pages/admin/RuntimePodsPage';
 import UserSettingsPage from '../pages/settings/UserSettingsPage';
 import OpenClawConfigCenterPage from '../pages/openclaw/OpenClawConfigCenterPage';
@@ -55,8 +56,11 @@ import CreateInstancePage from '../pages/instances/CreateInstancePage';
 import InstanceDetailPage from '../pages/instances/InstanceDetailPage';
 import InstancePortalPage from '../pages/instances/InstancePortalPage';
 import SharedInstancePage from '../pages/instances/SharedInstancePage';
+import IEISystemListInstancesPage from '../pages/instances/IEISystemListInstancesPage';
+import IEISystemInstancePage from '../pages/instances/IEISystemInstancePage';
 import TeamListPage from '../pages/teams/TeamListPage';
 import CreateTeamPage from '../pages/teams/CreateTeamPage';
+import CustomTeamTemplatesPage from '../pages/teams/CustomTeamTemplatesPage';
 import TeamDetailPage from '../pages/teams/TeamDetailPage';
 import SkillHubPage from '../pages/skill-hub/SkillHubPage';
 
@@ -168,6 +172,8 @@ function AppRoutes() {
         }
       />
       <Route path="/share/:code" element={<SharedInstancePage />} />
+      <Route path="/ieisystem/list-instances" element={<IEISystemListInstancesPage />} />
+      <Route path="/ieisystem/instances/:id" element={<IEISystemInstancePage />} />
 
       {/* User Routes */}
       <Route
@@ -225,6 +231,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CreateTeamPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teams/custom-templates"
+        element={
+          <ProtectedRoute>
+            <CustomTeamTemplatesPage />
           </ProtectedRoute>
         }
       />
@@ -477,6 +491,14 @@ function AppRoutes() {
         }
       />
       <Route
+		path="/admin/northbound"
+		element={
+		  <AdminRoute>
+			<NorthboundSettingsPage />
+		  </AdminRoute>
+		}
+	  />
+	  <Route
         path="/admin/settings"
         element={
           <AdminRoute>
@@ -484,7 +506,6 @@ function AppRoutes() {
           </AdminRoute>
         }
       />
-
       {/* Default Redirect */}
       <Route path="/" element={<DashboardRedirect />} />
     </Routes>

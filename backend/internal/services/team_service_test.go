@@ -1,11 +1,15 @@
 package services
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -261,6 +265,9 @@ func TestBuildTeamMemberInstanceRequestSupportsLiteMode(t *testing.T) {
 	if req.RuntimeType != RuntimeBackendGateway {
 		t.Fatalf("expected lite Team member to target gateway runtime, got %q", req.RuntimeType)
 	}
+	if req.DiskGB != DefaultLiteDiskGB {
+		t.Fatalf("expected Lite Team member disk to default to %dGiB, got %dGiB", DefaultLiteDiskGB, req.DiskGB)
+	}
 
 	rosterJSON := `{"teamId":"8","members":[{"memberId":"lite-worker"}]}`
 	liteReq := service.buildTeamMemberInstanceRequestWithSecrets(team, memberPlan, &teamRuntimeSecrets{
@@ -273,6 +280,22 @@ func TestBuildTeamMemberInstanceRequestSupportsLiteMode(t *testing.T) {
 	}
 	if liteReq.EnvironmentOverrides["CLAWMANAGER_TEAM_CONFIG_JSON"] != rosterJSON {
 		t.Fatalf("Lite Team roster JSON should preserve upstream logical sharedDir contract, got %#v", liteReq.EnvironmentOverrides)
+	}
+}
+
+func TestBuildTeamMemberInstanceRequestKeepsProDiskDefault(t *testing.T) {
+	service := &teamService{}
+	req := service.buildTeamMemberInstanceRequest(&models.Team{Name: "Pro Team"}, plannedTeamMember{
+		MemberKey:    "pro-worker",
+		RuntimeType:  "openclaw",
+		InstanceMode: InstanceModePro,
+	})
+
+	if req.InstanceMode != InstanceModePro || req.RuntimeType != RuntimeBackendDesktop {
+		t.Fatalf("expected Pro desktop request, got mode=%q runtime=%q", req.InstanceMode, req.RuntimeType)
+	}
+	if req.DiskGB != 20 {
+		t.Fatalf("expected existing Pro disk default to remain 20GiB, got %dGiB", req.DiskGB)
 	}
 }
 
@@ -322,8 +345,9 @@ func TestOpenClawConfigPlanForTeamMemberFiltersOnlyWorkers(t *testing.T) {
 	service := &teamService{openClawConfigPlanner: planner}
 
 	leaderPlan, err := service.openClawConfigPlanForTeamMember(7, plannedTeamMember{
-		IsLeader: true,
-		Request:  CreateTeamMemberRequest{OpenClawConfigPlan: originalPlan},
+		IsLeader:    true,
+		RuntimeType: RuntimeTypeOpenClaw,
+		Request:     CreateTeamMemberRequest{OpenClawConfigPlan: originalPlan},
 	})
 	if err != nil {
 		t.Fatalf("leader plan returned error: %v", err)
@@ -336,8 +360,9 @@ func TestOpenClawConfigPlanForTeamMemberFiltersOnlyWorkers(t *testing.T) {
 	}
 
 	workerPlan, err := service.openClawConfigPlanForTeamMember(7, plannedTeamMember{
-		IsLeader: false,
-		Request:  CreateTeamMemberRequest{OpenClawConfigPlan: originalPlan},
+		IsLeader:    false,
+		RuntimeType: RuntimeTypeOpenClaw,
+		Request:     CreateTeamMemberRequest{OpenClawConfigPlan: originalPlan},
 	})
 	if err != nil {
 		t.Fatalf("worker plan returned error: %v", err)
@@ -347,6 +372,19 @@ func TestOpenClawConfigPlanForTeamMemberFiltersOnlyWorkers(t *testing.T) {
 	}
 	if planner.calls != 1 || planner.userID != 7 || planner.plan != originalPlan {
 		t.Fatalf("unexpected planner call: %#v", planner)
+	}
+	hermesPlan, err := service.openClawConfigPlanForTeamMember(7, plannedTeamMember{
+		RuntimeType: RuntimeTypeHermes,
+		Request:     CreateTeamMemberRequest{OpenClawConfigPlan: originalPlan},
+	})
+	if err != nil {
+		t.Fatalf("Hermes plan returned error: %v", err)
+	}
+	if hermesPlan != nil {
+		t.Fatal("Hermes member must never receive an OpenClaw config plan")
+	}
+	if planner.calls != 1 {
+		t.Fatalf("Hermes plan unexpectedly called OpenClaw planner: %d", planner.calls)
 	}
 }
 
@@ -1648,6 +1686,10 @@ func TestProjectTeamEventLeaderPlanningDoesNotCreateLeaderAssignmentLane(t *test
 		CurrentTaskID: &taskID,
 		Availability:  models.TeamMemberAvailabilityBusy,
 	}
+	leaderRuntimeTaskID := "team-31-task-179"
+	leaderRuntimeIntent := "final synthesis"
+	leader.RuntimeTaskID = &leaderRuntimeTaskID
+	leader.RuntimeIntent = &leaderRuntimeIntent
 	repo := &teamRepositoryStub{
 		tasksByID:        map[int]*models.TeamTask{taskID: task},
 		tasksByMessageID: map[string]*models.TeamTask{messageID: task},
@@ -1791,6 +1833,72 @@ func TestProjectTeamEventDowngradesLiteDispatchWrapperFailure(t *testing.T) {
 	}
 	if len(repo.createdEvents) != 1 || repo.createdEvents[0].EventType != "message_warning" {
 		t.Fatalf("expected warning event, got %#v", repo.createdEvents)
+	}
+}
+
+func TestProjectTeamEventKeepsTargetResolutionWarningOnCurrentAttempt(t *testing.T) {
+	taskID := 72
+	teamID := 31
+	leaderID := 120
+	workerID := 121
+	messageID := "team-31-task-72"
+	assignmentID := "phase-1"
+	task := &models.TeamTask{
+		ID: taskID, TeamID: teamID, TargetMemberID: leaderID, MessageID: messageID,
+		Status: models.TeamTaskStatusRunning, UpdatedAt: time.Now().UTC(),
+	}
+	worker := &models.TeamMember{
+		ID: workerID, TeamID: teamID, MemberKey: "worker", Role: "developer",
+		Status: models.TeamMemberStatusBusy, CurrentTaskID: &taskID, Availability: models.TeamMemberAvailabilityBusy,
+	}
+	repo := &teamRepositoryStub{
+		tasksByID:        map[int]*models.TeamTask{taskID: task},
+		tasksByMessageID: map[string]*models.TeamTask{messageID: task},
+		membersByKey:     map[string]*models.TeamMember{"worker": worker},
+		workItems: []models.TeamWorkItem{{
+			TeamID: teamID, RootTaskID: taskID, WorkID: assignmentID, AssignmentID: &assignmentID,
+			Revision: 1, OwnerMemberID: &workerID, Status: models.TeamTaskStatusRunning,
+		}},
+	}
+	service := &teamService{repo: repo}
+	payload := map[string]interface{}{
+		"event":                 "message_warning",
+		"eventKind":             "target_resolution_warning",
+		"memberId":              "worker",
+		"messageId":             "outbound-72",
+		"rootMessageId":         messageID,
+		"rootTaskId":            "team-31-task-72",
+		"assignmentId":          assignmentID,
+		"workId":                assignmentID,
+		"revision":              1,
+		"failureDomain":         "transport",
+		"failureKind":           "target_resolution",
+		"nonAuthoritative":      true,
+		"stateEffect":           "none",
+		"rootTaskTerminal":      false,
+		"clarificationRequired": true,
+		"targetSuggestions":     []interface{}{"leader"},
+		"runtimeStatus":         "running",
+		"availability":          "busy",
+	}
+	payloadJSON, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = service.projectTeamEvent(&models.Team{ID: teamID, CommunicationMode: teamCommunicationModeLeaderMediated}, nil, redisStreamMessage{
+		ID: "1781171178660-0", Fields: map[string]string{"payload": string(payloadJSON)},
+	})
+	if err != nil {
+		t.Fatalf("project target-resolution warning: %v", err)
+	}
+	if len(repo.workItems) != 1 || repo.workItems[0].Status != models.TeamTaskStatusRunning || repo.workItems[0].FinishedAt != nil {
+		t.Fatalf("target-resolution warning must leave the current attempt active: %#v", repo.workItems)
+	}
+	if len(repo.createdEvents) != 1 || repo.createdEvents[0].EventType != "message_warning" {
+		t.Fatalf("expected one state-neutral warning audit event, got %#v", repo.createdEvents)
+	}
+	if repo.updatedTask != nil && isTerminalTeamTaskStatus(repo.updatedTask.Status) {
+		t.Fatalf("transport warning must not terminate the root task: %#v", repo.updatedTask)
 	}
 }
 
@@ -2385,6 +2493,11 @@ func TestProjectTeamEventLeaderMediatedLeaderCompletionAfterAssignmentResultsClo
 	}
 	if repo.updatedTask.ResultJSON == nil || !strings.Contains(*repo.updatedTask.ResultJSON, "designer=1") {
 		t.Fatalf("expected final synthesis result stored, got %#v", repo.updatedTask.ResultJSON)
+	}
+	if repo.updatedMember == nil || repo.updatedMember.Status != models.TeamMemberStatusIdle ||
+		repo.updatedMember.Availability != models.TeamMemberAvailabilityIdle ||
+		repo.updatedMember.CurrentTaskID != nil || repo.updatedMember.RuntimeTaskID != nil || repo.updatedMember.RuntimeIntent != nil {
+		t.Fatalf("accepted root completion must release the Leader's matching runtime assignment: %#v", repo.updatedMember)
 	}
 	if len(repo.outboxRows) != 1 || !strings.Contains(repo.outboxRows[0].Destination, "completion-acks") || !strings.Contains(repo.outboxRows[0].PayloadJSON, `"decision":"accepted"`) {
 		t.Fatalf("accepted root completion must atomically persist its acknowledgement: %#v", repo.outboxRows)
@@ -3262,6 +3375,137 @@ func TestProjectTeamWorkItemRevisionInheritsEstablishedReviewGate(t *testing.T) 
 	}
 }
 
+func TestDeliverySemanticsCreatesNewSequentialStageForDifferentMember(t *testing.T) {
+	team := &models.Team{ID: 194, CommunicationMode: teamCommunicationModeLeaderMediated}
+	task := &models.TeamTask{ID: 295, TeamID: team.ID, TargetMemberID: 400, Status: models.TeamTaskStatusRunning}
+	worker1ID := 401
+	worker2 := &models.TeamMember{ID: 402, TeamID: team.ID, MemberKey: "worker-2", Role: "specialist"}
+	firstAssignment := "stage-one"
+	repo := &teamRepositoryStub{
+		membersByKey: map[string]*models.TeamMember{"worker-2": worker2},
+		workItems: []models.TeamWorkItem{{
+			ID: 501, TeamID: team.ID, RootTaskID: task.ID, WorkID: firstAssignment, AssignmentID: &firstAssignment,
+			OwnerMemberID: &worker1ID, Revision: 1, RequiredForRoot: true, Status: models.TeamTaskStatusSucceeded,
+		}},
+	}
+	payload := map[string]interface{}{
+		"deliverySemanticsVersion": 1, "businessDeliveryKind": "assignment", "businessMutation": true,
+		"requiresCompletion": true, "revisionAuthorized": true,
+		"assignmentId": "stage-two", "workId": "stage-two", "revision": 7, "required": true,
+		"collaborationStep": map[string]interface{}{
+			"type": "assignment", "status": "dispatched", "actor": "leader", "target": "worker-2", "workId": "stage-two",
+		},
+	}
+	service := &teamService{repo: repo}
+	if err := service.projectTeamWorkItem(team, task, worker2, "outbound", payload, &models.TeamEvent{CreatedAt: time.Now().UTC()}); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.workItems) != 2 {
+		t.Fatalf("a new member stage must create one independent Work Item: %#v", repo.workItems)
+	}
+	created := repo.workItems[1]
+	if workItemBusinessID(created) != "stage-two" || created.Revision != 1 || created.OwnerMemberID == nil || *created.OwnerMemberID != worker2.ID {
+		t.Fatalf("new stage identity must be server-normalized to revision 1: %#v", created)
+	}
+}
+
+func TestDeliverySemanticsContextNeverCreatesWorkItem(t *testing.T) {
+	team := &models.Team{ID: 194, CommunicationMode: teamCommunicationModeLeaderMediated}
+	task := &models.TeamTask{ID: 296, TeamID: team.ID, TargetMemberID: 400, Status: models.TeamTaskStatusRunning}
+	worker := &models.TeamMember{ID: 401, TeamID: team.ID, MemberKey: "worker-1", Role: "specialist"}
+	repo := &teamRepositoryStub{membersByKey: map[string]*models.TeamMember{"worker-1": worker}}
+	payload := map[string]interface{}{
+		"deliverySemanticsVersion": 1, "businessDeliveryKind": "peer_request", "businessMutation": false,
+		"requiresCompletion": false, "nonAuthoritative": true, "assignmentId": "stage-one", "revision": 2,
+		"collaborationStep": map[string]interface{}{
+			"type": "peer_request", "status": "running", "actor": "leader", "target": "worker-1", "workId": "stage-one",
+		},
+	}
+	service := &teamService{repo: repo}
+	if err := service.projectTeamWorkItem(team, task, worker, "peer_request", payload, &models.TeamEvent{CreatedAt: time.Now().UTC()}); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.workItems) != 0 {
+		t.Fatalf("context or peer traffic must not materialize business work: %#v", repo.workItems)
+	}
+}
+
+func TestDeliverySemanticsRevisionRequiresLedgerAuthorization(t *testing.T) {
+	team := &models.Team{ID: 194, CommunicationMode: teamCommunicationModeLeaderMediated}
+	task := &models.TeamTask{ID: 297, TeamID: team.ID, TargetMemberID: 400, Status: models.TeamTaskStatusRunning}
+	worker := &models.TeamMember{ID: 401, TeamID: team.ID, MemberKey: "worker-1", Role: "specialist"}
+	assignmentID := "stage-one"
+	phaseID := "phase-one"
+	dependencyJSON := `["source-stage"]`
+	repo := &teamRepositoryStub{
+		membersByKey: map[string]*models.TeamMember{"worker-1": worker},
+		workItems: []models.TeamWorkItem{{
+			ID: 501, TeamID: team.ID, RootTaskID: task.ID, WorkID: assignmentID, AssignmentID: &assignmentID,
+			OwnerMemberID: &worker.ID, PhaseID: &phaseID, Revision: 1, RequiredForRoot: true, ReviewRequired: true,
+			Title: "Issued stage contract", Status: models.TeamTaskStatusSucceeded, DependsOnJSON: &dependencyJSON,
+		}},
+	}
+	base := map[string]interface{}{
+		"deliverySemanticsVersion": 1, "businessDeliveryKind": "assignment", "businessMutation": true,
+		"requiresCompletion": true, "assignmentId": assignmentID, "workId": assignmentID, "revision": 2,
+		"collaborationStep": map[string]interface{}{
+			"type": "assignment", "status": "dispatched", "actor": "leader", "target": "worker-1", "workId": assignmentID,
+		},
+	}
+	service := &teamService{repo: repo}
+	if err := service.projectTeamWorkItem(team, task, worker, "outbound", base, &models.TeamEvent{CreatedAt: time.Now().UTC()}); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.workItems) != 1 || base["workflowConcern"] != "revision_authority_missing" {
+		t.Fatalf("an Agent-authored revision alone must remain non-blocking: items=%#v payload=%#v", repo.workItems, base)
+	}
+	authorized := make(map[string]interface{}, len(base))
+	for key, value := range base {
+		authorized[key] = value
+	}
+	repo.workItems[0].Status = models.TeamTaskStatusFailed
+	repo.workItems[0].ResultJSON = stringPtr(`{"originalEvent":"task_failed","event":"task_failed","assignmentId":"stage-one","status":"failed","resultFailed":true}`)
+	// Runtime may omit or mis-state revisionAuthorized. Persisted failure facts,
+	// not an Agent/Runtime boolean, are the authority for an exact successor.
+	authorized["revisionAuthorized"] = false
+	delete(authorized, "workflowConcern")
+	delete(authorized, "projectionSuppressed")
+	if err := service.projectTeamWorkItem(team, task, worker, "outbound", authorized, &models.TeamEvent{CreatedAt: time.Now().UTC()}); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.workItems) != 2 || repo.workItems[1].Revision != 2 {
+		t.Fatalf("a ledger-authorized successor should create exactly one revision: %#v", repo.workItems)
+	}
+	got := repo.workItems[1]
+	if derefTeamString(got.PhaseID) != phaseID || derefTeamString(got.DependsOnJSON) != dependencyJSON ||
+		!got.RequiredForRoot || !got.ReviewRequired || got.Title != "Issued stage contract" {
+		t.Fatalf("a real successor revision must inherit the durable assignment contract: %#v", got)
+	}
+}
+
+func TestRevisionRecoveryUsesLatestValidationForCurrentTargetRevision(t *testing.T) {
+	now := time.Now().UTC()
+	targetID := "stage-one"
+	targetRevision := 2
+	failedReview := `{"reviewVerdict":"FAIL"}`
+	passedReview := `{"reviewVerdict":"PASS"}`
+	items := []models.TeamWorkItem{
+		{ID: 1, WorkID: targetID, AssignmentID: &targetID, Revision: targetRevision, Status: models.TeamTaskStatusSucceeded, UpdatedAt: now.Add(-3 * time.Minute)},
+		{ID: 2, WorkID: "review-old", ReviewTargetAssignmentID: &targetID, ReviewTargetRevision: &targetRevision, Status: models.TeamTaskStatusSucceeded, ResultJSON: &failedReview, UpdatedAt: now.Add(-2 * time.Minute)},
+		{ID: 3, WorkID: "review-new", ReviewTargetAssignmentID: &targetID, ReviewTargetRevision: &targetRevision, Status: models.TeamTaskStatusSucceeded, ResultJSON: &passedReview, UpdatedAt: now.Add(-time.Minute)},
+	}
+	if teamAssignmentRevisionRecoveryAllowed(items, targetID) {
+		t.Fatal("an older FAIL must not keep authorizing rework after the current revision passed a newer validation")
+	}
+	if !teamAssignmentRevisionRecoveryAllowed(items[:2], targetID) {
+		t.Fatal("the latest explicit FAIL for the current target revision should authorize one recoverable successor")
+	}
+	items[0].ValidatedRevision = &targetRevision
+	if teamAssignmentRevisionRecoveryAllowed(items[:2], targetID) {
+		t.Fatal("a durable validation receipt on the current target revision must outrank stale failure evidence")
+	}
+}
+
 func TestCompletedReviewerAssignmentClosesOnlyItsPersistedTargetGate(t *testing.T) {
 	task := &models.TeamTask{ID: 193, TeamID: 93, TargetMemberID: 315, Status: models.TeamTaskStatusRunning, LedgerVersion: 20}
 	reviewer := &models.TeamMember{ID: 317, TeamID: 93, MemberKey: "reviewer", Role: "qa-engineer"}
@@ -3418,16 +3662,63 @@ func TestMemberOperationalStateUsesAllPersistedAssignments(t *testing.T) {
 
 func TestMemberOperationalStateClosesStaleRuntimeAfterLastSuccess(t *testing.T) {
 	runtimeRunning := models.TeamTaskStatusRunning
+	runtimeTaskID := "team-12-task-102"
+	runtimeIntent := "finish assignment"
 	member := &models.TeamMember{ID: 42, TeamID: 12, Status: models.TeamMemberStatusIdle,
-		Availability: models.TeamMemberAvailabilityIdle, RuntimeStatus: &runtimeRunning, Progress: 65}
+		Availability: models.TeamMemberAvailabilityIdle, RuntimeStatus: &runtimeRunning,
+		RuntimeTaskID: &runtimeTaskID, RuntimeIntent: &runtimeIntent, Progress: 65}
 	items := []models.TeamWorkItem{{ID: 1, TeamID: member.TeamID, RootTaskID: 102, WorkID: "done", OwnerMemberID: &member.ID,
 		Status: models.TeamTaskStatusSucceeded, UpdatedAt: time.Now().UTC()}}
 	if !reconcileTeamMemberOperationalState(member, items) {
 		t.Fatal("a terminal assignment should repair a stale running runtime status")
 	}
 	if member.Status != models.TeamMemberStatusIdle || member.Availability != models.TeamMemberAvailabilityIdle ||
-		member.CurrentTaskID != nil || derefTeamString(member.RuntimeStatus) != models.TeamTaskStatusSucceeded || member.Progress != 100 {
+		member.CurrentTaskID != nil || member.RuntimeTaskID != nil || member.RuntimeIntent != nil ||
+		derefTeamString(member.RuntimeStatus) != models.TeamTaskStatusSucceeded || member.Progress != 100 {
 		t.Fatalf("the member should converge to a coherent terminal state: %#v", member)
+	}
+}
+
+func TestTerminalTaskReconciliationCompareAndClearsOnlyMatchingMembers(t *testing.T) {
+	terminalTaskID := 103
+	newTaskID := 104
+	terminalRuntimeID := "team-12-task-103"
+	newRuntimeID := "team-12-task-104"
+	intent := "work"
+	team := &models.Team{ID: 12, Status: models.TeamStatusRunning, CommunicationMode: teamCommunicationModeLeaderMediated}
+	terminal := &models.TeamTask{ID: terminalTaskID, TeamID: team.ID, Status: models.TeamTaskStatusSucceeded}
+	current := &models.TeamTask{ID: newTaskID, TeamID: team.ID, Status: models.TeamTaskStatusRunning}
+	staleLeader := &models.TeamMember{ID: 51, TeamID: team.ID, MemberKey: "leader", Role: "leader",
+		Status: models.TeamMemberStatusBusy, Availability: models.TeamMemberAvailabilityBusy,
+		CurrentTaskID: &terminalTaskID, RuntimeTaskID: &terminalRuntimeID, RuntimeIntent: &intent}
+	staleWorker := &models.TeamMember{ID: 52, TeamID: team.ID, MemberKey: "worker", Role: "worker",
+		Status: models.TeamMemberStatusBusy, Availability: models.TeamMemberAvailabilityBusy,
+		CurrentTaskID: &terminalTaskID, RuntimeTaskID: &terminalRuntimeID, RuntimeIntent: &intent}
+	newWorker := &models.TeamMember{ID: 53, TeamID: team.ID, MemberKey: "new-worker", Role: "worker",
+		Status: models.TeamMemberStatusBusy, Availability: models.TeamMemberAvailabilityBusy,
+		CurrentTaskID: &newTaskID, RuntimeTaskID: &newRuntimeID, RuntimeIntent: &intent}
+	repo := &teamRepositoryStub{
+		tasksByID: map[int]*models.TeamTask{terminalTaskID: terminal, newTaskID: current},
+		membersByID: map[int]*models.TeamMember{
+			staleLeader.ID: staleLeader,
+			staleWorker.ID: staleWorker,
+			newWorker.ID:   newWorker,
+		},
+	}
+	service := &teamService{repo: repo}
+	if err := service.reconcileTerminalTeamMemberBindings(team, []models.TeamMember{*staleLeader, *staleWorker, *newWorker}, time.Now().UTC()); err != nil {
+		t.Fatalf("reconcileTerminalTeamMemberBindings returned error: %v", err)
+	}
+	for _, member := range []*models.TeamMember{staleLeader, staleWorker} {
+		if member.Status != models.TeamMemberStatusIdle || member.Availability != models.TeamMemberAvailabilityIdle ||
+			member.CurrentTaskID != nil || member.RuntimeTaskID != nil || member.RuntimeIntent != nil ||
+			derefTeamString(member.RuntimeStatus) != models.TeamTaskStatusSucceeded || member.Progress != 100 {
+			t.Fatalf("terminal task member did not converge safely: %#v", member)
+		}
+	}
+	if newWorker.CurrentTaskID == nil || *newWorker.CurrentTaskID != newTaskID ||
+		derefTeamString(newWorker.RuntimeTaskID) != newRuntimeID || newWorker.Status != models.TeamMemberStatusBusy {
+		t.Fatalf("a member on a newer task must not be cleared: %#v", newWorker)
 	}
 }
 
@@ -5814,8 +6105,6 @@ func cloneStringInterfaceMap(source map[string]interface{}) map[string]interface
 	return clone
 }
 
-func stringPtr(value string) *string { return &value }
-
 func TestTaskHasRecentActivityUsesBusinessWorkItems(t *testing.T) {
 	now := time.Now().UTC()
 	task := &models.TeamTask{
@@ -5884,6 +6173,70 @@ func TestLeaderMediatedWorkerProgressIsNotConfirmedAsResult(t *testing.T) {
 		if event.EventType == "member_result_confirmed" {
 			t.Fatalf("progress-only worker reply must not emit result confirmation: %#v", event)
 		}
+	}
+}
+
+func TestLeaderMediatedDependencyWaitStaysOnSameAssignment(t *testing.T) {
+	teamID := 131
+	taskID := 274
+	leaderID := 1001
+	workerID := 1002
+	assignmentID := "digest-filter"
+	dependencyJSON := `["digest-collect"]`
+	task := &models.TeamTask{ID: taskID, TeamID: teamID, TargetMemberID: leaderID, MessageID: "team-131-task-274", Status: models.TeamTaskStatusRunning}
+	worker := &models.TeamMember{ID: workerID, TeamID: teamID, MemberKey: "content-filter", Role: "domain-specialist"}
+	repo := &teamRepositoryStub{
+		tasksByID:        map[int]*models.TeamTask{taskID: task},
+		tasksByMessageID: map[string]*models.TeamTask{task.MessageID: task},
+		membersByID:      map[int]*models.TeamMember{workerID: worker},
+		membersByKey:     map[string]*models.TeamMember{"content-filter": worker},
+		workItems: []models.TeamWorkItem{{
+			ID: 1, TeamID: teamID, RootTaskID: taskID, WorkID: assignmentID, AssignmentID: &assignmentID,
+			OwnerMemberID: &workerID, Revision: 1, RequiredForRoot: true, Status: models.TeamTaskStatusRunning,
+			DependsOnJSON: &dependencyJSON,
+		}},
+	}
+	payload := map[string]interface{}{
+		"event": "task_progress", "memberId": "content-filter", "rootTaskId": fmt.Sprintf("team-%d-task-%d", teamID, taskID),
+		"rootMessageId": task.MessageID, "messageId": "wait-turn-1",
+		"protocolVersion": 4, "eventKind": "worker_progress", "nonAuthoritative": true, "stateEffect": "none",
+		"assignmentId": assignmentID, "workId": assignmentID, "revision": 1,
+		"status": "blocked", "availability": "blocked", "summary": "Waiting for digest-collect.",
+		"collaborationStep": map[string]interface{}{"type": "progress", "actor": "content-filter", "workId": assignmentID},
+	}
+	if isLeaderMediatedWorkerToLeaderResult(&models.Team{ID: teamID, CommunicationMode: teamCommunicationModeLeaderMediated}, "task_progress", payload, worker, task) {
+		t.Fatalf("dependency wait progress must not become a terminal member result: %#v", payload)
+	}
+	service := &teamService{repo: repo}
+	payloadJSON, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := service.projectTeamEvent(&models.Team{ID: teamID, UserID: 1, SharedMountPath: "/team", CommunicationMode: teamCommunicationModeLeaderMediated}, nil, redisStreamMessage{
+		ID: "wait-stream-1", Fields: map[string]string{"payload": string(payloadJSON)},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.workItems) != 1 || repo.workItems[0].Status != models.TeamTaskStatusWaiting || repo.workItems[0].FinishedAt != nil {
+		t.Fatalf("dependency wait must preserve one non-terminal assignment: %#v", repo.workItems)
+	}
+	if got := teamWorkItemDependencies(repo.workItems[0]); !slices.Equal(got, []string{"digest-collect"}) {
+		t.Fatalf("dependency wait rewrote the issued contract: %#v", repo.workItems[0])
+	}
+	if teamAssignmentRevisionRecoveryAllowed(repo.workItems, assignmentID) {
+		t.Fatal("a waiting assignment must not authorize a recovery revision")
+	}
+}
+
+func TestFalseFailedWaitingObservationDoesNotAuthorizeRevision(t *testing.T) {
+	assignmentID := "digest-filter"
+	resultJSON := `{"eventKind":"worker_progress","nonAuthoritative":true,"stateEffect":"none","status":"blocked","assignmentId":"digest-filter"}`
+	items := []models.TeamWorkItem{{WorkID: assignmentID, AssignmentID: &assignmentID, Revision: 1, Status: models.TeamTaskStatusFailed, ResultJSON: &resultJSON}}
+	if teamAssignmentRevisionRecoveryAllowed(items, assignmentID) {
+		t.Fatal("a misprojected waiting observation must not authorize r2")
+	}
+	if !workItemIsMisprojectedWaitingObservation(items[0]) {
+		t.Fatal("the reconciler must recognize the old false-failure shape")
 	}
 }
 
@@ -6082,15 +6435,24 @@ func TestAssignmentMonitorEnvelopeCarriesExactRuntimeAndArtifactEvidence(t *test
 	}
 	owner := &models.TeamMember{ID: 303, TeamID: 46, MemberKey: "developer"}
 	activity := &teamAssignmentActivitySnapshot{
-		TurnState: "suspected_stalled", LastActivityKind: "assistant_message",
+		TurnID: "turn-9004", TurnState: "quiet_healthy", ExecutionAlive: true,
+		QuietForSeconds: 188, StallCandidate: true, ActivityClass: "live_turn_quiet",
+		SessionCursor: "cursor-44", LastActivityKind: "assistant_message",
 		LastAssistantText: "The implementation is written; I am preparing the final receipt.",
 		LastToolName:      "team_artifact_write", LastToolAt: now.Add(-time.Minute).Format(time.RFC3339Nano),
 	}
 	envelope, _ := buildAssignmentStatusCheckEnvelopeWithEvidence(team, task, item, owner, activity, 4, now)
 	prompt := eventString(envelope, "prompt")
 	if !strings.Contains(prompt, activity.LastAssistantText) || !strings.Contains(prompt, "team_artifact_write") ||
-		!strings.Contains(prompt, "4 earlier Monitor reminder") || !strings.Contains(prompt, "/team/artifacts/team-46-task-80/") {
+		!strings.Contains(prompt, "4 earlier Monitor reminder") || !strings.Contains(prompt, "/team/artifacts/team-46-task-80/") ||
+		!strings.Contains(prompt, "executionAlive=true") || !strings.Contains(prompt, "quietForSeconds=188") ||
+		!strings.Contains(prompt, "sessionCursor=cursor-44") {
 		t.Fatalf("Monitor must give the member exact dialogue, tool, attempt, and artifact facts: %s", prompt)
+	}
+	metadata, _ := envelope["metadata"].(map[string]interface{})
+	businessFacts, _ := metadata["businessFacts"].(map[string]interface{})
+	if businessFacts["attemptStatus"] != item.Status || businessFacts["acceptedResultReceipt"] != false {
+		t.Fatalf("Monitor must carry machine business facts separately from dialogue: %#v", businessFacts)
 	}
 	if refs := normalizeContextRefs(envelope["artifactRefs"]); !slices.Equal(refs, []string{"/team/artifacts/team-46-task-80/members/developer/build-board/index.html"}) {
 		t.Fatalf("Monitor envelope lost durable artifact evidence: %#v", envelope)
@@ -6151,7 +6513,7 @@ func TestAssignmentMonitorDoesNotQueueBehindRecentUnansweredAttempt(t *testing.T
 	if err != nil || !outstanding {
 		t.Fatalf("a recent unanswered Monitor must suppress queue buildup: outstanding=%v err=%v", outstanding, err)
 	}
-	outstanding, err = service.hasRecentUnansweredAssignmentMonitor(team, task, item, now.Add(7*time.Minute))
+	outstanding, err = service.hasRecentUnansweredAssignmentMonitor(team, task, item, now.Add(4*time.Minute))
 	if err != nil || outstanding {
 		t.Fatalf("an expired unanswered Monitor lease must permit recovery: outstanding=%v err=%v", outstanding, err)
 	}
@@ -6263,6 +6625,24 @@ func TestLeaderMediatedRecoverableWarningClassification(t *testing.T) {
 	team := &models.Team{ID: 47, CommunicationMode: teamCommunicationModeLeaderMediated}
 	task := &models.TeamTask{ID: 82, TeamID: 47, Status: models.TeamTaskStatusRunning}
 	member := &models.TeamMember{ID: 12, TeamID: 47, MemberKey: "developer", Role: "developer"}
+	targetResolution := map[string]interface{}{
+		"eventKind":             "target_resolution_warning",
+		"failureDomain":         "transport",
+		"failureKind":           "target_resolution",
+		"nonAuthoritative":      true,
+		"stateEffect":           "none",
+		"rootTaskTerminal":      false,
+		"clarificationRequired": true,
+	}
+	if !isNonAuthoritativeDispatchFailure("message_failed", targetResolution) {
+		t.Fatal("an outbound message failure must never become an assignment result")
+	}
+	if isLeaderMediatedWorkerToLeaderResult(team, "message_failed", targetResolution, member, task) {
+		t.Fatal("transport failure must not confirm a failed Worker result")
+	}
+	if !isLeaderMediatedRecoverableWarning(team, "message_warning", targetResolution, member, task) {
+		t.Fatal("target ambiguity should ask the same Worker and Leader to review without closing the attempt")
+	}
 	if !isLeaderMediatedRecoverableWarning(team, "message_warning", map[string]interface{}{
 		"artifactValidationFailed": true,
 		"rootTaskTerminal":         false,
@@ -6780,13 +7160,23 @@ func TestLeaderSynthesisReminderCreatedWhenWorkersDone(t *testing.T) {
 	if len(repo.createdEvents) != 1 {
 		t.Fatalf("ledger-only projection changes must not create duplicate synthesis reminders, got %#v", repo.createdEvents)
 	}
+	if err := service.createLeaderSynthesisReminder(&models.Team{ID: 51, CommunicationMode: teamCommunicationModeLeaderMediated}, nil, task, leader, resultItems, now.Add(4*time.Minute)); err != nil {
+		t.Fatalf("next-generation createLeaderSynthesisReminder returned error: %v", err)
+	}
+	if len(repo.createdEvents) != 2 {
+		t.Fatalf("unchanged workflow facts must receive a later reminder generation, got %#v", repo.createdEvents)
+	}
+	secondPayload := teamEventPayloadMap(repo.createdEvents[1])
+	if eventInt(secondPayload, "reminderGeneration") != 2 {
+		t.Fatalf("expected reminder generation 2, got %#v", secondPayload)
+	}
 
 	changedResult := `{"summary":"PASS with updated evidence","resultMarkdown":"Reviewer verdict: PASS with updated evidence."}`
 	resultItems[1].ResultJSON = &changedResult
-	if err := service.createLeaderSynthesisReminder(&models.Team{ID: 51, CommunicationMode: teamCommunicationModeLeaderMediated}, nil, task, leader, resultItems, now.Add(2*time.Minute)); err != nil {
+	if err := service.createLeaderSynthesisReminder(&models.Team{ID: 51, CommunicationMode: teamCommunicationModeLeaderMediated}, nil, task, leader, resultItems, now.Add(5*time.Minute)); err != nil {
 		t.Fatalf("changed-result createLeaderSynthesisReminder returned error: %v", err)
 	}
-	if len(repo.createdEvents) != 2 {
+	if len(repo.createdEvents) != 3 {
 		t.Fatalf("a materially changed result must allow a fresh synthesis reminder, got %#v", repo.createdEvents)
 	}
 }
@@ -7301,12 +7691,15 @@ func TestRuntimeTurnResultKeepsDirectTargetAsRootResult(t *testing.T) {
 func TestAssignmentFailureNeverNormalizesToSucceededResult(t *testing.T) {
 	payload := map[string]interface{}{
 		"assignmentResultOnly": true,
+		"assignmentId":         "review-assignment",
+		"originalEvent":        "task_failed",
+		"resultFailed":         true,
 		"status":               models.TeamTaskStatusFailed,
 		"runtimeStatus":        models.TeamTaskStatusFailed,
 		"summary":              "Required artifact is unavailable.",
 	}
 	step := map[string]interface{}{"type": "result"}
-	normalizeExistingCollaborationStep(step, &models.Team{ID: 123}, "completion_proposed", payload, &models.TeamMember{MemberKey: "reviewer"}, nil)
+	normalizeExistingCollaborationStep(step, &models.Team{ID: 123}, "task_failed", payload, &models.TeamMember{MemberKey: "reviewer"}, nil)
 	if eventString(step, "status") != models.TeamTaskStatusFailed {
 		t.Fatalf("failed assignment receipt was converted to success: step=%#v payload=%#v", step, payload)
 	}
@@ -7381,6 +7774,58 @@ func TestUnresolvedDependenciesTriggerRecoveryOnlyForConfirmedBlocker(t *testing
 	items[1].ResultJSON = stringPtr(`{"status":"failed"}`)
 	if got := dependencyBlockedAssignmentsReadyAfter(items, "P1"); len(got) != 0 {
 		t.Fatalf("a real product failure must not be retried as a dependency recovery: %#v", got)
+	}
+}
+
+func TestDependencyReadyContextKeepsSameAttemptAndIgnoresUnknownDependencies(t *testing.T) {
+	now := time.Date(2026, 8, 12, 12, 0, 0, 0, time.UTC)
+	producerID := 11
+	consumerID := 12
+	dependencyJSON := `["collect-news"]`
+	producerAssignment := "collect-news"
+	consumerAssignment := "filter-news"
+	team := &models.Team{ID: 132, CommunicationMode: teamCommunicationModeLeaderMediated}
+	task := &models.TeamTask{ID: 332, TeamID: team.ID, MessageID: "root-332", Status: models.TeamTaskStatusRunning}
+	consumer := &models.TeamMember{ID: consumerID, TeamID: team.ID, MemberKey: "content-filter", Role: "domain-specialist"}
+	items := []models.TeamWorkItem{
+		{ID: 1, TeamID: team.ID, RootTaskID: task.ID, WorkID: producerAssignment, AssignmentID: &producerAssignment, OwnerMemberID: &producerID, Revision: 1, Status: models.TeamTaskStatusRunning},
+		{ID: 2, TeamID: team.ID, RootTaskID: task.ID, WorkID: consumerAssignment, AssignmentID: &consumerAssignment, OwnerMemberID: &consumerID, Revision: 1, Status: models.TeamTaskStatusRunning, DependsOnJSON: &dependencyJSON},
+	}
+	if got := dependencyReadyAssignmentsAfter(items, producerAssignment); !slices.Equal(got, []string{consumerAssignment}) {
+		t.Fatalf("exact downstream dependency should become ready after producer success: %#v", got)
+	}
+	repo := &teamRepositoryStub{workItems: items, membersByID: map[int]*models.TeamMember{consumerID: consumer}}
+	service := &teamService{repo: repo}
+	if err := service.dispatchDependencyReadyReminder(team, nil, task, &items[1], consumer, now); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.createdEvents) != 0 || len(repo.outboxRows) != 0 {
+		t.Fatalf("dependency readiness must be verified against persisted succeeded facts: events=%#v outbox=%#v", repo.createdEvents, repo.outboxRows)
+	}
+	repo.workItems[0].Status = models.TeamTaskStatusSucceeded
+	if err := service.dispatchDependencyReadyReminder(team, nil, task, &items[1], consumer, now); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.createdEvents) != 1 || len(repo.outboxRows) != 1 {
+		t.Fatalf("expected one durable readiness context, events=%#v outbox=%#v", repo.createdEvents, repo.outboxRows)
+	}
+	var envelope map[string]interface{}
+	if err := json.Unmarshal([]byte(repo.outboxRows[0].PayloadJSON), &envelope); err != nil {
+		t.Fatal(err)
+	}
+	if eventString(envelope, "assignmentId") != consumerAssignment || eventInt(envelope, "revision") != 1 || eventBool(envelope, "requiresCompletion") {
+		t.Fatalf("readiness context changed attempt identity or business semantics: %#v", envelope)
+	}
+	if err := service.dispatchDependencyReadyReminder(team, nil, task, &items[1], consumer, now.Add(time.Minute)); err != nil {
+		t.Fatal(err)
+	}
+	if len(repo.createdEvents) != 1 || len(repo.outboxRows) != 1 {
+		t.Fatalf("same dependency generation must remain idempotent: events=%#v outbox=%#v", repo.createdEvents, repo.outboxRows)
+	}
+	unknownJSON := `["model-authored-label"]`
+	items[1].DependsOnJSON = &unknownJSON
+	if got := dependencyReadyAssignmentsAfter(items, producerAssignment); len(got) != 0 {
+		t.Fatalf("unknown dependency text must not create a hidden control-plane action: %#v", got)
 	}
 }
 
@@ -7986,7 +8431,7 @@ func TestTimeoutScannerNeverPromotesHistoricalReplyToSuccess(t *testing.T) {
 	}
 }
 
-func TestOldRuntimeDispatchWrapperNeverStartsRecovery(t *testing.T) {
+func TestOldRuntimeDispatchWrapperStartsStateNeutralRecovery(t *testing.T) {
 	team := &models.Team{ID: 100, CommunicationMode: teamCommunicationModeLeaderMediated}
 	task := &models.TeamTask{ID: 264, TeamID: 100, Status: models.TeamTaskStatusRunning}
 	member := &models.TeamMember{ID: 1001, TeamID: 100, MemberKey: "reviewer", Role: "reviewer"}
@@ -7994,8 +8439,8 @@ func TestOldRuntimeDispatchWrapperNeverStartsRecovery(t *testing.T) {
 		"originalEvent": "task_failed", "nonAuthoritative": true,
 		"error": "dispatch finished without reply/completion", "rootTaskTerminal": false,
 	}
-	if isLeaderMediatedRecoverableWarning(team, "message_warning", payload, member, task) {
-		t.Fatal("old Runtime wrapper diagnostics must not trigger a recovery storm")
+	if !isLeaderMediatedRecoverableWarning(team, "message_warning", payload, member, task) {
+		t.Fatal("old Runtime transport diagnostics must wake an idempotent recovery observer without failing the assignment")
 	}
 }
 
@@ -8112,6 +8557,20 @@ func TestRootCoordinationRecoveryUsesMachineTurnFactsOnly(t *testing.T) {
 	if shouldRequestRootCoordinationRecovery(task, worker, "turn_finished_without_completion", payload) {
 		t.Fatal("a non-owner Worker turn must not be converted into root recovery")
 	}
+	workerReceiptGap := map[string]interface{}{
+		"activeTurnFinished":          true,
+		"assignmentId":                "dev-page",
+		"turnObservationOutcome":      "completion_receipt_gap",
+		"immediateRecoveryEligible":   true,
+		"downstreamAssignmentStarted": false,
+	}
+	if !shouldRequestRootCoordinationRecovery(task, worker, "turn_finished_without_completion", workerReceiptGap) {
+		t.Fatal("an authenticated Worker return without a completion receipt should receive a state-neutral recovery turn")
+	}
+	workerReceiptGap["downstreamAssignmentStarted"] = true
+	if shouldRequestRootCoordinationRecovery(task, worker, "turn_finished_without_completion", workerReceiptGap) {
+		t.Fatal("a real downstream assignment must remain a legitimate wait")
+	}
 	directTask := &models.TeamTask{ID: 65, TeamID: team.ID, TargetMemberID: worker.ID, Status: models.TeamTaskStatusRunning}
 	if !shouldRequestRootCoordinationRecovery(directTask, worker, "turn_finished_without_completion", payload) {
 		t.Fatal("a direct root-task owner must receive the same non-terminal recovery coverage")
@@ -8126,6 +8585,63 @@ func TestRootCoordinationRecoveryUsesMachineTurnFactsOnly(t *testing.T) {
 	}
 	if shouldRequestRootCoordinationRecovery(task, leader, "reply", payload) {
 		t.Fatal("ordinary prose must not trigger recovery classification")
+	}
+	actionableObservation := map[string]interface{}{
+		"activeTurnFinished":        true,
+		"rootTaskTerminal":          false,
+		"turnObservationOutcome":    "retryable_tool_gap",
+		"immediateRecoveryEligible": true,
+	}
+	cloneObservation := func(source map[string]interface{}) map[string]interface{} {
+		cloned := make(map[string]interface{}, len(source))
+		for key, value := range source {
+			cloned[key] = value
+		}
+		return cloned
+	}
+	if !shouldRequestRootCoordinationRecovery(task, leader, "turn_finished_without_completion", actionableObservation) {
+		t.Fatal("an exact retryable Team-tool gap should receive one immediate recovery turn")
+	}
+	conflictingObservation := cloneObservation(actionableObservation)
+	conflictingObservation["observationConflict"] = true
+	if shouldRequestRootCoordinationRecovery(task, leader, "turn_finished_without_completion", conflictingObservation) {
+		t.Fatal("conflicting observer facts must degrade to Monitor evidence without an immediate action")
+	}
+	unknownObservation := cloneObservation(actionableObservation)
+	unknownObservation["turnObservationOutcome"] = "runtime_observation_unknown"
+	if shouldRequestRootCoordinationRecovery(task, leader, "turn_finished_without_completion", unknownObservation) {
+		t.Fatal("unknown observations must not drive workflow recovery")
+	}
+	recoveryTurn := cloneObservation(actionableObservation)
+	recoveryTurn["completionRecoveryAttempt"] = 1
+	if shouldRequestRootCoordinationRecovery(task, leader, "turn_finished_without_completion", recoveryTurn) {
+		t.Fatal("an immediate recovery turn must not recursively create another reminder")
+	}
+}
+
+func TestMemberResultNotificationCarriesNonBlockingTurnOutcomePolicy(t *testing.T) {
+	leader := &models.TeamMember{ID: 1, TeamID: 28, MemberKey: "delivery-lead", Role: "leader"}
+	member := &models.TeamMember{ID: 2, TeamID: 28, MemberKey: "developer", Role: "developer"}
+	task := &models.TeamTask{ID: 64, TeamID: 28, TargetMemberID: leader.ID, MessageID: "root-64", Status: models.TeamTaskStatusRunning}
+	service := &teamService{repo: &teamRepositoryStub{membersByID: map[int]*models.TeamMember{leader.ID: leader}}}
+	envelope, target := service.buildLeaderMediatedResultNotificationEnvelope(
+		&models.Team{ID: 28, CommunicationMode: teamCommunicationModeLeaderMediated},
+		task,
+		member,
+		map[string]interface{}{
+			"assignmentId": "dev-page",
+			"workId":       "dev-page",
+			"status":       models.TeamTaskStatusSucceeded,
+			"summary":      "Implementation delivered.",
+		},
+		"member-result-confirmed:64",
+	)
+	if target != leader.MemberKey || eventBool(envelope, "requiresCompletion") {
+		t.Fatalf("unexpected result notification routing: target=%q envelope=%#v", target, envelope)
+	}
+	policy, ok := envelope["turnOutcomePolicy"].(map[string]interface{})
+	if !ok || !eventBool(policy, "actionExpected") || !eventBool(policy, "immediateRecoveryAllowed") {
+		t.Fatalf("result notification must request an observable, non-blocking Leader action: %#v", envelope)
 	}
 }
 
@@ -8161,22 +8677,266 @@ func TestCreateRootCoordinationRecoveryPersistsHiddenEventAndOutbox(t *testing.T
 	if eventString(envelope, "rootTaskId") != "team-28-task-64" || eventBool(envelope, "requiresCompletion") {
 		t.Fatalf("unexpected recovery envelope: %#v", envelope)
 	}
+	policy, ok := envelope["turnOutcomePolicy"].(map[string]interface{})
+	if !ok || eventBool(policy, "immediateRecoveryAllowed") || !eventBool(policy, "actionExpected") {
+		t.Fatalf("recovery turn must be observable but must not recursively self-trigger: %#v", envelope)
+	}
+	metadata, _ := envelope["metadata"].(map[string]interface{})
+	if eventInt(metadata, "completionRecoveryAttempt") != 1 {
+		t.Fatalf("recovery generation was not carried into the next turn: %#v", envelope)
+	}
+}
+
+type teamDeletionInstanceServiceStub struct {
+	InstanceService
+	validateErr     error
+	validateErrByID map[int]error
+	validateCalls   []int
+	deleteErr       error
+	deleteCalls     []int
+}
+
+type teamRuntimeAvailabilityInstanceServiceStub struct {
+	InstanceService
+	instances map[int]*models.Instance
+	err       error
+}
+
+func (s *teamRuntimeAvailabilityInstanceServiceStub) GetByID(id int) (*models.Instance, error) {
+	if s.err != nil {
+		return nil, s.err
+	}
+	return s.instances[id], nil
+}
+
+func TestTeamRuntimeAvailabilityProjectsFailedInstanceOffline(t *testing.T) {
+	instanceID := 930
+	runtimeError := "exit status 1"
+	member := &models.TeamMember{ID: 90, InstanceID: &instanceID, Status: models.TeamMemberStatusBusy, Availability: models.TeamMemberAvailabilityBusy}
+	service := &teamService{instanceService: &teamRuntimeAvailabilityInstanceServiceStub{instances: map[int]*models.Instance{
+		instanceID: {ID: instanceID, Status: "error", RuntimeErrorMessage: &runtimeError},
+	}}}
+
+	unavailable, _, changed, err := service.reconcileTeamMemberRuntimeAvailability(member, nil, time.Now().UTC())
+	if err != nil || !unavailable || !changed {
+		t.Fatalf("availability result unavailable=%t changed=%t err=%v", unavailable, changed, err)
+	}
+	if member.Status != models.TeamMemberStatusOffline || member.Availability != models.TeamMemberAvailabilityOffline || derefTeamString(member.RuntimeStatus) != "error" {
+		t.Fatalf("failed Runtime projection = %+v", member)
+	}
+	if !strings.Contains(derefTeamString(member.BlockedReason), runtimeError) {
+		t.Fatalf("blocked reason = %q, want Runtime failure", derefTeamString(member.BlockedReason))
+	}
+}
+
+func TestTeamRuntimeAvailabilityRestoresActiveAssignmentAfterRuntimeRecovery(t *testing.T) {
+	instanceID := 931
+	rootTaskID := 401
+	runtimeStatus := "error"
+	reason := teamRuntimeUnavailableReasonPrefix + "exit status 1"
+	member := &models.TeamMember{
+		ID: 91, InstanceID: &instanceID, Status: models.TeamMemberStatusOffline,
+		Availability: models.TeamMemberAvailabilityOffline, RuntimeStatus: &runtimeStatus, BlockedReason: &reason,
+	}
+	service := &teamService{instanceService: &teamRuntimeAvailabilityInstanceServiceStub{instances: map[int]*models.Instance{
+		instanceID: {ID: instanceID, Status: "running"},
+	}}}
+	items := []models.TeamWorkItem{{ID: 501, RootTaskID: rootTaskID, OwnerMemberID: &member.ID, WorkID: "A1", Status: models.TeamTaskStatusRunning}}
+
+	unavailable, _, changed, err := service.reconcileTeamMemberRuntimeAvailability(member, items, time.Now().UTC())
+	if err != nil || unavailable || !changed {
+		t.Fatalf("availability result unavailable=%t changed=%t err=%v", unavailable, changed, err)
+	}
+	if member.Status != models.TeamMemberStatusBusy || member.Availability != models.TeamMemberAvailabilityBusy || member.CurrentTaskID == nil || *member.CurrentTaskID != rootTaskID || derefTeamString(member.RuntimeStatus) != "running" || member.BlockedReason != nil {
+		t.Fatalf("recovered Runtime projection = %+v", member)
+	}
+}
+
+func TestTeamRuntimeAvailabilityDoesNotInferFailureFromControlPlaneReadError(t *testing.T) {
+	instanceID := 932
+	member := &models.TeamMember{ID: 92, InstanceID: &instanceID, Status: models.TeamMemberStatusBusy, Availability: models.TeamMemberAvailabilityBusy}
+	service := &teamService{instanceService: &teamRuntimeAvailabilityInstanceServiceStub{err: context.DeadlineExceeded}}
+
+	unavailable, _, changed, err := service.reconcileTeamMemberRuntimeAvailability(member, nil, time.Now().UTC())
+	if err == nil || unavailable || changed {
+		t.Fatalf("availability result unavailable=%t changed=%t err=%v", unavailable, changed, err)
+	}
+	if member.Status != models.TeamMemberStatusBusy || member.Availability != models.TeamMemberAvailabilityBusy {
+		t.Fatalf("transient control-plane error mutated member: %+v", member)
+	}
+}
+
+func (s *teamDeletionInstanceServiceStub) ValidateDelete(instanceID int) error {
+	s.validateCalls = append(s.validateCalls, instanceID)
+	if err := s.validateErrByID[instanceID]; err != nil {
+		return err
+	}
+	return s.validateErr
+}
+
+func (s *teamDeletionInstanceServiceStub) Delete(instanceID int) error {
+	s.deleteCalls = append(s.deleteCalls, instanceID)
+	return s.deleteErr
+}
+
+func TestDeleteMemberValidatesRuntimeUpgradeBeforeChangingMemberState(t *testing.T) {
+	instanceID := 901
+	team := &models.Team{ID: 71, UserID: 45, Status: models.TeamStatusRunning}
+	member := &models.TeamMember{
+		ID:         81,
+		TeamID:     team.ID,
+		UserID:     team.UserID,
+		InstanceID: &instanceID,
+		MemberKey:  "worker-a",
+		Role:       "worker",
+		Status:     models.TeamMemberStatusIdle,
+	}
+	repo := &teamRepositoryStub{
+		teamsByID:   map[int]*models.Team{team.ID: team},
+		membersByID: map[int]*models.TeamMember{member.ID: member},
+	}
+	instances := &teamDeletionInstanceServiceStub{validateErr: errors.New("active rollout")}
+	service := &teamService{repo: repo, instanceService: instances}
+
+	err := service.DeleteMember(team.UserID, team.ID, strconv.Itoa(member.ID))
+	if err == nil || !strings.Contains(err.Error(), "active rollout") {
+		t.Fatalf("DeleteMember error = %v, want active rollout rejection", err)
+	}
+	if member.Status != models.TeamMemberStatusIdle || len(repo.updatedMembers) != 0 {
+		t.Fatalf("member mutated before validation: status=%q updates=%#v", member.Status, repo.updatedMembers)
+	}
+	if !reflect.DeepEqual(instances.validateCalls, []int{instanceID}) || len(instances.deleteCalls) != 0 {
+		t.Fatalf("validate calls=%#v delete calls=%#v", instances.validateCalls, instances.deleteCalls)
+	}
+}
+
+func TestDeleteTeamValidatesEveryMemberBeforeChangingTeamState(t *testing.T) {
+	firstInstanceID := 911
+	secondInstanceID := 912
+	team := &models.Team{ID: 73, UserID: 45, Status: models.TeamStatusRunning}
+	first := &models.TeamMember{ID: 83, TeamID: team.ID, UserID: team.UserID, InstanceID: &firstInstanceID, MemberKey: "leader", Role: "leader", Status: models.TeamMemberStatusIdle}
+	second := &models.TeamMember{ID: 84, TeamID: team.ID, UserID: team.UserID, InstanceID: &secondInstanceID, MemberKey: "worker", Role: "worker", Status: models.TeamMemberStatusIdle}
+	repo := &teamRepositoryStub{
+		teamsByID:   map[int]*models.Team{team.ID: team},
+		membersByID: map[int]*models.TeamMember{first.ID: first, second.ID: second},
+	}
+	instances := &teamDeletionInstanceServiceStub{validateErrByID: map[int]error{secondInstanceID: errors.New("active rollout")}}
+	service := &teamService{repo: repo, instanceService: instances}
+
+	err := service.DeleteTeam(team.UserID, team.ID)
+	if err == nil || !strings.Contains(err.Error(), "active rollout") {
+		t.Fatalf("DeleteTeam error = %v, want active rollout rejection", err)
+	}
+	if team.Status != models.TeamStatusRunning || repo.updatedTeam != nil || len(repo.updatedMembers) != 0 {
+		t.Fatalf("Team mutated before all members passed validation: team=%#v member updates=%#v", repo.updatedTeam, repo.updatedMembers)
+	}
+	if len(instances.deleteCalls) != 0 {
+		t.Fatalf("delete calls = %#v, want none", instances.deleteCalls)
+	}
+}
+
+func TestDeleteMemberClearsInstanceReferenceAfterSuccessfulDelete(t *testing.T) {
+	instanceID := 902
+	team := &models.Team{ID: 72, UserID: 45, Status: models.TeamStatusRunning}
+	member := &models.TeamMember{
+		ID:         82,
+		TeamID:     team.ID,
+		UserID:     team.UserID,
+		InstanceID: &instanceID,
+		MemberKey:  "worker-b",
+		Role:       "worker",
+		Status:     models.TeamMemberStatusIdle,
+	}
+	repo := &teamRepositoryStub{
+		teamsByID:                map[int]*models.Team{team.ID: team},
+		membersByID:              map[int]*models.TeamMember{member.ID: member},
+		updateMemberErrForStatus: models.TeamMemberStatusDeleted,
+	}
+	instances := &teamDeletionInstanceServiceStub{}
+	service := &teamService{repo: repo, instanceService: instances}
+
+	err := service.DeleteMember(team.UserID, team.ID, strconv.Itoa(member.ID))
+	if err == nil || !strings.Contains(err.Error(), "forced member update failure") {
+		t.Fatalf("DeleteMember error = %v, want forced terminal update failure", err)
+	}
+	if !reflect.DeepEqual(instances.deleteCalls, []int{instanceID}) {
+		t.Fatalf("delete calls = %#v, want [%d]", instances.deleteCalls, instanceID)
+	}
+	if repo.updatedMember == nil || repo.updatedMember.Status != models.TeamMemberStatusDeleted || repo.updatedMember.InstanceID != nil {
+		t.Fatalf("terminal member update retained a stale instance reference: %#v", repo.updatedMember)
+	}
+}
+
+type pendingDeletionTeamRepositoryStub struct {
+	*teamRepositoryStub
+}
+
+func (s *pendingDeletionTeamRepositoryStub) ListTeamsByStatus(status string) ([]models.Team, error) {
+	result := make([]models.Team, 0)
+	for _, team := range s.teamsByID {
+		if team != nil && team.Status == status {
+			result = append(result, *team)
+		}
+	}
+	return result, nil
+}
+
+func (s *pendingDeletionTeamRepositoryStub) ListMembersByStatus(status string) ([]models.TeamMember, error) {
+	result := make([]models.TeamMember, 0)
+	for _, member := range s.membersByID {
+		if member != nil && member.Status == status {
+			result = append(result, *member)
+		}
+	}
+	return result, nil
+}
+
+func TestPendingDeletionReconcilerFinishesDeletedTeamMember(t *testing.T) {
+	instanceID := 921
+	team := &models.Team{ID: 74, UserID: 45, Status: models.TeamStatusDeleted}
+	member := &models.TeamMember{
+		ID:         85,
+		TeamID:     team.ID,
+		UserID:     team.UserID,
+		InstanceID: &instanceID,
+		MemberKey:  "worker-c",
+		Role:       "worker",
+		Status:     models.TeamMemberStatusDeleting,
+	}
+	baseRepo := &teamRepositoryStub{
+		teamsByID:   map[int]*models.Team{team.ID: team},
+		membersByID: map[int]*models.TeamMember{member.ID: member},
+	}
+	repo := &pendingDeletionTeamRepositoryStub{teamRepositoryStub: baseRepo}
+	instances := &teamDeletionInstanceServiceStub{}
+	service := &teamService{repo: repo, instanceService: instances}
+
+	service.resumePendingTeamDeletions()
+
+	if !reflect.DeepEqual(instances.deleteCalls, []int{instanceID}) {
+		t.Fatalf("delete calls = %#v, want [%d]", instances.deleteCalls, instanceID)
+	}
+	if baseRepo.updatedMember == nil || baseRepo.updatedMember.Status != models.TeamMemberStatusDeleted || baseRepo.updatedMember.InstanceID != nil {
+		t.Fatalf("pending deleted-Team member did not converge: %#v", baseRepo.updatedMember)
+	}
 }
 
 type teamRepositoryStub struct {
-	mu               sync.Mutex
-	teamsByID        map[int]*models.Team
-	membersByID      map[int]*models.TeamMember
-	membersByKey     map[string]*models.TeamMember
-	tasksByID        map[int]*models.TeamTask
-	tasksByMessageID map[string]*models.TeamTask
-	createdEvents    []models.TeamEvent
-	workItems        []models.TeamWorkItem
-	workflowPhases   []models.TeamWorkflowPhase
-	outboxRows       []models.TeamEventOutbox
-	updatedTask      *models.TeamTask
-	updatedMember    *models.TeamMember
-	updatedTeam      *models.Team
+	mu                       sync.Mutex
+	teamsByID                map[int]*models.Team
+	membersByID              map[int]*models.TeamMember
+	membersByKey             map[string]*models.TeamMember
+	tasksByID                map[int]*models.TeamTask
+	tasksByMessageID         map[string]*models.TeamTask
+	createdEvents            []models.TeamEvent
+	workItems                []models.TeamWorkItem
+	workflowPhases           []models.TeamWorkflowPhase
+	outboxRows               []models.TeamEventOutbox
+	updatedTask              *models.TeamTask
+	updatedMember            *models.TeamMember
+	updatedMembers           []models.TeamMember
+	updateMemberErrForStatus string
+	updatedTeam              *models.Team
 }
 
 type teamOpenClawConfigPlannerStub struct {
@@ -8223,7 +8983,41 @@ func (s *teamRepositoryStub) CreateMember(member *models.TeamMember) error { ret
 func (s *teamRepositoryStub) UpdateMember(member *models.TeamMember) error {
 	clone := *member
 	s.updatedMember = &clone
+	s.updatedMembers = append(s.updatedMembers, clone)
+	if s.updateMemberErrForStatus != "" && clone.Status == s.updateMemberErrForStatus {
+		return errors.New("forced member update failure")
+	}
 	return nil
+}
+func (s *teamRepositoryStub) ReleaseMemberFromTask(memberID, taskID int, runtimeStatus, availability string, progress int, updatedAt time.Time) (bool, error) {
+	var member *models.TeamMember
+	if s.membersByID != nil {
+		member = s.membersByID[memberID]
+	}
+	if member == nil {
+		for _, candidate := range s.membersByKey {
+			if candidate != nil && candidate.ID == memberID {
+				member = candidate
+				break
+			}
+		}
+	}
+	if member == nil || member.CurrentTaskID == nil || *member.CurrentTaskID != taskID {
+		return false, nil
+	}
+	member.Status = models.TeamMemberStatusIdle
+	member.CurrentTaskID = nil
+	member.Progress = progress
+	member.Availability = availability
+	member.RuntimeStatus = &runtimeStatus
+	member.RuntimeTaskID = nil
+	member.RuntimeIntent = nil
+	member.BlockedReason = nil
+	member.UpdatedAt = updatedAt
+	clone := *member
+	s.updatedMember = &clone
+	s.updatedMembers = append(s.updatedMembers, clone)
+	return true, nil
 }
 func (s *teamRepositoryStub) GetMemberByID(id int) (*models.TeamMember, error) {
 	if s.membersByID != nil {

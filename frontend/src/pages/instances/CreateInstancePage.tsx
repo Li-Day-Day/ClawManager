@@ -9,7 +9,11 @@ import { useAuth } from "../../contexts/AuthContext";
 import { instanceService } from "../../services/instanceService";
 import { skillHubService } from "../../services/skillHubService";
 import { userService } from "../../services/userService";
-import { INSTANCE_TYPES, PRESET_CONFIGS } from "../../types/instance";
+import {
+  DEFAULT_LITE_DISK_GB,
+  INSTANCE_TYPES,
+  PRESET_CONFIGS,
+} from "../../types/instance";
 import type { CreateInstanceRequest, InstanceMode } from "../../types/instance";
 import type { Instance } from "../../types/instance";
 import type { OpenClawConfigCompilePreview } from "../../types/openclawConfig";
@@ -45,10 +49,44 @@ const BYTES_PER_GIB = 1024 * 1024 * 1024;
 const AGENT_PROTOCOL_VERSION = "v1";
 const CUSTOM_RESOURCE_PRESET = "custom";
 const SKILLS_PER_PAGE = 6;
-const supportsRuntimeInjection = (type: string) =>
-  type === "openclaw" || type === "hermes" || type === "workbuddy";
+type ManagedRuntimeVariant = "linux" | "windows";
+const inferManagedRuntimeVariant = (
+  type: string,
+  image?: string,
+): ManagedRuntimeVariant => {
+  const normalizedImage = image?.trim().toLowerCase() ?? "";
+  if (type === "workbuddy" && normalizedImage.includes("workbuddy-linux")) {
+    return "linux";
+  }
+  if (type === "codex" && normalizedImage.includes("agentsruntime/codex")) {
+    return "linux";
+  }
+  return "windows";
+};
+const resolveManagedRuntimeVariant = (
+  type: string,
+  setting?: SystemImageSetting | null,
+): ManagedRuntimeVariant | undefined =>
+  type === "workbuddy" || type === "codex"
+    ? setting?.runtime_variant ?? inferManagedRuntimeVariant(type, setting?.image)
+    : undefined;
+const supportsRuntimeInjection = (
+  type: string,
+  image?: string,
+  runtimeVariant?: ManagedRuntimeVariant,
+) =>
+  type === "openclaw" ||
+  type === "hermes" ||
+  (type === "workbuddy" &&
+    (runtimeVariant ?? inferManagedRuntimeVariant(type, image)) === "linux");
+const supportsSkillSelection = (type: string) =>
+  supportsRuntimeInjection(type) || type === "deepseek-harness";
 const isProOnlyInstanceType = (type: string) =>
-  type === "custom" || type === "workbuddy";
+  type === "custom" ||
+  type === "workbuddy" ||
+  type === "codex" ||
+  type === "claude-code";
+const isLiteOnlyInstanceType = (type: string) => type === "opencode";
 const DESKTOP_STREAM_PROFILES: Array<{
   id: DesktopStreamProfile;
   labelKey: string;
@@ -75,11 +113,21 @@ const DESKTOP_STREAM_PROFILES: Array<{
   },
 ];
 
-const runtimeWorkspaceDirectory = (type: string) =>
-  type === "hermes" ? ".hermes" : ".openclaw";
+const runtimeWorkspaceDirectory = (type: string) => {
+  if (type === "hermes") return ".hermes";
+  if (type === "opencode") return ".opencode";
+  if (type === "codex") return ".codex";
+  if (type === "claude-code") return ".claude";
+  return ".openclaw";
+};
 
-const runtimeProductName = (type: string) =>
-  type === "hermes" ? "Hermes" : "OpenClaw";
+const runtimeProductName = (type: string) => {
+  if (type === "hermes") return "Hermes";
+  if (type === "opencode") return "OpenCode";
+  if (type === "codex") return "Codex";
+  if (type === "claude-code") return "Claude Code";
+  return "OpenClaw";
+};
 
 const INSTANCE_TYPE_I18N_KEYS: Record<
   string,
@@ -109,9 +157,25 @@ const INSTANCE_TYPE_I18N_KEYS: Record<
     label: "instances.typeOptions.hermes.label",
     description: "instances.typeOptions.hermes.description",
   },
+  opencode: {
+    label: "instances.typeOptions.opencode.label",
+    description: "instances.typeOptions.opencode.description",
+  },
+  "deepseek-harness": {
+    label: "instances.typeOptions.deepseekHarness.label",
+    description: "instances.typeOptions.deepseekHarness.description",
+  },
   workbuddy: {
     label: "instances.typeOptions.workbuddy.label",
     description: "instances.typeOptions.workbuddy.description",
+  },
+  codex: {
+    label: "instances.typeOptions.codex.label",
+    description: "instances.typeOptions.codex.description",
+  },
+  "claude-code": {
+    label: "instances.typeOptions.claudeCode.label",
+    description: "instances.typeOptions.claudeCode.description",
   },
   custom: {
     label: "instances.typeOptions.custom.label",
@@ -119,17 +183,39 @@ const INSTANCE_TYPE_I18N_KEYS: Record<
   },
 };
 
-// Keep the runtime implementation and existing-instance views intact while
-// temporarily removing unavailable runtimes from the new-instance chooser.
-const TEMPORARILY_HIDDEN_CREATE_INSTANCE_TYPE_IDS = new Set(["workbuddy"]);
+// The team distribution does not ship these managed runtime images. Keep
+// their type renderers for existing records, but never offer them for new
+// instances, even when an old image setting remains in the database.
+const HIDDEN_TEAM_INSTANCE_TYPE_IDS = new Set([
+  "workbuddy",
+  "codex",
+  "claude-code",
+]);
 
-const FALLBACK_CREATE_INSTANCE_TYPES = INSTANCE_TYPES.filter((type) =>
-  ["openclaw", "hermes", "workbuddy"].includes(type.id) &&
-  !TEMPORARILY_HIDDEN_CREATE_INSTANCE_TYPE_IDS.has(type.id),
+const FALLBACK_CREATE_INSTANCE_TYPES = INSTANCE_TYPES.filter(
+  (type) =>
+    [
+      "openclaw",
+      "hermes",
+      "opencode",
+      "workbuddy",
+      "deepseek-harness",
+      "codex",
+      "claude-code",
+    ].includes(type.id) && !HIDDEN_TEAM_INSTANCE_TYPE_IDS.has(type.id),
 );
-const CONFIGURED_CREATE_INSTANCE_TYPES = INSTANCE_TYPES.filter((type) =>
-  ["openclaw", "hermes", "workbuddy", "custom"].includes(type.id) &&
-  !TEMPORARILY_HIDDEN_CREATE_INSTANCE_TYPE_IDS.has(type.id),
+const CONFIGURED_CREATE_INSTANCE_TYPES = INSTANCE_TYPES.filter(
+  (type) =>
+    [
+      "openclaw",
+      "hermes",
+      "opencode",
+      "workbuddy",
+      "deepseek-harness",
+      "codex",
+      "claude-code",
+      "custom",
+    ].includes(type.id) && !HIDDEN_TEAM_INSTANCE_TYPE_IDS.has(type.id),
 );
 
 const INSTANCE_MODE_OPTIONS: {
@@ -148,6 +234,8 @@ const INSTANCE_MODE_OPTIONS: {
     descriptionKey: "instances.instanceModeProDescription",
   },
 ];
+
+const requiresProMode = (type: string) => type === "codex" || type === "claude-code";
 
 const PRESET_I18N_KEYS: Record<string, { label: string; description: string }> =
   {
@@ -171,7 +259,14 @@ const getBuiltInEnvTemplates = (
   diskGb: number,
 ): BuiltInEnvTemplate[] => {
   const templates: BuiltInEnvTemplate[] = [];
-  const persistentDir = type === "hermes" ? "/config/.hermes" : "/config";
+  const persistentDir =
+    type === "hermes"
+      ? "/config/.hermes"
+      : type === "deepseek-harness"
+        ? "/config/.dsh"
+        : type === "opencode"
+          ? "/config/.opencode"
+          : "/config";
 
   if (type === "ubuntu") {
     templates.push(
@@ -298,13 +393,15 @@ const getBuiltInEnvTemplates = (
     );
   }
 
-  if (type === "openclaw" || type === "workbuddy") {
+  if (type === "openclaw" || type === "deepseek-harness") {
     templates.push(
       {
         key: "TITLE",
         description: t("instances.envDescDesktopTitleOpenClaw"),
         defaultValue:
-          type === "workbuddy" ? "Workbuddy" : "ClawManager Desktop",
+          type === "deepseek-harness"
+            ? "DeepSeek Harness"
+            : "ClawManager Desktop",
       },
       {
         key: "SUBFOLDER",
@@ -440,7 +537,8 @@ const getRuntimeImageOptionKey = (item: SystemImageSetting): string =>
 
 const normalizeRuntimeImageType = (
   runtimeType?: SystemImageSetting["runtime_type"] | "shell",
-) => (runtimeType === "gateway" || runtimeType === "shell" ? "gateway" : "desktop");
+) =>
+  runtimeType === "gateway" || runtimeType === "shell" ? "gateway" : "desktop";
 
 const CreateInstancePage: React.FC = () => {
   const { user } = useAuth();
@@ -476,7 +574,10 @@ const CreateInstancePage: React.FC = () => {
     string | null
   >(null);
   const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
-  const [skillInventorySummary, setSkillInventorySummary] = useState({ total: 0, hiddenByRisk: 0 });
+  const [skillInventorySummary, setSkillInventorySummary] = useState({
+    total: 0,
+    hiddenByRisk: 0,
+  });
   const [skillLoading, setSkillLoading] = useState(false);
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]);
   const [skillPage, setSkillPage] = useState(1);
@@ -495,11 +596,12 @@ const CreateInstancePage: React.FC = () => {
 
   const [formData, setFormData] = useState<CreateInstanceRequest>({
     name: "",
+    owner: "",
     type: "openclaw",
     mode: "lite",
     cpu_cores: 2,
     memory_gb: 4,
-    disk_gb: 20,
+    disk_gb: DEFAULT_LITE_DISK_GB,
     os_type: "openclaw",
     os_version: "latest",
     gpu_enabled: false,
@@ -519,10 +621,12 @@ const CreateInstancePage: React.FC = () => {
       !Object.prototype.hasOwnProperty.call(builtinEnvOverrides, template.key),
   );
   const selectedMode = formData.mode ?? "lite";
-  const selectedRuntimeType =
-    selectedMode === "lite" ? "gateway" : "desktop";
+  const selectedRuntimeType = selectedMode === "lite" ? "gateway" : "desktop";
   const availableTypesForMode = availableTypes.filter(
-    (item) => selectedMode === "pro" || !isProOnlyInstanceType(item.id),
+    (item) =>
+      selectedMode === "pro"
+        ? !isLiteOnlyInstanceType(item.id)
+        : !isProOnlyInstanceType(item.id),
   );
   const selectedType = availableTypesForMode.find(
     (item) => item.id === formData.type,
@@ -536,7 +640,14 @@ const CreateInstancePage: React.FC = () => {
   const selectedRuntimeImage =
     runtimeImageOptions.find(
       (item) => getRuntimeImageOptionKey(item) === selectedRuntimeImageKey,
-    ) ?? runtimeImageOptions[0] ?? null;
+    ) ??
+    runtimeImageOptions[0] ??
+    null;
+  const selectedRuntimeVariant = resolveManagedRuntimeVariant(
+    formData.type,
+    selectedRuntimeImage,
+  );
+  const isWindowsVM = selectedRuntimeVariant === "windows";
   const primaryCustomProRuntimeImage =
     runtimeImageSettings.find(
       (item) =>
@@ -550,7 +661,10 @@ const CreateInstancePage: React.FC = () => {
     const instanceMode = (
       instance as Instance & { instance_mode?: InstanceMode }
     ).instance_mode;
-    return instanceMode === "pro" || (!instanceMode && instance.runtime_type !== "gateway");
+    return (
+      instanceMode === "pro" ||
+      (!instanceMode && instance.runtime_type !== "gateway")
+    );
   };
 
   const renderInstanceModeSelector = () => (
@@ -559,7 +673,7 @@ const CreateInstancePage: React.FC = () => {
         {t("instances.instanceMode")}
       </h3>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {INSTANCE_MODE_OPTIONS.map((mode) => {
+        {INSTANCE_MODE_OPTIONS.filter((mode) => !requiresProMode(formData.type) || mode.id === "pro").map((mode) => {
           const selected = selectedMode === mode.id;
           return (
             <button
@@ -580,8 +694,7 @@ const CreateInstancePage: React.FC = () => {
                     instance_mode: mode.id,
                     ...(fallbackType
                       ? {
-                          type:
-                            fallbackType.id as CreateInstanceRequest["type"],
+                          type: fallbackType.id as CreateInstanceRequest["type"],
                           os_type: fallbackType.defaultOs,
                           os_version: fallbackType.defaultVersion,
                           storage_class: "",
@@ -620,7 +733,13 @@ const CreateInstancePage: React.FC = () => {
     const loadAvailableTypes = async () => {
       try {
         const items = await systemSettingsService.getImageSettings();
-        const enabledItems = items.filter((item) => item.is_enabled !== false);
+        const enabledItems = items.filter(
+          (item) =>
+            item.is_enabled !== false &&
+            !HIDDEN_TEAM_INSTANCE_TYPE_IDS.has(item.instance_type) &&
+            (item.instance_type !== "workbuddy" ||
+              resolveManagedRuntimeVariant("workbuddy", item) === "linux"),
+        );
         setRuntimeImageSettings(enabledItems);
         const enabledTypes = new Set(
           enabledItems.map((item) => item.instance_type),
@@ -663,9 +782,7 @@ const CreateInstancePage: React.FC = () => {
         const items = await skillHubService.listAttachable();
         const activeSkills = items.filter((item) => item.status === "active");
         const attachableSkills = activeSkills.filter(
-          (item) =>
-            item.risk_level !== "medium" &&
-            item.risk_level !== "high",
+          (item) => item.risk_level !== "medium" && item.risk_level !== "high",
         );
         setAvailableSkills(attachableSkills);
         setSkillInventorySummary({
@@ -735,22 +852,47 @@ const CreateInstancePage: React.FC = () => {
   const handleTypeSelect = (typeId: string) => {
     const instanceType = availableTypesForMode.find((t) => t.id === typeId);
     if (instanceType) {
-      if (!supportsRuntimeInjection(typeId)) {
+      const configuredRuntimeImage = runtimeImageSettings.find(
+        (item) =>
+          item.is_enabled !== false &&
+          item.instance_type === typeId &&
+          normalizeRuntimeImageType(item.runtime_type) === "desktop",
+      );
+      const runtimeVariant = resolveManagedRuntimeVariant(typeId, configuredRuntimeImage);
+      if (!supportsRuntimeInjection(typeId, configuredRuntimeImage?.image, runtimeVariant)) {
         setOpenClawImportFile(null);
         setOpenClawInjectionMode("none");
         setOpenClawBundleId(undefined);
         setOpenClawResourceIds([]);
         setOpenClawPreview(null);
         setOpenClawPreviewError(null);
-        setSelectedSkillIds([]);
+        if (!supportsSkillSelection(typeId)) {
+          setSelectedSkillIds([]);
+        }
       }
+      const windowsVMResources = runtimeVariant === "windows"
+        ? { cpu_cores: 6, memory_gb: 12, disk_gb: 80 }
+        : typeId === "workbuddy" || typeId === "codex"
+          ? {
+              cpu_cores: PRESET_CONFIGS.medium.cpu_cores,
+              memory_gb: PRESET_CONFIGS.medium.memory_gb,
+              disk_gb: PRESET_CONFIGS.medium.disk_gb,
+            }
+          : {};
       setFormData({
         ...formData,
         type: typeId as CreateInstanceRequest["type"],
+        runtime_variant: runtimeVariant,
+        mode: requiresProMode(typeId) ? "pro" : formData.mode,
+        instance_mode: requiresProMode(typeId) ? "pro" : formData.instance_mode,
         os_type: instanceType.defaultOs,
         os_version: instanceType.defaultVersion,
         storage_class: "",
+        ...windowsVMResources,
       });
+      if (runtimeVariant) {
+        setResourcePresetMode(runtimeVariant === "windows" ? CUSTOM_RESOURCE_PRESET : "medium");
+      }
     }
   };
 
@@ -763,7 +905,7 @@ const CreateInstancePage: React.FC = () => {
         ...current,
         cpu_cores: PRESET_CONFIGS.medium.cpu_cores,
         memory_gb: PRESET_CONFIGS.medium.memory_gb,
-        disk_gb: PRESET_CONFIGS.medium.disk_gb,
+        disk_gb: isWindowsVM ? 80 : PRESET_CONFIGS.medium.disk_gb,
       }));
       return;
     }
@@ -772,9 +914,9 @@ const CreateInstancePage: React.FC = () => {
     setResourcePresetMode(preset);
     setFormData((current) => ({
       ...current,
-      cpu_cores: config.cpu_cores,
-      memory_gb: config.memory_gb,
-      disk_gb: config.disk_gb,
+      cpu_cores: isWindowsVM ? Math.max(6, config.cpu_cores) : config.cpu_cores,
+      memory_gb: isWindowsVM ? Math.max(12, config.memory_gb) : config.memory_gb,
+      disk_gb: isWindowsVM ? 80 : config.disk_gb,
     }));
   };
 
@@ -888,6 +1030,8 @@ const CreateInstancePage: React.FC = () => {
       setError(null);
       const createPayload: CreateInstanceRequest = {
         ...formData,
+        owner: formData.owner?.trim(),
+        runtime_variant: selectedRuntimeVariant,
         mode: selectedMode,
         instance_mode: selectedMode,
         runtime_type: selectedRuntimeType,
@@ -899,7 +1043,7 @@ const CreateInstancePage: React.FC = () => {
           : PRESET_CONFIGS.small.memory_gb,
         disk_gb: usesDedicatedResources
           ? formData.disk_gb
-          : PRESET_CONFIGS.small.disk_gb,
+          : DEFAULT_LITE_DISK_GB,
         gpu_enabled: usesDedicatedResources ? formData.gpu_enabled : false,
         gpu_count: usesDedicatedResources ? formData.gpu_count : 0,
         desktop_stream_profile:
@@ -907,15 +1051,15 @@ const CreateInstancePage: React.FC = () => {
         image_registry: selectedRuntimeImage?.image,
         image_tag: selectedRuntimeImage ? undefined : formData.image_tag,
         environment_overrides: overrides,
-        skill_ids: supportsRuntimeInjection(formData.type)
+        skill_ids: supportsSkillSelection(formData.type)
           ? selectedSkillIds
           : undefined,
         openclaw_config_plan:
-          supportsRuntimeInjection(formData.type) &&
+          supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
           openClawInjectionMode === "bundle" &&
           openClawBundleId
             ? { mode: "bundle", bundle_id: openClawBundleId }
-            : supportsRuntimeInjection(formData.type) &&
+            : supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
                 openClawInjectionMode === "manual" &&
                 openClawResourceIds.length > 0
               ? { mode: "manual", resource_ids: openClawResourceIds }
@@ -926,7 +1070,7 @@ const CreateInstancePage: React.FC = () => {
         await instanceService.createInstance(createPayload);
 
       if (
-        supportsRuntimeInjection(formData.type) &&
+        supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
         openClawInjectionMode === "archive" &&
         openClawImportFile
       ) {
@@ -954,7 +1098,8 @@ const CreateInstancePage: React.FC = () => {
   };
 
   const canProceed = () => {
-    if (step === 1) return formData.name.length >= 3;
+    if (step === 1)
+      return formData.name.length >= 3 && Boolean(formData.owner?.trim());
     if (step === 2) return availableTypesForMode.length > 0;
     return true;
   };
@@ -993,12 +1138,16 @@ const CreateInstancePage: React.FC = () => {
     instances: instances.length,
     cpu: instances.reduce(
       (sum, instance) =>
-        instanceUsesDedicatedResources(instance) ? sum + instance.cpu_cores : sum,
+        instanceUsesDedicatedResources(instance)
+          ? sum + instance.cpu_cores
+          : sum,
       0,
     ),
     memory: instances.reduce(
       (sum, instance) =>
-        instanceUsesDedicatedResources(instance) ? sum + instance.memory_gb : sum,
+        instanceUsesDedicatedResources(instance)
+          ? sum + instance.memory_gb
+          : sum,
       0,
     ),
     storage: instances.reduce(
@@ -1032,8 +1181,7 @@ const CreateInstancePage: React.FC = () => {
                 next: usedResources.cpu + formData.cpu_cores,
                 max: quota.max_cpu_cores,
                 exceeded:
-                  usedResources.cpu + formData.cpu_cores >
-                  quota.max_cpu_cores,
+                  usedResources.cpu + formData.cpu_cores > quota.max_cpu_cores,
               },
               {
                 key: "memory",
@@ -1073,7 +1221,7 @@ const CreateInstancePage: React.FC = () => {
   const exceededQuotaItems = quotaChecks.filter((item) => item.exceeded);
   const quotaExceeded = exceededQuotaItems.length > 0;
   const openClawPlanInvalid =
-    supportsRuntimeInjection(formData.type) &&
+    supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
     ((openClawInjectionMode === "bundle" &&
       (!openClawBundleId ||
         !!openClawPreviewError ||
@@ -1147,11 +1295,51 @@ const CreateInstancePage: React.FC = () => {
       );
     }
 
+    if (typeId === "opencode") {
+      return (
+        <img
+          src="/opencode.png"
+          alt="OpenCode"
+          className="h-10 w-10 object-contain"
+        />
+      );
+    }
+
     if (typeId === "workbuddy") {
       return (
         <img
           src="/workbuddy.png"
           alt="Workbuddy"
+          className="h-10 w-10 object-contain"
+        />
+      );
+    }
+
+    if (typeId === "deepseek-harness") {
+      return (
+        <img
+          src="/deepseek-harness.svg?v=20260819-2"
+          alt="DeepSeek Harness"
+          className="h-10 w-10 object-contain"
+        />
+      );
+    }
+
+    if (typeId === "codex") {
+      return (
+        <img
+          src="/codex.png"
+          alt="Codex"
+          className="h-10 w-10 object-contain"
+        />
+      );
+    }
+
+    if (typeId === "claude-code") {
+      return (
+        <img
+          src="/claude-code.png"
+          alt="Claude Code"
           className="h-10 w-10 object-contain"
         />
       );
@@ -1222,6 +1410,117 @@ const CreateInstancePage: React.FC = () => {
     );
   };
 
+  const renderSkillSelector = () => (
+    <>
+      {selectedSkillNames.length > 0 && (
+        <div className="mt-4">
+          {renderSummaryTagList(
+            selectedSkillNames,
+            t("instances.noReusableSkillsSelected"),
+            "emerald",
+          )}
+        </div>
+      )}
+
+      {skillInventorySummary.hiddenByRisk > 0 && (
+        <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          {skillRiskPolicySummary}
+        </div>
+      )}
+
+      <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+        {skillLoading ? (
+          <div className="text-sm text-gray-500">
+            {t("openClawResourcesPage.loadingSkills")}
+          </div>
+        ) : availableSkills.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-500">
+            {t("instances.noAvailableSkillsForInjection")}
+          </div>
+        ) : (
+          paginatedSkills.map((skill) => {
+            const checked = selectedSkillIds.includes(skill.id);
+            return (
+              <label
+                key={skill.id}
+                className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 ${
+                  checked
+                    ? "border-indigo-300 bg-indigo-50"
+                    : "border-gray-200 bg-white"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(event) =>
+                    setSelectedSkillIds((current) =>
+                      event.target.checked
+                        ? [...current, skill.id]
+                        : current.filter((value) => value !== skill.id),
+                    )
+                  }
+                />
+                <span className="min-w-0">
+                  <span className="block font-medium text-gray-900">
+                    {skill.name}
+                  </span>
+                  <span className="mt-1 block text-xs text-gray-500">
+                    {t("instances.skillRiskVersionLabel", {
+                      key: skill.skill_key,
+                      risk: skill.risk_level,
+                      version: skill.current_version_no || 1,
+                    })}
+                  </span>
+                  {skill.description && (
+                    <span className="mt-2 block text-sm text-gray-600">
+                      {skill.description}
+                    </span>
+                  )}
+                </span>
+              </label>
+            );
+          })
+        )}
+      </div>
+
+      {!skillLoading && availableSkills.length > 0 && (
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-200 pt-4">
+          <p className="text-sm text-gray-500">
+            {t("instances.skillPageSummary", {
+              page: skillPage,
+              totalPages: totalSkillPages,
+              totalSkills: availableSkills.length,
+            })}
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                setSkillPage((current) => Math.max(1, current - 1))
+              }
+              disabled={skillPage <= 1}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("instances.previous")}
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setSkillPage((current) =>
+                  Math.min(totalSkillPages, current + 1),
+                )
+              }
+              disabled={skillPage >= totalSkillPages}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("instances.nextPage")}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <UserLayout>
       {/* Progress Bar */}
@@ -1278,7 +1577,7 @@ const CreateInstancePage: React.FC = () => {
               onClick={() => setError(null)}
               className="float-right text-red-500 hover:text-red-700"
             >
-              \u00d7
+              ×
             </button>
           </div>
         )}
@@ -1345,6 +1644,30 @@ const CreateInstancePage: React.FC = () => {
                   />
                 </div>
 
+                <div>
+                  <label
+                    htmlFor="owner"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    {t("instances.owner")}
+                  </label>
+                  <input
+                    type="text"
+                    id="owner"
+                    value={formData.owner || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, owner: e.target.value })
+                    }
+                    className="app-input mt-1 block w-full"
+                    placeholder={t("instances.ownerPlaceholder")}
+                    maxLength={128}
+                    required
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    {t("instances.ownerHelp")}
+                  </p>
+                </div>
+
                 {renderInstanceModeSelector()}
               </div>
             </div>
@@ -1369,7 +1692,13 @@ const CreateInstancePage: React.FC = () => {
                   >
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <div className="h-12 w-12 rounded-lg bg-indigo-100 flex items-center justify-center">
+                        <div
+                          className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                            type.id === "deepseek-harness"
+                              ? "border border-slate-200 bg-white"
+                              : "bg-indigo-100"
+                          }`}
+                        >
                           {renderTypeIcon(type.id)}
                         </div>
                       </div>
@@ -1426,7 +1755,9 @@ const CreateInstancePage: React.FC = () => {
                           <button
                             key={optionKey}
                             type="button"
-                            onClick={() => setSelectedRuntimeImageKey(optionKey)}
+                            onClick={() =>
+                              setSelectedRuntimeImageKey(optionKey)
+                            }
                             className={`rounded-[20px] border p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_56px_-42px_rgba(72,44,24,0.55)] ${
                               selected
                                 ? "border-indigo-500 bg-white ring-2 ring-indigo-500"
@@ -1439,13 +1770,19 @@ const CreateInstancePage: React.FC = () => {
                                   <h4 className="text-sm font-semibold text-gray-900">
                                     {item.display_name}
                                   </h4>
-                                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                                    normalizeRuntimeImageType(item.runtime_type) === "gateway"
-                                      ? "bg-emerald-50 text-emerald-700"
-                                      : "bg-indigo-50 text-indigo-700"
-                                  }`}>
+                                  <span
+                                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                                      normalizeRuntimeImageType(
+                                        item.runtime_type,
+                                      ) === "gateway"
+                                        ? "bg-emerald-50 text-emerald-700"
+                                        : "bg-indigo-50 text-indigo-700"
+                                    }`}
+                                  >
                                     {t(
-                                      normalizeRuntimeImageType(item.runtime_type) === "gateway"
+                                      normalizeRuntimeImageType(
+                                        item.runtime_type,
+                                      ) === "gateway"
                                         ? "instances.runtimeTypeGateway"
                                         : "instances.runtimeTypeDesktop",
                                     )}
@@ -1460,7 +1797,9 @@ const CreateInstancePage: React.FC = () => {
                                 </p>
                               </div>
                               {selected && (
-                                <span className="rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">\u2713</span>
+                                <span className="rounded-full bg-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700">
+                                  \u2713
+                                </span>
                               )}
                             </div>
                             <p className="mt-3 break-all rounded-2xl bg-[#f8f5f2] px-3 py-2 font-mono text-xs text-[#5f5957]">
@@ -1547,11 +1886,7 @@ const CreateInstancePage: React.FC = () => {
                               {getPresetLabel(t, key, config.name)}
                             </h3>
                             <p className="mt-1 text-sm text-gray-500">
-                              {getPresetDescription(
-                                t,
-                                key,
-                                config.description,
-                              )}
+                              {getPresetDescription(t, key, config.description)}
                             </p>
                             <div className="mt-2 text-sm text-gray-600">
                               {t("instances.resourcePresetSummary", {
@@ -1641,8 +1976,7 @@ const CreateInstancePage: React.FC = () => {
                                 onChange={(e) =>
                                   setFormData((current) => ({
                                     ...current,
-                                    memory_gb:
-                                      parseInt(e.target.value) || 1,
+                                    memory_gb: parseInt(e.target.value) || 1,
                                   }))
                                 }
                                 className="mt-1 h-9 w-full rounded-xl border border-gray-200 bg-white px-2 text-sm font-medium text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
@@ -1659,13 +1993,16 @@ const CreateInstancePage: React.FC = () => {
                               <input
                                 type="number"
                                 id="custom_disk"
-                                min={10}
-                                max={1000}
+                                min={isWindowsVM ? 80 : 10}
+                                max={isWindowsVM ? 80 : 1000}
                                 value={formData.disk_gb}
                                 onChange={(e) =>
                                   setFormData((current) => ({
                                     ...current,
-                                    disk_gb: parseInt(e.target.value) || 10,
+                                    disk_gb:
+                                      isWindowsVM
+                                        ? 80
+                                        : parseInt(e.target.value) || 10,
                                   }))
                                 }
                                 className="mt-1 h-9 w-full rounded-xl border border-gray-200 bg-white px-2 text-sm font-medium text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
@@ -2010,7 +2347,7 @@ const CreateInstancePage: React.FC = () => {
                       {quotaLoading
                         ? t("instances.checkingQuota")
                         : loading
-                          ? supportsRuntimeInjection(formData.type) &&
+                          ? supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) &&
                             openClawInjectionMode === "archive" &&
                             openClawImportFile
                             ? t("instances.creatingAndImporting")
@@ -2020,7 +2357,7 @@ const CreateInstancePage: React.FC = () => {
                   </div>
                 </div>
 
-                {supportsRuntimeInjection(formData.type) && (
+                {supportsRuntimeInjection(formData.type, selectedRuntimeImage?.image, selectedRuntimeVariant) && (
                   <div className="app-panel order-2 p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -2083,118 +2420,7 @@ const CreateInstancePage: React.FC = () => {
                           </span>
                         </div>
 
-                        {selectedSkillNames.length > 0 && (
-                          <div className="mt-4">
-                            {renderSummaryTagList(
-                              selectedSkillNames,
-                              t("instances.noReusableSkillsSelected"),
-                              "emerald",
-                            )}
-                          </div>
-                        )}
-
-                        {skillInventorySummary.hiddenByRisk > 0 && (
-                          <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                            {skillRiskPolicySummary}
-                          </div>
-                        )}
-
-                        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-                          {skillLoading ? (
-                            <div className="text-sm text-gray-500">
-                              {t("openClawResourcesPage.loadingSkills")}
-                            </div>
-                          ) : availableSkills.length === 0 ? (
-                            <div className="rounded-2xl border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-500">
-                              {t("instances.noAvailableSkillsForInjection")}
-                            </div>
-                          ) : (
-                            paginatedSkills.map((skill) => {
-                              const checked = selectedSkillIds.includes(
-                                skill.id,
-                              );
-                              return (
-                                <label
-                                  key={skill.id}
-                                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 ${
-                                    checked
-                                      ? "border-indigo-300 bg-indigo-50"
-                                      : "border-gray-200 bg-white"
-                                  }`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={(e) =>
-                                      setSelectedSkillIds((current) =>
-                                        e.target.checked
-                                          ? [...current, skill.id]
-                                          : current.filter(
-                                              (value) => value !== skill.id,
-                                            ),
-                                      )
-                                    }
-                                  />
-                                  <span className="min-w-0">
-                                    <span className="block font-medium text-gray-900">
-                                      {skill.name}
-                                    </span>
-                                    <span className="mt-1 block text-xs text-gray-500">
-                                      {t("instances.skillRiskVersionLabel", {
-                                        key: skill.skill_key,
-                                        risk: skill.risk_level,
-                                        version: skill.current_version_no || 1,
-                                      })}
-                                    </span>
-                                    {skill.description && (
-                                      <span className="mt-2 block text-sm text-gray-600">
-                                        {skill.description}
-                                      </span>
-                                    )}
-                                  </span>
-                                </label>
-                              );
-                            })
-                          )}
-                        </div>
-
-                        {!skillLoading && availableSkills.length > 0 && (
-                          <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-200 pt-4">
-                            <p className="text-sm text-gray-500">
-                              {t("instances.skillPageSummary", {
-                                page: skillPage,
-                                totalPages: totalSkillPages,
-                                totalSkills: availableSkills.length,
-                              })}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setSkillPage((current) =>
-                                    Math.max(1, current - 1),
-                                  )
-                                }
-                                disabled={skillPage <= 1}
-                                className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                              >
-                                {t("instances.previous")}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setSkillPage((current) =>
-                                    Math.min(totalSkillPages, current + 1),
-                                  )
-                                }
-                                disabled={skillPage >= totalSkillPages}
-                                className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                              >
-                                {t("instances.nextPage")}
-                              </button>
-                            </div>
-                          </div>
-                        )}
+                        {renderSkillSelector()}
                       </div>
                     )}
 
@@ -2272,6 +2498,28 @@ const CreateInstancePage: React.FC = () => {
                     )}
                   </div>
                 )}
+
+                {formData.type === "deepseek-harness" && (
+                  <div className="app-panel order-2 p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h2 className="text-lg font-medium text-gray-900">
+                          {t("instances.skillsSection")}
+                        </h2>
+                        <p className="mt-1 text-sm text-gray-500">
+                          {t("instances.noReusableSkillsSelected")}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                        {t("instances.selectedCount", {
+                          count: selectedSkillIds.length,
+                        })}
+                      </span>
+                    </div>
+
+                    {renderSkillSelector()}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-6 xl:sticky xl:top-24">
@@ -2325,6 +2573,14 @@ const CreateInstancePage: React.FC = () => {
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900">
                         {formData.name}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500">
+                        {t("instances.owner")}
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-900">
+                        {formData.owner}
                       </dd>
                     </div>
                     <div>
@@ -2430,32 +2686,34 @@ const CreateInstancePage: React.FC = () => {
                         )
                       )}
                     </div>
-                    {supportsRuntimeInjection(formData.type) && (
+                    {supportsSkillSelection(formData.type) && (
                       <>
-                        <div className="sm:col-span-2">
-                          <dt className="text-sm font-medium text-gray-500">
-                            {t("instances.channelInjection")}
-                          </dt>
-                          {openClawInjectionMode === "archive" ? (
-                            <p className="mt-2 text-sm text-gray-400">
-                              {t("instances.archiveSkipsChannelInjection")}
-                            </p>
-                          ) : openClawPreviewLoading ? (
-                            <p className="mt-2 text-sm text-gray-400">
-                              {t("instances.compilingRuntimePreview")}
-                            </p>
-                          ) : openClawPreviewError ? (
-                            <p className="mt-2 text-sm text-red-600">
-                              {openClawPreviewError}
-                            </p>
-                          ) : (
-                            renderSummaryTagList(
-                              resolvedChannelNames,
-                              t("instances.noChannelsSelectedForInjection"),
-                              "indigo",
-                            )
-                          )}
-                        </div>
+                        {supportsRuntimeInjection(formData.type) && (
+                          <div className="sm:col-span-2">
+                            <dt className="text-sm font-medium text-gray-500">
+                              {t("instances.channelInjection")}
+                            </dt>
+                            {openClawInjectionMode === "archive" ? (
+                              <p className="mt-2 text-sm text-gray-400">
+                                {t("instances.archiveSkipsChannelInjection")}
+                              </p>
+                            ) : openClawPreviewLoading ? (
+                              <p className="mt-2 text-sm text-gray-400">
+                                {t("instances.compilingRuntimePreview")}
+                              </p>
+                            ) : openClawPreviewError ? (
+                              <p className="mt-2 text-sm text-red-600">
+                                {openClawPreviewError}
+                              </p>
+                            ) : (
+                              renderSummaryTagList(
+                                resolvedChannelNames,
+                                t("instances.noChannelsSelectedForInjection"),
+                                "indigo",
+                              )
+                            )}
+                          </div>
+                        )}
                         <div className="sm:col-span-2">
                           <dt className="text-sm font-medium text-gray-500">
                             {t("instances.skillInjection")}

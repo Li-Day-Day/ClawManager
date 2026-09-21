@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -13,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/util/retry"
 )
 
 const instanceDeploymentRestartedAtAnnotation = "clawmanager.io/restarted-at"
@@ -61,17 +63,29 @@ func (s *InstanceDeploymentService) EnsureDeployment(ctx context.Context, config
 		return nil, fmt.Errorf("instance deployment %s/%s selector mismatch; delete and recreate the deployment to change immutable selector", desired.Namespace, desired.Name)
 	}
 
-	updated := existing.DeepCopy()
-	if updated.Labels == nil {
-		updated.Labels = map[string]string{}
-	}
-	for key, value := range desired.Labels {
-		updated.Labels[key] = value
-	}
-	updated.Spec.Replicas = desired.Spec.Replicas
-	updated.Spec.Template = desired.Spec.Template
+	var result *appsv1.Deployment
+	updateErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		current, getErr := deployments.Get(ctx, desired.Name, metav1.GetOptions{})
+		if getErr != nil {
+			return getErr
+		}
+		if !reflect.DeepEqual(current.Spec.Selector, desired.Spec.Selector) {
+			return fmt.Errorf("instance deployment %s/%s selector mismatch; delete and recreate the deployment to change immutable selector", desired.Namespace, desired.Name)
+		}
 
-	result, updateErr := deployments.Update(ctx, updated, metav1.UpdateOptions{})
+		updated := current.DeepCopy()
+		if updated.Labels == nil {
+			updated.Labels = map[string]string{}
+		}
+		for key, value := range desired.Labels {
+			updated.Labels[key] = value
+		}
+		updated.Spec.Replicas = desired.Spec.Replicas
+		updated.Spec.Template = desired.Spec.Template
+
+		result, getErr = deployments.Update(ctx, updated, metav1.UpdateOptions{})
+		return getErr
+	})
 	if updateErr != nil {
 		return nil, fmt.Errorf("failed to update instance deployment %s/%s: %w", desired.Namespace, desired.Name, updateErr)
 	}
@@ -254,6 +268,7 @@ func BuildInstanceDeployment(client *Client, config PodConfig, replicas int32) *
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: &replicas,
+			Strategy: instanceDeploymentStrategy(config),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
 					"app":         "clawreef",
@@ -271,17 +286,36 @@ func BuildInstanceDeployment(client *Client, config PodConfig, replicas int32) *
 	}
 }
 
+func instanceDeploymentStrategy(config PodConfig) appsv1.DeploymentStrategy {
+	instanceType := strings.ToLower(strings.TrimSpace(config.Type))
+	if strings.TrimSpace(config.MountPath) == "/storage" && (instanceType == "workbuddy" || instanceType == "codex") {
+		return appsv1.DeploymentStrategy{Type: appsv1.RecreateDeploymentStrategyType}
+	}
+	return appsv1.DeploymentStrategy{}
+}
+
 func instanceDeploymentAnnotations(config PodConfig) map[string]string {
-	if config.SecurityMode == PodSecurityChromiumCompat {
+	if requiresUnconfinedAppArmor(config.SecurityMode) {
 		return map[string]string{"container.apparmor.security.beta.kubernetes.io/desktop": "unconfined"}
 	}
 	return nil
 }
 
 func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeType string) corev1.PodSpec {
-	pvcName := client.GetPVCName(config.InstanceID)
+	pvcName := strings.TrimSpace(config.PVCName)
+	if pvcName == "" {
+		pvcName = client.GetPVCName(config.InstanceID)
+	}
 	if config.ContainerPort == 0 {
 		config.ContainerPort = 3001
+	}
+	probePort := config.ProbePort
+	if probePort == 0 {
+		probePort = config.ContainerPort
+	}
+	startupProbeFailures := config.StartupProbeFailures
+	if startupProbeFailures <= 0 {
+		startupProbeFailures = 30
 	}
 	pullPolicy := config.ImagePullPolicy
 	if pullPolicy == "" {
@@ -312,20 +346,20 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			Name:          "http",
 		}},
 		StartupProbe: &corev1.Probe{
-			ProbeHandler:     corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(config.ContainerPort)}},
-			FailureThreshold: 30,
+			ProbeHandler:     corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(probePort)}},
+			FailureThreshold: startupProbeFailures,
 			PeriodSeconds:    5,
 			TimeoutSeconds:   2,
 		},
 		ReadinessProbe: &corev1.Probe{
-			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(config.ContainerPort)}},
+			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(probePort)}},
 			InitialDelaySeconds: 3,
 			PeriodSeconds:       5,
 			TimeoutSeconds:      2,
 			FailureThreshold:    6,
 		},
 		LivenessProbe: &corev1.Probe{
-			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(config.ContainerPort)}},
+			ProbeHandler:        corev1.ProbeHandler{TCPSocket: &corev1.TCPSocketAction{Port: intstrFromInt32(probePort)}},
 			InitialDelaySeconds: 15,
 			PeriodSeconds:       10,
 			TimeoutSeconds:      2,
@@ -341,6 +375,12 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			{Name: "INSTANCE_ID", Value: fmt.Sprintf("%d", config.InstanceID)},
 			{Name: "USER_ID", Value: fmt.Sprintf("%d", config.UserID)},
 		},
+	}
+	if probePort != config.ContainerPort {
+		container.Ports = append(container.Ports, corev1.ContainerPort{
+			ContainerPort: probePort,
+			Name:          "ready",
+		})
 	}
 	if runtimeType == "shell" {
 		container.Ports = nil
@@ -372,6 +412,10 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			},
 		}},
 	}
+	if config.TerminationGrace > 0 {
+		grace := config.TerminationGrace
+		spec.TerminationGracePeriodSeconds = &grace
+	}
 
 	for _, mount := range config.ExtraPVCMounts {
 		if mount.Name == "" || mount.ClaimName == "" || mount.MountPath == "" {
@@ -388,6 +432,16 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			MountPath: mount.MountPath,
 			ReadOnly:  mount.ReadOnly,
 		})
+	}
+
+	// Keep Deployment-backed desktop instances consistent with the legacy pod
+	// path: layout/bootstrap scripts must run before the Webtop init process
+	// copies its default desktop profile into the persistent volume.
+	for index, initScript := range config.VolumeInitScripts {
+		if initScript.Name == "" || initScript.MountPath == "" || initScript.Script == "" {
+			continue
+		}
+		spec.InitContainers = append(spec.InitContainers, buildVolumeInitScriptContainer(index, config.Image, pullPolicy, initScript))
 	}
 
 	for index, fix := range config.VolumeOwnershipFixes {
@@ -415,6 +469,21 @@ func buildInstanceDeploymentPodSpec(client *Client, config PodConfig, runtimeTyp
 			volumeMount.SubPath = mount.Key
 		}
 		spec.Containers[0].VolumeMounts = append(spec.Containers[0].VolumeMounts, volumeMount)
+	}
+
+	for _, mount := range config.SecretDirectoryMounts {
+		if mount.Name == "" || mount.SecretName == "" || mount.MountPath == "" {
+			continue
+		}
+		spec.Volumes = append(spec.Volumes, corev1.Volume{
+			Name: mount.Name,
+			VolumeSource: corev1.VolumeSource{Secret: &corev1.SecretVolumeSource{
+				SecretName: mount.SecretName,
+			}},
+		})
+		spec.Containers[0].VolumeMounts = append(spec.Containers[0].VolumeMounts, corev1.VolumeMount{
+			Name: mount.Name, MountPath: mount.MountPath, ReadOnly: true,
+		})
 	}
 
 	if config.SHMSizeGB > 0 {

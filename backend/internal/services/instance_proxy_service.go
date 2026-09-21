@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -58,9 +60,19 @@ type serviceLookupCall struct {
 	err         error
 }
 
-const defaultServiceCacheTTL = 30 * time.Second
+const (
+	defaultServiceCacheTTL                 = 30 * time.Second
+	openCodePublicURLTemplateEnvVar        = "CLAWMANAGER_OPENCODE_PUBLIC_URL_TEMPLATE"
+	deepSeekHarnessPublicURLTemplateEnvVar = "CLAWMANAGER_DEEPSEEK_HARNESS_PUBLIC_URL_TEMPLATE"
+)
 
-var ErrInstanceGatewayUnavailable = errors.New("instance gateway is not available")
+// DedicatedRuntimeOriginHeader marks requests routed through a runtime-specific browser origin.
+const DedicatedRuntimeOriginHeader = "X-ClawManager-Runtime-Origin"
+
+var (
+	ErrInstanceGatewayUnavailable      = errors.New("instance gateway is not available")
+	ErrOpenCodeDedicatedOriginRequired = errors.New("OpenCode Lite requires its dedicated instance origin")
+)
 
 type InstanceProxyServiceOption func(*InstanceProxyService)
 
@@ -131,62 +143,56 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 	if accessToken.InstanceID != instanceID {
 		return fmt.Errorf("token does not match instance")
 	}
+	// Hermes Lite is served only through the managed Desktop bridge. Its raw
+	// runtime endpoint must not remain reachable through the generic proxy.
+	if s.isHermesLiteProxyInstance(instanceID, RuntimeTypeHermes) {
+		return ErrHermesDesktopUnavailable
+	}
 
 	effectiveRequestPath := canonicalProxyEntryRequestPath(r.URL.Path, accessToken, instanceID)
+	dedicatedRuntimeOrigin := isDedicatedRuntimeOriginRequest(r, accessToken.InstanceType)
+	opencodeLite := s.isOpenCodeLiteProxyInstance(instanceID, accessToken.InstanceType)
+	if opencodeLite && !dedicatedRuntimeOrigin {
+		return ErrOpenCodeDedicatedOriginRequired
+	}
 
 	// Extract the actual path from the request (remove the proxy prefix)
-	targetPath := s.extractTargetPath(effectiveRequestPath, instanceID, accessToken.InstanceType)
+	targetPath := s.extractTargetPath(effectiveRequestPath, instanceID, accessToken.InstanceType, accessToken.TargetPort)
 	targetPort := s.resolveTargetPort(accessToken.InstanceType, accessToken.TargetPort, targetPath)
-	shouldRewriteHTML := s.shouldRewriteHTMLForProxy(instanceID, accessToken.InstanceType)
+	shouldRewriteHTML := s.shouldRewriteHTMLForProxy(instanceID, accessToken.InstanceType, targetPort) && !dedicatedRuntimeOrigin
 
 	// Build target URL
-	targetURL, err := s.resolveHTTPProxyTarget(ctx, accessToken, instanceID, targetPort, targetPath, effectiveRequestPath)
+	targetURL, runtimeGateway, err := s.resolveHTTPProxyTarget(ctx, accessToken, instanceID, targetPort, targetPath, effectiveRequestPath)
 	if err != nil {
 		return err
 	}
 
 	managedGatewayToken := s.managedRuntimeGatewayBearerToken(ctx, instanceID, accessToken.InstanceType)
-	proxyPrefix := hermesProxyPrefix(instanceID)
-	hermesLite := s.isHermesLiteProxyInstance(instanceID, accessToken.InstanceType)
+	proxyPrefix := instanceProxyPrefix(instanceID)
 	bootstrapPath := stripInstanceProxyPrefix(targetPath, instanceID)
 
 	// Copy query parameters, excluding ClawManager-owned proxy/gateway tokens.
+	// DSH's plugin loader uses a significant leading '?' inside RawQuery
+	// (`/plugins/??module&rev=...`). Parsing and re-encoding that query changes
+	// the module key and makes the upstream loader return 404.
+	preserveDeepSeekRawQuery := dedicatedRuntimeOrigin && isDeepSeekHarnessRuntimeType(accessToken.InstanceType)
 	queryParams := r.URL.Query()
-	s.removeProxyAccessTokenQuery(queryParams, token, managedGatewayToken)
-	if len(queryParams) > 0 {
-		targetURL.RawQuery = queryParams.Encode()
-	}
-
-	// Create new request with longer timeout for streaming
-	proxyCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
-	defer cancel()
-
-	var bootstrapSetCookies []string
-	if hermesLite && shouldBootstrapHermesDashboardSession(r, bootstrapPath) && strings.TrimSpace(managedGatewayToken) != "" {
-		if cookies, bootErr := s.bootstrapHermesDashboardSession(proxyCtx, targetURL, instanceID, managedGatewayToken, r); bootErr == nil {
-			bootstrapSetCookies = cookies
+	openCodeProjectSearchRewritten := false
+	if preserveDeepSeekRawQuery {
+		targetURL.RawQuery = s.filterProxyAccessTokenRawQuery(r.URL.RawQuery, token, managedGatewayToken)
+	} else {
+		s.removeProxyAccessTokenQuery(queryParams, token, managedGatewayToken)
+		openCodeProjectSearchRewritten = s.rewriteOpenCodeProjectSearchDirectory(ctx, instanceID, accessToken.InstanceType, bootstrapPath, queryParams)
+		if len(queryParams) > 0 {
+			targetURL.RawQuery = queryParams.Encode()
 		}
 	}
 
-	// After a successful bootstrap on non-chat entry points, send the browser
-	// to /chat with session cookies instead of serving the login HTML.
-	if len(bootstrapSetCookies) > 0 && shouldRedirectHermesBootstrapToChat(bootstrapPath) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		for _, cookie := range bootstrapSetCookies {
-			if strings.TrimSpace(cookie) == "" {
-				continue
-			}
-			w.Header().Add("Set-Cookie", cookie)
-		}
-		w.Header().Set("Location", hermesChatProxyLocation(instanceID, token))
-		w.Header().Del("X-Frame-Options")
-		w.Header().Del("Content-Security-Policy")
-		w.WriteHeader(http.StatusFound)
-		return nil
-	}
-
-	proxyReq, err := http.NewRequestWithContext(proxyCtx, r.Method, targetURL.String(), r.Body)
+	// Agent UIs use SSE, streaming responses, and long-running HTTP calls such
+	// as DeepSeek Harness /api/respond. Keep every proxied request attached to
+	// the browser's request context instead of imposing an unrelated hard
+	// deadline. Client disconnects still cancel the upstream request.
+	proxyReq, err := http.NewRequestWithContext(ctx, r.Method, targetURL.String(), r.Body)
 	if err != nil {
 		return fmt.Errorf("failed to create proxy request: %w", err)
 	}
@@ -197,17 +203,42 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 			proxyReq.Header.Add(key, value)
 		}
 	}
-	attachCookiesToRequest(proxyReq, bootstrapSetCookies)
+	if dedicatedRuntimeOrigin && isDeepSeekHarnessRuntimeType(accessToken.InstanceType) {
+		// DeepSeek Harness validates every /api request against Host and Origin.
+		// The browser uses a per-instance public origin while the upstream sees
+		// the runtime Pod address, so normalize both values at this trust boundary.
+		proxyReq.Host = targetURL.Host
+		if strings.TrimSpace(proxyReq.Header.Get("Origin")) != "" {
+			proxyReq.Header.Set("Origin", targetURL.Scheme+"://"+targetURL.Host)
+		}
+	}
 
-	// Set X-Forwarded headers
+	// Set X-Forwarded headers. OpenClaw 2026.8.1 rejects proxy-shaped
+	// requests whose forwarded client cannot be attributed to a concrete IP.
+	// Shared Runtime gateways reach this backend through the nginx sidecar in
+	// the same Pod, so r.RemoteAddr is loopback rather than the browser peer.
+	// Rebuild only the OpenClaw Runtime header at that trusted local boundary;
+	// all other instance types retain their existing proxy contract.
 	proxyReq.Header.Set("X-Forwarded-For", r.RemoteAddr)
+	if runtimeGateway && isOpenClawRuntimeType(accessToken.InstanceType) {
+		setOpenClawRuntimeForwardedClient(proxyReq.Header, r)
+	}
 	proxyReq.Header.Set("X-Forwarded-Host", r.Host)
 	proxyReq.Header.Set("X-Forwarded-Proto", requestScheme(r))
-	proxyReq.Header.Set("X-Forwarded-Prefix", proxyPrefix)
-	if !isHermesDashboardPublicAuthPath(bootstrapPath) {
+	if dedicatedRuntimeOrigin {
+		proxyReq.Header.Del("X-Forwarded-Prefix")
+	} else {
+		proxyReq.Header.Set("X-Forwarded-Prefix", proxyPrefix)
+	}
+	if opencodeLite {
+		setOpenCodeServerBasicAuthHeaders(proxyReq.Header, managedGatewayToken)
+	} else if !isRuntimePublicAuthPath(bootstrapPath) {
 		setManagedRuntimeGatewayAuthHeaders(proxyReq.Header, managedGatewayToken)
 	}
 	if shouldRewriteHTML {
+		proxyReq.Header.Del("Accept-Encoding")
+	}
+	if openCodeProjectSearchRewritten {
 		proxyReq.Header.Del("Accept-Encoding")
 	}
 
@@ -225,8 +256,31 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
-	if location := resp.Header.Get("Location"); location != "" {
+	if location := resp.Header.Get("Location"); location != "" && !dedicatedRuntimeOrigin {
 		resp.Header.Set("Location", s.rewriteRedirectLocation(instanceID, location))
+	}
+	// OpenCode is authenticated transparently on the upstream request. Do not
+	// let a failed upstream challenge open a native browser Basic-auth dialog.
+	if isOpenCodeRuntimeType(accessToken.InstanceType) {
+		resp.Header.Del("WWW-Authenticate")
+	}
+
+	if openCodeProjectSearchRewritten && resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
+		body, readErr := io.ReadAll(resp.Body)
+		if readErr != nil {
+			return fmt.Errorf("failed to read OpenCode file search response: %w", readErr)
+		}
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			return fmt.Errorf("failed to close OpenCode file search response: %w", closeErr)
+		}
+		if modifiedBody, changed := rewriteOpenCodeFileSearchResponse(bootstrapPath, body); changed {
+			body = modifiedBody
+			resp.Header.Del("ETag")
+			resp.Header.Del("Last-Modified")
+		}
+		resp.Body = io.NopCloser(bytes.NewReader(body))
+		resp.ContentLength = int64(len(body))
+		resp.Header.Set("Content-Length", strconv.Itoa(len(body)))
 	}
 
 	if shouldRewriteHTML && strings.Contains(resp.Header.Get("Content-Type"), "text/html") {
@@ -239,8 +293,9 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 		}
 
 		modifiedBody := injectProxyBase(string(body), proxyBaseForRequestPath(effectiveRequestPath, instanceID))
-		if hermesLite {
-			modifiedBody = injectHermesAbsolutePathPatch(modifiedBody, proxyPrefix)
+		if opencodeLite {
+			modifiedBody = rewriteOpenCodeHTMLRootAssets(modifiedBody, proxyPrefix)
+			modifiedBody = injectOpenCodeAbsolutePathPatch(modifiedBody, proxyPrefix)
 		}
 		resp.Body = io.NopCloser(bytes.NewReader([]byte(modifiedBody)))
 		resp.ContentLength = int64(len(modifiedBody))
@@ -255,12 +310,6 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 			w.Header().Add(key, value)
 		}
 	}
-	for _, cookie := range bootstrapSetCookies {
-		if strings.TrimSpace(cookie) == "" {
-			continue
-		}
-		w.Header().Add("Set-Cookie", cookie)
-	}
 	w.Header().Del("X-Frame-Options")
 	w.Header().Del("Content-Security-Policy")
 
@@ -270,6 +319,10 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 	// Write status code
 	w.WriteHeader(resp.StatusCode)
 
+	if strings.HasPrefix(strings.ToLower(resp.Header.Get("Content-Type")), "text/event-stream") {
+		return copyEventStream(w, resp.Body)
+	}
+
 	// Copy response body
 	_, err = io.Copy(w, resp.Body)
 	if err != nil {
@@ -277,6 +330,28 @@ func (s *InstanceProxyService) ProxyRequest(ctx context.Context, instanceID int,
 	}
 
 	return nil
+}
+
+func copyEventStream(w http.ResponseWriter, body io.Reader) error {
+	buffer := make([]byte, 32*1024)
+	flusher, _ := w.(http.Flusher)
+	for {
+		read, readErr := body.Read(buffer)
+		if read > 0 {
+			if _, err := w.Write(buffer[:read]); err != nil {
+				return fmt.Errorf("failed to write event stream: %w", err)
+			}
+			if flusher != nil {
+				flusher.Flush()
+			}
+		}
+		if errors.Is(readErr, io.EOF) {
+			return nil
+		}
+		if readErr != nil {
+			return fmt.Errorf("failed to read event stream: %w", readErr)
+		}
+	}
 }
 
 // ProxyWebSocket handles WebSocket upgrade requests
@@ -301,26 +376,38 @@ func (s *InstanceProxyService) ProxyWebSocket(ctx context.Context, instanceID in
 	if accessToken.InstanceID != instanceID {
 		return fmt.Errorf("token does not match instance")
 	}
+	// Browser cookies and tickets for Hermes Desktop must never enter this raw
+	// WebSocket tunnel.
+	if s.isHermesLiteProxyInstance(instanceID, RuntimeTypeHermes) {
+		return ErrHermesDesktopUnavailable
+	}
+	dedicatedRuntimeOrigin := isDedicatedRuntimeOriginRequest(r, accessToken.InstanceType)
+	opencodeLite := s.isOpenCodeLiteProxyInstance(instanceID, accessToken.InstanceType)
+	if opencodeLite && !dedicatedRuntimeOrigin {
+		return ErrOpenCodeDedicatedOriginRequired
+	}
 
 	// Extract the actual path from the request
-	targetPath := s.extractTargetPath(r.URL.Path, instanceID, accessToken.InstanceType)
+	targetPath := s.extractTargetPath(r.URL.Path, instanceID, accessToken.InstanceType, accessToken.TargetPort)
 	targetPort := s.resolveTargetPort(accessToken.InstanceType, accessToken.TargetPort, targetPath)
 
-	targetURL, err := s.resolveWebSocketProxyTarget(ctx, accessToken, instanceID, targetPort, targetPath, r.URL.Path)
+	targetURL, runtimeGateway, err := s.resolveWebSocketProxyTarget(ctx, accessToken, instanceID, targetPort, targetPath, r.URL.Path)
 	if err != nil {
 		return err
 	}
 
 	managedGatewayToken := s.managedRuntimeGatewayBearerToken(ctx, instanceID, accessToken.InstanceType)
-	upstreamPath := stripInstanceProxyPrefix(targetPath, instanceID)
-	hermesLite := s.isHermesLiteProxyInstance(instanceID, accessToken.InstanceType)
-	skipManagedWSAuth := hermesLite && isHermesDashboardTicketWebSocket(upstreamPath, r.URL.Query())
 
 	// Copy query parameters, excluding ClawManager-owned proxy/gateway tokens.
+	// Preserve DSH's significant leading '?' in plugin-loader batch queries.
 	queryParams := r.URL.Query()
-	s.removeProxyAccessTokenQuery(queryParams, token, managedGatewayToken)
-	if len(queryParams) > 0 {
-		targetURL.RawQuery = queryParams.Encode()
+	if dedicatedRuntimeOrigin && isDeepSeekHarnessRuntimeType(accessToken.InstanceType) {
+		targetURL.RawQuery = s.filterProxyAccessTokenRawQuery(r.URL.RawQuery, token, managedGatewayToken)
+	} else {
+		s.removeProxyAccessTokenQuery(queryParams, token, managedGatewayToken)
+		if len(queryParams) > 0 {
+			targetURL.RawQuery = queryParams.Encode()
+		}
 	}
 
 	upstreamHeader := http.Header{}
@@ -336,21 +423,27 @@ func (s *InstanceProxyService) ProxyWebSocket(ctx context.Context, instanceID in
 	upstreamHeader.Del("Sec-Websocket-Version")
 	upstreamHeader.Del("Sec-Websocket-Extensions")
 	upstreamHeader.Set("X-Forwarded-For", r.RemoteAddr)
+	if runtimeGateway && isOpenClawRuntimeType(accessToken.InstanceType) {
+		setOpenClawRuntimeForwardedClient(upstreamHeader, r)
+	}
 	upstreamHeader.Set("X-Forwarded-Host", r.Host)
 	upstreamHeader.Set("X-Forwarded-Proto", requestScheme(r))
-	upstreamHeader.Set("X-Forwarded-Prefix", fmt.Sprintf("/api/v1/instances/%d/proxy", instanceID))
-	// Hermes dashboard chat uses cookie + ticket query auth. Do not inject
-	// managed Bearer/API-Key headers or rewrite Origin for those sockets.
-	if skipManagedWSAuth {
-		upstreamHeader.Del("Authorization")
-		upstreamHeader.Del("X-Api-Key")
-		upstreamHeader.Del("X-OpenAI-Api-Key")
-		upstreamHeader.Del("OpenAI-Api-Key")
-		upstreamHeader.Del("X-ClawManager-Instance-Token")
-		upstreamHeader.Del("X-ClawManager-LLM-API-Key")
+	if dedicatedRuntimeOrigin {
+		upstreamHeader.Del("X-Forwarded-Prefix")
+	} else {
+		upstreamHeader.Set("X-Forwarded-Prefix", fmt.Sprintf("/api/v1/instances/%d/proxy", instanceID))
+	}
+	if opencodeLite {
+		setOpenCodeServerBasicAuthHeaders(upstreamHeader, managedGatewayToken)
 	} else {
 		setManagedRuntimeGatewayAuthHeaders(upstreamHeader, managedGatewayToken)
-		if managedGatewayToken != "" {
+		if dedicatedRuntimeOrigin && isDeepSeekHarnessRuntimeType(accessToken.InstanceType) {
+			// DeepSeek Harness applies the same Host/Origin trust check to its
+			// event sockets as it does to HTTP API requests. The public dedicated
+			// origin is only a ClawManager routing boundary; the upstream handshake
+			// must use the selected instance gateway as its origin.
+			upstreamHeader.Set("Origin", websocketUpstreamOrigin(targetURL))
+		} else if managedGatewayToken != "" {
 			upstreamHeader.Set("Origin", s.openClawWebSocketOrigin(targetURL))
 		}
 	}
@@ -378,7 +471,7 @@ func (s *InstanceProxyService) ProxyWebSocket(ctx context.Context, instanceID in
 		return fmt.Errorf("failed to connect upstream websocket: %w", err)
 	}
 	defer upstreamConn.Close()
-	upstreamConn.SetReadLimit(hermesWebSocketMaxMessageBytes)
+	upstreamConn.SetReadLimit(instanceProxyWebSocketMaxMessageBytes)
 
 	upgrader := websocket.Upgrader{
 		CheckOrigin:     func(r *http.Request) bool { return true },
@@ -396,7 +489,7 @@ func (s *InstanceProxyService) ProxyWebSocket(ctx context.Context, instanceID in
 		return fmt.Errorf("failed to upgrade client websocket: %w", err)
 	}
 	defer clientConn.Close()
-	clientConn.SetReadLimit(hermesWebSocketMaxMessageBytes)
+	clientConn.SetReadLimit(instanceProxyWebSocketMaxMessageBytes)
 
 	errCh := make(chan error, 2)
 	pipe := func(dst, src *websocket.Conn) {
@@ -472,8 +565,98 @@ func setManagedRuntimeGatewayAuthHeaders(header http.Header, token string) {
 	header.Set("X-ClawManager-LLM-API-Key", token)
 }
 
-func hermesProxyPrefix(instanceID int) string {
+func isDeepSeekHarnessRuntimeType(instanceType string) bool {
+	runtimeType, managed := NormalizeV2RuntimeType(instanceType)
+	return managed && runtimeType == RuntimeTypeDeepSeekHarness
+}
+
+func isDedicatedRuntimeOriginRequest(r *http.Request, instanceType string) bool {
+	if r == nil {
+		return false
+	}
+	runtimeType, managed := NormalizeV2RuntimeType(instanceType)
+	originRuntimeType, originManaged := NormalizeV2RuntimeType(r.Header.Get(DedicatedRuntimeOriginHeader))
+	if !managed || !originManaged || runtimeType != originRuntimeType {
+		return false
+	}
+	return runtimeType == RuntimeTypeOpenCode || runtimeType == RuntimeTypeDeepSeekHarness
+}
+
+func setOpenCodeServerBasicAuthHeaders(header http.Header, token string) {
+	token = strings.TrimSpace(token)
+	if header == nil || token == "" {
+		return
+	}
+	username := strings.TrimSpace(os.Getenv("OPENCODE_SERVER_USERNAME"))
+	if username == "" {
+		username = "opencode"
+	}
+	encoded := base64.StdEncoding.EncodeToString([]byte(username + ":" + token))
+	header.Set("Authorization", "Basic "+encoded)
+	header.Del("X-Api-Key")
+	header.Del("X-OpenAI-Api-Key")
+	header.Del("OpenAI-Api-Key")
+}
+
+func instanceProxyPrefix(instanceID int) string {
 	return fmt.Sprintf("/api/v1/instances/%d/proxy", instanceID)
+}
+
+func isOpenCodeRuntimeType(instanceType string) bool {
+	runtimeType, managed := NormalizeV2RuntimeType(instanceType)
+	return managed && runtimeType == RuntimeTypeOpenCode
+}
+
+func isOpenClawRuntimeType(instanceType string) bool {
+	runtimeType, managed := NormalizeV2RuntimeType(instanceType)
+	return managed && runtimeType == RuntimeTypeOpenClaw
+}
+
+// setOpenClawRuntimeForwardedClient reconstructs the client attribution passed
+// to an OpenClaw shared Runtime gateway. Only the in-Pod nginx hop is allowed
+// to supply X-Real-IP. Direct callers cannot spoof either forwarded header.
+func setOpenClawRuntimeForwardedClient(header http.Header, request *http.Request) {
+	if header == nil || request == nil {
+		return
+	}
+	peer := parseProxyPeerIP(request.RemoteAddr)
+	client := peer
+	if peer != nil && peer.IsLoopback() {
+		if realIP := net.ParseIP(strings.TrimSpace(request.Header.Get("X-Real-IP"))); realIP != nil {
+			client = realIP
+		}
+	}
+	if client == nil {
+		header.Del("X-Forwarded-For")
+		header.Del("X-Real-IP")
+		return
+	}
+	normalized := client.String()
+	header.Set("X-Forwarded-For", normalized)
+	header.Set("X-Real-IP", normalized)
+}
+
+func parseProxyPeerIP(remoteAddr string) net.IP {
+	value := strings.TrimSpace(remoteAddr)
+	if value == "" {
+		return nil
+	}
+	if host, _, err := net.SplitHostPort(value); err == nil {
+		value = host
+	}
+	return net.ParseIP(strings.Trim(value, "[]"))
+}
+
+func (s *InstanceProxyService) isOpenCodeLiteProxyInstance(instanceID int, instanceType string) bool {
+	if s == nil || s.instanceRepo == nil || !strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeOpenCode) {
+		return false
+	}
+	instance, err := s.instanceRepo.GetByID(instanceID)
+	if err != nil || instance == nil {
+		return false
+	}
+	runtimeType, ok := v2RuntimeTypeForInstance(instance)
+	return ok && runtimeType == RuntimeTypeOpenCode
 }
 
 func (s *InstanceProxyService) isHermesLiteProxyInstance(instanceID int, instanceType string) bool {
@@ -484,11 +667,153 @@ func (s *InstanceProxyService) isHermesLiteProxyInstance(instanceID int, instanc
 	if err != nil || instance == nil {
 		return false
 	}
+	if mode, ok := NormalizeInstanceMode(instance.InstanceMode); ok && mode == InstanceModePro {
+		return false
+	}
 	runtimeType, ok := v2RuntimeTypeForInstance(instance)
 	return ok && runtimeType == RuntimeTypeHermes
 }
 
-func isHermesDashboardPublicAuthPath(targetPath string) bool {
+// rewriteOpenCodeProjectSearchDirectory keeps OpenCode's web project picker
+// away from the instance HOME directory. OpenCode 1.18.x uses FFF for this
+// endpoint, and FFF refuses to index HOME. The ClawManager workspace browser
+// stores uploaded user projects directly under the instance workspace root,
+// alongside the internal home directory.
+func (s *InstanceProxyService) rewriteOpenCodeProjectSearchDirectory(ctx context.Context, instanceID int, instanceType, targetPath string, query url.Values) bool {
+	if s == nil || s.bindingRepo == nil || !isOpenCodeRuntimeType(instanceType) {
+		return false
+	}
+	binding, err := s.bindingRepo.GetRunningByInstanceID(ctx, instanceID)
+	if err != nil || binding == nil {
+		return false
+	}
+	return rewriteOpenCodeFileSearchDirectory(targetPath, binding.WorkspacePath, query)
+}
+
+func rewriteOpenCodeFileSearchDirectory(targetPath, workspaceRoot string, query url.Values) bool {
+	if query == nil {
+		return false
+	}
+	root := strings.TrimRight(strings.TrimSpace(workspaceRoot), "/")
+	if root == "" {
+		return false
+	}
+	var key string
+	switch strings.TrimSpace(targetPath) {
+	case "/api/fs/find":
+		key = "location[directory]"
+	case "/find/file":
+		key = "directory"
+	default:
+		return false
+	}
+	if strings.TrimRight(strings.TrimSpace(query.Get(key)), "/") != root+"/home" {
+		return false
+	}
+	query.Set(key, root)
+	return true
+}
+
+type openCodeFileSearchItem struct {
+	Path string `json:"path"`
+	Type string `json:"type"`
+}
+
+type openCodeFileSearchPayload struct {
+	Location json.RawMessage          `json:"location"`
+	Data     []openCodeFileSearchItem `json:"data"`
+}
+
+// OpenCode's FFF directory results contain matching descendants but can omit
+// their top-level project directory. The project picker needs that parent to
+// open the project itself. Internal HOME descendants are not user projects.
+func rewriteOpenCodeFileSearchResponse(targetPath string, body []byte) ([]byte, bool) {
+	if strings.TrimSpace(targetPath) == "/find/file" {
+		return rewriteOpenCodeFindFileResponse(body)
+	}
+	if strings.TrimSpace(targetPath) != "/api/fs/find" {
+		return body, false
+	}
+
+	var payload openCodeFileSearchPayload
+	if err := json.Unmarshal(body, &payload); err != nil || payload.Data == nil {
+		return body, false
+	}
+
+	result := make([]openCodeFileSearchItem, 0, len(payload.Data)*2)
+	seen := make(map[string]struct{}, len(payload.Data)*2)
+	appendItem := func(item openCodeFileSearchItem) {
+		if _, exists := seen[item.Path]; exists {
+			return
+		}
+		seen[item.Path] = struct{}{}
+		result = append(result, item)
+	}
+
+	for _, item := range payload.Data {
+		cleanPath := strings.TrimLeft(strings.TrimSpace(item.Path), "/")
+		if cleanPath == "" || cleanPath == "home/" || strings.HasPrefix(cleanPath, "home/") {
+			continue
+		}
+		topLevel := strings.SplitN(cleanPath, "/", 2)[0] + "/"
+		appendItem(openCodeFileSearchItem{Path: topLevel, Type: "directory"})
+		item.Path = cleanPath
+		appendItem(item)
+	}
+
+	if len(result) == 0 && len(payload.Data) == 0 {
+		return body, false
+	}
+	payload.Data = result
+	modified, err := json.Marshal(payload)
+	if err != nil {
+		return body, false
+	}
+	return modified, true
+}
+
+// OpenCode 1.18.x's current web UI uses /find/file rather than /api/fs/find.
+// It returns matching descendant paths as a string array and omits the parent
+// project directory, so add each visible top-level project root and hide the
+// internal HOME tree.
+func rewriteOpenCodeFindFileResponse(body []byte) ([]byte, bool) {
+	var paths []string
+	if err := json.Unmarshal(body, &paths); err != nil || paths == nil {
+		return body, false
+	}
+
+	result := make([]string, 0, len(paths)*2)
+	seen := make(map[string]struct{}, len(paths)*2)
+	appendPath := func(path string) {
+		if _, exists := seen[path]; exists {
+			return
+		}
+		seen[path] = struct{}{}
+		result = append(result, path)
+	}
+
+	for _, path := range paths {
+		cleanPath := strings.TrimLeft(strings.TrimSpace(path), "/")
+		if cleanPath == "" || cleanPath == "home/" || strings.HasPrefix(cleanPath, "home/") {
+			continue
+		}
+		topLevel := strings.SplitN(cleanPath, "/", 2)[0] + "/"
+		appendPath(topLevel)
+		if strings.HasSuffix(cleanPath, "/") {
+			appendPath(cleanPath)
+		}
+	}
+
+	modified, err := json.Marshal(result)
+	if err != nil {
+		return body, false
+	}
+	return modified, true
+}
+
+// Preserve the public-auth header behavior for managed runtimes other than the
+// separately protected Hermes Desktop bridge.
+func isRuntimePublicAuthPath(targetPath string) bool {
 	path := strings.TrimSpace(targetPath)
 	if path == "" {
 		return false
@@ -496,235 +821,47 @@ func isHermesDashboardPublicAuthPath(targetPath string) bool {
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
-	switch {
-	case path == "/login", strings.HasPrefix(path, "/login?"):
-		return true
-	case path == "/auth", strings.HasPrefix(path, "/auth/"):
-		return true
-	default:
-		return false
-	}
+	return path == "/login" || strings.HasPrefix(path, "/login?") || path == "/auth" || strings.HasPrefix(path, "/auth/")
 }
 
-const hermesWebSocketMaxMessageBytes int64 = 8 << 20 // 8 MiB PTY snapshots
+const instanceProxyWebSocketMaxMessageBytes int64 = 8 << 20
 
-func isHermesDashboardTicketWebSocket(targetPath string, query url.Values) bool {
-	if query != nil && strings.TrimSpace(query.Get("ticket")) != "" {
-		return true
-	}
-	path := normalizeHermesBootstrapPath(targetPath)
-	switch path {
-	case "/api/pty", "/api/events":
-		return true
-	default:
-		return strings.HasPrefix(path, "/api/pty/") || strings.HasPrefix(path, "/api/events/")
-	}
-}
+var openCodeHTMLRootAssetPattern = regexp.MustCompile(`(?i)(\b(?:href|src)\s*=\s*["'])(/[^"']*)`)
 
-func isHermesSessionCookieName(name string) bool {
-	bare := strings.TrimSpace(name)
-	for _, prefix := range []string{"__Host-", "__Secure-"} {
-		if strings.HasPrefix(bare, prefix) {
-			bare = strings.TrimPrefix(bare, prefix)
-			break
-		}
-	}
-	return bare == "hermes_session_at"
-}
-
-func requestHasHermesSessionCookie(r *http.Request) bool {
-	if r == nil {
-		return false
-	}
-	for _, cookie := range r.Cookies() {
-		if isHermesSessionCookieName(cookie.Name) && strings.TrimSpace(cookie.Value) != "" {
-			return true
-		}
-	}
-	return false
-}
-
-func shouldBootstrapHermesDashboardSession(r *http.Request, targetPath string) bool {
-	if r == nil {
-		return false
-	}
-	method := strings.ToUpper(strings.TrimSpace(r.Method))
-	if method != http.MethodGet && method != http.MethodHead {
-		return false
-	}
-	if requestHasHermesSessionCookie(r) {
-		return false
-	}
-	path := normalizeHermesBootstrapPath(targetPath)
-	switch path {
-	case "/", "/chat", "/login":
-		return true
-	}
-	if strings.HasPrefix(path, "/login") {
-		return true
-	}
-	accept := strings.ToLower(r.Header.Get("Accept"))
-	if strings.Contains(accept, "text/html") &&
-		!strings.HasPrefix(path, "/api") &&
-		!strings.HasPrefix(path, "/auth") &&
-		!strings.HasPrefix(path, "/assets") {
-		return true
-	}
-	return false
-}
-
-func normalizeHermesBootstrapPath(targetPath string) string {
-	path := strings.TrimSpace(targetPath)
-	if path == "" {
-		return "/"
-	}
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-	trimmed := strings.TrimSuffix(path, "/")
-	if trimmed == "" {
-		return "/"
-	}
-	return trimmed
-}
-
-func shouldRedirectHermesBootstrapToChat(bootstrapPath string) bool {
-	return normalizeHermesBootstrapPath(bootstrapPath) != "/chat"
-}
-
-func hermesChatProxyLocation(instanceID int, proxyToken string) string {
-	location := fmt.Sprintf("/api/v1/instances/%d/proxy/chat/", instanceID)
-	if token := strings.TrimSpace(proxyToken); token != "" {
-		return location + "?token=" + url.QueryEscape(token)
-	}
-	return location
-}
-
-func (s *InstanceProxyService) bootstrapHermesDashboardSession(
-	ctx context.Context,
-	upstreamTarget *url.URL,
-	instanceID int,
-	password string,
-	clientReq *http.Request,
-) ([]string, error) {
-	if s == nil || s.httpClient == nil || upstreamTarget == nil {
-		return nil, fmt.Errorf("hermes bootstrap unavailable")
-	}
-	password = strings.TrimSpace(password)
-	if password == "" {
-		return nil, fmt.Errorf("hermes bootstrap password missing")
-	}
-
-	loginURL := &url.URL{
-		Scheme: upstreamTarget.Scheme,
-		Host:   upstreamTarget.Host,
-		Path:   "/auth/password-login",
-	}
-	body, err := json.Marshal(map[string]string{
-		"provider": "basic",
-		"username": "clawmanager",
-		"password": password,
-		"next":     "/chat",
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, loginURL.String(), bytes.NewReader(body))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	if clientReq != nil {
-		req.Header.Set("X-Forwarded-For", clientReq.RemoteAddr)
-		req.Header.Set("X-Forwarded-Host", clientReq.Host)
-		req.Header.Set("X-Forwarded-Proto", requestScheme(clientReq))
-	}
-	req.Header.Set("X-Forwarded-Prefix", hermesProxyPrefix(instanceID))
-
-	resp, err := s.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	_, _ = io.Copy(io.Discard, resp.Body)
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("hermes password-login status %d", resp.StatusCode)
-	}
-	cookies := collectUpstreamSetCookies(resp)
-	if len(cookies) == 0 {
-		return nil, fmt.Errorf("hermes password-login returned no cookies")
-	}
-	return cookies, nil
-}
-
-func collectUpstreamSetCookies(resp *http.Response) []string {
-	if resp == nil {
-		return nil
-	}
-	if values := resp.Header.Values("Set-Cookie"); len(values) > 0 {
-		return append([]string(nil), values...)
-	}
-	if values := resp.Header["Set-Cookie"]; len(values) > 0 {
-		return append([]string(nil), values...)
-	}
-	out := make([]string, 0, len(resp.Cookies()))
-	for _, cookie := range resp.Cookies() {
-		if cookie == nil || strings.TrimSpace(cookie.Name) == "" {
-			continue
-		}
-		out = append(out, cookie.String())
-	}
-	return out
-}
-
-func attachCookiesToRequest(req *http.Request, setCookies []string) {
-	if req == nil || len(setCookies) == 0 {
-		return
-	}
-	existing := req.Header.Get("Cookie")
-	parts := make([]string, 0, len(setCookies)+1)
-	if strings.TrimSpace(existing) != "" {
-		parts = append(parts, existing)
-	}
-	for _, raw := range setCookies {
-		name, value, ok := parseSetCookiePair(raw)
-		if !ok {
-			continue
-		}
-		parts = append(parts, name+"="+value)
-	}
-	if len(parts) == 0 {
-		return
-	}
-	req.Header.Set("Cookie", strings.Join(parts, "; "))
-}
-
-func parseSetCookiePair(raw string) (name, value string, ok bool) {
-	raw = strings.TrimSpace(raw)
-	if raw == "" {
-		return "", "", false
-	}
-	pair := strings.SplitN(raw, ";", 2)[0]
-	name, value, found := strings.Cut(pair, "=")
-	name = strings.TrimSpace(name)
-	if !found || name == "" {
-		return "", "", false
-	}
-	return name, value, true
-}
-
-func injectHermesAbsolutePathPatch(html, proxyPrefix string) string {
+func rewriteOpenCodeHTMLRootAssets(html, proxyPrefix string) string {
 	prefix := strings.TrimRight(strings.TrimSpace(proxyPrefix), "/")
 	if prefix == "" || html == "" {
 		return html
 	}
-	// Keep the script brace-safe for fmt; prefix is JSON-quoted for JS.
+	return openCodeHTMLRootAssetPattern.ReplaceAllStringFunc(html, func(match string) string {
+		sub := openCodeHTMLRootAssetPattern.FindStringSubmatch(match)
+		if len(sub) != 3 {
+			return match
+		}
+		attr, path := sub[1], sub[2]
+		if strings.HasPrefix(path, "//") {
+			return match
+		}
+		if path == prefix || strings.HasPrefix(path, prefix+"/") {
+			return match
+		}
+		return attr + prefix + path
+	})
+}
+
+func injectOpenCodeAbsolutePathPatch(html, proxyPrefix string) string {
+	prefix := strings.TrimRight(strings.TrimSpace(proxyPrefix), "/")
+	if prefix == "" || html == "" {
+		return html
+	}
 	prefixJSON, err := json.Marshal(prefix)
 	if err != nil {
 		return html
 	}
-	script := `<script>(function(p){if(!p)return;function fix(u){if(typeof u!=="string")return u;if(!u||u.charAt(0)!=="/"||u.indexOf("//")===0)return u;if(u===p||u.indexOf(p+"/")===0)return u;return p+u;}var of=window.fetch;if(typeof of==="function"){window.fetch=function(input,init){if(typeof input==="string"){input=fix(input);}else if(input&&typeof input.url==="string"){try{input=new Request(fix(input.url),input);}catch(e){}}return of.call(this,input,init);};}if(window.XMLHttpRequest&&XMLHttpRequest.prototype){var oo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(method,url){if(typeof url==="string"){arguments[1]=fix(url);}return oo.apply(this,arguments);};}function wrap(fn){return function(url){if(typeof url==="string"){url=fix(url);}return fn.call(this,url);};}try{var la=window.location.assign.bind(window.location);window.location.assign=wrap(la);}catch(e){}try{var lr=window.location.replace.bind(window.location);window.location.replace=wrap(lr);}catch(e){}})(` + string(prefixJSON) + `);</script>`
+	// Keep WebSocket URLs absolute. Unlike fetch/EventSource, WebSocket does
+	// not accept a relative URL; converting ws://host/path to /proxy/path
+	// prevents the OpenCode UI from establishing its event channel.
+	script := `<script>(function(p){if(!p)return;function fix(u){if(u&&typeof u.url==="string")u=u.url;if(typeof URL!=="undefined"&&u instanceof URL)u=u.toString();if(typeof u!=="string"||!u)return u;if(u.charAt(0)==="/"){if(u.indexOf("//")===0||u===p||u.indexOf(p+"/")===0)return u;return p+u;}try{var a=new URL(u,window.location.href);if(a.host===window.location.host&&a.pathname.charAt(0)==="/"&&a.pathname!==p&&a.pathname.indexOf(p+"/")!==0){var v=p+a.pathname+a.search+a.hash;return a.protocol==="ws:"||a.protocol==="wss:"?a.protocol+"//"+a.host+v:v;}}catch(e){}return u;}if(window.history){["pushState","replaceState"].forEach(function(n){var oh=window.history[n];if(typeof oh==="function"){window.history[n]=function(a,b,u){return oh.call(window.history,a,b,fix(u));};}});}var of=window.fetch;if(typeof of==="function"){window.fetch=function(input,init){if(typeof input==="string"||(typeof URL!=="undefined"&&input instanceof URL)){input=fix(input);}else if(input&&typeof input.url==="string"){try{input=new Request(fix(input.url),input);}catch(e){}}return of.call(this,input,init);};}if(window.XMLHttpRequest&&XMLHttpRequest.prototype){var oo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(method,url){arguments[1]=fix(url);return oo.apply(this,arguments);};}if(typeof window.EventSource==="function"){var OE=window.EventSource;window.EventSource=function(url,config){return new OE(fix(url),config);};window.EventSource.prototype=OE.prototype;try{Object.setPrototypeOf(window.EventSource,OE);}catch(e){}}if(typeof window.WebSocket==="function"){var OW=window.WebSocket;window.WebSocket=function(url,protocols){url=fix(url);return protocols===undefined?new OW(url):new OW(url,protocols);};window.WebSocket.prototype=OW.prototype;try{Object.setPrototypeOf(window.WebSocket,OW);}catch(e){}}function wrap(fn){return function(url){return fn.call(this,fix(url));};}try{var la=window.location.assign.bind(window.location);window.location.assign=wrap(la);}catch(e){}try{var lr=window.location.replace.bind(window.location);window.location.replace=wrap(lr);}catch(e){}})(` + string(prefixJSON) + `);</script>`
 
 	for _, tag := range []string{"<head>", "<Head>", "<HEAD>"} {
 		if idx := strings.Index(html, tag); idx != -1 {
@@ -758,34 +895,34 @@ func (s *InstanceProxyService) managedRuntimeGatewayBearerToken(ctx context.Cont
 	return ""
 }
 
-func (s *InstanceProxyService) resolveHTTPProxyTarget(ctx context.Context, accessToken *AccessToken, instanceID int, targetPort int32, targetPath, requestPath string) (*url.URL, error) {
+func (s *InstanceProxyService) resolveHTTPProxyTarget(ctx context.Context, accessToken *AccessToken, instanceID int, targetPort int32, targetPath, requestPath string) (*url.URL, bool, error) {
 	if targetURL, ok, err := s.resolveV2ProxyTarget(ctx, accessToken, instanceID, targetPath, requestPath, false); ok || err != nil {
-		return targetURL, err
+		return targetURL, ok, err
 	}
 	serviceInfo, err := s.getOrCreateService(ctx, accessToken.UserID, instanceID, targetPort)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get or create service: %w", err)
+		return nil, false, fmt.Errorf("failed to get or create service: %w", err)
 	}
 	return &url.URL{
-		Scheme: s.resolveTargetScheme(accessToken.InstanceType, false),
+		Scheme: s.resolveTargetScheme(accessToken.InstanceType, targetPort, false),
 		Host:   s.resolveProxyHost(ctx, accessToken.UserID, instanceID, serviceInfo),
 		Path:   targetPath,
-	}, nil
+	}, false, nil
 }
 
-func (s *InstanceProxyService) resolveWebSocketProxyTarget(ctx context.Context, accessToken *AccessToken, instanceID int, targetPort int32, targetPath, requestPath string) (*url.URL, error) {
+func (s *InstanceProxyService) resolveWebSocketProxyTarget(ctx context.Context, accessToken *AccessToken, instanceID int, targetPort int32, targetPath, requestPath string) (*url.URL, bool, error) {
 	if targetURL, ok, err := s.resolveV2ProxyTarget(ctx, accessToken, instanceID, targetPath, requestPath, true); ok || err != nil {
-		return targetURL, err
+		return targetURL, ok, err
 	}
 	serviceInfo, err := s.getOrCreateService(ctx, accessToken.UserID, instanceID, targetPort)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get or create service: %w", err)
+		return nil, false, fmt.Errorf("failed to get or create service: %w", err)
 	}
 	return &url.URL{
-		Scheme: s.resolveTargetScheme(accessToken.InstanceType, true),
+		Scheme: s.resolveTargetScheme(accessToken.InstanceType, targetPort, true),
 		Host:   s.resolveProxyHost(ctx, accessToken.UserID, instanceID, serviceInfo),
 		Path:   targetPath,
-	}, nil
+	}, false, nil
 }
 
 func (s *InstanceProxyService) resolveV2ProxyTarget(ctx context.Context, accessToken *AccessToken, instanceID int, targetPath, requestPath string, websocket bool) (*url.URL, bool, error) {
@@ -899,9 +1036,9 @@ func (s *InstanceProxyService) getOrCreateService(ctx context.Context, userID, i
 // extractTargetPath extracts the target path from the proxy URL
 // Input: /api/v1/instances/24/proxy/vnc.html
 // Output: /vnc.html
-func (s *InstanceProxyService) extractTargetPath(requestPath string, instanceID int, instanceType string) string {
+func (s *InstanceProxyService) extractTargetPath(requestPath string, instanceID int, instanceType string, targetPort int32) string {
 	prefix := fmt.Sprintf("/api/v1/instances/%d/proxy", instanceID)
-	if usesWebtopImage(instanceType) {
+	if usesWebtopRuntime(instanceType, targetPort) {
 		if strings.HasPrefix(requestPath, prefix) {
 			path := requestPath
 			if path == "" {
@@ -990,10 +1127,54 @@ func (s *InstanceProxyService) GetProxyURLForInstance(instance *models.Instance,
 	if instance == nil {
 		return ""
 	}
+	if runtimeType, ok := v2RuntimeTypeForInstance(instance); ok && runtimeType == RuntimeTypeOpenCode {
+		// OpenCode owns the root of its dedicated origin. Falling back to the
+		// legacy subpath produces broken asset and WebSocket URLs.
+		return managedRuntimePublicURL(runtimeType, instance.ID, token)
+	}
+	if runtimeType, ok := v2RuntimeTypeForInstance(instance); ok && runtimeType == RuntimeTypeDeepSeekHarness {
+		if publicURL := managedRuntimePublicURL(runtimeType, instance.ID, token); publicURL != "" {
+			return publicURL
+		}
+	}
 	if runtimeType, ok := v2RuntimeTypeForInstance(instance); ok && runtimeType == RuntimeTypeHermes {
-		return proxyURLWithPath(instance.ID, "/chat", token)
+		return ""
 	}
 	return proxyURLWithPath(instance.ID, "/", token)
+}
+
+func managedRuntimePublicURL(runtimeType string, instanceID int, token string) string {
+	// DNS and TLS are deployment concerns. ClawManager only expands the
+	// deployment-provided origin template, so the same code supports public
+	// wildcard DNS (for example nip.io) and an offline authoritative DNS zone.
+	var envVar string
+	switch runtimeType {
+	case RuntimeTypeOpenCode:
+		envVar = openCodePublicURLTemplateEnvVar
+	case RuntimeTypeDeepSeekHarness:
+		envVar = deepSeekHarnessPublicURLTemplateEnvVar
+	default:
+		return ""
+	}
+	template := strings.TrimSpace(os.Getenv(envVar))
+	if template == "" || !strings.Contains(template, "{instance_id}") {
+		return ""
+	}
+
+	rawURL := strings.ReplaceAll(template, "{instance_id}", strconv.Itoa(instanceID))
+	parsed, err := url.Parse(rawURL)
+	if err != nil || (parsed.Scheme != "https" && parsed.Scheme != "http") || strings.TrimSpace(parsed.Host) == "" {
+		return ""
+	}
+	if parsed.Path == "" {
+		parsed.Path = "/"
+	}
+	if token != "" {
+		query := parsed.Query()
+		query.Set("token", token)
+		parsed.RawQuery = query.Encode()
+	}
+	return parsed.String()
 }
 
 // GetTargetPortForInstance returns the service target port used by the instance type.
@@ -1002,7 +1183,7 @@ func (s *InstanceProxyService) GetTargetPortForInstance(instance *models.Instanc
 		return 3001
 	}
 
-	return buildRuntimeConfig(instance.Type, instance.OSType, instance.OSVersion, instance.ImageRegistry, instance.ImageTag).Port
+	return buildRuntimeConfigForInstance(instance).Port
 }
 
 // ResolveUpstreamHostPort ensures the instance Service exists and returns its
@@ -1018,7 +1199,7 @@ func (s *InstanceProxyService) ResolveUpstreamHostPort(ctx context.Context, user
 }
 
 func (s *InstanceProxyService) resolveTargetPort(instanceType string, defaultPort int32, targetPath string) int32 {
-	if usesWebtopImage(instanceType) {
+	if usesWebtopRuntime(instanceType, defaultPort) {
 		if defaultPort == 0 {
 			return 3001
 		}
@@ -1041,6 +1222,9 @@ func (s *InstanceProxyService) resolveTargetPort(instanceType string, defaultPor
 }
 
 func (s *InstanceProxyService) getAdditionalPorts(targetPort int32) []int32 {
+	if targetPort == 8006 {
+		return []int32{3389}
+	}
 	if targetPort == 3000 || targetPort == 8082 {
 		return []int32{3000, 8082}
 	}
@@ -1048,8 +1232,8 @@ func (s *InstanceProxyService) getAdditionalPorts(targetPort int32) []int32 {
 	return nil
 }
 
-func (s *InstanceProxyService) resolveTargetScheme(instanceType string, websocket bool) string {
-	if usesHTTPSUpstream(instanceType) {
+func (s *InstanceProxyService) resolveTargetScheme(instanceType string, targetPort int32, websocket bool) string {
+	if usesHTTPSUpstream(instanceType, targetPort) {
 		if websocket {
 			return "wss"
 		}
@@ -1063,9 +1247,12 @@ func (s *InstanceProxyService) resolveTargetScheme(instanceType string, websocke
 	return "http"
 }
 
-func usesHTTPSUpstream(instanceType string) bool {
+func usesHTTPSUpstream(instanceType string, targetPort int32) bool {
+	if usesWebtopRuntime(instanceType, targetPort) {
+		return true
+	}
 	switch instanceType {
-	case "ubuntu", "webtop", "hermes", "openclaw", "workbuddy":
+	case "ubuntu", "webtop", "hermes", "openclaw", RuntimeTypeDeepSeekHarness:
 		return true
 	default:
 		return false
@@ -1076,11 +1263,11 @@ func (s *InstanceProxyService) resolveProxyHost(ctx context.Context, userID, ins
 	return fmt.Sprintf("%s:%d", serviceInfo.ClusterIP, serviceInfo.TargetPort)
 }
 
-func (s *InstanceProxyService) shouldRewriteHTML(instanceType string) bool {
-	return !usesWebtopImage(instanceType)
+func (s *InstanceProxyService) shouldRewriteHTML(instanceType string, targetPort int32) bool {
+	return !usesWebtopRuntime(instanceType, targetPort)
 }
 
-func (s *InstanceProxyService) shouldRewriteHTMLForProxy(instanceID int, instanceType string) bool {
+func (s *InstanceProxyService) shouldRewriteHTMLForProxy(instanceID int, instanceType string, targetPort int32) bool {
 	if s != nil && s.instanceRepo != nil && strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeHermes) {
 		instance, err := s.instanceRepo.GetByID(instanceID)
 		if err == nil && instance != nil {
@@ -1089,13 +1276,30 @@ func (s *InstanceProxyService) shouldRewriteHTMLForProxy(instanceID int, instanc
 			}
 		}
 	}
-	return s.shouldRewriteHTML(instanceType)
+	if s.isOpenCodeLiteProxyInstance(instanceID, instanceType) {
+		return true
+	}
+	return s.shouldRewriteHTML(instanceType, targetPort)
 }
 
 // IsWebtopInstanceType reports whether the instance type is served by a
 // Webtop/KasmVNC desktop image (and therefore eligible for direct gateway
 // proxying via SUBFOLDER-prefixed paths).
 func (s *InstanceProxyService) IsWebtopInstanceType(instanceType string) bool {
+	return usesWebtopImage(instanceType)
+}
+
+// IsWebtopInstance includes legacy Linux Workbuddy instances without treating
+// Windows Workbuddy/noVNC as Webtop.
+func (s *InstanceProxyService) IsWebtopInstance(instance *models.Instance) bool {
+	return isWebtopRuntimeInstance(instance)
+}
+
+func usesWebtopRuntime(instanceType string, targetPort int32) bool {
+	if strings.EqualFold(strings.TrimSpace(instanceType), "workbuddy") ||
+		strings.EqualFold(strings.TrimSpace(instanceType), RuntimeTypeCodex) {
+		return targetPort == 3001
+	}
 	return usesWebtopImage(instanceType)
 }
 
@@ -1200,6 +1404,31 @@ func (s *InstanceProxyService) removeProxyAccessTokenQuery(query url.Values, acc
 		return
 	}
 	query["token"] = filtered
+}
+
+// filterProxyAccessTokenRawQuery removes only ClawManager-owned token fields
+// while preserving every other raw query segment byte-for-byte. DeepSeek
+// Harness relies on a leading '?' in its plugin batch key, which url.Values
+// would percent-encode and normalize.
+func (s *InstanceProxyService) filterProxyAccessTokenRawQuery(rawQuery, accessToken, managedGatewayToken string) string {
+	if rawQuery == "" {
+		return ""
+	}
+	segments := strings.Split(rawQuery, "&")
+	kept := make([]string, 0, len(segments))
+	for _, segment := range segments {
+		rawKey, rawValue, hasValue := strings.Cut(segment, "=")
+		key, err := url.QueryUnescape(rawKey)
+		if err != nil || key != "token" || !hasValue {
+			kept = append(kept, segment)
+			continue
+		}
+		value, err := url.QueryUnescape(rawValue)
+		if err != nil || !s.shouldRemoveProxyTokenQueryValue(value, accessToken, managedGatewayToken) {
+			kept = append(kept, segment)
+		}
+	}
+	return strings.Join(kept, "&")
 }
 
 func (s *InstanceProxyService) shouldRemoveProxyTokenQueryValue(value, accessToken, managedGatewayToken string) bool {
