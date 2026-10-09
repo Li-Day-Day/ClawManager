@@ -1,0 +1,155 @@
+{
+  "version": 1,
+  "date": "2026-09-30",
+  "role": "D",
+  "status": "observation_binding_and_call_snapshots_validated_pending_production_environment_and_publication",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupproducer/execution.go",
+      "sha256": "4ad78012c1156f44d06267009d68ca0ad1537394b7c19acffc4f665976129cb1"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution_policy.go",
+      "sha256": "3264b58051fcc612e50282c439cf4af505b9063cb51217047133dc2d5f0dbcbc"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution_test.go",
+      "sha256": "6cc806ec21b9959952d19756edecc45feb4bf2f178d4c21f11d2ee99f675122f"
+    },
+    {
+      "path": "docs/system-backup-d-producer-execution-20260930.md",
+      "sha256": "f81333c2cf022705d92000b9af25c3523306ec522b80400bc5539e34df2a2ec1"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "7405ea3f7b4b59e3df54c878f7e141bad27f0bb6ebf4743035b805664fb3f0b1"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "4cbea3c43250fcaeb0d56741198fa5e7bc0eb51381b956bd8abd6ee0443fdfe7"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupproducer/codec.go",
+      "sha256": "9c7c8c793edb497f980da9bb05f4ec2e2e9956b379ca850ba3f0026998e9138e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/contract_test.go",
+      "sha256": "55fccda0e53180925691cc3b9549369ebf90483a22cc0ac3e6ae4af9515544d6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/decode.go",
+      "sha256": "e02ed710189fa1d71a4b1ab7fd607b6ff668ac2be1ac58c82c7fc940c6554672"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/frame_decode.go",
+      "sha256": "e1a2d4faefac35a77b892b792380e5c1ed2ae943436437d560d9276e7acb04a6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/lifecycle.go",
+      "sha256": "8843803f3c57b7452746538570d8ae99f831a6b8b42930853033869e95aa1853"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/lifecycle_test.go",
+      "sha256": "c0d896f9dafc82b0195bb9b1559516c70038ea2de7a6c900c7fa599e3d9ca47b"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "sha256": "85363a3c0bc873cfe065e20755d6c17ffb8b32d5640bf0e27c13aa1112f0ccc5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql_test.go",
+      "sha256": "015e78e4c3a49f2717f99ab9b2c1c43ef78f345016176674e3eb62c8f3df16ff"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage.go",
+      "sha256": "d52843eaeb4d80ecea8e463bcc01e2b7f9fd867650169dbc46233c2b44f67f6c"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage_test.go",
+      "sha256": "59bc8305bbeb65e346e0eea5c8ddc1483e80834d840ffa3da5c4e6b385669797"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "8f33ce071e06abc6f5ee216422136d7d4dd8d0c28cf1a5810c3e2d06bee197d0"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction_test.go",
+      "sha256": "e8e18be01be2410b17dda58304d6fa72eea7445cc577cacde17a0b9fbf1e79a7"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "sha256": "07f97f04824c2c253f02f39ba44db59512e21d4f80b36ad9756d2da81073ea4f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-validation.ps1",
+      "sha256": "6648170da4f8acd688651882aaa5652246b33bf1ad9c06e8673b297da55c7069"
+    }
+  ],
+  "validation": {
+    "runner": "scripts/system-backup-d-producer-validation.ps1",
+    "exitCode": 0,
+    "windowsTopLevelTests": 31,
+    "namedPassesIncludingSubtests": 424,
+    "defaultGoTestVet": true,
+    "linuxTestCrossCompile": true,
+    "linuxBinaryExecuted": false,
+    "temporaryArtifactsCleaned": true,
+    "mysqlExecuted": false,
+    "dependencyInstallation": false,
+    "remoteOperations": false,
+    "noExecutableChangesAfterFinalValidation": true,
+    "coverage": [
+      "Read-only probe snapshots with fixed binding/hash/deadline and detached adapter views",
+      "Live renewal/revocation/takeover and domain/grant/run/target/identity/ref changes invalidate prior snapshots",
+      "Original observation pair binds once with independent evaluator-admission interface and exact version CAS",
+      "Exact observation replay is readback without renewed time, capacity charge or mutation",
+      "Content read and wrap require original live observation and locked evidence absence",
+      "Pre-BEGIN capacity sample cannot refresh after installation waits; binding cost and overflow checked",
+      "Audit/reservation/recheck failures roll back observation writes",
+      "Ambiguous commit returns no authority; known late commit preserves historical observation result only",
+      "STS/publication require private service-local claim with exact evidence owner/type/version/manifest/claim/ref binding and original write cutoff",
+      "Synthetic private claims validate rejection boundaries only; no production claim issuer implemented"
+    ]
+  },
+  "catalog": {
+    "files": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "producerMigrationAdded": false
+  },
+  "limitations": [
+    "Production CommandEnvironment and ExecutionEnvironment implementations absent; no permissive defaults or runtime wiring",
+    "PublicationClaim has no production issuer; pending/claim/publication/result/historical recovery remain",
+    "Test driver does not prove MySQL syntax/FK/gap locks, cross-process concurrency or provider behavior",
+    "SnapshotView and hashes are detached data, never bearer authority; actual A I/O adapters must retain and recheck original snapshot",
+    "New hash domains, read-only call reservation/audit interpretation and original-probe-deadline binding require A/C integration review",
+    "Domain provisioning/emergency revocation, C independent evidence channel and B Job host review remain",
+    "Eight-table candidate DDL not executed or included in formal migration/inventory; V01-V10 not accepted",
+    "Prior milestone evidence preserved with its original source fingerprints"
+  ]
+}

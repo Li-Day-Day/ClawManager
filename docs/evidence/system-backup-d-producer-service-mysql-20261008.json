@@ -1,0 +1,21 @@
+{
+  "kind": "d_producer_service_mysql_handoff",
+  "created_at": "2026-10-08T03:23:12.4804616Z",
+  "status": "local_passed_remote_not_run",
+  "snapshot": "docs/evidence/system-backup-d-producer-service-snapshot-20261008.json",
+  "snapshot_sha256": "2199aec8a75ae3bf1c9cf14f436617996354f4ede937c962370082da286638db",
+  "source_files": 853,
+  "live_drift": [],
+  "local_log": "docs/evidence/system-backup-d-producer-service-advancing-local-20261008.txt",
+  "local_log_sha256": "e57ad7de754f9a183f1477c7736f3c8ee9dce6f9a540fd0e1b247e9a5f097e1a",
+  "top_level_passes": 181,
+  "passes_including_subtests": 1829,
+  "linux_probe_sha256": "1ed194b0e76b6c533eda4e03dd547e773cf67d0288c604563ef625b561c3b4d6",
+  "linux_migration_sha256": "da9fa96f8dc0b3c2f326ca84cbf30cc83eaec1e85b647a54e47ceb3805dfc2d0",
+  "real_mysql": "not_run",
+  "remote_contacted": false,
+  "dependencies_installed": false,
+  "owned_build_artifacts_removed": true,
+  "old_runs": "superseded and intentionally stopped during Linux compilation; their untagged regressions passed; all owned scratch directories removed",
+  "remote_command": "& .\\scripts\\system-backup-a-producer-adapter-validation.ps1 -MySQLService -Remote -ExpectedSnapshot .\\docs\\evidence\\system-backup-d-producer-service-snapshot-20261008.json"
+}

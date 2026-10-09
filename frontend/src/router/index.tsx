@@ -25,6 +25,7 @@ import RiskRulesPage from '../pages/admin/RiskRulesPage';
 import ModelManagementPage from '../pages/admin/ModelManagementPage';
 import SystemSettingsPage from '../pages/admin/SystemSettingsPage';
 import NorthboundSettingsPage from '../pages/admin/NorthboundSettingsPage';
+import SystemBackupsPage from '../pages/admin/backups/SystemBackupsPage';
 import RuntimePodsPage from '../pages/admin/RuntimePodsPage';
 import UserSettingsPage from '../pages/settings/UserSettingsPage';
 import OpenClawConfigCenterPage from '../pages/openclaw/OpenClawConfigCenterPage';
@@ -506,6 +507,7 @@ function AppRoutes() {
           </AdminRoute>
         }
       />
+      <Route path="/admin/backups" element={<AdminRoute><SystemBackupsPage /></AdminRoute>} />
       {/* Default Redirect */}
       <Route path="/" element={<DashboardRedirect />} />
     </Routes>

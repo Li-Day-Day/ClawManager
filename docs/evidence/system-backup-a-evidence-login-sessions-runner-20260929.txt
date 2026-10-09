@@ -1,0 +1,21 @@
+PASS mysql-probe-build asm-persistent=False
+PASS mysql-probe-build asm-persistent=True
+PASS migration-build asm-persistent=False
+PASS migration-build asm-persistent=True
+PASS mysql-probe-build compile-persistent=False
+PASS mysql-probe-build compile-persistent=True
+PASS migration-build compile-persistent=False
+PASS migration-build compile-persistent=True
+PASS success
+PASS vet-crash-then-success
+PASS two-vet-crashes-then-success
+PASS persistent-vet-crash
+PASS ordinary-vet-finding
+PASS test-assertion-plus-vet-crash
+PASS panic-plus-vet-crash
+PASS other-process-error
+PASS pass-text-nonzero-exit
+PASS native-stderr-crash-then-success
+LOCAL_PASS isolated-go-telemetry=off
+PASS native-go-telemetry-isolated-off
+PASS evidence Go retry gate: 19 cases; no build artifacts or remote actions

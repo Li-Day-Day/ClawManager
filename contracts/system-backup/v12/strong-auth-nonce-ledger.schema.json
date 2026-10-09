@@ -34,6 +34,6 @@
   "x-consumption-rule": "Insert the consumed nonce with the target mutation or immutable failed response and the audit intent in one database transaction; pre-transaction auth, validation and readiness failures create no row.",
   "x-replay-rule": "A-owned proof verifier must compute and check the nonce HMAC under every retained historical key version before consuming; the unique (nonce_hmac, nonce_hmac_key_version) key is only the per-version database guard.",
   "x-retention-rule": "retain_until must cover control metadata retention, and historical HMAC key material remains available until the last row using its version passes retention.",
-  "x-pending-owner-contract": "A-owned strong_auth_proof_nonce wire schema, issuer rules and cross-version verifier are still missing; this ledger does not define or approve them.",
+  "x-pending-owner-contract": "A-owned strong_auth_proof_nonce wire schema, issuer rules and cross-version verifier are draft and require owner review; this ledger does not define or approve their runtime implementation.",
   "x-forbidden-fields": ["proof", "raw_nonce", "nonce_key_material", "credential", "session_token", "raw_subject"]
 }

@@ -1,0 +1,179 @@
+{
+  "schema_version": "a-evidence-s3-local-validation.v1",
+  "recorded_at_utc": "2026-09-29T01:14:09.6484585Z",
+  "result": "PASS_LOCAL_ONLY",
+  "command": "scripts/system-backup-a-evidence-validation.ps1 -BuildParallelism 1",
+  "runner_exit_code": 0,
+  "transcript": "docs/evidence/system-backup-a-evidence-s3-local-20260929.txt",
+  "transcript_format": "Merged tool process output, normalized line endings; native exit code observed separately",
+  "transcript_sha256": "3eefcde742b8efb261fa30c57857e1e9acb248bfcedb9f38cd261fd2313bc9ce",
+  "validation": {
+    "go_top_level_tests_passed": 16,
+    "go_subtests_passed": 61,
+    "s3_top_level_tests_passed": 6,
+    "s3_subtests_passed": 34,
+    "package_seconds": 3.328,
+    "independent_server_sigv4_verification": true,
+    "signed_owner_deadline_checked": true,
+    "conditional_large_body_rejection": true,
+    "explicit_delete_marker_false_accepted": true,
+    "lost_put_response_reconciled": true,
+    "unknown_absence_preserved_registry": true,
+    "verified_absence_completed_gc": true,
+    "vet_enabled": true,
+    "go_format_passed": true,
+    "expected_local_tls_rejection_diagnostics": 4,
+    "unchanged_previous_go_source_bindings": 10,
+    "go_mod_and_sum_unchanged": true
+  },
+  "build": {
+    "linux_mysql_probe_compiled": true,
+    "migration_runner_compiled": true,
+    "probe_sha256": "046d6677d823c454b1df81e330964d3789743feb164c9e524a3964beca4d660a",
+    "ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "build_parallelism": 1,
+    "dependency_proxy": "off",
+    "module_mode": "readonly",
+    "signer_dependency": "existing github.com/minio/minio-go/v7 v7.0.85"
+  },
+  "development_attempts": [
+    {
+      "result": "FAIL_TEST_ASSERTION",
+      "package_seconds": 3.732,
+      "test": "TestS3EvidenceLifecycle",
+      "observed": "Early conditional PUT rejection returned artifact_unavailable instead of expected conflict",
+      "correction": "Added Expect: 100-continue to allow rejection before streaming the large request body; complete rerun passed",
+      "runner_exit_code": 1,
+      "automatic_assertion_retry": false,
+      "local_cleanup_reported": true
+    }
+  ],
+  "cleanup": {
+    "owned_scratch_paths": [
+      ".tmp-a-evidence-5870429e46984c138077e530979d1718",
+      ".tmp-a-evidence-f4a6cdcf71e444d0b8d69b31faebeb4f"
+    ],
+    "final_runner_reported_clean": true,
+    "both_owned_scratch_paths_absent": true,
+    "build_binaries_and_cache_removed": true,
+    "dependencies_installed": false
+  },
+  "acceptance_scope": [
+    "S3 HTTPS client and actual signed wire requests against a local synthetic TLS provider",
+    "Client integration with existing Publish, encrypted Range and GC using synthetic registry, keys, STS resolver and absence verifier",
+    "Exact version, checksum, length, deadline and scope binding plus failure handling",
+    "Windows tests with vet and Linux probe/migration compilation"
+  ],
+  "limitations": [
+    "Production STS resolver and provider-side scope/revocation not implemented or verified",
+    "S3AbsenceVerifier has no production implementation; local verifier is synthetic",
+    "Versioned bucket and native checksum profile need actual admission and provider verification",
+    "No live S3/OpenBao or real MySQL run in this revision",
+    "Maximum-size 1 GiB provider transfer and production throughput not measured",
+    "D formal migration, owner/reference policy, HTTP/session/RBAC and scheduling remain unconnected"
+  ],
+  "prior_transit_receipt": "docs/evidence/system-backup-a-evidence-transit-local-20260929.json",
+  "prior_mysql_receipt": "docs/evidence/system-backup-a-external-evidence-sbk-mig-260928090803-518e.json",
+  "historical_receipts_modified": false,
+  "agent_remote_actions_performed": false,
+  "real_mysql_run_performed": false,
+  "production_provider_verified": false,
+  "production_scoped_grants_verified": false,
+  "production_absence_proof_verified": false,
+  "deployed_http_download_verified": false,
+  "formal_gc_migration_deployed": false,
+  "provider_capability_approved": false,
+  "human_mfa_verified": false,
+  "config_activated": false,
+  "source_bindings": [
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_test.go",
+      "sha256": "9370fb7057081fd2a92a22f7982a85a8692a4a31de5d1026f60a9e2406583617"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3.go",
+      "sha256": "3e3039b369e7e677186c79d92aff7227b6a0fb74e00ed2ab3cd093c123c1cffe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_test.go",
+      "sha256": "225a3a58365a9555e14a1cbe02dcb80863bfd95180b51d909ed5cb9737ac248b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit.go",
+      "sha256": "80eafd8403608de6a106705144372938d3b2c6d0c71aef4c1543918f40f34a6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "1df72df3a77f63358a71825b60f1668cfef9f90259c6229b04abe3df1824a2cf"
+    },
+    {
+      "path": "backend/go.mod",
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "b54d8a3aaa93c154a5d3a4355b6fed67fc8fc437afbfb63f9822e7bf8c1877c7"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "e33cebe262482dde1ea057ff41deacc068ef5b8e57756b946f377f0280487fc8"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1",
+      "sha256": "8b01abde2476eb3f810042bdbab5d1edd9765807a55e8a0bb5ee553dd4659d7b"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-phase.sh",
+      "sha256": "a7e57658d18f993b67218dad6af675793fec49cf4c8e4e5561d2b777847e0c93"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-evidence-gc-migration-proposal.sql",
+      "sha256": "3f65e0c05a61746968655e069e3e883f3074ece1184743f9c18a7c46561c0fca"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-s3-20260929.md",
+      "sha256": "88643e017b598706f9870b56269b6c77849ea7fc10d4819c86e98c908104d291"
+    },
+    {
+      "path": "docs/system-backup-a-external-evidence-20260928.md",
+      "sha256": "597cb18facdf0eda199e3703a40f5a9141308ad43dbcc46b7043af25e31ef13c"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "b3fbb5ea1815439cb6b836da3ac4214324b60419343d4418cccd1ee16ddc9e10"
+    }
+  ]
+}

@@ -1983,6 +1983,10 @@ func (s *instanceService) stopV2Instance(ctx context.Context, instance *models.I
 }
 
 func (s *instanceService) deleteV2Instance(ctx context.Context, instance *models.Instance) error {
+	runtimeType, ok := v2RuntimeTypeForInstance(instance)
+	if !ok {
+		return fmt.Errorf("instance is not a Lite gateway runtime")
+	}
 	if instance.Status != "deleting" {
 		now := time.Now()
 		instance.Status = "deleting"
@@ -1996,6 +2000,9 @@ func (s *instanceService) deleteV2Instance(ctx context.Context, instance *models
 	cleanupErr := s.cleanupV2GatewayBinding(ctx, instance)
 	if cleanupErr != nil {
 		return cleanupErr
+	}
+	if err := s.eraseV2Workspace(instance, runtimeType); err != nil {
+		return fmt.Errorf("failed to erase v2 workspace during deletion: %w", err)
 	}
 	if err := s.instanceRepo.Delete(instance.ID); err != nil {
 		return fmt.Errorf("failed to delete v2 instance record: %w", err)
@@ -2600,17 +2607,20 @@ func (s *instanceService) eraseV2Workspace(instance *models.Instance, runtimeTyp
 	if actual == "." || actual == root || actual != expected || !isPathWithin(root, actual) {
 		return fmt.Errorf("Lite workspace path failed factory-reset safety validation")
 	}
-	if info, err := os.Lstat(actual); err == nil {
-		if info.Mode()&os.ModeSymlink != 0 {
-			return fmt.Errorf("Lite workspace path must not be a symbolic link")
-		}
-		resolvedRoot, rootErr := filepath.EvalSymlinks(root)
-		resolvedParent, parentErr := filepath.EvalSymlinks(filepath.Dir(actual))
-		if rootErr != nil || parentErr != nil || !isPathWithin(resolvedRoot, resolvedParent) {
-			return fmt.Errorf("Lite workspace parent failed factory-reset safety validation")
-		}
-	} else if !os.IsNotExist(err) {
+	info, err := os.Lstat(actual)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
 		return fmt.Errorf("failed to inspect Lite workspace: %w", err)
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("Lite workspace path must not be a symbolic link")
+	}
+	resolvedRoot, rootErr := filepath.EvalSymlinks(root)
+	resolvedParent, parentErr := filepath.EvalSymlinks(filepath.Dir(actual))
+	if rootErr != nil || parentErr != nil || !isPathWithin(resolvedRoot, resolvedParent) {
+		return fmt.Errorf("Lite workspace parent failed factory-reset safety validation")
 	}
 	if err := os.RemoveAll(actual); err != nil {
 		return fmt.Errorf("failed to erase Lite workspace: %w", err)
@@ -2976,14 +2986,14 @@ func (s *instanceService) cleanupOrphanedResources(ctx context.Context, userID, 
 		}
 	}
 
-	// List and delete Secrets with instance label
-	secrets, err := client.CoreV1().Secrets(namespace).List(ctx, metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("instance-id=%s", instanceLabel),
-	})
-	if err == nil && len(secrets.Items) > 0 {
-		for _, secret := range secrets.Items {
-			fmt.Printf("Deleting orphaned Secret %s\n", secret.Name)
-			client.CoreV1().Secrets(namespace).Delete(ctx, secret.Name, metav1.DeleteOptions{})
+	// Delete only managed Secrets through the restricted Secret store. The
+	// broker does not expose Secret listing or payloads for cleanup operations.
+	if s.secretService != nil {
+		if err := s.secretService.DeleteByLabels(ctx, namespace, map[string]string{
+			"instance-id": instanceLabel,
+			"managed-by":  "clawreef",
+		}); err != nil {
+			fmt.Printf("Warning: failed to delete orphaned Secrets for instance %s: %v\n", instanceLabel, err)
 		}
 	}
 

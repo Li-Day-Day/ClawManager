@@ -10,6 +10,7 @@ import (
 	"clawreef/internal/config"
 	"clawreef/internal/models"
 	"clawreef/internal/repository"
+	"clawreef/internal/systembackupsecurity"
 	"clawreef/internal/utils"
 )
 
@@ -36,6 +37,7 @@ type authService struct {
 	jwtConfig               config.JWTConfig
 	enterpriseAuthenticator EnterpriseAuthenticator
 	enterprisePolicy        enterpriseAuthPolicy
+	backupSessions          systembackupsecurity.LoginSessionRecorder
 }
 
 type enterpriseAuthPolicy struct {
@@ -78,11 +80,8 @@ func NewAuthService(userRepo repository.UserRepository, jwtConfig config.JWTConf
 
 // Register registers a new user
 func (s *authService) Register(username, email, password string) (*models.User, error) {
-	if isReservedLocalUsername(username) {
-		return nil, errors.New("local usernames cannot start with ldap_")
-	}
 	// Check if username already exists
-	existingUser, err := s.userRepo.GetByAuthProviderUsername(AuthProviderLocal, username)
+	existingUser, err := s.userRepo.GetByUsername(username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check username: %w", err)
 	}
@@ -118,6 +117,9 @@ func (s *authService) Register(username, email, password string) (*models.User, 
 	}
 
 	if err := s.userRepo.Create(user); err != nil {
+		if errors.Is(err, repository.ErrUserUsernameConflict) {
+			return nil, errors.New("username already exists")
+		}
 		return nil, fmt.Errorf("failed to create user: %w", err)
 	}
 	// Self-registration needs the same ordinary quota as administrator-created
@@ -133,24 +135,20 @@ func (s *authService) Register(username, email, password string) (*models.User, 
 
 // Login authenticates a user and returns tokens
 func (s *authService) Login(username, password string) (*TokenPair, error) {
-	if strings.HasPrefix(strings.ToLower(strings.TrimSpace(username)), "ldap_") {
-		return s.loginLDAPAlias(strings.TrimSpace(username), password)
-	}
-	// An unqualified username is always a local login. LDAP is never selected
-	// implicitly, even when a directory contains the same uid.
-	return s.loginLocal(username, password)
-}
-
-func (s *authService) loginLocal(username, password string) (*TokenPair, error) {
-	// Get user by username
-	user, err := s.userRepo.GetByAuthProviderUsername(AuthProviderLocal, username)
+	user, err := s.userRepo.GetByUsername(username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	if user == nil {
 		return nil, errors.New("invalid username or password")
 	}
+	if normalizeAuthProvider(user.AuthProvider) == AuthProviderLDAP {
+		return s.loginLDAP(user, password)
+	}
+	return s.loginLocal(user, password)
+}
 
+func (s *authService) loginLocal(user *models.User, password string) (*TokenPair, error) {
 	// Check if user is active
 	if !user.IsActive {
 		return nil, errors.New("account is disabled")
@@ -165,31 +163,27 @@ func (s *authService) loginLocal(username, password string) (*TokenPair, error) 
 	}
 
 	// Update last login
+	state := loginState(user)
 	now := time.Now()
 	user.LastLogin = &now
 	if strings.TrimSpace(user.AuthProvider) == "" {
 		user.AuthProvider = AuthProviderLocal
 	}
-	if err := s.userRepo.Update(user); err != nil {
+	if err := s.updateLoginState(user, state); err != nil {
 		return nil, fmt.Errorf("failed to update last login: %w", err)
 	}
 
 	// Generate tokens
-	tokenPair, err := s.generateTokens(user.ID)
+	tokenPair, err := s.issueSessionTokens(user, "")
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate tokens: %w", err)
+		return nil, err
 	}
 
 	return tokenPair, nil
 }
 
-func (s *authService) loginLDAPAlias(loginName, password string) (*TokenPair, error) {
-	loginAlias := strings.ToLower(strings.TrimSpace(loginName))
-	if len(loginAlias) == len("ldap_") || s.enterpriseAuthenticator == nil {
-		return nil, errors.New("invalid username or password")
-	}
-	user, err := s.userRepo.GetByLoginAlias(AuthProviderLDAP, loginAlias)
-	if err != nil || user == nil || user.ExternalID == nil || strings.TrimSpace(*user.ExternalID) == "" || !user.IsActive {
+func (s *authService) loginLDAP(user *models.User, password string) (*TokenPair, error) {
+	if s.enterpriseAuthenticator == nil || user.ExternalID == nil || strings.TrimSpace(*user.ExternalID) == "" || !user.IsActive {
 		return nil, errors.New("invalid username or password")
 	}
 	externalID := strings.TrimSpace(*user.ExternalID)
@@ -201,6 +195,7 @@ func (s *authService) loginLDAPAlias(loginName, password string) (*TokenPair, er
 		return nil, errors.New("invalid username or password")
 	}
 
+	state := loginState(user)
 	now := time.Now()
 	user.LastLogin = &now
 	if s.currentEnterprisePolicy().SyncRole && (enterpriseUser.Role == "admin" || enterpriseUser.Role == "user") {
@@ -209,10 +204,10 @@ func (s *authService) loginLDAPAlias(loginName, password string) (*TokenPair, er
 			return nil, err
 		}
 	}
-	if err := s.userRepo.Update(user); err != nil {
+	if err := s.updateLoginState(user, state); err != nil {
 		return nil, fmt.Errorf("failed to update enterprise user: %w", err)
 	}
-	return s.generateTokens(user.ID)
+	return s.issueSessionTokens(user, "")
 }
 
 func (s *authService) currentEnterprisePolicy() enterpriseAuthPolicy {
@@ -254,9 +249,9 @@ func (s *authService) RefreshToken(refreshToken string) (*TokenPair, error) {
 	}
 
 	// Generate new tokens
-	tokenPair, err := s.generateTokens(user.ID)
+	tokenPair, err := s.issueSessionTokens(user, refreshToken)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate tokens: %w", err)
+		return nil, err
 	}
 
 	return tokenPair, nil
@@ -313,10 +308,6 @@ func normalizeAuthProvider(provider string) string {
 	default:
 		return AuthProviderLocal
 	}
-}
-
-func isReservedLocalUsername(username string) bool {
-	return strings.HasPrefix(strings.ToLower(strings.TrimSpace(username)), "ldap_")
 }
 
 func enterprisePasswordMarker(provider string) string {

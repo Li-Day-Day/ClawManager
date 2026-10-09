@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T03:50:43.1740508Z",
+  "status": "ssh_blocked_real_mysql_not_run",
+  "operator_report": {
+    "local_build": "pass",
+    "unit_tests": "skipped",
+    "vet": "skipped",
+    "probe_attempts": 1,
+    "runner_attempts": 1,
+    "runner_sha256": "99265645c6d27fe8c4245073ca5ce4f1b442396d2d8b2b30fddee4802b60efe4",
+    "probe_sha256": "f9bbbfa98bf0ff49e38f95a1d333b8e74791f0c0c8bf3470c175e77824d0bfe3",
+    "backend_source_sha256": "f1b8a139f1137dcf52af1f3f24e5e1878cc6ea7844b7b4ae252b4ee6cb5e38c8",
+    "failed_stage": "first SSH remote scratch creation",
+    "ssh_message": "Connection closed by 10.130.14.23 port 22",
+    "root_cause": "unknown; authentication vs command-session termination not established",
+    "upload_started": false,
+    "remote_mysql_started": false,
+    "remote_scratch_state": "unknown; previous wrapper did not log random path or reconcile lost mkdir acknowledgement",
+    "local_cleanup": "operator reported True; failed-run cleanup not independently observed"
+  },
+  "remediation": [
+    "CheckRemote performs only SSH printf marker verification; Verbose enables ssh -v",
+    "Remote performs preflight before any build",
+    "Strict host key checking retained; one password prompt per connection",
+    "Scratch identity logged before creation; creation acknowledgement required before upload",
+    "Lost creation acknowledgement reconciled through exact ownership marker or verified absence",
+    "Cleanup failure or missing acknowledgement reports CLEANUP_PENDING; local cleanup still runs"
+  ],
+  "validation": {
+    "wrapper_mock_scenarios_passed": 20,
+    "bash_cleanup_directory_scenarios_passed": 6,
+    "bash_test_top_level_passed": 1,
+    "real_ssh_executed": false,
+    "real_mysql_executed": false,
+    "go_rebuilt": false,
+    "go_source_modified_by_this_change": false,
+    "initial_node_sandbox_attempt": "spawn EPERM before test execution; approved local-only rerun passed",
+    "test_scratch_remaining": 0,
+    "dependencies_installed": false
+  },
+  "next_operator_command": ".\\scripts\\system-backup-d-invariants.ps1 -CheckRemote -Verbose",
+  "source_sha256_at_receipt": {
+    "scripts/system-backup-d-invariants.ps1": "40e6aeeee51859cd22f0ce774e270fadf33ef2885cedfa6ca14ba724af253331",
+    "scripts/system-backup-d-history-cli-wrapper.test.ps1": "c5f05c993e3787aac205e8f00e189776d8b6ac04310cff1707e7c6eecbf7f447",
+    "scripts/system-backup-d-ssh-cleanup.test.mjs": "eb20eaf68397f949a6de331d99a0342db5d6c47dd1664d7551a6fbb260eee0f5"
+  }
+}

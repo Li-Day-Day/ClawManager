@@ -1,0 +1,175 @@
+{
+  "schema_version": "a-evidence-transit-local-validation.v1",
+  "recorded_at_utc": "2026-09-29T00:46:25.8897000Z",
+  "result": "PASS_LOCAL_ONLY",
+  "command": "scripts/system-backup-a-evidence-validation.ps1 -BuildParallelism 1",
+  "runner_exit_code": 0,
+  "validation": {
+    "go_top_level_tests_passed": 10,
+    "go_subtests_passed": 27,
+    "download_subtests_passed": 9,
+    "transit_failure_subtests_passed": 18,
+    "package_seconds": 3.224,
+    "vet_enabled": true,
+    "go_format_passed": true,
+    "powershell_syntax_files_passed": 3,
+    "linux_mysql_probe_compiled": true,
+    "migration_runner_compiled": true,
+    "helper_cases_passed_in_each_shell": 14,
+    "helper_current_powershell": "passed",
+    "helper_windows_powershell_5_1": "passed",
+    "helper_native_stderr_and_argument_boundaries": "passed",
+    "expected_tls_bad_certificate_diagnostics": 2
+  },
+  "build": {
+    "probe_sha256": "1719cc4e9519ba5d523326d3cb81248bc9b750a12f92af8474509c2bc68b2a4a",
+    "ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "build_parallelism": 1,
+    "go_dependency_proxy": "off",
+    "module_mode": "readonly",
+    "toolchain": "local"
+  },
+  "development_attempts": [
+    {
+      "result": "FAIL_ABORTED_TEST_FIXTURE",
+      "detail": "Synthetic HTTP/1 expiry handler waited for cancellation without consuming request body; bounded the handler and consumed body. Stopped only the run-owned test process after executable path verification.",
+      "runner_exit_code": 1,
+      "local_cleanup_reported": true
+    },
+    {
+      "result": "FAIL_LINUX_BUILD",
+      "detail": "All Go tests passed in 2.752 seconds, then asm.exe exited 0xc0000043 for internal/runtime/syscall/linux and internal/runtime/atomic.",
+      "runner_exit_code": 1,
+      "local_cleanup_reported": true
+    },
+    {
+      "result": "FIXED_HELPER_TEST_FIXTURE",
+      "detail": "Corrected mock reply initialization and single-element array handling before passing all 14 helper cases in both shells."
+    }
+  ],
+  "retry_policy": {
+    "stages": [
+      "test-vet",
+      "mysql-probe-build",
+      "migration-build"
+    ],
+    "observed_diagnostic": "vet.exe or asm.exe: exit status 0xc0000043",
+    "max_attempts": 3,
+    "same_command_arguments_and_isolated_cache": true,
+    "assertion_failure_or_panic_retried": false,
+    "remote_operation_retried": false,
+    "success_requires_native_exit_zero": true,
+    "root_cause_determined": false
+  },
+  "cleanup": {
+    "final_run_scratch": ".tmp-a-evidence-1bd54f05c1514183a778d9da907b222e",
+    "runner_reported_clean": true,
+    "scratch_absence_verified": true,
+    "binaries_and_build_cache_removed": true,
+    "native_mock_artifacts_removed": true,
+    "dependencies_installed": false
+  },
+  "historical_comparison": {
+    "mysql_receipt": "docs/evidence/system-backup-a-external-evidence-sbk-mig-260928090803-518e.json",
+    "unchanged_core_go_source_bindings": 8,
+    "ddl_sha256_unchanged": true,
+    "migration_binary_sha256_unchanged": true,
+    "historical_receipts_modified": false
+  },
+  "acceptance_scope": [
+    "Real HTTPS client behavior against synthetic local TLS provider",
+    "Prepare/OpenRange integration with synthetic AES-GCM wrapping and separate operation tokens",
+    "Exact ref/version and grant binding, expiry, malformed response and TLS rejection",
+    "Local Linux probe and migration runner compilation only"
+  ],
+  "limitations": [
+    "Production credential resolver remains to be implemented",
+    "Dedicated live evidence key, provider ACL and revocation not verified",
+    "Historical key routing still requires trusted exact-ref mapping",
+    "S3 store, authoritative absence proof, redaction validator and D control-plane wiring remain pending"
+  ],
+  "real_mysql_run_performed": false,
+  "agent_remote_actions_performed": false,
+  "production_provider_kms_verified": false,
+  "production_scoped_grants_verified": false,
+  "deployed_http_download_verified": false,
+  "formal_gc_migration_deployed": false,
+  "provider_capability_approved": false,
+  "human_mfa_verified": false,
+  "config_activated": false,
+  "source_bindings": [
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_test.go",
+      "sha256": "225a3a58365a9555e14a1cbe02dcb80863bfd95180b51d909ed5cb9737ac248b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit.go",
+      "sha256": "80eafd8403608de6a106705144372938d3b2c6d0c71aef4c1543918f40f34a6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "1df72df3a77f63358a71825b60f1668cfef9f90259c6229b04abe3df1824a2cf"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "b54d8a3aaa93c154a5d3a4355b6fed67fc8fc437afbfb63f9822e7bf8c1877c7"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "e33cebe262482dde1ea057ff41deacc068ef5b8e57756b946f377f0280487fc8"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1",
+      "sha256": "8b01abde2476eb3f810042bdbab5d1edd9765807a55e8a0bb5ee553dd4659d7b"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-phase.sh",
+      "sha256": "a7e57658d18f993b67218dad6af675793fec49cf4c8e4e5561d2b777847e0c93"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-evidence-gc-migration-proposal.sql",
+      "sha256": "3f65e0c05a61746968655e069e3e883f3074ece1184743f9c18a7c46561c0fca"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-transit-20260928.md",
+      "sha256": "d1f37b3f99478f24ecb8a5e893be5530ffb2c81ae6c5e932be40392544a8a55b"
+    },
+    {
+      "path": "docs/system-backup-a-external-evidence-20260928.md",
+      "sha256": "6594950030b115daf476b46333af5d0b2d79571e89f9f3a407acb2d12e06f515"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "ea07cc80de43bd4e2e378d3cfa9a77c03eb615cc9519f40097bc8ec654f6d63b"
+    }
+  ]
+}

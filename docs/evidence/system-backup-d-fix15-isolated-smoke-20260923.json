@@ -1,0 +1,60 @@
+{
+  "kind": "d_only_fix15_controller_isolated_smoke_observation",
+  "date": "2026-09-23",
+  "source": "user_supplied_remote_command_output",
+  "independently_requeried_cluster": false,
+  "test_namespace": "sbk-mig-260923065511-33ab",
+  "test_namespace_uid": "75d476b7-248c-4b87-b934-a1006cb60fd3",
+  "source_namespace": "clawmanager-zhanghui08-system",
+  "test_node": "node1",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "script_archive_checksum_verification_reported": "OK",
+  "fresh_migration_replay": {
+    "range": "001..079",
+    "applied_files": 92,
+    "exact_filenames": true,
+    "d_key_column_types": ["blob", "blob", "blob", "char"]
+  },
+  "dedicated_db_user": {
+    "positive": ["registered_migrations_read", "current_user", "no_role"],
+    "negative": ["users_select_denied", "schema_migrations_delete_denied"],
+    "result": "pass"
+  },
+  "controller": {
+    "replicas": 2,
+    "leaders": 1,
+    "standbys": 1,
+    "grant_probe": "accepted",
+    "initial_effective_state": "disabled",
+    "initial_first_enabled_at": "unset",
+    "leader_lease_holder": "pod",
+    "first_enable_once": "pass",
+    "leader_failover": "leader_transferred",
+    "same_digest_rolling_restart": "both_pods_replaced",
+    "installation_projection": "stable",
+    "final_kill_switch": "disabled",
+    "monitoring_armed_after_disable": true,
+    "required_select_revoked": "both_not_ready",
+    "grant_restored_with_restart": "two_ready_one_leader_one_standby",
+    "installation_projection_after_grant_drift": "unchanged"
+  },
+  "cleanup_reported": {
+    "namespace": "cleaned_with_matching_run_uid",
+    "remote_script_directory": "cleaned",
+    "local_script_directory": "cleaned"
+  },
+  "ssh_close_warning_observed": true,
+  "exit_code": 0,
+  "result": "pass_within_isolated_migration_controller_scope",
+  "limits": [
+    "Received operator summary output; raw controller responses and logs were not retained, and the cluster was not independently queried.",
+    "The source business Deployment was not rolled out by this test; this is not a production fix15 deployment acceptance.",
+    "Empty task and operation sets were used. No real backup or restore Job, provider action or A/B/C proof was exercised.",
+    "Grant restoration included a same-digest controller restart; automatic recovery without restart is not established.",
+    "The six TestDDatabaseInvariants probes were not packaged in this runtime image and were not run.",
+    "This result does not freeze contracts, approve schema-hash evidence, or establish P0-0b or P0 completion.",
+    "The SSH close warning is accepted only for this complete output with exit code zero and reported cleanup; no general exception for SSH errors is implied."
+  ]
+}

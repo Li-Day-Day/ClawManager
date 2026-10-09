@@ -395,7 +395,39 @@ func TestDesktopAuthAllowsDedicatedOriginTokenRotation(t *testing.T) {
 
 func TestRuntimeManifestsSeedLiteDefaultImages(t *testing.T) {
 	repoRoot := filepath.Clean(filepath.Join("..", "..", ".."))
-	for _, manifest := range append(deploymentRuntimeManifests(repoRoot), filepath.Join(repoRoot, "backend", "deployments", "k8s", "clawreef-incluster.yaml")) {
+	// Official installs now receive D-owned seed rows through the embedded
+	// migration runner. Require actual INSERT statements, not duplicate init SQL
+	// or an unrelated runtime image string somewhere in the deployment YAML.
+	for image, migration := range map[string]string{
+		"ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest":         "034_update_lite_default_images.sql",
+		"ghcr.io/yuan-lab-llm/agentsruntime/hermes-lite:latest":           "034_update_lite_default_images.sql",
+		"ghcr.io/yuan-lab-llm/agentsruntime/deepseek-harness-lite:latest": "047_add_deepseek_harness_runtime.sql",
+	} {
+		raw, err := embeddedMigrations.ReadFile("migrations/" + migration)
+		if err != nil {
+			t.Fatal(err)
+		}
+		found := false
+		for _, statement := range splitSQLStatements(string(raw)) {
+			if strings.HasPrefix(strings.TrimSpace(statement), "INSERT INTO system_image_settings") && strings.Contains(statement, "'"+image+"'") {
+				found = true
+			}
+		}
+		if !found {
+			t.Fatalf("embedded migration %s must seed lite image %s", migration, image)
+		}
+	}
+	for _, manifest := range deploymentRuntimeManifests(repoRoot) {
+		raw, err := os.ReadFile(manifest)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(string(raw), "system_image_settings") {
+			t.Fatalf("official manifest %s duplicates D-owned migration seeds", manifest)
+		}
+	}
+	// The legacy incluster installer has not migrated its bootstrap policy.
+	for _, manifest := range []string{filepath.Join(repoRoot, "backend", "deployments", "k8s", "clawreef-incluster.yaml")} {
 		t.Run(manifest, func(t *testing.T) {
 			raw, err := os.ReadFile(manifest)
 			if err != nil {

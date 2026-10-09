@@ -1,0 +1,37 @@
+{
+  "kind": "a_d_producer_cancel_rollback_fix_local_gate",
+  "checked_at": "2026-10-08T05:53:56.9253282Z",
+  "status": "local_passed_remote_required",
+  "remote_executed": false,
+  "exit_code": 0,
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-054411-8848e9d0.json",
+    "sha256": "47755d18e368ad4e3b9251ebf7c2ac34e020446f755979f1199872da3afcbeee",
+    "files": 854,
+    "live_drift": 0
+  },
+  "log": {
+    "path": "docs/evidence/system-backup-a-producer-cancel-fix-final-local-20261008.txt",
+    "sha256": "56883214241d3a9581f8b444fd7b4e4d10dcac735a2ec536981bcb9eb7635e85"
+  },
+  "top_level_passes": 182,
+  "named_passes": 1830,
+  "controlled_cancel_case_repetitions": 100,
+  "assertion_failures": 0,
+  "tool_fault_retries": 0,
+  "default_vet": true,
+  "linux_mysql_probe_compiled": true,
+  "migration_runner_compiled": true,
+  "dependencies_installed": false,
+  "production_transaction_logic_changed": false,
+  "local_artifacts_cleaned": true,
+  "remote_command_syntax_checked": true,
+  "previous_user_failure": "docs/evidence/a-d-producer-service-preflight-failure-20261008.json",
+  "interim_local_attempt": {
+    "log": "docs/evidence/system-backup-a-producer-cancel-fix-local-20261008.txt",
+    "exit_code": 1,
+    "cause": "Unsupported Stage argument in newly added repetition step; fixed to test-vet before full rerun.",
+    "cleaned": true,
+    "superseded": true
+  }
+}

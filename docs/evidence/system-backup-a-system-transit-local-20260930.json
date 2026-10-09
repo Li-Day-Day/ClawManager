@@ -1,0 +1,87 @@
+{
+  "kind": "a_system_transit_preparer_local_validation",
+  "date": "2026-09-30",
+  "status": "passed_exact_snapshot",
+  "production_authorization": false,
+  "exit_code": 0,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-transit-local-20260930.txt",
+    "sha256": "6d5cea578fd1b9be10ddb0b0a0267226adf5b54f9563fd2457f5fab2bb7ae0e4"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20260930-083042-c9ef25fb.json",
+    "sha256": "cef6e904d69446e883308b690aa89f80ffaffcdf4f8bc4b40e50420a82d6053a",
+    "files": 205,
+    "live_drift_after_validation": [
+      "backend/internal/systembackupproducer/lifecycle_test.go",
+      "backend/internal/systembackupproducer/lifecycle.go"
+    ],
+    "all_a_evidence_sources_still_match": true
+  },
+  "validation": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 122,
+    "named_passes_including_subtests": 1159,
+    "new_system_transit_named_passes": 38,
+    "assertion_failures": 0,
+    "windows_compiler_process_faults": 2,
+    "same_snapshot_tool_fault_retries": 1,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "executed_sha256": "95b9ad8cdc6c0506827749d19299f6a3003a9289a387178a0443dc7373223da8",
+    "final_sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08",
+    "post_dispatch_change": "Nested finally ensures receipt I/O cannot skip scratch cleanup",
+    "final_powershell_syntax_passed": true,
+    "final_cleanup_receipt_write_fault_injection_passed": true
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-0fe66d687ad44b088a32d2073e560e1b",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Dedicated system preparation with live authority for exact JWT/Transit profile",
+    "Private per-call binding and fixed deadline across validation/JWT exchange/Wrap/staging",
+    "Exact KEK ref, internal version, CA, endpoint and evidence context",
+    "Fresh single-audience projected JWT each call; strict short batch token response",
+    "No public Wrap or Unwrap API; no task/config placeholders"
+  ],
+  "excluded_scope": [
+    "Production SystemPreparationAuthority, D BeginCall/RecheckCall integration",
+    "Real workload issuer/JWT signature verification and Transit encrypt-only ACL",
+    "System STS, Guarded SQL registration/publication/result and historical recovery",
+    "Real MySQL/provider V01-V10",
+    "Newer versions of D lifecycle.go and lifecycle_test.go listed in snapshot drift",
+    "Full HTTP authentication and real LDAP/directory revocation"
+  ],
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_transit.go",
+      "sha256": "2f6c510b5ed35f3d5826fd6be918ecbf61324dc5ba71095d621e19d48c6d2b8a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_transit_test.go",
+      "sha256": "76c4fde77c221fa9a2671a5f52845542ff2e41cba4bc94af99aa8b2433e76437"
+    },
+    {
+      "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+      "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+    },
+    {
+      "path": "docs/system-backup-a-system-transit-20260930.md",
+      "sha256": "f76397cff2235127c9674db796576d04e2c00682f77fed27f79bb89f13e9d45d"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "7ad744c7409ed553f0297db3987690f156f5068326c53afd67404f3d787087fb"
+    }
+  ]
+}

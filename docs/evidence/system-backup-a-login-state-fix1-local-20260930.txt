@@ -1,0 +1,51 @@
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE login-state-only=yes full-login-http=no real_mysql=not_run
+go: error obtaining buildID for C:\Program Files\Go\pkg\tool\windows_amd64\vet.exe: exit status 0xc0000043
+# github.com/upper/db/v4/adapter/mysql
+..\..\..\..\go\pkg\mod\github.com\upper\db\v4@v4.10.0\adapter\mysql\connection.go:25:2: could not import errors (open $WORK\b003\_pkg_.a: The system cannot find the path specified.)
+go: unlinkat C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-397ded40537744209ec9d12995a20baf\tmp\go-build236249052: The directory is not empty.
+Windows vet/asm/compile process exited 0xc0000043; retrying the SAME test-vet command (1/3 failed). Vet remains enabled; isolated cache is retained only until this run ends.
+=== RUN   TestBuildV2SchedulerInstanceQueryRequiresWorkspaceTypeAndStatuses
+--- PASS: TestBuildV2SchedulerInstanceQueryRequiresWorkspaceTypeAndStatuses (0.00s)
+=== RUN   TestV2DesiredRunningStatusesIncludeRecoverableErrorCandidates
+--- PASS: TestV2DesiredRunningStatusesIncludeRecoverableErrorCandidates (0.00s)
+=== RUN   TestBuildV2SchedulerInstanceQueryDefaultsLimit
+--- PASS: TestBuildV2SchedulerInstanceQueryDefaultsLimit (0.00s)
+=== RUN   TestGatewayTokenHashTrimsAndDoesNotExposeToken
+--- PASS: TestGatewayTokenHashTrimsAndDoesNotExposeToken (0.00s)
+=== RUN   TestAppendTimeFilterAddsSinceAndUntilClauses
+--- PASS: TestAppendTimeFilterAddsSinceAndUntilClauses (0.00s)
+=== RUN   TestAppendTimeFilterEmptyFilterLeavesQueryUnchanged
+--- PASS: TestAppendTimeFilterEmptyFilterLeavesQueryUnchanged (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyHermesNestedPath
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyHermesNestedPath (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyOpenClawFlatPath
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyOpenClawFlatPath (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyRejectsMismatchedLeaf
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyRejectsMismatchedLeaf (0.00s)
+=== RUN   TestUsernameUniqueConstraintRecognition
+--- PASS: TestUsernameUniqueConstraintRecognition (0.00s)
+=== RUN   TestLoginStateClosedPoolReturnsUnavailable
+2026/09/30 15:15:17 	Session ID:     00001
+	Query:          SELECT DATABASE() AS name
+	Stack:          
+		fmt.(*pp).handleMethods@C:/Program Files/Go/src/fmt/print.go:674
+		fmt.(*pp).printArg@C:/Program Files/Go/src/fmt/print.go:757
+		fmt.(*pp).doPrint@C:/Program Files/Go/src/fmt/print.go:1206
+		fmt.Append@C:/Program Files/Go/src/fmt/print.go:290
+		log.(*Logger).Print.func1@C:/Program Files/Go/src/log/log.go:260
+		log.(*Logger).output@C:/Program Files/Go/src/log/log.go:237
+		log.(*Logger).Print@C:/Program Files/Go/src/log/log.go:259
+		clawreef/internal/repository_test.TestLoginStateClosedPoolReturnsUnavailable@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login_failure_test.go:48
+		testing.tRunner@C:/Program Files/Go/src/testing/testing.go:2036
+		runtime.goexit@C:/Program Files/Go/src/runtime/asm_amd64.s:1771
+	Error:          unexpected offline query
+	Time taken:     0.00380s
+	Context:        context.Background
+
+    user_login_failure_test.go:50: could not initialize offline adapter fixture
+--- FAIL: TestLoginStateClosedPoolReturnsUnavailable (1.11s)
+FAIL
+FAIL	clawreef/internal/repository	3.976s
+FAIL
+CLEANED local-registration-build-cache=True

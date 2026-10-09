@@ -1,0 +1,82 @@
+{
+  "kind": "a_login_state_mysql_remote_acceptance",
+  "date": "2026-09-30",
+  "status": "accepted_for_repository_login_state_scope",
+  "run": "sbk-mig-260930075123-5f56",
+  "namespace_uid": "f3f58ad6-1a88-4f71-8ff1-712d75c94910",
+  "mysql_version": "8.4.8",
+  "operator_transcript": {
+    "path": "docs/evidence/a-login-state-remote-20260930-153937.txt",
+    "sha256": "e90a15c328cf77ad03bb2217e2d997e8984b9922d807d7b5d9cd5b92505bdad3",
+    "complete": true
+  },
+  "subtests_passed": [
+    "local_changed_and_zero_changed_rows",
+    "ldap_changed_and_zero_changed_rows",
+    "ldap_role_to_admin",
+    "ldap_role_to_user",
+    "stale_password",
+    "stale_password_case",
+    "stale_password_trailing_space",
+    "stale_disabled",
+    "stale_role",
+    "stale_provider",
+    "stale_external_id",
+    "stale_external_id_case",
+    "stale_external_id_null",
+    "null_external_is_not_empty",
+    "missing_user",
+    "waiting_for_password",
+    "waiting_for_disabled",
+    "waiting_for_role",
+    "waiting_for_provider",
+    "waiting_for_external_id",
+    "waiting_for_external_id_null",
+    "database_failure_is_redacted"
+  ],
+  "subtest_count": 22,
+  "observed_exact_blocker_waits": 6,
+  "observed_zero_changed_fallbacks": 2,
+  "probe_sha256": "8e69b46048f93e32fb3cb1a01d22cd8f7051a978ae3dd760fe87f5d4551b27b9",
+  "migration_sha256": "0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea",
+  "inputs_json_sha256": "087a1da9e1cd0e1be328cfe51a57ab20260a0b944e5b087d97f48121f625e49a",
+  "input_format_review": "Windows PowerShell 5.1 serialization; exact digest reproduced in failed-run review; differs from PowerShell 7 bytes for the same descriptor",
+  "catalog": {
+    "file_count": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "exact_filenames": true
+  },
+  "normalized_users_create_sha256": "cc460b67cbea1e13ce2c21b0a799d643e1b5d7b7c5847dd89d87b7fb4c69ebb9",
+  "source_binding": {
+    "snapshot": "docs/evidence/system-backup-a-login-state-fix1-inputs-20260930.json",
+    "compared": 678,
+    "matching": 678,
+    "differences": [],
+    "note": "Binaries match fixed preparation; current-source comparison is separate and does not expand validation to later changes"
+  },
+  "cleanup": {
+    "probe_database_deleted_and_absence_checked": true,
+    "namespace_deleted": true,
+    "remote_scratch_deleted": true,
+    "local_build_cache_deleted": true
+  },
+  "wrapper_exit_code": 0,
+  "ssh_socket_close_diagnostics": "Present without test or cleanup failure; no rerun required for these diagnostics",
+  "accepted_scope": [
+    "Fresh current migration catalog replay and post-migration users schema clone",
+    "Actual UpdateLoginState changed/no-change/error paths",
+    "Concurrent password/active/role/provider/external-identity changes with exact InnoDB blocker observations"
+  ],
+  "excluded_scope": [
+    "HTTP login/refresh/logout and full server integration",
+    "Real LDAP bind or directory revocation events",
+    "Production SQL log redaction",
+    "Production schema upgrade, config activation or human MFA",
+    "System producer V01-V10 and full backup/restore",
+    "Cleanup after a forced child panic (this run succeeded normally)"
+  ],
+  "original_failure_preserved": "docs/evidence/a-login-state-mysql-failed-sbk-mig-260930070728-6476.json",
+  "agent_remote_actions": false,
+  "agent_rebuilt_or_reran_tests": false,
+  "live_cluster_independently_rechecked": false
+}

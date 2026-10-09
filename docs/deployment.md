@@ -16,6 +16,13 @@ Choose the deployment path that matches your environment:
 
 The cluster profile is validated with Longhorn as the example CSI implementation. It uses `longhorn` for RWO control-plane and instance volumes, and `longhorn-rwx` for the RWX workspace volume. These names are not a project requirement; replace them with compatible StorageClasses for your storage provider.
 
+These profiles describe the final, post-cutover security state. For an existing
+installation that still has an app `cluster-admin` compatibility binding, first
+stage and verify the broker PKI/workload and complete the reviewed RBAC cutover;
+do not use a blind profile re-apply as the migration procedure. A normal
+`kubectl apply` does not delete an existing binding, but prune/GitOps deletion
+must remain disabled until the installation has its own approved evidence.
+
 ## What Gets Deployed
 
 - ClawManager frontend and backend
@@ -24,6 +31,7 @@ The cluster profile is validated with Longhorn as the example CSI implementation
 - `skill-scanner` for skill analysis workflows
 - Team Redis and shared workspace storage services
 - Shared Lite Runtime pools for OpenClaw, Hermes, OpenCode, and DeepSeek Harness
+- HTTPS-only Secret broker with its dedicated ServiceAccount, closed RBAC and ingress policy
 - Kubernetes Services used for portal, gateway, and supporting traffic paths
 
 ## Repository Entry Points
@@ -41,17 +49,20 @@ The cluster profile is validated with Longhorn as the example CSI implementation
 1. Choose the Kubernetes distribution: `k3s` or `k8s`.
 2. Choose the storage profile: `single-node` or `cluster`.
 3. Check the storage prerequisites for that profile.
-4. Review the bundled manifest and adjust secrets, images, StorageClass names, and ingress exposure for your environment.
-5. Deploy the platform components into the cluster.
-6. Wait for the core services to become ready.
-7. Validate frontend access, AI Gateway management pages, Security Protection connectivity, and OpenClaw/Hermes/OpenCode/DeepSeek Harness runtime creation flows.
+4. Provision `Secret/clawmanager-secret-broker-tls` and `ConfigMap/clawmanager-secret-broker-ca` from the installation PKI. The certificate must cover `clawmanager-secret-broker.clawmanager-system.svc.cluster.local`. For a self-contained test installation, use `scripts/secret-broker-pki-bootstrap.sh`; production should use the reviewed site PKI.
+5. Review the bundled manifest and adjust secrets, images, StorageClass names, and ingress exposure for your environment.
+6. Deploy the platform components into the cluster. Every profile includes the HTTPS broker and starts the app with broker migration enabled; a missing TLS Secret/CA ConfigMap or an unverifiable broker TLS endpoint intentionally blocks the app init container.
+7. Wait for both `clawmanager-secret-broker` and `clawmanager-app` to become ready.
+8. Validate frontend access, AI Gateway management pages, Security Protection connectivity, and OpenClaw/Hermes/OpenCode/DeepSeek Harness runtime creation flows.
 
 Single-node example:
 
 ```bash
 kubectl get nodes
 kubectl label node <node> clawmanager.io/storage-node=true --overwrite
+KUBE_CONTEXT="$(kubectl config current-context)" SOURCE_NAMESPACE=clawmanager-system bash scripts/secret-broker-pki-bootstrap.sh
 kubectl apply -f deployments/k8s/single-node/clawmanager.yaml
+kubectl -n clawmanager-system rollout status deployment/clawmanager-secret-broker --timeout=5m
 kubectl get pvc -n clawmanager-system
 kubectl get pods -n clawmanager-system
 ```
@@ -60,7 +71,9 @@ Cluster example:
 
 ```bash
 kubectl get storageclass longhorn longhorn-rwx
+KUBE_CONTEXT="$(kubectl config current-context)" SOURCE_NAMESPACE=clawmanager-system bash scripts/secret-broker-pki-bootstrap.sh
 kubectl apply -f deployments/k8s/cluster/clawmanager.yaml
+kubectl -n clawmanager-system rollout status deployment/clawmanager-secret-broker --timeout=5m
 kubectl get pvc -n clawmanager-system
 kubectl get pods -n clawmanager-system
 ```

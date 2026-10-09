@@ -36,6 +36,7 @@ const requiredArtifactIDs = [
   'strong_auth_proof_nonce',
   'strong_auth_nonce_ledger',
   'provider_proof_registration',
+  'secret_ref',
   'restore_target',
   'restore_drill_resource_lifecycle',
   'status_relay',
@@ -55,6 +56,7 @@ const requiredArtifactIDs = [
   'audit_cursor_redacted_examples',
   'go_typescript_dto_parity',
   'capability_evidence',
+  'producer_authority',
   'cross_owner_reviews',
 ];
 

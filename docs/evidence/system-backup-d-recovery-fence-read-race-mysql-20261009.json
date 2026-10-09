@@ -1,0 +1,65 @@
+{
+  "kind": "system_backup_d_recovery_fence_read_race_mysql_handoff",
+  "date": "2026-10-09",
+  "source": "user_pasted_console_output",
+  "raw_log_in_repository": false,
+  "explicit_final_shell_exit_code": false,
+  "profile": "ProducerRecoveryOnly/D",
+  "result": "PASS",
+  "mysql_version": "8.4.8",
+  "namespace": "sbk-mig-261009074618-5503",
+  "namespace_uid": "eead87dd-98b2-46da-8d7c-fcfd1083cb87",
+  "binary_sha256": "ad63c9a2b65bf4afd4072fb2d2f096143b037357c478dd06f5b93d3c473878e1",
+  "ddl_sha256": "97abacd3f045046d01cb74211362a9a6aeada8c724c16958b48178517d5c8ff8",
+  "migration_runner_sha256": "0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea",
+  "migration_catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+  "fresh_migration_replay": "PASS 001..080 applied=94 exact_filenames=yes",
+  "suites": {
+    "TestDRecoveryFenceMySQL": {
+      "result": "PASS",
+      "cases": [
+        "register_rotate_rekey_and_revoke",
+        "concurrent_rotate_single_winner",
+        "rollback_audit_guard_and_second_insert",
+        "commit_ack_loss_never_returns_row"
+      ]
+    },
+    "TestDRecoveryFenceRecoveryRaceMySQL": {
+      "result": "PASS",
+      "cases": [
+        "rotate_blocks_old_epoch_claim",
+        "revoke_blocks_old_epoch_finish"
+      ]
+    },
+    "TestDRecoveryFenceReadMySQL": {
+      "result": "PASS",
+      "cases": []
+    },
+    "TestDHistoricalRecoveryMySQL": {
+      "result": "PASS",
+      "cases": [
+        "claim_revocation_and_evidence_only_finish",
+        "commit_ack_loss_has_no_claim"
+      ]
+    }
+  },
+  "cleanup": {
+    "run_owned_databases": 9,
+    "namespace": "CLEANED",
+    "remote_registration_scratch": "CLEANED",
+    "local_registration_build_cache": "CLEANED",
+    "cleanup_pending_reported": false
+  },
+  "local_validation": {
+    "isolated_go_telemetry": "off",
+    "recovery_focused_tests_and_vet": "PASS",
+    "mysql_seed": "PASS",
+    "linux_probe_build": "PASS",
+    "pinned_migration_runner_build": "PASS"
+  },
+  "notes": [
+    "SSH closed-socket messages appeared around password prompts; all four suites and cleanup markers were subsequently reported PASS.",
+    "The pasted output contains no explicit final shell exit code.",
+    "Management authority, audit capacity, and C Stat proof remain test substitutes; A/C production review and numbered migration are separate gates."
+  ]
+}

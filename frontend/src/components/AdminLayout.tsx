@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
+  Archive,
   Bot,
   ChevronDown,
   ChevronRight,
@@ -55,6 +56,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
     { path: '/admin/instances', label: t('nav.instances'), icon: Monitor },
     { path: '/admin/runtime-pods', label: t('nav.runtime'), icon: Server },
     { path: '/admin/northbound', label: '北向接口', icon: Network },
+    { path: '/admin/backups', label: t('systemBackup.title'), icon: Archive },
     {
       path: '/admin/secplane',
       label: t('nav.secplane'),

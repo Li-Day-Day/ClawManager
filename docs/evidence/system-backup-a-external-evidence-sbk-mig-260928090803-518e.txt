@@ -1,0 +1,68 @@
+=== RUN   TestEnvelopeChunkRangesAndTampering
+--- PASS: TestEnvelopeChunkRangesAndTampering (0.03s)
+=== RUN   TestPrepareRejectsDriftSizeAndRedaction
+--- PASS: TestPrepareRejectsDriftSizeAndRedaction (0.00s)
+=== RUN   TestPublishUnknownAndRetentionGC
+--- PASS: TestPublishUnknownAndRetentionGC (0.03s)
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/success
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/denied
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/late-revoke
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/tamper
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/audit-failure
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/multi-range
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/duplicate-range
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/oversize
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/forwarded-http
+--- PASS: TestDownloadAuthAuditRangeAndNoPartialBody (0.11s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/success (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/denied (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/late-revoke (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/tamper (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/audit-failure (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/multi-range (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/duplicate-range (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/oversize (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/forwarded-http (0.01s)
+=== RUN   TestRetentionSnapshotAndLogSeparation
+--- PASS: TestRetentionSnapshotAndLogSeparation (0.00s)
+=== RUN   TestRangeAndKeyBoundaries
+--- PASS: TestRangeAndKeyBoundaries (0.00s)
+PASS
+ok      clawreef/internal/systembackupevidence  1.235s
+LOCAL_PASS evidence-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=e8c1f5717a269baab23437d68178ed7f94a73a52ae15d9a025e766a2bbe6e3ec ddl_sha256=c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001E73CCC16B0
+root@10.130.14.23's password:
+bundle.tar                                                                                         100%   19MB   6.2MB/s   00:03
+close - IO is still pending on closed socket. read:1, write:0, io:00000158165FCCF0
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-260928090803-518e uid=277799f2-d47e-4dcb-9de9-b49b9ecd0c06 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"human_mfa_verified":false,"migration_catalog_sha256":"68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564","migration_count":93,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88 catalog_sha256=68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564
+PASS fresh-migration-replay=001..080 applied=93 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestAEvidenceMySQL
+=== RUN   TestAEvidenceMySQL/pending_intent_chunks_atomic_and_duplicate_rejected
+=== RUN   TestAEvidenceMySQL/publish_and_exact_version_read
+=== RUN   TestAEvidenceMySQL/retention_and_references_block_gc
+=== RUN   TestAEvidenceMySQL/audit_failure_rolls_back_claim_before_delete
+=== RUN   TestAEvidenceMySQL/unknown_delete_retains_ref_then_confirmed_gc_clears_payload
+=== NAME  TestAEvidenceMySQL
+    evidence_mysql_test.go:77: CLEANED evidence run-owned database
+--- PASS: TestAEvidenceMySQL (0.36s)
+    --- PASS: TestAEvidenceMySQL/pending_intent_chunks_atomic_and_duplicate_rejected (0.01s)
+    --- PASS: TestAEvidenceMySQL/publish_and_exact_version_read (0.07s)
+    --- PASS: TestAEvidenceMySQL/retention_and_references_block_gc (0.02s)
+    --- PASS: TestAEvidenceMySQL/audit_failure_rolls_back_claim_before_delete (0.01s)
+    --- PASS: TestAEvidenceMySQL/unknown_delete_retains_ref_then_confirmed_gc_clears_payload (0.04s)
+PASS
+PASS a-evidence-mysql binary_sha256=e8c1f5717a269baab23437d68178ed7f94a73a52ae15d9a025e766a2bbe6e3ec ddl_sha256=c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199
+CLEANED namespace=sbk-mig-260928090803-518e uid=277799f2-d47e-4dcb-9de9-b49b9ecd0c06
+close - IO is still pending on closed socket. read:1, write:0, io:000001F39BCEDDE0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001F970A722E0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+a_evidence_exit=0

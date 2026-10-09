@@ -1,0 +1,317 @@
+{
+  "schema_version": "a-capability-producer-admission-request.v1",
+  "recorded_at": "2026-09-29T07:48:01.7149761Z",
+  "status": "pending_cross_owner_design",
+  "scope": "System-owned capability_snapshot producer admission, including bootstrap before active config",
+  "sources": [
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content.go",
+      "sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority.go",
+      "sha256": "58320e994f195d86e330a5687b4b860c435a835fe30f68eb74f6d6c034b76729"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_prepare_test.go",
+      "sha256": "9dc4fd8b711fc9accf88c943264e30b322de5918e5c6ffd3036d615e4b1aa0de"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_prepare.go",
+      "sha256": "da2cdb16337a5aed2c5fe234aa195303333d26fe9db861a24e6cd4773d8266b3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "sha256": "88b5a7c8e0e4c60d22da3e465dffd76cfa0e6acd2061086a5f943921e3d9a703"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "sha256": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "sha256": "758b8da3593308051ccd360a97c62e2234fca391eaae41b8bdc0fb7fe9ca31b3"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "c5ad6bfc2d7e2d5ce343aa30ab085de5b82b27cf7b77cfc05b2f4d475b8f727c"
+    },
+    {
+      "path": "docs/system-backup-a-capability-producer-admission-request-20260929.md",
+      "sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d"
+    }
+  ],
+  "source_findings": {
+    "content_roles": [
+      "artifact",
+      "catalog",
+      "evidence",
+      "kms",
+      "secret",
+      "signing"
+    ],
+    "provider_row_roles": [
+      "artifact",
+      "catalog",
+      "evidence"
+    ],
+    "non_provider_roles": [
+      "kms",
+      "secret",
+      "signing"
+    ],
+    "non_provider_mapping": {
+      "kms": "Input to independently evaluated kek dependency health; no automatic healthy row.",
+      "secret": "Input to Secret bundle/KEK capability checks; no provider row and no automatic dependency-health projection.",
+      "signing": "Input to independently evaluated signing dependency health; no automatic healthy row."
+    },
+    "provider_rows_have_claims": true,
+    "dependency_health_has_producer_claim": false,
+    "operation_types": [
+      "cancel",
+      "cleanup",
+      "ownership_resolution",
+      "provider_proof_register",
+      "finalization_resolution",
+      "manual_hold_update",
+      "config_update",
+      "promotion_create",
+      "promotion_revoke",
+      "catalog_scan",
+      "catalog_import",
+      "prune_execute",
+      "prune_retry",
+      "artifact_health_reconcile",
+      "orphan_gc",
+      "control_metadata_gc",
+      "evidence_gc"
+    ],
+    "dedicated_capability_operation_present": false,
+    "task_authority_scope": "job_log_chunk only",
+    "bootstrap_boundary": "ConfigBootstrapService rejects existing installation/config rows; separate pre-config evidence admission decision required"
+  },
+  "required_reviewers": [
+    "B",
+    "C",
+    "D"
+  ],
+  "approved_reviewers": [],
+  "handoff_dispatched": false,
+  "required_decisions": [
+    {
+      "id": "CAP-PRODUCER-LEASE",
+      "owner": "D",
+      "status": "open",
+      "requirement": "Durable authenticated/revocable producer lease binding installation, identity, run, claim/CAS and expiry across all six roles"
+    },
+    {
+      "id": "CAP-BOOTSTRAP-TRUST",
+      "owner": "D/A/C",
+      "status": "open",
+      "requirement": "Pre-config evidence path and trust root without reusing task/GC/config grants or self-asserted capability content"
+    },
+    {
+      "id": "CAP-ROLE-ADMISSION",
+      "owner": "A/B/C/D",
+      "status": "open",
+      "requirement": "Exact role/ref/scope/Job or workload binding, evidence admission and atomic capability/health commit ordering"
+    }
+  ],
+  "strict_contract_gate": {
+    "command": "node scripts/system-backup-contract-check.mjs --check --strict",
+    "exit_code": 1,
+    "status": "draft",
+    "schema_registry_current": true,
+    "blockers": {
+      "plan_control_without_inventory": [
+        "system_backup_catalog_imports",
+        "system_backup_catalog_records",
+        "system_backup_catalog_scan_states"
+      ],
+      "missing_artifacts": [
+        "recovery_catalog_records",
+        "restore_target",
+        "status_relay",
+        "catalog_scan_record"
+      ],
+      "draft_artifacts": [
+        "registry_enums",
+        "hash_algorithms",
+        "schema_registry",
+        "admin_openapi",
+        "task_operation_dto",
+        "status_failure_enums",
+        "manifest_system_backup_v1",
+        "artifact_index",
+        "provider_finalizer_request",
+        "committed_marker",
+        "acceptance_marker",
+        "control_evidence_sidecar",
+        "strong_auth_proof_nonce",
+        "strong_auth_nonce_ledger",
+        "provider_proof_registration",
+        "secret_ref",
+        "restore_drill_resource_lifecycle",
+        "job_observation_cursor",
+        "verifier_contract",
+        "metrics_alert_registry",
+        "staging_resource_lifecycle",
+        "maintenance_participant_state",
+        "external_action_payload",
+        "evidence_chunk_log",
+        "dependency_provider_capability",
+        "compact_tombstone",
+        "installation_state",
+        "source_writer_check_state",
+        "runner_collector_normalizer_interfaces",
+        "audit_cursor_redacted_examples",
+        "go_typescript_dto_parity",
+        "capability_evidence",
+        "cross_owner_reviews"
+      ],
+      "policy_pending": [
+        "table:backup_schedules",
+        "table:backups",
+        "table:custom_team_templates",
+        "table:instance_agents",
+        "table:instance_commands",
+        "table:instance_config_revisions",
+        "table:instance_desired_state",
+        "table:instance_external_access",
+        "table:instance_runtime_bindings",
+        "table:instance_runtime_status",
+        "table:instance_skills",
+        "table:instance_usage",
+        "table:instances",
+        "table:northbound_operations",
+        "table:openclaw_config_bundle_items",
+        "table:openclaw_config_bundle_skills",
+        "table:openclaw_config_bundles",
+        "table:openclaw_config_resources",
+        "table:openclaw_injection_snapshots",
+        "table:persistent_volumes",
+        "table:runtime_pods",
+        "table:runtime_rollouts",
+        "table:runtime_upgrade_audits",
+        "table:runtime_upgrade_items",
+        "table:skill_blobs",
+        "table:skill_hub_tag_assignments",
+        "table:skill_hub_tags",
+        "table:skill_package_materialize_jobs",
+        "table:skill_scan_results",
+        "table:skill_versions",
+        "table:skills",
+        "table:team_event_outbox",
+        "table:team_events",
+        "table:team_members",
+        "table:team_tasks",
+        "table:team_work_items",
+        "table:team_workflow_phases",
+        "table:teams",
+        "table:workspace_file_audits"
+      ],
+      "cross_review_pending": [
+        "table:audit_events",
+        "table:audit_logs",
+        "table:chat_messages",
+        "table:chat_sessions",
+        "table:cost_records",
+        "table:egress_private_exceptions",
+        "table:enterprise_auth_settings",
+        "table:instance_gateway_token_aliases",
+        "table:llm_models",
+        "table:model_invocations",
+        "table:northbound_admin_settings",
+        "table:northbound_auth_challenges",
+        "table:northbound_caller_policies",
+        "table:northbound_sessions",
+        "table:northbound_settings_audit",
+        "table:risk_hits",
+        "table:risk_rules",
+        "table:schema_migrations",
+        "table:security_scan_configs",
+        "table:security_scan_job_items",
+        "table:security_scan_jobs",
+        "table:security_scan_reports",
+        "table:system_artifact_lease_states",
+        "table:system_artifact_leases",
+        "table:system_backup_admin_revocations",
+        "table:system_backup_admin_sessions",
+        "table:system_backup_alert_states",
+        "table:system_backup_artifact_verifications",
+        "table:system_backup_attempts",
+        "table:system_backup_check_results",
+        "table:system_backup_compact_tombstones",
+        "table:system_backup_configs",
+        "table:system_backup_dependency_health",
+        "table:system_backup_events",
+        "table:system_backup_evidence",
+        "table:system_backup_evidence_chunks",
+        "table:system_backup_external_actions",
+        "table:system_backup_installation_state",
+        "table:system_backup_job_observations",
+        "table:system_backup_log_chunks",
+        "table:system_backup_metadata_reservations",
+        "table:system_backup_operations",
+        "table:system_backup_preflights",
+        "table:system_backup_promotions",
+        "table:system_backup_provider_capabilities",
+        "table:system_backup_prune_items",
+        "table:system_backup_prune_runs",
+        "table:system_backup_source_writer_check_states",
+        "table:system_backup_staging_resources",
+        "table:system_backup_strong_auth_nonces",
+        "table:system_backup_totp_credentials",
+        "table:system_backups",
+        "table:system_image_settings",
+        "table:system_maintenance_locks",
+        "table:system_maintenance_mutation_leases",
+        "table:system_maintenance_participants",
+        "table:system_restore_drill_resources",
+        "table:system_restore_drills",
+        "table:user_quotas",
+        "table:users"
+      ],
+      "schema_hash_pending": true
+    },
+    "output": {
+      "sha256": "d257608eb805def6bd5e6a2ea5cee9a85414bf292c1b52637ff4b90ad46b8968",
+      "path": "docs/evidence/system-backup-a-capability-producer-contract-gate-20260929.txt"
+    }
+  },
+  "prior_boundary_verification": {
+    "path": "docs/evidence/system-backup-a-evidence-task-runtime-local-20260929.json",
+    "sha256": "2051af39c087d9c6d2d1d29a5e8f1438a94c110f515cc5620f9b7db59ee67c42",
+    "boundary_sources_unchanged": true,
+    "log_hash_verified": true,
+    "test": "TestTaskPreparerRejectsRevocationAndDrift/type",
+    "rerun_this_turn": false
+  },
+  "production_authority_added": false,
+  "production_enabled": false,
+  "contract_changed": false,
+  "contract_freeze_approved": false,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "build_artifacts_created": false
+}

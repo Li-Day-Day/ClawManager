@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T05:56:51.9158080Z",
+  "status": "remote_fresh_catalog_failed_local_harness_fix_passed_mysql_history_pending",
+  "origin": "operator supplied transcript beginning at SCP; no local build preamble included",
+  "attachment_sha256": "3bbc131e94fdbeb7aa0027f461b8bc366c1eb95872032fb53bbecfd3056d52ea",
+  "remote_report": {
+    "scratch_owner": "ccc6163ffea74fdbb1a1a19e6dedc771",
+    "namespace": "sbk-mig-260930054140-3824",
+    "namespace_uid": "549aaa6c-303a-4097-9c00-a79650d7352a",
+    "mysql_version": "8.4.8",
+    "app_digest": "d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e",
+    "mysql_digest": "5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+    "bundle_sha256": "628cffd648e8a29a359f99c1ee4d56abea1219b2249652cf33c4ef4ffdfb4a6f",
+    "runner_sha256_in_command": "7ab37c3ac839a499e2ee19d066e3fba49abc34b334c951ebf456d503e2fc0fbb",
+    "probe_sha256": "not included in supplied excerpt",
+    "scp_exit_code": 0,
+    "bundle_hash_check": "OK",
+    "fresh_applied": 93,
+    "fresh_expected": 94,
+    "app_phase": "Running",
+    "remote_exit_code": 1,
+    "history_test_started": false,
+    "namespace_cleanup": "reported CLEANED exact UID",
+    "remote_scratch_cleanup": "reported yes",
+    "local_cleanup": "reported True"
+  },
+  "diagnosis": "history CLI harness used cached old app for fresh replay while current controller/catalog require 94 files",
+  "current_catalog": {
+    "count": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "added_file": "063_unique_usernames.sql",
+    "synthetic_history_before": 96,
+    "synthetic_history_after": 97
+  },
+  "fix": [
+    "bundle dedicated migration phase for history CLI",
+    "use identical pinned current runner for isolated fresh apply and later history test",
+    "require namespace/pod/server identity and runner checksum before fresh apply",
+    "no migration-app Pod in CLI mode; require no such Pod before history test",
+    "retain exact filename/count/column checks; never lower count to 93",
+    "conflicting runner inputs rejected before kubectl"
+  ],
+  "validation": {
+    "wrapper_mock_scenarios_passed": 25,
+    "existing_node_top_level_checks_passed": 9,
+    "full_harness_top_level_checks_passed": 1,
+    "full_harness_mock_cases": [
+      "current-catalog-success",
+      "fresh-runner-failure",
+      "same-count-wrong-filenames",
+      "unexpected-app-pod",
+      "conflicting-runner-inputs"
+    ],
+    "real_mysql_after_fix": "not run",
+    "go_rebuilt": false,
+    "backend_modified": false,
+    "backend_source_sha256": "e333a14366a0ce1e98e72e35140a714cbdb536fb59df58b62b43bcc5357c4d54",
+    "test_scratch_remaining": 0,
+    "dependencies_installed": false,
+    "test_development_notes": "new mock initially had JS template escaping error, then exceeded 30s Windows process startup limit; corrected escaping, added polling fail-fast, raised per-case timeout, cleaned leftover fixture; final five-case harness passed"
+  },
+  "next_operator_command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -BuildOnly -Remote",
+  "source_sha256_at_receipt": {
+    "scripts/system-backup-d-invariants.ps1": "4f4dd8f0eed85736472b4e230f2fbd1eac25963aa1b4dbe109b9677fbc3e812a",
+    "scripts/system-backup-fresh-migration-smoke.sh": "5e00228bbd106b7b6fa7fbea5ef4f749e01a16242d5ae891b0f9915c1b3a5367",
+    "scripts/system-backup-d-migration-phase.sh": "08951f7ed907ece42f79c0e543490df806f9f60e20b6e9619324d9fd01e112a8",
+    "scripts/system-backup-d-invariants-phase.sh": "9ef99b4aa7f3aff516b0814d450a96017c6bd887a365864de6febd63715056df",
+    "scripts/system-backup-d-history-cli-phase.sh": "828f9b688632f841c81ab5cad5d020bc2668307b67962b32ed5b9aeef1bea486",
+    "scripts/system-backup-d-history-cli-fresh.test.mjs": "b39273091b517d0590cf6ae0451e1d60d788a205abe11a9ba7cf84770d92e4c9"
+  }
+}

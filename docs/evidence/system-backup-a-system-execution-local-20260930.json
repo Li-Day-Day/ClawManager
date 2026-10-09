@@ -1,0 +1,91 @@
+{
+  "kind": "a_system_execution_preparation_local_validation",
+  "date": "2026-09-30",
+  "status": "passed_exact_snapshot",
+  "production_authorization": false,
+  "exit_code": 0,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-execution-local-20260930.txt",
+    "sha256": "e7f408cb29f632d12c03b83f05409a98902b2a9885a12fb2cc8a4d714a0d77ef"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20260930-092120-7d85ed69.json",
+    "sha256": "688bc396e64efc23e683c1b373f9ad5d8eb3af57340f778ac1dea142467c8282",
+    "files": 212,
+    "live_drift_after_validation": [
+      "backend/internal/systembackupproducer/validate.go",
+      "backend/internal/systembackupproducer/pending_test.go",
+      "backend/internal/systembackupproducer/pending.go"
+    ],
+    "all_a_evidence_sources_still_match": true
+  },
+  "validation": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 136,
+    "named_passes_including_subtests": 1318,
+    "new_system_execution_top_level_passes": 4,
+    "new_system_execution_named_passes": 47,
+    "assertion_failures": 0,
+    "windows_compiler_process_faults": 0,
+    "same_snapshot_tool_fault_retries": 0,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "gofmt_clean": true,
+    "a_call_bridge_uses_private_test_double": true,
+    "local_tls_jwt_transit_round_trip": true,
+    "real_d_production_environment_success_integration": false
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-ab9d83145d414110b79da9b76f76c75d",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Public factory accepts concrete D Execution and opaque ExecutionHandle only",
+    "Separate content_read and wrap snapshots before body/token/provider I/O",
+    "Full body, run, input, evaluator, scope, subject/issuer, observation and exact KEK policy binding",
+    "Shared snapshot facts must match; retain original objects, deadlines and hashes",
+    "Recheck both original snapshots across body, JWT, Wrap and staging; no replacement on denial",
+    "Return detached content policies; reject zero handles and fake views in concrete D bridge"
+  ],
+  "excluded_scope": [
+    "Production D CommandEnvironment/ExecutionEnvironment and independent complete policy admission",
+    "Real mTLS deployment/workload/JWT issuer-subject mapping and shared revocation",
+    "Actual provider Transit encrypt-only ACL and independent C evidence channel",
+    "D pending/claim and A system STS/publication/result/historical recovery",
+    "Final D validate.go, pending.go and pending_test.go listed as drift",
+    "Real MySQL/provider V01-V10 and Linux binary runtime execution",
+    "Full HTTP authentication and real LDAP/directory revocation"
+  ],
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_execution.go",
+      "sha256": "2fb9dce5737444772b442e8d88626108dd978d5622c34e30c5845f4cd5b3b1e5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_execution_test.go",
+      "sha256": "e2997a4e746ed33f8be854d13e3ae5435a1575e8ddcf8d5d31d9daa9105d42fa"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "4afb96c7845559e5e80acb6c32c8eb322a6184f651efa6ac4edebe089e7f12bd"
+    },
+    {
+      "path": "docs/system-backup-a-system-execution-20260930.md",
+      "sha256": "0d2602f57a16bd06b8ea09c9a1d08959907ba081665a87215ac286421adcd48c"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "eac51e4052f2b74063f7595928d429fbda468fca8f3eb11a662eac8053553f70"
+    }
+  ]
+}

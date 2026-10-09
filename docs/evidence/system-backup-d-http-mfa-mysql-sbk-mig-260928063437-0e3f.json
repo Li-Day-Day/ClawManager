@@ -1,0 +1,85 @@
+{
+  "kind": "d_http_mfa_mysql_operator_receipt_v1",
+  "recorded_at": "2026-09-28T06:38:46.6280616Z",
+  "source": "operator-provided console transcript",
+  "independently_queried_remote": false,
+  "result": "PASS",
+  "separate_process_exit_code": null,
+  "namespace": "sbk-mig-260928063437-0e3f",
+  "namespace_uid": "4209e0c4-8f99-43d8-96c5-5a88a3b732b7",
+  "mysql_version": "8.4.8",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "binary_sha256": "d5d994bffb426a5be75073a8fb20457e7557e4485fed6f334c7efb3b4d9db877",
+  "ddl_sha256": "2661503d821ae4a5346609a6dfba93db5483b6538e71de46c2e686d9a050ceba",
+  "source_binding_check": {
+    "local_receipt": "system-backup-d-http-mfa-receipt-count-local-20260928.json",
+    "matched": 55,
+    "mismatches": 0
+  },
+  "fresh_migrations": {
+    "range": "001..079",
+    "applied": 92,
+    "exact_filenames": true,
+    "d_columns": "blob/blob/blob/char",
+    "result": "PASS"
+  },
+  "local_package_test_seconds": 1.443,
+  "test_seconds": 1.59,
+  "top_level_pass": 9,
+  "top_level_fail": 0,
+  "passed_subtests": [
+    "concurrent_same_request_has_one_atomic_result",
+    "body_conflict",
+    "nonce_replay_with_new_idempotency_key",
+    "result_audit_failure_rolls_back_every_table",
+    "permission_revocation_blocks_committed_retry",
+    "https_registration_replay_conflict_and_revocation",
+    "totp_persistence_replay_throttle_and_session_revocation",
+    "https_jwt_mfa_registration_and_config_revocation",
+    "first_config_bootstrap_atomicity"
+  ],
+  "bootstrap_nested_pass": [
+    "result_audit_failure_rolls_back_config_state_and_reservation",
+    "concurrent_first_requests_commit_once",
+    "wrong_database_conflict_reinitialization_and_revocation"
+  ],
+  "new_http_subtest_seconds": 0.33,
+  "new_http_assertions": [
+    "JWT refresh/wrong signature and unbound admin rejected",
+    "MFA enrollment confirmation proof issuance and replay rejection",
+    "Provider observation and first HTTP registration",
+    "Identical committed retry and exactly one evidence receipt",
+    "Logout blocks committed retry and proof issuance",
+    "Configuration rotation waits for MFA authorization transaction",
+    "Old runtime pins refuse rotated configuration",
+    "Reloaded runtime refuses revoked role without consuming TOTP step",
+    "Audit contains none of the tested credentials"
+  ],
+  "supersedes_failed_probe": "system-backup-d-http-mfa-mysql-sbk-mig-260928061146-2742.json",
+  "cleanup": {
+    "bootstrap_database_reported": true,
+    "registration_database_reported": true,
+    "namespace_matching_uid_reported": true,
+    "remote_scratch_reported": true,
+    "local_build_cache_reported": true,
+    "local_remaining_scratch_independently_checked": 0
+  },
+  "scope": {
+    "real_mysql": true,
+    "isolated_https_jwt_mfa_chain": true,
+    "synthetic_user_and_keys": true,
+    "synthetic_provider_facts_nonce_capacity_and_bootstrap_admission": true,
+    "real_transit_in_this_test": false,
+    "human_mfa_verified": false,
+    "production_active_config_updated": false,
+    "production_http_service_deployed": false
+  },
+  "remaining": [
+    "Production bootstrap admission with real registry and typed secret references",
+    "Runtime signing identities, TLS, collector and logout deployment",
+    "Human administrator MFA and deployed HTTP acceptance",
+    "Actual configuration activation acceptance"
+  ],
+  "note": "Full isolated suite passed. This supplements immutable local NOT_RUN and earlier failed receipts; it does not establish production activation or human MFA. No separate shell exit code was supplied."
+}

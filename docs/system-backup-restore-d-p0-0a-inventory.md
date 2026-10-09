@@ -2,7 +2,27 @@
 
 > 2026-09-14；对应尚未冻结的主计划 `system-backup-plan.v12`。这是开工时仓库事实及后续进展记录，不是机器合同或 schema object registry。八表归属已补入主计划；分类、策略、verifier 等正式决议仍须进入同版本合同并通过交叉评审。
 
+## 当前盘点与验证边界（2026-09-28）
+
+当前 inventory 已增至 **99 个对象**，embedded migration catalog 为 **93 个文件**，包含 `080` 的四张认证/会话/容量 runtime 表。新独立迁移入口已在隔离 MySQL 8.4.8 完成 `001..080 applied=93 exact_filenames=yes`；同轮 HTTP/MFA/事务 9 个一级用例及 3 个 bootstrap 嵌套用例通过，资源报告清理完成。见 [远程回执](evidence/system-backup-d-runtime-migration-mysql-sbk-mig-260928072119-004e.json)及 [D 当前进度](system-backup-restore-d-role-steps.md#0-当前进度2026-09-28)。
+
+下述 95 表/92 文件的 live schema candidate 是历史证据，与当前 inventory/catalog 的绑定不再一致。新隔离迁移 PASS 不等于实际应用库升级或新 live schema hash 已采集；仍须取得对应版本的结构证据并完成 owner 评审与登记，冻结门禁不变。历史生命周期“待 A 签收”已由 [A 限定范围签收](system-backup-a-lifecycle-acceptance-20260924.md)补充，不改写原证据。
+
+## Live schema-hash 历史状态（2026-09-23）
+
+操作者已完成一次真实采集，退出0；95张表与当前 inventory 集合一致、missing/unexpected为空，3092条结构记录得到 canonical schema hash `a0cea874cd2c1dddb0740c7bfd066954e70e400fa38251f145aa2006711907e3`，采集端报告原始记录清理完成。D 本地核对当前 SQL、inventory、migration catalog 和对象集合 hash 均匹配。见 [候选证据与交接](system-backup-d-schema-hash-handoff-2026-09-23.md)。后文“尚未采集”保留为历史记录；本轮仍为 candidate、无运行时 evidence 注册和 A/B/C 批准，`schema_hash_evidence_present=false`。对象名匹配不代表期望结构对比或历史 migration 等价性通过。
+
+## Secret broker cutover 权威状态（2026-09-23 正式 cutover 后）
+
+- 【已完成】D 侧预切换实现、业务 smoke 和脱敏证据登记；历史 evidence SHA-256 `419852166e49be4f6aa4f66bf26b8b9980cb5cff77e5f4cb98722a213eb4b991` 只证明当时现场状态，不构成 cutover 授权。
+- 【已完成】A 侧安全签收。2026-09-23，A 已复核原三项修正、P1 standalone `+` 修复、现场 app init/Ready 和 v3 evidence `fd8588ed96a93c30c7ac1ac96d9d9f77d78fb2c9388d9f344d986ca355d136c5`。
+- 【已完成正式 RBAC 去权】操作者显式批准后，reviewed 脚本绑定 v3 evidence 执行成功并返回0；目标 `clawmanager-zhanghui08-app-cluster-admin` 已删除，终态查询为 `NotFound`。app SA 的 Secret list 为 `no`、Deployment get 为 `yes`，删除前后 app/runtime/sync smoke 通过且 app 零重启。
+- 【继续保护】受保护的 `clawmanager-app-cluster-admin` 仍绑定 `clawmanager-system/clawmanager-app`，绝对不得删除。脱敏终态记录见 [`secret-broker-rbac-cutover-zhanghui08-20260923.txt`](evidence/secret-broker-rbac-cutover-zhanghui08-20260923.txt)；该项通过不等于 P0-0b 整体通过。
+- 【fix14 已完成 D 侧远程验收】镜像 digest `sha256:1ba8cc47f468610e6875117f75fe42ce9fdb15e1cd2e6f877ac8ff2f99e2baa0` 已完成 app/broker 2/2 rollout；四个 Pod 零重启，migration=true 且两条 binding 未变。兼容旧版 kubectl 的脚本 SHA-256 `aedcbeb09c3cbd0bdbe90b992fc1f8b05b4fd72c74a1f2d4d88af8079201e852` 已验证缺失/错误标签 get/get-value/delete 六项 403、拒绝点删保留及正确标签完整生命周期；下一步为新脱敏 evidence 与 A 复审，仍禁止实际去权。
+
 ## 范围和复核方法
+
+2026-09-24 provider 生命周期增量：操作者已完成 [D→A 补充测试](system-backup-d-a-lifecycle-handoff-20260924.md)，run `d-lc-387dab09ff2a1367ca4b5b56` 的14项检查通过，覆盖五类身份撤销/240秒自然过期、四用途 old/new named-ref 轮换、历史解包/离线验签及脱敏审计；D 本地复核六份签名、194条观察、388条审计及输入绑定通过。临时资源报告精确清理完成；证据未签名，未重新点查集群，A 签收和正式登记待完成。原 provider handoff/hash 保持不变，原 lab 保留，不重跑成功 run。
 
 盘点了主计划第 5.1 节的业务对象表、`backend/internal/db/migrations/*.sql`、`backend/internal/repository/*.go` 中的建表入口、四套官方 k8s/k3s YAML、站点模板、现有 Admin 路由与数据源配置。静态命令：
 
@@ -27,7 +47,11 @@ kubectl config current-context
 | repository 建表入口 | 开工时为 14 个表名；包含上列 7 个未迁移表，也包含已迁移表的重复 ensure 路径 | P0-0b 逐 owner 移除剩余运行时 DDL，并用静态门禁防回归 |
 | `schema_migrations` | 由 migration runner 创建 bookkeeping 表，不在 embedded SQL 内 | 按主计划第 5 节以 metadata/reference-only 处理并纳入 registry |
 | 系统备份控制面 | 仍无独立 `system-backup-controller`；已新增明确标记为 `draft` 的 `contracts/system-backup/v12` 合同骨架，现有 `backups`/`backup_schedules` 仍属实例备份 | 不复用实例级模型；补齐 manifest 中的 missing/draft 项并通过评审后才能冻结，controller 留在后续阶段 |
-| 官方权限模板 | `deployments/{k8s,k3s}/{cluster,single-node}/clawmanager.yaml` 四处均有 app `cluster-admin` binding；九节点站点模板亦有同类 binding | P0-0b 在保留现有 runtime/sync 能力的前提下改为最小权限并做正负测 |
+| 官方权限模板 | 【D 侧预切换、A 安全签收与现场正式去权已完成】五套模板已补齐无 Secret 的 runtime manager，不再声明 app `cluster-admin`，固定 migration=true，并内置 HTTPS broker；P1 init 命令已修复，两个 live init exit 0/零重启、app 2/2 Ready，v3 evidence 已由 A 签收；reviewed cutover 返回0且终态权限正负测通过 | 目标 binding 已删除；受保护 binding 保持不变且永远不得删除。该工作项通过不替代 P0-0b 其余联合权限、DDL、init 同源及 controller/Job 门禁 |
+
+2026-09-21 后续镜像状态：【已完成 fix11 app/broker rollout、TLS/Team namespace staging、migration canary 及真实 Team #4 broker create/delete/cleanup】fix11 digest 为 `sha256:10125e2bf46da1d1ac163a937b8bddb1b5dbc43edf82af789b2f7fd75fa59418`；app/broker 四个 Pod 跨 node1/k8s-master 2/2、零重启且 imageID 一致。migration=true，两条 cluster-admin binding 保留。Team #4 已验证 broker Secret 两个预期 key、ConfigMap/Bound PVC，UI 删除后目标 namespace 的 Secret/ConfigMap/PVC/PV 全部消失；最终复核输出 PASS/IGNORED/DONE。claim namespace 为 `clawmanager-ltt-user-1` 的另一安装 Retain PV 已正确隔离并保留。Team #3 仍是此前 migration=false 的旧直连路径证据。
+
+2026-09-21 实例清理状态：【已完成代码修复与本地回归，待 fix12 远程复测】旧实例清理会按全局 `instance-id` 枚举/删除 PV，现已要求当前安装 tenant namespace、`user-id`、`instance-id`、`managed-by` 四项归属一致，并让收敛等待忽略另一安装同 ID PV；回归测试明确保留 `clawmanager-ltt-user-1`。已新增无主动删除命令的实例 #6 UI 删除 smoke 脚本。当前 fix11 运行镜像不含该修复，实例 #6、目标 cluster-admin binding 均不得提前删除。
 | 当前路由位置 | Admin API 在 `backend/cmd/server/main.go`；Console 路由/导航在 `frontend/src/router/index.tsx`、`frontend/src/components/AdminLayout.tsx` | P0a/P0b 仅按冻结 OpenAPI/DTO 接入 |
 | 当前环境真实能力证据 | `kubectl config current-context` 返回 `current-context is not set` | 无法在此环境验证 CSI、对象存储、Redis、KMS 或 provider 权限；不宣称 capability spike 通过 |
 
@@ -136,5 +160,12 @@ SELECT filename FROM schema_migrations ORDER BY filename;
 2. 在已提供的测试安装查询 `information_schema`，与 embedded migration、registry 双向比对；确认 view/trigger/routine/event、安装程序和 MySQL init 中的实际对象及差异。
 3. 与 A/B/C 对真实 provider/CSI/KMS/Redis 做第 17.1 节能力和权限 spike；固定 fixture 只能证明接口行为，不能替代真实 provider 能力证明。
 4. 冻结机器合同、DTO parity、redacted fixture、文档版本门禁和非实现 owner 交叉评审；在这些提交前，P0-0a 总门禁仍为未通过。
+
+## 本轮 A 交付（2026-09-20）
+
+- 【已完成】A 为 15 个 users/AI Gateway 对象提交 owner、classification、backup/restore strategy、normalizer、verifier、依赖和 redacted explanation；生成 registry 后当前 `policy_recorded=56`、`policy_pending=39`，A 对象不再处于 `pending_owner_review`。
+- 【已完成】A 将 `chat_sessions`、`chat_messages`、`risk_rules` 纳入 `079_add_a_owned_chat_and_risk_tables.sql`，并移除 A-owned repository 的运行时建表/改表路径；schema inventory 当前 `without_migration=0`、`repository_runtime_create=0`、`repository_runtime_alter=0`。
+- 【已完成】A 提交 `strong-auth-proof-nonce.schema.json`、`provider-proof-registration.schema.json`、`capability-evidence.schema.json` 和脱敏示例；它们仍是 draft，不代表 strong-auth、provider、KMS、Secret 或 signing key 的远程能力已经证明。
+- 【已完成】本轮只运行仓库已有 Node/Go 检查，不安装依赖、不保留测试构建产物；远程 schema、migration、权限和 provider 能力验证仍需按 A 文档中的完整命令执行。
 
 此记录只保存对象名、代码位置和无密钥命令，不复制 YAML 中的 Secret 值、外部连接信息或运行时凭据。

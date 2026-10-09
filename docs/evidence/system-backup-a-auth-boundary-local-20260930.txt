@@ -1,0 +1,51 @@
+**********************
+PowerShell transcript start
+Start time: 20260930115944
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+gofmt -w backend/internal/services/auth_sessions_test.go
+$aBoundaryLog=Join-Path (Get-Location) 'docs/evidence/system-backup-a-auth-boundary-local-20260930.txt'
+Start-Transcript -LiteralPath $aBoundaryLog -NoClobber | Out-Null
+try {
+    & ./scripts/system-backup-a-auth-boundary-validation.ps1 -BuildParallelism 1
+    if(-not $?){throw 'Auth boundary validation failed'}
+} finally { Stop-Transcript | Out-Null }
+Process ID: 35604
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+OWNED_SCRATCH C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-7b36b25a0ba142aea1a7ef1706aac976
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE auth-source-only=yes full-services-package=no full-server-build=no http-handler=no live-ldap=no real-mysql=no
+go: downloading github.com/klauspost/compress v1.18.0
+..\..\..\..\go\pkg\mod\github.com\minio\minio-go\v7@v7.0.85\api-putobject-snowball.go:33:2: open C:\Users\zhanghui08\go\pkg\mod\cache\download\github.com\klauspost\compress\@v\v1.18.0.lock: Access is denied.
+github.com/klauspost/compress/s2
+github.com/minio/minio-go/v7
+clawreef/internal/services
+clawreef/internal/aigateway
+clawreef/internal/northbound
+clawreef/internal/teamtemplate
+clawreef/internal/handlers
+clawreef/cmd/server
+FULL_PACKAGE_DEPENDENCY_PREFLIGHT exit=1
+# command-line-arguments [command-line-arguments.test]
+.\auth_service_test.go:129:48: undefined: enterpriseAuthFunc
+FAIL	command-line-arguments [build failed]
+FAIL
+PS>TerminatingError(): "Evidence test-vet gate failed (exit=1, attempt=1); remote validation has not started; dependencies will not be installed"
+CLEANED auth-boundary-build-cache=True
+PS>TerminatingError(): "Evidence test-vet gate failed (exit=1, attempt=1); remote validation has not started; dependencies will not be installed"
+**********************
+PowerShell transcript end
+End time: 20260930121254
+**********************

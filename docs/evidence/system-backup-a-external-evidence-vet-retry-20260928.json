@@ -1,0 +1,91 @@
+{
+  "schema_version": "a-external-evidence-runner-revision.v1",
+  "observed_at_utc": "2026-09-28T08:59:00.2323240Z",
+  "operator_run": {
+    "source": "user-provided console excerpt",
+    "vet_diagnostic": "net/http/internal/httpcommon: C:\\Program Files\\Go\\pkg\\tool\\windows_amd64\\vet.exe: exit status 0xc0000043",
+    "test_assertions_passed": true,
+    "top_level_count": 6,
+    "download_subtest_count": 9,
+    "package_seconds": 1.494,
+    "overall_result": "FAIL",
+    "wrapper_exit_code": 1,
+    "local_cache_cleanup_reported": true,
+    "remote_started": false,
+    "remote_start_basis": "runner failed at local test gate before Linux compilation and SSH branch"
+  },
+  "revision": {
+    "max_attempts": 3,
+    "retry_only": "vet.exe exit status 0xc0000043 without assertion failure/panic",
+    "same_command_and_cache": true,
+    "vet_disabled": false,
+    "nonzero_final_exit_stops_remote": true
+  },
+  "validation": {
+    "strategy_cases": 10,
+    "current_powershell": "passed",
+    "windows_powershell_5_1": "passed",
+    "native_stderr_and_exit_case": "passed in both shells",
+    "syntax_files": 3,
+    "go_source_bindings_unchanged": 8,
+    "full_go_build_repeated": false,
+    "remote_run_performed": false,
+    "native_mock_artifacts_removed": true,
+    "dependencies_installed": false,
+    "development_attempt": "Initial native-process test exposed LASTEXITCODE scope handling; fixed to native global exit status and reran all cases successfully"
+  },
+  "previous_receipt": "docs/evidence/system-backup-a-external-evidence-local-20260928.json",
+  "source_bindings": [
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "75eec37366536d526ce09a0144a382a9efe4efff0f3d4d844bff0204f9d788c6"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "322b2721628a33d09e503b44587899587b770ea6a1953895b68023203e324d7e"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1",
+      "sha256": "397b91da98e186fe0cc82721cc70ae4ae378e9466afba60529fbecf25ebf446b"
+    },
+    {
+      "path": "docs/system-backup-a-external-evidence-20260928.md",
+      "sha256": "c8c1a9521170839a2a3dbd8d68a8c5c0d8c381a389193fa111d93aef61238b7c"
+    }
+  ],
+  "go_source_bindings": [
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "1df72df3a77f63358a71825b60f1668cfef9f90259c6229b04abe3df1824a2cf"
+    }
+  ],
+  "next_step": "Operator reruns unchanged -Remote command; no remote acceptance until full exit 0 and cleanup evidence are returned"
+}

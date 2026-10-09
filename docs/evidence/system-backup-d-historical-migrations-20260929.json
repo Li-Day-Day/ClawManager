@@ -1,0 +1,70 @@
+{
+  "recorded_at": "2026-09-29T03:06:49.5202352+00:00",
+  "head": "f9429da92c443b0b8df4c990b8281efe9521d260",
+  "remote_queried": false,
+  "shallow": false,
+  "scope": "local working tree, all locally available branches/tags/remotes and reflog; no fetch, unreachable/pruned objects or unpublished build archives recovered",
+  "equivalence_approved": false,
+  "conversation_provenance": {
+    "source": "local original Codex rollout records; targeted messages and executed edits, not reviewer transcript copies",
+    "legacy_ledger": {
+      "thread_id": "01a09edd-27dc-7f32-8c18-be9cae04a020",
+      "rollout_file": "rollout-2026-09-14T15-41-30-01a09edd-27dc-7f32-8c18-be9cae04a020.jsonl",
+      "line": 449,
+      "user_message_utc": "2026-09-14T08:09:15.109Z",
+      "old_045_046_047_applied_at_raw": "2026-08-12 02:32:22",
+      "current_050_052_053_applied_at_raw": "2026-09-14 07:16:42",
+      "database_timestamp_timezone": "not established",
+      "original_sql_or_renumbering_proved": false
+    },
+    "d_deployment_iteration": {
+      "thread_id": "01a0d206-13e3-7ad3-bc1f-11b563811bce",
+      "rollout_file": "rollout-2026-09-24T14-06-50-01a0d206-13e3-7ad3-bc1f-11b563811bce.jsonl",
+      "formal_080_write_line": 3111,
+      "formal_080_write_utc": "2026-09-28T06:46:49.582Z",
+      "unknown_ledger_guard_patch_line": 3144,
+      "unknown_ledger_guard_patch_utc": "2026-09-28T06:49:21.656Z",
+      "guard_patch_completion_line": 3153,
+      "guard_patch_completion_utc": "2026-09-28T06:50:15.396Z",
+      "guard_scope": "target != nil / ApplyPinnedMigrations; legacy core path not changed to reject extras by this guard",
+      "test_summary_line": 3301,
+      "test_summary_utc": "2026-09-28T07:02:21.502Z",
+      "installed_legacy_ledger_upgrade_proved": false
+    },
+    "conclusion": "Old entries predate fix16. D introduced strict standalone migration rejection on 2026-09-28 without completing the known installed-ledger compatibility path. Actual 080 remains unapplied; no observed production runner failure or image guard attestation is claimed.",
+    "d_responsibility": "deployment upgrade integration; owner SQL semantics still require their own evidence/review"
+  },
+  "kind": "d_historical_migration_source_investigation",
+  "files": [
+    {
+      "current_normalized_sha256": "58bc026e38fe2e4023e8317eff14285849ab451ce52fdad0999533bdeb63a350",
+      "similar_current_filename": "050_update_workbuddy_windows_runtime.sql",
+      "historical_filename": "045_update_workbuddy_windows_runtime.sql",
+      "initial_blob": "11ec4eb6caa82bcb34ed24d4cc427a0837ad1a29",
+      "reachable_history_found": false,
+      "first_visible_add_commit": "00d4d2a70b72cabd85badec71c167db415a1138f",
+      "historical_equivalence": "unknown; original bytes absent",
+      "current_matches_initial_after_lf_and_outer_whitespace_normalization": true
+    },
+    {
+      "current_normalized_sha256": "c1ee976bbb93faa6a68c3095765a2e4efcb90e406db2af482cb9735a8444cec1",
+      "similar_current_filename": "052_add_instance_pvc_name.sql",
+      "historical_filename": "046_add_instance_pvc_name.sql",
+      "initial_blob": "c7da1438d4e5476b320b8bb55f41ae07bcba3955",
+      "reachable_history_found": false,
+      "first_visible_add_commit": "00d4d2a70b72cabd85badec71c167db415a1138f",
+      "historical_equivalence": "unknown; original bytes absent",
+      "current_matches_initial_after_lf_and_outer_whitespace_normalization": true
+    },
+    {
+      "current_normalized_sha256": "8fac6d6b9ad83b033580304b5a71ccde6b3c009af4ad3e8704cc9bb15c397604",
+      "similar_current_filename": "053_add_instance_runtime_variant.sql",
+      "historical_filename": "047_add_instance_runtime_variant.sql",
+      "initial_blob": "c6229a0b213c4ee455cd44afcdedc83186a31d3a",
+      "reachable_history_found": false,
+      "first_visible_add_commit": "00d4d2a70b72cabd85badec71c167db415a1138f",
+      "historical_equivalence": "unknown; original bytes absent",
+      "current_matches_initial_after_lf_and_outer_whitespace_normalization": true
+    }
+  ]
+}

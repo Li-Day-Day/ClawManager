@@ -1,0 +1,225 @@
+{
+  "kind": "system_backup_d_cross_owner_review_record",
+  "contract_version": "system-backup-plan.v12",
+  "review_date": "2026-09-23",
+  "reviewer": "D",
+  "implementation_owner": "A",
+  "status": "changes_requested",
+  "scope": [
+    "strong_auth_proof_nonce",
+    "provider_proof_registration",
+    "secret_ref",
+    "capability_evidence",
+    "A_owned_schema_policy_and_fixtures"
+  ],
+  "report": "docs/system-backup-d-a-contract-review-2026-09-23.md",
+  "findings": [
+    {
+      "id": "D-A-01",
+      "priority": "P1",
+      "result": "reproduced",
+      "probe": "TestDReviewCanonicalPayloadJCSStrings"
+    },
+    {
+      "id": "D-A-02",
+      "priority": "P1",
+      "result": "reproduced",
+      "probe": "TestDReviewMissingRetainedNonceKeyFailsClosed"
+    },
+    {
+      "id": "D-A-03",
+      "priority": "P1",
+      "result": "reproduced",
+      "probe": "TestDReviewProviderTimeWindow"
+    },
+    {
+      "id": "D-A-04",
+      "priority": "P1",
+      "result": "reproduced",
+      "probe": "TestDReviewProviderErrorsDoNotExposeAdapterText"
+    },
+    {
+      "id": "D-A-05",
+      "priority": "P2",
+      "result": "reproduced",
+      "probe": "TestDReviewProviderPublicIDAndFieldBounds"
+    },
+    {
+      "id": "D-A-06",
+      "priority": "P1",
+      "result": "static_variant_exhaustion",
+      "accepted_variant_count": 0
+    }
+  ],
+  "secret_ref_variant_purposes": [
+    {
+      "name": "ExternalKMSKeyRef",
+      "purpose": {
+        "enum": [
+          "data_key_generation",
+          "kek_unwrap"
+        ]
+      }
+    },
+    {
+      "name": "ExternalSecretRef",
+      "purpose": {
+        "const": "secret_bundle_part"
+      }
+    },
+    {
+      "name": "KubernetesSecretRef",
+      "purpose": {
+        "const": "secret_bundle_part"
+      }
+    },
+    {
+      "name": "SigningKeyRef",
+      "purpose": {
+        "enum": [
+          "capture_certificate",
+          "acceptance_record",
+          "catalog_record",
+          "provider_proof_issuer",
+          "strong_auth_issuer"
+        ]
+      }
+    },
+    {
+      "name": "ProviderCredentialRef",
+      "purpose": {
+        "enum": [
+          "artifact_write",
+          "artifact_read",
+          "catalog_append",
+          "evidence_read_write"
+        ]
+      }
+    }
+  ],
+  "local_validation": {
+    "a_existing_go_tests": {
+      "passed": 9
+    },
+    "d_acceptance_go_probes": {
+      "passed": 0,
+      "failed_top_level": 5,
+      "failed_leaf_cases": 7,
+      "exit_code": 1,
+      "scratch_removed": true,
+      "mode": "stdlib_only_scratch_copy_no_dependency_download"
+    },
+    "ssh_transport_tests": {
+      "passed": 5
+    },
+    "schema_capture_tests": {
+      "passed": 4
+    },
+    "schema_hash_tests": {
+      "passed": 6
+    },
+    "contract_artifact_tests": {
+      "passed": 70
+    },
+    "contract_check_tests": {
+      "passed": 6
+    },
+    "inventory_check": "passed",
+    "contract_check": "passed",
+    "strict_freeze": "blocked",
+    "remote_executed": false,
+    "dependencies_installed": false,
+    "build_artifacts_retained": false
+  },
+  "registry_summary": {
+    "object_count": 95,
+    "policy_recorded": 56,
+    "policy_pending": 39,
+    "cross_review_pending": 56
+  },
+  "review_approvals_added": [],
+  "limitations": [
+    "Synthetic signature adapters only; not cryptographic or live-provider acceptance.",
+    "No A/B/C implementation changes.",
+    "A object fixtures and capability-to-D projection remain pending.",
+    "Remote schema evidence still requires operator capture, registration and A/B/C review."
+  ],
+  "file_hashes": [
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "add5996d159efc185df07a0c8173bc31da4dcfdf462e4f7dadab3e1f7b85fca4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "sha256": "e2e85914ce4f6a34a59e4bba3a0edffc637684165517965197b9ccb698c2d0b9"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth_test.go",
+      "sha256": "4b83ad4f206f27af272998e59cf3cfa41ae1b2651beb6f325136f5424c562cd2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof.go",
+      "sha256": "1c54c50170d53a5e427351aea1597578d4dc2c4a1d46c28ce8d302c5d0223c1d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_test.go",
+      "sha256": "b079d003b43e72428a58521e7e2e2634be11e73c82d7140f2778f361c8ee11e4"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json",
+      "sha256": "4863c3118a2249b7f90eb82c548a99280dd402d7efaf38bb4023c6fc8b0b689b"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-nonce-ledger.schema.json",
+      "sha256": "d08a8eb8f1f542458a2238d02c496bc14edb2fbe799b90d18da3638aafff3da5"
+    },
+    {
+      "path": "contracts/system-backup/v12/provider-proof-registration.schema.json",
+      "sha256": "e7481caefbda9672abdc466f6333af18c853c84714c22e7540f86b9d5741b539"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "sha256": "9c6c0f898892c8fd7787c2c3f38794d6b2f06e5364cbdbb66079cc859472669e"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "f4865a11c98def9a3dc94ab41e5b5ebbc4ed14552b0870185008e1bca43d1fd4"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixtures.json",
+      "sha256": "0d831ebedd310ec23bf62a94030f687fca0a4a8347042c0567a1661be819ea2c"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "sha256": "353897327854347cdc91c217cd61bd5e9d23d49c0f2e41330d634a8c0165ffe2"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "sha256": "1cdde900729d4858c7dd093eca04fc06ce9482c47cb7b4af50c131a51c3fbf5b"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "f1499939a39551fbe5d0845c403f75a491b9e49d45c6b481d17e98917f59aca8"
+    },
+    {
+      "path": "scripts/system-backup-d-a-review/review_test.go",
+      "sha256": "771e1de3a95361f899ace0f580f6f97e6693255a482b23340d3c6d03bdfe4b32"
+    },
+    {
+      "path": "scripts/system-backup-d-a-review.ps1",
+      "sha256": "970149de247619b16acfb2ea8d18786177341aba47b51cb8d19ab88499974c55"
+    },
+    {
+      "path": "scripts/system-backup-schema-hash-ssh.mjs",
+      "sha256": "9dfc8fa2ed93f3a485439515aae1d209ca11516c82c34d8f0f3dbafcfe531be8"
+    },
+    {
+      "path": "scripts/system-backup-schema-hash-ssh.test.mjs",
+      "sha256": "667dd92ca5dc659ab9d665e4624f8da15e480b57512c1c278f6a370228464df9"
+    },
+    {
+      "path": "docs/system-backup-d-a-contract-review-2026-09-23.md",
+      "sha256": "0fa96282a7805d68f0679dcd97e803c0022edfcca919da37cc06f48261adf1ab"
+    }
+  ]
+}

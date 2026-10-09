@@ -1,0 +1,49 @@
+{
+  "kind": "a_login_state_fix1_local_validation",
+  "status": "local_pass_pending_remote_22_case_rerun",
+  "date": "2026-09-30",
+  "local_exit_code": 0,
+  "repository_tests_passed": 11,
+  "offline_seed_tests_passed": 1,
+  "linux_probe_compiled": true,
+  "linux_migration_compiled": true,
+  "probe_sha256": "8e69b46048f93e32fb3cb1a01d22cd8f7051a978ae3dd760fe87f5d4551b27b9",
+  "inputs_json_sha256": "5eb3f79ae824806648aafcf7365694f045b19560bb81ac961b9a4b5919ae5fc8",
+  "migration_sha256": "0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea",
+  "production_code_changed": false,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "real_mysql_cases_pending": 22,
+  "source_snapshot": "docs/evidence/system-backup-a-login-state-fix1-inputs-20260930.json",
+  "source_snapshot_phase": "final_run_in_progress_after_source_edits_complete",
+  "source_hashes_rechecked": 678,
+  "source_drift_count": 0,
+  "all_owned_build_directories_absent": true,
+  "owned_build_directories": [
+    ".tmp-a-evidence-397ded40537744209ec9d12995a20baf",
+    ".tmp-a-evidence-8b5b79479d9a4968b01e8fd1a3f8d867",
+    ".tmp-a-evidence-2bdfec10c37444c7b60150e4b6621fcc"
+  ],
+  "final_log": "docs/evidence/system-backup-a-login-state-fix1-final-local-20260930.txt",
+  "earlier_local_attempts": [
+    {
+      "log": "docs/evidence/system-backup-a-login-state-fix1-local-20260930.txt",
+      "outcome": "failed",
+      "reason": "Windows tool process failure retried; offline fixture rejected initialization SQL whitespace before pool-close assertion",
+      "cleaned": true
+    },
+    {
+      "log": "docs/evidence/system-backup-a-login-state-fix1-complete-local-20260930.txt",
+      "outcome": "failed",
+      "reason": "Source import edited during build; compilation reported missing fmt import metadata",
+      "cleaned": true
+    }
+  ],
+  "repair": [
+    "Close the underlying sql.DB pool while retaining the upper/db session adapter",
+    "Use the same fault helper in offline regression and remote database-failure case",
+    "Use parent t.Cleanup for probe sessions/database/context so child panic runs cleanup"
+  ],
+  "remote_failure_receipt": "docs/evidence/a-login-state-mysql-failed-sbk-mig-260930070728-6476.json",
+  "scope_note": "Validates repository error return; expected upper/db SQL diagnostics contain synthetic fixture arguments. Does not validate production SQL log redaction or independently exercise MySQL database DROP after panic."
+}

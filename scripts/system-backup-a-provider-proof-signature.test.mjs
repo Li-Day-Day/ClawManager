@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {createPublicKey,verify} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {test} from 'node:test';
+const fixture=JSON.parse(readFileSync(new URL('../contracts/system-backup/v12/a-provider-proof-signature-vectors.json',import.meta.url)));
+const canonical=v=>v===null||typeof v!=='object'?JSON.stringify(v):Array.isArray(v)?'['+v.map(canonical).join(',')+']':'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';
+for(const vector of fixture.vectors)test('provider-proof independent public vector: '+vector.name,()=>{
+  const r=vector.registration,bytes=Buffer.from(r.proof.signed_proof_base64,'base64'),doc=JSON.parse(bytes);
+  assert(bytes.length<=8192);assert.equal(bytes.toString(),canonical(doc));
+  const {signed_proof_base64,...proof}=r.proof;
+  assert.deepEqual(doc.payload,{...vector.scope,target:r.target,proof});
+  assert.equal(Buffer.from(canonical(doc.payload)).toString('hex'),vector.canonical_payload_utf8_hex);
+  const header=JSON.parse(Buffer.from(doc.signature.protected_header,'base64url'));
+  assert.equal(header.purpose,'provider_proof_issuer');assert.equal(header.typ,'clawmanager.system-backup.provider-proof.v1');
+  const key=createPublicKey({format:'der',type:'spki',key:Buffer.concat([Buffer.from('302a300506032b6570032100','hex'),Buffer.from(vector.public_key_base64,'base64')])});
+  const input=doc.signature.protected_header+'.'+Buffer.from(canonical(doc.payload)).toString('base64url');
+  const signature=Buffer.from(doc.signature.value,'base64url');
+  assert(verify(null,Buffer.from(input),key,signature));
+  assert(!verify(null,Buffer.from(input+'x'),key,signature));
+  doc.payload.audience='wrong-audience';
+  assert(!verify(null,Buffer.from(doc.signature.protected_header+'.'+Buffer.from(canonical(doc.payload)).toString('base64url')),key,signature));
+});

@@ -1,0 +1,218 @@
+{
+  "kind": "d_actual_installation_readonly_observation_receipt",
+  "source": "operator_supplied_console_attachment",
+  "source_sha256": "236b1cea2f0d4666663266bf78cbf62a8b26fe9a9dade71e4dec65bdd82334b4",
+  "independently_requeried_cluster": false,
+  "probe_exit_code": 2,
+  "result": "discovery_completed_admission_blocked",
+  "archive_checksum_reported": "OK",
+  "cleanup_reported": {
+    "remote_scripts": true,
+    "local_scripts": true
+  },
+  "local_scratch_remaining": 0,
+  "ssh_close_warning_observed": true,
+  "observation": {
+    "kind": "d_live_readonly_discovery",
+    "status": "BLOCKED",
+    "observed_at": "2026-09-29T02:46:39.058373+00:00",
+    "namespace": "clawmanager-zhanghui08-system",
+    "expected_namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "image": "10.130.14.23:5000/clawmanager@sha256:d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e",
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "checks": [
+      {
+        "name": "namespace_uid_matches",
+        "passed": true
+      },
+      {
+        "name": "exactly_one_running_mysql_pod",
+        "passed": true
+      },
+      {
+        "name": "mysql_container_unambiguous",
+        "passed": true
+      },
+      {
+        "name": "database_identity_well_formed",
+        "passed": true
+      },
+      {
+        "name": "mysql_datadir_exact_volume_mount",
+        "passed": true
+      },
+      {
+        "name": "mysql_datadir_is_pvc",
+        "passed": true
+      },
+      {
+        "name": "auto_cnf_metadata_readable",
+        "passed": true
+      },
+      {
+        "name": "migration_filenames_match",
+        "passed": false
+      },
+      {
+        "name": "d_tables_present",
+        "passed": false
+      },
+      {
+        "name": "current_catalog_fresh_schema_reference_required",
+        "passed": false
+      },
+      {
+        "name": "rwx_storage_candidate_exists",
+        "passed": false
+      },
+      {
+        "name": "dedicated_report_pvc_selection_and_permissions_required",
+        "passed": false
+      },
+      {
+        "name": "collector_pod_exists",
+        "passed": false
+      },
+      {
+        "name": "pinned_collector_source_grants_and_report_preflight_required",
+        "passed": false
+      },
+      {
+        "name": "namespace_uid_stable",
+        "passed": true
+      },
+      {
+        "name": "mysql_process_stable",
+        "passed": true
+      },
+      {
+        "name": "database_identity_stable",
+        "passed": true
+      }
+    ],
+    "blockers": [
+      "migration_filenames_match",
+      "d_tables_present",
+      "current_catalog_fresh_schema_reference_required",
+      "rwx_storage_candidate_exists",
+      "dedicated_report_pvc_selection_and_permissions_required",
+      "collector_pod_exists",
+      "pinned_collector_source_grants_and_report_preflight_required"
+    ],
+    "cluster_mutated": false,
+    "database_mutated": false,
+    "collector_admitted": false,
+    "schema_diff_verified": false,
+    "http_deployed_by_probe": false,
+    "configuration_activated": false,
+    "mysql": {
+      "pod": "mysql-66496b8965-d6tsl",
+      "pod_uid": "dab1cbf6-ca49-4e16-bd2d-27e70da52004",
+      "container": "mysql",
+      "node": "k8s-master",
+      "data_pvc": "mysql-data",
+      "data_subpath": "",
+      "auto_cnf_metadata": {
+        "uid": 999,
+        "gid": 999,
+        "mode": "640"
+      }
+    },
+    "database": {
+      "utc_now": "2026-09-29T02:46:39.491899Z",
+      "version": "8.4.8",
+      "database": "clawmanager",
+      "server_uuid": "f1f5f76a-95f5-11f1-b08e-366835b4a029",
+      "data_directory": "/var/lib/mysql/"
+    },
+    "database_identity_source": "discovered_from_pinned_namespace; pin before deployment",
+    "migrations": {
+      "expected_count": 93,
+      "observed_count": 95,
+      "missing": [
+        "080_add_system_backup_registration_runtime.sql"
+      ],
+      "unexpected": [
+        "045_update_workbuddy_windows_runtime.sql",
+        "046_add_instance_pvc_name.sql",
+        "047_add_instance_runtime_variant.sql"
+      ]
+    },
+    "d_tables": {
+      "expected_count": 45,
+      "missing": [
+        "system_backup_admin_revocations",
+        "system_backup_admin_sessions",
+        "system_backup_metadata_reservations",
+        "system_backup_totp_credentials"
+      ]
+    },
+    "d_columns_observation": {
+      "rows": 1148,
+      "sha256": "9e4655c32bc764d3d5922516d3b047e6a7036fffbea988bc3b1d1c5597041a6a",
+      "baseline_compared": false
+    },
+    "storage": [
+      {
+        "name": "clawmanager-workspaces",
+        "uid": "12354b07-dd21-4d40-ac9b-da5c97699109",
+        "phase": "Bound",
+        "access_modes": [
+          "ReadWriteMany"
+        ],
+        "volume_mode": "Filesystem",
+        "storage_class": "manual",
+        "volume_name": "clawmanager-zhanghui08-workspaces-pv",
+        "backend_type": "hostPath",
+        "claim_reference_matches": true
+      },
+      {
+        "name": "minio-data",
+        "uid": "e7bc8d73-e8fb-4010-8751-d9a0c8bb2467",
+        "phase": "Bound",
+        "access_modes": [
+          "ReadWriteOnce"
+        ],
+        "volume_mode": "Filesystem",
+        "storage_class": "manual",
+        "volume_name": "clawmanager-zhanghui08-minio-pv",
+        "backend_type": "hostPath",
+        "claim_reference_matches": true
+      },
+      {
+        "name": "mysql-data",
+        "uid": "e3c297bd-a00a-4a60-bce7-7368a69e8fd2",
+        "phase": "Bound",
+        "access_modes": [
+          "ReadWriteOnce"
+        ],
+        "volume_mode": "Filesystem",
+        "storage_class": "manual",
+        "volume_name": "clawmanager-zhanghui08-mysql-pv",
+        "backend_type": "hostPath",
+        "claim_reference_matches": true
+      },
+      {
+        "name": "redis-data",
+        "uid": "34941b96-4f87-4c08-a1c4-843c3d18fa2e",
+        "phase": "Bound",
+        "access_modes": [
+          "ReadWriteOnce"
+        ],
+        "volume_mode": "Filesystem",
+        "storage_class": "manual",
+        "volume_name": "clawmanager-zhanghui08-redis-pv",
+        "backend_type": "hostPath",
+        "claim_reference_matches": true
+      }
+    ],
+    "rwx_report_candidates": [],
+    "collectors": []
+  },
+  "limits": [
+    "image is the planned fix16 reference; this probe did not verify the running application or collector binary",
+    "storage observations cover existing PVCs in this namespace, not every available cluster provisioner",
+    "schema column digest has no fresh approved baseline; no schema compatibility approval",
+    "no migration, deployment, credential grant, MFA or configuration activation was performed"
+  ]
+}

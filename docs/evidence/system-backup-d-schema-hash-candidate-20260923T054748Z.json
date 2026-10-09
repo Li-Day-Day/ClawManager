@@ -1,0 +1,52 @@
+{
+  "kind": "system_backup_schema_hash_live_evidence",
+  "contract_version": "system-backup-plan.v12",
+  "status": "candidate",
+  "installation_identity_hash": "a88b9dcf73776853ff36887f705a156b3ffdf4db12ab2497c614ffa6f814079b",
+  "installation_identity_version": "k8s-namespace-uid-v1",
+  "capture_started_at": "2026-09-23T05:47:48.342Z",
+  "capture_finished_at": "2026-09-23T05:47:51.322Z",
+  "capture_method": "mysql-batch-raw-no-column-names-v1",
+  "capture_sql_sha256": "842f341e29f0b1123414328e4910a5fd350135854434db4aff8f8f2c3f6a4a38",
+  "capture_records_sha256": "3c3f47cfacfb870fd2f25a00f4afe56e2ea8ec69a52a93d531c0eb89b473e094",
+  "capture_record_count": 3092,
+  "server_context_hash": "61ed0563a7d33809ddbd0946986e3bdd3f22ad3b4863b83f2c609b1a7b75774e",
+  "inventory_snapshot_sha256": "b2b3da5e54cd31d780efcfb44be90de95bda94ca4da5202a3dc6ca5b1fe3a1ae",
+  "migration_catalog_hash": "0dcb3f38ce14165504335c715bf03533e95c9d3992146769fc21dab6c59d00dd",
+  "result": {
+    "kind": "system_backup_schema_hash_result",
+    "contract_version": "system-backup-plan.v12",
+    "algorithm": "sha256-information-schema-canonical-v1",
+    "hash": "a0cea874cd2c1dddb0740c7bfd066954e70e400fa38251f145aa2006711907e3",
+    "canonical_bytes_length": 607262,
+    "object_count": 95,
+    "object_counts": {
+      "mysql_event": 0,
+      "routine": 0,
+      "table": 95,
+      "trigger": 0,
+      "view": 0
+    }
+  },
+  "inventory_comparison": {
+    "expected_object_count": 95,
+    "observed_object_count": 95,
+    "observed_object_keys_hash": "c9b061c2cca2396560a54bfd54e3ff20b183f864779f80fdabb234f9458d0f32",
+    "missing_object_keys": [],
+    "unexpected_object_keys": [],
+    "matched": true
+  },
+  "records_cleanup": {
+    "path_hash": "9dff83b2efc88b8541ad34e9e145eab183c35ade53f577a3eaf832a4b1324fa2",
+    "status": "verified",
+    "deleted_at": "2026-09-23T05:47:51.449Z",
+    "verified_absent": true
+  },
+  "registered_evidence": null,
+  "required_reviewers": [
+    "A",
+    "B",
+    "C"
+  ],
+  "approved_reviewers": []
+}

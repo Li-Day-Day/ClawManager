@@ -4,18 +4,26 @@ This directory is the machine-readable P0-0a workspace for
 `system-backup-plan.v12`. It is intentionally marked `draft`; the presence of
 these files does not mean the contract is frozen.
 
-As of 2026-09-17, `contract-manifest.json` contains 29 draft artifacts and 7
-missing artifacts. The generated registry records D policy for 41 of 95
-inventoried objects; 54 A/B/C policies and all 41 D-object cross reviews remain
+As of 2026-09-20, `contract-manifest.json` contains 33 draft artifacts and 4
+missing artifacts. The generated registry records owner policy for 56 of 95
+inventoried objects; 39 B/C policies and all required cross reviews remain
 pending. These are inventory counts, not completed acceptance gates.
 
 ## Current contents
 
+- `producer-authority.schema.json`, `producer-authority-transactions.json`,
+  `producer-authority-persistence.json` and `producer-authority-vectors.json`
+  form D's C1 internal producer-authority review package. The eight proposed
+  control tables are a data dictionary, not embedded migrations or inventory
+  entries. A/C review and B review if using Jobs remain pending. The dependency-free
+  reference check is `node --test scripts/system-backup-producer-contract.test.mjs`
+  from the repository root; synthetic vectors do not execute V01–V10.
 - `contract-manifest.json` accounts for every artifact required by plan section
   3 and records missing artifacts explicitly.
 - `registry-enums.json` defines the closed values used by the schema registry.
-- `schema-registry-decisions.json` contains owner decisions. D-owned entries are
-  recorded here; A/B/C entries must be supplied and reviewed by their owners.
+- `schema-registry-decisions.json` contains owner decisions. D-owned entries and
+  the first A-owned users/AI Gateway entries are recorded here; B/C entries and
+  cross-owner approvals remain pending.
 - `schema-registry.json` is generated from the ownership inventory, decisions
   and embedded migration catalog. Do not edit it directly. Its current 95-object
   coverage is not the full plan: section 6.2 names three additional control or
@@ -32,6 +40,11 @@ pending. These are inventory counts, not completed acceptance gates.
 - `dto-parity.json` points at the Go and TypeScript wire snapshots. The artifact
   test prevents their enum values and JSON field names from drifting.
 - `redacted-examples.json` contains synthetic, non-replayable examples only.
+- `a-owned-object-fixtures.json` records the 15 A-owned object fixture cases;
+  `a-owned-redacted-examples.json` covers the new security proof examples.
+- `strong-auth-proof-nonce.schema.json`, `secret-ref.schema.json`,
+  `provider-proof-registration.schema.json` and
+  `capability-evidence.schema.json` are A-owned draft security contracts.
 - `cross-owner-review-requests.json` is the machine-readable A/B/C handoff. It
   lists pending submissions and reviews, but deliberately contains no approval
   evidence until reviewers provide it.
@@ -227,3 +240,29 @@ node scripts/system-backup-contract-check.mjs --check --strict
 Never change a missing or draft gate to frozen merely to make strict mode pass.
 Capability evidence, review identity and observed hashes must be supplied by the
 corresponding owner or test environment.
+
+### A revision after the 2026-09-23 D review
+
+A has addressed D-A-01 through D-A-06 locally and supplied real Node/Go
+JCS/Ed25519 vectors (`a-strong-auth-signature-vectors.json`), shared provider
+schema/runtime vectors (`a-provider-proof-parity-vectors.json`), and closed
+Secret/CA/credential reference vectors (`a-secret-ref-vectors.json`).
+`a-capability-role-mapping.json` defines exact D provider-code mappings and
+expiry rules; kms/secret/signing spikes do not create D provider rows.
+`a-owned-object-fixture-policies.json` and `a-owned-object-fixtures.json` provide
+45 executable synthetic projected-row vectors for all 15 A-owned objects.
+They do not claim complete SQL/collector or production restore coverage.
+
+Run `powershell -NoProfile -File scripts/system-backup-a-local-validation.ps1`
+from the repository root. It disables dependency/toolchain downloads and removes
+its isolated Go cache and binaries in finally. Remote identity preflight mocks
+run separately with `node scripts/system-backup-a-identity-readonly-probe.test.mjs`
+using an existing Bash. See [A revision handoff](../../../docs/system-backup-a-contract-revision-2026-09-23.md).
+All contracts remain draft and await independent re-review; no approvals or
+runtime evidence registrations are implied by these local tests.
+
+The A read-only remote preflight now uses `scripts/system-backup-a-identity-ssh.mjs`
+to send UTF-8/LF bytes directly to OpenSSH. Do not pipe a PowerShell string into
+`bash -s`: a trailing CR can yield PASS followed by exit 127. The transport tests
+reject nonzero exits even when PASS was printed. See the A remote validation
+runbook for the password-login command; no remote dependencies are installed.

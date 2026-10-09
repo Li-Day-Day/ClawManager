@@ -1,0 +1,72 @@
+{
+  "kind": "a_lifecycle_scoped_acceptance_v1",
+  "recorded_at": "2026-09-24T04:11:13.600Z",
+  "run_id": "d-lc-387dab09ff2a1367ca4b5b56",
+  "source": "unsigned operator result supplied by D; A offline source and evidence review; no cluster re-query",
+  "result_file": "docs/evidence/system-backup-d-lifecycle-d-lc-387dab09ff2a1367ca4b5b56-run.json",
+  "result_file_sha256": "99fc68a174daa0785fbbb9b552f7f2fe05432daa284b8aad8d3123a9625fdcd9",
+  "review": {
+    "checks": 14,
+    "signatures_verified": 6,
+    "lifecycle_groups": 10,
+    "events_checked": 194,
+    "audit_rows_checked": 388,
+    "minimum_expiry_denial_seconds_after_expiration": 15.708624839782715,
+    "key_absence_observations": 8,
+    "policy_absence_observations": 5,
+    "cleanup_report_accepted": true,
+    "independent_cluster_requery": false,
+    "operator_process_exit_code": null,
+    "acceptance": "accepted_for_isolated_lifecycle_and_named_ref_rotation_only",
+    "provider_capability_approved": false,
+    "evidence_registered": false
+  },
+  "source_hashes": {
+    "scripts/system-backup-a-lifecycle-review.mjs": "2dd5dca5b7ddb5f3d0d1034a821e045e4816eb015852a2a25e9e81575905afae",
+    "scripts/system-backup-a-lifecycle-review.test.mjs": "acbc12739409f088a4615a633af114476c4e24191d20556cb17827aa58f5ce14",
+    "scripts/system-backup-d-lifecycle.mjs": "f2c6dbe87bece113bc61cdce23f746cb5c1e915edfed264db29ce1ff5e45c11a"
+  },
+  "validation": [
+    {
+      "command": "node scripts/system-backup-d-lifecycle.mjs verify --file docs/evidence/system-backup-d-lifecycle-d-lc-387dab09ff2a1367ca4b5b56-run.json",
+      "exit_code": 0
+    },
+    {
+      "command": "node scripts/system-backup-a-lifecycle-review.mjs",
+      "exit_code": 0
+    },
+    {
+      "command": "node --test scripts/system-backup-a-lifecycle-review.test.mjs",
+      "exit_code": 1,
+      "reason": "Sandbox rejected Node test subprocess spawn with EPERM before tests ran"
+    },
+    {
+      "command": "node --test --test-isolation=none scripts/system-backup-a-lifecycle-review.test.mjs",
+      "exit_code": 0,
+      "passed": 10
+    },
+    {
+      "command": "py -3.10 -B scripts/system-backup-d-lifecycle.test.py",
+      "exit_code": 0,
+      "passed": 11
+    },
+    {
+      "command": "node --test --test-isolation=none scripts/system-backup-d-lifecycle.test.mjs",
+      "exit_code": 0,
+      "passed": 21
+    }
+  ],
+  "dependencies_installed": false,
+  "test_artifacts_created": false,
+  "remote_actions_performed": false,
+  "recovery_required": false,
+  "limitations": [
+    "No independently supplied remote process exit code; retained as null",
+    "Named old/new keys each at internal version 1; no same-key v1-to-v2 rotation coverage",
+    "Provider observations and cleanup are unsigned reports; no independent remote cleanup re-query",
+    "Failed-token audit rows have unresolved identity; correlated with client pod, ordered path/method/time and controls",
+    "KMS plaintext comparisons are asserted by source-bound remote runner; plaintext and ciphertext were deliberately not archived",
+    "No production scoped grants, provider-proof registry or source-independent recovery acceptance"
+  ],
+  "registered_evidence": null
+}

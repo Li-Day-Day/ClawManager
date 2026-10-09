@@ -1,0 +1,47 @@
+{
+  "kind": "a_provider_proof_adapter_local_validation_v1",
+  "recorded_at": "2026-09-24T06:06:08.417Z",
+  "scope": "Ed25519 provider-proof adapter and caller-owned SQL transaction inline evidence staging; not an enabled Admin registration API",
+  "status": "local_checks_passed",
+  "validation": [
+    {
+      "command": "scripts/system-backup-a-provider-proof-validation.ps1",
+      "exit_code": 0,
+      "go_top_level_tests_passed": 36,
+      "includes_unchanged_d_acceptance_probes": true
+    },
+    {
+      "command": "node scripts/system-backup-a-provider-proof-signature.test.mjs",
+      "exit_code": 0,
+      "passed": 3
+    },
+    {
+      "command": "node scripts/system-backup-a-security.test.mjs",
+      "exit_code": 0,
+      "passed": 6
+    }
+  ],
+  "independent_node_go_signature_vectors": 3,
+  "dependencies_installed": false,
+  "test_scratch_removed": true,
+  "remote_execution": false,
+  "mysql_integration_verified": false,
+  "admin_endpoint_wired": false,
+  "atomic_nonce_idempotency_audit_integration_verified": false,
+  "provider_capability_approved": false,
+  "evidence_registered": false,
+  "contract_status": "draft",
+  "files_sha256": {
+    "backend/internal/systembackupsecurity/providerproof_ed25519.go": "c489eedaf6d6450543c583da93b75cc492be8c7102fa9aeeb22b82d630af9ea3",
+    "backend/internal/systembackupsecurity/providerproof_registration.go": "090ae8bc5f2ba1dd678758f946f8641c5a9109c3d274833decfb68d77ec3aa6e",
+    "backend/internal/systembackupsecurity/providerproof_json.go": "b88090465e9040b84c3ee6701ea295023e95c935755a1991b17f56c63260173a",
+    "backend/internal/systembackupsecurity/providerproof_sql.go": "e76f88601ae965662229fdf7a670b7ff25b7550810bf0da6c5c35aaa7e135083",
+    "backend/internal/systembackupsecurity/providerproof_ed25519_test.go": "e58fca9b941693796d5abe816afaf6cf140b1625dbf6e879a7a70420584b6300",
+    "backend/internal/systembackupsecurity/providerproof_sql_test.go": "3e0229770a7bb90132fbcd37c695dc7e76de2c2101a091a5f95aeec83df8c991",
+    "scripts/system-backup-a-provider-proof-validation.ps1": "4cb564c2f46e2b5b347ae63392816aff748ced9a73c61e0fc9b987f33447dafc",
+    "scripts/system-backup-a-provider-proof-signature.test.mjs": "90a16e2dac030a972be4bcc281729ed2d4958fd8e373aaba1726caf139b18f9d",
+    "contracts/system-backup/v12/a-provider-proof-signature-vectors.json": "7200738b962b2cfa3d0592283e8f1eadb7a9cfa9afcf738d74874cad259b9a76",
+    "backend/internal/systembackupsecurity/providerproof.go": "550827d2ace9d502223d6ce5af64e579ca73378d2a532ee056d8c673739db363",
+    "backend/internal/systembackupsecurity/strongauth.go": "aeb519b2c45683cd2ad5427001cb6c248b41b637e23b69f72b6098e920329c59"
+  }
+}

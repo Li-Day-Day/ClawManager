@@ -12,5 +12,7 @@
   "enum_source": "contracts/system-backup/v12/status-failure-enums.schema.json",
   "go_snapshot": "backend/internal/systembackupcontract/types.go",
   "typescript_snapshot": "frontend/src/types/systemBackupContract.ts",
-  "check": "node scripts/system-backup-contract-artifacts.test.mjs"
+  "check": "node scripts/system-backup-contract-artifacts.test.mjs",
+  "wire_type_check": "node scripts/system-backup-d-dto-check.mjs",
+  "wire_type_scope": "All object definitions in schema_sources; Go field types, TS literals, nested references and nullability. JSON Schema retains semantic constraints and conditional refinements."
 }

@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "date": "2026-10-08",
+  "role": "D",
+  "status": "prepared_waiting_operator_remote_execution",
+  "sources": [
+    {
+      "path": "scripts/system-backup-d-producer-ddl-probe.py",
+      "sha256": "89827bd2473830d39fd0bfd4c19b0b9ef1333797711e317f900dd76b0204feb9"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-ddl-probe_test.py",
+      "sha256": "bf0adc2ca48d42e3de95df2ba20befbe069d05b1538e6e2c1d0422c4b40bf2f0"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-ddl-remote.ps1",
+      "sha256": "ac771e82a1614901c48c3fe8c61d412ddb690ce19b814e785dd85945d807d380"
+    },
+    {
+      "path": "docs/system-backup-d-producer-ddl-remote-20261008.md",
+      "sha256": "ead47cc8dad90451a6941cec46bf6f491dd8784c71a6daa5856af6babefdcaeb"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "88f42e6162f33e8f0c9f7c976623040d35ab0f7a7051c0afae2bb1ff95d9334c"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c"
+    }
+  ],
+  "localValidation": {
+    "pythonTests": 8,
+    "pythonTestsPassed": true,
+    "pythonInputCheck": true,
+    "powershellParse": true,
+    "powershellCheckOnly": true,
+    "dependenciesInstalled": false,
+    "temporaryArtifactsCleaned": true,
+    "remoteContacted": false,
+    "mysqlExecuted": false
+  },
+  "supersededValidation": {
+    "reason": "Windows TemporaryDirectory permissions prevented malformed-input fixture writes and automatic cleanup. Test changed to in-memory input; eight tests passed afterward. Exact owned workspace scratch was verified and removed with approved elevated cleanup.",
+    "temporaryArtifactsCleaned": true
+  },
+  "remotePlan": {
+    "sshTarget": "root@10.130.14.23",
+    "context": "kubernetes-admin@kubernetes",
+    "node": "node1",
+    "image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+    "imagePullPolicy": "Never",
+    "database": "producer_validation",
+    "plannedChecks": 26,
+    "namespace": "fresh sbk-prod-ddl-<random owner>",
+    "storage": "emptyDir only",
+    "cleanup": "owner/name/label/known UID checked, namespace deletion and absence confirmed; both transfer directories cleaned",
+    "productionMutation": false
+  },
+  "limits": [
+    "No remote result yet; local tests do not verify actual MySQL or Kubernetes behavior",
+    "Physical candidate DDL and two locking primitives only; synthetic record bytes are not valid C1 runtime records",
+    "Full A/D real-database service path, production authorization/provider, formal migration review and V01-V10 remain"
+  ]
+}

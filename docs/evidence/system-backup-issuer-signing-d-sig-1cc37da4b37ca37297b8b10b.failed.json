@@ -1,0 +1,27 @@
+{
+  "schema_version": "d-issuer-signing-failure.operator-report.v1",
+  "reported_date": "2026-09-28",
+  "source": "operator-provided console output in this task",
+  "run_id": "d-sig-1cc37da4b37ca37297b8b10b",
+  "exit_code": 1,
+  "stage": "provider.sign.normal",
+  "status": "FAILED",
+  "http_status": null,
+  "diagnostic_limit": "The original runner suppressed the client exit output; this transcript does not identify the HTTP status or prove the root cause.",
+  "cleanup": {
+    "explicit_marker_supplied": false,
+    "independently_requeried": false,
+    "inferred_from_original_control_flow": "completed: original execute restores provider.sign.normal only after cleanup() returns successfully",
+    "original_runner_sha256": "df55643726a90f2036095dc30e898f463aae1fad14700a2dad81a8bbae0c5c7d"
+  },
+  "confirmed_local_mismatch": {
+    "handoff_signing_key_version_wire_type": "string",
+    "original_probe_and_go_signer_wire_type": "number",
+    "change": "Use explicit canonical string version and a string-only ACL, matching the pinned provider handoff.",
+    "remote_resolution_verified": false
+  },
+  "issuer_keys_recreated": false,
+  "active_config_updated": false,
+  "http_service_ready": false,
+  "human_mfa_verified": false
+}

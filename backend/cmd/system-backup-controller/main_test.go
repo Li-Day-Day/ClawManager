@@ -86,14 +86,15 @@ func TestHealthHandlerDistinguishesDisabledStandbyLeaderAndDatabaseFailure(t *te
 		t.Fatalf("dependency-pending readiness = %d %q", code, body)
 	}
 	status.setDependenciesReady()
+	catalogPrefix := systembackupcontroller.ContractMigrationCatalogHash[:12]
 	code, body = requestHealth(t, healthHandler(fixedPinger{}, status), "/readyz")
-	if code != http.StatusOK || body != "standby config=disabled effective=disabled config_version=7 catalog=294bc95d5b07\n" {
+	if code != http.StatusOK || body != "standby config=disabled effective=disabled config_version=7 catalog="+catalogPrefix+"\n" {
 		t.Fatalf("standby readiness = %d %q", code, body)
 	}
 
 	status.leading.Store(true)
 	code, body = requestHealth(t, healthHandler(fixedPinger{}, status), "/readyz")
-	if code != http.StatusOK || body != "leader config=disabled effective=disabled config_version=7 catalog=294bc95d5b07\n" {
+	if code != http.StatusOK || body != "leader config=disabled effective=disabled config_version=7 catalog="+catalogPrefix+"\n" {
 		t.Fatalf("leader readiness = %d %q", code, body)
 	}
 

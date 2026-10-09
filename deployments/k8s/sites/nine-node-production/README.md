@@ -83,18 +83,19 @@ instance access tokens.
 3. `kubectl apply -f 10-longhorn-production.yaml`
 4. Wait for Longhorn and the `longhorn` StorageClass to be Ready.
 5. Create the production `clawmanager-secrets` Secret.
-6. `kubectl apply -f 20-clawmanager-production.yaml`
-7. Confirm MySQL, Redis, MinIO and Workspace PVCs are Bound.
-8. `kubectl apply -f 30-mysql-backup-storage.yaml`
-9. `kubectl apply -f 40-longhorn-backup-target.yaml`
-10. Confirm ClawManager, MySQL, Redis, MinIO and Longhorn are Ready. The backup
+6. Provision `Secret/clawmanager-secret-broker-tls` and `ConfigMap/clawmanager-secret-broker-ca` from the reviewed site PKI. The server certificate must cover `clawmanager-secret-broker.clawmanager-system.svc.cluster.local`; do not enable the test-only HTTP switch.
+7. `kubectl apply -f 20-clawmanager-production.yaml`
+8. Wait for both `clawmanager-secret-broker` and `clawmanager-app` rollouts, then confirm MySQL, Redis, MinIO and Workspace PVCs are Bound.
+9. `kubectl apply -f 30-mysql-backup-storage.yaml`
+10. `kubectl apply -f 40-longhorn-backup-target.yaml`
+11. Confirm ClawManager, MySQL, Redis, MinIO and Longhorn are Ready. The backup
     resources below are deliberately outside the application startup path.
-11. `kubectl apply -f 31-mysql-full-backup-cronjob.yaml`
-12. Wait for Job `mysql-production-backup-users` to succeed.
-13. Create one initial full backup from the CronJob and wait for it to succeed:
+12. `kubectl apply -f 31-mysql-full-backup-cronjob.yaml`
+13. Wait for Job `mysql-production-backup-users` to succeed.
+14. Create one initial full backup from the CronJob and wait for it to succeed:
     `kubectl create job --from=cronjob/mysql-production-full-backup mysql-production-full-backup-initial -n clawmanager-system`
-14. `kubectl apply -f 41-longhorn-recurring-job.yaml`
-15. `kubectl apply -f 42-longhorn-backup-assignment.yaml`
+15. `kubectl apply -f 41-longhorn-recurring-job.yaml`
+16. `kubectl apply -f 42-longhorn-backup-assignment.yaml`
 16. `kubectl apply -f 33-mysql-restore-verification-job.yaml`. This Job is
     suspended and does not run until an operator explicitly unsuspends it.
 17. Run `scripts/bootstrap-northbound-secrets.sh` once as a cluster

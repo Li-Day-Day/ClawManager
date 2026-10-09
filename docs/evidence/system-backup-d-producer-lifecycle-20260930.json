@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "date": "2026-09-30",
+  "role": "D",
+  "status": "four_lifecycle_commands_validated_pending_production_environment_and_remaining_methods",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupproducer/lifecycle.go",
+      "sha256": "8843803f3c57b7452746538570d8ae99f831a6b8b42930853033869e95aa1853"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/lifecycle_test.go",
+      "sha256": "c0d896f9dafc82b0195bb9b1559516c70038ea2de7a6c900c7fa599e3d9ca47b"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction_test.go",
+      "sha256": "e8e18be01be2410b17dda58304d6fa72eea7445cc577cacde17a0b9fbf1e79a7"
+    },
+    {
+      "path": "docs/system-backup-d-producer-lifecycle-20260930.md",
+      "sha256": "23a25d7daa8598fe46e0813d1a566e0705e842237ba1ed78e2eab7905b5f1255"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "67b2b5d2cd7c8ced20fe945062a776fe2345f3dfa711c9dc27384fd8d77e49c7"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "88c3bb976e0ad7fa5bcd1abc993487f35e8f01bbbc6b9350880085fbed87ecc9"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-validation.ps1",
+      "sha256": "6648170da4f8acd688651882aaa5652246b33bf1ad9c06e8673b297da55c7069"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/codec.go",
+      "sha256": "9c7c8c793edb497f980da9bb05f4ec2e2e9956b379ca850ba3f0026998e9138e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/contract_test.go",
+      "sha256": "55fccda0e53180925691cc3b9549369ebf90483a22cc0ac3e6ae4af9515544d6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/decode.go",
+      "sha256": "e02ed710189fa1d71a4b1ab7fd607b6ff668ac2be1ac58c82c7fc940c6554672"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/frame_decode.go",
+      "sha256": "e1a2d4faefac35a77b892b792380e5c1ed2ae943436437d560d9276e7acb04a6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql_test.go",
+      "sha256": "015e78e4c3a49f2717f99ab9b2c1c43ef78f345016176674e3eb62c8f3df16ff"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "sha256": "85363a3c0bc873cfe065e20755d6c17ffb8b32d5640bf0e27c13aa1112f0ccc5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage_test.go",
+      "sha256": "59bc8305bbeb65e346e0eea5c8ddc1483e80834d840ffa3da5c4e6b385669797"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage.go",
+      "sha256": "d52843eaeb4d80ecea8e463bcc01e2b7f9fd867650169dbc46233c2b44f67f6c"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "8f33ce071e06abc6f5ee216422136d7d4dd8d0c28cf1a5810c3e2d06bee197d0"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "sha256": "07f97f04824c2c253f02f39ba44db59512e21d4f80b36ad9756d2da81073ea4f"
+    }
+  ],
+  "validation": {
+    "runner": "scripts/system-backup-d-producer-validation.ps1",
+    "exitCode": 0,
+    "windowsTopLevelTests": 25,
+    "namedPassesIncludingSubtests": 348,
+    "defaultGoTestVet": true,
+    "linuxTestCrossCompile": true,
+    "linuxBinaryExecuted": false,
+    "temporaryArtifactsCleaned": true,
+    "mysqlExecuted": false,
+    "dependencyInstallation": false,
+    "remoteOperations": false,
+    "noExecutableChangesAfterFinalValidation": true,
+    "coverage": [
+      "Acquire/replay/renew/replay/revoke through SQL with transactional rollback snapshots",
+      "Replay returns original receipt only and requires independently authenticated exact historical receipt-read authority",
+      "Replay can proceed without new capacity report; new mutations cannot",
+      "Renew increments grant version while original run deadlines/history remain unchanged",
+      "Takeover requires expiry or verified termination; new grant/run/evidence and monotonic target fence",
+      "Pending run observation and owner write cutoff preserved during takeover",
+      "Grant/run lock IDs sorted before target/ref/reservation",
+      "Prepare pins report before BEGIN; installation/identity/statement waits cannot refresh original five-second sample",
+      "Exact C1 new-row cost plus existing costs once; overflow rejected; no replay charging",
+      "Identity/binding/profile/management/version/capacity/audit/recheck failures roll back state and return no handle",
+      "Ambiguous commit returns no receipt/handle; known late commit returns historical receipt without handle"
+    ]
+  },
+  "supersededValidation": [
+    {
+      "namedPassesIncludingSubtests": 342,
+      "windowsAndLinuxPassed": true,
+      "reason": "Before explicit receipt-read authority and pre-BEGIN preparation refinements",
+      "artifactsCleaned": true
+    },
+    {
+      "exitCode": 1,
+      "reason": "Intermediate compile saw new Prepare interface before test adapter synchronization; adapter updated and final frozen implementation validated",
+      "artifactsCleaned": true
+    }
+  ],
+  "catalog": {
+    "files": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "producerMigrationAdded": false
+  },
+  "limitations": [
+    "Production CommandEnvironment/CommandSession authentication, reservation and audit integration not implemented; no permissive default or runtime wiring",
+    "Test driver models transaction state but does not prove real MySQL syntax/FK/gap locks, concurrency or providers",
+    "ExecutionHandle is private service-local identity and grants no provider rights by itself",
+    "Domain provisioning/emergency revocation, observation binding, call snapshots, pending/claim/publication/result/historical recovery remain",
+    "C1 A/C review and B review for Job remain; no V01-V10 runtime acceptance",
+    "Existing-target Acquire requires explicit Takeover, independent receipt replay authorization and receipt timestamp semantics require integration review",
+    "Prior reports preserved as historical snapshots"
+  ]
+}

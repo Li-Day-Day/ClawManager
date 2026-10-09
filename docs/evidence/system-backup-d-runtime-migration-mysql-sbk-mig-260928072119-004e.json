@@ -1,0 +1,118 @@
+{
+  "kind": "d_runtime_migration_mysql_operator_receipt_v1",
+  "recorded_at": "2026-09-28T07:23:35.5267163Z",
+  "source": "operator-provided console transcript attachment",
+  "transcript_sha256": "d04ed6b70732a80bf4ed44261f91c800c91165bd9ae9805d13f5410545702e5d",
+  "independently_queried_remote": false,
+  "result": "PASS",
+  "separate_process_exit_code": null,
+  "namespace": "sbk-mig-260928072119-004e",
+  "namespace_uid": "01632b8f-0728-4ed3-8aef-22ef44000a44",
+  "mysql_version": "8.4.8",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "app_image_migration_runner_used": false,
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "binary_sha256": "d5d994bffb426a5be75073a8fb20457e7557e4485fed6f334c7efb3b4d9db877",
+  "ddl_sha256": "3d5eeab6f1b4393bfb3f92c57b5ce18d910694ac186c186d06e79b6058141b52",
+  "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+  "source_binding_check": {
+    "local_receipt": "system-backup-d-runtime-migration-local-20260928.json",
+    "local_receipt_sha256": "c28e8ab2021c392121039e423d26167e5087cf976df1578b2e26ccd0497c3a6a",
+    "matched": 163,
+    "mismatches": 0
+  },
+  "fresh_migrations": {
+    "range": "001..080",
+    "applied": 93,
+    "exact_filenames": true,
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "d_columns": "blob/blob/blob/char",
+    "pinned_runner_result": "PASS",
+    "result": "PASS"
+  },
+  "local_package_test_seconds": {
+    "security": 2.035,
+    "db": 1.968,
+    "migrationcoord": 1.991,
+    "migrationcatalog": 0.903
+  },
+  "test_seconds": 1.54,
+  "top_level_pass": 9,
+  "top_level_fail": 0,
+  "bootstrap_nested_pass": 3,
+  "passed_subtests": [
+    {
+      "name": "concurrent_same_request_has_one_atomic_result",
+      "seconds": 0.08
+    },
+    {
+      "name": "body_conflict",
+      "seconds": 0.01
+    },
+    {
+      "name": "nonce_replay_with_new_idempotency_key",
+      "seconds": 0.02
+    },
+    {
+      "name": "result_audit_failure_rolls_back_every_table",
+      "seconds": 0.02
+    },
+    {
+      "name": "permission_revocation_blocks_committed_retry",
+      "seconds": 0.01
+    },
+    {
+      "name": "https_registration_replay_conflict_and_revocation",
+      "seconds": 0.04
+    },
+    {
+      "name": "totp_persistence_replay_throttle_and_session_revocation",
+      "seconds": 0.18
+    },
+    {
+      "name": "https_jwt_mfa_registration_and_config_revocation",
+      "seconds": 0.3
+    },
+    {
+      "name": "first_config_bootstrap_atomicity",
+      "seconds": 0.53
+    },
+    {
+      "name": "first_config_bootstrap_atomicity/result_audit_failure_rolls_back_config_state_and_reservation",
+      "seconds": 0.02
+    },
+    {
+      "name": "first_config_bootstrap_atomicity/concurrent_first_requests_commit_once",
+      "seconds": 0.11
+    },
+    {
+      "name": "first_config_bootstrap_atomicity/wrong_database_conflict_reinitialization_and_revocation",
+      "seconds": 0.05
+    }
+  ],
+  "cleanup": {
+    "bootstrap_database_reported": true,
+    "registration_database_reported": true,
+    "namespace_matching_uid_reported": true,
+    "remote_scratch_reported": true,
+    "local_build_cache_reported": true,
+    "local_remaining_scratch_independently_checked": 0
+  },
+  "scope": {
+    "real_mysql": true,
+    "fresh_current_embedded_migration_catalog": true,
+    "isolated_https_jwt_mfa_chain": true,
+    "synthetic_user_and_keys": true,
+    "synthetic_provider_facts_nonce_capacity_and_bootstrap_admission": true,
+    "real_transit_in_this_test": false,
+    "human_mfa_verified": false,
+    "production_active_config_updated": false,
+    "production_http_service_deployed": false
+  },
+  "remaining": [
+    "Production bootstrap admission with real registries and typed references",
+    "Runtime signing identities, TLS, collector and logout deployment",
+    "Administrator human MFA and deployed HTTP acceptance",
+    "Actual configuration transaction and activation acceptance"
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "kind": "system_backup_d_cross_owner_revision_acceptance",
+  "contract_version": "system-backup-plan.v12",
+  "review_date": "2026-09-23",
+  "recorded_at": "2026-09-23T09:28:41.689Z",
+  "reviewer": "D",
+  "implementation_owner": "A",
+  "status": "accepted_local_revisions",
+  "contract_status": "draft",
+  "report": "docs/system-backup-d-a-contract-rereview-round2-2026-09-23.md",
+  "supersedes_for_current_revision": "docs/evidence/system-backup-d-a-contract-rereview-20260923.json",
+  "scope": [
+    "D-A-R1 Unicode signing metadata validation",
+    "D-A-R2 status/reason constraints across A and D contracts"
+  ],
+  "closed_findings": [
+    "D-A-R1",
+    "D-A-R2"
+  ],
+  "new_findings": [],
+  "original_d_probes_unchanged": true,
+  "validation": {
+    "go": {
+      "command": "powershell -NoProfile -File scripts/system-backup-d-a-revision-review.ps1",
+      "exit_code": 0,
+      "passed_top_level": 25,
+      "output": "--- PASS: TestCapabilityRoleMappingAndExpiry (0.11s)\r\n--- PASS: TestCapabilityRejectsUntrustedOrStaleObservations (0.04s)\r\n--- PASS: TestCapabilityStatusReasonMatrix (0.04s)\r\n--- PASS: TestProviderProofSharedParityVectors (0.00s)\r\n--- PASS: TestProviderErrorsAreTypedBoundedAndDoNotWrapCauses (0.00s)\r\n--- PASS: TestVerifyProviderProofBindsTargetAndSignedBytes (0.00s)\r\n--- PASS: TestVerifyProviderProofRejectsAbsenceWithPresenceState (0.00s)\r\n--- PASS: TestVerifyProviderProofRejectsRestoreSealedAndOversizedEvidence (0.00s)\r\n--- PASS: TestDReviewCanonicalPayloadJCSStrings (0.00s)\r\n--- PASS: TestDReviewMissingRetainedNonceKeyFailsClosed (0.00s)\r\n--- PASS: TestDReviewProviderTimeWindow (0.00s)\r\n--- PASS: TestDReviewProviderErrorsDoNotExposeAdapterText (0.00s)\r\n--- PASS: TestDReviewProviderPublicIDAndFieldBounds (0.00s)\r\n--- PASS: TestDRevisionUnicodeSigningMetadata (0.01s)\r\n--- PASS: TestDRevisionTemporaryCapabilityFailureIsNotUnsupported (0.01s)\r\n--- PASS: TestSigningMetadataUnicodeFullVerification (0.01s)\r\n--- PASS: TestNodeJCSAndRealEd25519JWSVectors (0.01s)\r\n--- PASS: TestNonceKeySnapshotMustBeComplete (0.00s)\r\n--- PASS: TestIssuerPolicyAndUnicodeBoundaries (0.00s)\r\n--- PASS: TestCanonicalPayloadIsStableAndExcludesSignatureEnvelope (0.00s)\r\n--- PASS: TestVerifyAcceptsHistoricalNonceKeyAndBindsRequest (0.00s)\r\n--- PASS: TestVerifyRejectsRequestTamperingBeforeSignatureAdapter (0.00s)\r\n--- PASS: TestVerifyRejectsExpiredFutureAndBadIssuerProofs (0.00s)\r\n--- PASS: TestVerifyRejectsWebAuthnWithoutMethodEvidence (0.00s)\r\n--- PASS: TestVerifyRejectsWireValuesOutsideSchema (0.00s)\r\nok  \t_/C_/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-d-a-review-1dbc5512f26a4bcab9d1ad02d6551ec8/source\t1.734s\r\nD review scratch removed: True\r\nD round2 review exit: 0\r\n"
+    },
+    "node": {
+      "exit_code": 0,
+      "passed": 87,
+      "output": "system-backup-d-a-revision-schema.test.mjs: exit=0\r\nℹ tests 2\r\nℹ pass 2\r\nℹ fail 0\r\nsystem-backup-a-security.test.mjs: exit=0\r\nℹ tests 6\r\nℹ pass 6\r\nℹ fail 0\r\nsystem-backup-a-object-fixtures.test.mjs: exit=0\r\nℹ tests 3\r\nℹ pass 3\r\nℹ fail 0\r\nsystem-backup-contract-artifacts.test.mjs: exit=0\r\n✔ D-owned dependency and provider capability records are closed and fail closed (1.0772ms)\r\nℹ tests 70\r\nℹ pass 70\r\nℹ fail 0\r\nsystem-backup-contract-check.test.mjs: exit=0\r\nℹ tests 6\r\nℹ pass 6\r\nℹ fail 0\r\n"
+    },
+    "independent_status_reason_matrix": {
+      "exit_code": 0,
+      "unique_pairs": 27,
+      "accepted": 9,
+      "rejected": 18,
+      "output": "D independent matrix: 27 unique pairs, 9 accepted, 18 rejected; A schema and all D example roles agree\n"
+    },
+    "gates": [
+      {
+        "command": "inventory --check",
+        "exit_code": 0,
+        "summary": {
+          "plan_business_tables": 94,
+          "plan_control_tables": 32,
+          "plan_control_without_inventory": 3,
+          "inventoried_objects": 95,
+          "migration_objects": 94,
+          "without_migration": 0,
+          "unassigned": 0,
+          "repository_runtime_create": 0,
+          "repository_runtime_alter": 0,
+          "deployment_bootstrap_create": 22
+        }
+      },
+      {
+        "command": "contract --check",
+        "exit_code": 0,
+        "status": "draft",
+        "summary": {
+          "object_count": 95,
+          "policy_recorded": 56,
+          "policy_pending": 39,
+          "cross_review_pending": 56
+        }
+      },
+      {
+        "command": "contract --check --strict",
+        "exit_code": 1,
+        "status": "draft",
+        "summary": {
+          "object_count": 95,
+          "policy_recorded": 56,
+          "policy_pending": 39,
+          "cross_review_pending": 56
+        },
+        "missing_artifacts": [
+          "recovery_catalog_records",
+          "restore_target",
+          "status_relay",
+          "catalog_scan_record"
+        ],
+        "missing_control_tables": [
+          "system_backup_catalog_imports",
+          "system_backup_catalog_records",
+          "system_backup_catalog_scan_states"
+        ],
+        "schema_hash_pending": true
+      }
+    ],
+    "tooling_note": "A Node spawnSync helper hit local EPERM before executing a gate. Direct PowerShell invocations subsequently executed all three checks; final results above are those direct runs."
+  },
+  "acceptance_boundaries": [
+    "No new issue found within the reviewed revision scope.",
+    "D accepts matching ProviderCapabilityRecord schema constraint changes, not C adapter probe facts.",
+    "No remote provider capability or nonce/audit/mutation transaction acceptance.",
+    "No global contract freeze or cross-owner approvals inferred."
+  ],
+  "approvals_changed": false,
+  "freeze_gate_changed": false,
+  "remote_access_performed": false,
+  "dependencies_installed": false,
+  "cleanup": {
+    "review_scratch_removed": true,
+    "build_cache_and_test_binaries_retained": false
+  },
+  "fingerprint_algorithm": "sha256-raw-file-bytes",
+  "reviewed_files": [
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "sha256": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability_test.go",
+      "sha256": "82a9aab4c76420e79f1838ba6cc88414d4ec151504d7ca1b073c9a716faa2107"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof.go",
+      "sha256": "dd2dfc776920e4daf6fa8f2ae6ec8a8ec31745fe21a66dd75061a093156ece87"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_test.go",
+      "sha256": "b6b95847c393a1a6359a78da316334537f42d482431c104d9a23fdc6a3499648"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "sha256": "92fcb7fc60bba6e7babfc41aa2752adb73a73adc15c7312aa1d41a393ad6e2b6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth_test.go",
+      "sha256": "f7e7c080d41f373e394b9a87210592a6ed3d16bc0a20557a8811f5252eb0e3a4"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-status-reason-vectors.json",
+      "sha256": "f63d2bbd2df657d1f003c122cdda80b079cf498777b667f01cc256fe3bd8c3eb"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixture-policies.json",
+      "sha256": "9bed84f18fcbfb97729ca91ca526a6d7768c1704e26b9db7e446f998e45b4e0b"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixtures.json",
+      "sha256": "7b2c73be6fcf1b5bf475a3ad4b1994d300aba7a4e4d5a5783340c3b7b883921a"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "sha256": "eff9e7ebf5a14992cfbe8562aa869dfcbacee4481914db1e708249c6f341dbf0"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-provider-proof-parity-vectors.json",
+      "sha256": "b89eeedbb3d217892f506d0cad734d11897892ed68ca14164414c2317e7da2f3"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-secret-ref-vectors.json",
+      "sha256": "90eeca215129fb792221b4b5661a077045265bb30c1009d38a855833380f1f65"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-strong-auth-signature-vectors.json",
+      "sha256": "10d4ff8d3bbfdcb81416bb48ca0f7cd456bcd227d4986f69744ebdc14dc1cf07"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "f1499939a39551fbe5d0845c403f75a491b9e49d45c6b481d17e98917f59aca8"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+      "sha256": "b1c596590f182577511e5e888786798d5c246d33e47b29e8f9bf068cf555ed12"
+    },
+    {
+      "path": "contracts/system-backup/v12/provider-proof-registration.schema.json",
+      "sha256": "618754245abc64cb2c9ca88a0099bfddae98bbe46caa5580f95d26b354542626"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry-decisions.json",
+      "sha256": "b98d865a89e89e300bf1e6ba4345fb7e234adb25e9c308f244c5aa4f2fc07e6a"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "sha256": "1888d6dd8741dd67eba03853603c1e39b33d5a38507071bb84cd234e6bb8cd07"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json",
+      "sha256": "ff3aaf4780f207cec5b7a864fc8c36b958ad750bdb2b6c9c26d017fc02005805"
+    },
+    {
+      "path": "docs/system-backup-a-contract-revision-2026-09-23.md",
+      "sha256": "f43b92694c640278ce6008a907ce351ba3d522221d22561f76cb4856fe82572e"
+    },
+    {
+      "path": "docs/system-backup-a-rereview-revision-2026-09-23.md",
+      "sha256": "ba2dd76cd989952aa8784d755699cbd0b59b017b2ccbce5fa40d5c86b3f31edd"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "add5996d159efc185df07a0c8173bc31da4dcfdf462e4f7dadab3e1f7b85fca4"
+    },
+    {
+      "path": "scripts/system-backup-a-local-validation.ps1",
+      "sha256": "4616f061a6a15c172071766c466f6265e30458a269babf794e9b2a290095ac25"
+    },
+    {
+      "path": "scripts/system-backup-a-object-fixture-model.mjs",
+      "sha256": "a62220b55634df1c48bc8789854344a636ca52fd9765080fa200610b2dcc5113"
+    },
+    {
+      "path": "scripts/system-backup-a-object-fixtures.test.mjs",
+      "sha256": "bd80a34f04e34a92101b662a583886b6f51279ca5d0a263731ff54dc9576d134"
+    },
+    {
+      "path": "scripts/system-backup-a-schema-validation.mjs",
+      "sha256": "6ed33bd899736b6e4231e111f7a86c1ba472d5ff105089d0a88dd26d1b7b8e50"
+    },
+    {
+      "path": "scripts/system-backup-a-security.test.mjs",
+      "sha256": "43d0fba7cfcf41411bf02446f2aa60fc16d00a5b516137b42ffa4807889fdb72"
+    },
+    {
+      "path": "scripts/system-backup-d-a-review/review_test.go",
+      "sha256": "771e1de3a95361f899ace0f580f6f97e6693255a482b23340d3c6d03bdfe4b32"
+    },
+    {
+      "path": "scripts/system-backup-d-a-review/revision_test.go",
+      "sha256": "36ba2f8f3527ac02961c9b47d302a12ab680d79d22537e215acfb41245a02c4c"
+    },
+    {
+      "path": "scripts/system-backup-d-a-revision-review.ps1",
+      "sha256": "b81b23941da0c08d1297ec9728e5eef5360558bfa3474ea1fc2eadc88fe218cc"
+    },
+    {
+      "path": "scripts/system-backup-d-a-revision-schema.test.mjs",
+      "sha256": "c52001377628e619e069470f4ab1056b847d38d09a3858add35cca00362c48e4"
+    }
+  ]
+}

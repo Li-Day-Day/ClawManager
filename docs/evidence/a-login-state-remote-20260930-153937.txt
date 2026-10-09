@@ -1,0 +1,169 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20260930153937
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 16196
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE login-state-only=yes full-login-http=no real_mysql=not_run
+=== RUN   TestBuildV2SchedulerInstanceQueryRequiresWorkspaceTypeAndStatuses
+--- PASS: TestBuildV2SchedulerInstanceQueryRequiresWorkspaceTypeAndStatuses (0.00s)
+=== RUN   TestV2DesiredRunningStatusesIncludeRecoverableErrorCandidates
+--- PASS: TestV2DesiredRunningStatusesIncludeRecoverableErrorCandidates (0.00s)
+=== RUN   TestBuildV2SchedulerInstanceQueryDefaultsLimit
+--- PASS: TestBuildV2SchedulerInstanceQueryDefaultsLimit (0.00s)
+=== RUN   TestGatewayTokenHashTrimsAndDoesNotExposeToken
+--- PASS: TestGatewayTokenHashTrimsAndDoesNotExposeToken (0.00s)
+=== RUN   TestAppendTimeFilterAddsSinceAndUntilClauses
+--- PASS: TestAppendTimeFilterAddsSinceAndUntilClauses (0.00s)
+=== RUN   TestAppendTimeFilterEmptyFilterLeavesQueryUnchanged
+--- PASS: TestAppendTimeFilterEmptyFilterLeavesQueryUnchanged (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyHermesNestedPath
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyHermesNestedPath (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyOpenClawFlatPath
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyOpenClawFlatPath (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyRejectsMismatchedLeaf
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyRejectsMismatchedLeaf (0.00s)
+=== RUN   TestUsernameUniqueConstraintRecognition
+--- PASS: TestUsernameUniqueConstraintRecognition (0.00s)
+=== RUN   TestLoginStateClosedPoolReturnsUnavailable
+2026/09/30 15:44:47 	Session ID:     00001
+	Query:          UPDATE users SET last_login=?,auth_provider=?,role=? WHERE id=? AND BINARY password_hash=BINARY ? AND auth_provider=? AND role=? AND is_active=TRUE AND BINARY external_id <=> BINARY ?
+	Arguments:      []interface {}{time.Date(2026, time.September, 30, 7, 44, 47, 128003000, time.UTC), "local", "user", 1, "synthetic-offline-hash", "local", "user", (*string)(nil)}
+	Stack:
+		fmt.(*pp).handleMethods@C:/Program Files/Go/src/fmt/print.go:674
+		fmt.(*pp).printArg@C:/Program Files/Go/src/fmt/print.go:757
+		fmt.(*pp).doPrint@C:/Program Files/Go/src/fmt/print.go:1206
+		fmt.Append@C:/Program Files/Go/src/fmt/print.go:290
+		log.(*Logger).Print.func1@C:/Program Files/Go/src/log/log.go:260
+		log.(*Logger).output@C:/Program Files/Go/src/log/log.go:237
+		log.(*Logger).Print@C:/Program Files/Go/src/log/log.go:259
+		clawreef/internal/repository.(*userRepository).UpdateLoginState@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login.go:27
+		clawreef/internal/repository_test.assertLoginStateClosedPool@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login_failure_test.go:36
+		clawreef/internal/repository_test.TestLoginStateClosedPoolReturnsUnavailable@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login_failure_test.go:55
+		testing.tRunner@C:/Program Files/Go/src/testing/testing.go:2036
+		runtime.goexit@C:/Program Files/Go/src/runtime/asm_amd64.s:1771
+	Error:          sql: database is closed
+	Time taken:     0.00000s
+	Context:        context.Background
+
+--- PASS: TestLoginStateClosedPoolReturnsUnavailable (0.07s)
+PASS
+ok  	clawreef/internal/repository	2.031s
+=== RUN   TestLoginStateMySQLSeed
+--- PASS: TestLoginStateMySQLSeed (0.01s)
+PASS
+ok  	clawreef/internal/repository	1.315s
+LOCAL_PASS login-state-seed=yes real_mysql=not_run
+LOCAL_PASS login-state-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=8e69b46048f93e32fb3cb1a01d22cd8f7051a978ae3dd760fe87f5d4551b27b9 ddl_sha256=087a1da9e1cd0e1be328cfe51a57ab20260a0b944e5b087d97f48121f625e49a
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea
+
+close - IO is still pending on closed socket. read:1, write:0, io:000002C2207B3110
+close - IO is still pending on closed socket. read:1, write:0, io:000001B5269E0C90
+bundle.tar: OK
+RUN namespace=sbk-mig-260930075123-5f56 uid=f3f58ad6-1a88-4f71-8ff1-712d75c94910 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestALoginStateMySQL
+    user_login_mysql_test.go:194: MIGRATION_INPUT files=94 catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+    user_login_mysql_test.go:240: USERS_SCHEMA normalized_create_sha256=cc460b67cbea1e13ce2c21b0a799d643e1b5d7b7c5847dd89d87b7fb4c69ebb9
+=== RUN   TestALoginStateMySQL/local_changed_and_zero_changed_rows
+    user_login_mysql_test.go:282: OBSERVED zero-changed-rows fallback SELECT
+=== RUN   TestALoginStateMySQL/ldap_changed_and_zero_changed_rows
+    user_login_mysql_test.go:282: OBSERVED zero-changed-rows fallback SELECT
+=== RUN   TestALoginStateMySQL/ldap_role_to_admin
+=== RUN   TestALoginStateMySQL/ldap_role_to_user
+=== RUN   TestALoginStateMySQL/stale_password
+=== RUN   TestALoginStateMySQL/stale_password_case
+=== RUN   TestALoginStateMySQL/stale_password_trailing_space
+=== RUN   TestALoginStateMySQL/stale_disabled
+=== RUN   TestALoginStateMySQL/stale_role
+=== RUN   TestALoginStateMySQL/stale_provider
+=== RUN   TestALoginStateMySQL/stale_external_id
+=== RUN   TestALoginStateMySQL/stale_external_id_case
+=== RUN   TestALoginStateMySQL/stale_external_id_null
+=== RUN   TestALoginStateMySQL/null_external_is_not_empty
+=== RUN   TestALoginStateMySQL/missing_user
+=== RUN   TestALoginStateMySQL/waiting_for_password
+    user_login_mysql_test.go:392: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_disabled
+    user_login_mysql_test.go:392: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_role
+    user_login_mysql_test.go:392: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_provider
+    user_login_mysql_test.go:392: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_external_id
+    user_login_mysql_test.go:392: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_external_id_null
+    user_login_mysql_test.go:392: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/database_failure_is_redacted
+2026/09/30 07:51:45 	Session ID:     00010
+	Query:          UPDATE users SET last_login=?,auth_provider=?,role=? WHERE id=? AND BINARY password_hash=BINARY ? AND auth_provider=? AND role=? AND is_active=TRUE AND BINARY external_id <=> BINARY ?
+	Arguments:      []interface {}{time.Date(2026, time.September, 30, 0, 0, 0, 0, time.UTC), "local", "user", 22, "SyntheticHash", "local", "user", (*string)(nil)}
+	Stack:
+		fmt.(*pp).handleMethods@C:/Program Files/Go/src/fmt/print.go:674
+		fmt.(*pp).printArg@C:/Program Files/Go/src/fmt/print.go:757
+		fmt.(*pp).doPrint@C:/Program Files/Go/src/fmt/print.go:1206
+		fmt.Append@C:/Program Files/Go/src/fmt/print.go:290
+		log.(*Logger).Print.func1@C:/Program Files/Go/src/log/log.go:260
+		log.(*Logger).output@C:/Program Files/Go/src/log/log.go:237
+		log.(*Logger).Print@C:/Program Files/Go/src/log/log.go:259
+		clawreef/internal/repository.(*userRepository).UpdateLoginState@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login.go:27
+		clawreef/internal/repository_test.assertLoginStateClosedPool@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login_failure_test.go:36
+		clawreef/internal/repository_test.TestALoginStateMySQL.func14@C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login_mysql_test.go:419
+		testing.tRunner@C:/Program Files/Go/src/testing/testing.go:2036
+		runtime.goexit@C:/Program Files/Go/src/runtime/asm_amd64.s:1771
+	Error:          sql: database is closed
+	Time taken:     0.00004s
+	Context:        context.Background.WithDeadline(2026-09-30 07:54:14.893476613 +0000 UTC m=+150.002163332 [2m29.735734739s])
+
+=== NAME  TestALoginStateMySQL
+    user_login_mysql_test.go:219: CLEANED login-state run-owned database
+--- PASS: TestALoginStateMySQL (0.28s)
+    --- PASS: TestALoginStateMySQL/local_changed_and_zero_changed_rows (0.01s)
+    --- PASS: TestALoginStateMySQL/ldap_changed_and_zero_changed_rows (0.01s)
+    --- PASS: TestALoginStateMySQL/ldap_role_to_admin (0.00s)
+    --- PASS: TestALoginStateMySQL/ldap_role_to_user (0.00s)
+    --- PASS: TestALoginStateMySQL/stale_password (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_password_case (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_password_trailing_space (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_disabled (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_role (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_provider (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_external_id (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_external_id_case (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_external_id_null (0.03s)
+    --- PASS: TestALoginStateMySQL/null_external_is_not_empty (0.01s)
+    --- PASS: TestALoginStateMySQL/missing_user (0.00s)
+    --- PASS: TestALoginStateMySQL/waiting_for_password (0.03s)
+    --- PASS: TestALoginStateMySQL/waiting_for_disabled (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_role (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_provider (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_external_id (0.03s)
+    --- PASS: TestALoginStateMySQL/waiting_for_external_id_null (0.01s)
+    --- PASS: TestALoginStateMySQL/database_failure_is_redacted (0.00s)
+PASS
+PASS a-login-state-mysql binary_sha256=8e69b46048f93e32fb3cb1a01d22cd8f7051a978ae3dd760fe87f5d4551b27b9 inputs_sha256=087a1da9e1cd0e1be328cfe51a57ab20260a0b944e5b087d97f48121f625e49a
+CLEANED namespace=sbk-mig-260930075123-5f56 uid=f3f58ad6-1a88-4f71-8ff1-712d75c94910
+close - IO is still pending on closed socket. read:1, write:0, io:000002391F5E3E40
+close - IO is still pending on closed socket. read:1, write:0, io:000001B7036D96C0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+a_login_state_remote_exit=0
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20260930155217
+**********************

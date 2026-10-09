@@ -1,0 +1,16 @@
+{
+  "kind": "a_d_producer_service_local_preflight_failure",
+  "status": "failed_cancel_rollback_assertion",
+  "log": {
+    "path": "docs/evidence/a-d-producer-service-remote-20261008-132936.txt",
+    "sha256": "9f7ad185eb749999376f2f169f0c74e5ae45cf00a920d32fcfb2397ee38920f3"
+  },
+  "snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261008-052954-cb0110e4.json",
+  "failed_case": "TestGuardedTransactionFailures/cancel_during_work",
+  "cause": "The database/sql cancellation goroutine may own rollback while deferred Rollback returns ErrTxDone. The test read driver counters before asynchronous rollback completed.",
+  "remote_started": false,
+  "reported_exit_code": -1,
+  "local_artifacts_cleaned": true,
+  "source_drift": 0,
+  "fixed_validation": "pending"
+}

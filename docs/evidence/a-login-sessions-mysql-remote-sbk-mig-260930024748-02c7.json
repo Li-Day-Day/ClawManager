@@ -1,0 +1,69 @@
+{
+  "schema_version": "a-login-sessions-mysql-remote.v1",
+  "status": "accepted_with_explicit_scope",
+  "reviewed_at_utc": "2026-09-30T04:00:51.0650894Z",
+  "run": "sbk-mig-260930024748-02c7",
+  "namespace_uid": "bd482f2e-3735-44bf-b16c-a60197652b4d",
+  "mysql_version": "8.4.8",
+  "log": "docs/evidence/a-login-sessions-remote-20260930-103129.txt",
+  "log_sha256": "5adfef71ad99ab2e2e9c43975da0176b0d863f5129ff46aceb8492ee481c949a",
+  "baseline": "docs/evidence/system-backup-a-login-sessions-local-20260930.json",
+  "binary_sha256": "5c905153ebc2d996e6471f0e1b621444a538f33f018e5209de7d9d74acd25ab0",
+  "ddl_sha256": "9a0761f3b2cdf0ac1afc4d93e57ce0d9f0e549132dde069da5f0e383531e35bd",
+  "migration_binary_sha256": "9989e7db7f408ad483663e32ca1767366693eaa2825a7aa745979057f9bf0e25",
+  "migration_catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+  "migration_count": 93,
+  "test": "TestALoginSessionsMySQL",
+  "passed_cases": [
+    "pair_and_audit_commit_atomically",
+    "same_refresh_has_exactly_one_concurrent_winner",
+    "refresh_commits_before_logout_all_tokens_revoked",
+    "logout_commits_before_refresh_no_new_pair",
+    "login_waits_for_password",
+    "login_waits_for_disable",
+    "refresh_waits_for_password",
+    "refresh_waits_for_disable",
+    "old_refresh_cannot_rebind_new_password",
+    "login_audit_failure_rolls_back_pair",
+    "refresh_audit_failure_restores_parent_and_allows_retry",
+    "logout_failure_rolls_back_epoch_and_revocations",
+    "token_expires_during_observed_user_lock_wait",
+    "wrong_database_pin_rejects_before_writes",
+    "logout_is_scoped_to_exact_installation"
+  ],
+  "passed_count": 15,
+  "observed_lock_waits": 12,
+  "cleanup_markers": [
+    "CLEANED login-sessions run-owned database",
+    "CLEANED namespace=sbk-mig-260930024748-02c7 uid=bd482f2e-3735-44bf-b16c-a60197652b4d",
+    "CLEANED remote-registration-scratch=yes",
+    "CLEANED local-registration-build-cache=True",
+    "a_login_sessions_remote_exit=0"
+  ],
+  "cleanup_basis": "Operator transcript; no new remote command executed during review.",
+  "exit_code": 0,
+  "source_comparison": {
+    "matched": 164,
+    "changed": [
+      {
+        "path": "backend/internal/db/migrations.go",
+        "baseline_sha256": "cb9bd2d6f33ba9f6bed5cdbd4db71dc11c2ac5645fa6cf4a680296113bcc749e",
+        "current_sha256": "8760fe9cc073af591e065c72f65768b538e3e3ce0bf845b078f731568c9ee57b"
+      },
+      {
+        "path": "backend/internal/systembackupcontroller/bootstrap.go",
+        "baseline_sha256": "da9fd6ce954a0ac7436462de40d0cca118a2216a48175f9362dc387d4be47fbc",
+        "current_sha256": "e773ebc5349172ac21603c384943c6131c269f22e80095e2620d47b02da03ab5"
+      }
+    ],
+    "note": "Acceptance binds the operator-run binary and DDL hashes above. Current workspace changes are not retroactively covered."
+  },
+  "limitations": [
+    "Synthetic authentication inputs; no HTTP login chain",
+    "No repository UpdateLoginState MySQL coverage",
+    "No real LDAP bind or directory revocation events",
+    "No production activation, provider or MFA acceptance",
+    "No database COMMIT-response-loss coverage"
+  ],
+  "transport_note": "Socket-close diagnostics occurred; all required test/cleanup markers and wrapper exit 0 are present."
+}

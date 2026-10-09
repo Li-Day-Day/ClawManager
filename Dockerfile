@@ -44,7 +44,11 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpat
     -ldflags="-s -w -buildid= -X clawreef/internal/buildinfo.Version=${VERSION} -X clawreef/internal/buildinfo.Commit=${VCS_REF} -X clawreef/internal/buildinfo.BuildTime=${BUILD_DATE}" \
     -o /out/clawreef-server ./cmd/server \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-northbound-gateway ./cmd/northbound-gateway \
-    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-controller ./cmd/system-backup-controller
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-secret-broker ./cmd/secret-broker \
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-controller ./cmd/system-backup-controller \
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-registration ./cmd/system-backup-registration \
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-migrate ./cmd/system-backup-migrate \
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-bootstrap ./cmd/system-backup-bootstrap
 
 FROM nginx:1.27-alpine
 
@@ -56,7 +60,11 @@ WORKDIR /app
 
 COPY --from=backend-builder /out/clawreef-server /usr/local/bin/clawreef-server
 COPY --from=backend-builder /out/clawreef-northbound-gateway /usr/local/bin/clawreef-northbound-gateway
+COPY --from=backend-builder /out/clawreef-secret-broker /usr/local/bin/clawreef-secret-broker
 COPY --from=backend-builder /out/clawreef-system-backup-controller /usr/local/bin/clawreef-system-backup-controller
+COPY --from=backend-builder /out/clawreef-system-backup-registration /usr/local/bin/clawreef-system-backup-registration
+COPY --from=backend-builder /out/clawreef-system-backup-migrate /usr/local/bin/clawreef-system-backup-migrate
+COPY --from=backend-builder /out/clawreef-system-backup-bootstrap /usr/local/bin/clawreef-system-backup-bootstrap
 COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
 COPY --from=hermes-desktop-builder /app/frontend/public/hermes-desktop-web /usr/share/nginx/html/hermes-desktop-web
 COPY deployments/nginx/nginx.conf /etc/nginx/nginx.conf

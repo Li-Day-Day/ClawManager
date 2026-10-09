@@ -1,0 +1,54 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20261009152311
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 33952
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 docs/evidence/a-historical-recovery-mtls-mysql-remote-20261009-r2.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    & .\scripts\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -RecoveryTest A -Remote -SshTarget 'root@10.130.14.23'
+    if (-not $?) { throw 'A historical recovery MySQL validation failed' }
+} finally {
+    Stop-Transcript
+}
+LOCAL_PASS isolated-go-telemetry=off
+ok  	clawreef/internal/systembackupevidence	2.120s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.53s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.28s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.25s)
+PASS
+ok  	clawreef/internal/systembackupevidence	2.616s
+LOCAL_PASS a-producer-recovery-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=ad63c9a2b65bf4afd4072fb2d2f096143b037357c478dd06f5b93d3c473878e1 ddl_sha256=97abacd3f045046d01cb74211362a9a6aeada8c724c16958b48178517d5c8ff8
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea
+
+close - IO is still pending on closed socket. read:1, write:0, io:000001825EAEBA40
+close - IO is still pending on closed socket. read:1, write:0, io:0000027E51ABF700
+bundle.tar: OK
+RUN namespace=sbk-mig-261009074340-6393 uid=3d2fe319-37b4-483a-bd18-8d832421dab3 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+Error from server (Forbidden): error when creating "STDIN": pods "mysql" is forbidden: error looking up service account sbk-mig-261009074340-6393/default: serviceaccount "default" not found
+CLEANED namespace=sbk-mig-261009074340-6393 uid=3d2fe319-37b4-483a-bd18-8d832421dab3
+close - IO is still pending on closed socket. read:1, write:0, io:0000018DA1F72D40
+close - IO is still pending on closed socket. read:1, write:0, io:000002160EF32930
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“MySQL validation failed; retain any CLEANUP_PENDING identity”
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261009154427
+**********************

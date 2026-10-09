@@ -14,6 +14,9 @@ export type TaskStatus = (typeof backupStatuses)[number] | (typeof drillStatuses
 export type OperationStatus = (typeof operationStatuses)[number];
 export type OperationType = (typeof operationTypes)[number];
 export type FailureCategory = (typeof failureCategories)[number];
+export type ArtifactUnusableReason = "acceptance_invalid" | "catalog_tombstoned" | "catalog_unavailable" | "corrupt" | "credential_unavailable" | "delete_failed" | "deleted" | "deleting" | "evidence_unavailable" | "finalization_pending" | "kek_unavailable" | "none" | "not_committed" | "provider_unavailable" | "signing_key_unavailable" | "verification_inconclusive" | "verification_pending";
+export type TargetRisk = "artifact_credential_source_dependent" | "attestation_expired" | "attestation_missing" | "broad_egress" | "catalog_source_dependent" | "conditional_commit_unavailable" | "kek_source_dependent" | "provider_capability_degraded" | "same_failure_domain" | "signing_key_source_dependent" | "source_overlap" | "transport_unverified";
+export type EligibilityReasonCode = "artifact_not_committed" | "attestation_invalid" | "catalog_unavailable" | "consistency_not_strong" | "disqualifying_warning" | "eligible" | "evidence_incomplete" | "functional_test" | "isolation_invalid" | "kek_not_recoverable" | "manifest_drift" | "required_part_failed" | "required_verifier_failed" | "source_artifact_unusable" | "source_backup_not_eligible" | "staging_cleanup_failed" | "target_not_external" | "target_risk" | "task_not_succeeded";
 
 export interface SystemBackupTask {
   schema_version: "system-backup-task.v1";
@@ -268,6 +271,18 @@ export interface ConfigResource {
   created_at: string;
 }
 
+export interface ConfigResourceList {
+  items: ConfigResource[];
+  next_cursor: string | null;
+  consistency: "stable_cutoff" | "eventual";
+}
+
+export interface PruneRunResourceList {
+  items: PruneRunResource[];
+  next_cursor: string | null;
+  consistency: "stable_cutoff" | "eventual";
+}
+
 export interface FailureDomainShortage {
   target_failure_domain_id: string;
   minimum_recovery_points: number;
@@ -517,10 +532,10 @@ export interface BackupDetailResource {
   artifact_committed_at: string | null;
   acceptance_ready: boolean;
   acceptance_eligible: boolean;
-  eligibility_reason_codes: string[];
+  eligibility_reason_codes: EligibilityReasonCode[];
   eligibility_decision_hash: string | null;
   target_class: "dr-ready-external" | "same-cluster-copy";
-  target_risks: string[];
+  target_risks: TargetRisk[];
   target_failure_domain_id: string;
   consistency: "strong" | "bounded" | "weak";
   checksums: NullableArtifactChecksumSet;
@@ -553,7 +568,7 @@ export interface DrillDetailResource {
   verifier_summary: VerifierSummary;
   consistency: "strong" | "bounded" | "weak" | null;
   acceptance_eligible: boolean;
-  eligibility_reason_codes: string[];
+  eligibility_reason_codes: EligibilityReasonCode[];
   eligibility_decision_hash: string | null;
 }
 
@@ -585,8 +600,8 @@ export interface ArtifactVerificationDetailResource {
   artifact_state_after: "staging" | "committed" | "deleting" | "delete_failed" | "deleted" | "corrupt" | null;
   usable_before: boolean;
   usable_after: boolean;
-  unusable_reason_before: string;
-  unusable_reason_after: string;
+  unusable_reason_before: ArtifactUnusableReason;
+  unusable_reason_after: ArtifactUnusableReason;
   decision_reason: "pending" | "unchanged" | "restored_usable" | "marked_unusable" | "marked_corrupt" | "catalog_tombstoned" | "verification_inconclusive";
   verifier_summary: VerifierSummary;
 }

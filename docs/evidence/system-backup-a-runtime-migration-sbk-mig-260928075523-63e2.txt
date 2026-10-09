@@ -1,0 +1,58 @@
+ok      clawreef/internal/systembackupsecurity  1.702s
+ok      clawreef/internal/db    2.022s
+ok      clawreef/internal/migrationcoord        1.472s
+ok      clawreef/internal/migrationcatalog      1.047s
+?       clawreef/cmd/system-backup-migrate      [no test files]
+LOCAL_PASS registration-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=d5d994bffb426a5be75073a8fb20457e7557e4485fed6f334c7efb3b4d9db877 ddl_sha256=3d5eeab6f1b4393bfb3f92c57b5ce18d910694ac186c186d06e79b6058141b52
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000002B5C07735B0
+root@10.130.14.23's password:
+bundle.tar                                                                                         100%   33MB  11.3MB/s   00:02
+close - IO is still pending on closed socket. read:1, write:0, io:000002C3E546D7A0
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-260928075523-63e2 uid=f79546bb-6441-49c7-9cf8-bd624f77ccad app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"human_mfa_verified":false,"migration_catalog_sha256":"68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564","migration_count":93,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88 catalog_sha256=68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564
+PASS fresh-migration-replay=001..080 applied=93 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestDProviderRegistrationMySQL
+=== RUN   TestDProviderRegistrationMySQL/concurrent_same_request_has_one_atomic_result
+=== RUN   TestDProviderRegistrationMySQL/body_conflict
+=== RUN   TestDProviderRegistrationMySQL/nonce_replay_with_new_idempotency_key
+=== RUN   TestDProviderRegistrationMySQL/result_audit_failure_rolls_back_every_table
+=== RUN   TestDProviderRegistrationMySQL/permission_revocation_blocks_committed_retry
+=== RUN   TestDProviderRegistrationMySQL/https_registration_replay_conflict_and_revocation
+=== RUN   TestDProviderRegistrationMySQL/totp_persistence_replay_throttle_and_session_revocation
+=== RUN   TestDProviderRegistrationMySQL/https_jwt_mfa_registration_and_config_revocation
+    registration_http_mysql_test.go:319: synthetic HTTPS JWT/MFA/observation/registration chain passed; revoked actor=44; human_mfa=false real_transit=false active_config_updated=false
+=== RUN   TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity
+=== RUN   TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity/result_audit_failure_rolls_back_config_state_and_reservation
+=== RUN   TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity/concurrent_first_requests_commit_once
+=== RUN   TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity/wrong_database_conflict_reinitialization_and_revocation
+=== NAME  TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity
+    config_bootstrap_mysql_test.go:44: CLEANED bootstrap run-owned database
+=== NAME  TestDProviderRegistrationMySQL
+    providerproof_mysql_test.go:96: CLEANED provider-registration run-owned database
+--- PASS: TestDProviderRegistrationMySQL (1.28s)
+    --- PASS: TestDProviderRegistrationMySQL/concurrent_same_request_has_one_atomic_result (0.04s)
+    --- PASS: TestDProviderRegistrationMySQL/body_conflict (0.04s)
+    --- PASS: TestDProviderRegistrationMySQL/nonce_replay_with_new_idempotency_key (0.01s)
+    --- PASS: TestDProviderRegistrationMySQL/result_audit_failure_rolls_back_every_table (0.02s)
+    --- PASS: TestDProviderRegistrationMySQL/permission_revocation_blocks_committed_retry (0.01s)
+    --- PASS: TestDProviderRegistrationMySQL/https_registration_replay_conflict_and_revocation (0.06s)
+    --- PASS: TestDProviderRegistrationMySQL/totp_persistence_replay_throttle_and_session_revocation (0.13s)
+    --- PASS: TestDProviderRegistrationMySQL/https_jwt_mfa_registration_and_config_revocation (0.31s)
+    --- PASS: TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity (0.46s)
+        --- PASS: TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity/result_audit_failure_rolls_back_config_state_and_reservation (0.02s)
+        --- PASS: TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity/concurrent_first_requests_commit_once (0.07s)
+        --- PASS: TestDProviderRegistrationMySQL/first_config_bootstrap_atomicity/wrong_database_conflict_reinitialization_and_revocation (0.07s)
+PASS
+PASS d-provider-registration-mysql binary_sha256=d5d994bffb426a5be75073a8fb20457e7557e4485fed6f334c7efb3b4d9db877 ddl_sha256=3d5eeab6f1b4393bfb3f92c57b5ce18d910694ac186c186d06e79b6058141b52
+CLEANED namespace=sbk-mig-260928075523-63e2 uid=f79546bb-6441-49c7-9cf8-bd624f77ccad
+close - IO is still pending on closed socket. read:1, write:0, io:000002076E3AAB90
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000022244B93560
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+a_review_remote_exit=0

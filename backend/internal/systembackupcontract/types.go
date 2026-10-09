@@ -269,6 +269,18 @@ type ConfigResource struct {
 	CreatedAt            string       `json:"created_at"`
 }
 
+type ConfigResourceList struct {
+	Items       []ConfigResource `json:"items"`
+	NextCursor  *string          `json:"next_cursor"`
+	Consistency string           `json:"consistency"`
+}
+
+type PruneRunResourceList struct {
+	Items       []PruneRunResource `json:"items"`
+	NextCursor  *string            `json:"next_cursor"`
+	Consistency string             `json:"consistency"`
+}
+
 type FailureDomainShortage struct {
 	TargetFailureDomainID        string `json:"target_failure_domain_id"`
 	MinimumRecoveryPoints        int64  `json:"minimum_recovery_points"`

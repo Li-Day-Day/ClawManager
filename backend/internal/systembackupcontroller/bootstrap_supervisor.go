@@ -175,6 +175,14 @@ func (s BootstrapSupervisor) runWithTicks(ctx context.Context, ticks <-chan time
 				Snapshot: failedSnapshot,
 				Err:      bootstrapFailure(BootstrapWorkerExited, workerErr),
 			})
+			// A revoked grant can leave bootstrap reads available while worker
+			// admission fails immediately. Bound retries by the same check cadence
+			// instead of spinning new workers and database probes without a delay.
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-ticks:
+			}
 		case <-ticks:
 		}
 	}

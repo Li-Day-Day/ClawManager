@@ -1,0 +1,173 @@
+{
+  "kind": "system_backup_a_operator_kms_signing_spike_receipt",
+  "source": "operator-provided final CLI output; presentation escapes normalized; not signed evidence",
+  "recorded_at": "2026-09-24T02:36:53.494Z",
+  "remote_exit": 0,
+  "result": {
+    "kind": "a_kms_signing_spike_v1",
+    "status": "passed",
+    "run_id": "a-ks-fb61b8d528bd3b052b5ecbdc",
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "action": "run",
+    "started_at": "2026-09-24T02:31:16.175886+00:00",
+    "finished_at": "2026-09-24T02:35:16.734722+00:00",
+    "failed_stage": "none",
+    "checks_passed": [
+      "kms-roundtrip-v1",
+      "generate-unwrap-denied",
+      "unwrap-generate-denied",
+      "generate-wrong-context-denied",
+      "generate-wrong-bits-denied",
+      "unwrap-unwrap-wrong-context-denied",
+      "capture-metadata-and-sign-v1",
+      "acceptance-metadata-and-sign-v1",
+      "catalog-metadata-and-sign-v1",
+      "capture-wrong-version-denied",
+      "capture-cross-acceptance-record-denied",
+      "capture-cross-catalog-record-denied",
+      "acceptance-wrong-version-denied",
+      "acceptance-cross-capture-certificate-denied",
+      "acceptance-cross-catalog-record-denied",
+      "catalog-wrong-version-denied",
+      "catalog-cross-capture-certificate-denied",
+      "catalog-cross-acceptance-record-denied"
+    ],
+    "observations": [
+      {
+        "role": "generate",
+        "action": "generate",
+        "http_status": 200
+      },
+      {
+        "role": "unwrap",
+        "action": "unwrap",
+        "http_status": 200
+      },
+      {
+        "role": "generate",
+        "action": "unwrap",
+        "http_status": 403
+      },
+      {
+        "role": "unwrap",
+        "action": "generate",
+        "http_status": 403
+      },
+      {
+        "role": "generate",
+        "action": "wrong-context",
+        "http_status": 403
+      },
+      {
+        "role": "generate",
+        "action": "wrong-bits",
+        "http_status": 403
+      },
+      {
+        "role": "unwrap",
+        "action": "unwrap-wrong-context",
+        "http_status": 403
+      },
+      {
+        "role": "capture",
+        "action": "metadata",
+        "http_status": 200
+      },
+      {
+        "role": "capture",
+        "action": "sign",
+        "http_status": 200
+      },
+      {
+        "role": "acceptance",
+        "action": "metadata",
+        "http_status": 200
+      },
+      {
+        "role": "acceptance",
+        "action": "sign",
+        "http_status": 200
+      },
+      {
+        "role": "catalog",
+        "action": "metadata",
+        "http_status": 200
+      },
+      {
+        "role": "catalog",
+        "action": "sign",
+        "http_status": 200
+      },
+      {
+        "role": "capture",
+        "action": "wrong-version",
+        "http_status": 403
+      },
+      {
+        "role": "capture",
+        "action": "sign",
+        "http_status": 403
+      },
+      {
+        "role": "capture",
+        "action": "sign",
+        "http_status": 403
+      },
+      {
+        "role": "acceptance",
+        "action": "wrong-version",
+        "http_status": 403
+      },
+      {
+        "role": "acceptance",
+        "action": "sign",
+        "http_status": 403
+      },
+      {
+        "role": "acceptance",
+        "action": "sign",
+        "http_status": 403
+      },
+      {
+        "role": "catalog",
+        "action": "wrong-version",
+        "http_status": 403
+      },
+      {
+        "role": "catalog",
+        "action": "sign",
+        "http_status": 403
+      },
+      {
+        "role": "catalog",
+        "action": "sign",
+        "http_status": 403
+      }
+    ],
+    "pods_removed": true,
+    "recovery_intent_retained": false,
+    "provider_capability_approved": false,
+    "evidence_registered": false,
+    "production_scoped_grant_verified": false,
+    "token_lifecycle_verified": false,
+    "rotation_history_verified": false,
+    "independent_ed25519_verified": [
+      "capture_certificate",
+      "acceptance_record",
+      "catalog_record"
+    ]
+  },
+  "receipt_validation": {
+    "handoff_identity_matches": true,
+    "expected_checks_match": true,
+    "observation_count": 22,
+    "cleanup_complete_reported": true,
+    "independent_verification_reported_by_operator_cli": true,
+    "cryptographic_verification_repeated_during_archival": false
+  },
+  "validation_limit": "The CLI strips public_proofs after local Node verification. This returned summary cannot independently replay signature verification and is not provider-signed evidence.",
+  "transport_warning": "OpenSSH reported pending IO on closed socket; complete success summary and exit 0 were provided",
+  "registered_evidence": null,
+  "approved_reviewers": []
+}

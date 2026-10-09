@@ -1,0 +1,77 @@
+{
+  "kind": "d_real_admission_local_validation_v1",
+  "recorded_at": "2026-09-28T08:24:43.796Z",
+  "scope": "Admission orchestration and public input intake only; concrete resource adapters and deployment caller remain absent",
+  "validation": {
+    "security_package_and_default_vet": "PASS",
+    "security_package_seconds": 3.404,
+    "registration_command_compile": "PASS",
+    "linux_amd64_registration_build": "PASS",
+    "runner_exit": 0,
+    "public_input_tests": {
+      "passed": 7,
+      "failed": 0,
+      "exit": 0
+    },
+    "public_input_cli_exit": 2,
+    "public_input_status": "BLOCKED",
+    "gofmt": "PASS",
+    "diff_whitespace": "PASS",
+    "dependencies_installed": false,
+    "temporary_build_artifacts_cleaned": true,
+    "temporary_input_test_artifacts_cleaned": true
+  },
+  "limitations": [
+    "Synthetic adapter/fault-driver tests do not prove provider semantics or real MySQL concurrency",
+    "Node test worker spawning was denied by the sandbox; direct node execution passed all seven tests",
+    "No Docker image build or remote SSH/deployment was executed"
+  ],
+  "source_bindings": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_grant.go",
+      "sha256": "b9b301e525825eb6230c89d68d736df36a7c138eb37129d6f5ad8991c03fc014"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission_test.go",
+      "sha256": "7070b93d93de17d44f7168d71ed10b889bd784e771a1c2c43c005843dc897c6d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_files.go",
+      "sha256": "6597f252283569df33a5e1738a43088f2342881e8c469c0d7fadb15b4efb23f5"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/main.go",
+      "sha256": "494b4b92197e6c87857d8a8b64fea2cc8c8f0f21e604f6e7de9799f4177b3f3c"
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "2593624a893064109bc6fcf047e19c77bdec3005c0ad4a2210b89d4230e2761c"
+    },
+    {
+      "path": "backend/deployments/docker/Dockerfile",
+      "sha256": "443c21f6f20f852ad5ef5613b1bad28b6093264d33eac791018d6fb08456178f"
+    },
+    {
+      "path": "scripts/system-backup-d-activation-inputs.mjs",
+      "sha256": "ab93f658b9bec3a47f70f4bb6d523d93801236adc1b22f43423acb023ad89a10"
+    },
+    {
+      "path": "scripts/system-backup-d-activation-inputs.test.mjs",
+      "sha256": "975976fcfc6b348f1700fcacd33d456c7d2c8b59a0a75ee5cf9aabf355576109"
+    }
+  ],
+  "input_report": {
+    "path": "docs/evidence/system-backup-d-activation-inputs-20260928.json",
+    "sha256": "b8e7fc2e042cd59eca404e11b2102c970bb05b9e46e83574d9e20d67ff5064d0"
+  },
+  "state": {
+    "full_production_admission_complete": false,
+    "http_service_deployed": false,
+    "human_mfa_verified": false,
+    "active_config_updated": false
+  }
+}

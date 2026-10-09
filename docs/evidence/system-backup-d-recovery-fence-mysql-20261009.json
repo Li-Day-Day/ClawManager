@@ -1,0 +1,52 @@
+{
+  "kind": "system_backup_d_recovery_fence_mysql_handoff",
+  "date": "2026-10-09",
+  "source": "user_pasted_console_output",
+  "raw_log_in_repository": false,
+  "profile": "ProducerRecoveryOnly/D",
+  "result": "PASS",
+  "mysql_version": "8.4.8",
+  "namespace": "sbk-mig-261009064842-1ad7",
+  "namespace_uid": "d2673791-2c1c-4247-9046-d5ef28e87784",
+  "binary_sha256": "a8e9842e598e6e7306984845e28e6ce0c43568e013a17a53075ff5fafa1a872b",
+  "ddl_sha256": "97abacd3f045046d01cb74211362a9a6aeada8c724c16958b48178517d5c8ff8",
+  "migration_runner_sha256": "0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea",
+  "migration_catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+  "fresh_migration_replay": "PASS 001..080 applied=94 exact_filenames=yes",
+  "suites": {
+    "TestDRecoveryFenceMySQL": {
+      "result": "PASS",
+      "cases": [
+        "register_rotate_rekey_and_revoke",
+        "concurrent_rotate_single_winner",
+        "rollback_audit_guard_and_second_insert",
+        "commit_ack_loss_never_returns_row"
+      ]
+    },
+    "TestDHistoricalRecoveryMySQL": {
+      "result": "PASS",
+      "cases": [
+        "claim_revocation_and_evidence_only_finish",
+        "commit_ack_loss_has_no_claim"
+      ]
+    }
+  },
+  "cleanup": {
+    "run_owned_databases": 6,
+    "namespace": "CLEANED",
+    "remote_registration_scratch": "CLEANED",
+    "local_registration_build_cache": "CLEANED",
+    "cleanup_pending_reported": false
+  },
+  "local_validation": {
+    "initial_vet_windows_process_exit": "0xc0000043",
+    "same_command_retry": "PASS",
+    "seed": "PASS",
+    "linux_probe_build": "PASS"
+  },
+  "notes": [
+    "SSH closed-socket messages appeared around password prompts; both suites and cleanup markers were subsequently reported PASS.",
+    "The pasted output contains no explicit final shell exit code.",
+    "The management authority, audit capacity, and C Stat proof used in this D-only SQL suite are test substitutes; this is not production A/C approval."
+  ]
+}

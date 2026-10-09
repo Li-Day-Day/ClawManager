@@ -43,7 +43,10 @@ func applyEmbeddedMigrations(session db.Session) (returnErr error) {
 	if !ok || rawDB == nil {
 		return fmt.Errorf("database migration driver is not *sql.DB")
 	}
-	ctx := context.Background()
+	return applyEmbeddedMigrationsSQL(context.Background(), rawDB, nil)
+}
+
+func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *MigrationTarget) (returnErr error) {
 	guard, err := (migrationcoord.SQLLocker{DB: rawDB}).AcquireSQL(ctx)
 	if err != nil {
 		return fmt.Errorf("acquire application migration exclusion: %w", err)
@@ -55,9 +58,21 @@ func applyEmbeddedMigrations(session db.Session) (returnErr error) {
 			returnErr = fmt.Errorf("release application migration exclusion: %w", err)
 		}
 	}()
+	if target != nil {
+		if err := verifyMigrationTarget(ctx, guard, *target); err != nil {
+			return err
+		}
+	}
 
-	if err := ensureSchemaMigrationsTable(ctx, guard); err != nil {
-		return err
+	if target != nil && target.HistoryReview != nil {
+		exists, err := migrationTableExists(ctx, guard, schemaMigrationsTable)
+		if err != nil || !exists {
+			return errors.New("reviewed installation migration ledger is missing or unreadable")
+		}
+	} else {
+		if err := ensureSchemaMigrationsTable(ctx, guard); err != nil {
+			return err
+		}
 	}
 
 	applied, err := listAppliedMigrations(ctx, guard)
@@ -68,6 +83,21 @@ func applyEmbeddedMigrations(session db.Session) (returnErr error) {
 	entries, err := embeddedMigrations.ReadDir("migrations")
 	if err != nil {
 		return fmt.Errorf("failed to list embedded migrations: %w", err)
+	}
+	if target != nil && target.HistoryReview != nil {
+		if err := target.HistoryReview.verifyLedger(applied); err != nil {
+			return err
+		}
+	} else if target != nil {
+		known := make(map[string]bool, len(entries))
+		for _, entry := range entries {
+			known[entry.Name()] = true
+		}
+		for name := range applied {
+			if !known[name] {
+				return errors.New("target migration ledger contains unknown migration")
+			}
+		}
 	}
 	sort.Slice(entries, func(i, j int) bool {
 		return entries[i].Name() < entries[j].Name()
@@ -87,6 +117,12 @@ func applyEmbeddedMigrations(session db.Session) (returnErr error) {
 		if _, gateSchemaApplied := applied[captureGateMigration]; gateSchemaApplied {
 			if err := assertCaptureGateIdle(ctx, guard); err != nil {
 				return fmt.Errorf("migration %s blocked by system backup capture gate: %w", entry.Name(), err)
+			}
+		}
+
+		if entry.Name() == "063_unique_usernames.sql" {
+			if err := checkUniqueUsernames(ctx, guard); err != nil {
+				return fmt.Errorf("cannot apply migration %s: %w", entry.Name(), err)
 			}
 		}
 
@@ -114,6 +150,38 @@ func applyEmbeddedMigrations(session db.Session) (returnErr error) {
 		log.Printf("Applied database migration %s", entry.Name())
 	}
 
+	return nil
+}
+
+// Group and join using the database collation, exactly as the unique index does.
+// Include each conflicting row separately so long groups cannot be truncated.
+func checkUniqueUsernames(ctx context.Context, executor migrationSQL) error {
+	rows, err := executor.QueryContext(ctx, `
+		SELECT u.username, u.id, u.auth_provider
+		FROM users AS u
+		JOIN (SELECT username FROM users GROUP BY username HAVING COUNT(*) > 1) AS duplicates
+		  ON duplicates.username = u.username
+		ORDER BY u.username, u.id
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to check duplicate usernames: %w", err)
+	}
+	defer rows.Close()
+	var conflicts []string
+	for rows.Next() {
+		var username, provider string
+		var id int
+		if err := rows.Scan(&username, &id, &provider); err != nil {
+			return fmt.Errorf("failed to read duplicate username: %w", err)
+		}
+		conflicts = append(conflicts, fmt.Sprintf("username=%q id=%d auth_provider=%q", username, id, provider))
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("failed to read duplicate usernames: %w", err)
+	}
+	if len(conflicts) > 0 {
+		return fmt.Errorf("duplicate usernames must be resolved by an administrator before retrying the upgrade: %s", strings.Join(conflicts, "; "))
+	}
 	return nil
 }
 

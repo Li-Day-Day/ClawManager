@@ -1,0 +1,163 @@
+=== RUN   TestEnvelopeChunkRangesAndTampering
+--- PASS: TestEnvelopeChunkRangesAndTampering (0.08s)
+=== RUN   TestPrepareRejectsDriftSizeAndRedaction
+--- PASS: TestPrepareRejectsDriftSizeAndRedaction (0.00s)
+=== RUN   TestPublishUnknownAndRetentionGC
+--- PASS: TestPublishUnknownAndRetentionGC (0.05s)
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/success
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/denied
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/late-revoke
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/tamper
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/audit-failure
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/multi-range
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/duplicate-range
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/oversize
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/forwarded-http
+--- PASS: TestDownloadAuthAuditRangeAndNoPartialBody (0.23s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/success (0.04s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/denied (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/late-revoke (0.04s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/tamper (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/audit-failure (0.03s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/multi-range (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/duplicate-range (0.03s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/oversize (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/forwarded-http (0.02s)
+=== RUN   TestRetentionSnapshotAndLogSeparation
+--- PASS: TestRetentionSnapshotAndLogSeparation (0.00s)
+=== RUN   TestRangeAndKeyBoundaries
+--- PASS: TestRangeAndKeyBoundaries (0.00s)
+=== RUN   TestS3EvidenceLifecycle
+--- PASS: TestS3EvidenceLifecycle (0.24s)
+=== RUN   TestS3EvidenceResponseRejection
+=== RUN   TestS3EvidenceResponseRejection/stat-wrong-version
+=== RUN   TestS3EvidenceResponseRejection/stat-duplicate-version
+=== RUN   TestS3EvidenceResponseRejection/stat-etag-only
+=== RUN   TestS3EvidenceResponseRejection/stat-composite
+=== RUN   TestS3EvidenceResponseRejection/stat-delete-marker
+=== RUN   TestS3EvidenceResponseRejection/stat-duplicate-marker
+=== RUN   TestS3EvidenceResponseRejection/stat-invalid-marker
+=== RUN   TestS3EvidenceResponseRejection/stat-redirect
+=== RUN   TestS3EvidenceResponseRejection/stat-denied
+=== RUN   TestS3EvidenceResponseRejection/stat-not-found
+=== RUN   TestS3EvidenceResponseRejection/stat-encoding
+=== RUN   TestS3EvidenceResponseRejection/range-wrong-version
+=== RUN   TestS3EvidenceResponseRejection/range-duplicate-version
+=== RUN   TestS3EvidenceResponseRejection/range-wrong-range
+=== RUN   TestS3EvidenceResponseRejection/range-full-body
+=== RUN   TestS3EvidenceResponseRejection/range-short-body
+=== RUN   TestS3EvidenceResponseRejection/range-encoding
+=== RUN   TestS3EvidenceResponseRejection/put-wrong-checksum
+=== RUN   TestS3EvidenceResponseRejection/put-duplicate-version
+=== RUN   TestS3EvidenceResponseRejection/put-etag-only
+=== RUN   TestS3EvidenceResponseRejection/put-composite
+=== RUN   TestS3EvidenceResponseRejection/put-redirect
+--- PASS: TestS3EvidenceResponseRejection (0.35s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-wrong-version (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-duplicate-version (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-etag-only (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-composite (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-delete-marker (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-duplicate-marker (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-invalid-marker (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-redirect (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-denied (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-not-found (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-encoding (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/range-wrong-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-duplicate-version (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/range-wrong-range (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-full-body (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/range-short-body (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/range-encoding (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-wrong-checksum (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-duplicate-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-etag-only (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-composite (0.02s)
+    --- PASS: TestS3EvidenceResponseRejection/put-redirect (0.01s)
+=== RUN   TestS3EvidenceScopeAndBodyBinding
+=== RUN   TestS3EvidenceScopeAndBodyBinding/expired-grant
+=== RUN   TestS3EvidenceScopeAndBodyBinding/wrong-grant
+=== RUN   TestS3EvidenceScopeAndBodyBinding/resolver-failure
+=== RUN   TestS3EvidenceScopeAndBodyBinding/static-grant
+--- PASS: TestS3EvidenceScopeAndBodyBinding (0.06s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/expired-grant (0.00s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/wrong-grant (0.00s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/resolver-failure (0.00s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/static-grant (0.00s)
+=== RUN   TestS3EvidenceAbsenceProofBinding
+=== RUN   TestS3EvidenceAbsenceProofBinding/wrong-key
+=== RUN   TestS3EvidenceAbsenceProofBinding/wrong-version
+=== RUN   TestS3EvidenceAbsenceProofBinding/wrong-challenge
+=== RUN   TestS3EvidenceAbsenceProofBinding/stale
+=== RUN   TestS3EvidenceAbsenceProofBinding/future
+=== RUN   TestS3EvidenceAbsenceProofBinding/expired
+=== RUN   TestS3EvidenceAbsenceProofBinding/long-lived
+=== RUN   TestS3EvidenceAbsenceProofBinding/verifier-error
+--- PASS: TestS3EvidenceAbsenceProofBinding (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/wrong-key (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/wrong-version (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/wrong-challenge (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/stale (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/future (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/expired (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/long-lived (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/verifier-error (0.00s)
+=== RUN   TestS3EvidenceDeleteAndRangeLimits
+--- PASS: TestS3EvidenceDeleteAndRangeLimits (0.01s)
+=== RUN   TestS3EvidenceTLSAndConfiguration
+2026/09/29 09:08:07 http: TLS handshake error from 127.0.0.1:50919: remote error: tls: bad certificate
+2026/09/29 09:08:07 http: TLS handshake error from 127.0.0.1:50920: remote error: tls: bad certificate
+--- PASS: TestS3EvidenceTLSAndConfiguration (0.49s)
+=== RUN   TestTransitEvidenceEnvelopeRoundTrip
+--- PASS: TestTransitEvidenceEnvelopeRoundTrip (0.07s)
+=== RUN   TestTransitEvidenceFailuresAreClosed
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-version
+=== RUN   TestTransitEvidenceFailuresAreClosed/mismatched-version-field
+=== RUN   TestTransitEvidenceFailuresAreClosed/provider-denied
+=== RUN   TestTransitEvidenceFailuresAreClosed/redirect
+=== RUN   TestTransitEvidenceFailuresAreClosed/oversize
+=== RUN   TestTransitEvidenceFailuresAreClosed/encoded-response
+=== RUN   TestTransitEvidenceFailuresAreClosed/duplicate-data
+=== RUN   TestTransitEvidenceFailuresAreClosed/duplicate-field
+=== RUN   TestTransitEvidenceFailuresAreClosed/trailing-json
+=== RUN   TestTransitEvidenceFailuresAreClosed/errors-with-200
+=== RUN   TestTransitEvidenceFailuresAreClosed/response-wrapping
+=== RUN   TestTransitEvidenceFailuresAreClosed/expired-grant
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-installation
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-key
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-operation
+=== RUN   TestTransitEvidenceFailuresAreClosed/invalid-token
+=== RUN   TestTransitEvidenceFailuresAreClosed/resolver-error
+=== RUN   TestTransitEvidenceFailuresAreClosed/grant-expires-during-read
+--- PASS: TestTransitEvidenceFailuresAreClosed (0.27s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-version (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/mismatched-version-field (0.02s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/provider-denied (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/redirect (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/oversize (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/encoded-response (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/duplicate-data (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/duplicate-field (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/trailing-json (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/errors-with-200 (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/response-wrapping (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/expired-grant (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-installation (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-key (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-operation (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/invalid-token (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/resolver-error (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/grant-expires-during-read (0.11s)
+=== RUN   TestTransitEvidenceRejectsWrongUnwrapAndRefs
+--- PASS: TestTransitEvidenceRejectsWrongUnwrapAndRefs (0.01s)
+=== RUN   TestTransitEvidenceTLSPinningAndConfiguration
+2026/09/29 09:08:08 http: TLS handshake error from 127.0.0.1:50978: remote error: tls: bad certificate
+2026/09/29 09:08:08 http: TLS handshake error from 127.0.0.1:50979: remote error: tls: bad certificate
+--- PASS: TestTransitEvidenceTLSPinningAndConfiguration (0.03s)
+PASS
+ok  	clawreef/internal/systembackupevidence	3.328s
+LOCAL_PASS evidence-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=046d6677d823c454b1df81e330964d3789743feb164c9e524a3964beca4d660a ddl_sha256=c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88
+CLEANED local-registration-build-cache=True

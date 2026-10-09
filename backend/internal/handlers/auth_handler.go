@@ -12,8 +12,13 @@ import (
 
 // AuthHandler handles authentication-related requests
 type AuthHandler struct {
-	authService       services.AuthService
-	desktopLogoutHook func(context.Context, int) error
+	authService            services.AuthService
+	desktopLogoutHook      func(context.Context, int) error
+	systemBackupLogoutHook func(context.Context, int) error
+}
+
+func (h *AuthHandler) SetSystemBackupLogoutHook(hook func(context.Context, int) error) {
+	h.systemBackupLogoutHook = hook
 }
 
 func (h *AuthHandler) SetDesktopLogoutHook(hook func(context.Context, int) error) {
@@ -101,6 +106,12 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 
 // Logout handles user logout
 func (h *AuthHandler) Logout(c *gin.Context) {
+	if h.systemBackupLogoutHook != nil {
+		if err := h.systemBackupLogoutHook(c.Request.Context(), c.GetInt("userID")); err != nil {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"success": false, "error": "system_backup_session_revocation_unavailable"})
+			return
+		}
+	}
 	if h.desktopLogoutHook != nil {
 		if err := h.desktopLogoutHook(c.Request.Context(), c.GetInt("userID")); err != nil {
 			c.JSON(http.StatusServiceUnavailable, gin.H{"success": false, "error": "desktop_session_revocation_unavailable"})

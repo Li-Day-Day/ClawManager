@@ -1,0 +1,24 @@
+{
+  "kind": "a_d_producer_service_remote_failure",
+  "status": "failed_acquire_scope_mismatch",
+  "namespace": "sbk-mig-261008040523-2a2d",
+  "namespace_uid": "a0582c64-d26b-4753-bf45-bf184bfd8225",
+  "pasted_output": {
+    "path": "docs/evidence/a-d-producer-service-remote-20261008-115821-pasted.txt",
+    "sha256": "e3c516c2bebae06deb1692619b17b6afa889667bf59bd76f43d7738b88f5da04"
+  },
+  "transcript": {
+    "path": "docs/evidence/a-d-producer-service-remote-20261008-115821.txt",
+    "complete_native_output": false
+  },
+  "test_subcases_failed": 22,
+  "run_owned_databases_cleaned": 22,
+  "exit_code": 1,
+  "namespace_cleaned": true,
+  "remote_scratch_cleaned": true,
+  "local_build_cache_cleaned": true,
+  "outer_build_cache_cleaned": true,
+  "root_cause": "Fixture retained contract-vector server UUID and database; Transactions.Run rejected the actual run-owned MySQL database identity before Acquire work.",
+  "production_guard_changed": false,
+  "fixed_remote_validation": "pending"
+}

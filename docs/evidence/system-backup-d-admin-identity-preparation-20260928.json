@@ -1,0 +1,33 @@
+{
+  "schema_version": "d-admin-identity-preparation.v1",
+  "recorded_date": "2026-09-28",
+  "requested_username": "admin",
+  "requested_auth_provider": "local",
+  "authorization": "Operator accepted resolving admin as the candidate account; no assumed numeric ID.",
+  "validation": {
+    "node_tests_passed": 13,
+    "python_tests_passed": 5,
+    "remote_admin_identity": "NOT_RUN",
+    "rbac_candidate_generated": false,
+    "config_activated": false,
+    "http_accepted": false
+  },
+  "remote_access": {
+    "attempt": "read-only native OpenSSH BatchMode connectivity check",
+    "result": "Permission denied (publickey,password)",
+    "password_requested_in_chat": false
+  },
+  "cleanup": {
+    "dependencies_installed": false,
+    "test_build_artifacts_created": false,
+    "python_bytecode_created": false
+  },
+  "scope": "Read-only account/config inventory and local candidate RBAC generation only; current DB role/session authorization remains mandatory.",
+  "source_hash_encoding": "UTF-8 normalized LF with one trailing newline",
+  "source_sha256": {
+    "scripts/system-backup-d-admin-identity.mjs": "2415decad75ab973061152c047a3e08abf59a62539be32831cddd5efc62cef60",
+    "scripts/system-backup-d-admin-identity.py": "56c1f4999444519754c645e999371c27260f966dc34679b8ecd3ff31a296ed57",
+    "scripts/system-backup-d-admin-identity.test.mjs": "c54c62e945c88f004a66bb273baf90a8d8a6eeadc447fedbd82e4f615669e973",
+    "scripts/system-backup-d-admin-identity_test.py": "7661b1d45079cb837f154516f0071f35d10de24a2d212c0ddbc7ec8fb19a30c4"
+  }
+}

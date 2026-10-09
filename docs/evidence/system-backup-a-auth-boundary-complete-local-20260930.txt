@@ -1,0 +1,243 @@
+**********************
+PowerShell transcript start
+Start time: 20260930121915
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$aBoundaryLog=Join-Path (Get-Location) 'docs/evidence/system-backup-a-auth-boundary-complete-local-20260930.txt'
+Start-Transcript -LiteralPath $aBoundaryLog -NoClobber | Out-Null
+try {
+    & ./scripts/system-backup-a-auth-boundary-validation.ps1 -BuildParallelism 2
+    if(-not $?){throw 'Auth boundary validation failed'}
+} finally { Stop-Transcript | Out-Null }
+Process ID: 33808
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+OWNED_SCRATCH C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-9cf2adafca61439d85bf09da6e4db142
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE auth-source-only=yes full-services-package=no full-server-build=no http-handler=no live-ldap=no real-mysql=no
+go: downloading github.com/klauspost/compress v1.18.0
+..\..\..\..\go\pkg\mod\github.com\minio\minio-go\v7@v7.0.85\api-putobject-snowball.go:33:2: open C:\Users\zhanghui08\go\pkg\mod\cache\download\github.com\klauspost\compress\@v\v1.18.0.lock: Access is denied.
+github.com/klauspost/compress/s2
+github.com/minio/minio-go/v7
+clawreef/internal/services
+clawreef/internal/aigateway
+clawreef/internal/northbound
+clawreef/internal/teamtemplate
+clawreef/internal/handlers
+clawreef/cmd/server
+FULL_PACKAGE_DEPENDENCY_PREFLIGHT exit=1
+=== RUN   TestLoginEnterpriseRejectsUnprovisionedLDAPUser
+--- PASS: TestLoginEnterpriseRejectsUnprovisionedLDAPUser (0.00s)
+=== RUN   TestLoginEnterpriseAllowsProvisionedLDAPUser
+--- PASS: TestLoginEnterpriseAllowsProvisionedLDAPUser (0.00s)
+=== RUN   TestLoginEnterpriseRejectsDisabledProvisionedLDAPUser
+--- PASS: TestLoginEnterpriseRejectsDisabledProvisionedLDAPUser (0.00s)
+=== RUN   TestLoginEnterpriseRejectsExternalIdentityConflict
+--- PASS: TestLoginEnterpriseRejectsExternalIdentityConflict (0.00s)
+=== RUN   TestLoginEnterpriseSyncsRoleWhenEnabled
+--- PASS: TestLoginEnterpriseSyncsRoleWhenEnabled (0.00s)
+=== RUN   TestLocalLoginDoesNotRequireLDAPAvailability
+--- PASS: TestLocalLoginDoesNotRequireLDAPAvailability (0.23s)
+=== RUN   TestLocalLoginIgnoresEnterpriseFallbackPolicy
+--- PASS: TestLocalLoginIgnoresEnterpriseFallbackPolicy (0.21s)
+=== RUN   TestLocalLoginDoesNotRequireLDAPUser
+--- PASS: TestLocalLoginDoesNotRequireLDAPUser (0.20s)
+=== RUN   TestLocalLoginUsesAccountProvider
+--- PASS: TestLocalLoginUsesAccountProvider (0.20s)
+=== RUN   TestChangePasswordRejectsLDAPUser
+--- PASS: TestChangePasswordRejectsLDAPUser (0.00s)
+=== RUN   TestDeleteUserHardDeletesLDAPUser
+--- PASS: TestDeleteUserHardDeletesLDAPUser (0.00s)
+=== RUN   TestUpdateUserCanDisableAndRestoreLDAPUser
+--- PASS: TestUpdateUserCanDisableAndRestoreLDAPUser (0.00s)
+=== RUN   TestDeleteUserHardDeletesLocalUser
+--- PASS: TestDeleteUserHardDeletesLocalUser (0.11s)
+=== RUN   TestAuthSessionLoginAndRefreshCallback
+--- PASS: TestAuthSessionLoginAndRefreshCallback (0.29s)
+=== RUN   TestAuthSessionRejectsBeforeReturningTokens
+=== RUN   TestAuthSessionRejectsBeforeReturningTokens/system_backup_session_rejected
+=== RUN   TestAuthSessionRejectsBeforeReturningTokens/PRIVATE_SQL_PASSWORD_AND_TOKEN
+--- PASS: TestAuthSessionRejectsBeforeReturningTokens (1.03s)
+    --- PASS: TestAuthSessionRejectsBeforeReturningTokens/system_backup_session_rejected (0.67s)
+    --- PASS: TestAuthSessionRejectsBeforeReturningTokens/PRIVATE_SQL_PASSWORD_AND_TOKEN (0.36s)
+=== RUN   TestAuthSessionLoginCannotRestoreStaleUser
+=== RUN   TestAuthSessionLoginCannotRestoreStaleUser/password
+=== RUN   TestAuthSessionLoginCannotRestoreStaleUser/disabled
+=== RUN   TestAuthSessionLoginCannotRestoreStaleUser/role
+=== RUN   TestAuthSessionLoginCannotRestoreStaleUser/external_identity
+--- PASS: TestAuthSessionLoginCannotRestoreStaleUser (0.83s)
+    --- PASS: TestAuthSessionLoginCannotRestoreStaleUser/password (0.23s)
+    --- PASS: TestAuthSessionLoginCannotRestoreStaleUser/disabled (0.20s)
+    --- PASS: TestAuthSessionLoginCannotRestoreStaleUser/role (0.21s)
+    --- PASS: TestAuthSessionLoginCannotRestoreStaleUser/external_identity (0.18s)
+=== RUN   TestAuthSessionRequiresNarrowRepository
+--- PASS: TestAuthSessionRequiresNarrowRepository (0.18s)
+=== RUN   TestAuthSessionLDAPUsesVerifiedIdentity
+--- PASS: TestAuthSessionLDAPUsesVerifiedIdentity (0.09s)
+=== RUN   TestAuthSessionLDAPLegacyAliasCannotIssueTokens
+--- PASS: TestAuthSessionLDAPLegacyAliasCannotIssueTokens (0.00s)
+=== RUN   TestAuthSessionLocalPrefixedUsernameKeepsLocalProvider
+--- PASS: TestAuthSessionLocalPrefixedUsernameKeepsLocalProvider (0.18s)
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/bad_password
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/unavailable
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/missing_user
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/nil_identity
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/different_identity
+=== RUN   TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/empty_identity
+--- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/bad_password (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/unavailable (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/missing_user (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/nil_identity (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/different_identity (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsDirectoryFailuresBeforeIssuance/empty_identity (0.00s)
+=== RUN   TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory
+=== RUN   TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/disabled
+=== RUN   TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/missing_identity
+=== RUN   TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/blank_identity
+=== RUN   TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/unprovisioned
+=== RUN   TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/missing_adapter
+--- PASS: TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/disabled (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/missing_identity (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/blank_identity (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/unprovisioned (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsInvalidLocalBindingBeforeDirectory/missing_adapter (0.00s)
+=== RUN   TestAuthSessionLDAPRejectsChangedSnapshot
+=== RUN   TestAuthSessionLDAPRejectsChangedSnapshot/disabled
+=== RUN   TestAuthSessionLDAPRejectsChangedSnapshot/role
+=== RUN   TestAuthSessionLDAPRejectsChangedSnapshot/identity
+=== RUN   TestAuthSessionLDAPRejectsChangedSnapshot/provider
+=== RUN   TestAuthSessionLDAPRejectsChangedSnapshot/credential
+--- PASS: TestAuthSessionLDAPRejectsChangedSnapshot (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsChangedSnapshot/disabled (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsChangedSnapshot/role (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsChangedSnapshot/identity (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsChangedSnapshot/provider (0.00s)
+    --- PASS: TestAuthSessionLDAPRejectsChangedSnapshot/credential (0.00s)
+=== RUN   TestAuthSessionLDAPRecorderFailureHidesTokens
+=== RUN   TestAuthSessionLDAPRecorderFailureHidesTokens/login/unavailable
+=== RUN   TestAuthSessionLDAPRecorderFailureHidesTokens/login/rejected
+=== RUN   TestAuthSessionLDAPRecorderFailureHidesTokens/refresh/unavailable
+=== RUN   TestAuthSessionLDAPRecorderFailureHidesTokens/refresh/rejected
+--- PASS: TestAuthSessionLDAPRecorderFailureHidesTokens (0.00s)
+    --- PASS: TestAuthSessionLDAPRecorderFailureHidesTokens/login/unavailable (0.00s)
+    --- PASS: TestAuthSessionLDAPRecorderFailureHidesTokens/login/rejected (0.00s)
+    --- PASS: TestAuthSessionLDAPRecorderFailureHidesTokens/refresh/unavailable (0.00s)
+    --- PASS: TestAuthSessionLDAPRecorderFailureHidesTokens/refresh/rejected (0.00s)
+=== RUN   TestAuthSessionLDAPRoleSyncPrecedesRecorder
+=== RUN   TestAuthSessionLDAPRoleSyncPrecedesRecorder/admin
+=== RUN   TestAuthSessionLDAPRoleSyncPrecedesRecorder/user
+--- PASS: TestAuthSessionLDAPRoleSyncPrecedesRecorder (0.00s)
+    --- PASS: TestAuthSessionLDAPRoleSyncPrecedesRecorder/admin (0.00s)
+    --- PASS: TestAuthSessionLDAPRoleSyncPrecedesRecorder/user (0.00s)
+=== RUN   TestUsernameLoginUsesStoredDNAndIgnoresLegacyAlias
+--- PASS: TestUsernameLoginUsesStoredDNAndIgnoresLegacyAlias (0.00s)
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/wrong_password
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/unavailable
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/disabled
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/missing_DN
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/empty_DN
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/missing_authenticator
+=== RUN   TestLDAPLoginFailuresDoNotUseLocalPassword/nil_identity
+--- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword (0.12s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/wrong_password (0.00s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/unavailable (0.00s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/disabled (0.00s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/missing_DN (0.00s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/empty_DN (0.00s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/missing_authenticator (0.00s)
+    --- PASS: TestLDAPLoginFailuresDoNotUseLocalPassword/nil_identity (0.00s)
+=== RUN   TestUsernamePrefixDoesNotSelectProvider
+=== RUN   TestUsernamePrefixDoesNotSelectProvider/local
+=== RUN   TestUsernamePrefixDoesNotSelectProvider/ldap
+--- PASS: TestUsernamePrefixDoesNotSelectProvider (0.38s)
+    --- PASS: TestUsernamePrefixDoesNotSelectProvider/local (0.27s)
+    --- PASS: TestUsernamePrefixDoesNotSelectProvider/ldap (0.11s)
+=== RUN   TestDefaultQuotaForRoleUsesExpectedValues
+--- PASS: TestDefaultQuotaForRoleUsesExpectedValues (0.00s)
+=== RUN   TestSyncDefaultQuotaForRoleUpgradesOnlyOrdinaryDefaults
+--- PASS: TestSyncDefaultQuotaForRoleUpgradesOnlyOrdinaryDefaults (0.00s)
+=== RUN   TestCreateUserUsesRoleSpecificDefaultQuota
+--- PASS: TestCreateUserUsesRoleSpecificDefaultQuota (0.23s)
+=== RUN   TestUpdateUserRoleUpgradesOrdinaryQuota
+--- PASS: TestUpdateUserRoleUpgradesOrdinaryQuota (0.00s)
+PASS
+ok  	command-line-arguments	5.653s
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig/host_required
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig/base_dn_required
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig/tls_modes_are_exclusive
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig/user_filter_placeholder_required
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig/group_filter_placeholder_required
+=== RUN   TestNewLDAPAuthenticatorValidatesRequiredConfig/ca_file_requires_tls_mode
+--- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig (0.00s)
+    --- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig/host_required (0.00s)
+    --- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig/base_dn_required (0.00s)
+    --- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig/tls_modes_are_exclusive (0.00s)
+    --- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig/user_filter_placeholder_required (0.00s)
+    --- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig/group_filter_placeholder_required (0.00s)
+    --- PASS: TestNewLDAPAuthenticatorValidatesRequiredConfig/ca_file_requires_tls_mode (0.00s)
+=== RUN   TestNewLDAPAuthenticatorAcceptsValidConfig
+--- PASS: TestNewLDAPAuthenticatorAcceptsValidConfig (0.00s)
+=== RUN   TestUniqueLDAPAttributesTrimsAndDeduplicates
+--- PASS: TestUniqueLDAPAttributesTrimsAndDeduplicates (0.00s)
+=== RUN   TestLDAPDirectoryFilterUsesWildcardForConfiguredPlaceholder
+--- PASS: TestLDAPDirectoryFilterUsesWildcardForConfiguredPlaceholder (0.00s)
+=== RUN   TestLDAPDirectoryFilterUsesEscapedContainsQuery
+--- PASS: TestLDAPDirectoryFilterUsesEscapedContainsQuery (0.00s)
+=== RUN   TestLDAPSearchLimit
+--- PASS: TestLDAPSearchLimit (0.00s)
+=== RUN   TestLDAPSimpleMemberAttribute
+--- PASS: TestLDAPSimpleMemberAttribute (0.00s)
+=== RUN   TestLDAPRoleForDNUsePrefetchedAdminMembers
+--- PASS: TestLDAPRoleForDNUsePrefetchedAdminMembers (0.00s)
+=== RUN   TestLDAPDiagnosticsStatusDisabledSkipsChecks
+--- PASS: TestLDAPDiagnosticsStatusDisabledSkipsChecks (0.00s)
+=== RUN   TestLDAPDiagnosticsStatusReportsConfigError
+--- PASS: TestLDAPDiagnosticsStatusReportsConfigError (0.00s)
+=== RUN   TestLDAPDiagnosticsStatusIncludesDetails
+--- PASS: TestLDAPDiagnosticsStatusIncludesDetails (0.00s)
+PASS
+ok  	command-line-arguments	1.841s
+=== RUN   TestGeneratedTokensHaveUniqueSessionIDs
+--- PASS: TestGeneratedTokensHaveUniqueSessionIDs (0.02s)
+=== RUN   TestBackupSessionHTTPFailures
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+2026/09/30 12:24:09 [ERROR] system_backup_session_unavailable
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+2026/09/30 12:24:09 [ERROR] system_backup_session_rejected
+--- PASS: TestBackupSessionHTTPFailures (0.27s)
+=== RUN   TestFormatOpenClawSessionKey
+--- PASS: TestFormatOpenClawSessionKey (0.00s)
+=== RUN   TestNormalizeOpenClawSessionID
+--- PASS: TestNormalizeOpenClawSessionID (0.00s)
+=== RUN   TestIsTraceFallbackSessionID
+--- PASS: TestIsTraceFallbackSessionID (0.00s)
+PASS
+ok  	clawreef/internal/utils	2.787s
+PASS a-auth-boundary-source-only full-http-and-directory-events=not-verified
+CLEANED auth-boundary-build-cache=True
+**********************
+PowerShell transcript end
+End time: 20260930122419
+**********************

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "kind": "d_history_cli_operator_asm_failure",
+  "recorded_at_utc": "2026-09-30T03:07:18.7412528Z",
+  "source": "operator_supplied_conversation_build_output",
+  "observed_markers": [
+    "D_PROBE_VET serial=true",
+    "D_PROBE_BUILD linux-integration=true",
+    "CLEANED local-probe-build-cache=True"
+  ],
+  "package": "internal/cpu",
+  "tool": "C:/Program Files/Go/pkg/tool/windows_amd64/asm.exe",
+  "exit_status": "0xc0000043",
+  "ntstatus": "STATUS_SHARING_VIOLATION",
+  "lock_holder_identified": false,
+  "remote_started": false,
+  "cleanup_reported": true,
+  "cleanup_independently_verified_for_operator_run": false,
+  "failed_run_source_or_binary_pin_provided": false,
+  "next_command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -BuildOnly -Remote",
+  "mitigation": {
+    "max_build_attempts": 3,
+    "retry_delays_seconds": [
+      2,
+      4
+    ],
+    "only_exact_sharing_diagnostics": true,
+    "mixed_errors_retry": false,
+    "same_run_cache_retained": true,
+    "source_rechecked_before_retry": true,
+    "final_cleanup": true,
+    "build_only_skips_tests_and_vet": true,
+    "remote_acceptance_skipped": false,
+    "dependencies_installed": false
+  },
+  "reference": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55"
+}

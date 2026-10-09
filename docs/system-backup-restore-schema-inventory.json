@@ -3,16 +3,16 @@
   "plan_version": "system-backup-plan.v12",
   "plan_source": "docs/system-backup-restore-division-plan.md",
   "summary": {
-    "plan_business_tables": 94,
+    "plan_business_tables": 98,
     "plan_control_tables": 32,
     "plan_control_without_inventory": 3,
-    "inventoried_objects": 95,
-    "migration_objects": 91,
-    "without_migration": 3,
+    "inventoried_objects": 99,
+    "migration_objects": 98,
+    "without_migration": 0,
     "unassigned": 0,
-    "repository_runtime_create": 9,
-    "repository_runtime_alter": 3,
-    "deployment_bootstrap_create": 22
+    "repository_runtime_create": 0,
+    "repository_runtime_alter": 0,
+    "deployment_bootstrap_create": 0
   },
   "gaps": {
     "plan_control_without_inventory": [
@@ -20,52 +20,11 @@
       "system_backup_catalog_records",
       "system_backup_catalog_scan_states"
     ],
-    "without_migration": [
-      "chat_messages",
-      "chat_sessions",
-      "risk_rules"
-    ],
+    "without_migration": [],
     "unassigned": [],
-    "repository_runtime_create": [
-      "audit_events",
-      "chat_messages",
-      "chat_sessions",
-      "cost_records",
-      "enterprise_auth_settings",
-      "llm_models",
-      "model_invocations",
-      "risk_hits",
-      "risk_rules"
-    ],
-    "repository_runtime_alter": [
-      "enterprise_auth_settings",
-      "llm_models",
-      "model_invocations"
-    ],
-    "deployment_bootstrap_create": [
-      "backup_schedules",
-      "backups",
-      "instance_agents",
-      "instance_commands",
-      "instance_config_revisions",
-      "instance_desired_state",
-      "instance_runtime_status",
-      "instance_skills",
-      "instance_usage",
-      "instances",
-      "openclaw_config_bundle_items",
-      "openclaw_config_bundle_skills",
-      "openclaw_config_bundles",
-      "openclaw_config_resources",
-      "openclaw_injection_snapshots",
-      "persistent_volumes",
-      "skill_blobs",
-      "skill_scan_results",
-      "skill_versions",
-      "skills",
-      "user_quotas",
-      "users"
-    ]
+    "repository_runtime_create": [],
+    "repository_runtime_alter": [],
+    "deployment_bootstrap_create": []
   },
   "objects": [
     {
@@ -76,9 +35,7 @@
       "migration_sources": [
         "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
       ],
-      "repository_create_sources": [
-        "backend/internal/repository/audit_event_repository.go"
-      ],
+      "repository_create_sources": [],
       "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
@@ -106,12 +63,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -124,12 +76,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -137,10 +84,10 @@
       "name": "chat_messages",
       "owner": "A",
       "category": "ai_gateway",
-      "migration_sources": [],
-      "repository_create_sources": [
-        "backend/internal/repository/chat_message_repository.go"
+      "migration_sources": [
+        "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
       ],
+      "repository_create_sources": [],
       "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
@@ -150,10 +97,10 @@
       "name": "chat_sessions",
       "owner": "A",
       "category": "ai_gateway",
-      "migration_sources": [],
-      "repository_create_sources": [
-        "backend/internal/repository/chat_session_repository.go"
+      "migration_sources": [
+        "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
       ],
+      "repository_create_sources": [],
       "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
@@ -166,9 +113,7 @@
       "migration_sources": [
         "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
       ],
-      "repository_create_sources": [
-        "backend/internal/repository/cost_record_repository.go"
-      ],
+      "repository_create_sources": [],
       "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
@@ -207,12 +152,8 @@
       "migration_sources": [
         "backend/internal/db/migrations/050_add_enterprise_auth_settings.sql"
       ],
-      "repository_create_sources": [
-        "backend/internal/repository/enterprise_auth_setting_repository.go"
-      ],
-      "repository_alter_sources": [
-        "backend/internal/repository/enterprise_auth_setting_repository.go"
-      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
@@ -226,12 +167,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -244,12 +180,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -262,12 +193,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -280,12 +206,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -337,12 +258,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -355,12 +271,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -373,12 +284,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -391,12 +297,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -407,12 +308,8 @@
       "migration_sources": [
         "backend/internal/db/migrations/045_add_llm_model_reasoning_control.sql"
       ],
-      "repository_create_sources": [
-        "backend/internal/repository/llm_model_repository.go"
-      ],
-      "repository_alter_sources": [
-        "backend/internal/repository/llm_model_repository.go"
-      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
@@ -424,12 +321,8 @@
       "migration_sources": [
         "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
       ],
-      "repository_create_sources": [
-        "backend/internal/repository/model_invocation_repository.go"
-      ],
-      "repository_alter_sources": [
-        "backend/internal/repository/model_invocation_repository.go"
-      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
@@ -521,12 +414,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -539,12 +427,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -557,12 +440,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -575,12 +453,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -593,12 +466,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -611,12 +479,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -627,9 +490,7 @@
       "migration_sources": [
         "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
       ],
-      "repository_create_sources": [
-        "backend/internal/repository/risk_hit_repository.go"
-      ],
+      "repository_create_sources": [],
       "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
@@ -639,10 +500,10 @@
       "name": "risk_rules",
       "owner": "A",
       "category": "ai_gateway",
-      "migration_sources": [],
-      "repository_create_sources": [
-        "backend/internal/repository/risk_rule_repository.go"
+      "migration_sources": [
+        "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
       ],
+      "repository_create_sources": [],
       "repository_alter_sources": [],
       "deployment_bootstrap_create_sources": [],
       "source_exception": null
@@ -772,12 +633,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -829,12 +685,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -847,12 +698,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -865,12 +711,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -893,6 +734,32 @@
       "category": "system_backup",
       "migration_sources": [
         "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "system_backup_admin_revocations",
+      "owner": "D",
+      "category": "system_backup",
+      "migration_sources": [
+        "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "system_backup_admin_sessions",
+      "owner": "D",
+      "category": "system_backup",
+      "migration_sources": [
+        "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
@@ -1083,6 +950,19 @@
     },
     {
       "object_type": "table",
+      "name": "system_backup_metadata_reservations",
+      "owner": "D",
+      "category": "system_backup",
+      "migration_sources": [
+        "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
       "name": "system_backup_operations",
       "owner": "D",
       "category": "system_backup",
@@ -1192,6 +1072,19 @@
       "category": "system_backup",
       "migration_sources": [
         "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "system_backup_totp_credentials",
+      "owner": "D",
+      "category": "system_backup",
+      "migration_sources": [
+        "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
@@ -1391,12 +1284,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {
@@ -1409,12 +1297,7 @@
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
-      "deployment_bootstrap_create_sources": [
-        "deployments/k3s/cluster/clawmanager.yaml",
-        "deployments/k3s/single-node/clawmanager.yaml",
-        "deployments/k8s/cluster/clawmanager.yaml",
-        "deployments/k8s/single-node/clawmanager.yaml"
-      ],
+      "deployment_bootstrap_create_sources": [],
       "source_exception": null
     },
     {

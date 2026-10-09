@@ -1,0 +1,30 @@
+**********************
+PowerShell transcript start
+Start time: 20261009142750
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$logPath = Join-Path (Get-Location) ('docs/evidence/a-d-recovery-fence-remote-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.txt'); Start-Transcript -Path $logPath | Out-Null; Write-Output "EVIDENCE_LOG=$logPath"; try { & .\scripts\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -Remote -SshTarget 'root@10.130.14.23'; $runExit = $LASTEXITCODE; if ($null -eq $runExit) { $runExit = 0 }; Write-Output "REMOTE_EXIT=$runExit"; exit $runExit } finally { Stop-Transcript | Out-Null }
+Process ID: 35044
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+EVIDENCE_LOG=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-d-recovery-fence-remote-20261009-142750.txt
+LOCAL_PASS isolated-go-telemetry=off
+PS>TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+PS>TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+**********************
+PowerShell transcript end
+End time: 20261009143240
+**********************

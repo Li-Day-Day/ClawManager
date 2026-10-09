@@ -21,11 +21,31 @@ D_SCHEMA_COMPARE="${D_SCHEMA_COMPARE:-0}"
 CONTROLLER_ENABLED_SMOKE="${CONTROLLER_ENABLED_SMOKE:-0}"
 CONTROLLER_TRANSITION_SMOKE="${CONTROLLER_TRANSITION_SMOKE:-0}"
 CONTROLLER_GRANT_DRIFT_SMOKE="${CONTROLLER_GRANT_DRIFT_SMOKE:-0}"
+D_DB_INVARIANT_SMOKE="${D_DB_INVARIANT_SMOKE:-0}"
+D_HISTORY_CLI_SMOKE="${D_HISTORY_CLI_SMOKE:-0}"
+[[ "$D_HISTORY_CLI_SMOKE" == 0 || "$D_HISTORY_CLI_SMOKE" == 1 ]] || { echo 'invalid history CLI mode' >&2; exit 1; }
+test_image_pull_policy=IfNotPresent
+if [[ "$D_HISTORY_CLI_SMOKE" == 1 ]]; then
+  [[ "$D_DB_INVARIANT_SMOKE" == 1 && "${D_HISTORY_REVIEW_SMOKE:-0}" == 1 && "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 0 && -z "${D_INVARIANT_IMAGE:-}" && -s "${D_HISTORY_CLI_BINARY:-}" && "${D_HISTORY_CLI_SHA256:-}" =~ ^[0-9a-f]{64}$ && -s scripts/system-backup-d-history-cli-phase.sh ]] || { echo 'history CLI requires dedicated pinned history inputs' >&2; exit 1; }
+  [[ "$(sha256sum "$D_HISTORY_CLI_BINARY" | cut -d' ' -f1)" == "$D_HISTORY_CLI_SHA256" ]] || { echo 'history CLI checksum mismatch' >&2; exit 1; }
+  [[ -z "${D_MIGRATION_BINARY:-}" || ( "$D_MIGRATION_BINARY" == "$D_HISTORY_CLI_BINARY" && "${D_MIGRATION_BINARY_SHA256:-}" == "$D_HISTORY_CLI_SHA256" ) ]] || { echo 'history CLI fresh runner inputs conflict' >&2; exit 1; }
+  # Replay today's embedded catalog with the same pinned CLI under test. The
+  # cached app image may contain an older catalog and must not seed this mode.
+  D_MIGRATION_BINARY="$D_HISTORY_CLI_BINARY"
+  D_MIGRATION_BINARY_SHA256="$D_HISTORY_CLI_SHA256"
+  test_image_pull_policy=Never
+fi
+D_FRESH_BASELINE="${D_FRESH_BASELINE:-0}"
+D_EMBEDDED_MIGRATION_COMPLETED=0
+if [[ -n "${D_MIGRATION_BINARY:-}" ]]; then
+  [[ ( "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 1 || "$D_HISTORY_CLI_SMOKE" == 1 ) && "$D_DB_INVARIANT_SMOKE" == 1 && -s "$D_MIGRATION_BINARY" && "${D_MIGRATION_BINARY_SHA256:-}" =~ ^[0-9a-f]{64}$ && -s scripts/system-backup-d-migration-phase.sh ]] || { echo 'invalid dedicated migration binary inputs' >&2; exit 1; }
+fi
 if [[ "$D_SCHEMA_COMPARE" == 1 ]]; then
   SCHEMA_CAPTURE=1
   DDL_CAPTURE=1
 fi
-EXPECTED_MIGRATIONS=91
+source scripts/system-backup-smoke-contract.sh
+load_system_backup_smoke_contract backend/internal/systembackupcontroller/bootstrap.go
 RUN_ID="$(date -u +%y%m%d%H%M%S)-$(printf '%04x' "$RANDOM")"
 RUN_NAMESPACE="sbk-mig-$RUN_ID"
 RUN_NAMESPACE_UID=''
@@ -87,6 +107,25 @@ done
 [[ "$CONTROLLER_TRANSITION_SMOKE" == 0 || "$CONTROLLER_ENABLED_SMOKE" == 1 ]] || { echo 'controller transition requires CONTROLLER_ENABLED_SMOKE=1' >&2; exit 1; }
 [[ "$CONTROLLER_GRANT_DRIFT_SMOKE" == 0 || "$CONTROLLER_GRANT_DRIFT_SMOKE" == 1 ]] || { echo 'CONTROLLER_GRANT_DRIFT_SMOKE must be 0 or 1' >&2; exit 1; }
 [[ "$CONTROLLER_GRANT_DRIFT_SMOKE" == 0 || "$CONTROLLER_TRANSITION_SMOKE" == 1 ]] || { echo 'controller grant drift requires CONTROLLER_TRANSITION_SMOKE=1' >&2; exit 1; }
+[[ "$D_DB_INVARIANT_SMOKE" == 0 || "$D_DB_INVARIANT_SMOKE" == 1 ]] || { echo 'D_DB_INVARIANT_SMOKE must be 0 or 1' >&2; exit 1; }
+[[ "$D_FRESH_BASELINE" == 0 || "$D_FRESH_BASELINE" == 1 ]] || exit 1
+if [[ "$D_FRESH_BASELINE" == 1 ]]; then
+  [[ "$D_DB_INVARIANT_SMOKE" == 0 && "$CONTROLLER_ENABLED_SMOKE" == 0 && "$SCHEMA_CAPTURE" == 0 && "$DDL_CAPTURE" == 0 && -z "${D_MIGRATION_BINARY:-}" ]] || { echo 'baseline requires a separate fresh run' >&2; exit 1; }
+  command -v python3 >/dev/null
+  [[ -s scripts/system-backup-d-fresh-baseline.py && -s deployments/mysql/000_database.sql ]] || exit 1
+  python3 -B scripts/system-backup-d-fresh-baseline.py inputs
+fi
+if [[ "$D_DB_INVARIANT_SMOKE" == 1 ]]; then
+  [[ "$CONTROLLER_ENABLED_SMOKE" == 0 && "$SCHEMA_CAPTURE" == 0 && "$DDL_CAPTURE" == 0 ]] || { echo 'D database probes require a separate fresh run without controller or capture phases' >&2; exit 1; }
+  [[ -s scripts/system-backup-d-invariants-phase.sh ]] || { echo 'D invariant phase missing' >&2; exit 1; }
+  if [[ -n "${D_INVARIANT_IMAGE:-}" ]]; then
+    validate_system_backup_smoke_image "$D_INVARIANT_IMAGE" "${D_INVARIANT_IMAGE##*@sha256:}"
+    [[ -s scripts/system-backup-d-invariants-image-phase.sh ]] || { echo 'D image phase missing' >&2; exit 1; }
+  else
+    [[ -s "${D_INVARIANT_BINARY:-}" && "${D_INVARIANT_BINARY_SHA256:-}" =~ ^[0-9a-f]{64}$ ]] || { echo 'D invariant probe binary inputs missing' >&2; exit 1; }
+  fi
+  command -v sha256sum >/dev/null
+fi
 if [[ "$CONTROLLER_ENABLED_SMOKE" == 1 ]]; then
   [[ "$SCHEMA_CAPTURE" == 0 && "$DDL_CAPTURE" == 0 ]] || { echo 'controller smoke cannot run with metadata capture' >&2; exit 1; }
   for tool in awk sed grep cat; do
@@ -120,12 +159,15 @@ fi
 actual_count="$(find backend/internal/db/migrations -maxdepth 1 -type f -name '*.sql' | wc -l | tr -d ' ')"
 [[ "$actual_count" == "$EXPECTED_MIGRATIONS" ]] || { printf 'checkout has %s migrations, expected %s\n' "$actual_count" "$EXPECTED_MIGRATIONS" >&2; exit 1; }
 
-source_image_id="$(kubectl --context="$CONTEXT" --namespace="$SOURCE_NAMESPACE" get pods -l app=clawmanager-app -o jsonpath='{.items[0].status.containerStatuses[0].imageID}')"
-app_image="${source_image_id#*://}"
-[[ "$app_image" == *@sha256:"$EXPECTED_APP_DIGEST" ]] || {
-  printf 'source app digest differs from the pinned test image: %s\n' "$source_image_id" >&2
-  exit 1
-}
+if [[ -n "${TEST_APP_IMAGE:-}" ]]; then
+  # A separately built image is used only in this run's fresh namespace.
+  # The source installation need not be rolled forward to test that image.
+  app_image="$TEST_APP_IMAGE"
+else
+  source_image_id="$(kubectl --context="$CONTEXT" --namespace="$SOURCE_NAMESPACE" get pods -l app=clawmanager-app -o jsonpath='{.items[0].status.containerStatuses[0].imageID}')"
+  app_image="${source_image_id#*://}"
+fi
+validate_system_backup_smoke_image "$app_image" "$EXPECTED_APP_DIGEST"
 mysql_image_id="$(kubectl --context="$CONTEXT" --namespace="$SOURCE_NAMESPACE" get pods -l app=mysql -o jsonpath='{.items[0].status.containerStatuses[0].imageID}')"
 mysql_image="${mysql_image_id#*://}"
 [[ "$mysql_image" == *@sha256:* ]] || { printf 'MySQL Pod has no immutable image digest: %s\n' "$mysql_image_id" >&2; exit 1; }
@@ -146,7 +188,11 @@ umask 077
 INIT_SQL="$(mktemp /tmp/sbk-mig-init.XXXXXXXX.sql)"
 EXPECTED_LIST="$(mktemp /tmp/sbk-mig-expected.XXXXXXXX.txt)"
 APPLIED_LIST="$(mktemp /tmp/sbk-mig-applied.XXXXXXXX.txt)"
-kubectl --context="$CONTEXT" --namespace="$SOURCE_NAMESPACE" get configmap clawmanager-mysql-init -o jsonpath='{.data.001_init_schema\.sql}' > "$INIT_SQL"
+if [[ "$D_FRESH_BASELINE" == 1 ]]; then
+  cp deployments/mysql/000_database.sql "$INIT_SQL"
+else
+  kubectl --context="$CONTEXT" --namespace="$SOURCE_NAMESPACE" get configmap clawmanager-mysql-init -o jsonpath='{.data.001_init_schema\.sql}' > "$INIT_SQL"
+fi
 [[ -s "$INIT_SQL" ]] || { echo 'source MySQL init SQL is empty' >&2; exit 1; }
 find backend/internal/db/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort > "$EXPECTED_LIST"
 password="$(od -An -N24 -tx1 /dev/urandom | tr -d ' \n')"
@@ -163,6 +209,22 @@ EOF
 )"
 [[ -n "$RUN_NAMESPACE_UID" ]] || { echo 'namespace creation did not return a UID' >&2; exit 1; }
 printf 'RUN namespace=%s uid=%s app_image=%s mysql_image=%s mysql_version=%s\n' "$RUN_NAMESPACE" "$RUN_NAMESPACE_UID" "$app_image" "$mysql_image" "$mysql_version"
+
+# Namespace creation returns before the service-account controller has made
+# default available. Pod admission rejects an immediate create in that gap.
+default_sa_ready=0
+for ((attempt=0; attempt<60; attempt++)); do
+  [[ "$(kubectl --context="$CONTEXT" get namespace "$RUN_NAMESPACE" -o jsonpath='{.metadata.uid}' 2>/dev/null || true)" == "$RUN_NAMESPACE_UID" ]] || {
+    echo 'run namespace UID changed while waiting for default ServiceAccount' >&2
+    exit 1
+  }
+  if kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" get serviceaccount default -o name >/dev/null 2>&1; then
+    default_sa_ready=1
+    break
+  fi
+  sleep 1
+done
+[[ "$default_sa_ready" == 1 ]] || { echo 'default ServiceAccount was not created in the run namespace' >&2; exit 1; }
 
 kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" create configmap mysql-init --from-file=001_init_schema.sql="$INIT_SQL" >/dev/null
 kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" create -f - >/dev/null <<EOF
@@ -192,7 +254,7 @@ spec:
   containers:
     - name: mysql
       image: $mysql_image
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: $test_image_pull_policy
       args: ["--innodb-use-native-aio=0"]
       resources:
         requests: {cpu: 250m, memory: 512Mi, ephemeral-storage: 512Mi}
@@ -229,9 +291,15 @@ mysql_query() {
 
 initial_registration="$(mysql_query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='clawmanager' AND TABLE_NAME='schema_migrations'")"
 [[ "$initial_registration" == 0 ]] || { echo 'fresh database already has schema_migrations' >&2; exit 1; }
+if [[ "$D_FRESH_BASELINE" == 1 ]]; then
+  [[ "$(mysql_query "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA='clawmanager'")" == 0 ]] || { echo 'baseline must start from zero tables' >&2; exit 1; }
+fi
 mysql_ip="$(kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" get pod mysql -o jsonpath='{.status.podIP}')"
 [[ -n "$mysql_ip" ]] || { echo 'temporary MySQL has no Pod IP' >&2; exit 1; }
 
+if [[ -n "${D_MIGRATION_BINARY:-}" ]]; then
+  source scripts/system-backup-d-migration-phase.sh
+else
 kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" create -f - >/dev/null <<EOF
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -260,7 +328,7 @@ spec:
   containers:
     - name: migration-app
       image: $app_image
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: $test_image_pull_policy
       command: ["/usr/local/bin/clawreef-server"]
       resources:
         requests: {cpu: 100m, memory: 256Mi, ephemeral-storage: 128Mi}
@@ -277,6 +345,7 @@ spec:
         - {name: OBJECT_STORAGE_ENDPOINT, value: "127.0.0.1:1"}
         - {name: SYSTEM_BACKUP_ENABLED, value: "false"}
 EOF
+fi
 
 deadline=$((SECONDS + 210))
 applied_count=0
@@ -297,7 +366,14 @@ column_types="$(mysql_query "SELECT CONCAT(TABLE_NAME,'.',COLUMN_NAME,'=',DATA_T
 expected_types=$' system_backup_check_results.actual_canonical_json=blob\nsystem_backup_check_results.expected_canonical_json=blob\nsystem_backup_operations.external_action_public_ids_canonical_json=blob\nsystem_backup_operations.retry_of_operation_public_id=char'
 expected_types="${expected_types# }"
 [[ "$column_types" == "$expected_types" ]] || { printf 'unexpected D column types:\n%s\n' "$column_types" >&2; exit 1; }
-printf 'PASS fresh-migration-replay=001..078 applied=%s exact_filenames=yes d_columns=blob/blob/blob/char\n' "$applied_count"
+last_migration="$(tail -n 1 "$EXPECTED_LIST")"
+printf 'PASS fresh-migration-replay=001..%s applied=%s exact_filenames=yes d_columns=blob/blob/blob/char\n' "${last_migration%%_*}" "$applied_count"
+if [[ "$D_FRESH_BASELINE" == 1 ]]; then
+  python3 -B scripts/system-backup-d-fresh-baseline.py capture "$CONTEXT" "$RUN_NAMESPACE" "$RUN_NAMESPACE_UID" "$app_image" "$mysql_image"
+fi
+if [[ "$D_DB_INVARIANT_SMOKE" == 1 ]]; then
+  source scripts/system-backup-d-invariants-phase.sh
+fi
 if [[ "$CONTROLLER_ENABLED_SMOKE" == 1 ]]; then
   # The sourced phase reuses this run's isolated MySQL, image and UID cleanup.
   source scripts/system-backup-controller-enabled-phase.sh

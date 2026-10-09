@@ -1,0 +1,12 @@
+schema=clawmanager.system-backup-a-active-config-inventory/v1
+recorded_date=2026-09-23
+captured_at=not-provided-in-operator-output
+source=operator-provided-read-only-mysql-query-result
+namespace=clawmanager-zhanghui08-system
+query=SELECT (SELECT COUNT(*) FROM system_backup_configs) AS config_rows, (SELECT COUNT(*) FROM system_backup_installation_state WHERE active_config_version IS NOT NULL) AS active_installations
+config_rows=0
+active_installations=0
+result=no_active_system_backup_config_in_this_installation
+interpretation=The current installation cannot run config-bound system-backup integration probes. Standalone P0-0a provider capability spikes may still run against explicitly supplied versioned refs, task-scoped test identities and run-owned test resources.
+not_proven=absence of an external KMS/signing/evidence provider; inability to run standalone provider capability spikes; P0-0a/P0-0b completion
+fixture_guard=scripts/system-backup-controller-enabled-fixture.mysql.sql is a throwaway D-only fixture marked never to apply to a live installation.

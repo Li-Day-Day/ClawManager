@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sourced only by system-backup-fresh-migration-smoke.sh after its fresh replay.
-[[ "${CONTROLLER_ENABLED_SMOKE:-0}" == 1 && -n "${RUN_NAMESPACE_UID:-}" ]] || {
+[[ "${CONTROLLER_ENABLED_SMOKE:-0}" == 1 && -n "${RUN_NAMESPACE_UID:-}" && "${EXPECTED_MIGRATIONS:-}" =~ ^[1-9][0-9]*$ && "${EXPECTED_CATALOG_PREFIX:-}" =~ ^[0-9a-f]{12}$ ]] || {
   echo 'controller phase requires the isolated migration smoke run' >&2
   return 1
 }
@@ -76,7 +76,7 @@ spec:
         - -ec
         - |
           export MYSQL_PWD="\$CONTROLLER_DB_PASSWORD"
-          mysql --protocol=tcp --host="\$DB_HOST" --user=sbk_controller --database=clawmanager --batch --raw --skip-column-names --execute='SELECT COUNT(*) FROM schema_migrations' | grep -qx 91
+          mysql --protocol=tcp --host="\$DB_HOST" --user=sbk_controller --database=clawmanager --batch --raw --skip-column-names --execute='SELECT COUNT(*) FROM schema_migrations' | grep -qx "$EXPECTED_MIGRATIONS"
           mysql --protocol=tcp --host="\$DB_HOST" --user=sbk_controller --database=clawmanager --batch --raw --skip-column-names --execute='SELECT CURRENT_USER(), CURRENT_ROLE()' | grep -Eq '^sbk_controller@.+[[:space:]]NONE$'
           if mysql --protocol=tcp --host="\$DB_HOST" --user=sbk_controller --database=clawmanager --execute='SELECT COUNT(*) FROM users' >/dev/null 2>&1; then echo 'unexpected users SELECT permission' >&2; exit 1; fi
           if mysql --protocol=tcp --host="\$DB_HOST" --user=sbk_controller --database=clawmanager --execute='DELETE FROM schema_migrations WHERE 1=0' >/dev/null 2>&1; then echo 'unexpected schema_migrations DELETE permission' >&2; exit 1; fi
@@ -171,8 +171,8 @@ standby_count=0
 for pod in "${controller_pods[@]}"; do
   ready="$(kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" exec "$pod" -- wget -qO- http://127.0.0.1:9003/readyz)"
   case "$ready" in
-    'leader config=disabled effective=disabled config_version=1 catalog=b3fe27c26b2'*) ((leader_count+=1)) ;;
-    'standby config=disabled effective=disabled config_version=1 catalog=b3fe27c26b2'*) ((standby_count+=1)) ;;
+    "leader config=disabled effective=disabled config_version=1 catalog=$EXPECTED_CATALOG_PREFIX") ((leader_count+=1)) ;;
+    "standby config=disabled effective=disabled config_version=1 catalog=$EXPECTED_CATALOG_PREFIX") ((standby_count+=1)) ;;
     *) printf 'unexpected controller readyz %s: %s\n' "$pod" "$ready" >&2; return 1 ;;
   esac
 done

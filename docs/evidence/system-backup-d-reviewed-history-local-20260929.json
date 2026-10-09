@@ -1,0 +1,38 @@
+{
+  "kind": "d_reviewed_historical_ledger_local_validation",
+  "recorded_at": "2026-09-29T03:33:49.987957+00:00",
+  "go_test": {
+    "packages": [
+      "./internal/db",
+      "./cmd/system-backup-migrate"
+    ],
+    "result": "PASS",
+    "command_package_has_no_test_files": true,
+    "new_history_subtests": 27,
+    "sql_driver": "simulated; historical SQL and review provenance synthetic test-only"
+  },
+  "linux_migration_build": "PASS",
+  "powershell_parse": "PASS",
+  "gofmt": "PASS",
+  "diff_check": "PASS",
+  "catalog": {
+    "file_count": 93,
+    "sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "changed": false
+  },
+  "real_mysql_for_new_path": "NOT_RUN",
+  "live_review_supplied": false,
+  "live_database_mutated": false,
+  "fix16_contains_this_change": false,
+  "dependencies_installed": false,
+  "owned_test_build_artifacts_remaining": 0,
+  "source_sha256": {
+    "backend/internal/db/migration_history.go": "4f23684e84c231895c557ab851f0f37d3b9b836c8af232b98ecb44a3f98d27f8",
+    "backend/internal/db/migration_history_test.go": "2d43872942749a2b36fb3868ff397463c63d11158fc96dc7b070f16b72afa453",
+    "backend/internal/db/migration_target.go": "65c8d6e722abc5eb03b313ed41e9933a610da2c760c2dcc55aab1ac0d1d2ea06",
+    "backend/internal/db/migration_target_test.go": "f87d086df19b46690725facb4da8a3508d65c35ed0562db939692d47b5d79553",
+    "backend/internal/db/migrations.go": "cb9bd2d6f33ba9f6bed5cdbd4db71dc11c2ac5645fa6cf4a680296113bcc749e",
+    "backend/cmd/system-backup-migrate/main.go": "dd53786fc237b2906e0eb159d24b9e44daf149e9875bbfcfe20df9abc1da8d1d",
+    "scripts/system-backup-d-history-validation.ps1": "20a430b6c049b521b2c5583139b8e8b5f64620666b58f51f0f3eb4f7bb1206e0"
+  }
+}

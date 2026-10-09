@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T02:42:53.6065258Z",
+  "status": "local_pass_remote_pending",
+  "scope": "D standalone migration CLI and controlled partial-DDL recovery acceptance harness",
+  "local_validation": {
+    "go_packages": [
+      "internal/db",
+      "internal/migrationcoord",
+      "internal/systembackupcontroller",
+      "internal/migrationcatalog"
+    ],
+    "go_tests": "PASS",
+    "serial_go_vet": "PASS",
+    "linux_integration_compile": "PASS",
+    "linux_runner_compile": "PASS",
+    "runner_sha256": "99265645c6d27fe8c4245073ca5ce4f1b442396d2d8b2b30fddee4802b60efe4",
+    "probe_sha256": "cacdb472691eca13c7a9393595717353c479d34a2d25df2f2fb88b49a9797e80",
+    "local_probe_trimpath": false,
+    "local_runner_trimpath": true,
+    "final_remote_wrapper_uses_trimpath_for_both": true,
+    "node_unique_top_level_tests_passed": 9,
+    "wrapper_mock_scenarios_passed": 2,
+    "wrapper_mock_scenarios": [
+      "stable source returns local-only result and restores environment/cleans scratch",
+      "concurrent source edit refuses success and cleans scratch"
+    ],
+    "powershell_parser": "PASS",
+    "bash_syntax": "PASS",
+    "linux_runtime_probe_checks": [
+      "exact TestDReviewedHistoryCLI present",
+      "missing isolated identity rejected before DB connection"
+    ],
+    "linux_runtime_network": "none",
+    "runtime_image": "10.130.14.23:5000/clawmanager@sha256:d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e",
+    "initial_environment_issues": [
+      "sandbox Git Bash signal pipe denied; mock/syntax checks rerun outside sandbox",
+      "initial manual Docker test flag unquoted in PowerShell; rerun with quoted native flags passed"
+    ],
+    "final_wrapper_source_guard": "PASS in offline orchestration mocks; not claimed exercised by the earlier full local build invocation"
+  },
+  "remote": {
+    "executed": false,
+    "pending_scenarios": 8,
+    "ssh_batch_auth": "unavailable",
+    "operator_selected": "interactive SSH password in terminal",
+    "command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -Remote",
+    "inputs": "synthetic-isolated-mysql",
+    "production_upgrade": false,
+    "image_publish": false,
+    "tls_acceptance": false,
+    "historical_source_approved": false,
+    "arbitrary_schema_drift_recovery_tested": false,
+    "post_commit_response_loss_tested": false
+  },
+  "cleanup": {
+    "local_probe_build_cache_removed": true,
+    "wrapper_mock_scratch_remaining": 0,
+    "linux_probe_containers": "--rm; completed",
+    "remote_resources_created": false,
+    "dependencies_installed": false,
+    "images_pulled": false
+  },
+  "source_file_sha256_at_receipt": {
+    "backend/internal/db/migration_history_cli_integration_test.go": "93fe789481e2a46b9f9f88afaedb4d116b456ae80d3400c754da64f63e570442",
+    "backend/internal/db/migration_history_integration_test.go": "52bce5873b5ef43c1d2f7ecad9f2d7fc8e81c55e23ac0c24f998acfe9ed965ef",
+    "scripts/system-backup-d-invariants.ps1": "2685a2caf6d988cf574cd443b06354b3cc32073a11b5c51f9df2a63d67f1d8fd",
+    "scripts/system-backup-d-invariants-phase.sh": "d2d7520183c709ec90014ee45e2e96cc06a6e2b95c99fc0a7220d09dacbc75d1",
+    "scripts/system-backup-d-history-cli-phase.sh": "b241e6670dad61ea4ca70ce360b8d88e35c20b46d0510499a4f8fba0dfcf1fe5",
+    "scripts/system-backup-d-history-cli-phase.test.mjs": "b5595c0b9286f2072e40d7b0952a04124fa80efb01cde178f423a47286cb413d",
+    "scripts/system-backup-d-history-cli-wrapper.test.ps1": "f8e9cccab9781906c4cf7f59cca2023f6d3a1a7de6d684e8b9f53ce208fb4e0c",
+    "scripts/system-backup-fresh-migration-smoke.sh": "741156c7de830d42cdbc46d63300a4f09053366f24d405d72e3c58c1c0c2e2f4"
+  }
+}

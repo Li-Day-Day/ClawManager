@@ -6,6 +6,8 @@ set -euo pipefail
 # an interactive SSH shell with `set -e` does not close on that outcome.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
+source scripts/system-backup-smoke-contract.sh
+load_system_backup_smoke_contract backend/internal/systembackupcontroller/bootstrap.go
 CONTEXT="${KUBE_CONTEXT:-kubernetes-admin@kubernetes}"
 NAMESPACE="${SOURCE_NAMESPACE:-clawmanager-zhanghui08-system}"
 EXPECTED_APP_DIGEST="${EXPECTED_APP_DIGEST:-4f8ed9600eff963103feec1fcc23f37397ef48ce3961e7542c41e4e0faed7cdd}"
@@ -78,11 +80,11 @@ read -r migrations state_rows state_id_count joined_rows config_rows first_enabl
   echo 'unexpected MySQL preflight result' >&2
   exit 1
 }
-[[ "$migrations" -ge 91 ]] || blockers+=(migration_count_below_embedded_catalog)
-# The pinned image is expected to embed the 91 repository migrations through 078.
-# Later migrations in this checkout are not part of that immutable image.
-mapfile -t expected_migrations < <(find backend/internal/db/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | awk 'substr($0,1,3) ~ /^[0-9][0-9][0-9]$/ && substr($0,1,3)+0 <= 78' | sort)
-[[ "${#expected_migrations[@]}" == 91 ]] || { printf 'expected 91 pinned migration filenames in checkout, found %s\n' "${#expected_migrations[@]}" >&2; exit 1; }
+[[ "$migrations" -ge "$EXPECTED_MIGRATIONS" ]] || blockers+=(migration_count_below_embedded_catalog)
+# Check every migration in the current controller contract, including newly
+# appended files. Historical extra live filenames remain a separate review.
+mapfile -t expected_migrations < <(find backend/internal/db/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort)
+[[ "${#expected_migrations[@]}" == "$EXPECTED_MIGRATIONS" ]] || { printf 'expected %s migration filenames in checkout, found %s\n' "$EXPECTED_MIGRATIONS" "${#expected_migrations[@]}" >&2; exit 1; }
 mapfile -t registered_migrations < <(mysql_query 'SELECT filename FROM schema_migrations ORDER BY filename')
 [[ "${#registered_migrations[@]}" == "$migrations" ]] || { echo 'migration row count changed during preflight or filename query failed' >&2; exit 1; }
 declare -A registered=()
@@ -116,8 +118,8 @@ if kubectl --context="$CONTEXT" --namespace="$NAMESPACE" get deployment "$DEPLOY
 fi
 
 printf 'RUN context=%s namespace=%s uid=%s app_image=%s binary_available=%s runtime_catalog=%s\n' "$CONTEXT" "$NAMESPACE" "$namespace_uid" "$app_image" "$binary_available" "$runtime_catalog"
-printf 'DB migrations=%s expected_catalog_files=91 expected_filenames=%s installation_rows=%s installation_id_count=%s identity_sha256=%s active_config_joins=%s config_rows=%s first_enabled_rows=%s effective_enabled_rows=%s active_config_enabled_rows=%s\n' \
-  "$migrations" "$embedded_filenames" "$state_rows" "$state_id_count" "$identity_hash" "$joined_rows" "$config_rows" "$first_enabled" "$effective_enabled" "$config_enabled"
+printf 'DB migrations=%s expected_catalog_files=%s expected_filenames=%s installation_rows=%s installation_id_count=%s identity_sha256=%s active_config_joins=%s config_rows=%s first_enabled_rows=%s effective_enabled_rows=%s active_config_enabled_rows=%s\n' \
+  "$migrations" "$EXPECTED_MIGRATIONS" "$embedded_filenames" "$state_rows" "$state_id_count" "$identity_hash" "$joined_rows" "$config_rows" "$first_enabled" "$effective_enabled" "$config_enabled"
 printf 'K8S db_secret_exists=%s db_secret_password_key=%s controller_deployment_exists=%s controller_gate=%s\n' \
   "$secret_exists" "$secret_password_key" "$deployment_exists" "$deployment_gate"
 if ((${#blockers[@]})); then

@@ -6,8 +6,8 @@
   "plan_source": "docs/system-backup-restore-division-plan.md",
   "migration_catalog": {
     "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
-    "file_count": 91,
-    "hash": "b3fe27c26b2917b2b17a8c20b0af24b5c375188a5478fbe43c4fd15cd1375991"
+    "file_count": 94,
+    "hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
   },
   "schema_hash": {
     "algorithm": "sha256-information-schema-canonical-v1",
@@ -16,10 +16,10 @@
     "evidence": null
   },
   "summary": {
-    "object_count": 95,
-    "policy_recorded": 41,
-    "policy_pending": 54,
-    "cross_review_pending": 41
+    "object_count": 99,
+    "policy_recorded": 60,
+    "policy_pending": 39,
+    "cross_review_pending": 60
   },
   "objects": [
     {
@@ -27,24 +27,27 @@
       "name": "audit_events",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.audit_events.normalize.v1",
+      "verifier_id": "ai_gateway.audit_events.verify.v1",
+      "depends_on": [
+        "table:model_invocations",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "AI Gateway audit history is retained as redacted historical evidence; actor, invocation and request references are remapped and no event resumes execution.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
         ],
-        "repository_create": [
-          "backend/internal/repository/audit_event_repository.go"
-        ],
+        "repository_create": [],
         "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
@@ -102,12 +105,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -133,12 +131,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -147,22 +140,29 @@
       "name": "chat_messages",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.chat_messages.normalize.v1",
+      "verifier_id": "ai_gateway.chat_messages.verify.v1",
+      "depends_on": [
+        "table:chat_sessions",
+        "table:instances",
+        "table:model_invocations",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Chat content is confidential historical data. Restore remaps session, actor, instance and invocation references and never restores a live conversation cursor.",
       "sources": {
-        "migration": [],
-        "repository_create": [
-          "backend/internal/repository/chat_message_repository.go"
+        "migration": [
+          "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
         ],
+        "repository_create": [],
         "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
@@ -173,22 +173,27 @@
       "name": "chat_sessions",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.chat_sessions.normalize.v1",
+      "verifier_id": "ai_gateway.chat_sessions.verify.v1",
+      "depends_on": [
+        "table:instances",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Chat sessions are restored as historical session metadata with target user and instance mapping; session activity is not resumed automatically.",
       "sources": {
-        "migration": [],
-        "repository_create": [
-          "backend/internal/repository/chat_session_repository.go"
+        "migration": [
+          "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
         ],
+        "repository_create": [],
         "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
@@ -199,24 +204,28 @@
       "name": "cost_records",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.cost_records.normalize.v1",
+      "verifier_id": "ai_gateway.cost_records.verify.v1",
+      "depends_on": [
+        "table:llm_models",
+        "table:model_invocations",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Cost records are immutable accounting history; target identifiers are remapped and monetary/token aggregates are verified without replaying provider calls.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
         ],
-        "repository_create": [
-          "backend/internal/repository/cost_record_repository.go"
-        ],
+        "repository_create": [],
         "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
@@ -285,27 +294,27 @@
       "name": "enterprise_auth_settings",
       "owner": "A",
       "category": "users",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "secret",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "users.enterprise_auth_settings.normalize.v1",
+      "verifier_id": "users.enterprise_auth_settings.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Enterprise authentication policy is retained with secret material represented only by typed refs; encrypted bind credentials never enter manifest, evidence or restored active state.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/050_add_enterprise_auth_settings.sql"
         ],
-        "repository_create": [
-          "backend/internal/repository/enterprise_auth_setting_repository.go"
-        ],
-        "repository_alter": [
-          "backend/internal/repository/enterprise_auth_setting_repository.go"
-        ],
+        "repository_create": [],
+        "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
       }
@@ -332,12 +341,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -363,12 +367,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -394,12 +393,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -425,12 +419,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -465,17 +454,21 @@
       "name": "instance_gateway_token_aliases",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "secret",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.instance_gateway_token_aliases.normalize.v1",
+      "verifier_id": "ai_gateway.instance_gateway_token_aliases.verify.v1",
+      "depends_on": [
+        "table:instances"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Gateway token aliases contain only non-reversible token hashes and expiry history; restored rows cannot become active credentials without a new token issuance.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/038_add_instance_gateway_token_aliases.sql"
@@ -534,12 +527,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -565,12 +553,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -596,12 +579,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -627,12 +605,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -641,27 +614,25 @@
       "name": "llm_models",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "secret",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
+      "normalizer_id": "ai_gateway.llm_models.normalize.v1",
+      "verifier_id": "ai_gateway.llm_models.verify.v1",
       "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Model catalog metadata is restored with provider and secret references redacted; API key material is never copied into a manifest or evidence.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/045_add_llm_model_reasoning_control.sql"
         ],
-        "repository_create": [
-          "backend/internal/repository/llm_model_repository.go"
-        ],
-        "repository_alter": [
-          "backend/internal/repository/llm_model_repository.go"
-        ],
+        "repository_create": [],
+        "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
       }
@@ -671,27 +642,29 @@
       "name": "model_invocations",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.model_invocations.normalize.v1",
+      "verifier_id": "ai_gateway.model_invocations.verify.v1",
+      "depends_on": [
+        "table:instances",
+        "table:llm_models",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Invocation history is immutable audit and usage data; request/response bodies are redacted under the AI policy and restored rows cannot trigger provider execution.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
         ],
-        "repository_create": [
-          "backend/internal/repository/model_invocation_repository.go"
-        ],
-        "repository_alter": [
-          "backend/internal/repository/model_invocation_repository.go"
-        ],
+        "repository_create": [],
+        "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
       }
@@ -733,17 +706,19 @@
       "name": "northbound_auth_challenges",
       "owner": "A",
       "category": "users",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "secret",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
+      "normalizer_id": "users.northbound_auth_challenges.normalize.v1",
+      "verifier_id": "users.northbound_auth_challenges.verify.v1",
       "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Authentication challenges are retained only as expired or consumed history; nonce hashes and challenge state never restore as usable login material.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/045_add_northbound_api.sql"
@@ -759,17 +734,21 @@
       "name": "northbound_caller_policies",
       "owner": "A",
       "category": "users",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "users.northbound_caller_policies.normalize.v1",
+      "verifier_id": "users.northbound_caller_policies.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Caller scopes are restored only after user mapping and closed permission validation; the target cannot inherit an unrecognized or expanded scope.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/057_add_northbound_admin_settings.sql"
@@ -811,17 +790,21 @@
       "name": "northbound_sessions",
       "owner": "A",
       "category": "users",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "secret",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "users.northbound_sessions.normalize.v1",
+      "verifier_id": "users.northbound_sessions.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Northbound sessions are restored as revoked historical records; refresh-token hashes and session state cannot be used to continue a source session.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/045_add_northbound_api.sql"
@@ -886,12 +869,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -917,12 +895,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -948,12 +921,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -979,12 +947,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1010,12 +973,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1041,12 +999,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1055,24 +1008,28 @@
       "name": "risk_hits",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "ai_gateway.risk_hits.normalize.v1",
+      "verifier_id": "ai_gateway.risk_hits.verify.v1",
+      "depends_on": [
+        "table:model_invocations",
+        "table:risk_rules",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Risk detections are retained as redacted historical findings with rule and invocation references remapped; they do not re-trigger enforcement on restore.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
         ],
-        "repository_create": [
-          "backend/internal/repository/risk_hit_repository.go"
-        ],
+        "repository_create": [],
         "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
@@ -1083,22 +1040,24 @@
       "name": "risk_rules",
       "owner": "A",
       "category": "ai_gateway",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "internal",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
+      "normalizer_id": "ai_gateway.risk_rules.normalize.v1",
+      "verifier_id": "ai_gateway.risk_rules.verify.v1",
       "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Risk policy is restored through the closed rule schema and normalized action set; unsupported or unsafe actions are rejected before activation.",
       "sources": {
-        "migration": [],
-        "repository_create": [
-          "backend/internal/repository/risk_rule_repository.go"
+        "migration": [
+          "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
         ],
+        "repository_create": [],
         "repository_alter": [],
         "deployment_bootstrap": [],
         "exception": null
@@ -1379,12 +1338,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1488,12 +1442,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1519,12 +1468,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1550,12 +1494,7 @@
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -1619,6 +1558,66 @@
       "sources": {
         "migration": [
           "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql"
+        ],
+        "repository_create": [],
+        "repository_alter": [],
+        "deployment_bootstrap": [],
+        "exception": null
+      }
+    },
+    {
+      "object_type": "table",
+      "name": "system_backup_admin_revocations",
+      "owner": "D",
+      "category": "system_backup",
+      "data_classification": "confidential",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only",
+      "excluded_reason": null,
+      "normalizer_id": null,
+      "verifier_id": "system_backup.admin_revocations.reference.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Only schema metadata is recorded. Installation-local token revocation cutoffs are never dumped or restored from a source backup. Existing target cutoffs must not be cleared; a new target requires fresh authentication identities before admission.",
+      "sources": {
+        "migration": [
+          "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
+        ],
+        "repository_create": [],
+        "repository_alter": [],
+        "deployment_bootstrap": [],
+        "exception": null
+      }
+    },
+    {
+      "object_type": "table",
+      "name": "system_backup_admin_sessions",
+      "owner": "D",
+      "category": "system_backup",
+      "data_classification": "confidential",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only",
+      "excluded_reason": null,
+      "normalizer_id": null,
+      "verifier_id": "system_backup.admin_sessions.reference.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Only schema metadata is recorded. Live session digests, credential bindings, expirations and revocation flags are never dumped or restored. Current target sessions cannot be replaced with source sessions.",
+      "sources": {
+        "migration": [
+          "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
         ],
         "repository_create": [],
         "repository_alter": [],
@@ -2083,6 +2082,34 @@
     },
     {
       "object_type": "table",
+      "name": "system_backup_metadata_reservations",
+      "owner": "D",
+      "category": "system_backup",
+      "data_classification": "internal",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only",
+      "excluded_reason": null,
+      "normalizer_id": null,
+      "verifier_id": "system_backup.metadata_reservations.reference.verify.v1",
+      "depends_on": [],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Only schema metadata is recorded. Target-local monotonic capacity reservations are not copied from a backup and must never be reset by ordinary startup or statistics refresh. Any reconciliation requires a quiesced measured target baseline.",
+      "sources": {
+        "migration": [
+          "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
+        ],
+        "repository_create": [],
+        "repository_alter": [],
+        "deployment_bootstrap": [],
+        "exception": null
+      }
+    },
+    {
+      "object_type": "table",
       "name": "system_backup_operations",
       "owner": "D",
       "category": "system_backup",
@@ -2375,6 +2402,36 @@
       "sources": {
         "migration": [
           "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql"
+        ],
+        "repository_create": [],
+        "repository_alter": [],
+        "deployment_bootstrap": [],
+        "exception": null
+      }
+    },
+    {
+      "object_type": "table",
+      "name": "system_backup_totp_credentials",
+      "owner": "D",
+      "category": "system_backup",
+      "data_classification": "secret",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only",
+      "excluded_reason": null,
+      "normalizer_id": null,
+      "verifier_id": "system_backup.totp_credentials.reference.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Only schema metadata is recorded. Encrypted TOTP seeds, password-binding hashes, consumed steps and throttle state never enter backup payloads or diagnostic evidence. A restored target must enroll its administrator independently; source enrollment is not transferable.",
+      "sources": {
+        "migration": [
+          "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql"
         ],
         "repository_create": [],
         "repository_alter": [],
@@ -2795,29 +2852,28 @@
       "name": "user_quotas",
       "owner": "A",
       "category": "users",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
-      "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "normalizer_id": "users.user_quotas.normalize.v1",
+      "verifier_id": "users.user_quotas.verify.v1",
+      "depends_on": [
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Quota policy is restored after user mapping and target capacity validation; it does not grant resources beyond the target installation limits.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/001_init_schema.sql"
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },
@@ -2826,29 +2882,26 @@
       "name": "users",
       "owner": "A",
       "category": "users",
-      "data_classification": null,
-      "backup_strategy": null,
-      "restore_strategy": null,
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
       "excluded_reason": null,
-      "normalizer_id": null,
-      "verifier_id": null,
+      "normalizer_id": "users.users.normalize.v1",
+      "verifier_id": "users.users.verify.v1",
       "depends_on": [],
-      "decision_status": "pending_owner_review",
-      "required_cross_reviewers": [],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "D"
+      ],
       "approved_cross_reviewers": [],
-      "redacted_explanation": null,
+      "redacted_explanation": "Users are restored through immutable identity mapping and role allowlists; password hashes and external authentication material are redacted from evidence and never exposed in diagnostics.",
       "sources": {
         "migration": [
           "backend/internal/db/migrations/001_init_schema.sql"
         ],
         "repository_create": [],
         "repository_alter": [],
-        "deployment_bootstrap": [
-          "deployments/k3s/cluster/clawmanager.yaml",
-          "deployments/k3s/single-node/clawmanager.yaml",
-          "deployments/k8s/cluster/clawmanager.yaml",
-          "deployments/k8s/single-node/clawmanager.yaml"
-        ],
+        "deployment_bootstrap": [],
         "exception": null
       }
     },

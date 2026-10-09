@@ -1,10 +1,133 @@
 # 系统备份/恢复 D 角色开发步骤
 
+【2026-10-08 候选 DDL 远程验收通过】[八表候选 DDL 的隔离 MySQL 验收](system-backup-d-producer-ddl-remote-20261008.md)已收到完整回传：MySQL 8.4.8 上 27/27 检查通过，覆盖约束、执行计划及双连接行锁/gap lock；退出码 0，namespace 和两端临时目录均报告清理完成。DDL/探针指纹及全部检查名称与当前源码一致，无需重跑。原准备文档“26 项”为计数笔误；完整粘贴原文和结构化回执已归档，并修正 PowerShell transcript 漏记原生输出的问题。本轮不代表完整 producer 服务真实数据库联调、生产 authority/provider 或正式 migration 已批准。
+
+【2026-10-08 A/D 本地联调】[真实私有句柄到结果收据的跨包用例](system-backup-d-producer-ad-integration-20261008.md)已通过：D 公开服务串联 A 实际 pending/claim/finish/result SQL，验证共同提交、14 类失败回滚和精确重放。两包冻结快照 176 个顶层测试/含子测试 1777 项、默认 vet 和 Linux 交叉编译通过；产物已清理。两份并行 STS 文件的后续版本不由该快照背书。生产 authority/evaluator/投影、真实 provider/MySQL、独立历史恢复和 V01–V10 仍待完成。
+
+【2026-10-08 结果提交】[CommitResult 与精确收据重放](system-backup-d-producer-result-20261008.md)已落代码：完整结果/ready 证据及当前权限核验后，原子更新 target/run、收据、引用及适用的投影；候选不写正式槽，重放只返回历史收据。同时补齐 Finish ready 的 run pending→published 同事务推进。A 已提供实际 ready SQL 适配，完整 A/D 联调、生产 evaluator/投影/授权环境、引用退休及独立恢复仍待完成。
+
+【2026-10-08 发布结果登记】[FinishPublication 原子登记](system-backup-d-producer-finish-20261008.md)已落代码：当前权限及原证据/claim 复查后登记 ready/write_unknown，原子消费 claim；不改变能力结果、health 或保留期。C 独立对象证明、A 实际加载器、生产环境及 CommitResult/历史恢复仍待接通。
+
+【2026-10-08 claim 签发】[publication claim 提交后签发](system-backup-d-producer-claim-20261008.md)已落代码：当前权限/历史/hold/证据核验后 CAS，提交确认或独立同请求读回后才产生私有 claim；失败和提交不明不签发。A 实际锁定加载器、生产环境、发布完成/结果和真实 MySQL 仍待验收。以下记录保留原交付时范围。
+
+【2026-09-30 页面优化与国际化】操作者已回传首版远端“尚未接入”和“示例总览”截图，确认这两种视图已渲染。本轮据此将恢复状态与任务指标前置，移除总览重复页签、压缩未接入提示，为八入口增加图标；业务分区在窄屏使用选择框、宽屏使用可横向滚动导航。页面不再展示 P0c/P1 等内部阶段编号。通过共享 I18nContext 接入中/英/日/韩/德五种语言，覆盖导航、操作、状态、提示、示例说明、日期及容量格式；切换语言保留业务 ID 与状态语义。现有 9 项测试与新增 5 项国际化检查共 14 项通过，read model/fixture/词条严格类型检查及 TS/TSX 转换通过。未安装依赖；新布局及五语言浏览器验收仍需远端重建验证。
+
+【2026-09-30 pending 事务】[D pending 原子事务](system-backup-d-producer-pending-20260930.md)已落代码：历史绑定、保护引用及 run→pending 与 A 同事务写入接口统一由最终 Guard 提交；精确重放不重复收费或 Wrap。实际 A registry/chunks 适配、生产环境认证及 ClaimPublication/发布/结果仍待接通，不能把 pending 结果当作发布权限。
+
+【2026-09-30 调用授权】[观测绑定与固定调用快照](system-backup-d-producer-execution-20260930.md)已落代码：BindObservation 只写一次，BeginCall/RecheckCall 固定并复查原权限、版本和期限。发布仍缺私有 claim 的生产签发器；生产环境适配、pending/发布/结果及真实 MySQL 验收继续推进。以下里程碑保留各自交付时范围。
+
+【2026-09-30 页面提前开发】`/admin/backups` 已新增管理员路由、导航和只读页面骨架，按用户图片提供备份、恢复、恢复预检、备份校验、备份导入、备份清理、备份设置、恢复基线八个入口。默认尚未接入；显式示例模式覆盖记录、详情/事件/日志/Manifest 摘要、目录、演练清理、预检差异、校验、配置和基线，以及空/加载/失败/禁用/不支持/日志过期状态。9 项无依赖测试、既有 DTO parity、TS/TSX 转换及 read model/fixture 严格类型检查通过；前端依赖缺失，项目构建和浏览器交互尚未验收，未安装依赖或保留测试构建产物。正式 API、mutation 与轮询仍待接入，不改变 P0-0a/P0-0b/P0a/P0b 门禁。范围见[页面状态与验证边界](system-backup-development-flow.md#真实集成与页面)。
+
+【2026-09-30 生命周期】[Acquire/Renew/Revoke/Takeover 事务服务](system-backup-d-producer-lifecycle-20260930.md)已落代码，包含幂等收据、原期限保护、固定成本及提交后句柄边界。生产环境认证/容量/审计适配、观察绑定/调用快照及发布结果流程仍待完成。
+
+【2026-09-30 事务 SQL】[八类记录的完整主键锁定读取、插入与精确 CAS](system-backup-d-producer-sql-20260930.md)已落代码，接入已有强制最终检查事务边界。生产 Policy、生命周期服务和真实 MySQL 验收继续推进。
+
+【2026-09-30 持久化推进】[八类记录的 SQL 投影完整性校验与八表 DDL 候选](system-backup-d-producer-storage-20260930.md)已落盘。DDL 尚未纳入正式迁移；锁定 SQL、生产 Policy、生命周期与真实数据库验收继续推进。
+
+【2026-09-30 Go 接线基础】C1 后续已落 [Go 数据合同、严格解码、跨语言摘要和强制最终检查的事务执行器](system-backup-d-producer-go-foundation-20260930.md)。这是 D/A 可接线的编译代码；生产 Policy、生命周期签发服务、正式新表及真实 MySQL/provider 验收仍待完成。旧 C1 文档和机器记录保留原交付范围。
+
+【2026-09-30 后续状态】A 已认可 producer R1 的六项设计回复。D 已交付 [C1 合同/事务接口/持久化字典/摘要向量](system-backup-d-producer-authority-contract-20260930.md)，新增草案已登记到 manifest 并请求 A/C 评审，采用 Job 时需 B。C1 是可审查合同包，尚非 SQL/运行实现；八类拟议表未进入 embedded catalog/inventory，V01–V10 仍未执行。下文“R1 待复审”为原交付时状态，以 A 后续回执和本项为准。
+
 > 派生自 `docs/system-backup-restore-division-plan.md`，引用合同版本：`system-backup-plan.v12`（2026-09-09）。
 > 本文只规定 D 的执行顺序、仓库落点、交接和验收导航，不定义字段、枚举、状态转换、API 形状或安全判定。公共行为以主计划为准；P0-0a 落盘后，wire shape 以同版本机器合同为准。发现缺口时回到主计划与机器合同修订，不在本文新增规则。
 > 当前仍是 P0-0a 前的“待冻结规范”，不能把本文当作已冻结的实现合同。
 
-## 0. 当前进度（2026-09-18）
+## 0. 当前进度（2026-09-30）
+
+【真实 CLI 八场景全部通过，独立验收完成】最新 run `sbk-mig-260930062648-2795` 在 MySQL 8.4.8 上通过 94 份 fresh replay、精确文件名/字段检查及完整八场景。两处故障分别在 2/4 张表已完成时核验 migration lock owner 后 KILL；账本保持不变，随后同输入恢复 96→97，重复执行保留账本和 runtime 行。runner/probe/source 三项 SHA 与最终本地验证完全一致，namespace、远端 scratch、本地缓存均报告 CLEANED。本固定输入无需重跑。见 [完整远端回执](evidence/system-backup-d-history-cli-mysql-20260930.json)。本轮为 synthetic 隔离验收，未升级实际安装、未激活配置；真实旧 SQL 来源及审查等门槛仍单独保留。
+
+此前 SSH、旧镜像 93/94 catalog 不匹配及 LOCK TABLES 夹具失败均为历史过程，原回执保留。当前入口使用本轮 CLI 建库、测试专用 loopback 代理在目标 SQL 转发前实施断连，生产 CLI 已补齐独立驱动日志器的固定错误边界；实现及覆盖范围见 [故障注入修正](system-backup-d-reviewed-history-20260929.md#故障注入夹具修正2026-09-30)。不得把本轮成功扩展为任意结构漂移修复或提交后回包丢失已验证。
+
+【独立 runner 镜像与历史镜像补查】当前 runner 已实际通过 Linux 容器及独立最小镜像的 catalog/help/拒绝检查；两次 `-trimpath` 二进制 SHA 一致，独立镜像不依赖宿主挂载。测试镜像/容器/tar/二进制/缓存已清理，未发布或连接数据库。另只读检查本地 ldap-test-zh-fix1..16 的 server 二进制，六个新旧迁移文件名均无命中，未恢复旧来源。见 [runner 验证与入口](system-backup-d-reviewed-history-20260929.md) 和 [中间镜像回执](evidence/system-backup-d-intermediate-image-source-trace-20260930.json)。
+
+【历史迁移 CLI 本地验收补齐】新增真实 main/flag 子进程测试，覆盖 catalog 精确一致、三个历史审查参数和 16 项模式/输入拒绝及公开错误脱敏。db/CLI 包测试、独立串行 vet、Linux runner 与集成探针编译通过；首轮 Windows vet 文件共享失败后改为测试与 vet 分阶段，未移除静态检查。二进制摘要已归档，构建缓存与产物已清理，未安装依赖；不等于 Linux CLI 已部署或实际库升级。见 [本地回执](evidence/system-backup-d-history-cli-local-20260930.json)。
+
+【Git 来源追查】已直接抓取上游全部 136 个保留 PR head 到独立临时仓库并检查文件历史。现行 050/052/053 首见于 PR #199 的 `ee7b4f61`，主线为 `00d4d2a`；旧 045/046/047 及重命名记录未找到，不能据此补造旧原文来源。临时 Git 仓库已清理，实际库未升级。见 [来源追查与现有交付门槛](system-backup-d-legacy-source-upgrade-handoff-20260929.md)。
+
+【系统 producer 授权 R1 已回复，待复审】A 于 2026-09-30 完成 [设计评审](system-backup-a-d-producer-authority-review-20260930.md)，结论 changes_requested。D 已交付 [R1 修订及逐项回复](system-backup-d-producer-authority-revision-20260930.md)：明确无配置/disabled/enabled 三场景、独立可信证据通道、当前与拟议锁序、事务末 Guard、结果幂等/历史读取、独立恢复及续租使在途快照失效的语义，并提供 D→A/C 接口表及 V01–V10 验收映射。六项 finding 仍待 A/C 复审和运行验收，涉及 Job 时需 B；未新增迁移、公共枚举或生产授权，未标记合同冻结。原 [D 提案](system-backup-d-producer-authority-design-20260930.md) 和 A 首轮评审保留原字节；[R1 机器记录](evidence/system-backup-d-producer-authority-revision-20260930.json) 固定本次输入与交付指纹。
+
+【实际安装只读发现已完成，准入阻断】02:46 UTC 回传：MySQL 位于 k8s-master，ledger 95 条但缺少 080，并有三条既有历史额外记录；四张 runtime 表缺失。当前 namespace PVC 全是 hostPath，未发现符合现有共享方案的报告卷及 collector；可信 fresh schema 基线仍缺。身份稳定、传输目录清理完成，未执行升级。见 [真实现场结果与处理顺序](system-backup-d-live-preflight-20260929.md)。
+
+【080/存储方案与迭代归因已整理】旧三条 ledger 在 9 月 14 日用户回传中已存在（applied_at 为 8 月 12 日）；D 于 9 月 28 日新增 080 和严格独立迁移入口，尚未闭环该历史库的兼容升级路径。已准备只读 `-UpgradeReview` 补充探针和不可执行的升级/同节点报告卷评审材料；未放宽校验或改库，未代 A/B/C 批准语义。见 [来源时间线与评审方案](system-backup-d-080-storage-review-20260929.md)。
+
+【历史账本兼容入口已实现，实际证据待补】独立 runner 新增固定 SHA-256 的部署审查文件和旧 SQL 原文校验，仅允许保留完整历史账本并补 080；默认未知文件名拒绝、同连接身份/迁移锁/capture gate 保留。27 个新增子场景覆盖模拟 95→96、重试及拒绝路径；实际旧原文/审查清单仍缺，本轮实现不在 fix16 已验收范围内。见 [兼容入口及交付边界](system-backup-d-reviewed-history-20260929.md)。
+
+【升级前置只读回执已收到】only-080、无部分建表残留、users.id FK 元数据、gate 当时 idle、目标身份稳定和 PV claim 绑定通过；没有获取迁移锁或执行升级。已发现 longhorn-rwx StorageClass，优先核验现有共享报告存储，node-local 方案降为备选；StorageClass 存在不等于 RWX 能力验收。见 [最新现场结果](system-backup-d-live-preflight-20260929.md)。
+
+【Longhorn/历史兼容脚本及回执】`-LonghornReview` 的只读观察和 `-HistoryReview` 的隔离 MySQL 六场景均已收到现场回执。历史测试运行当前编译探针，材料为 synthetic，不视作真实来源。见 [两项运行命令与验收范围](system-backup-d-longhorn-history-next-20260929.md)。
+
+【Longhorn 已回传；历史隔离验证已通过】Longhorn 25 项原动态检查通过且清理完成，但 Multipathd/KernelModulesLoaded 有异常条件，专用 RWX 挂载仍未验收。历史测试最初被本地 0xc0000043 阻断；wrapper 串行构建修复后，操作者已完成 run `sbk-mig-260929062117-1e03` 的 MySQL 8.4.8 六场景，全部 PASS，探针摘要与本地一致，namespace 和两端 scratch 均报告 CLEANED。见 [历史兼容远程回执](evidence/system-backup-d-reviewed-history-mysql-20260929.json)。无需重跑；实际旧原文/审查与 schema 基线仍缺，未升级实际库或创建报告卷。
+
+【fix16 隔离现场回传通过】新镜像 digest `d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e` 完成 93 文件重放、专用账号及 Controller 双副本验收；SELECT/UPDATE 两轮撤权后均无重启恢复，Pod/容器/restartCount/installation 投影不变。清理报告完整。依据为操作者回传，未独立查远端，单独退出码未提供。见 [fix16 回执](evidence/system-backup-d-fix16-isolated-smoke-20260929.json)。
+
+【D-only 部署配套】已补独立容量采集器的固定摘要/节点部署模板、MySQL 只读卷与 RWX 报告卷接线、source 身份/精确 SELECT 权限校验，以及数据库身份、migration 文件名、D schema 差异和现场挂载权限的只读预检。当前交付为本地代码与脚本，真实 collector、存储及新镜像仍待现场验收。详见 [容量部署与预检](system-backup-d-capacity-deployment-20260929.md)。
+
+【D-only 独立收敛】四部署形态及生产站点的 init 已改为 database-only，表结构与种子统一使用 embedded migration；新增 49 种 DTO 的字段类型门禁、controller 失败限速和恢复测试，以及固定摘要的离线 HTTP 部署组合。隔离无重启恢复已有上述 fix16 回传，真实服务/MFA/激活尚未验收。详见 [D 独立交付](system-backup-d-independent-20260929.md)。
+
+【D-only 接入增量】新增固定摘要部署包加载和独立 bootstrap CLI，接入既有 disabled-v1 原子事务；缺少任一 owner adapter 时禁止读取数据库凭据或打开 SQL。A/B/C 的语义、provider 与安全 API 保留原 owner，本轮不代实现、不代批准。详见 [离线初始化入口与依赖边界](system-backup-d-bootstrap-entry-20260928.md)。
+
+最新增量见 [真实准入与部署缺项](system-backup-d-real-admission-20260928.md)：已补充强制准入编排、离线授权文件校验、公开输入核验及镜像二进制打包接线。仓库搜索仍只找到三类 registry，六类实际内容和二十类配置 ref 映射未交付；真实 adapter/部署入口尚未接线，HTTP、本人 MFA 与激活保持未完成。
+
+**D 的事务组件、真实 issuer 签名及隔离 MySQL/HTTPS 验收已有通过证据；实际 HTTP 部署、管理员本人 MFA 和配置激活仍未完成。当前可进行阶段评审，不能按 D 全部完成交接，也不解除 P0 门禁。**
+
+| 项目 | 最新状态与证据 | 尚未覆盖 |
+| --- | --- | --- |
+| 正式迁移与数据库 | `080` 将四张认证/会话/容量 runtime 表纳入正式目录。独立迁移入口在 MySQL 8.4.8 上重放 `001..080`、93 文件，精确文件名检查通过。见 [93 文件远程回执](evidence/system-backup-d-runtime-migration-mysql-sbk-mig-260928072119-004e.json)。 | 实际应用库升级、新 catalog 的 controller 现场准入及四部署矩阵。 |
+| 权限、nonce、幂等、审计与 HTTP | 同一回执的 9 个一级用例及 bootstrap 3 个嵌套用例全部 PASS，覆盖并发唯一结果、冲突、重放、审计失败回滚、权限/会话/配置撤销和 HTTPS/JWT/MFA 链。三个构建摘要及 163 项来源绑定核对一致。 | 用户、密钥、provider 事实和 bootstrap admission 是 synthetic fixtures；不证明真实管理员本人 MFA 或已部署 HTTP。 |
+| 真实 issuer 与管理员 | [双 issuer 签名验收](evidence/system-backup-d-issuer-signing-verified-20260928.json)已通过两份 Transit 签名及 16 项 ACL 拒绝；[管理员身份核对](evidence/system-backup-d-admin-identity-verified-20260928.json)确认本地启用管理员 `admin`/ID 1。 | 候选 registry 不等于活跃配置；部署运行 token、TLS、容量 collector 和 core logout 接线仍待完成。 |
+| 首次配置 | 严格配置解析及首次配置事务已实现并在隔离 MySQL 验证。见 [HTTP 与激活进度](system-backup-d-http-activation-20260928.md)。 | 生产 `BootstrapAdmission`/调用入口、六类 registry 的真实内容、20 类 ref 映射、完整 config_update 和实际激活。 |
+| schema 与评审 | 当前 inventory 为 99 对象、catalog 为 93 文件；D 45 项对象决议已登记。生命周期已有 [A 的限定范围签收](system-backup-a-lifecycle-acceptance-20260924.md)。 | 旧 95 表 schema candidate 只绑定旧版本，不能复用于当前 catalog；新版本 schema 证据、交叉评审及合同冻结仍待完成。 |
+
+最新 Controller 远程 run 为 `sbk-mig-260929022805-0758`，UID `c95e3256-469b-4113-bd84-54112b8324be`，namespace/两端脚本目录报告清理完成，本地另查 fix16 临时目录为 0。此前 HTTP/事务 run `sbk-mig-260928072119-004e` 的独立范围及清理回执继续保留；无需重跑这两组已通过检查。两次证据均来自操作者控制台回传，未独立查询远端，单独进程退出码未提供。
+
+下一步按 [运行时部署待办](system-backup-d-runtime-deployment-20260928.md) 补齐真实配置准入、运行身份与部署接线，再进行本人 MFA、已部署 HTTP 和配置激活验收。新版本 schema 采集和 A/C/D 评审按对应输入指纹推进，不沿用旧批准或把测试配置导入实际安装。
+
+### 历史进展（保留各次验收时状态）
+
+以下条目中的“当前”“待 A 签收”“待远程验证”和对象数量均指各条记录当时的版本；最新状态以本节上方及所链接的新回执为准。
+
+- 【2026-09-24 生命周期远程测试与 D 复核已完成，待 A 签收】操作者 run `d-lc-387dab09ff2a1367ca4b5b56` 的14项检查通过，覆盖五类身份撤销/240秒自然过期及控制身份、KMS与三用途 signer 的 old/new named-ref 切换和历史验证；194条调用观察、388条审计投影、六份新旧签名均已接收，本地独立验签及绑定复核退出0。本 run 临时身份/key/Pod/检查点报告清理完成，原 lab 保留；无需仅因 SSH 关闭提示重跑或执行 RECOVERY。原始证据未签名，未重新点查远程集群，A 签收及正式 evidence 登记未完成。见 [D→A 生命周期补充与结果](system-backup-d-a-lifecycle-handoff-20260924.md)。
+
+- 【D 对 A 第二轮修订复审通过】R1 的 Unicode 签名 metadata 边界与 R2 的 capability 状态/原因闭集均已独立验证，25个 Go 顶层测试、87个 Node 测试及独立27组合矩阵通过；本轮无新增发现，R1/R2 关闭。D 同时接受相应 provider record schema 修订。见 [第二轮复审及指纹](system-backup-d-a-contract-rereview-round2-2026-09-23.md)。整体仍为 draft，B/C 签收、真实 provider 能力及 D 事务接入仍待完成；下条“仍需两项 P2”是上一轮历史结论。
+
+- 【D 对 A 修订已复审，仍需两项 P2 修正】原 D-A-01～06 在本地合同/校验边界已解决，15对象的45份可执行投影 fixture 和 capability role/有效期映射已补齐；新增 strong-auth 签名 metadata 的 Unicode 长度不一致、capability 临时故障被接受为 unsupported 两项问题。后者也涉及 D 的投影合同，需 A/C/D 联动闭合。结论与独立探针见 [D→A 修订复审](system-backup-d-a-contract-rereview-2026-09-23.md)；不登记批准，v12 保持 draft，真实 provider 与 D 事务接入仍待完成。下文首轮六项退回记录是历史状态。
+
+- 【已完成六组 D 数据库原语真实 MySQL 验证】操作者构建上传dprobe1，镜像和runtime imageID均为 `sha256:c7cd64007531be8c29948f1bcc3f9778faf4d185fab35367cfd3977a54cf4e94`。MySQL 8.4.8上六组探针6/6通过、总耗时17.26秒、`d_probe_image_exit=0`，覆盖多连接UTC、DDL持锁/连接死亡释放/不确定释放丢弃连接、migration与gate互斥、operation claim真实15秒过期接管和双安装隔离、受保护写事务回滚及旧token拒绝。临时namespace `sbk-mig-260923071854-23cf` 按原UID清理，两端脚本目录报告清理。见 [数据库探针结果](evidence/system-backup-d-database-invariants-20260923.json)。本轮四项D独立工作已闭环；不扩展为真实backup/restore状态机、B participant证明、全部部署矩阵或P0验收。
+
+- 【已完成 fix15 migration/controller 远程隔离冒烟】操作者回传 `fix15_smoke_exit=0`：MySQL 8.4.8重放92个migration并精确匹配文件名，专用账号权限正负测通过；controller两副本、一leader一standby，首次启用只记录一次、leader接管、同digest滚动重启及kill switch后监控保持armed均通过；撤销必需SELECT后两副本退出Ready，恢复授权并重启后恢复，installation投影不变。临时namespace `sbk-mig-260923065511-33ab` 按原UID清理，两端脚本目录报告清理。结果与范围限制见 [fix15隔离冒烟记录](evidence/system-backup-d-fix15-isolated-smoke-20260923.json)。这是操作者回传的摘要证据；没有独立重查集群，不证明生产Deployment已更新，也不包含下条六组数据库探针。本轮完整输出及退出0足以接收结果，无需仅因SSH关闭提示重跑。
+
+- 【D 独立数据库探针准备与本地回归已完成，现场结果见上条】生产原语探针、独立测试镜像和密码SSH入口已落盘；本地四个Go包回归通过，修正migration 068测试对 `detail_truncated` 的误判，并把默认镜像断言对齐到embedded seed。Windows原生编译路径后来出现工具链文件共享冲突，操作者改用Linux容器构建并完成上述六组现场测试；没有将编译成功冒充数据库验收。复现入口与范围见 [D独立数据库验证](system-backup-d-independent-db-validation.md)。
+- 【D 验证工具收尾】controller 预检/启用冒烟/全新库重放统一读取 controller migration count/hash，移除91及旧hash漂移；新增带独立文件校验和的 schema candidate 接收器，拒绝绑定漂移和伪造批准。当前95表 candidate 接收核验通过，依然未批准、未注册、冻结门禁为false。相关 Node、合同、Shell 和拒绝路径回归已通过。
+
+- 【已完成远程 live schema-hash candidate 采集与 D 本地核对，待 A/B/C 签收登记】操作者于2026-09-23T05:47:48Z通过 Windows 密码模式取得3092条结构记录的结果，`schema_capture_exit=0`；95张表与当前 inventory 完全匹配，无额外 view/trigger/routine/event，原始记录报告清理完成。canonical schema hash 为 `a0cea874cd2c1dddb0740c7bfd066954e70e400fa38251f145aa2006711907e3`。D 核对 SQL/inventory/当前 migration catalog/对象名集合 hash 均匹配，candidate 仍被 reviewed gate 拒绝，未置真冻结门禁。完整候选、证据限制和交接见 [schema-hash 交接](system-backup-d-schema-hash-handoff-2026-09-23.md)。原 D→A 评审问题与 B/C 缺失交付仍待 owner 处理；无需仅因 SSH 关闭提示重跑本轮采集。
+
+- 【已完成 D 对 A 的首轮合同交叉评审，退回修订】评审报告与交接看板见 [D→A 合同评审](system-backup-d-a-contract-review-2026-09-23.md)。本地复现 JCS 编码、历史 nonce key 缺失、provider-proof 时间窗口、错误脱敏、ID/字段边界五类失败，另确认 Secret ref 没有可接受 nonce-HMAC 用途的分支；A 的对象 fixture 与 capability 映射仍需补充。未改 A/B/C 实现、未登记批准，39项策略/56项交叉评审和四份缺失合同仍阻断冻结。D 新增本机 Node 经 SSH 采集远程只读 schema 的入口，无需远程 Node；本地 transport/capture/hash 与合同回归通过。报告中的“待远程”是评审时历史状态，本轮采集已由上条新证据更新，签收/登记仍待完成。
+
+- 【已完成原三项修正、fix14 标签负测、P1 app init、v3 evidence、A 安全签收及正式 RBAC cutover】五套 OpenSSL standalone `+` 已修正并有语义回归；两个 live init exit 0/restarts 0、app/broker 2/2、migration=true。操作者于2026-09-23显式批准后，以 reviewed 脚本和 v3 evidence `fd8588ed96a93c30c7ac1ac96d9d9f77d78fb2c9388d9f344d986ca355d136c5` 完成去权，脚本返回0；目标 binding 终态为 `NotFound`，app SA 的 Secret list 为 `no`、Deployment get 为 `yes`，受保护 binding 保持不变。脱敏终态证据见 [`secret-broker-rbac-cutover-zhanghui08-20260923.txt`](evidence/secret-broker-rbac-cutover-zhanghui08-20260923.txt)。该项完成不代表 P0-0b 整体通过。
+- 【已完成 D-only app RBAC 安全分阶段】五套官方 Kubernetes/k3s 安装清单已依据 backend Kubernetes 调用点补齐显式、无 Secret 权限的 `clawmanager-runtime-manager`：覆盖 Lease、Deployment、Pod/exec、Service、Endpoint、ConfigMap、PVC/PV、Namespace、Node、NetworkPolicy 与 StorageClass，每类只保留代码实际使用的 verbs，不包含 RBAC、Job 或通配符。复核同时确认 app 仍直接读写 Secret，涉及 Codex/OpenClaw bootstrap、Team token/Redis、通用 Secret ref、北向证书和资源清理；因此五套清单已保留兼容性 `clawmanager-app-cluster-admin`，避免在 broker 迁移前造成业务回归。该项不代表 P0-0b 权限隔离通过。
+- 【已完成 D-only functional-test Secret allowlist 落盘】新增空的登记 Secret `clawmanager-system-backup-functional-test-allowlisted`、独立 `clawmanager-system-backup-secret-capture` ServiceAccount 和仅 `resourceNames + get` 的 Role/RoleBinding；registry version 为 `functional-test-2026-09-20`，hash 为 `4966a40bc8e3b948d29ac79cb3514a2955ec47a4186aa2eee14b07cbec4242b5`。静态测试重算 hash 并核对 manifest annotation，不把任意业务 Secret 或 secret data 写入仓库。
+- 【已完成 D-only RBAC 本地回归】无依赖 RBAC 静态测试、cutover 脚本 `bash -n`、既有合同产物测试、合同检查测试和 draft contract check 已通过；未安装依赖，未生成或保留测试构建产物。本机 `kubectl --dry-run=client` 仍因 current-context 为空、无法完成 API discovery 而阻塞，未将其记作 YAML 远程准入通过。
+- 【已完成远程安全阶段 RBAC smoke】2026-09-21 在 `clawmanager-zhanghui08-system` 完成隔离 runtime 权限/Secret 拒绝、app 2/2 Ready 零重启、OpenClaw/Hermes rollout、计划 sync，以及 collector 登记 get/未登记 get/其余 Secret verbs 的正负测；allowlist version/hash 与仓库一致。脚本按设计以 `BLOCKED` 和退出码 3 停在 broker 门禁，目标 `clawmanager-zhanghui08-app-cluster-admin` 现场复核仍存在且精确绑定本安装 app SA，另一 namespace 的 `clawmanager-app-cluster-admin` baseline 未变，远程临时日志已清理。该项只完成安全分阶段验收；独立 Secret broker、app Secret 调用迁移和真正降权仍待后续，P0-0b 不通过。
+- 【已完成 D-only Secret broker 实现与 app 调用收口】新增独立 broker 二进制、精确 app SA TokenReview/audience 认证、闭集 namespace/name/operation/label/key 策略、独立 SA/RBAC/NetworkPolicy、投影 token 及灰度开关；Codex/OpenClaw、Team、通用 Secret ref、北向证书和清理路径均经统一 `SecretStore`，静态门禁仅允许 store/broker 持有直接 Kubernetes Secret 调用。五套官方清单保持 migration=false，旧 cluster-admin binding 保留。broker read allowlist registry 当前为空，hash 为 `57f8cc8e82e2f0a3d2ac893d792b49f1a4449e29100cfe25f16e6060d5a9428e`。
+- 【已完成 D-only broker 本地回归】`internal/services/k8s` 完整包测试和 broker 命令入口编译通过，RBAC/Secret 边界静态测试 6/6、两份远程脚本 `bash -n` 和 diff 检查通过；没有安装依赖，专用 Go cache 已清理。`internal/services` 整包仍因本机离线缓存缺少既有 `github.com/klauspost/compress` 无法编译，不能计作通过。
+- 【已完成 fix10 broker 远程灰度】修复首次配置冲突后，broker Deployment 2/2 Ready/Available，Pod 跨 node1/k8s-master、零重启、imageID 精确绑定 fix10 digest；独立 app SA/audience 身份、错误 SA 拒绝、functional Secret upsert/get-value/filtered-delete、未登记名称拒绝和临时资源清理均通过。read allowlist version/hash 为 `staging-2026-09-21`/`57f8cc8e82e2f0a3d2ac893d792b49f1a4449e29100cfe25f16e6060d5a9428e`；后续现场盘点确认没有非空 `llm_models.api_key_secret_ref`，TLS 和 migration canary 也已完成。剩余是实例、Team、北向证书和清理业务 smoke。
+- 【已完成 fix10 构建与 app 基础 rollout】`backup-test-zh-fix10` 构建 digest 为 `sha256:99d10f0932702f9dc82b37e32d86783c2cbefcd8c1116a30bfd6903ec4903c9b`；两个 app Pod 在 node1/k8s-master 均 1/1 Running、零重启，后续 broker/TLS staging 已补采不可变 imageID 并完成关联验证。
+- 【已完成首次 broker rollout 故障修复】两个 broker Pod 均成功拉取并启动 fix10 digest，但因 Kubernetes 同名 Service 自动注入 `CLAWMANAGER_SECRET_BROKER_PORT=tcp://...`，进程把它作为数字端口解析后退出。Pod 模板现显式固定端口 `9444` 并关闭 `enableServiceLinks`；该修复只改部署配置，无需重建 fix10。现场同时确认 app migration 为空且目标 cluster-admin binding 仍精确保留；首次尝试不计作灰度通过，须用修复后的脚本重跑完整正负测。
+- 【已完成现场 Secret ref 盘点与 TLS 灰度】`llm_models.api_key_secret_ref` 非空引用计数为 0，故空 allowlist/hash 不变。broker/app 以 CA hash `bacce361acffc8bec342ef5f637ceed45500c996daf47a12808962f88e815003` 完成 2/2 TLS rollout；OpenSSL 探针通过 CA/SAN、HTTPS health、认证 Secret 生命周期及明文拒绝，临时资源均清理。app migration=false、目标 cluster-admin binding 保留；正式证书轮换流程及 migration 业务 smoke 仍待完成。
+- 【已完成首次 TLS CSR 故障修复】首次执行在 OpenSSL CSR 阶段因完整 Service FQDN 超过 Subject CN 的 64 字符上限而退出，尚未创建 TLS Secret/CA ConfigMap 或修改 Deployment；broker 保持 2/2 staging。脚本现用短 Service 名作为 CN，完整 FQDN 只进入 SAN，并增加静态断言；fix10 无需重建，后续 TLS staging 已通过。
+- 【已完成第二次 TLS patch 故障修复】证书签发及 TLS Secret/CA ConfigMap 创建成功，CA hash 一致且证书有效至 2026-10-21；strategic-merge JSON 多余的结尾括号使 API Server 在修改 Deployment 前拒绝，broker/app 仍保持原 2/2、零重启，app 配置为空。两个 patch JSON 已修正并增加实际 JSON 解析测试；后续执行复用现有 TLS 资源，不自动轮换。
+- 【已完成第三次 TLS probe 兼容修复及闭环】broker/app TLS rollout 已分别达到 2/2，app HTTPS URL/CA 已挂载且 migration=false；原探针仅因 BusyBox wget 不支持自定义 CA 参数而退出。改用镜像已有 OpenSSL 客户端后，CA、SAN hostname、HTTPS 请求及明文拒绝均已通过；未安装依赖、未重建 fix10。
+- 【已完成 migration canary】现场显式把 app migration 切为 true 后，app、OpenClaw/Hermes runtime rollout、计划 sync、错误日志扫描和重启数检查全部通过；app/broker 各 2/2，四个运行 Pod 的 imageID 均匹配 fix10 digest，app 总重启数保持 0。目标及受保护 cluster-admin binding 均未改变，证据日志已清理。实例、Team、northbound 证书与清理的真实业务 smoke 尚待执行，故目标 binding 仍不得删除。
+- 【已完成 Team smoke 阻断定位及代码修复，待新镜像复测】现场 OpenClaw Lite 实例创建成功，但 Team bus Secret 写入真实租户 namespace `clawmanager-zhanghui08-system-user-1` 时被 403 拒绝；broker 错误地只允许基础前缀下的 `clawmanager-zhanghui08-user-*`。策略已与 `Client.GetNamespace` 收敛为 `<system-namespace>-user-<positive-id>`，仍拒绝旧错误形式和任意 namespace；定向测试通过。修复部署前现场 migration 应回滚 false，不能进入 binding 删除阶段。
+- 【已完成 fix11 构建/app rollout、现场回滚与 smoke 加固，待 broker 复测】fix11 digest 为 `sha256:10125e2bf46da1d1ac163a937b8bddb1b5dbc43edf82af789b2f7fd75fa59418`；app 两 Pod 跨 node1/k8s-master Running、零重启。migration 已回滚 false，失败 Team 1 无 Secret/PVC/ConfigMap 残留，目标 binding 保留。两份 broker staging 脚本现使用真实 system-namespace 租户前缀，并覆盖 Team bus Secret 生命周期及旧错误 namespace 拒绝；静态测试和 shell 语法检查通过。broker fix11/TLS 远程复测完成前不得重新开启 migration。
+- 【已完成 fix11 broker TLS/Team namespace 远程复测】app/broker 四个 Pod 均为 fix11 digest、零重启并跨 node1/k8s-master；真实租户 namespace 中实例/Team Secret 生命周期、旧前缀拒绝、TLS 与明文拒绝全部通过，临时资源已清理。migration=false，目标及受保护 binding 均未改变；现在可重新运行 migration canary，但真实 Team 创建/删除通过前仍不得删 binding。
+- 【已完成 fix11 migration canary】首次短窗口误判已安全回滚并修复；修正版等待当前 revision 精确收敛后，从 `pod-template-hash=75c5f76fbd` 捕获 `[SyncService] Sync complete`。最终 `script_status=0`、migration=true，app/runtime rollout、broker/TLS 错误扫描及重启数检查通过；app/broker 各 2/2、四个 Pod 均为 fix11 digest且零重启，两条 binding 未改变。Team #3 创建于此前 migration=false 阶段，不算 broker 证据；下一步另建可回收 Team 完成 create/delete smoke。
+- 【已完成真实 Team smoke 本地脚本，待远程执行】新增交互式 `secret-broker-team-business-smoke-zhanghui08.sh`：以现有 Team Secret 为 baseline，仅识别一个新的一次性 Team，验证 migration=true、fix11 imageID、Secret key 名/标签、ConfigMap、Bound PVC、错误日志和零重启；操作者确认 UI Running 后只在 UI 删除新 Team，脚本再验证 Secret/ConfigMap/PVC/PV 清理。脚本自身没有 `kubectl delete`，不会触碰 Team #3 或任一 binding；静态门禁及 Bash 语法检查通过。
+- 【已完成真实 Team #4 broker create/delete、清理及跨安装隔离复核】migration=true 下 Team #4 成功 Running，broker Secret 标签/预期 key 名、ConfigMap 和 Bound PVC 通过；UI 删除后目标 namespace 的 Secret/ConfigMap/PVC/PV 均已消失。最终输出确认 app 零重启、migration=true、两条 binding 不变且无 broker/TLS 清理错误；claim `clawmanager-ltt-user-1` 的同 team ID Retain PV 属另一安装，已正确忽略和保留。脚本现记录实际 bound PV 并精确匹配 claim namespace/name。
+- 【已完成最终只读复核的 gawk 兼容修复】首次命令在列出跨安装 PV 后，因把现场 gawk 内建名 `namespace` 用作 `-v` 变量而退出；失败发生在纯文本筛选阶段，没有集群写操作。脚本/文档改用 `target_ns`，静态门禁同时禁止旧写法；不需要重建 Team。
+- 【已完成 Team smoke 最终闭环】复核输出包含 `PASS[team-business-smoke:delete]`、`IGNORED[foreign-installation]`、`DONE[team-business-smoke]`；Team #4 及目标 namespace 清理完整，另一安装 PV 和两条 cluster-admin binding 未受影响。
+- 【已完成实例删除跨安装风险定位与代码修复，待 fix12 远程复测】准备删除一次性实例 #6 时发现旧 `CleanupService` 会按集群全局 `instance-id` 删除 PV；共享集群不同安装可复用相同数据库 ID，存在误删另一安装 PV 的风险。现在 namespace 搜索只接受当前安装的 `<system-namespace>-user-<positive-id>`，PV 删除必须同时证明 `managed-by`、`instance-id`、`user-id` 和精确 claim namespace，等待收敛也只统计本安装拥有的 PV。单元测试固定“删除目标、保留 `clawmanager-ltt-user-1` 同 ID PV/错误 user/no claim PV”的边界。
+- 【已完成实例删除 smoke 脚本与本地回归，待 fix12 现场执行】新增 `secret-broker-instance-delete-smoke-zhanghui08.sh`，只观察操作者在 UI 删除已登记的一次性 `d-broker-smoke-*` 实例；执行前核对实例名称标签、user/namespace、migration、fix12 imageID、零重启和两条 binding，记录目标/外部 PV UID，执行后验证 namespaced 资源和目标 PV 消失、外部 PV UID 不变。脚本没有任何 `kubectl delete` 或 binding 删除；K8s 包测试、7 项 RBAC 静态测试和 Bash 语法检查已通过，专用 Go cache 已清理。fix11 不含该安全修复，实例 #6 在 fix12 验收前不得删除。
 
 - 【已完成 D-only resources 源库审计边界草案】`SQLCountCollector.CollectSnapshot`在同一个只读repeatable-read事务内读取九张D-owned业务表的行数，并对`audit_logs`以同一SQL取得`COUNT(*)`与`MAX(id)`；空表返回无cutoff，缺失/矛盾/负值、非InnoDB、查询或commit失败均不返回部分结果。原`Collect`仍只返回脱敏行数。标准库fake-driver定向测试已通过，未安装依赖且一次性Go缓存已清理。该结果只描述源库事务视图；没有B的MySQL checkpoint/capture certificate及dump侧逐表证据，不能宣称备份包包含相同行，也不能完成D的backup/restore verifier。A的统一redaction和北向配置字段交叉评审同样尚未交付，不能由D替代决定业务字段的脱敏或归一化。
 - 【已完成 D-only resources backup verifier 离线草案】`verifier-contract.schema.json`登记了12项 D check 和封闭的 hash/行数/audit cutoff 字段；`VerifyBackupSnapshot`在冻结 registry 与 B 的 `CaptureProofVerifier` 前置校验后比较源/dump脱敏元数据，缺证明或不完整输入失败关闭；固定 fixture 标注 `synthetic-test-only`。接口和 B 的必需证明语义见 `docs/system-backup-resources-verifier-draft.md`。这只验证离线比较逻辑，真实 capture certificate、dump 内容证明、A 的 evidence/redaction 与 controller 接入尚未完成。
@@ -111,7 +234,8 @@
 - 【已完成 D-only claim生产生命周期入口】新增`ClaimCoordinator`统一封装五类D task/operation claim的Acquire/Renew/Release，target/owner/row-version/policy/retry delay在持久化前fail-fast，实际动作继续是数据库时间下的单条row-version CAS；operation保持无heartbeat列，release只清当前live owner并安排`next_reconcile_at`，不改变业务status。SQL deadline store已改为复用该入口，协调器本身不列候选、不推进状态，也没有runner/provider/catalog接口。
 - 【已完成 D-only gate核心事件原子投影】maintenance gate的`idle→acquiring→held→releasing→idle`、acquisition abort、过期acquiring恢复及过期holder/releaser fencing现在都在同一数据库事务中更新lock并写一条closed、redacted的`gate_changed` system event；event只记录previous/current state、固定reason和固定message，不含participant ACK、resource ID、credential或owner payload。事件插入不是权威状态但必须恰好一行，写入失败会回滚对应gate转换；renew heartbeat不产生状态事件。B的paused/running proof仍在事件前验证且未由D伪造。
 - 【已完成 D-only migration/capture双向互斥入口】新增`internal/migrationcoord`连接级MySQL advisory lock；application migration runner在专用连接上持锁执行全部DDL与`schema_migrations`登记，因此不受MySQL DDL隐式提交影响。`068` gate schema已应用后，每个待执行migration前都在同一锁内确认所有capture gate为严格idle；任一active/acquiring/releasing gate均失败关闭。`GateCoordinator.BeginAcquisition`反向要求先取得同名锁，并在gate事务commit/rollback后才释放；production构造器默认安装该锁，缺失、busy或release ownership丢失均拒绝capture，并拒绝仅允许1条连接的数据库池（advisory lock和gate事务须同时占用2条）。获取/释放锁结果不确定时强制丢弃物理连接，避免把可能仍持锁的连接放回池；标准库fake-driver测试覆盖正常复用和异常丢弃。该入口只协调D的schema migration与capture gate，不实现B的rollout preflight或participant ACK。标准库`migrationcoord`与`systembackupcontroller`整包测试通过；`internal/db`编译测试因本机离线module cache缺少既有`upper/db`、`yaml.v3`依赖而在setup失败，遵守约束未下载依赖。
-- 【已完成 D-only migration 启动无DDL保护】应用每次启动不再无条件执行`CREATE TABLE IF NOT EXISTS schema_migrations`：持有migration/capture advisory lock后先只读检查登记表，已存在则直接读取；仅全新库且gate表也不存在时创建；若gate表已存在但登记表缺失则失败关闭。新增标准库fake-driver测试覆盖三种分支，避免正常重启在capture gate已持有时发出DDL。`internal/db` Go测试在本机离线依赖缓存缺失下仍停于setup；本次一次性缓存已清理，真实MySQL并发验证仍待环境。
+- 【2026-10-09 D 双向互斥隔离 MySQL 已验收】操作者回传的 `sbk-mig-261009085934-4366`（UID `a4c541de-7d73-44ef-8b6f-48497cd508b3`）在 MySQL 8.4.8 重放 `001..080` 共94条 migration，文件名精确匹配；`TestDDatabaseInvariants` 全部7个子项通过（17.45秒）。其中 `capture_waits_for_migration_DDL_lock` 证明持有同名 advisory lock 的迁移连接执行真实 DDL 期间，另一连接的 `BeginAcquisition` 等待至锁释放才提交 gate；`migration_and_gate_mutually_exclude` 证明 gate 已提交时实际 embedded migration runner 在执行待迁移 SQL 和登记 ledger 前拒绝。回传含本地 unit/vet/Linux probe 编译通过、探针二进制 SHA-256 `0a7fa15a7f408ac0852341f29494c7e1d8325057c67ea746a09965c5dc225688`、catalog SHA-256 `0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93`、`PASS d-database-invariants`、按原UID清理 namespace、远端 scratch 和本地缓存。连接死亡子项中的 `unexpected EOF` 是主动 `KILL CONNECTION` 后的预期输出，子项通过。此前镜像 digest 不匹配和 Windows vet 文件占用尝试均在 MySQL 探针前退出且清理；修正后本轮成功结果不依赖它们。证据范围见 [双向互斥 MySQL 观察记录](evidence/system-backup-d-migration-capture-mysql-20261009.json)。这只关闭 D 的 migration/capture gate 隔离 MySQL 双向互斥验证，不覆盖 B rollout preflight、participant ACK 或真实生产 capture。
+- 【已完成 D-only migration 启动无DDL保护】应用每次启动不再无条件执行`CREATE TABLE IF NOT EXISTS schema_migrations`：持有migration/capture advisory lock后先只读检查登记表，已存在则直接读取；仅全新库且gate表也不存在时创建；若gate表已存在但登记表缺失则失败关闭。新增标准库fake-driver测试覆盖三种分支，避免正常重启在capture gate已持有时发出DDL。`internal/db` Go测试在本机离线依赖缓存缺失下仍停于setup；本次一次性缓存已清理；后续隔离MySQL互斥回执见上条，缺表失败关闭分支仍仅有离线测试。
 - 【已完成 D-only leader控制循环故障传播】leader的控制循环若异常返回或无取消即退出，不再只写日志而保留ready：故障进入supervisor worker结果并取消运行态，触发bootstrap readiness失败；正常leader取消不报故障。新增定向单元测试覆盖两种故障和正常取消；本机`cmd/system-backup-controller`包仍因既有Go依赖未缓存无法离线执行，测试安装验证待后续环境。
 - 【已完成 D-only controller dependency readiness】新增15秒周期、5秒单轮上限的依赖探针，并把结果并入`/readyz`而不影响`/healthz`：数据库侧对backup、drill、preflight、artifact-verify和operation五类权威表执行`WHERE 1=0`的claim-shaped UPDATE，证明精确列与UPDATE权限而不改变任何行；Kubernetes侧发现`coordination.k8s.io/v1` Lease、读取固定leader Lease（NotFound视为可达），并以SelfSubjectAccessReview验证create/get/update/patch。standby不要求持有leader，但DB claim或Lease API/RBAC不可用时稳定返回`dependency_probe_failed`。controller同时改为从upper session显式取得底层`*sql.DB`，避免把SQL builder误作标准连接。该探针只验证D controller自身依赖，不检查B participant/rollout、A认证或C provider健康。
 - 【已完成 D-only controller UTC会话配置与探针草案】独立controller改用专用数据库连接入口，在MySQL连接参数中固定`time_zone='+00:00'`与`loc=UTC`，使每个新建pool连接都请求UTC会话，不改变app/ABC的连接入口；启动及依赖readiness仍以只读数据库表达式比较`CURRENT_TIMESTAMP(6)`与`UTC_TIMESTAMP(6)`，偏移或查询失败均拒绝ready，leader控制循环每轮也在授权检查之后、任何D写入之前执行探针并fail-stop。标准库fake-driver覆盖UTC、非UTC、查询失败与取消，控制循环测试覆盖UTC门禁阻止后续pass；新增DSN解析回归测试待本机依赖可用或CI执行。代码与静态检查不能代替真实MySQL多连接、app/API写入会话和时间边界联测，P0-0b数据库UTC验收仍待完成。
@@ -156,7 +280,7 @@ D 负责 `resources` 业务域（系统镜像、出站例外、安全扫描、�
 1. 用追加 migration 建系统备份控制表、约束和索引，覆盖合同中的任务/operation、claim/gate/lease、资源 inventory、external action、evidence/log、dependency/capability、catalog scan/record、nonce、GC/tombstone、promotion 等实体；将 D 的资源域 ensure-only 建表移入 migration。跨 owner 的 risk/chat DDL 由对应 owner 提交或共同评审（第 5～6、17.1 节）。
 2. 验证 schema coverage、migration catalog/schema hash、控制表 dump 排除、migration runner 与 gate 的互斥；repository 不再在构造时创建业务表，四套部署的 MySQL init 与 embedded migration 保持同源（第 5、17.1 节）。
 3. 建独立 `system-backup-controller` 进程/Deployment、ServiceAccount、leader lease 与 DB claim。先用无 provider 副作用的 fake runner 验证 CAS、数据库时间、失去 leader/claim 后接管，再接入 D 的 gate/fencing 与 B 的 participant/runner/relay（第 6～8、17.2 节）。
-4. 从全部官方部署移除 app `cluster-admin`，补齐 app 现有 runtime/sync 最小权限；为 controller/Job 分离 RBAC、NetworkPolicy、准入限制、资源限额及身份。与 A/B/C 联合验证 Secret/KMS/artifact/catalog 权限；正向动作和负向 SubjectAccessReview 均通过（第 7.1、17.1、18 节）。
+4. 先补齐 app 现有 runtime/sync 最小权限，再把 app 的直接 Secret 调用迁移到独立、受约束的 broker；完成核心功能与越权拒绝 smoke 后，才从全部官方部署移除 app `cluster-admin`。为 controller/Job 分离 RBAC、NetworkPolicy、准入限制、资源限额及身份，并与 A/B/C 联合验证 Secret/KMS/artifact/catalog 权限（第 7.1、17.1、18 节）。
 5. 接入部署/数据库 feature gate、首次启用持久化、controller liveness/readiness；把 A 的 audit/redaction、request ID、strong-auth/nonce 接入管理 mutation 公共入口。准备 D 的 resources 数据模块骨架与 redacted fixture（第 6、10、14～15 节）。
 
 **完成判据**：migration/coverage 可重复验证、运行时 DDL 消除、官方部署权限隔离正负测通过、controller 在测试安装中安全 claim/接管且 gate/fence 不变量成立，feature gate 可独立回滚。未过门禁不创建真实备份 Job（第 5～8、17.1～17.2、18 节）。

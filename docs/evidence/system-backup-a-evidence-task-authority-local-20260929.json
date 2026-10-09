@@ -1,0 +1,169 @@
+{
+  "schema_version": "a-evidence-task-authority-local.v1",
+  "recorded_at": "2026-09-29T03:53:06.4237266Z",
+  "status": "local_component_pass",
+  "command": "pwsh -NoProfile -File scripts/system-backup-a-evidence-validation.ps1 -BuildParallelism 1",
+  "exit_code": 0,
+  "tests": {
+    "main_passed": 40,
+    "subtests_passed": 268,
+    "package_seconds": 4.743,
+    "vet_enabled": true,
+    "real_mtls_local": true,
+    "sql_driver": "scripted; no MySQL execution",
+    "sts_provider": "local HTTPS simulation"
+  },
+  "builds": {
+    "linux_mysql_probe": "pass",
+    "linux_mysql_probe_sha256": "d35d3f6c9a9c4ca8ec313a1c74f615d3ae177756b3e0d849e4710920ba807b7e",
+    "probe_ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+    "migration_runner": "pass",
+    "migration_runner_sha256": "9989e7db7f408ad483663e32ca1767366693eaa2825a7aa745979057f9bf0e25"
+  },
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "production_authorization_complete": false,
+  "cleanup": {
+    "scratch_name": ".tmp-a-evidence-6c1ab5c4c453417b8460457bd41ee831",
+    "exists": false,
+    "runner_reported_cleaned": true
+  },
+  "output": {
+    "path": "docs/evidence/system-backup-a-evidence-task-authority-local-20260929.txt",
+    "sha256": "fd6dab56271d9ae4a0f05b7e3077ac40be4aa5458b1ef31c0a2f5eb064312e47"
+  },
+  "sources": [
+    {
+      "path": "backend/internal/systembackupevidence/access_claim.go",
+      "sha256": "b7024b4de7933c8ab1eeb0ebe12a2afc918f72176a0fe2d4818bbb404145052c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content_test.go",
+      "sha256": "938df2c745a62489a7f40176c85fc8d01deb3f1d20cbce30269e3b7ee589571a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content.go",
+      "sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/content_dispatch.go",
+      "sha256": "b96285ff0ac32c817bcbb8a1b6273a66334c9c879f7d2a2f0a37dbf1d8cafa74"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "13d11b70cde7dd01705adf183dad0b324e63de9c94b26143a8e21c2913725c1e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "63d59cf8c4ceb8def43dde087e8fc2c67a912cababbd4042b9a0b76d07629f94"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/log_content_test.go",
+      "sha256": "49b410451ae5debd59f3fe33af1e0cd986c2692529e662d453dfac3d46052ea9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/log_content.go",
+      "sha256": "5041d59f9482022fa262a5f9e8d4bf77dd17ece2e5547f470f54ef41a50e2e46"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_sts_test.go",
+      "sha256": "17ce1d138e41ef37ca4203c27e8ec9d6825bd39f7e23ef353b29a0096536eec5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_sts.go",
+      "sha256": "724bcbf3161b541bf9bb9bed0e23265c6ed8d91a89fab6f1cbf6c0e003710bee"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_test.go",
+      "sha256": "9370fb7057081fd2a92a22f7982a85a8692a4a31de5d1026f60a9e2406583617"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3.go",
+      "sha256": "3e3039b369e7e677186c79d92aff7227b6a0fb74e00ed2ab3cd093c123c1cffe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority_sql.go",
+      "sha256": "179661708b4efcf9ad200cb0b8ed835fd591f654cb73a363887556c71fa4397a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority_test.go",
+      "sha256": "0090a8dd436d1dfef84a442b0a67e7f3ed827677b65e3667b0c973ee55b53e3e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority.go",
+      "sha256": "2e110800d249b27636b5c5f7565f62ad3d0eee0bb86f2a396c81675ea86f85a4"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_keyring_test.go",
+      "sha256": "c407d498bf848e3d111c23a7e50e250b010b031137c869626b83d4dee3bd8db1"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_keyring.go",
+      "sha256": "0f9766f6750d7e83cd719cf5b85135dfc366a870c04381c4f22107db6bca3208"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_test.go",
+      "sha256": "225a3a58365a9555e14a1cbe02dcb80863bfd95180b51d909ed5cb9737ac248b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit.go",
+      "sha256": "80eafd8403608de6a106705144372938d3b2c6d0c71aef4c1543918f40f34a6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "33a50664ee920481750766d508f4dda41ccbaccc9cd2aced052b9532e86d31ae"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "df795d1e366d96a7ad28c463a0df0d9462b0b0353891ab7f63bcfd8200f39909"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "7ebc45b01349af18bc9ccca42e2dfdb45efd1857bbb4ad62223ea37a2513909a"
+    },
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+    },
+    {
+      "path": "backend/internal/db/migrations/076_add_system_backup_job_observations.sql",
+      "sha256": "947ab3471b8445fa743b40702447c22df96b9f49c6c5e8b8bc069a13778517b3"
+    }
+  ],
+  "remaining": [
+    "system capability producer authority",
+    "administrator download and GC authorities",
+    "deadline-expired reconciliation identity",
+    "reviewed deployment inputs and runtime assembly",
+    "real MySQL query/locking/concurrency validation",
+    "real OIDC/STS/provider enforcement validation"
+  ]
+}

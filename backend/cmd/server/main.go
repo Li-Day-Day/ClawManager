@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	stdsql "database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -23,6 +24,7 @@ import (
 	"clawreef/internal/services"
 	"clawreef/internal/services/k8s"
 	"clawreef/internal/services/leader"
+	"clawreef/internal/systembackupsecurity"
 	"clawreef/internal/teamtemplate"
 
 	"github.com/gin-gonic/gin"
@@ -110,7 +112,16 @@ func main() {
 	if enterpriseAuthManager.Status(context.Background()).Enabled {
 		log.Printf("Enterprise LDAP authentication enabled")
 	}
-	authService := services.NewAuthService(userRepo, cfg.JWT, enterpriseAuthManager, services.WithEnterpriseAuthPolicy(cfg.Auth.Enterprise), services.WithQuotaRepository(quotaRepo))
+	sessionDB, _ := database.Driver().(*stdsql.DB)
+	backupSessions, err := backupSessionRecorder(sessionDB, cfg.Database.Database, cfg.JWT.Secret, os.Getenv)
+	if err != nil {
+		log.Fatal("system-backup read session configuration unavailable")
+	}
+	authOptions := []services.AuthServiceOption{services.WithEnterpriseAuthPolicy(cfg.Auth.Enterprise), services.WithQuotaRepository(quotaRepo)}
+	if backupSessions != nil {
+		authOptions = append(authOptions, services.WithSystemBackupSessions(backupSessions))
+	}
+	authService := services.NewAuthService(userRepo, cfg.JWT, enterpriseAuthManager, authOptions...)
 	quotaService := services.NewQuotaService(quotaRepo)
 	userService := services.NewUserService(userRepo, quotaRepo)
 	systemImageSettingService := services.NewSystemImageSettingService(systemImageSettingRepo)
@@ -230,6 +241,16 @@ func main() {
 	// Initialize handlers
 	versionHandler := handlers.NewVersionHandler()
 	authHandler := handlers.NewAuthHandler(authService)
+	if backupSessions != nil {
+		authHandler.SetSystemBackupLogoutHook(backupSessions.RevokeUserSessions)
+	} else if installation := os.Getenv("SYSTEM_BACKUP_REGISTRATION_INSTALLATION_ID"); installation != "" {
+		sqlDB, ok := database.Driver().(*stdsql.DB)
+		if !ok {
+			log.Fatal("system-backup registration requires SQL session revocation support")
+		}
+		revoker := systembackupsecurity.SQLTOTPService{DB: sqlDB, InstallationID: installation}
+		authHandler.SetSystemBackupLogoutHook(revoker.RevokeUserSessions)
+	}
 	enterpriseAuthHandler := handlers.NewEnterpriseAuthHandler(enterpriseAuthManager, enterpriseAuthManager)
 	userHandler := handlers.NewUserHandler(userService, quotaService, enterpriseAuthManager)
 	instanceHandler := handlers.NewInstanceHandler(
@@ -873,6 +894,12 @@ func main() {
 			adminSecurity.GET("/scan-jobs", securityHandler.ListJobs)
 			adminSecurity.GET("/scan-jobs/:id", securityHandler.GetJob)
 		}
+
+		// Contract fixture is read-only and explicitly enabled for integration checks.
+		// Use the same access-token and administrator checks with the module error envelope.
+		adminBackupRead := api.Group("/admin")
+		adminBackupRead.Use(middleware.SystemBackupReadFixtureAuth(userRepo))
+		registerBackupReadFixture(adminBackupRead, cfg.JWT.Secret)
 
 		gatewayLLM := api.Group("/gateway/llm")
 		gatewayLLM.Use(middleware.GatewayAuth(instanceRepo, bindingRepo))

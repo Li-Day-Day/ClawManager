@@ -118,10 +118,10 @@ export function verifySchemaHashEvidenceCleanup(candidate, recordsPath, deletedA
   };
 }
 
-export function validateReviewedSchemaHashEvidence(evidence, { inventory, migrationCatalog, captureSql }) {
+function validateBoundSchemaHashEvidence(evidence, { inventory, migrationCatalog, captureSql }) {
   const rootKeys = ['kind', 'contract_version', 'status', 'installation_identity_hash', 'installation_identity_version', 'capture_started_at', 'capture_finished_at', 'capture_method', 'capture_sql_sha256', 'capture_records_sha256', 'capture_record_count', 'server_context_hash', 'inventory_snapshot_sha256', 'migration_catalog_hash', 'result', 'inventory_comparison', 'records_cleanup', 'registered_evidence', 'required_reviewers', 'approved_reviewers'];
   expectClosed(evidence, rootKeys, 'schema hash live evidence');
-  if (evidence.kind !== 'system_backup_schema_hash_live_evidence' || evidence.contract_version !== contractVersion || evidence.status !== 'reviewed') throw new Error('schema hash live evidence is not reviewed for system-backup-plan.v12');
+  if (evidence.kind !== 'system_backup_schema_hash_live_evidence' || evidence.contract_version !== contractVersion) throw new Error('schema hash live evidence identity is invalid');
   for (const key of ['installation_identity_hash', 'capture_sql_sha256', 'capture_records_sha256', 'server_context_hash', 'inventory_snapshot_sha256', 'migration_catalog_hash']) expectSha256(evidence[key], key);
   if (typeof evidence.installation_identity_version !== 'string' || !evidence.installation_identity_version || evidence.installation_identity_version.length > 128) throw new Error('installation_identity_version must be 1..128 characters');
   expectTimestamp(evidence.capture_started_at, 'capture_started_at');
@@ -137,7 +137,7 @@ export function validateReviewedSchemaHashEvidence(evidence, { inventory, migrat
   const comparison = evidence.inventory_comparison;
   expectClosed(comparison, ['expected_object_count', 'observed_object_count', 'observed_object_keys_hash', 'missing_object_keys', 'unexpected_object_keys', 'matched'], 'inventory_comparison');
   expectSha256(comparison.observed_object_keys_hash, 'observed_object_keys_hash');
-  if (comparison.expected_object_count !== expectedKeys.length || comparison.observed_object_count !== expectedKeys.length || comparison.matched !== true) throw new Error('reviewed evidence must exactly match inventory object count');
+  if (comparison.expected_object_count !== expectedKeys.length || comparison.observed_object_count !== expectedKeys.length || comparison.matched !== true) throw new Error('accepted evidence must exactly match inventory object count');
   if (comparison.observed_object_keys_hash !== sha256(Buffer.from(canonicalJSON(expectedKeys), 'utf8'))) throw new Error('reviewed evidence object set does not match inventory');
   if (!Array.isArray(comparison.missing_object_keys) || comparison.missing_object_keys.length || !Array.isArray(comparison.unexpected_object_keys) || comparison.unexpected_object_keys.length) throw new Error('reviewed evidence cannot contain inventory differences');
 
@@ -157,6 +157,23 @@ export function validateReviewedSchemaHashEvidence(evidence, { inventory, migrat
   expectSha256(cleanup.path_hash, 'records_cleanup.path_hash');
   expectTimestamp(cleanup.deleted_at, 'records_cleanup.deleted_at');
   if (cleanup.status !== 'verified' || cleanup.verified_absent !== true || Date.parse(cleanup.deleted_at) < Date.parse(evidence.capture_finished_at)) throw new Error('temporary capture cleanup is not verified');
+  if (JSON.stringify(evidence.required_reviewers) !== JSON.stringify(reviewers)) throw new Error('evidence requires A/B/C reviewers');
+}
+
+// Reception validates repository bindings and reported cleanup, not the
+// authenticity of the observation or approvals. No field is promoted here.
+export function validateSchemaHashCandidate(evidence, inputs) {
+  if (evidence?.status !== 'candidate') throw new Error('schema hash evidence is not a candidate');
+  validateBoundSchemaHashEvidence(evidence, inputs);
+  if (evidence.registered_evidence !== null || !Array.isArray(evidence.approved_reviewers) || evidence.approved_reviewers.length !== 0) {
+    throw new Error('candidate cannot carry registration or approvals');
+  }
+  return evidence;
+}
+
+export function validateReviewedSchemaHashEvidence(evidence, inputs) {
+  if (evidence?.status !== 'reviewed') throw new Error('schema hash live evidence is not reviewed for system-backup-plan.v12');
+  validateBoundSchemaHashEvidence(evidence, inputs);
   expectClosed(evidence.registered_evidence, ['public_id', 'sha256'], 'registered_evidence');
   if (typeof evidence.registered_evidence.public_id !== 'string' || !/^sev_[A-Za-z0-9_-]+$/.test(evidence.registered_evidence.public_id)) throw new Error('registered evidence public ID is invalid');
   expectSha256(evidence.registered_evidence.sha256, 'registered_evidence.sha256');

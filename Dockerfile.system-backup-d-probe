@@ -1,0 +1,12 @@
+# Dedicated D integration test image. Build/push is performed by the operator.
+FROM golang:1.26.1-alpine AS probe-builder
+WORKDIR /workspace/backend
+COPY backend/ ./
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOTOOLCHAIN=local GOTELEMETRY=off GOWORK=off
+RUN go test -mod=readonly -p 1 -c -tags systembackup_integration -o /out/d-invariants.test ./internal/db
+
+FROM scratch
+COPY --from=probe-builder /out/d-invariants.test /d-invariants.test
+USER 65532:65532
+ENTRYPOINT ["/d-invariants.test"]
+CMD ["-test.run", "^TestDDatabaseInvariants$", "-test.v", "-test.count=1", "-test.timeout=180s"]

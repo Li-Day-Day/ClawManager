@@ -1,0 +1,15 @@
+LOCAL_PASS isolated-go-telemetry=off
+ok  	clawreef/internal/systembackupproducer	1.575s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.25s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.12s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.13s)
+PASS
+ok  	clawreef/internal/systembackupevidence	1.538s
+LOCAL_PASS d-producer-recovery-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=28c17c09607281a1870338b0307c27d024972e6f9226d1c7f7a2f867af2a81bd ddl_sha256=97abacd3f045046d01cb74211362a9a6aeada8c724c16958b48178517d5c8ff8
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea
+CLEANED local-registration-build-cache=True
+a_d_historical_recovery_local_exit=0

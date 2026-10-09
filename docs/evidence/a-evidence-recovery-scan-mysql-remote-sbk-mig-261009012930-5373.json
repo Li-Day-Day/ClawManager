@@ -1,0 +1,47 @@
+{
+  "kind": "a_evidence_recovery_scan_mysql_remote_acceptance",
+  "date": "2026-10-09",
+  "status": "accepted_for_frozen_a_evidence_mysql_scope",
+  "run": "sbk-mig-261009012930-5373",
+  "namespace_uid": "1ed7090f-8321-4297-99fc-dc0693867291",
+  "operator_transcript": {
+    "path": "docs/evidence/a-evidence-recovery-scan-mysql-remote-20261009-091741.txt",
+    "sha256": "6a8dc240acefd8700c9cf294f62c93dadae32a88c282e28860afa2316d9436a3",
+    "complete": true
+  },
+  "expected_snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261009-010042-7ed3e5cc.json",
+  "run_snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261009-011802-ff41f8ac.json",
+  "validation_profile": "a-evidence",
+  "snapshot_file_count": 867,
+  "snapshot_passed": true,
+  "live_drift_files": [
+    "backend/internal/systembackupevidence/d_producer_mysql_test.go",
+    "backend/internal/systembackupproducer/domain_open_test.go",
+    "backend/internal/systembackupproducer/domain_open.go"
+  ],
+  "mysql_top_level_subtests_passed": 9,
+  "recovery_scan_filters_due_claim_store_and_literal_installation_passed": true,
+  "run_owned_databases_cleaned": 1,
+  "binary_sha256": "91cac0da7be07ad2ddbba6ab32ea4c17bd7d8afebc21eacbcb47ecc1d826eb8d",
+  "ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+  "cleanup": {
+    "namespace_deleted": true,
+    "remote_registration_scratch_deleted": true,
+    "local_registration_build_cache_deleted": true,
+    "producer_adapter_build_cache_deleted": true
+  },
+  "wrapper_exit_code": 0,
+  "ssh_socket_close_diagnostics": "Present after successful phases; no test or cleanup failure recorded",
+  "accepted_scope": [
+    "Frozen A evidence MySQL suite, all nine top-level subtests",
+    "Recovery scanner excludes system capability_snapshot and retains system diagnostic candidates",
+    "Frozen recovery_scan.go and evidence_mysql_test.go match the expected local snapshot"
+  ],
+  "excluded_scope": [
+    "Three later live edits to D producer MySQL and domain-open files",
+    "Production D historical authority and C restricted Stat integration",
+    "Real provider and complete V01-V10 backup/restore acceptance"
+  ],
+  "agent_remote_actions": false,
+  "live_cluster_independently_rechecked": false
+}

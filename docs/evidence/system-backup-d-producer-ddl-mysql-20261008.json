@@ -1,0 +1,251 @@
+{
+  "kind": "d_producer_candidate_ddl_mysql_acceptance",
+  "receivedDate": "2026-10-08",
+  "status": "PASS",
+  "checkCount": 27,
+  "provenance": {
+    "source": "operator-supplied console text",
+    "independentRemoteRecheck": false,
+    "console": {
+      "path": "docs/evidence/system-backup-d-producer-ddl-console-20261008.txt",
+      "sha256": "6437ec8ab9d3535e67e5a65b3e413a9d1b00f3defc8cb4a9273cb1c4c007bf28"
+    },
+    "transcript": {
+      "path": "docs/evidence/system-backup-d-producer-ddl-remote-20261008-102446.log",
+      "sha256": "13a9b507d5f19c1de4df4cd50a6dd4c11d73c176a998ab44fe19ebd0e757ebad",
+      "completeNativeOutput": false,
+      "role": "Corroborates wrapper exit and cleanup; full result is in console text."
+    }
+  },
+  "sourceVerification": {
+    "ddl": {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c",
+      "matchesRemoteResult": true
+    },
+    "probe": {
+      "path": "scripts/system-backup-d-producer-ddl-probe.py",
+      "sha256": "89827bd2473830d39fd0bfd4c19b0b9ef1333797711e317f900dd76b0204feb9",
+      "matchesRemotePlan": true
+    },
+    "allExpectedCheckNamesMatchSource": true
+  },
+  "remoteResult": {
+    "checks": [
+      {
+        "name": "test_node_ready",
+        "passed": true
+      },
+      {
+        "name": "namespace_owned",
+        "passed": true
+      },
+      {
+        "name": "mysql_8_4",
+        "passed": true
+      },
+      {
+        "name": "loopback_only",
+        "passed": true
+      },
+      {
+        "name": "eight_innodb_tables",
+        "passed": true
+      },
+      {
+        "name": "four_foreign_keys",
+        "passed": true
+      },
+      {
+        "name": "all_candidate_checks",
+        "passed": true
+      },
+      {
+        "name": "domain_duplicate",
+        "passed": true
+      },
+      {
+        "name": "domain_zero_epoch",
+        "passed": true
+      },
+      {
+        "name": "domain_empty_record",
+        "passed": true
+      },
+      {
+        "name": "domain_oversize_record",
+        "passed": true
+      },
+      {
+        "name": "grant_domain_fk",
+        "passed": true
+      },
+      {
+        "name": "grant_lease_bound",
+        "passed": true
+      },
+      {
+        "name": "one_run_per_grant_generation",
+        "passed": true
+      },
+      {
+        "name": "pending_requires_observation",
+        "passed": true
+      },
+      {
+        "name": "observation_pair_required",
+        "passed": true
+      },
+      {
+        "name": "run_generation_fk",
+        "passed": true
+      },
+      {
+        "name": "target_initial_zero_result_allowed",
+        "passed": true
+      },
+      {
+        "name": "history_run_evidence_fk",
+        "passed": true
+      },
+      {
+        "name": "unique_target_result_version",
+        "passed": true
+      },
+      {
+        "name": "reference_composite_primary_key",
+        "passed": true
+      },
+      {
+        "name": "domain_delete_restricted",
+        "passed": true
+      },
+      {
+        "name": "rollback_restores_version",
+        "passed": true
+      },
+      {
+        "name": "grant_primary_key_plan",
+        "passed": true
+      },
+      {
+        "name": "existing_row_lock",
+        "passed": true
+      },
+      {
+        "name": "missing_receipt_gap_lock",
+        "passed": true
+      },
+      {
+        "name": "insert_succeeds_after_gap_release",
+        "passed": true
+      }
+    ],
+    "cleanup": true,
+    "ddl_sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c",
+    "dependency_installation": false,
+    "finished_utc": "2026-10-08T02:26:07.717244+00:00",
+    "grant_explain": {
+      "query_block": {
+        "cost_info": {
+          "query_cost": "1.00"
+        },
+        "select_id": 1,
+        "table": {
+          "access_type": "const",
+          "cost_info": {
+            "data_read_per_join": "280",
+            "eval_cost": "0.10",
+            "prefix_cost": "0.00",
+            "read_cost": "0.00"
+          },
+          "filtered": "100.00",
+          "key": "PRIMARY",
+          "key_length": "162",
+          "possible_keys": [
+            "PRIMARY",
+            "uq_prod_1_0",
+            "ix_prod_1_0"
+          ],
+          "ref": [
+            "const",
+            "const"
+          ],
+          "rows_examined_per_scan": 1,
+          "rows_produced_per_join": 1,
+          "table_name": "system_backup_producer_grants",
+          "used_columns": [
+            "scope_key",
+            "grant_id",
+            "generation",
+            "domain_epoch",
+            "row_version",
+            "state",
+            "subject_identity_hash",
+            "lease_expires_at",
+            "authorization_expires_at",
+            "record_bytes",
+            "record_sha256"
+          ],
+          "used_key_parts": [
+            "scope_key",
+            "grant_id"
+          ]
+        }
+      }
+    },
+    "image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+    "image_pull_policy": "Never",
+    "kind": "d_producer_candidate_ddl_mysql",
+    "lock_waits": [
+      {
+        "name": "existing_row_lock",
+        "seconds": 1.241
+      },
+      {
+        "name": "missing_receipt_gap_lock",
+        "seconds": 1.215
+      }
+    ],
+    "mysql_version": "8.4.8",
+    "namespace": "sbk-prod-ddl-53df88906278bd6cb5f408cf",
+    "namespace_uid": "6e8e62df-9dab-45b5-bcb2-2ae49d990ef5",
+    "owner": "53df88906278bd6cb5f408cf",
+    "producer_runtime_validated": false,
+    "production_mutated": false,
+    "status": "PASS"
+  },
+  "wrapperExitCode": 0,
+  "cleanup": {
+    "namespace": true,
+    "localTransfer": true,
+    "remoteTransfer": true
+  },
+  "diagnostics": {
+    "sshPendingSocketMessageObserved": true,
+    "requiresRerun": false,
+    "reason": "Full PASS result, exit 0 and all cleanup confirmations received."
+  },
+  "countCorrection": "Historical ready receipt plannedChecks=26 was a documentation miscount; unchanged probe source and returned result both contain 27 distinct checks. Historical receipt preserved.",
+  "loggingFix": {
+    "path": "scripts/system-backup-d-producer-ddl-remote.ps1",
+    "sha256": "3f2bcd4a28e41d9aa2864dbcbfd66d9db6c405c8215d045b5463a1ae4a8d8620",
+    "change": "Forward native stdout/stderr through host for Start-Transcript, preserving exit code.",
+    "validation": [
+      "PowerShell 7 parser and CheckOnly",
+      "PowerShell 7 local transcript captures both streams and preserves exit 7/0",
+      "Windows PowerShell 5.1.26100.6899 local transcript captures both streams and preserves exit 7/0"
+    ],
+    "initialPS51TestHarnessFailure": "Inline node -e test quotes were stripped by native argument forwarding; moved fixture to a temporary JS file and repeated successfully.",
+    "remoteValidated": false,
+    "testArtifactsCleaned": true,
+    "dependenciesInstalled": false
+  },
+  "limitations": [
+    "Synthetic physical DDL records, not canonical C1 records",
+    "Full producer Go service and actual A/D authority/provider runtime not exercised",
+    "No formal migration/inventory adoption or C1 cross-owner approval",
+    "V01-V10 remain outstanding",
+    "No production database mutation"
+  ]
+}

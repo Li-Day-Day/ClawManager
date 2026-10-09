@@ -1,0 +1,58 @@
+{
+  "kind": "d_reviewed_history_isolated_mysql_receipt",
+  "status": "PASS",
+  "source": "operator_pasted_console_output",
+  "independently_queried_remote": false,
+  "standalone_process_exit_code": null,
+  "test_log_time": "2026/09/29 06:21:43",
+  "test_log_timezone": "not_explicit_in_receipt",
+  "namespace": "sbk-mig-260929062117-1e03",
+  "namespace_uid": "2387ad0f-429a-4181-a910-8f889a0fde89",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "binary_sha256": "58e0afd66d07cb7533ec8dc320ec16e0c1712f8c043b2900108c67cca8f89480",
+  "matching_local_build_receipt": "system-backup-d-build-lock-fix-local-20260929.json",
+  "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+  "local_build": {
+    "parallelism": 1,
+    "dependency_download": false,
+    "four_package_tests": "PASS",
+    "linux_probe_compile": "PASS"
+  },
+  "bundle_checksum_reported": "OK",
+  "fresh_migration_replay": {
+    "status": "PASS",
+    "applied": 93,
+    "exact_filenames": true,
+    "d_columns": "blob/blob/blob/char"
+  },
+  "test": "TestDReviewedHistoryMySQL",
+  "duration_seconds": 0.44,
+  "subtests": [
+    {"name": "unreviewed_95_rejected_without_DDL", "status": "PASS"},
+    {"name": "wrong_target_rejected_without_DDL", "status": "PASS"},
+    {"name": "unreviewed_extra_rejected_without_DDL", "status": "PASS"},
+    {"name": "capture_gate_rejects_then_recovers", "status": "PASS"},
+    {"name": "apply_95_to_96_preserves_history_and_exact_runtime_DDL", "status": "PASS"},
+    {"name": "retry_preserves_ledger_and_runtime_rows", "status": "PASS"}
+  ],
+  "history_fixtures_synthetic": true,
+  "fixture_ledger_transition": "95->96",
+  "historical_rows_retained": true,
+  "original_sql_executed": false,
+  "production_upgrade": false,
+  "cleanup_reported": {
+    "namespace": "sbk-mig-260929062117-1e03",
+    "namespace_uid": "2387ad0f-429a-4181-a910-8f889a0fde89",
+    "namespace_cleaned": true,
+    "remote_probe_scratch_cleaned": true,
+    "local_probe_build_cache_cleaned": true
+  },
+  "limitations": [
+    "Synthetic historical SQL and review inputs do not establish provenance or equivalence of the installed database's historical migrations.",
+    "The newly compiled probe exercised this implementation; the fix16 image supplied fresh replay and is not evidence that fix16 contains the new history-review feature.",
+    "This does not validate partial DDL failure recovery, the deployed migration CLI, or the installed database schema baseline.",
+    "No production 080 upgrade, report volume acceptance, HTTP deployment, personal MFA or configuration activation is established by this receipt."
+  ]
+}

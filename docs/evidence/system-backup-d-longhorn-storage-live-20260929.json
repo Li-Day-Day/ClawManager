@@ -1,0 +1,524 @@
+{
+  "kind": "d_operator_receipt_archive",
+  "source_attachment_sha256": "9109bb7d4f221e7d1e5ee20e1342847bc52ba55187e15908eb03205b2b2061da",
+  "received_at": "2026-09-29T07:30:17.533702+00:00",
+  "cleanup_markers": [
+    "CLEANED remote-d-live-preflight=yes",
+    "CLEANED local-d-live-preflight=yes"
+  ],
+  "remote_independently_rechecked": false,
+  "observation": {
+    "kind": "d_longhorn_readonly_review",
+    "status": "BLOCKED",
+    "checks": [
+      {
+        "name": "namespace_uid_matches",
+        "passed": true
+      },
+      {
+        "name": "node_uid_matches",
+        "passed": true
+      },
+      {
+        "name": "mysql_pod_node_matches",
+        "passed": true
+      },
+      {
+        "name": "target_node_ready",
+        "passed": true
+      },
+      {
+        "name": "target_node_schedulable",
+        "passed": true
+      },
+      {
+        "name": "rwx_class_driver_matches",
+        "passed": true
+      },
+      {
+        "name": "rwx_class_not_migratable",
+        "passed": true
+      },
+      {
+        "name": "rwx_class_not_prepopulated",
+        "passed": true
+      },
+      {
+        "name": "target_node_csi_registered",
+        "passed": true
+      },
+      {
+        "name": "target_node_manager_ready",
+        "passed": true
+      },
+      {
+        "name": "daemonsets_longhorn-csi-plugin_ready",
+        "passed": true
+      },
+      {
+        "name": "daemonsets_longhorn-manager_ready",
+        "passed": true
+      },
+      {
+        "name": "deployments_csi-attacher_ready",
+        "passed": true
+      },
+      {
+        "name": "deployments_csi-provisioner_ready",
+        "passed": true
+      },
+      {
+        "name": "deployments_csi-resizer_ready",
+        "passed": true
+      },
+      {
+        "name": "deployments_csi-snapshotter_ready",
+        "passed": true
+      },
+      {
+        "name": "deployments_longhorn-driver-deployer_ready",
+        "passed": true
+      },
+      {
+        "name": "deployments_longhorn-ui_ready",
+        "passed": true
+      },
+      {
+        "name": "csi_plugin_daemonset_observed",
+        "passed": true
+      },
+      {
+        "name": "longhorn_node_ready",
+        "passed": true
+      },
+      {
+        "name": "longhorn_dependency_Multipathd_requires_review",
+        "passed": false
+      },
+      {
+        "name": "longhorn_dependency_KernelModulesLoaded_requires_review",
+        "passed": false
+      },
+      {
+        "name": "longhorn_dependency_Multipathd_observed",
+        "passed": true
+      },
+      {
+        "name": "longhorn_dependency_KernelModulesLoaded_observed",
+        "passed": true
+      },
+      {
+        "name": "longhorn_dependency_NFSClientInstalled_observed",
+        "passed": true
+      },
+      {
+        "name": "longhorn_dependency_RequiredPackages_observed",
+        "passed": true
+      },
+      {
+        "name": "longhorn_dependency_MountPropagation_observed",
+        "passed": true
+      },
+      {
+        "name": "engine_settings_boolean",
+        "passed": true
+      },
+      {
+        "name": "ssh_host_hostname_matches_target",
+        "passed": true
+      },
+      {
+        "name": "namespace_uid_stable",
+        "passed": true
+      },
+      {
+        "name": "node_uid_stable",
+        "passed": true
+      },
+      {
+        "name": "mysql_pod_node_stable",
+        "passed": true
+      },
+      {
+        "name": "storage_class_stable",
+        "passed": true
+      },
+      {
+        "name": "longhorn_namespace_uid_stable",
+        "passed": true
+      }
+    ],
+    "blockers": [
+      "dedicated_rwx_mount_permissions_and_freshness_not_tested",
+      "longhorn_dependency_Multipathd_requires_review",
+      "longhorn_dependency_KernelModulesLoaded_requires_review"
+    ],
+    "cluster_mutated": false,
+    "database_mutated": false,
+    "storage_authorized": false,
+    "captured_at": "2026-09-29T07:18:57.097792+00:00",
+    "node": {
+      "name": "k8s-master",
+      "uid": "bc1fb478-0388-4f53-96b4-8d186301f6af",
+      "hostname": "k8s-master",
+      "unschedulable": false,
+      "taints": [],
+      "conditions": [
+        {
+          "type": "NetworkUnavailable",
+          "status": "False",
+          "reason": "CalicoIsUp"
+        },
+        {
+          "type": "MemoryPressure",
+          "status": "False",
+          "reason": "KubeletHasSufficientMemory"
+        },
+        {
+          "type": "DiskPressure",
+          "status": "False",
+          "reason": "KubeletHasNoDiskPressure"
+        },
+        {
+          "type": "PIDPressure",
+          "status": "False",
+          "reason": "KubeletHasSufficientPID"
+        },
+        {
+          "type": "Ready",
+          "status": "True",
+          "reason": "KubeletReady"
+        }
+      ]
+    },
+    "storage_class": {
+      "name": "longhorn-rwx",
+      "uid": "a7e3a85f-6ecf-4b40-bfb7-98892f9b3076",
+      "resource_version": "5107362",
+      "provisioner": "driver.longhorn.io",
+      "binding_mode": "Immediate",
+      "reclaim_policy": "Delete",
+      "allow_expansion": true,
+      "parameters": {
+        "fsType": "ext4",
+        "numberOfReplicas": "2",
+        "staleReplicaTimeout": "30"
+      },
+      "allowed_topologies": []
+    },
+    "csi_driver": {
+      "uid": "0f24c0cf-fa72-42bd-9ddc-f123dcf8fdf0",
+      "fs_group_policy": "ReadWriteOnceWithFSType",
+      "attach_required": true
+    },
+    "longhorn_namespace": {
+      "name": "longhorn-system",
+      "uid": "219c83f8-2f9d-4e12-94e2-00b5e750cba0"
+    },
+    "managers": [
+      {
+        "name": "longhorn-manager-h7xlm",
+        "uid": "6f2d1ace-820a-46e3-9925-ed61c02793ef",
+        "node": "k8s-master",
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "PodReadyToStartContainers",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "Initialized",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "Ready",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "ContainersReady",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "PodScheduled",
+            "status": "True",
+            "reason": null
+          }
+        ],
+        "images": [
+          "10.130.14.23:5000/longhorn-manager:v1.12.0"
+        ]
+      },
+      {
+        "name": "longhorn-manager-mgpc4",
+        "uid": "3462d55b-b305-4a41-9076-817bc66d8788",
+        "node": "node1",
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "PodReadyToStartContainers",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "Initialized",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "Ready",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "ContainersReady",
+            "status": "True",
+            "reason": null
+          },
+          {
+            "type": "PodScheduled",
+            "status": "True",
+            "reason": null
+          }
+        ],
+        "images": [
+          "10.130.14.23:5000/longhorn-manager:v1.12.0"
+        ]
+      }
+    ],
+    "workloads": [
+      {
+        "kind": "daemonsets",
+        "name": "longhorn-csi-plugin",
+        "desired": 2,
+        "ready": 2,
+        "generation_observed": true
+      },
+      {
+        "kind": "daemonsets",
+        "name": "longhorn-manager",
+        "desired": 2,
+        "ready": 2,
+        "generation_observed": true
+      },
+      {
+        "kind": "deployments",
+        "name": "csi-attacher",
+        "desired": 3,
+        "ready": 3,
+        "generation_observed": true
+      },
+      {
+        "kind": "deployments",
+        "name": "csi-provisioner",
+        "desired": 3,
+        "ready": 3,
+        "generation_observed": true
+      },
+      {
+        "kind": "deployments",
+        "name": "csi-resizer",
+        "desired": 3,
+        "ready": 3,
+        "generation_observed": true
+      },
+      {
+        "kind": "deployments",
+        "name": "csi-snapshotter",
+        "desired": 3,
+        "ready": 3,
+        "generation_observed": true
+      },
+      {
+        "kind": "deployments",
+        "name": "longhorn-driver-deployer",
+        "desired": 1,
+        "ready": 1,
+        "generation_observed": true
+      },
+      {
+        "kind": "deployments",
+        "name": "longhorn-ui",
+        "desired": 2,
+        "ready": 2,
+        "generation_observed": true
+      }
+    ],
+    "longhorn_node": {
+      "uid": "9ee91133-171c-43eb-8295-d6904b49bce8",
+      "allow_scheduling": true,
+      "conditions": [
+        {
+          "type": "Ready",
+          "status": "True",
+          "reason": ""
+        },
+        {
+          "type": "Schedulable",
+          "status": "True",
+          "reason": ""
+        },
+        {
+          "type": "RequiredPackages",
+          "status": "True",
+          "reason": ""
+        },
+        {
+          "type": "Multipathd",
+          "status": "False",
+          "reason": "MultipathdIsRunning"
+        },
+        {
+          "type": "NFSClientInstalled",
+          "status": "True",
+          "reason": ""
+        },
+        {
+          "type": "KernelModulesLoaded",
+          "status": "False",
+          "reason": "KernelModulesNotLoaded"
+        },
+        {
+          "type": "MountPropagation",
+          "status": "True",
+          "reason": ""
+        }
+      ],
+      "disks": [
+        {
+          "name": "default-disk-21cf1b2a3104c362",
+          "storage_available": 2411200512000,
+          "storage_maximum": 3933593591808,
+          "storage_scheduled": 2039035723776,
+          "conditions": [
+            {
+              "type": "Ready",
+              "status": "True",
+              "reason": ""
+            },
+            {
+              "type": "Schedulable",
+              "status": "True",
+              "reason": ""
+            }
+          ]
+        }
+      ]
+    },
+    "dependency_details": [
+      {
+        "type": "RequiredPackages",
+        "status": "True",
+        "reason": "",
+        "lastTransitionTime": "2026-06-25T07:38:58Z"
+      },
+      {
+        "type": "Multipathd",
+        "status": "False",
+        "reason": "MultipathdIsRunning",
+        "lastTransitionTime": "2026-06-25T07:38:58Z"
+      },
+      {
+        "type": "NFSClientInstalled",
+        "status": "True",
+        "reason": "",
+        "lastTransitionTime": "2026-06-25T07:38:58Z"
+      },
+      {
+        "type": "KernelModulesLoaded",
+        "status": "False",
+        "reason": "KernelModulesNotLoaded",
+        "lastTransitionTime": "2026-06-25T07:38:58Z",
+        "missing_modules": [
+          "dm_crypt"
+        ],
+        "module_message_recognized": true
+      },
+      {
+        "type": "MountPropagation",
+        "status": "True",
+        "reason": "",
+        "lastTransitionTime": "2026-06-25T07:39:28Z"
+      }
+    ],
+    "dependency_condition_findings": [
+      {
+        "type": "Multipathd",
+        "status": "False",
+        "reason": "MultipathdIsRunning"
+      },
+      {
+        "type": "KernelModulesLoaded",
+        "status": "False",
+        "reason": "KernelModulesNotLoaded"
+      }
+    ],
+    "client_dependencies_verified": false,
+    "settings": {
+      "default-replica-count": "{\"v1\":\"3\",\"v2\":\"3\"}",
+      "storage-minimal-available-percentage": "25",
+      "storage-over-provisioning-percentage": "100",
+      "v1-data-engine": "true",
+      "v2-data-engine": "false"
+    },
+    "requested_data_engine": null,
+    "engine_default_requires_volume_verification": true,
+    "diagnostic_interpretation": {
+      "multipath": "daemon_response_observed_not_proof_of_device_claim",
+      "kernel": "v1.12_checks_dm_crypt_plus_v2_modules_when_v2_enabled",
+      "host_independently_verified": false,
+      "volume_engine_verified": false
+    },
+    "ssh_host_diagnostics": {
+      "hostname_matches": true,
+      "mutated": false,
+      "device_claim_verified": false,
+      "kernel_modules_present": {
+        "dm_crypt": false,
+        "vfio_pci": false,
+        "uio_pci_generic": false,
+        "nvme_tcp": false,
+        "iscsi_tcp": true,
+        "nfs": true
+      },
+      "module_scope": "sysfs_present_loaded_or_builtin_not_a_complete_kernel_config_check",
+      "services": {
+        "multipathd.service": "active",
+        "multipathd.socket": "active",
+        "iscsid.service": "active"
+      },
+      "multipathd_status_response_nonempty": true,
+      "multipathd_status_command_succeeded": true
+    },
+    "ssh_host_storage_details": {
+      "mutated": false,
+      "module_loaded_by_probe": false,
+      "service_changed": false,
+      "dm_crypt_module_file_available": true,
+      "active_multipath_map_count": 0,
+      "longhorn_block_devices": [],
+      "block_topology_read_complete": false,
+      "effective_multipath_filters": {
+        "config_sha256": "b26c91f7a02e74a9aa36f4771bd85fec840e2c8a31442b6716fefb6bb9d2585e",
+        "sections": {
+          "blacklist": {
+            "devnode": [
+              "^sd[a-z0-9]+",
+              "!^(sd[a-z]|dasd[a-z]|nvme[0-9])"
+            ],
+            "other_rule_count": 14
+          },
+          "blacklist_exceptions": {
+            "devnode": [],
+            "other_rule_count": 1
+          }
+        },
+        "future_longhorn_exclusion_verified": false
+      },
+      "safe_to_stop_multipathd": false
+    }
+  }
+}

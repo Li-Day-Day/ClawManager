@@ -36,6 +36,16 @@ jobs:
       - name: Check system backup draft contracts
         run: node ../scripts/system-backup-contract-check.mjs --check
 
+      - name: Check D deployment init and Admin DTO wire parity
+        run: |
+          node ../scripts/system-backup-d-init-check.mjs
+          node ../scripts/system-backup-d-dto-check.mjs
+          node ../scripts/system-backup-d-init-check.test.mjs
+          node ../scripts/system-backup-d-dto-check.test.mjs
+          node ../scripts/system-backup-d-deployment.test.mjs
+          node ../scripts/system-backup-d-capacity-deployment.test.mjs
+          bash ../scripts/system-backup-controller-grant-drift-phase.test.sh
+
       - name: Check system backup metrics registry
         run: node ../scripts/system-backup-metrics-registry.mjs --check
 
@@ -43,7 +53,7 @@ jobs:
         run: node ../scripts/system-backup-prometheus-rules.mjs --check
 
       - name: Test system backup contract gates
-        run: node --test ../scripts/system-backup-contract-check.test.mjs ../scripts/system-backup-contract-artifacts.test.mjs ../scripts/system-backup-schema-hash.test.mjs ../scripts/system-backup-prometheus-rules.test.mjs
+        run: node --test ../scripts/system-backup-contract-check.test.mjs ../scripts/system-backup-contract-artifacts.test.mjs ../scripts/system-backup-producer-contract.test.mjs ../scripts/system-backup-schema-hash.test.mjs ../scripts/system-backup-prometheus-rules.test.mjs
 
       - name: Install dependencies
         run: npm ci

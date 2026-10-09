@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "date": "2026-10-08",
+  "role": "D",
+  "status": "result_commit_and_exact_receipt_replay_locally_validated_pending_production_integration",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupproducer/result.go",
+      "sha256": "c5f288ce41d834bc7b6517cb57c1b4739df75bad257728b1acf3d53b5b1c2e98"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/result_test.go",
+      "sha256": "32c6acfa7fb42036a26541f00087478e4641412b12c0c662c08ffc3646785378"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/finish.go",
+      "sha256": "789c1f013538c0a51c29592f9e52937ece921c3e6269df66a9b1145a59448f73"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/finish_test.go",
+      "sha256": "892b34ceb8d091b8473c946d0e0b48a2e24d286ac20c4c2ec9459a27f9acf766"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-validation.ps1",
+      "sha256": "584abf2f5069fd10502285eb5a523d60b4b779bd64a920b4e88f3899e27c09f8"
+    },
+    {
+      "path": "docs/system-backup-d-producer-result-20261008.md",
+      "sha256": "9dfd3b027a8c1f1788afb9734fb9ee05a85159492901c264c8819483faa86b2a"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "ff06a6c5c8dc26305f42a270a0e1b654d8f7eb85ca676667295b887fd89c4f8c"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "2ca7832c239418358688022fef47f0e83fa56ce4bf0ec5ff1f6b19dfbed64004"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupproducer/claim.go",
+      "sha256": "bc1085a97cbec0f48ebd007b7966425acfe5844d0186ec74973a407fdc2d2514"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/claim_test.go",
+      "sha256": "d50ff6d63e06e8623a0e2ed53da7b07cd93e8ebe81170e1dbbeca9b2d3ade1cb"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/codec.go",
+      "sha256": "9c7c8c793edb497f980da9bb05f4ec2e2e9956b379ca850ba3f0026998e9138e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/contract_test.go",
+      "sha256": "55fccda0e53180925691cc3b9549369ebf90483a22cc0ac3e6ae4af9515544d6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/decode.go",
+      "sha256": "e02ed710189fa1d71a4b1ab7fd607b6ff668ac2be1ac58c82c7fc940c6554672"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution.go",
+      "sha256": "3195e9e2150241cd457f197cead636be6ba3953ce9737d6c4b84a322228ef606"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution_policy.go",
+      "sha256": "3264b58051fcc612e50282c439cf4af505b9063cb51217047133dc2d5f0dbcbc"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution_test.go",
+      "sha256": "6cc806ec21b9959952d19756edecc45feb4bf2f178d4c21f11d2ee99f675122f"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/frame_decode.go",
+      "sha256": "e1a2d4faefac35a77b892b792380e5c1ed2ae943436437d560d9276e7acb04a6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/lifecycle.go",
+      "sha256": "8843803f3c57b7452746538570d8ae99f831a6b8b42930853033869e95aa1853"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/lifecycle_test.go",
+      "sha256": "c0d896f9dafc82b0195bb9b1559516c70038ea2de7a6c900c7fa599e3d9ca47b"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/pending.go",
+      "sha256": "f73a054c9054f41560be643d0f1a7fcbf7347f060fe9478e6b998c238d047418"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/pending_test.go",
+      "sha256": "c02903f48fc45453065b7694cb62b06d3f0c971afc82d7fdc91015894e113326"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "sha256": "85363a3c0bc873cfe065e20755d6c17ffb8b32d5640bf0e27c13aa1112f0ccc5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql_test.go",
+      "sha256": "015e78e4c3a49f2717f99ab9b2c1c43ef78f345016176674e3eb62c8f3df16ff"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage.go",
+      "sha256": "d52843eaeb4d80ecea8e463bcc01e2b7f9fd867650169dbc46233c2b44f67f6c"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage_test.go",
+      "sha256": "59bc8305bbeb65e346e0eea5c8ddc1483e80834d840ffa3da5c4e6b385669797"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "8f33ce071e06abc6f5ee216422136d7d4dd8d0c28cf1a5810c3e2d06bee197d0"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction_test.go",
+      "sha256": "e8e18be01be2410b17dda58304d6fa72eea7445cc577cacde17a0b9fbf1e79a7"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "sha256": "a23f6c121f304c566f033d20cd30c8976dcb69ac52bd56d10417fdd1fbe14ed2"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c"
+    }
+  ],
+  "referenceOnlyNotValidated": [
+    {
+      "path": "backend/internal/systembackupevidence/system_pending.go",
+      "sha256": "8758cb36a5f9cd5948c1dce956c46290763f665011c6cb2e92eb8b336da5178f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_publication.go",
+      "sha256": "2ce7105202650ac3166ee2aaaf1c68d432eb71bee0d82115081d409a26180b68"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_result.go",
+      "sha256": "b42f976b3b24288069a6df5e6fd4fa27944d25949b804ac826bee6f4099610b7"
+    },
+    {
+      "path": "docs/system-backup-a-system-result-20261008.md",
+      "sha256": "ee3b6d1a391198b22f77e4fc963f0d634cc679ceeb4afa43ce44f5d3562ca33e"
+    }
+  ],
+  "validation": {
+    "runner": "scripts/system-backup-d-producer-validation.ps1",
+    "testPattern": ".",
+    "exitCode": 0,
+    "windowsTopLevelTests": 48,
+    "namedPassesIncludingSubtests": 681,
+    "defaultGoTestVet": true,
+    "linuxTestCrossCompile": true,
+    "linuxBinaryExecuted": false,
+    "temporaryArtifactsCleaned": true,
+    "mysqlExecuted": false,
+    "dependencyInstallation": false,
+    "remoteOperations": false,
+    "noExecutableChangesAfterFinalValidation": true,
+    "coverage": [
+      "Local Lifecycle/Execution/Pending/Claim/Finish to CommitResult using synthetic SQL driver and authority",
+      "Finish ready atomically advances pending run to published; run CAS failure rolls back evidence ready",
+      "Published run to committed with target version, receipt, two references and applicable complete projection in one transaction",
+      "Unconfigured candidate and configured disabled/enabled candidate or canonical projection modes",
+      "Exact current request/identity/admission/history/observation/evidence checks and 442368-byte synthetic cost",
+      "Projection, run/target CAS, receipt, audit and final guard failures roll back every participant",
+      "Exact receipt replay uses independent historical permission after grant revocation and observation expiry without charging or mutation",
+      "Changed same-key request and new key after committed run rejected",
+      "Commit uncertainty returns no receipt; same-key authorized readback can recover original committed receipt",
+      "Known late commit returns historical receipt with ErrCommittedExpired only"
+    ]
+  },
+  "supersededValidation": [
+    {
+      "scope": "full package before published transition correction",
+      "exitCode": 1,
+      "temporaryArtifactsCleaned": true,
+      "diagnostics": "Large JSON output truncated; source inspection found missing pending-to-published transition in Finish. Complete failure list unavailable."
+    },
+    {
+      "scope": "targeted result diagnostic before final full rerun",
+      "exitCode": 1,
+      "temporaryArtifactsCleaned": true,
+      "diagnostics": "Build failed. Initial compact logger omitted build-output events, so exact cause unavailable. Logger corrected before final full rerun."
+    }
+  ],
+  "catalog": {
+    "files": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "producerMigrationAdded": false
+  },
+  "limitations": [
+    "Production authentication, evaluator provenance, canonical target mapping, full legacy projections, capacity and audit authority are not implemented by this change",
+    "A has supplied actual pending/claim/finish/result SQL adapters; this D-only run neither compiles/tests A nor proves complete A/D Lifecycle-to-CommitResult integration",
+    "Synthetic SQL tests do not validate real MySQL syntax/FK/gap locks/cross-process races or provider behavior",
+    "Existing pending hold and older result references remain; reference retirement, retention reconciliation and GC/capacity release are pending",
+    "Exact replay still needs the original private execution handle and an open scope domain; independent process-loss/closed-domain/cross-configuration history recovery remains",
+    "D owns the outer transaction; general caller-owned LockedPrefix composition remains pending",
+    "Domain provisioning/management, actual system STS and independent C proof channel, production environments and provider integration remain",
+    "Eight-table DDL is a candidate only; A/C review, applicable B Job review, V01-V10 and production acceptance are incomplete",
+    "Prior milestone evidence is retained at its historical source fingerprints and does not cover the new Finish run transition"
+  ]
+}

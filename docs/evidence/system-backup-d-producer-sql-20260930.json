@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "date": "2026-09-30",
+  "role": "D",
+  "status": "transaction_record_sql_validated_pending_production_policy_and_lifecycle",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "sha256": "85363a3c0bc873cfe065e20755d6c17ffb8b32d5640bf0e27c13aa1112f0ccc5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql_test.go",
+      "sha256": "015e78e4c3a49f2717f99ab9b2c1c43ef78f345016176674e3eb62c8f3df16ff"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "8f33ce071e06abc6f5ee216422136d7d4dd8d0c28cf1a5810c3e2d06bee197d0"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction_test.go",
+      "sha256": "d2d55d8a7bde07fe36562ac2b68896f79e6e12734b28be52b4cc1fed6a0e33f6"
+    },
+    {
+      "path": "docs/system-backup-d-producer-sql-20260930.md",
+      "sha256": "fb4ee731feae100c8fd8e6183984b7eb5661b2360908f34debf17dcc0522bfe8"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "7793caccfe5e0a2df8c13c70a97c4fe97af434f4f8c464cf062b4a6c9de8710c"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "70266b9578bf1e6d498cc53a450370c49b4004ab9d7f5fe47676d44edcd77514"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-validation.ps1",
+      "sha256": "6648170da4f8acd688651882aaa5652246b33bf1ad9c06e8673b297da55c7069"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/producer_binding.go",
+      "sha256": "4bd112c43b4755ee01488b603b77ff855e1a622d3682be10e9a488255ff46dca"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_prepare.go",
+      "sha256": "158b2374797063c1a2730bf969a1b6d26e8c0d5a6208e8e02a1a447bd452cb71"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/codec.go",
+      "sha256": "9c7c8c793edb497f980da9bb05f4ec2e2e9956b379ca850ba3f0026998e9138e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/contract_test.go",
+      "sha256": "55fccda0e53180925691cc3b9549369ebf90483a22cc0ac3e6ae4af9515544d6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/decode.go",
+      "sha256": "e02ed710189fa1d71a4b1ab7fd607b6ff668ac2be1ac58c82c7fc940c6554672"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/frame_decode.go",
+      "sha256": "e1a2d4faefac35a77b892b792380e5c1ed2ae943436437d560d9276e7acb04a6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage_test.go",
+      "sha256": "59bc8305bbeb65e346e0eea5c8ddc1483e80834d840ffa3da5c4e6b385669797"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage.go",
+      "sha256": "d52843eaeb4d80ecea8e463bcc01e2b7f9fd867650169dbc46233c2b44f67f6c"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "sha256": "07f97f04824c2c253f02f39ba44db59512e21d4f80b36ad9756d2da81073ea4f"
+    }
+  ],
+  "validation": {
+    "runner": "scripts/system-backup-d-producer-validation.ps1",
+    "exitCode": 0,
+    "windowsTopLevelTests": 20,
+    "namedPassesIncludingSubtests": 296,
+    "defaultGoTestVet": true,
+    "linuxTestCrossCompile": true,
+    "linuxBinaryExecuted": false,
+    "temporaryArtifactsCleaned": true,
+    "mysqlExecuted": false,
+    "dependencyInstallation": false,
+    "remoteOperations": false,
+    "coverage": [
+      "Eight record types: existing current read and locked-absence insert",
+      "Four versioned records: complete old-column null-safe CAS and complete new projection bindings",
+      "Read/iteration/close/shape/hash/scope/key errors latch and prevent commit even when ignored",
+      "Zero/cross-transaction/closed locked handles refused",
+      "Zero/multiple affected rows and driver row-count errors abort",
+      "Receipts/history/reference replacement forbidden",
+      "Version overflow/skips, identity/host/input/deadline/observation rewrites and state regression refused",
+      "Returned mutable data cannot alter retained original CAS digest",
+      "Exact decimal SQL binding of full uint64 range"
+    ]
+  },
+  "catalog": {
+    "files": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "producerMigrationAdded": false
+  },
+  "limitations": [
+    "Mock driver tests validate database/sql dispatch, not real InnoDB locks, FK behavior or optimizer plans",
+    "LockedRecord is not an execution handle and does not authenticate a principal",
+    "Global L0-L10 ordering remains the mandatory Policy responsibility",
+    "Production Policy, lifecycle service, A runtime adapters and C provider acceptance incomplete",
+    "No V01-V10 runtime acceptance or formal migration admission",
+    "A prepare/binding files were inspected as current integration inputs, not modified or validated by this producer-only test run",
+    "Previous reports remain historical snapshots"
+  ]
+}

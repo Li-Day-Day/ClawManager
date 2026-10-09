@@ -1,0 +1,42 @@
+{
+  "kind": "d_history_build_and_longhorn_receipt_fix_validation",
+  "recorded_at": "2026-09-29T14:03:11.5662123+08:00",
+  "local_command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryReview",
+  "build_parallelism": 1,
+  "checks": {
+    "go_packages": [
+      "clawreef/internal/db",
+      "clawreef/internal/migrationcoord",
+      "clawreef/internal/systembackupcontroller",
+      "clawreef/internal/migrationcatalog"
+    ],
+    "go_package_tests": "PASS",
+    "linux_integration_probe_compile": "PASS",
+    "binary_sha256": "58e0afd66d07cb7533ec8dc320ec16e0c1712f8c043b2900108c67cca8f89480",
+    "longhorn_mock_tests_passed": 8,
+    "upgrade_review_regression_tests_passed": 4,
+    "default_upgrade_longhorn_checkonly_warnings_as_errors": "PASS",
+    "powershell_parse": "PASS",
+    "receipt_consistency": "PASS"
+  },
+  "dependencies_installed": false,
+  "local_build_cache_cleanup_reported": true,
+  "owned_scratch_path": ".tmp-d-invariants-16fa67e429514f329901ad59a4a10734",
+  "owned_scratch_exists": false,
+  "remote_history_mysql": "NOT_RUN",
+  "live_migration_applied": false,
+  "report_volume_created": false,
+  "http_mfa_activation_completed": false,
+  "original_file_lock_owner": "UNKNOWN",
+  "receipts": [
+    "system-backup-d-longhorn-live-20260929.json",
+    "system-backup-d-history-build-failure-20260929.json"
+  ],
+  "source_sha256": {
+    "scripts/system-backup-d-invariants.ps1": "a38441b1ed39e7338814600b0b67434afa6ac481fafb8113767ac378d8e28cf2",
+    "scripts/system-backup-d-live-preflight-remote.ps1": "aa4333a296de5606d7b536c0c383fc55d6b98387714aa5cfb81ce4488b515823",
+    "scripts/system-backup-d-longhorn-review.py": "21911bee09cb76922757bbf2757d883ac795d7d763a3267719e382af864f1337",
+    "scripts/system-backup-d-longhorn-review_test.py": "fa05818c290f7610a8b047c0db21106c5d66659373f64762febe774dd1ee5a9e",
+    "backend/internal/db/migration_history_integration_test.go": "8bf20aea297d7661e7227212872a7b8d4b5f95f54d2b76b6e06337df013353df"
+  }
+}

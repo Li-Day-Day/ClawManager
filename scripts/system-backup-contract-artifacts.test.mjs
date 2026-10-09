@@ -55,6 +55,11 @@ const controlEvidenceSidecarSchema = parseJSON(join(contractDir, 'control-eviden
 const controlEvidenceSidecarExample = parseJSON(join(contractDir, 'control-evidence-sidecar-redacted-example.json'));
 const evidenceChunkLogSchema = parseJSON(join(contractDir, 'evidence-chunk-log.schema.json'));
 const evidenceChunkLogExamples = parseJSON(join(contractDir, 'evidence-chunk-log-redacted-examples.json'));
+const strongAuthProofSchema = parseJSON(join(contractDir, 'strong-auth-proof-nonce.schema.json'));
+const providerProofRegistrationSchema = parseJSON(join(contractDir, 'provider-proof-registration.schema.json'));
+const secretRefSchema = parseJSON(join(contractDir, 'secret-ref.schema.json'));
+const capabilityEvidenceSchema = parseJSON(join(contractDir, 'capability-evidence.schema.json'));
+const aOwnedExamples = parseJSON(join(contractDir, 'a-owned-redacted-examples.json'));
 
 function canonicalJSON(value) {
   if (value === null || typeof value === 'boolean' || typeof value === 'string') return JSON.stringify(value);
@@ -1449,8 +1454,8 @@ test('D-owned system image schema is migration-owned instead of repository runti
   assert.deepEqual(systemImage.deployment_bootstrap_create_sources, []);
   assert.ok(systemImage.migration_sources.includes('backend/internal/db/migrations/003_add_system_image_settings.sql'));
   assert.ok(systemImage.migration_sources.includes('backend/internal/db/migrations/064_reconcile_system_image_settings_schema.sql'));
-  assert.equal(inventory.summary.repository_runtime_create, 9);
-  assert.equal(inventory.summary.repository_runtime_alter, 3);
+  assert.equal(inventory.summary.repository_runtime_create, 0);
+  assert.equal(inventory.summary.repository_runtime_alter, 0);
 
   const repositorySource = readFileSync(join(root, 'backend/internal/repository/system_image_setting_repository.go'), 'utf8');
   assert.doesNotMatch(repositorySource, /\b(?:CREATE|ALTER)\s+(?:TABLE|INDEX)\b|information_schema/i);
@@ -1502,7 +1507,7 @@ test('D-owned audit log table is created by embedded migration, not four deploym
   assert.equal(auditLog.owner, 'D');
   assert.ok(auditLog.migration_sources.includes('backend/internal/db/migrations/001_init_schema.sql'));
   assert.deepEqual(auditLog.deployment_bootstrap_create_sources, []);
-  assert.equal(inventory.summary.deployment_bootstrap_create, 22);
+  assert.equal(inventory.summary.deployment_bootstrap_create, 0);
   const migration = readFileSync(join(root, 'backend/internal/db/migrations/001_init_schema.sql'), 'utf8');
   assert.match(migration, /CREATE TABLE IF NOT EXISTS audit_logs\s*\(/);
   for (const manifest of [
@@ -1886,7 +1891,7 @@ test('D-owned strong-auth nonce ledger stores consumed HMACs without defining A 
   assert.deepEqual(decision.required_cross_reviewers, ['A']);
   assert.deepEqual(decision.approved_cross_reviewers, []);
   assert.equal(schema.properties.schema_version.const, 'system-backup-strong-auth-nonce.v1');
-  assert.equal(manifest.artifacts.find((artifact) => artifact.id === 'strong_auth_proof_nonce').status, 'missing');
+  assert.equal(manifest.artifacts.find((artifact) => artifact.id === 'strong_auth_proof_nonce').status, 'draft');
   for (const required of [
     'CREATE TABLE IF NOT EXISTS system_backup_strong_auth_nonces',
     'UNIQUE KEY uk_sb_auth_nonce (nonce_hmac, nonce_hmac_key_version)',
@@ -1902,6 +1907,159 @@ test('D-owned strong-auth nonce ledger stores consumed HMACs without defining A 
   assert.doesNotMatch(migration, /\b(?:DROP TABLE|TRUNCATE|DELETE FROM|raw_nonce|nonce_key_material|session_token|raw_subject)\b/i);
   assert.equal(schema['x-forbidden-fields'].includes('raw_nonce'), true);
   assert.equal(schema['x-forbidden-fields'].includes('proof'), true);
+});
+
+test('A-owned secret ref union carries only typed redacted identities', () => {
+  const manifest = parseJSON(join(contractDir, 'contract-manifest.json'));
+  assert.deepEqual(
+    manifest.artifacts.find((artifact) => artifact.id === 'secret_ref'),
+    { id: 'secret_ref', status: 'draft', path: 'contracts/system-backup/v12/secret-ref.schema.json' },
+  );
+  assert.deepEqual(
+    reviews.public_contract_reviews.find((item) => item.artifact_ids.includes('secret_ref')),
+    { artifact_ids: ['secret_ref'], required_reviewers: ['B', 'C', 'D'], approved_reviewers: [] },
+  );
+
+  assert.equal(secretRefSchema['x-contract-version'], contractVersion);
+  assert.equal(secretRefSchema['x-contract-status'], 'draft');
+  assert.equal(secretRefSchema.oneOf.length, 6);
+  assert.deepEqual(secretRefSchema.$defs.RefKind.enum, ['external_kms_key', 'external_secret', 'kubernetes_secret', 'signing_key', 'artifact_credential', 'catalog_credential', 'evidence_credential', 'ca_bundle']);
+  assert.deepEqual(secretRefSchema.$defs.RefPurpose.enum, [
+    'data_key_generation',
+    'kek_unwrap',
+    'secret_bundle_part',
+    'capture_certificate',
+    'acceptance_record',
+    'catalog_record',
+    'artifact_write',
+    'artifact_read',
+    'catalog_append',
+    'evidence_read_write',
+    'provider_proof_issuer',
+    'strong_auth_issuer',
+    'strong_auth_nonce_hmac',
+    'kek_wrap', 'artifact_delete', 'catalog_read', 'catalog_discovery', 'evidence_read', 'evidence_write', 'evidence_delete', 'artifact_ca', 'catalog_ca', 'evidence_ca',
+  ]);
+  for (const variant of ['ExternalKMSKeyRef', 'ExternalSecretRef', 'KubernetesSecretRef', 'SigningKeyRef', 'ProviderCredentialRef', 'CATrustRef']) {
+    const body = secretRefSchema.$defs[variant].allOf[1];
+    assert.equal(body.additionalProperties, false, `${variant} must be closed`);
+    assert.deepEqual([...body.required].sort(), Object.keys(body.properties).sort(), `${variant} must require every property`);
+  }
+  assert.deepEqual(secretRefSchema.$defs.KubernetesSecretRef.allOf[1].properties.read_mode.const, 'resource_name_get_only');
+  assert.deepEqual(secretRefSchema.$defs.ExternalSecretRef.allOf[1].properties.read_mode.const, 'exact_version_only');
+  assert.deepEqual(secretRefSchema.$defs.SigningKeyRef.allOf[1].properties.purpose.enum, ['capture_certificate', 'acceptance_record', 'catalog_record', 'provider_proof_issuer', 'strong_auth_issuer']);
+  assert.equal(secretRefSchema.$defs.ProviderCredentialRef.allOf[1].allOf.length, 13);
+  for (const forbidden of ['uri', 'url', 'endpoint', 'credential_bytes', 'secret_value', 'token', 'password', 'private_key', 'key_material', 'raw_response', 'raw_log']) {
+    assert.ok(secretRefSchema['x-forbidden-fields'].includes(forbidden));
+  }
+
+  const example = aOwnedExamples.secret_ref;
+  const kubernetesVariant = secretRefSchema.$defs.KubernetesSecretRef.allOf[1];
+  assert.deepEqual(Object.keys(example).sort(), Object.keys(kubernetesVariant.properties).sort());
+  assert.equal(example.ref_kind, 'kubernetes_secret');
+  assert.equal(example.purpose, 'secret_bundle_part');
+  assert.equal(example.read_mode, 'resource_name_get_only');
+  for (const field of ['identity_hash', 'provider_identity_hash', 'scope_hash', 'namespace_hash', 'name_hash', 'uid_hash', 'key_name_hash']) {
+    assert.match(example[field], /^[0-9a-f]{64}$/);
+  }
+  const serializedExample = JSON.stringify(example);
+  assert.doesNotMatch(serializedExample, /:\/\//);
+  assert.doesNotMatch(serializedExample, /"(?:uri|url|endpoint|credential|credential_bytes|secret_value|token|password|private_key|key_material|raw_response|raw_log)"\s*:/i);
+});
+
+test('A-owned strong-auth contract is closed and matches the redacted runtime fixture', () => {
+  const manifest = parseJSON(join(contractDir, 'contract-manifest.json'));
+  assert.deepEqual(
+    manifest.artifacts.find((artifact) => artifact.id === 'strong_auth_proof_nonce'),
+    { id: 'strong_auth_proof_nonce', status: 'draft', path: 'contracts/system-backup/v12/strong-auth-proof-nonce.schema.json' },
+  );
+  assert.deepEqual(
+    reviews.public_contract_reviews.find((item) => item.artifact_ids.includes('strong_auth_proof_nonce')),
+    { artifact_ids: ['strong_auth_proof_nonce'], required_reviewers: ['D'], approved_reviewers: [] },
+  );
+  assert.equal(strongAuthProofSchema['x-contract-version'], contractVersion);
+  assert.equal(strongAuthProofSchema['x-contract-status'], 'draft');
+  assert.equal(strongAuthProofSchema.additionalProperties, false);
+  assert.deepEqual([...strongAuthProofSchema.required].sort(), Object.keys(strongAuthProofSchema.properties).sort());
+  for (const definition of ['ProofPayload', 'ProofSignature']) {
+    const body = strongAuthProofSchema.$defs[definition];
+    assert.equal(body.additionalProperties, false);
+    assert.deepEqual([...body.required].sort(), Object.keys(body.properties).sort());
+  }
+  assert.equal(strongAuthProofSchema.$defs.ProofSignature.properties.domain_separator.const, 'clawmanager.system-backup.strong-auth.v1');
+  assert.match(strongAuthProofSchema['x-canonicalization'], /payload only/);
+  for (const forbidden of ['raw_secret', 'password', 'session_token', 'private_key', 'nonce_key_material']) {
+    assert.ok(strongAuthProofSchema['x-forbidden-fields'].includes(forbidden));
+  }
+  const example = aOwnedExamples.strong_auth_proof;
+  assert.deepEqual(Object.keys(example).sort(), Object.keys(strongAuthProofSchema.properties).sort());
+  assert.deepEqual(Object.keys(example.payload).sort(), Object.keys(strongAuthProofSchema.$defs.ProofPayload.properties).sort());
+  assert.deepEqual(Object.keys(example.signature).sort(), Object.keys(strongAuthProofSchema.$defs.ProofSignature.properties).sort());
+  assert.equal(example.signature.domain_separator, strongAuthProofSchema.$defs.ProofSignature.properties.domain_separator.const);
+  assert.match(example.payload.request_hash, /^[0-9a-f]{64}$/);
+});
+
+test('A-owned provider-proof registration is closed, bounded and target-bound', () => {
+  const manifest = parseJSON(join(contractDir, 'contract-manifest.json'));
+  assert.deepEqual(
+    manifest.artifacts.find((artifact) => artifact.id === 'provider_proof_registration'),
+    { id: 'provider_proof_registration', status: 'draft', path: 'contracts/system-backup/v12/provider-proof-registration.schema.json' },
+  );
+  assert.deepEqual(
+    reviews.public_contract_reviews.find((item) => item.artifact_ids.includes('provider_proof_registration')),
+    { artifact_ids: ['provider_proof_registration'], required_reviewers: ['C', 'D'], approved_reviewers: [] },
+  );
+  assert.equal(providerProofRegistrationSchema.additionalProperties, false);
+  assert.deepEqual([...providerProofRegistrationSchema.required].sort(), Object.keys(providerProofRegistrationSchema.properties).sort());
+  for (const definition of ['Target', 'Proof']) {
+    const body = providerProofRegistrationSchema.$defs[definition];
+    assert.equal(body.additionalProperties, false);
+    assert.deepEqual([...body.required].sort(), Object.keys(body.properties).sort());
+  }
+  assert.equal(providerProofRegistrationSchema.$defs.Proof.properties.signed_proof_base64.maxLength, 10924);
+  assert.equal(providerProofRegistrationSchema.allOf.length, 4);
+  for (const forbidden of ['uri', 'credential', 'authorization', 'presigned_url', 'provider_error', 'force_success']) {
+    assert.ok(providerProofRegistrationSchema['x-forbidden-fields'].includes(forbidden));
+  }
+  const example = aOwnedExamples.provider_proof_registration;
+  assert.deepEqual(Object.keys(example).sort(), Object.keys(providerProofRegistrationSchema.properties).sort());
+  assert.deepEqual(Object.keys(example.target).sort(), Object.keys(providerProofRegistrationSchema.$defs.Target.properties).sort());
+  assert.deepEqual(Object.keys(example.proof).sort(), Object.keys(providerProofRegistrationSchema.$defs.Proof.properties).sort());
+  assert.match(example.target.target_public_id, /^sxa_/);
+  assert.ok(Buffer.from(example.proof.signed_proof_base64, 'base64').length <= 8 * 1024);
+});
+
+test('A-owned capability evidence is closed, redacted and cleanup-proven', () => {
+  const manifest = parseJSON(join(contractDir, 'contract-manifest.json'));
+  assert.deepEqual(
+    manifest.artifacts.find((artifact) => artifact.id === 'capability_evidence'),
+    { id: 'capability_evidence', status: 'draft', path: 'contracts/system-backup/v12/capability-evidence.schema.json' },
+  );
+  assert.deepEqual(
+    reviews.public_contract_reviews.find((item) => item.artifact_ids.includes('capability_evidence')),
+    { artifact_ids: ['capability_evidence'], required_reviewers: ['B', 'C', 'D'], approved_reviewers: [] },
+  );
+  assert.equal(capabilityEvidenceSchema.additionalProperties, false);
+  assert.deepEqual([...capabilityEvidenceSchema.required].sort(), Object.keys(capabilityEvidenceSchema.properties).sort());
+  for (const definition of ['Capability', 'Redaction', 'Cleanup']) {
+    const body = capabilityEvidenceSchema.$defs[definition];
+    assert.equal(body.additionalProperties, false);
+    assert.deepEqual([...body.required].sort(), Object.keys(body.properties).sort());
+  }
+  const example = aOwnedExamples.capability_evidence;
+  assert.deepEqual(Object.keys(example).sort(), Object.keys(capabilityEvidenceSchema.properties).sort());
+  assert.equal(example.redaction.applied, true);
+  assert.equal(example.redaction.raw_material_present, false);
+  assert.equal(example.cleanup.temporary_artifacts_removed, true);
+  assert.match(example.cleanup.run_id, /^cap-/);
+  assert.match(example.cleanup.owner_marker, /^A:/);
+  for (const capability of example.capabilities) {
+    assert.equal(capability.status === 'supported', capability.reason_code === 'none');
+    assert.match(capability.request_scope_hash, /^[0-9a-f]{64}$/);
+  }
+  const serialized = JSON.stringify(aOwnedExamples);
+  assert.doesNotMatch(serialized, /:\/\//);
+  assert.doesNotMatch(serialized, /"(?:uri|url|credential|authorization|presigned_url|password|private_key|key_material|raw_response|raw_log)"\s*:/i);
 });
 
 test('D-owned Job observation cursor is migration-owned while B status relay stays missing', () => {

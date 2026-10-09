@@ -1,0 +1,149 @@
+{
+  "kind": "a_d_activation_review_local_v1",
+  "recorded_at": "2026-09-28T07:45:30.9133392Z",
+  "result": "LOCAL_PASS_REMOTE_PENDING",
+  "source_sha256": {
+    "backend/cmd/system-backup-migrate/main.go": "83a12099951e466af0985f26409f98d5e14e57e8c8c812df45e94ef0d6415300",
+    "backend/cmd/system-backup-registration/main.go": "63db47f698f627077be6aec88c9c3c349ff87ed917d8a17ead4fe5a9818f5f88",
+    "backend/go.mod": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318",
+    "backend/go.sum": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964",
+    "backend/internal/db/migration_target.go": "936d172be5f20ccf877d18ab97718f65d56909197ea8a6bbaa904ed97000d4df",
+    "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql": "5c5d29066a91efb0c215e59b230c0c4535b1411ecebb31fd62afe90757d08f7f",
+    "backend/internal/handlers/auth_handler.go": "3651bb0279559b85ecb40b493713bd8eafe60681e3ef24a820c4592b36ad5594",
+    "backend/internal/systembackupcontroller/bootstrap.go": "da9fd6ce954a0ac7436462de40d0cca118a2216a48175f9362dc387d4be47fbc",
+    "backend/internal/systembackupsecurity/capability_test.go": "82a9aab4c76420e79f1838ba6cc88414d4ec151504d7ca1b073c9a716faa2107",
+    "backend/internal/systembackupsecurity/capability.go": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8",
+    "backend/internal/systembackupsecurity/config_bootstrap_mysql_test.go": "6e7365d9051868fa3c14db04de67f1a976d035cbe09654f245da7afacca4e1a6",
+    "backend/internal/systembackupsecurity/config_bootstrap_rules.go": "4aae8559e04126145e35e7389670b6bdcf98258a236a5d0b5b6351f0ef9ab21f",
+    "backend/internal/systembackupsecurity/config_bootstrap_test.go": "7296b635ceb102f755f838116be5d87e968358574118ac0887b9ea53415ee289",
+    "backend/internal/systembackupsecurity/config_bootstrap_transaction_test.go": "0b7775ab1a2c10d1c91fabd82454d7e1652d683334ead6f81af9e015422d401b",
+    "backend/internal/systembackupsecurity/config_bootstrap_transaction.go": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe",
+    "backend/internal/systembackupsecurity/config_bootstrap.go": "7c41fb5b857d27c8eb61f05e3127a900920ae3ff4a85dba5cb3bb9c2a3feae78",
+    "backend/internal/systembackupsecurity/providerproof_ed25519_test.go": "e58fca9b941693796d5abe816afaf6cf140b1625dbf6e879a7a70420584b6300",
+    "backend/internal/systembackupsecurity/providerproof_ed25519.go": "c489eedaf6d6450543c583da93b75cc492be8c7102fa9aeeb22b82d630af9ea3",
+    "backend/internal/systembackupsecurity/providerproof_http_test.go": "a1d133611ee6b4f4c0749510b128248ee58c0deb9c2b7c9f2eaec9d3016d315c",
+    "backend/internal/systembackupsecurity/providerproof_http.go": "63b31cd610d1687bd3ce5ce0c07cb697ac70787923a4503e05b98f1f8ad0de52",
+    "backend/internal/systembackupsecurity/providerproof_json.go": "b88090465e9040b84c3ee6701ea295023e95c935755a1991b17f56c63260173a",
+    "backend/internal/systembackupsecurity/providerproof_mysql_test.go": "7a2a55d864f5a3616229b82d99c96671da4ce881059805c546f2720bf7c2d0d5",
+    "backend/internal/systembackupsecurity/providerproof_registration.go": "090ae8bc5f2ba1dd678758f946f8641c5a9109c3d274833decfb68d77ec3aa6e",
+    "backend/internal/systembackupsecurity/providerproof_registry_test.go": "22871ee478a55180abdfd7a8edaeea9f92bab1a9fa6d6f9599156c3b0434660f",
+    "backend/internal/systembackupsecurity/providerproof_registry.go": "63cbb271116ad7a193a69074b19a1bbd2f6eaddb2f2138562216378ea96ed6f8",
+    "backend/internal/systembackupsecurity/providerproof_s3.go": "3010b49cd27062e8451f13fc9b9479997869143aaefb703576f390616d4384d4",
+    "backend/internal/systembackupsecurity/providerproof_sql_test.go": "3e0229770a7bb90132fbcd37c695dc7e76de2c2101a091a5f95aeec83df8c991",
+    "backend/internal/systembackupsecurity/providerproof_sql.go": "e76f88601ae965662229fdf7a670b7ff25b7550810bf0da6c5c35aaa7e135083",
+    "backend/internal/systembackupsecurity/providerproof_test.go": "b6b95847c393a1a6359a78da316334537f42d482431c104d9a23fdc6a3499648",
+    "backend/internal/systembackupsecurity/providerproof_transaction_test.go": "d33718006b6da2e53df7e672fdd9a70229e6afdce20e7b55b168c296fb88dede",
+    "backend/internal/systembackupsecurity/providerproof_transaction.go": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978",
+    "backend/internal/systembackupsecurity/providerproof.go": "550827d2ace9d502223d6ce5af64e579ca73378d2a532ee056d8c673739db363",
+    "backend/internal/systembackupsecurity/registration_api.go": "6dfd6ad9c7ba32e958aafa77bc92d0f9289f6c1ac44579ea99b0372a9b39ad33",
+    "backend/internal/systembackupsecurity/registration_capacity_linux.go": "b204fd7557639caa2c36cbe585ca12568bc1289334ed79e52bdbb12a2b4785a1",
+    "backend/internal/systembackupsecurity/registration_capacity_other.go": "eb29838ad8a0411a77a83d9efa494d08720b86bc4408c510ec06d840ed992587",
+    "backend/internal/systembackupsecurity/registration_capacity.go": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2",
+    "backend/internal/systembackupsecurity/registration_database_test.go": "94c2b29e522e2088762205c49cbafdc6890687060d35a7c5c640fa723877fb56",
+    "backend/internal/systembackupsecurity/registration_database.go": "211e272e5cc194a230e356b5def83e03956bb3ac2d4543435b128e07b06011c0",
+    "backend/internal/systembackupsecurity/registration_files.go": "6287abe84422bd818ea96b47bc0dc6899a83aa23a818f32c22942358fa746ea8",
+    "backend/internal/systembackupsecurity/registration_http_mysql_test.go": "e3088d7b0f0c4eb727e723d8afc52d6054db4eaaa3956dda5cad45a82b816ef4",
+    "backend/internal/systembackupsecurity/registration_mfa_authorization_test.go": "4c4842ae6441a47f8718b81e9bed4515fe1d0a716800867a58e4e6d70def3c92",
+    "backend/internal/systembackupsecurity/registration_runtime.go": "89122a1363a43020b7df775cc7e2cb69381156989082ae48516eaa1ad6321e5e",
+    "backend/internal/systembackupsecurity/s3_read_client_test.go": "f534f627adee87e4a926fc258d28b74d4ce63fd503221a26c13e22432493e825",
+    "backend/internal/systembackupsecurity/s3_read_client.go": "5c81b6f2411de0a7e19b1215ba4678376510b9c76bb0b0166d5d32e59bd23118",
+    "backend/internal/systembackupsecurity/strongauth_test.go": "f7e7c080d41f373e394b9a87210592a6ed3d16bc0a20557a8811f5252eb0e3a4",
+    "backend/internal/systembackupsecurity/strongauth.go": "f370b6be9136ccded93e9a6ff7dcf9a8dc83ca2308cc6beb9784e4c112045aa2",
+    "backend/internal/systembackupsecurity/totp_mysql_test.go": "c8e6960376ca435ee75ce64f685083692a6832f2c96ef6d12577a96823c95301",
+    "backend/internal/systembackupsecurity/totp_sql.go": "60215306488ffc2b97a271d04ec132612db0ac081a2fb5d8263aed0e50fb5cb5",
+    "backend/internal/systembackupsecurity/totp_test.go": "a26cdc6043415212791aa11a1d069a019877fb025e3b62758ab435dcac2241c4",
+    "backend/internal/systembackupsecurity/totp.go": "94371c9e677cf8123d7d73eb88e3417134154e1acc8072f8058cfbdca9522858",
+    "backend/internal/systembackupsecurity/transit_signer_test.go": "ee3662571cbf06cf2cfeb97957253369ab8fddb1e2c6ccf758e071abf2aa8a2d",
+    "backend/internal/systembackupsecurity/transit_signer.go": "04bf4ccfc3f891888dbbb48b78a05afc7039705d64cd85542c6ef4440902f62b",
+    "scripts/system-backup-a-d-registration-review.ps1": "05689b08411477c3b5c1da9a54566e710caa2b067f7ceaa300fe493c561704b8",
+    "scripts/system-backup-a-d-registration-review/activation_review_test.go": "e786f86d79fe09f02d0f1a4515bdf356224062547719ebfe0e37bdeae29f5211",
+    "scripts/system-backup-a-d-registration-review/review_test.go": "a24dd3ea58cea12f87d10778a8e341d118d14d8cfc583f59ac03aaad20f3817c",
+    "scripts/system-backup-d-migration-phase.sh": "36aa05355af248c0438b5057d7f5c54df8d70d4cd03f5bdff5ea059b99056a1b",
+    "scripts/system-backup-d-provider-registration-phase.sh": "4434f4c282d582a35761bb99d08941733d2fe4d1aacb35b9c547e6d2d65cdce8",
+    "scripts/system-backup-d-provider-registration.ps1": "ac8a25c345ddd22e2120394768953d2e06f4eb885eeadcad72a94e6340895f93",
+    "scripts/system-backup-fresh-migration-smoke.sh": "1abc0d6281637eca8460af798fe3975cc594d94eda9313a828dd929df4b49835",
+    "scripts/system-backup-smoke-contract.sh": "bab50f7a93f663acde7c5d66f2d762818d9de3ea7438228e903a9c8bdeff732c"
+  },
+  "verification": {
+    "original_a_regression": "PASS 3 top-level / 4 negative scenarios",
+    "expanded_a_regression": "PASS 6 top-level, 37 named subtests; 29 missing-input cases plus commit/authorization and HTTP guards",
+    "d_offline_runner": "PASS: security/db/migrationcoord/migrationcatalog packages and default vet; Linux MySQL probe, HTTPS service and pinned migration runner compiled",
+    "node_provider_signatures": "PASS 3",
+    "node_a_security": "PASS 6",
+    "node_contract_artifacts": "PASS 70",
+    "node_smoke_contract": "PASS 4",
+    "bootstrap_rules": "PASS",
+    "powershell_and_gofmt": "PASS",
+    "contract_gate": "PASS_NON_STRICT draft; freeze blockers remain",
+    "issuer_ed25519_signatures_reverified": 2,
+    "issuer_source_bindings_reverified": 5,
+    "issuer_registry_pins_reverified": 2,
+    "issuer_acl_denials_reported": 16
+  },
+  "historical_binding_check": [
+    {
+      "record": "docs/evidence/system-backup-d-runtime-migration-local-20260928.json",
+      "bindings": 163,
+      "matched": 163,
+      "mismatches": []
+    },
+    {
+      "record": "docs/evidence/system-backup-d-http-mfa-receipt-count-local-20260928.json",
+      "bindings": 55,
+      "matched": 53,
+      "mismatches": [
+        "scripts/system-backup-d-provider-registration.ps1",
+        "scripts/system-backup-d-provider-registration-phase.sh"
+      ]
+    }
+  ],
+  "environment_events": [
+    "Bash subprocess EPERM in sandbox; same 4 smoke checks passed outside sandbox",
+    "PowerShell/gofmt invocation exited 0xc0000043 in sandbox; read-only retry outside sandbox passed"
+  ],
+  "scope": {
+    "production_modified": false,
+    "provider_capability_approved": false,
+    "real_commit_disconnect": "NOT_RUN",
+    "new_migration_real_mysql": "NOT_RUN",
+    "dependencies_installed": false,
+    "cross_installation_hmac_rotation_concurrency": "NOT_RUN",
+    "remote_executed": false,
+    "human_mfa": "NOT_RUN",
+    "active_config_updated": false
+  },
+  "cleanup": {
+    "original_a_runner_reported": true,
+    "remaining_current_runners": "All completed; no matching scratch directories remain",
+    "scratch_directories_remaining": 0
+  },
+  "reviewed_input_sha256": {
+    "docs/evidence/system-backup-d-runtime-migration-local-20260928.json": "c28e8ab2021c392121039e423d26167e5087cf976df1578b2e26ccd0497c3a6a",
+    "docs/evidence/system-backup-d-http-mfa-receipt-count-local-20260928.json": "67a7748dba5e718056f3df108f0ae875237fe415e7dc9ee3ddf9995ddd28d790",
+    "docs/evidence/system-backup-d-http-mfa-mysql-sbk-mig-260928063437-0e3f.json": "98cd1ccc9d0fe31ba36dd033d6bc20359e79087eb23cf28bc9589390c5b4270a",
+    "docs/evidence/system-backup-issuer-signing-d-sig-fa480a2d4c87ebdf0e48f9e6.json": "b6c5bca348f1b9d7b7235af7c3b5402af9dd3a036c4346f68d97793cf68a07a5",
+    "contracts/system-backup/v12/contract-manifest.json": "758b8da3593308051ccd360a97c62e2234fca391eaae41b8bdc0fb7fe9ca31b3",
+    "contracts/system-backup/v12/admin-control-resources.schema.json": "0f6224f3c5f499102ad9148f40bf4e2a3997cd144fe82e898c6740f85c7532bc",
+    "contracts/system-backup/v12/provider-proof-registration.schema.json": "618754245abc64cb2c9ca88a0099bfddae98bbe46caa5580f95d26b354542626"
+  },
+  "source_binding_final_check": {
+    "matched": 60,
+    "mismatches": []
+  },
+  "closed_findings": [
+    "A-D-REG-01",
+    "A-D-REG-02"
+  ],
+  "build": {
+    "migration_files": 93,
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "probe_sha256": "d5d994bffb426a5be75073a8fb20457e7557e4485fed6f334c7efb3b4d9db877",
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "ddl_sha256": "3d5eeab6f1b4393bfb3f92c57b5ce18d910694ac186c186d06e79b6058141b52"
+  },
+  "runner_exit_codes": {
+    "expanded_a": 0,
+    "original_a": 0,
+    "d_offline": 0
+  }
+}

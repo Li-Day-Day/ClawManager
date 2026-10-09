@@ -1,0 +1,322 @@
+{
+  "schema_version": "a-d-producer-authority-review.v1",
+  "review_date": "2026-09-30",
+  "reviewer": "A",
+  "status": "changes_requested",
+  "scope": "Static design and integration review of the D system capability producer authority proposal; no implementation or production acceptance.",
+  "reviewed_proposal": {
+    "path": "docs/system-backup-d-producer-authority-design-20260930.md",
+    "sha256": "580df5d3760de9293c5fe403f0df9eaff9fc3b2348e94ee483da7a4c7036ac2a"
+  },
+  "sources": [
+    {
+      "path": "docs/system-backup-d-producer-authority-design-20260930.md",
+      "sha256": "580df5d3760de9293c5fe403f0df9eaff9fc3b2348e94ee483da7a4c7036ac2a"
+    },
+    {
+      "path": "docs/system-backup-a-capability-producer-admission-request-20260929.md",
+      "sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/content_dispatch.go",
+      "sha256": "b96285ff0ac32c817bcbb8a1b6273a66334c9c879f7d2a2f0a37dbf1d8cafa74"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content.go",
+      "sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority.go",
+      "sha256": "58320e994f195d86e330a5687b4b860c435a835fe30f68eb74f6d6c034b76729"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority_sql.go",
+      "sha256": "c72265abfdbd7a2fe039ff01c62d80fd34b38ba688c82e7f10f3752899c8953d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_prepare.go",
+      "sha256": "da2cdb16337a5aed2c5fe234aa195303333d26fe9db861a24e6cd4773d8266b3"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_runtime.go",
+      "sha256": "5872f3b21b32832c8955fcfe61fb323bf5eda413e95f6f227d34d11cef990477"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "b1ce179d278e80cd62c62bd7f7dd46f749891a75bc990fc969e876f40611c996"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/access_claim.go",
+      "sha256": "b7024b4de7933c8ab1eeb0ebe12a2afc918f72176a0fe2d4818bbb404145052c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "d75918d0dcda8b1489ef58bb2122a1de71fcf2d8caf1812724164f8c6a4d00e2"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_sts.go",
+      "sha256": "3aeab071b5f273d79226532684f19213111b131f1ab26e781b52a64d12ea6e6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/write_recovery.go",
+      "sha256": "105b9e0235638afd53597684bffe5800319ee415445ca879f1dba08ffb4d2ccb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/recovery_scan.go",
+      "sha256": "583ec592622206551f2e977955393212881d99ac3b565610c74e6f0b779f4b6c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity.go",
+      "sha256": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "sha256": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978"
+    },
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "sha256": "758b8da3593308051ccd360a97c62e2234fca391eaae41b8bdc0fb7fe9ca31b3"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "c5ad6bfc2d7e2d5ce343aa30ab085de5b82b27cf7b77cfc05b2f4d475b8f727c"
+    }
+  ],
+  "findings": [
+    {
+      "id": "A-D-PROD-01",
+      "priority": "P1",
+      "status": "open",
+      "title": "Initialization, disabled-config admission and independent trust path remain undecided",
+      "owners": [
+        "D"
+      ],
+      "reviewers": [
+        "A",
+        "C"
+      ],
+      "sources": [
+        "docs/system-backup-d-producer-authority-design-20260930.md",
+        "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+        "backend/internal/systembackupevidence/task_authority_sql.go"
+      ],
+      "acceptance": [
+        "V02",
+        "V03"
+      ]
+    },
+    {
+      "id": "A-D-PROD-02",
+      "priority": "P1",
+      "status": "open",
+      "title": "Existing publication and STS interfaces do not accept system or pre-config producers",
+      "owners": [
+        "A"
+      ],
+      "dependencies": [
+        "D authority interface",
+        "C provider profile"
+      ],
+      "sources": [
+        "backend/internal/systembackupevidence/lifecycle.go",
+        "backend/internal/systembackupevidence/access_claim.go",
+        "backend/internal/systembackupevidence/s3_sts.go",
+        "backend/internal/systembackupevidence/task_prepare.go"
+      ],
+      "acceptance": [
+        "V01",
+        "V04"
+      ]
+    },
+    {
+      "id": "A-D-PROD-03",
+      "priority": "P1",
+      "status": "open",
+      "title": "Complete lock order and final transaction-time validity checks need specification",
+      "owners": [
+        "D"
+      ],
+      "reviewers": [
+        "A"
+      ],
+      "sources": [
+        "backend/internal/systembackupevidence/sql.go",
+        "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+        "backend/internal/systembackupsecurity/providerproof_transaction.go",
+        "backend/internal/systembackupsecurity/registration_capacity.go"
+      ],
+      "acceptance": [
+        "V03",
+        "V04",
+        "V05",
+        "V07"
+      ]
+    },
+    {
+      "id": "A-D-PROD-04",
+      "priority": "P1",
+      "status": "open",
+      "title": "Independent recovery must cover evidence left before bootstrap and after configuration changes",
+      "owners": [
+        "A",
+        "D"
+      ],
+      "dependencies": [
+        "C exact-object proof"
+      ],
+      "sources": [
+        "backend/internal/systembackupevidence/write_recovery.go",
+        "backend/internal/systembackupevidence/recovery_scan.go",
+        "backend/internal/systembackupevidence/lifecycle.go"
+      ],
+      "acceptance": [
+        "V04",
+        "V08",
+        "V09"
+      ]
+    },
+    {
+      "id": "A-D-PROD-05",
+      "priority": "P1",
+      "status": "open",
+      "title": "Result receipt authentication, idempotency and stale-run CAS need specification",
+      "owners": [
+        "D"
+      ],
+      "reviewers": [
+        "A",
+        "C"
+      ],
+      "sources": [
+        "docs/system-backup-d-producer-authority-design-20260930.md",
+        "contracts/system-backup/v12/a-capability-role-mapping.json",
+        "backend/internal/systembackupsecurity/providerproof_transaction.go"
+      ],
+      "acceptance": [
+        "V06",
+        "V07",
+        "V08"
+      ]
+    },
+    {
+      "id": "A-D-PROD-06",
+      "priority": "P2",
+      "status": "open",
+      "title": "Renewal semantics must preserve or deliberately invalidate in-flight authorization snapshots",
+      "owners": [
+        "D",
+        "A"
+      ],
+      "sources": [
+        "backend/internal/systembackupevidence/content_dispatch.go",
+        "backend/internal/systembackupevidence/capability_content.go",
+        "backend/internal/systembackupevidence/s3_sts.go"
+      ],
+      "acceptance": [
+        "V01",
+        "V05"
+      ]
+    }
+  ],
+  "acceptance_matrix_status": "planned_not_executed",
+  "request_requirement_coverage": {
+    "1": [
+      "V01"
+    ],
+    "2": [
+      "V02",
+      "V03"
+    ],
+    "3": [
+      "V03",
+      "V04",
+      "V05",
+      "V09"
+    ],
+    "4": [
+      "V01",
+      "V02"
+    ],
+    "5": [
+      "V05",
+      "V06"
+    ],
+    "6": [
+      "V06",
+      "V07",
+      "V08"
+    ],
+    "7": [
+      "V08",
+      "V09"
+    ],
+    "8": [
+      "V10"
+    ]
+  },
+  "validation": {
+    "command": "node scripts/system-backup-contract-check.mjs --check",
+    "exit_code": 0,
+    "strict": false,
+    "contract_status": "draft",
+    "migration_catalog": {
+      "file_count": 93,
+      "hash": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564"
+    },
+    "object_count": 99,
+    "policy_recorded": 60,
+    "policy_pending": 39,
+    "cross_review_pending": 60,
+    "missing_artifacts": [
+      "recovery_catalog_records",
+      "restore_target",
+      "status_relay",
+      "catalog_scan_record"
+    ],
+    "proves": "Existing non-strict contract consistency only; not producer implementation, concurrency or freeze."
+  },
+  "approval": {
+    "design_approved": false,
+    "production_approved": false,
+    "contract_approval_changed": false,
+    "approved_reviewers": [],
+    "other_owner_reviews_obtained": []
+  },
+  "execution": {
+    "remote_actions": false,
+    "go_tests": false,
+    "builds": false,
+    "dependencies_installed": false,
+    "test_build_artifacts_created": false,
+    "existing_25_case_mysql_suite_rerun": false
+  },
+  "report": "docs/system-backup-a-d-producer-authority-review-20260930.md",
+  "handoff_navigation": [
+    "docs/system-backup-restore-a-role-steps.md",
+    "docs/system-backup-restore-d-role-steps.md"
+  ]
+}

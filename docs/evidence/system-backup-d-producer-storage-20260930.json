@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "date": "2026-09-30",
+  "role": "D",
+  "status": "storage_integrity_validated_sql_candidate_pending_mysql_and_authority",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupproducer/frame_decode.go",
+      "sha256": "e1a2d4faefac35a77b892b792380e5c1ed2ae943436437d560d9276e7acb04a6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage.go",
+      "sha256": "d52843eaeb4d80ecea8e463bcc01e2b7f9fd867650169dbc46233c2b44f67f6c"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage_test.go",
+      "sha256": "59bc8305bbeb65e346e0eea5c8ddc1483e80834d840ffa3da5c4e6b385669797"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-candidate.sql",
+      "sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c"
+    },
+    {
+      "path": "docs/system-backup-d-producer-storage-20260930.md",
+      "sha256": "02274f5602e6c6e074c78242f4d1df1b1071c4b1eb5ef478c1cc665080d716b2"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "4bc5cb7848f6e17dc2548dd64bec646e1f7186efeb9d6425b6dd854ae7d46fbe"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "74951698cbd9d4f134415aa9d32684b8fee6498865420df0548aa5ddab66d3b1"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-validation.ps1",
+      "sha256": "6648170da4f8acd688651882aaa5652246b33bf1ad9c06e8673b297da55c7069"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/codec.go",
+      "sha256": "9c7c8c793edb497f980da9bb05f4ec2e2e9956b379ca850ba3f0026998e9138e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/contract_test.go",
+      "sha256": "55fccda0e53180925691cc3b9549369ebf90483a22cc0ac3e6ae4af9515544d6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/decode.go",
+      "sha256": "e02ed710189fa1d71a4b1ab7fd607b6ff668ac2be1ac58c82c7fc940c6554672"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction_test.go",
+      "sha256": "270dc638a8e0ce385d17fd2e8b09c9875211afd60cbbea6cb8c71a1a5c1444fd"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "1a73d4b799754ab80d59d2baf0897639f047e632535d5d85013754c4ff98a7b6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "sha256": "07f97f04824c2c253f02f39ba44db59512e21d4f80b36ad9756d2da81073ea4f"
+    }
+  ],
+  "validation": {
+    "runner": "scripts/system-backup-d-producer-validation.ps1",
+    "exitCode": 0,
+    "windowsTopLevelTests": 15,
+    "namedPassesIncludingSubtests": 232,
+    "defaultGoTestVet": true,
+    "linuxTestCrossCompile": true,
+    "linuxBinaryExecuted": false,
+    "temporaryArtifactsCleaned": true,
+    "mysqlExecuted": false,
+    "dependencyInstallation": false,
+    "dockerImagePull": false,
+    "dockerInspection": "Local desktop-linux existing-image inventory only; no MySQL image; no mysql/mysqld executable",
+    "coverage": [
+      "8 record roundtrips and exact original C1 canonical bytes",
+      "All typed SQL columns individually tampered; missing/extra columns, wrong table and scope refused without output mutation",
+      "Unsigned decimal driver values checked without float64/signed overflow",
+      "All truncation points of one DomainRecord with recomputed attacker checksum refused",
+      "Frame length/depth/UTF8/order/duplicate-key bounds",
+      "Persistence dictionary table/column/key/FK/record bounds correspond to candidate DDL"
+    ]
+  },
+  "catalog": {
+    "files": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "newProducerMigrations": 0
+  },
+  "limitations": [
+    "StoredRecord carries no authentication or lock proof",
+    "No SQL lifecycle service, production Policy or runtime wiring",
+    "DDL not executed against MySQL; static coverage does not prove syntax, CHECK/FK or locks",
+    "No V01-V10 runtime acceptance",
+    "C1 reviews, formal migration and inventory synchronization pending",
+    "Prior delivery evidence remains historical and is not rewritten"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "kind": "a_acceptance_of_d_producer_service_remote_mysql_gate",
+  "date": "2026-10-08",
+  "status": "remote_passed_with_test_authority_scope",
+  "exit_code": 0,
+  "log": {
+    "path": "docs/evidence/a-d-producer-service-remote-20261008-135516.txt",
+    "sha256": "9c3fdf456a6a80875ce8dfd9faca33e9d5f3fd129cd06a2d3af58bd334480743"
+  },
+  "expected_snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-054411-8848e9d0.json",
+    "sha256": "47755d18e368ad4e3b9251ebf7c2ac34e020446f755979f1199872da3afcbeee"
+  },
+  "run_snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-055525-711bff7e.json",
+    "sha256": "854258b2e0e54be4b1eb82390a85578bd01d8d55d489d877c510bc9ebfa7cbca",
+    "files": 854,
+    "path_and_content_diff_count": 0,
+    "live_drift_files": 0,
+    "snapshot_passed": true
+  },
+  "remote_run": {
+    "namespace": "sbk-mig-261008060225-0672",
+    "namespace_uid": "ae9ddc4a-2856-46c9-8fb1-5986a825491f",
+    "mysql_version": "8.4.8",
+    "migration_replay": "001..080",
+    "migration_applied": 94,
+    "mysql_subtests_passed": 22,
+    "mysql_subtests_expected": 22,
+    "run_owned_databases_cleaned": 22,
+    "cleanup_pending_count": 0,
+    "namespace_uid_cleanup_matched": true,
+    "remote_registration_scratch_cleaned": true,
+    "local_registration_build_cache_cleaned": true,
+    "producer_adapter_build_cache_cleaned": true
+  },
+  "digest_match": {
+    "mysql_probe_binary_sha256": "023007c995fd9b15a5543377c305516bdb604f90282ae9d35eec97e316cef778",
+    "ddl_sha256": "70d001e7cfc465f8098dc037fd932a6d76647629561e2e8be91decbdf75df016",
+    "local_and_remote_equal": true
+  },
+  "windows_tool_fault": {
+    "code": "0xc0000043",
+    "same_snapshot_and_cache_retry_succeeded": true,
+    "vet_remained_enabled": true,
+    "test_assertion_failures": 0
+  },
+  "scope": {
+    "a_d_sql_service_chain": true,
+    "production_identity": false,
+    "real_sts_or_provider_authority": false,
+    "independent_history_recovery": false,
+    "v01_to_v10_acceptance": false
+  },
+  "dependencies_installed": false,
+  "test_artifacts_cleaned": true
+}

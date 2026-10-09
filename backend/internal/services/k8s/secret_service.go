@@ -5,14 +5,13 @@ import (
 	"fmt"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // SecretService handles Kubernetes Secret reads.
 type SecretService struct {
 	client           *Client
 	namespaceService *NamespaceService
+	store            SecretStore
 }
 
 // NewSecretService creates a new secret service.
@@ -20,32 +19,26 @@ func NewSecretService() *SecretService {
 	return &SecretService{
 		client:           globalClient,
 		namespaceService: NewNamespaceService(),
+		store:            NewSecretStore(globalClient),
 	}
 }
 
 // GetSecretValue returns a decoded string value from a Kubernetes Secret.
 func (s *SecretService) GetSecretValue(ctx context.Context, namespace, name, key string) (string, error) {
-	if s.client == nil || s.client.Clientset == nil {
-		return "", fmt.Errorf("k8s client not initialized")
+	if s == nil || s.store == nil {
+		return "", fmt.Errorf("secret store not initialized")
 	}
-
-	secret, err := s.client.Clientset.CoreV1().Secrets(namespace).Get(ctx, name, metav1.GetOptions{})
+	value, err := s.store.GetValue(ctx, namespace, name, key)
 	if err != nil {
 		return "", fmt.Errorf("failed to get secret %s/%s: %w", namespace, name, err)
 	}
-
-	value, ok := secret.Data[key]
-	if !ok {
-		return "", fmt.Errorf("secret key %s not found in %s/%s", key, namespace, name)
-	}
-
 	return string(value), nil
 }
 
 // UpsertSecret creates or updates a secret in the user's namespace.
 func (s *SecretService) UpsertSecret(ctx context.Context, userID int, name string, data map[string]string, labels map[string]string) error {
-	if s.client == nil || s.client.Clientset == nil {
-		return fmt.Errorf("k8s client not initialized")
+	if s == nil || s.client == nil || s.store == nil {
+		return fmt.Errorf("secret store not initialized")
 	}
 
 	if _, err := s.namespaceService.EnsureNamespace(ctx, userID); err != nil {
@@ -58,51 +51,40 @@ func (s *SecretService) UpsertSecret(ctx context.Context, userID int, name strin
 		secretData[key] = []byte(value)
 	}
 
-	secret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-			Labels:    labels,
-		},
-		Type: corev1.SecretTypeOpaque,
-		Data: secretData,
-	}
-
-	existing, err := s.client.Clientset.CoreV1().Secrets(namespace).Get(ctx, name, metav1.GetOptions{})
-	if err == nil && existing != nil {
-		existing.Data = secretData
-		if existing.Labels == nil {
-			existing.Labels = map[string]string{}
-		}
-		for key, value := range labels {
-			existing.Labels[key] = value
-		}
-		if _, err := s.client.Clientset.CoreV1().Secrets(namespace).Update(ctx, existing, metav1.UpdateOptions{}); err != nil {
-			return fmt.Errorf("failed to update secret %s/%s: %w", namespace, name, err)
-		}
-		return nil
-	}
-	if err != nil && !errors.IsNotFound(err) {
-		return fmt.Errorf("failed to inspect secret %s/%s: %w", namespace, name, err)
-	}
-
-	if _, err := s.client.Clientset.CoreV1().Secrets(namespace).Create(ctx, secret, metav1.CreateOptions{}); err != nil {
-		return fmt.Errorf("failed to create secret %s/%s: %w", namespace, name, err)
+	if err := s.store.Upsert(ctx, &SecretRecord{Namespace: namespace, Name: name, Type: corev1.SecretTypeOpaque, Data: secretData, Labels: labels}); err != nil {
+		return fmt.Errorf("failed to upsert secret %s/%s: %w", namespace, name, err)
 	}
 	return nil
 }
 
 // DeleteSecret deletes a Secret from the user's namespace. Missing secrets are treated as already deleted.
 func (s *SecretService) DeleteSecret(ctx context.Context, userID int, name string) error {
-	if s.client == nil || s.client.Clientset == nil {
-		return fmt.Errorf("k8s client not initialized")
+	if s == nil || s.client == nil || s.store == nil {
+		return fmt.Errorf("secret store not initialized")
 	}
 	namespace := s.client.GetNamespace(userID)
-	if err := s.client.Clientset.CoreV1().Secrets(namespace).Delete(ctx, name, metav1.DeleteOptions{}); err != nil {
-		if errors.IsNotFound(err) {
-			return nil
-		}
+	if err := s.store.Delete(ctx, namespace, name); err != nil {
 		return fmt.Errorf("failed to delete secret %s/%s: %w", namespace, name, err)
 	}
 	return nil
+}
+
+// DeleteByLabels deletes only broker-policy-approved Secrets that match every
+// supplied label. It deliberately exposes no list operation to app callers.
+func (s *SecretService) DeleteByLabels(ctx context.Context, namespace string, labels map[string]string) error {
+	if s == nil || s.store == nil {
+		return fmt.Errorf("secret store not initialized")
+	}
+	if err := s.store.DeleteByLabels(ctx, namespace, labels); err != nil {
+		return fmt.Errorf("failed to delete secrets by labels in %s: %w", namespace, err)
+	}
+	return nil
+}
+
+// Store exposes the restricted store for system certificate operations.
+func (s *SecretService) Store() SecretStore {
+	if s == nil {
+		return nil
+	}
+	return s.store
 }

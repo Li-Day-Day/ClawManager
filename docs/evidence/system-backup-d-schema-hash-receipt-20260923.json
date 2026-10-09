@@ -1,0 +1,35 @@
+{
+  "kind": "system_backup_d_schema_candidate_receipt",
+  "contract_version": "system-backup-plan.v12",
+  "status": "candidate_received_not_approved",
+  "source": "operator_pasted_output",
+  "capture_exit_code": 0,
+  "candidate_path": "docs/evidence/system-backup-d-schema-hash-candidate-20260923T054748Z.json",
+  "candidate_file_sha256": "b6b39e4ccb8c94b76e3316ef6674532153f406fa665fa150c7f7aa13b3aa8779",
+  "observed_schema_hash": "a0cea874cd2c1dddb0740c7bfd066954e70e400fa38251f145aa2006711907e3",
+  "capture_record_count": 3092,
+  "local_checks": {
+    "closed_envelope": true,
+    "repository_capture_sql_hash_matches": true,
+    "inventory_snapshot_hash_matches": true,
+    "current_embedded_migration_catalog_hash_matches": true,
+    "inventory_object_key_hash_matches": true,
+    "counts_and_time_order_match": true,
+    "cleanup_reported_verified": true,
+    "candidate_rejected_by_reviewed_gate": true,
+    "schema_hash_gate_remains_false": true
+  },
+  "limitations": [
+    "Raw structure records were removed by the operator capture script; D did not independently recompute the observed schema hash from raw records.",
+    "Cleanup is reported by the operator-run script, not independently re-probed by D.",
+    "Installation identity and capture provenance await A/B review; registration and retention await A/C.",
+    "No expected-schema structure comparison or historical migration equivalence is established."
+  ],
+  "required_handoff": {
+    "A": "Authenticate installation/evidence identity and register safely; complete security contract corrections.",
+    "B": "Review database capture provenance; complete owned policies and missing contracts.",
+    "C": "Review evidence registration and retention; complete owned policies/catalog contracts."
+  },
+  "registered_evidence": null,
+  "approved_reviewers": []
+}

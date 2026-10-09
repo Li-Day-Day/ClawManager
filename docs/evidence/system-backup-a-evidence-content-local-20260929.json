@@ -1,0 +1,229 @@
+{
+  "schema_version": "a-evidence-content-local-validation.v1",
+  "recorded_at_utc": "2026-09-29T01:48:41.4900897Z",
+  "result": "PASS_LOCAL_ONLY",
+  "command": "scripts/system-backup-a-evidence-validation.ps1 -BuildParallelism 1",
+  "runner_exit_code": 0,
+  "transcript": "docs/evidence/system-backup-a-evidence-content-local-20260929.txt",
+  "transcript_sha256": "d55cbfd110113992bbc5f0ea8d65f464bcd55604c079f400a4504f71ac9fbd19",
+  "transcript_format": "Merged streamed tool output, normalized line endings; native exit observed separately",
+  "validation": {
+    "go_top_level_tests_passed": 21,
+    "go_subtests_passed": 106,
+    "package_seconds": 2.337,
+    "new_top_level_tests_passed": 5,
+    "new_subtests_passed": 45,
+    "schema_required_field_omissions_rejected": 25,
+    "unsafe_or_mismatched_json_cases_rejected_before_keys_and_staging": 20,
+    "evidence_type_owner_combinations_checked": 156,
+    "go_format_passed": true,
+    "powershell_syntax_files_passed": 3,
+    "helper_cases_passed_in_each_shell": 19,
+    "helper_current_powershell": "passed",
+    "helper_windows_powershell_5_1": "passed",
+    "native_telemetry_mode_and_directory_verified": true,
+    "vet_enabled": true,
+    "expected_local_tls_rejection_diagnostics": 4,
+    "unchanged_previous_evidence_go_files": 11,
+    "changed_existing_evidence_go_files": [
+      "types.go"
+    ],
+    "go_mod_and_sum_unchanged": true
+  },
+  "build": {
+    "linux_mysql_probe_compiled": true,
+    "migration_runner_compiled": true,
+    "probe_sha256": "fb79020c115dbe24f3af0dc7a47336b90641c6dd9662664e1ddc72ab33f5e9df",
+    "ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "build_parallelism": 1,
+    "dependency_proxy": "off",
+    "module_mode": "readonly"
+  },
+  "first_attempt": {
+    "result": "FAIL_LINUX_COMPILER_PROCESS",
+    "go_tests_passed": true,
+    "package_seconds": 4.19,
+    "diagnostic": "github.com/golang-jwt/jwt/v5: compile.exe: exit status 0xc0000043",
+    "runner_exit_code": 1,
+    "cleanup_reported": true,
+    "transcript": "docs/evidence/system-backup-a-evidence-content-first-failed-20260929.txt",
+    "transcript_sha256": "5ff7df2af06e940cea2973bc6b60acd197f66a3cfbeb55350c4ccc6c1c952f0b",
+    "prior_runner_sha256": "b54d8a3aaa93c154a5d3a4355b6fed67fc8fc437afbfb63f9822e7bf8c1877c7",
+    "prior_helper_sha256": "e33cebe262482dde1ea057ff41deacc068ef5b8e57756b946f377f0280487fc8",
+    "observed_telemetry_token_write_denials": 2,
+    "go_source_changed_before_final_rerun": false
+  },
+  "runner_revision": {
+    "max_attempts": 3,
+    "retry_tools": [
+      "vet.exe",
+      "asm.exe",
+      "compile.exe"
+    ],
+    "retry_exit_status": "0xc0000043",
+    "assertion_failure_retried": false,
+    "remote_operation_retried": false,
+    "compiler_failure_root_cause_determined": false,
+    "telemetry_mode": "off",
+    "telemetry_directory": "run-owned scratch/telemetry",
+    "telemetry_isolation_variable": "TEST_TELEMETRY_DIR",
+    "telemetry_native_mode_and_path_checked_before_build": true,
+    "user_global_telemetry_configuration_modified": false,
+    "final_telemetry_write_denials": 0
+  },
+  "cleanup": {
+    "owned_build_scratch_paths": [
+      ".tmp-a-evidence-91c550540dba451f9549a206665f540f",
+      ".tmp-a-evidence-042f865c0d3f44179f8c7ffda74b24d8"
+    ],
+    "both_build_directories_absent": true,
+    "helper_and_format_scratch_cleaned": true,
+    "binaries_build_cache_and_telemetry_removed": true,
+    "dependencies_installed": false
+  },
+  "acceptance_scope": [
+    "v12 evidence type/owner matrix at identity validation used before Prepare and SQL INSERT and during manifest reads",
+    "Closed capability snapshot JSON, exact required fields, trusted run/provider/identity binding and current expiry validation",
+    "Rejection before KEK or staging on unsafe capability JSON",
+    "Windows tests with vet and Linux probe/migration compilation",
+    "Native PowerShell helper retry and isolated telemetry checks"
+  ],
+  "limitations": [
+    "Capability policy inputs still require authenticated producer and trusted registry/config resolution",
+    "Only capability_snapshot application/json body is implemented by this validator, with a 64 KiB profile bound",
+    "Job-log line redaction and other evidence body validators remain pending",
+    "No inline persistence integration added",
+    "Production STS, C absence-proof verifier, dedicated KEK and D authoritative SQLPolicy/session/HTTP/scheduler remain pending",
+    "Changed owner/type behavior has not been rerun against real MySQL in this revision"
+  ],
+  "agent_remote_actions_performed": false,
+  "real_mysql_run_performed": false,
+  "production_content_pipeline_verified": false,
+  "production_provider_verified": false,
+  "production_scoped_grants_verified": false,
+  "deployed_http_download_verified": false,
+  "formal_gc_migration_deployed": false,
+  "provider_capability_approved": false,
+  "human_mfa_verified": false,
+  "config_activated": false,
+  "historical_receipts_modified": false,
+  "source_bindings": [
+    {
+      "path": "backend/internal/systembackupevidence/capability_content_test.go",
+      "sha256": "938df2c745a62489a7f40176c85fc8d01deb3f1d20cbce30269e3b7ee589571a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content.go",
+      "sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_test.go",
+      "sha256": "9370fb7057081fd2a92a22f7982a85a8692a4a31de5d1026f60a9e2406583617"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3.go",
+      "sha256": "3e3039b369e7e677186c79d92aff7227b6a0fb74e00ed2ab3cd093c123c1cffe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_test.go",
+      "sha256": "225a3a58365a9555e14a1cbe02dcb80863bfd95180b51d909ed5cb9737ac248b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit.go",
+      "sha256": "80eafd8403608de6a106705144372938d3b2c6d0c71aef4c1543918f40f34a6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "33a50664ee920481750766d508f4dda41ccbaccc9cd2aced052b9532e86d31ae"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "sha256": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8"
+    },
+    {
+      "path": "backend/go.mod",
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "sha256": "eff9e7ebf5a14992cfbe8562aa869dfcbacee4481914db1e708249c6f341dbf0"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-evidence-gc-migration-proposal.sql",
+      "sha256": "3f65e0c05a61746968655e069e3e883f3074ece1184743f9c18a7c46561c0fca"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "df795d1e366d96a7ad28c463a0df0d9462b0b0353891ab7f63bcfd8200f39909"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "7ebc45b01349af18bc9ccca42e2dfdb45efd1857bbb4ad62223ea37a2513909a"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1",
+      "sha256": "5f0f5a0ee727e4eb9a6bfde0b7f6f29ed251b48dc99c0692b0d7b17c60134b2a"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-phase.sh",
+      "sha256": "a7e57658d18f993b67218dad6af675793fec49cf4c8e4e5561d2b777847e0c93"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "24922246940b7fa8ce9159182ab5f1f4182cce2706516e2b9259e6d5d37bad3e"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-content-20260929.md",
+      "sha256": "83cade40da174f0bba1c081bc7fd0830538cd548fa4e34f53c37def8b6464265"
+    },
+    {
+      "path": "docs/system-backup-a-external-evidence-20260928.md",
+      "sha256": "b130135fc7ccff199d3f6d98359a407478adea0fff27d850cc56f874098c5886"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "a005c4e31f2a7bd90ba051cc75568becf6d9554edaf85d265b91fe99052484e3"
+    }
+  ]
+}

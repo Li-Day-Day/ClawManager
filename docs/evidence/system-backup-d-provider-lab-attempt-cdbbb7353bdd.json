@@ -1,0 +1,18 @@
+{
+  "kind": "system_backup_d_provider_lab_attempt",
+  "recorded_date": "2026-09-24",
+  "source": "operator-provided console output; not independently re-queried or signed",
+  "namespace": "sbk-provider-zh-cdbbb7353bdd",
+  "namespace_uid": "7a815c91-744a-4c37-920b-d6848e1fc43a",
+  "tools_image": "10.130.14.23:5000/clawmanager@sha256:8829a85386402301f06f00a766a8b3627001bb4d7f327e16af228d3b337d9cb3",
+  "bootstrap_client_sha256": "87251571c4e7db6f2442467dd534097e571c4c92a9d0c1d48a57dba2230834d8",
+  "failed_phase": "bao-audit",
+  "http_status": 400,
+  "completed_phases": ["bao-init", "bao-unseal"],
+  "provider_lab_exit": 1,
+  "namespace_and_kubernetes_pv_cleanup_reported": true,
+  "handoff_completed": false,
+  "provider_capability_approved": false,
+  "status": "failed_and_cleanup_reported",
+  "correction": "declare the audit device in server configuration; verify it via read-only sys/audit; keep API audit creation disabled"
+}

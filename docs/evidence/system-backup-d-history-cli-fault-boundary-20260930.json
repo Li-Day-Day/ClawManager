@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T06:20:04.7440415Z",
+  "status": "local_fix_validated_remote_eight_cases_pending",
+  "operator_report": {
+    "namespace": "sbk-mig-260930060054-0627",
+    "namespace_uid": "c9b9adee-1cc5-4861-8ce6-cbe82e897606",
+    "scratch_owner": "47b018e0886140f1a914c505239ea96a",
+    "mysql_version": "8.4.8",
+    "source_sha256": "e333a14366a0ce1e98e72e35140a714cbdb536fb59df58b62b43bcc5357c4d54",
+    "runner_sha256": "7ab37c3ac839a499e2ee19d066e3fba49abc34b334c951ebf456d503e2fc0fbb",
+    "probe_sha256": "028470fafe5c0dad7b7728914db8d420a65daa6a318121d60057b142588c1e54",
+    "catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "fresh_count": 94,
+    "fresh_exact_filenames": "PASS",
+    "history_passed": [
+      "unreviewed_ledger_rejected_without_DDL",
+      "wrong_target_rejected_without_DDL",
+      "unreviewed_extra_rejected_without_DDL",
+      "capture_gate_rejects_then_recovers"
+    ],
+    "history_failed": "CLI_partial_DDL_connection_killed_preserves_ledger",
+    "failure": "CLI exited before fault injection: <nil>",
+    "kill_executed": false,
+    "remaining_history_cases": "not run",
+    "namespace_cleanup": "reported CLEANED",
+    "remote_scratch_cleanup": "reported yes",
+    "local_cleanup": "reported True"
+  },
+  "fix": [
+    "replace LOCK TABLES fixture with single-connection loopback protocol proxy compiled only for integration tests",
+    "hold third DDL or ledger query/prepare before forwarding; verify actual server greeting connection ID equals migration lock owner before KILL",
+    "assert real completed table DDL and unchanged ledger before and after disconnect",
+    "no precreation of third table; no reconnect bypass; join proxy workers on cleanup",
+    "use per-connector MySQL NopLogger so disconnect diagnostics obey exact CLI public error boundary"
+  ],
+  "limits": [
+    "fault occurs before target statement transmission, not during server execution",
+    "does not cover successful ledger commit with lost acknowledgement",
+    "no current real MySQL rerun after fix"
+  ],
+  "validation": {
+    "status": "PASS for final stable source",
+    "initial_four_package_unit_tests": "PASS",
+    "windows_fault_proxy_tests": "PASS (DDL query, ledger prepare, cancellation, packet validation)",
+    "cli_subprocess_tests_including_real_tcp_disconnect": "PASS",
+    "vet_integration_db_and_cli": "PASS",
+    "wrapper_mock_scenarios_passed": 25,
+    "linux_probe_compile": "PASS",
+    "linux_cli_compile": "PASS",
+    "final_source_sha256": "da3a64b57805dffdaa6ef711c5d696b12a711da39659b254dd3d872a188aac4f",
+    "final_probe_sha256": "6bfc8a2acf76bdad7ae6807a2cb3d40c0b325188750cc921d657807dd3ab7f92",
+    "final_runner_sha256": "69e44727bcfad1e483263ab8fc0d9faf6a29977ea4accd887c6ffe3994304ef7",
+    "final_source_pre_post_match": true,
+    "initial_broad_validation": "compiled both binaries, then source guard correctly refused due to logger fix made during the run; not recorded as a full wrapper PASS",
+    "final_independent_validation": "reran proxy tests, CLI tests, tagged vet and both Linux compilations with stable source before/after",
+    "development_failure": "initial NopLogger value corrected to pointer before final tests; temporary telemetry warning avoided using run-owned telemetry directory",
+    "real_mysql_after_fix": false,
+    "dependencies_installed": false,
+    "test_artifacts_removed": true
+  },
+  "source_sha256_at_receipt": {
+    "backend/internal/db/migration_history_cli_integration_test.go": "cd77bf91f93c997c692b185b812c08f8ce4d5a57ffa2daec72e2aef289e2bae5",
+    "backend/internal/db/migration_history_fault_proxy_test.go": "44a7fcbfc43fd4a488bd1c4a2006a37dde55392fd5fd4781f5e790c5ccabbb17",
+    "backend/internal/db/migration_history_fault_proxy_validation_test.go": "cd09c7165f04e04dc5590b33f748a20b5a0a0aa639483ebed7252e7276d91ecc",
+    "backend/cmd/system-backup-migrate/main.go": "3073694b5828eeecea146b7d367fc68b305f3830c17e53b1b997b89fec2cb06e",
+    "backend/cmd/system-backup-migrate/main_test.go": "da2f52dec489f4645b16345f607d713aafd55d2cc241a48b6f2fcbf9896dabb4",
+    "scripts/system-backup-d-invariants.ps1": "c79f86222e856be7217682022fe06a098597291024f63037c04466da7d1ed36c"
+  },
+  "next_operator_command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -BuildOnly -Remote"
+}

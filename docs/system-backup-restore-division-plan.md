@@ -27,12 +27,12 @@ P0 固定区分三个结论：
 
 | 业务域 | manifest 字段 | owner | 数据范围 |实际开发人|
 | --- | --- | --- | --- | --- | 
-| 用户 | `users` | A | 用户、管理员、quota、企业认证配置和认证 Secret/ref | |
+| 用户 | `users` | A | 用户、管理员、quota、企业认证配置和认证 Secret/ref | zh |
 | 实例 | `instances` | B | 实例元数据、运行态、OpenClaw 配置、workspace 和实例内 skill | ltt | 
-| AI Gateway | `ai_gateway` | A | 模型、调用、成本、风险、聊天和 AI 专用审计 | |
+| AI Gateway | `ai_gateway` | A | 模型、调用、成本、风险、聊天和 AI 专用审计 | zh |
 | Teams | `teams` | C | Team、成员、任务、事件、workflow ledger 和相关 Redis 状态 | hxc |
 | 资源管理 | `resources` | D | 系统镜像、出站例外、安全扫描、北向平台管理配置及其审计、通用管理审计 | zh |
-| Skill Hub | `skill_hub` | C | Skill 元数据、绑定、materialize job 和对象存储内容 | hsr? |
+| Skill Hub | `skill_hub` | C | Skill 元数据、绑定、materialize job 和对象存储内容 | hsr |
 
 `openclaw_config_*` 归实例域；`system_backup_*`、maintenance lock/lease 属于控制面，不形成第七类业务 verifier。
 
@@ -81,6 +81,14 @@ P1 才实现：
 - P0 威胁模型必须随机器合同冻结：防御误操作、并发竞态、Pod/节点崩溃、网络/存储暂时故障、被窃取的普通 artifact reader credential、源集群整体丢失以及对 committed 对象的意外覆盖；通过最小权限、按 purpose 域分离的签名、外部 catalog 和对象版本历史检测 controller/DB/artifact 内容的不一致。Controller、其工作负载身份以及被授权调用的 KMS/catalog/finalizer 能力共同属于 P0 可信计算基；P0 不宣称在 controller 运行身份、任一 purpose signing key、artifact delete/catalog append credential、KMS 管理面或 artifact/catalog provider 完全失陷后仍保持可用或不可篡改。三个签名 purpose 必须使用不同 key ref、不同实际 key material 和独立 IAM/audit policy；domain separator 仍必须使用，但不能代替 key material 分离。验收报告必须明确该边界，不得笼统声称“防篡改”。
 
 ## 4. 公共术语、状态和资格
+
+### producer 授权合同补充（C1 草案，2026-09-30）
+
+系统 capability producer 的授权独立于普通 task 与管理员 bootstrap 授权。无配置、disabled、enabled 三场景分别准入；无配置检查只生成候选结果，不创建 installation/config 或写入活动能力投影。初始化消费候选证据时须在同一事务关闭原授权域，原观察期限不得刷新。独立证据通道须有不依赖候选检查结果的信任来源，缺失即拒绝。
+
+授权域/grant/run、目标代次、历史写入绑定、命令与结果收据及 evidence 引用的具体字段、锁序、摘要编码和容量规则见 [producer C1 合同包](../contracts/system-backup/v12/producer-authority-transactions.json)。续租使旧调用快照失效；旧 run 不得覆盖新 run；提交前在全部写入/审计后复核数据库时间；恢复只能独立 Stat/收敛 evidence，不恢复执行权。多个 probe scope 映射同一既有结果槽时，只有配置准入指定的唯一目标可更新活动投影，其余保持候选结果。
+
+本补充为 A 已认可 R1 后的待交叉评审细化，C1 新决议尚未签收。八类拟议控制表先保留在数据字典，不加入现行“仅补 080”升级包，不改变当前 migration catalog/inventory。A/C 签收、采用 Job 时 B 签收及 V01–V10 真实验收均为后续门禁；内部记录不是 Admin API，不据此新增公共路由或给普通任务扩权。交付和限制见 [D C1 记录](system-backup-d-producer-authority-contract-20260930.md)。
 
 ### 4.1 任务状态
 
@@ -198,7 +206,7 @@ API code与failure category使用冻结映射表：请求格式/范围、proof s
 | teams | C | `teams`、`team_members`、`team_tasks`、`team_events`、`team_work_items`、`team_event_outbox`、`team_workflow_phases`、`custom_team_templates` |
 | skill_hub | C | `skill_blobs`、`skills`、`skill_versions`、`instance_skills`、`skill_scan_results`、`skill_package_materialize_jobs`、`skill_hub_tags`、`skill_hub_tag_assignments` |
 | resources | D | `system_image_settings`、`egress_private_exceptions`、`security_scan_configs`、`security_scan_jobs`、`security_scan_job_items`、`security_scan_reports`、`audit_logs`、`northbound_admin_settings`、`northbound_settings_audit` |
-| system_backup | D | `system_backup_installation_state`、`system_backup_configs`、`system_backup_operations`、`system_backup_external_actions`、`system_backups`、`system_restore_drills`、`system_restore_drill_resources`、`system_backup_preflights`、`system_backup_artifact_verifications`、`system_backup_attempts`、`system_backup_staging_resources`、`system_backup_job_observations`、`system_backup_events`、`system_backup_alert_states`、`system_artifact_lease_states`、`system_artifact_leases`、`system_backup_prune_runs`、`system_backup_prune_items`、`system_backup_promotions`、`system_maintenance_locks`、`system_maintenance_mutation_leases`、`system_maintenance_participants`、`system_backup_strong_auth_nonces`、`system_backup_evidence`、`system_backup_evidence_chunks`、`system_backup_log_chunks`、`system_backup_dependency_health`、`system_backup_provider_capabilities`、`system_backup_source_writer_check_states`、`system_backup_check_results`、`system_backup_compact_tombstones`；其余P0系统备份控制面表随追加migration逐批显式登记，均不计入六类业务verifier |
+| system_backup | D | `system_backup_installation_state`、`system_backup_configs`、`system_backup_operations`、`system_backup_external_actions`、`system_backups`、`system_restore_drills`、`system_restore_drill_resources`、`system_backup_preflights`、`system_backup_artifact_verifications`、`system_backup_attempts`、`system_backup_staging_resources`、`system_backup_job_observations`、`system_backup_events`、`system_backup_alert_states`、`system_artifact_lease_states`、`system_artifact_leases`、`system_backup_prune_runs`、`system_backup_prune_items`、`system_backup_promotions`、`system_maintenance_locks`、`system_maintenance_mutation_leases`、`system_maintenance_participants`、`system_backup_strong_auth_nonces`、`system_backup_evidence`、`system_backup_evidence_chunks`、`system_backup_log_chunks`、`system_backup_dependency_health`、`system_backup_provider_capabilities`、`system_backup_source_writer_check_states`、`system_backup_check_results`、`system_backup_compact_tombstones`、`system_backup_admin_revocations`、`system_backup_totp_credentials`、`system_backup_metadata_reservations`、`system_backup_admin_sessions`；其余P0系统备份控制面表随追加migration逐批显式登记，均不计入六类业务verifier |
 
 `schema_migrations`是migration元数据，owner D、category `system_backup`、`metadata_only/reference_only`，只把applied filename与catalog hash写manifest，不恢复数据行。跨域表只有一个owner，其他verifier通过`depends_on`引用。
 
