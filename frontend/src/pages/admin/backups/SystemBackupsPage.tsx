@@ -7,6 +7,8 @@ import type { BackupDetailResource } from '../../../types/systemBackupContract';
 import { backupEntryPoints, filterBackups, formatBytes, previewScenarios, unavailableBackupSource } from './backupReadModel';
 import type { BackupReadSource, BackupReadState, BackupSnapshot, PreviewScenario } from './backupReadModel';
 import { previewBackupSource } from './backupPreview';
+import BackupLiveWorkspace from './BackupLiveWorkspace';
+import { liveBackupReadEnabled } from './backupLiveSource';
 import { useBackupText } from './useBackupText';
 
 const tabs = [
@@ -19,6 +21,7 @@ const warn = new Set(['degraded', 'warning', 'finalization_unknown', 'report_exp
 const panelClass = 'rounded-xl border border-slate-200 bg-white';
 const buttonClass = 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500';
 const checksumLabels = { manifest: 'checksum_manifest', index: 'checksum_index', marker: 'checksum_marker', acceptance: 'checksum_acceptance', catalog: 'checksum_catalog' } as const;
+const liveReadEnabled = liveBackupReadEnabled(import.meta.env.VITE_SYSTEM_BACKUP_LIVE_READ);
 
 function Badge({ value, label }: { value: string; label?: string }) {
   const { label: statusLabel } = useBackupText();
@@ -251,7 +254,11 @@ export default function SystemBackupsPage() {
     <div className="mx-auto max-w-[1600px] space-y-5">
       <header className="flex flex-wrap items-start justify-between gap-4"><div><div className="mb-2 flex items-center gap-2 text-slate-900"><Database className="h-5 w-5" aria-hidden="true" /><h2 className="text-lg font-semibold">{b('heading')}</h2></div><p className="text-sm leading-6 text-slate-500">{b('intro')}</p></div><div className="flex flex-wrap gap-2"><button type="button" aria-pressed={preview} onClick={changePreview} className={buttonClass}><FlaskConical className="h-4 w-4" aria-hidden="true" />{preview ? b('exitPreview') : b('showPreview')}</button><DisabledAction><Archive className="h-4 w-4" aria-hidden="true" />{b('createBackup')}</DisabledAction></div></header>
       {preview ? <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3"><div className="flex items-start gap-2 text-sm text-amber-900"><Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" /><p><strong>{b('preview')}</strong>{' · '}{b('previewNotice')}</p></div><label className="flex items-center gap-2 text-xs text-amber-900">{b('previewState')}<select value={scenario} onChange={(event) => changeScenario(event.target.value as PreviewScenario)} className="rounded-md border border-amber-200 bg-white px-2 py-1.5 text-sm">{previewScenarios.map((value) => <option key={value} value={value}>{b(`scenario_${value}`)}</option>)}</select></label></div> : <div className="flex items-center gap-2 text-xs text-slate-500"><Info className="h-4 w-4" aria-hidden="true" />{b('readOnly')}</div>}
-      <ReadWorkspace key={`${preview}-${scenario}`} source={source} onPreview={changePreview} />
+      {preview
+        ? <ReadWorkspace key={`${preview}-${scenario}`} source={source} onPreview={changePreview} />
+        : liveReadEnabled
+          ? <BackupLiveWorkspace fallback={<ReadWorkspace source={unavailableBackupSource} onPreview={changePreview} />} />
+          : <ReadWorkspace source={unavailableBackupSource} onPreview={changePreview} />}
     </div>
   </AdminLayout>;
 }

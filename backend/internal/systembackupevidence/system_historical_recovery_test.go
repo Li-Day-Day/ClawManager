@@ -168,7 +168,7 @@ func TestSystemHistoricalRecoveryAuthorizesCurrentWorkloadIdentity(t *testing.T)
 	}
 	requestHash := pd.Hash(strings.Repeat("d", 64))
 	now := time.Now().UTC().Truncate(time.Microsecond)
-	session := &historicalAuthorizingSessionFixture{admission: pd.RecoveryAdmission{VerifiedRequestHash: requestHash, IdentityHash: pd.Hash(auth.workload), IdentityExpiresAt: systemPublicationTimestamp(now.Add(time.Minute)), StatAllowed: true}}
+	session := &historicalAuthorizingSessionFixture{admission: pd.RecoveryAdmission{VerifiedRequestHash: requestHash, IdentityHash: pd.Hash(auth.workload), RevocationEpoch: "1", IdentityExpiresAt: systemPublicationTimestamp(now.Add(time.Minute)), DeploymentExpiresAt: systemPublicationTimestamp(now.Add(time.Minute)), StatAllowed: true}}
 	a := &historicalAuthorityFixture{channel: ProducerEvidenceChannel{Root: "evidence", Store: KeyRef{Identity: strings.Repeat("a", 64), Version: "store-v1"}, Write: KeyRef{Identity: strings.Repeat("b", 64), Version: "write-v1"}, RecoveryProfileHash: strings.Repeat("c", 64)}, sample: now, session: session}
 	env, err := NewSystemHistoricalRecoveryEnvironment(auth, peer, a)
 	if err != nil {
@@ -238,5 +238,15 @@ func TestSystemHistoricalRecoveryAuthorizesCurrentWorkloadIdentity(t *testing.T)
 	session.admission.IdentityExpiresAt = systemPublicationTimestamp(now.Add(time.Hour))
 	if _, err := authz().Authorize(context.Background(), check(), r, requestHash, "claim"); err != ErrDenied {
 		t.Fatal("identity deadline extended beyond certificate", err)
+	}
+	session.admission.IdentityExpiresAt = systemPublicationTimestamp(now.Add(time.Minute))
+	session.admission.RevocationEpoch = "0"
+	if _, err := authz().Authorize(context.Background(), check(), r, requestHash, "claim"); err != ErrDenied {
+		t.Fatal("missing current revocation epoch accepted", err)
+	}
+	session.admission.RevocationEpoch = "1"
+	session.admission.DeploymentExpiresAt = systemPublicationTimestamp(now.Add(-time.Second))
+	if _, err := authz().Authorize(context.Background(), check(), r, requestHash, "claim"); err != ErrDenied {
+		t.Fatal("expired current deployment accepted", err)
 	}
 }

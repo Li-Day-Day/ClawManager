@@ -1,0 +1,77 @@
+LOCAL_PASS isolated-go-telemetry=off
+ok      clawreef/internal/systembackupevidence  2.150s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.26s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.13s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.13s)
+PASS
+ok      clawreef/internal/systembackupevidence  1.976s
+net/http/internal/testcert: C:\Program Files\Go\pkg\tool\windows_amd64\compile.exe: exit status 0xc0000043
+警告: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME mysql-probe-build command (1/3 failed). Vet
+remains enabled; isolated cache is retained only until this run ends.
+LOCAL_PASS a-recovery-manager-bootstrap-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=2474fbc894ada0607ec88e5a2a0d9056a249798d8e07e48d76f7e090aaec0f82
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000002069DD0E610
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001AFA4E6F810
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-261012073839-3121 uid=72c392b5-09b1-4000-85ce-20fff877e57b app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestRecoveryManagerBootstrapMySQL
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestRecoveryManagerBootstrapMySQL (0.57s)
+PASS
+PASS a-recovery-manager-bootstrap-mysql binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=2474fbc894ada0607ec88e5a2a0d9056a249798d8e07e48d76f7e090aaec0f82
+CLEANED namespace=sbk-mig-261012073839-3121 uid=72c392b5-09b1-4000-85ce-20fff877e57b
+close - IO is still pending on closed socket. read:1, write:0, io:0000016F0AFA3880
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001A93B563560
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+LOCAL_PASS isolated-go-telemetry=off
+ok      clawreef/internal/systembackupevidence  1.366s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.25s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.13s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.12s)
+PASS
+ok      clawreef/internal/systembackupevidence  1.515s
+LOCAL_PASS a-recovery-manager-revocation-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=2474fbc894ada0607ec88e5a2a0d9056a249798d8e07e48d76f7e090aaec0f82
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+root@10.130.14.23's password:
+
+close - IO is still pending on closed socket. read:1, write:0, io:000002CEA9CE68B0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001A434E5BC20
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-261012075004-30ff uid=f51d83b1-fcee-4955-8c81-fc4a42571357 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestRecoveryManagerRevocationMySQL
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestRecoveryManagerRevocationMySQL (0.31s)
+PASS
+PASS a-recovery-manager-revocation-mysql binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=2474fbc894ada0607ec88e5a2a0d9056a249798d8e07e48d76f7e090aaec0f82
+
+CLEANED namespace=sbk-mig-261012075004-30ff uid=f51d83b1-fcee-4955-8c81-fc4a42571357
+close - IO is still pending on closed socket. read:1, write:0, io:0000013FA0BD5FE0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000002314A44E030
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+已停止脚本，输出文件为 C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-bootstrap-revoke-remote-20261012-152634.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Output "日志：$log"
+日志：docs/evidence/a-bootstrap-revoke-remote-20261012-152634.txt

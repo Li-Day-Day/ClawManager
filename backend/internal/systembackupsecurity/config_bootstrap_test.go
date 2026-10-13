@@ -26,7 +26,16 @@ func bootstrapFixture(t *testing.T) []byte {
 	}
 	refs := []BootstrapSecretRef{}
 	for _, purpose := range bootstrapReferencePurposes {
-		refs = append(refs, BootstrapSecretRef{purpose, strings.Repeat("b", 64), "synthetic-v1"})
+		identity := strings.Repeat("b", 64)
+		switch purpose {
+		case "capture_signing":
+			identity = strings.Repeat("c", 64)
+		case "acceptance_signing":
+			identity = strings.Repeat("d", 64)
+		case "catalog_signing":
+			identity = strings.Repeat("e", 64)
+		}
+		refs = append(refs, BootstrapSecretRef{purpose, identity, "synthetic-v1"})
 	}
 	v["registries"] = registries
 	v["references"] = refs
@@ -35,6 +44,37 @@ func bootstrapFixture(t *testing.T) []byte {
 		t.Fatal(err)
 	}
 	return raw
+}
+
+func TestBootstrapRejectsSharedSigningReferenceIdentity(t *testing.T) {
+	for _, pair := range [][2]string{{"capture_signing", "acceptance_signing"}, {"acceptance_signing", "catalog_signing"}, {"catalog_signing", "nonce_hmac"}} {
+		t.Run(pair[0]+"-"+pair[1], func(t *testing.T) {
+			var doc map[string]json.RawMessage
+			if err := json.Unmarshal(bootstrapFixture(t), &doc); err != nil {
+				t.Fatal(err)
+			}
+			var refs []BootstrapSecretRef
+			if err := json.Unmarshal(doc["references"], &refs); err != nil {
+				t.Fatal(err)
+			}
+			var identity string
+			for _, ref := range refs {
+				if ref.Purpose == pair[0] {
+					identity = ref.IdentityHash
+				}
+			}
+			for i := range refs {
+				if refs[i].Purpose == pair[1] {
+					refs[i].IdentityHash = identity
+				}
+			}
+			doc["references"], _ = json.Marshal(refs)
+			raw, _ := json.Marshal(doc)
+			if _, err := DecodeBootstrapConfig(raw); err != ErrBootstrapConfig {
+				t.Fatal("shared signing identity accepted", err)
+			}
+		})
+	}
 }
 func TestBootstrapRulesMatchContract(t *testing.T) {
 	raw, err := os.ReadFile("../../../contracts/system-backup/v12/admin-control-resources.schema.json")

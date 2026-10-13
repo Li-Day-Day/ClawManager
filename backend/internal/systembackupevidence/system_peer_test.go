@@ -43,7 +43,9 @@ func TestSystemPeerRealMTLS(t *testing.T) {
 			return
 		}
 		facts, err := a.Check(r.Context(), p, c.Scope, time.Now().UTC().Truncate(time.Microsecond))
-		if err != nil || facts.Subject != c.Subject || facts.ActorIdentityHash == r.Header.Get("X-Actor-Identity") || facts.IssuerIdentityHash != c.IssuerIdentityHash || facts.Scope != c.Scope || !digestPattern.MatchString(facts.AdmissionHash) {
+		if err != nil || facts.Subject != c.Subject || facts.SubjectHash != systemPeerHash(struct{ Domain, Subject string }{"system-backup-recovery-subject.v1", c.Subject}) ||
+			facts.ClientCASHA256 != c.ClientCASHA256 || facts.CertificateSHA256 != c.CertificateSHA256 ||
+			facts.ActorIdentityHash == r.Header.Get("X-Actor-Identity") || facts.IssuerIdentityHash != c.IssuerIdentityHash || facts.Scope != c.Scope || !digestPattern.MatchString(facts.AdmissionHash) {
 			t.Error("incorrect authenticated facts", err)
 			w.WriteHeader(500)
 			return

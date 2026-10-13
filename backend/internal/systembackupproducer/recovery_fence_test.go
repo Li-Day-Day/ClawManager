@@ -178,6 +178,14 @@ func TestRecoveryFenceLifecycle(t *testing.T) {
 	if _, err := m.ChangeFence(ctx, r); !errors.Is(err, ErrConflict) {
 		t.Fatal("duplicate revoke", err)
 	}
+	r.Operation, r.ExpectedEpoch, r.ExpectedRowVersion = "rotate", "4", "2"
+	if got, err := m.ChangeFence(ctx, r); !errors.Is(err, ErrConflict) || got != (RecoveryFenceRow{}) {
+		t.Fatal("revoked identity was revived", got, err)
+	}
+	newKey, _ := hex.DecodeString(string(next))
+	if row := e.rows[string(newKey)]; row.epoch != 4 || row.version != 2 || !row.revoked {
+		t.Fatal("rejected rotation changed revoked row", row)
+	}
 	if e.checks != 4 {
 		t.Fatal("missing final guards", e.checks)
 	}

@@ -53,7 +53,7 @@
       ]
     }
   },
-  "x-canonicalization": "Signature input is UTF-8 JCS(payload); signature is excluded. Object checksum is SHA-256 of UTF-8 JCS({payload,signature}).",
+  "x-canonicalization": "Signature input is ASCII protected_header + '.' + unpadded base64url(UTF-8 JCS(payload)); signature is excluded. Object checksum is SHA-256 of UTF-8 JCS({payload,signature}).",
   "x-ordering": "local_reason_codes are sorted by Unicode code point order before hashing and signing.",
   "x-forbidden-local-reasons": ["task_not_succeeded", "artifact_not_committed", "required_part_failed", "required_verifier_failed", "staging_cleanup_failed", "catalog_unavailable", "manifest_drift", "isolation_invalid", "evidence_incomplete"]
 }

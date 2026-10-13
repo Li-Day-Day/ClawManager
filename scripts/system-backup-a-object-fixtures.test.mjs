@@ -66,10 +66,17 @@ test('row boundary rejects unknown fields, broken mappings and oversized values'
 test('historical credentials are inactive, references remap and accounting retains decimal precision', () => {
   const row = name => fixtures.objects.find(o => o.name === name).cases.find(c => c.name === 'redacted_historical').expected.rows[0];
   assert.equal(row('users').is_active, false);
-  assert.equal(row('users').password_hash, null);
+  assert.equal(row('users').password_hash, '!system-backup-password-reset-required!');
+  assert.match(readFileSync(new URL('backend/internal/db/migrations/001_init_schema.sql', root), 'utf8'), /password_hash\s+VARCHAR\(255\)\s+NOT NULL/i);
   assert.equal(row('llm_models').api_key, null);
+  assert.equal(row('llm_models').api_key_secret_ref, null, 'a direct key and a resolvable Secret ref must both be cleared');
   assert.equal(row('enterprise_auth_settings').enabled, false);
+  assert.equal(row('enterprise_auth_settings').ldap_bind_password_ciphertext, '', 'SQL NULL inherits LDAP_BIND_PASSWORD; empty string explicitly clears it');
   assert.equal(row('northbound_auth_challenges').status, 'expired');
+  const challenge = fixtures.objects.find(o => o.name === 'northbound_auth_challenges').cases.find(c => c.name === 'redacted_historical');
+  const challengePolicy = policies.find(p => p.name === 'northbound_auth_challenges');
+  const processing = normalizeFixture(challengePolicy, [{ ...challenge.input_rows[0], status: 'processing' }], challenge.context, secretSchema);
+  assert.deepEqual(processing, challenge.expected, 'an in-flight production challenge must also expire on restore');
   assert.equal(row('northbound_sessions').status, 'revoked');
   assert.equal(row('instance_gateway_token_aliases').expires_at, fixtures.fixture_policy.snapshot_cutoff);
   assert.equal(row('chat_sessions').last_trace_id, null);

@@ -22,6 +22,22 @@
   },
   "allOf": [
     {
+      "if": { "properties": { "category": { "const": "users" }, "mode": { "const": "backup_validate" } }, "required": ["category", "mode"] },
+      "then": { "properties": { "checks": { "items": { "$ref": "#/$defs/AUsersBackupCheck" } } } }
+    },
+    {
+      "if": { "properties": { "category": { "const": "ai_gateway" }, "mode": { "const": "backup_validate" } }, "required": ["category", "mode"] },
+      "then": { "properties": { "checks": { "items": { "$ref": "#/$defs/AAIGatewayBackupCheck" } } } }
+    },
+    {
+      "if": { "properties": { "category": { "const": "users" }, "mode": { "const": "restore_validate" } }, "required": ["category", "mode"] },
+      "then": { "properties": { "checks": { "items": { "$ref": "#/$defs/AUsersRestoreCheck" } } } }
+    },
+    {
+      "if": { "properties": { "category": { "const": "ai_gateway" }, "mode": { "const": "restore_validate" } }, "required": ["category", "mode"] },
+      "then": { "properties": { "checks": { "items": { "$ref": "#/$defs/AAIGatewayRestoreCheck" } } } }
+    },
+    {
       "if": { "properties": { "category": { "const": "resources" }, "mode": { "const": "backup_validate" } }, "required": ["category", "mode"] },
       "then": { "properties": { "checks": { "items": { "$ref": "#/$defs/ResourcesBackupCheck" } } } }
     },
@@ -31,6 +47,54 @@
     }
   ],
   "$defs": {
+    "ABusinessDigestValue": {
+      "type": "object", "additionalProperties": false, "required": ["hash"],
+      "properties": { "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" } }
+    },
+    "ABusinessCountValue": {
+      "type": "object", "additionalProperties": false, "required": ["rows"],
+      "properties": { "rows": { "type": "integer", "minimum": 0 } }
+    },
+    "AUsersBackupCheck": {
+      "allOf": [
+        { "$ref": "#/$defs/Check" },
+        { "oneOf": [
+          { "properties": { "id": { "enum": ["users.checkpoint", "users.capture_context"] }, "expected": { "$ref": "#/$defs/ABusinessDigestValue" }, "actual": { "$ref": "#/$defs/ABusinessDigestValue" } } },
+          { "properties": { "id": { "enum": ["users.table_count.enterprise_auth_settings", "users.table_count.northbound_auth_challenges", "users.table_count.northbound_caller_policies", "users.table_count.northbound_sessions", "users.table_count.user_quotas", "users.table_count.users"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } }
+        ] }
+      ]
+    },
+    "AAIGatewayBackupCheck": {
+      "allOf": [
+        { "$ref": "#/$defs/Check" },
+        { "oneOf": [
+          { "properties": { "id": { "enum": ["ai_gateway.checkpoint", "ai_gateway.capture_context"] }, "expected": { "$ref": "#/$defs/ABusinessDigestValue" }, "actual": { "$ref": "#/$defs/ABusinessDigestValue" } } },
+          { "properties": { "id": { "enum": ["ai_gateway.table_count.audit_events", "ai_gateway.table_count.chat_messages", "ai_gateway.table_count.chat_sessions", "ai_gateway.table_count.cost_records", "ai_gateway.table_count.instance_gateway_token_aliases", "ai_gateway.table_count.llm_models", "ai_gateway.table_count.model_invocations", "ai_gateway.table_count.risk_hits", "ai_gateway.table_count.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } }
+        ] }
+      ]
+    },
+    "ABusinessViolationValue": {
+      "type": "object", "additionalProperties": false, "required": ["violations"],
+      "properties": { "violations": { "type": "integer", "minimum": 0 } }
+    },
+    "AUsersRestoreCheck": {
+      "allOf": [
+        { "$ref": "#/$defs/Check" },
+        { "oneOf": [
+          { "properties": { "id": { "enum": ["users.restore_count.enterprise_auth_settings", "users.restore_count.northbound_auth_challenges", "users.restore_count.northbound_caller_policies", "users.restore_count.northbound_sessions", "users.restore_count.user_quotas", "users.restore_count.users"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } },
+          { "properties": { "id": { "enum": ["users.restore_inert.enterprise_auth_settings", "users.restore_inert.northbound_auth_challenges", "users.restore_inert.northbound_caller_policies", "users.restore_inert.northbound_sessions", "users.restore_inert.users"] }, "expected": { "$ref": "#/$defs/ABusinessViolationValue" }, "actual": { "$ref": "#/$defs/ABusinessViolationValue" } } }
+        ] }
+      ]
+    },
+    "AAIGatewayRestoreCheck": {
+      "allOf": [
+        { "$ref": "#/$defs/Check" },
+        { "oneOf": [
+          { "properties": { "id": { "enum": ["ai_gateway.restore_count.audit_events", "ai_gateway.restore_count.chat_messages", "ai_gateway.restore_count.chat_sessions", "ai_gateway.restore_count.cost_records", "ai_gateway.restore_count.instance_gateway_token_aliases", "ai_gateway.restore_count.llm_models", "ai_gateway.restore_count.model_invocations", "ai_gateway.restore_count.risk_hits", "ai_gateway.restore_count.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } },
+          { "properties": { "id": { "enum": ["ai_gateway.restore_inert.chat_sessions", "ai_gateway.restore_inert.instance_gateway_token_aliases", "ai_gateway.restore_inert.llm_models", "ai_gateway.restore_inert.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessViolationValue" }, "actual": { "$ref": "#/$defs/ABusinessViolationValue" } } }
+        ] }
+      ]
+    },
     "ControlExclusionCheck": {
       "allOf": [
         { "$ref": "#/$defs/Check" },
@@ -119,7 +183,13 @@
     "promotion_validate": ["promotion"]
   },
   "x-owner-check-registries": {
-    "A": { "status": "pending_owner_submission", "categories": ["users", "ai_gateway"] },
+    "A": {
+      "status": "draft", "categories": ["users", "ai_gateway"],
+      "users_backup_validate": { "check_schema": "#/$defs/AUsersBackupCheck", "required_check_count": 8, "required_proof": "B-owned capture certificate and dump content proof binding both views to the pinned registry, observed schema and one checkpoint", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
+      "ai_gateway_backup_validate": { "check_schema": "#/$defs/AAIGatewayBackupCheck", "required_check_count": 11, "required_proof": "B-owned capture certificate and dump content proof binding both views to the pinned registry, observed schema and one checkpoint", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
+      "users_restore_validate": { "check_schema": "#/$defs/AUsersRestoreCheck", "required_check_count": 11, "required_proof": "B-owned isolated target identity, completed normalization, authenticated expected counts and separate SELECT-only verifier credential with final recheck", "failure_mapping": { "count_or_inert_state_mismatch": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
+      "ai_gateway_restore_validate": { "check_schema": "#/$defs/AAIGatewayRestoreCheck", "required_check_count": 13, "required_proof": "B-owned isolated target identity, completed normalization, authenticated expected counts and separate SELECT-only verifier credential with final recheck", "failure_mapping": { "count_or_inert_state_mismatch": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } }
+    },
     "B": { "status": "pending_owner_submission", "categories": ["instances"] },
     "C": { "status": "pending_owner_submission", "categories": ["teams", "skill_hub", "artifact", "catalog"] },
     "D": { "status": "draft", "categories": ["resources", "control_plane", "isolation", "cleanup", "prune", "promotion"], "resources_backup_validate": { "check_schema": "#/$defs/ResourcesBackupCheck", "required_check_count": 12, "required_proof": "B-owned capture certificate and dump content proof binding source and dump metadata to one checkpoint and capture context", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } }, "control_plane_restore_validate": { "check_schema": "#/$defs/ControlExclusionCheck", "required_check_count": 31, "required_proof": "B-owned isolated target identity, completed normalization boundary and separate SELECT-only verifier credential", "failure_mapping": { "nonempty_control_table": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } } }

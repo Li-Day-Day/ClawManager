@@ -37,8 +37,9 @@ type BootstrapAdmission interface {
 	ValidateAndReserve(context.Context, *sql.Tx, OfflineBootstrapGrant, BootstrapConfig, time.Time) error
 }
 type ConfigBootstrapService struct {
-	DB        *sql.DB
-	Admission BootstrapAdmission
+	DB                *sql.DB
+	Admission         BootstrapAdmission
+	CanonicalSnapshot bool // Isolated candidate path until the column is formally migrated.
 }
 type ConfigBootstrapResult struct {
 	OperationPublicID string `json:"operation_public_id"`
@@ -158,6 +159,9 @@ func (s ConfigBootstrapService) Bootstrap(ctx context.Context, g OfflineBootstra
 		return zero, err
 	}
 	columns, args := c.sqlValues(g.InstallationID, actor, g.ChangeReason)
+	if s.CanonicalSnapshot {
+		columns, args = c.sqlValuesWithCanonical(g.InstallationID, actor, g.ChangeReason)
+	}
 	marks := strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")
 	if _, err = tx.ExecContext(ctx, "INSERT INTO system_backup_configs ("+strings.Join(columns, ",")+") VALUES ("+marks+")", args...); err != nil {
 		return zero, ErrProviderEvidenceStorage

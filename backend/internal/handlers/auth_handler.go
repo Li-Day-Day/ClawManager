@@ -78,7 +78,13 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	tokenPair, err := h.authService.Login(req.Username, req.Password)
+	var tokenPair *services.TokenPair
+	var err error
+	if scoped, ok := h.authService.(services.RequestAuthService); ok {
+		tokenPair, err = scoped.LoginContext(c.Request.Context(), req.Username, req.Password)
+	} else {
+		tokenPair, err = h.authService.Login(req.Username, req.Password)
+	}
 	if err != nil {
 		utils.HandleError(c, err)
 		return
@@ -95,7 +101,13 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	tokenPair, err := h.authService.RefreshToken(req.RefreshToken)
+	var tokenPair *services.TokenPair
+	var err error
+	if scoped, ok := h.authService.(services.RequestAuthService); ok {
+		tokenPair, err = scoped.RefreshTokenContext(c.Request.Context(), req.RefreshToken)
+	} else {
+		tokenPair, err = h.authService.RefreshToken(req.RefreshToken)
+	}
 	if err != nil {
 		utils.HandleError(c, err)
 		return

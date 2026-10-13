@@ -25,6 +25,17 @@ func TestSystemHistoricalWorkloadIntentExactEvidenceAndScope(t *testing.T) {
 	if err != nil || facts.Scope != c.Scope || facts.ActorIdentityHash != a.actor || !digestPattern.MatchString(binding) {
 		t.Fatal("valid workload intent rejected", err)
 	}
+	for _, change := range []func(*SystemPeerFacts){
+		func(f *SystemPeerFacts) { f.SubjectHash = hash([]byte("different-subject")) },
+		func(f *SystemPeerFacts) { f.ClientCASHA256 = hash([]byte("different-ca")) },
+		func(f *SystemPeerFacts) { f.CertificateSHA256 = hash([]byte("different-certificate")) },
+	} {
+		modified := facts
+		change(&modified)
+		if systemHistoricalWorkloadBinding(modified, evidenceID) == binding {
+			t.Fatal("historical binding ignored current identity pin")
+		}
+	}
 	if _, _, err := intent.check(context.Background(), c.Scope, "sev_aaaaaaaa-2222-4333-8444-555555555555", now); err != ErrAuth {
 		t.Fatal("intent reused for another evidence", err)
 	}

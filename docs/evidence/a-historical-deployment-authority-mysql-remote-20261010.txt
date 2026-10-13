@@ -1,0 +1,65 @@
+**********************
+Windows PowerShell 脚本开始
+开始时间: 20261010114810
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称:
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 20668
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 docs/evidence/a-historical-deployment-authority-mysql-remote-20261010.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+  & .\scripts\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -RecoveryTest ADeployment -Remote -BuildParallelism 1 -SshTarget 'root@10.130.14.23'
+  if (-not $?) { throw 'A historical deployment authority MySQL validation failed' }
+  foreach ($path in $shared) {
+    if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash -ne $sharedBefore[$path]) { throw "Script changed during run: $path" }
+  }
+  Write-Output 'A_DEPLOYMENT_AUTHORITY_REMOTE_EXIT=0'
+} finally {
+  Stop-Transcript
+}
+LOCAL_PASS isolated-go-telemetry=off
+ok  	clawreef/internal/systembackupevidence	1.968s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.43s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.24s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.19s)
+PASS
+ok  	clawreef/internal/systembackupevidence	2.768s
+LOCAL_PASS a-recovery-deployment-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=7aeb517f18b7b44072ce21c078b24c021e721e63002bdb9e60bd05a57bbe9065 ddl_sha256=0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+
+close - IO is still pending on closed socket. read:1, write:0, io:000002156C193270
+close - IO is still pending on closed socket. read:1, write:0, io:000001DC5D3E9B90
+bundle.tar: OK
+RUN namespace=sbk-mig-261010040152-6a35 uid=07463262-f6d8-4061-93b6-10cb20286640 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestSystemHistoricalDeploymentGuardMySQL
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestSystemHistoricalDeploymentGuardMySQL (0.31s)
+PASS
+PASS a-recovery-deployment-mysql binary_sha256=7aeb517f18b7b44072ce21c078b24c021e721e63002bdb9e60bd05a57bbe9065 ddl_sha256=0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60
+CLEANED namespace=sbk-mig-261010040152-6a35 uid=07463262-f6d8-4061-93b6-10cb20286640
+close - IO is still pending on closed socket. read:1, write:0, io:00000214F4732E10
+close - IO is still pending on closed socket. read:1, write:0, io:00000205FB772FB0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+A_DEPLOYMENT_AUTHORITY_REMOTE_EXIT=0
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261010120246
+**********************

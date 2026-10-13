@@ -104,8 +104,12 @@ func (s *systemHistoricalRecoverySession) Authorize(ctx context.Context, tx pd.S
 	if err != nil {
 		return pd.RecoveryAdmission{}, err
 	}
-	expires, err := a.IdentityExpiresAt.Time()
-	if err != nil || a.IdentityHash != pd.Hash(facts.WorkloadIdentityHash) || a.VerifiedRequestHash != requestHash || !a.StatAllowed || expires.After(facts.ExpiresAt) {
+	identityUntil, identityErr := a.IdentityExpiresAt.Time()
+	deploymentUntil, deploymentErr := a.DeploymentExpiresAt.Time()
+	epoch, epochErr := a.RevocationEpoch.Uint64()
+	if identityErr != nil || deploymentErr != nil || epochErr != nil || epoch == 0 ||
+		a.IdentityHash != pd.Hash(facts.WorkloadIdentityHash) || a.VerifiedRequestHash != requestHash || !a.StatAllowed ||
+		identityUntil.After(facts.ExpiresAt) || !dbNow.Before(identityUntil) || !dbNow.Before(deploymentUntil) {
 		return pd.RecoveryAdmission{}, ErrDenied
 	}
 	s.admission, s.requestHash, s.binding = a, requestHash, binding
@@ -152,6 +156,11 @@ func (s *systemHistoricalRecoverySession) Recheck(ctx context.Context, tx pd.Rea
 	facts, binding, err := s.intent.check(ctx, r.Scope, string(r.EvidenceID), now)
 	if err != nil || pd.Hash(facts.WorkloadIdentityHash) != s.admission.IdentityHash || binding != s.binding {
 		return ErrAuth
+	}
+	identityUntil, identityErr := s.admission.IdentityExpiresAt.Time()
+	deploymentUntil, deploymentErr := s.admission.DeploymentExpiresAt.Time()
+	if identityErr != nil || deploymentErr != nil || !now.Before(identityUntil) || !now.Before(deploymentUntil) {
+		return ErrDenied
 	}
 	if err := s.SystemHistoricalAuthoritySession.Recheck(ctx, tx, r, h, s.admission, now); err != nil {
 		return err

@@ -166,6 +166,7 @@
       "x-max-jcs-utf8-bytes": 262144,
       "x-invariants": [
         "registries contain every RegistryReference.registry_kind exactly once and references contain every ConfigReference.purpose exactly once",
+        "capture_signing, acceptance_signing and catalog_signing identity_hash values are pairwise distinct and none equals any other reference identity_hash",
         "heartbeat values are no greater than one third of their TTL",
         "maintenance lock TTL covers quiesce hold, watchdog margin and two controller claim TTLs",
         "evidence retention is no shorter than artifact retention and control metadata retention covers artifact, evidence, logs and strong-auth nonce retention",

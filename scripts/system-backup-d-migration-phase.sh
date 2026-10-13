@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Only sourced inside the fresh, run-owned MySQL namespace. The binary embeds
 # the current catalog, so an older app image is not mistaken for a new replay.
-[[ ( "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 1 || "${D_HISTORY_CLI_SMOKE:-0}" == 1 ) && "$RUN_NAMESPACE" =~ ^sbk-mig-[0-9]{12}-[0-9a-f]{4}$ ]] || return 1
+[[ ( "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 1 || "${D_HISTORY_CLI_SMOKE:-0}" == 1 || "${A_BUSINESS_HISTORY_SMOKE:-0}" == 1 ) && "$RUN_NAMESPACE" =~ ^sbk-mig-[0-9]{12}-[0-9a-f]{4}$ ]] || return 1
 if [[ "${D_HISTORY_CLI_SMOKE:-0}" == 1 ]]; then
   [[ "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 0 && "${D_HISTORY_REVIEW_SMOKE:-0}" == 1 && "$D_MIGRATION_BINARY" == "$D_HISTORY_CLI_BINARY" && "$D_MIGRATION_BINARY_SHA256" == "$D_HISTORY_CLI_SHA256" ]] || return 1
 fi

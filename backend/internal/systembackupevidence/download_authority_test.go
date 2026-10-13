@@ -33,6 +33,30 @@ type downloadTestPolicy struct {
 	required              []string
 }
 
+type downloadTestStepUp struct {
+	calls int
+	fail  bool
+}
+
+// This wrapper exercises the handler's in-transaction call with its synthetic
+// memory registry. The SQL authority's transaction requirement is tested above.
+type downloadTestAuthenticator struct {
+	*SQLDownloadAuthority
+	stepUp *downloadTestStepUp
+}
+
+func (a downloadTestAuthenticator) AuthorizeSensitiveDownload(ctx context.Context, request *http.Request, actor Actor, record Record, start, end int64, _ Locked) error {
+	return a.stepUp.VerifyAndConsume(ctx, nil, request, actor, record, start, end)
+}
+
+func (s *downloadTestStepUp) VerifyAndConsume(_ context.Context, _ *sql.Tx, _ *http.Request, _ Actor, _ Record, start, end int64) error {
+	s.calls++
+	if s.fail || start < 0 || end < start {
+		return ErrDenied
+	}
+	return nil
+}
+
 func (p *downloadTestPolicy) LockScope(_ context.Context, _ *sql.Tx, _ string, _ Identity) error {
 	p.locks++
 	if p.denyOwner {
@@ -72,6 +96,7 @@ type downloadFixture struct {
 	keys                   testKeys
 	plain, object, wrapped []byte
 	rbacFile               string
+	stepUp                 *downloadTestStepUp
 }
 
 func newDownloadFixture(t *testing.T, role string) *downloadFixture {
@@ -85,7 +110,8 @@ func newDownloadFixture(t *testing.T, role string) *downloadFixture {
 	t.Cleanup(func() { db.Close() })
 	root := t.TempDir()
 	rbac := []byte(fmt.Sprintf(`{"schema_version":"system-backup-registration-rbac.draft.v1","version":"v1","installation_id":"installation_test","bindings":[{"actor_id":"42","subject":"user:42","role":"%s"}]}`, role))
-	c := DownloadAuthorityConfig{Registry: SQLRegistry{DB: db, Installation: "installation_test", ServerUUID: "server", Database: "evidence-test", Policy: policy}, JWTSecret: bytes.Repeat([]byte{7}, 32), ConfigVersion: 3, ConfigSHA256: hash([]byte(`{}`)), RBACVersion: "v1", RBACSHA256: hash(rbac), RegistryDirectory: root, Root: "evidence", Store: KeyRef{strings.Repeat("a", 64), "v1"}, Read: KeyRef{strings.Repeat("c", 64), "read-v1"}, Issuer: "https://issuer.example", Audience: "download-sts", Subject: "system:serviceaccount:backup:evidence-reader", TokenFile: filepath.Join(root, "oidc-token"), ExpiresAt: now.Add(time.Hour)}
+	stepUp := &downloadTestStepUp{}
+	c := DownloadAuthorityConfig{Registry: SQLRegistry{DB: db, Installation: "installation_test", ServerUUID: "server", Database: "evidence-test", Policy: policy}, JWTSecret: bytes.Repeat([]byte{7}, 32), ConfigVersion: 3, ConfigSHA256: hash([]byte(`{}`)), RBACVersion: "v1", RBACSHA256: hash(rbac), RegistryDirectory: root, Root: "evidence", Store: KeyRef{strings.Repeat("a", 64), "v1"}, Read: KeyRef{strings.Repeat("c", 64), "read-v1"}, Issuer: "https://issuer.example", Audience: "download-sts", Subject: "system:serviceaccount:backup:evidence-reader", TokenFile: filepath.Join(root, "oidc-token"), ExpiresAt: now.Add(time.Hour), SensitiveStepUp: stepUp}
 	dir := filepath.Join(root, "rbac_bindings", c.RBACVersion)
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		t.Fatal(err)
@@ -105,7 +131,7 @@ func newDownloadFixture(t *testing.T, role string) *downloadFixture {
 	}
 	key, _ := keyFor(c.Root, p.manifest.Identity)
 	r := Record{Manifest: p.Manifest(), Ref: Ref{c.Store.Identity, c.Store.Version, key, "object-v1"}, State: "ready", Failure: "none", RowVersion: 2, CreatedAt: now.Add(-time.Hour), ExpiresAt: now.Add(time.Hour), ProtectedUntil: now.Add(2 * time.Hour), OwnerDeadline: policy.deadline, Claim: "aev_0123456789abcdef0123456789abcdef", ClaimUntil: now.Add(25 * time.Second)}
-	f := &downloadFixture{c: c, db: d, policy: policy, record: r, keys: keys, plain: plain, object: object, rbacFile: rbacFile}
+	f := &downloadFixture{c: c, db: d, policy: policy, record: r, keys: keys, plain: plain, object: object, rbacFile: rbacFile, stepUp: stepUp}
 	m, i, ch := r.Manifest, r.Manifest.Identity, r.Manifest.Chunks[0]
 	nonce, _ := base64.RawURLEncoding.DecodeString(ch.Nonce)
 	tag, _ := base64.RawURLEncoding.DecodeString(ch.Tag)
@@ -180,6 +206,25 @@ func TestDownloadAuthoritySessionAndProviderScopes(t *testing.T) {
 		if g, err := f.a.AuthorizeS3(f.ctx, scope); err != ErrDenied || len(g.Token) != 0 {
 			t.Fatal("invalid scope admitted")
 		}
+	}
+}
+
+func TestDownloadAuthorityRequiresSensitiveStepUp(t *testing.T) {
+	f := newDownloadFixture(t, "security_admin")
+	tx, err := f.c.Registry.DB.BeginTx(f.ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer tx.Rollback()
+	locked := &sqlLocked{registry: f.c.Registry, tx: tx, record: f.record}
+	f.a.c.SensitiveStepUp = nil
+	if err := f.a.AuthorizeSensitiveDownload(f.ctx, f.request, f.actor, f.record, 0, 20, locked); err != ErrDenied {
+		t.Fatal("missing second factor accepted", err)
+	}
+	f.a.c.SensitiveStepUp = f.stepUp
+	f.stepUp.fail = true
+	if err := f.a.AuthorizeSensitiveDownload(f.ctx, f.request, f.actor, f.record, 0, 20, locked); err != ErrDenied || f.stepUp.calls != 1 {
+		t.Fatal("failed second factor accepted", err)
 	}
 }
 
@@ -419,7 +464,7 @@ func TestDownloadHandlerCarriesSessionAndRechecks(t *testing.T) {
 			if revoked {
 				store.onRead = func() { f.db.plan[5].values[4] = true }
 			}
-			h := Handler{Auth: f.a, Service: Service{Registry: downloadMemoryRegistry{memoryRegistry: m, actor: f.actor}, Store: store, Keys: DownloadKeys{Authority: f.a, Keys: f.keys}, Failure: func(context.Context, string, string) {}}}
+			h := Handler{Auth: downloadTestAuthenticator{SQLDownloadAuthority: f.a, stepUp: f.stepUp}, Service: Service{Registry: downloadMemoryRegistry{memoryRegistry: m, actor: f.actor}, Store: store, Keys: DownloadKeys{Authority: f.a, Keys: f.keys}, Failure: func(context.Context, string, string) {}}}
 			server := httptest.NewTLSServer(h)
 			defer server.Close()
 			r, _ := http.NewRequest("GET", server.URL+Path+f.record.Manifest.Identity.ID, nil)
@@ -436,6 +481,9 @@ func TestDownloadHandlerCarriesSessionAndRechecks(t *testing.T) {
 			}
 			if store.reads < 1 || f.db.begins < 2 {
 				t.Fatal("test did not reach authorized object read")
+			}
+			if f.stepUp.calls != 1 {
+				t.Fatal("sensitive read skipped second-factor boundary", f.stepUp.calls)
 			}
 			if revoked {
 				if response.StatusCode != 503 || bytes.Contains(body, f.plain[:21]) {

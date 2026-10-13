@@ -26,10 +26,10 @@ type SystemPeerConfig struct {
 }
 
 type SystemPeerAuthenticator struct {
-	c                          SystemPeerConfig
-	roots                      *x509.CertPool
-	workload, actor, admission string
-	closed                     atomic.Bool
+	c                                       SystemPeerConfig
+	roots                                   *x509.CertPool
+	workload, actor, admission, subjectHash string
+	closed                                  atomic.Bool
 }
 
 // SystemPeer is request-bound transport proof, NOT a C1 execution handle or
@@ -49,6 +49,7 @@ func (*SystemPeer) UnmarshalJSON([]byte) error  { return ErrAuth }
 type SystemPeerFacts struct {
 	Scope                                                                      systembackupproducer.Scope
 	ActorIdentityHash, WorkloadIdentityHash, IssuerIdentityHash, AdmissionHash string
+	SubjectHash, ClientCASHA256, CertificateSHA256                             string
 	Subject                                                                    string
 	ExpiresAt                                                                  time.Time
 }
@@ -79,8 +80,9 @@ func NewSystemPeerAuthenticator(c SystemPeerConfig) (*SystemPeerAuthenticator, e
 		Domain, Actor string
 		ExpiresAt     time.Time
 	}{"system-backup-peer-admission.v1", actor, c.ExpiresAt})
+	subjectHash := systemPeerHash(struct{ Domain, Subject string }{"system-backup-recovery-subject.v1", c.Subject})
 	c.ClientCAPEM = nil
-	return &SystemPeerAuthenticator{c: c, roots: roots, workload: workload, actor: actor, admission: admission}, nil
+	return &SystemPeerAuthenticator{c: c, roots: roots, workload: workload, actor: actor, admission: admission, subjectHash: subjectHash}, nil
 }
 
 func systemPeerHash(v any) string {
@@ -131,7 +133,7 @@ func (a *SystemPeerAuthenticator) Check(ctx context.Context, p *SystemPeer, scop
 	if err != nil || a.closed.Load() || ctx.Err() != nil || p.request.Err() != nil || !time.Now().Before(until) {
 		return deny()
 	}
-	return SystemPeerFacts{Scope: a.c.Scope, ActorIdentityHash: a.actor, WorkloadIdentityHash: a.workload, IssuerIdentityHash: a.c.IssuerIdentityHash, AdmissionHash: a.admission, Subject: a.c.Subject, ExpiresAt: earlier(until, dbUntil)}, nil
+	return SystemPeerFacts{Scope: a.c.Scope, ActorIdentityHash: a.actor, WorkloadIdentityHash: a.workload, IssuerIdentityHash: a.c.IssuerIdentityHash, AdmissionHash: a.admission, SubjectHash: a.subjectHash, ClientCASHA256: a.c.ClientCASHA256, CertificateSHA256: a.c.CertificateSHA256, Subject: a.c.Subject, ExpiresAt: earlier(until, dbUntil)}, nil
 }
 
 // Close locally invalidates proofs issued by this instance. It is not the

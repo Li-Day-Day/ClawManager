@@ -1,9 +1,12 @@
 package systembackupsecurity
 
 import (
+	"bytes"
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"database/sql/driver"
+	"encoding/hex"
 	"errors"
 	"strings"
 	"testing"
@@ -19,6 +22,7 @@ type bootstrapTestState struct {
 	wrongDB, inactive, denied, unresolved, exists, commitUnknown bool
 	authorized, validated                                        int
 	tx                                                           *sql.Tx
+	canonical                                                    []byte
 }
 type bootstrapConnector struct{ s *bootstrapTestState }
 
@@ -87,7 +91,19 @@ func (c *bootstrapConn) ExecContext(_ context.Context, q string, a []driver.Name
 		kind = "audit"
 	case strings.Contains(q, "INSERT INTO system_backup_configs"):
 		kind = "config"
-		if len(a) != 132 || a[1].Value != int64(1) || a[4].Value != false {
+		wantArgs := 132
+		if s.canonical != nil {
+			wantArgs++
+			stored, ok := a[len(a)-1].Value.([]byte)
+			if !ok || !bytes.Equal(stored, s.canonical) {
+				return nil, errors.New("canonical snapshot mismatch")
+			}
+			storedHash := sha256.Sum256(stored)
+			if a[2].Value != hex.EncodeToString(storedHash[:]) || a[3].Value != int64(len(stored)) {
+				return nil, errors.New("canonical hash or size mismatch")
+			}
+		}
+		if len(a) != wantArgs || a[1].Value != int64(1) || a[4].Value != false {
 			return nil, errors.New("bad snapshot")
 		}
 	case strings.Contains(q, "INSERT INTO system_backup_installation_state"):
@@ -178,6 +194,33 @@ func TestBootstrapAtomicIdempotencyAndReauthorization(t *testing.T) {
 	s.inactive = true
 	if _, err = svc.Bootstrap(context.Background(), g, raw); err != ErrRegistrationPermission {
 		t.Fatal("inactive user replayed", err)
+	}
+}
+
+func TestBootstrapCanonicalCandidateWritesExactSnapshotAtomically(t *testing.T) {
+	svc, grant, raw, state := bootstrapServiceFixture(t)
+	config, err := DecodeBootstrapConfig(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state.canonical = config.CanonicalJSON()
+	svc.CanonicalSnapshot = true
+	result, err := svc.Bootstrap(context.Background(), grant, raw)
+	if err != nil || result.Replayed || result.ConfigSHA256 != config.SHA256() ||
+		strings.Join(state.committed, ",") != "reservation,audit,config,state,operation,audit" {
+		t.Fatal("candidate canonical insert failed", result, err, state.committed)
+	}
+	svc, grant, raw, state = bootstrapServiceFixture(t)
+	config, err = DecodeBootstrapConfig(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state.canonical = config.CanonicalJSON()
+	state.failWrite = 5 // Operation receipt fails after config and state writes.
+	svc.CanonicalSnapshot = true
+	if result, err = svc.Bootstrap(context.Background(), grant, raw); err == nil ||
+		result.OperationPublicID != "" || len(state.committed) != 0 || len(state.pending) != 0 {
+		t.Fatal("candidate insert survived failed receipt", result, err, state)
 	}
 }
 func TestBootstrapRollsBackEveryWriteAndUnknownCommitRetries(t *testing.T) {

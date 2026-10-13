@@ -125,10 +125,15 @@ func DecodeBootstrapConfig(raw []byte) (BootstrapConfig, error) {
 		seen[r.Kind] = true
 	}
 	seen = map[string]bool{}
+	identityPurpose := map[string]string{}
 	for _, r := range v.References {
 		if !contains(bootstrapReferencePurposes, r.Purpose) || seen[r.Purpose] || !bootstrapVersion.MatchString(r.Version) || !providerHashPattern.MatchString(r.IdentityHash) {
 			return fail()
 		}
+		if prior, ok := identityPurpose[r.IdentityHash]; ok && (bootstrapSigningPurpose(prior) || bootstrapSigningPurpose(r.Purpose)) {
+			return fail()
+		}
+		identityPurpose[r.IdentityHash] = r.Purpose
 		seen[r.Purpose] = true
 	}
 	// All object keys are fixed ASCII; all numeric values fit exactly into the
@@ -151,6 +156,10 @@ func DecodeBootstrapConfig(raw []byte) (BootstrapConfig, error) {
 		return fail()
 	}
 	return c, nil
+}
+
+func bootstrapSigningPurpose(purpose string) bool {
+	return purpose == "capture_signing" || purpose == "acceptance_signing" || purpose == "catalog_signing"
 }
 
 func bootstrapNumber(n json.Number, r bootstrapNumberRule) (int64, bool) {

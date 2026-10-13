@@ -23,7 +23,7 @@
       "additionalProperties": false,
       "required": ["algorithm", "key_purpose", "key_id", "key_version", "domain_separator", "protected_header", "value"],
       "properties": {
-        "algorithm": { "type": "string", "minLength": 1, "maxLength": 32, "x-freeze-blocker": "A must select the signing algorithm before freeze" },
+        "algorithm": { "const": "EdDSA", "x-a-selection": "Ed25519 JWS signing input with JCS protected header and JCS payload; cross-owner review remains pending" },
         "key_purpose": { "enum": ["capture_certificate", "acceptance_record", "catalog_record"] },
         "key_id": { "type": "string", "minLength": 1, "maxLength": 256 },
         "key_version": { "type": "string", "minLength": 1, "maxLength": 128 },
@@ -31,7 +31,8 @@
         "protected_header": { "type": "string", "minLength": 1, "maxLength": 2048, "description": "Base64url encoded protected header without padding." },
         "value": { "type": "string", "minLength": 1, "maxLength": 4096, "description": "Base64url encoded signature without padding." }
       },
-      "x-canonicalization": "Signature input is the UTF-8 JCS canonical bytes of payload only. The signature field is excluded."
+      "x-canonicalization": "Protected header is unpadded base64url of UTF-8 JCS({alg,key_version,kid,purpose,typ}). Signature input is ASCII protected_header + '.' + unpadded base64url of UTF-8 JCS(payload). The signature field is excluded.",
+      "x-protected-header-binding": "Header must contain exactly alg=algorithm, key_version=key_version, kid=key_id, purpose=key_purpose, typ=domain_separator; reject missing, extra or mismatched fields."
     },
     "Warning": {
       "type": "object",

@@ -41,8 +41,9 @@ func newSystemHistoricalWorkloadIntent(ctx context.Context, auth *SystemPeerAuth
 func systemHistoricalWorkloadBinding(facts SystemPeerFacts, evidenceID string) string {
 	return systemPeerHash(struct {
 		Domain, EvidenceID, Purpose, Actor, Workload, Issuer, Admission string
+		SubjectHash, ClientCA, Certificate                              string
 		Scope                                                           pd.Scope
-	}{"system-backup-historical-workload.v1", evidenceID, "stat", facts.ActorIdentityHash, facts.WorkloadIdentityHash, facts.IssuerIdentityHash, facts.AdmissionHash, facts.Scope})
+	}{"system-backup-historical-workload.v2", evidenceID, "stat", facts.ActorIdentityHash, facts.WorkloadIdentityHash, facts.IssuerIdentityHash, facts.AdmissionHash, facts.SubjectHash, facts.ClientCASHA256, facts.CertificateSHA256, facts.Scope})
 }
 
 func (i *systemHistoricalWorkloadIntent) check(ctx context.Context, scope pd.Scope, evidenceID string, dbNow time.Time) (SystemPeerFacts, string, error) {

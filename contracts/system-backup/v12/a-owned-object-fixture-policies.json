@@ -304,7 +304,7 @@
       "redacted_fields": [],
       "normalize_set": {
         "enabled": false,
-        "ldap_bind_password_ciphertext": null
+        "ldap_bind_password_ciphertext": ""
       },
       "capacity_limits": {},
       "secret_ref_fields": [
@@ -396,6 +396,11 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 512
+          },
+          "api_key_secret_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
           }
         }
       },
@@ -405,7 +410,8 @@
       "redacted_fields": [],
       "normalize_set": {
         "is_active": false,
-        "api_key": null
+        "api_key": null,
+        "api_key_secret_ref": null
       },
       "capacity_limits": {},
       "secret_ref_fields": [
@@ -516,6 +522,7 @@
           "status": {
             "enum": [
               "issued",
+              "processing",
               "consumed",
               "expired"
             ]
@@ -892,7 +899,7 @@
       "redacted_fields": [],
       "normalize_set": {
         "is_active": false,
-        "password_hash": null
+        "password_hash": "!system-backup-password-reset-required!"
       },
       "capacity_limits": {},
       "secret_ref_fields": [],

@@ -1,7 +1,7 @@
 // Generated from the v12 D-owned ConfigValues schema. Tests pin the source hash.
 package systembackupsecurity
 
-const bootstrapConfigSchemaSHA256 = "0f6224f3c5f499102ad9148f40bf4e2a3997cd144fe82e898c6740f85c7532bc"
+const bootstrapConfigSchemaSHA256 = "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
 
 var bootstrapNumberRules = map[string]map[string]bootstrapNumberRule{
 	"durations": {

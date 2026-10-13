@@ -93,6 +93,7 @@ func TestDownloadRuntimeHTTPWithSTSAndTransit(t *testing.T) {
 				}
 			}
 			runtime.handler.Service.Registry = downloadMemoryRegistry{memoryRegistry: m, actor: f.actor}
+			runtime.handler.Auth = downloadTestAuthenticator{SQLDownloadAuthority: runtime.authority, stepUp: f.stepUp}
 			server := httptest.NewTLSServer(runtime)
 			defer server.Close()
 			r, _ := http.NewRequest("GET", server.URL+Path+f.record.Manifest.Identity.ID, nil)

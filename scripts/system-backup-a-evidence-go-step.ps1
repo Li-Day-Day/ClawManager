@@ -36,12 +36,12 @@ function Invoke-AEvidenceGoStep {
         $aEvidenceStepExit = $global:LASTEXITCODE
         if ($aEvidenceStepExit -eq 0) { return }
         $aEvidenceText = $aEvidenceOutput -join "`n"
-        $aEvidenceToolCrash = $aEvidenceText -match '(?im)^[^\r\n]*\b(?:vet|asm|compile)\.exe: exit status 0xc0000043\s*$'
+        $aEvidenceToolCrash = $aEvidenceText -match '(?im)^[^\r\n]*\b(?:vet|asm|compile)\.exe: exit status 0xc000(?:0043|026b)\s*$'
         $aEvidenceTestFailure = $aEvidenceText -match '(?m)^\s*--- FAIL:|^panic:|^fatal error:'
         if (-not $aEvidenceToolCrash -or $aEvidenceTestFailure -or $aEvidenceAttempt -eq 3) {
             throw "Evidence $Stage gate failed (exit=$aEvidenceStepExit, attempt=$aEvidenceAttempt); remote validation has not started; dependencies will not be installed"
         }
-        Write-Warning "Windows vet/asm/compile process exited 0xc0000043; retrying the SAME $Stage command ($aEvidenceAttempt/3 failed). Vet remains enabled; isolated cache is retained only until this run ends."
+        Write-Warning "Windows vet/asm/compile process exited with a known tool crash; retrying the SAME $Stage command ($aEvidenceAttempt/3 failed). Vet remains enabled; isolated cache is retained only until this run ends."
         Start-Sleep -Milliseconds 250
     }
 }

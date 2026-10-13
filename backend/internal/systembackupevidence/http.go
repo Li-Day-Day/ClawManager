@@ -24,6 +24,14 @@ type BoundDownloadAuthenticator interface {
 	AuthenticateContext(*http.Request) (context.Context, Actor, error)
 	AuthorizeDownload(context.Context, Actor, Record) error
 }
+
+// SensitiveDownloadAuthenticator must verify a fresh, exact-request second
+// factor in the same locked transaction as the download claim and audit intent.
+// Its implementation owns durable nonce consumption; ordinary JWT/RBAC is not
+// sufficient. The handler denies sensitive evidence without this boundary.
+type SensitiveDownloadAuthenticator interface {
+	AuthorizeSensitiveDownload(context.Context, *http.Request, Actor, Record, int64, int64, Locked) error
+}
 type Handler struct {
 	Service Service
 	Auth    Authenticator
@@ -196,7 +204,19 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		record.Claim = claim
 		record.ClaimUntil = now.Add(30 * time.Second)
 		record.RowVersion++
-		return tx.Save(ctx, record)
+		if e := tx.Save(ctx, record); e != nil {
+			return e
+		}
+		if sensitive {
+			stepUp, ok := h.Auth.(SensitiveDownloadAuthenticator)
+			if !ok {
+				return ErrAuth
+			}
+			if e := stepUp.AuthorizeSensitiveDownload(ctx, r, actor, record, start, end, tx); e != nil {
+				return boundary(e)
+			}
+		}
+		return nil
 	})
 	if e != nil {
 		fail(boundary(e))

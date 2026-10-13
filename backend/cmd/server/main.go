@@ -895,11 +895,22 @@ func main() {
 			adminSecurity.GET("/scan-jobs/:id", securityHandler.GetJob)
 		}
 
-		// Contract fixture is read-only and explicitly enabled for integration checks.
-		// Use the same access-token and administrator checks with the module error envelope.
+		// Real reads use A's request-bound installation/session/RBAC authority.
+		// The fixture keeps its separate explicit opt-in for contract previews.
 		adminBackupRead := api.Group("/admin")
-		adminBackupRead.Use(middleware.SystemBackupReadFixtureAuth(userRepo))
-		registerBackupReadFixture(adminBackupRead, cfg.JWT.Secret)
+		liveBackupRead, readErr := loadLiveBackupRead(sessionDB, backupSessions, os.Getenv)
+		if readErr != nil {
+			if liveBackupRead == nil {
+				log.Fatalf("system-backup live read switch invalid: %v", readErr)
+			}
+			log.Printf("system-backup live read unavailable: %v", readErr)
+		}
+		if liveBackupRead != nil {
+			registerBackupReadLive(adminBackupRead, liveBackupRead)
+		} else {
+			adminBackupRead.Use(middleware.SystemBackupReadFixtureAuth(userRepo))
+			registerBackupReadFixture(adminBackupRead, cfg.JWT.Secret)
+		}
 
 		gatewayLLM := api.Group("/gateway/llm")
 		gatewayLLM.Use(middleware.GatewayAuth(instanceRepo, bindingRepo))

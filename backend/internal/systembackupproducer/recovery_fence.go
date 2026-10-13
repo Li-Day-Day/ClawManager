@@ -193,7 +193,7 @@ func (p *recoveryFencePolicy) LockAndAuthorize(ctx context.Context, tx SQL, scop
 		if found {
 			return GuardPlan{}, ErrConflict
 		}
-	} else if !found || string(p.current.Epoch) != string(p.request.ExpectedEpoch) || string(p.current.RowVersion) != string(p.request.ExpectedRowVersion) || p.request.Operation == "revoke" && p.current.Revoked {
+	} else if !found || string(p.current.Epoch) != string(p.request.ExpectedEpoch) || string(p.current.RowVersion) != string(p.request.ExpectedRowVersion) || p.current.Revoked {
 		return GuardPlan{}, ErrConflict
 	}
 	if p.request.Operation == "rotate" && p.request.NextIdentityHash != nil && *p.request.NextIdentityHash != p.request.IdentityHash {

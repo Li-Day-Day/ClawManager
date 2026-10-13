@@ -40,22 +40,34 @@ func (s *authService) updateLoginState(user *models.User, state repository.Login
 	return s.userRepo.Update(user)
 }
 
-func (s *authService) issueSessionTokens(user *models.User, previousRefresh string) (*TokenPair, error) {
+func (s *authService) issueSessionTokens(ctx context.Context, user *models.User, previousRefresh string) (*TokenPair, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	pair, err := s.generateTokens(user.ID)
 	if err != nil {
 		return nil, errors.New("token generation unavailable")
 	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if s.backupSessions != nil {
 		digest := sha256.Sum256([]byte(user.PasswordHash))
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		recordCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
-		err = s.backupSessions.RecordPair(ctx, systembackupsecurity.LoginSessionPair{UserID: int64(user.ID), CredentialSHA256: hex.EncodeToString(digest[:]), AccessToken: pair.AccessToken, RefreshToken: pair.RefreshToken, PreviousRefreshToken: previousRefresh})
+		err = s.backupSessions.RecordPair(recordCtx, systembackupsecurity.LoginSessionPair{UserID: int64(user.ID), CredentialSHA256: hex.EncodeToString(digest[:]), AccessToken: pair.AccessToken, RefreshToken: pair.RefreshToken, PreviousRefreshToken: previousRefresh})
 		if err != nil {
 			if errors.Is(err, systembackupsecurity.ErrLoginSessionRejected) {
 				return nil, systembackupsecurity.ErrLoginSessionRejected
 			}
 			return nil, systembackupsecurity.ErrLoginSessionUnavailable
 		}
+		if recordCtx.Err() != nil {
+			return nil, systembackupsecurity.ErrLoginSessionUnavailable
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 	return pair, nil
 }

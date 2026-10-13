@@ -44,16 +44,18 @@ test('every configured language resolves every backup message through the shared
 
 test('entry points, scenarios, execution states and page message calls have translations', () => {
   const page = readFileSync(new URL('../src/pages/admin/backups/SystemBackupsPage.tsx', import.meta.url), 'utf8');
+  const livePage = readFileSync(new URL('../src/pages/admin/backups/BackupLiveWorkspace.tsx', import.meta.url), 'utf8');
   const keys = [
     ...backupEntryPoints.flatMap((entry) => [entry.label, entry.description]),
     ...previewScenarios.map((scenario) => `scenario_${scenario}`),
     ...new Set([...backupStatuses, ...drillStatuses, ...simpleTaskStatuses].map((status) => `status_${status}`)),
     ...[...page.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
+    ...[...livePage.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
   ];
   for (const locale of Object.keys(systemBackupTranslations)) {
     for (const key of keys) assert.ok(translate(locale, `systemBackup.${key}`), `${locale}.${key}`);
   }
-  for (const file of ['SystemBackupsPage.tsx', 'backupReadModel.ts', 'backupPreview.ts', 'useBackupText.ts']) {
+  for (const file of ['SystemBackupsPage.tsx', 'BackupLiveWorkspace.tsx', 'backupReadModel.ts', 'backupPreview.ts', 'useBackupText.ts']) {
     const code = readFileSync(new URL(`../src/pages/admin/backups/${file}`, import.meta.url), 'utf8');
     assert.doesNotMatch(code, /[\u3400-\u9fff]/, `${file} contains hardcoded Chinese`);
     assert.doesNotMatch(code, /\bP[01](?:[-_][a-z0-9]+|[a-z])?\b/i, `${file} contains an internal phase label`);

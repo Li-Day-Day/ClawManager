@@ -226,15 +226,24 @@ func CheckRegistrationSession(ctx context.Context, tx *sql.Tx, installation stri
 // so a delegated credential cannot outlive a shortened/revoked session.
 func CheckRegistrationSessionUntil(ctx context.Context, tx *sql.Tx, installation string, a RegistrationActor) (time.Time, error) {
 	var hash string
-	if tx.QueryRowContext(ctx, "SELECT password_hash FROM users WHERE id=? AND is_active=TRUE AND role='admin' FOR UPDATE", a.UserID).Scan(&hash) != nil {
-		return time.Time{}, ErrRegistrationPermission
+	if err := tx.QueryRowContext(ctx, "SELECT password_hash FROM users WHERE id=? AND is_active=TRUE AND role='admin' FOR UPDATE", a.UserID).Scan(&hash); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return time.Time{}, ErrRegistrationPermission
+		}
+		return time.Time{}, ErrProviderEvidenceStorage
 	}
 	var subject, credential string
 	var uid int64
 	var expires, now time.Time
 	var revoked bool
 	err := tx.QueryRowContext(ctx, "SELECT user_id,subject,credential_hash,expires_at,revoked,UTC_TIMESTAMP(6) FROM system_backup_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", installation, a.Session).Scan(&uid, &subject, &credential, &expires, &revoked, &now)
-	if err != nil || revoked || uid != a.UserID || subject != a.Subject || !expires.After(now) || credential != registrationHash(hash) {
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return time.Time{}, ErrRegistrationPermission
+		}
+		return time.Time{}, ErrProviderEvidenceStorage
+	}
+	if revoked || uid != a.UserID || subject != a.Subject || !expires.After(now) || credential != registrationHash(hash) {
 		return time.Time{}, ErrRegistrationPermission
 	}
 	return expires, nil

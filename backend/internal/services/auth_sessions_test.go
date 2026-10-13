@@ -409,3 +409,113 @@ func TestAuthSessionLDAPRoleSyncPrecedesRecorder(t *testing.T) {
 		})
 	}
 }
+
+type observedLoginQuotaRepo struct {
+	*fakeQuotaRepo
+	reads  int
+	onRead func()
+}
+
+func (r *observedLoginQuotaRepo) GetByUserID(id int) (*models.UserQuota, error) {
+	r.reads++
+	if r.onRead != nil {
+		r.onRead()
+	}
+	return r.fakeQuotaRepo.GetByUserID(id)
+}
+
+func TestAuthSessionLDAPQuotaSyncFollowsConditionalLogin(t *testing.T) {
+	for _, stale := range []bool{false, true} {
+		name := "accepted"
+		if stale {
+			name = "disabled_during_directory_auth"
+		}
+		t.Run(name, func(t *testing.T) {
+			r, u := ldapSessionFixture(t)
+			r.users[u.ID].Role = "user"
+			quota := &observedLoginQuotaRepo{fakeQuotaRepo: &fakeQuotaRepo{}}
+			quota.onRead = func() {
+				if r.users[u.ID].Role != "admin" || r.narrowUpdates != 1 {
+					t.Fatal("quota synchronized before the conditional login update")
+				}
+			}
+			directory := sessionDirectoryFunc(func(_ context.Context, id, _ string) (*EnterpriseUser, error) {
+				if stale {
+					r.users[u.ID].IsActive = false
+				}
+				return &EnterpriseUser{ExternalID: id, Role: "admin"}, nil
+			})
+			auth := NewAuthService(r, testJWTConfig(), directory, WithEnterpriseAuthPolicy(config.EnterpriseAuthConfig{SyncRole: true}), WithQuotaRepository(quota))
+			pair, err := auth.Login("alice", "directory-password")
+			if stale {
+				if pair != nil || err == nil || quota.reads != 0 || quota.createdFor != 0 {
+					t.Fatal("stale directory login changed quota or issued tokens")
+				}
+			} else if pair == nil || err != nil || quota.reads != 1 || quota.createdFor != u.ID {
+				t.Fatal("accepted directory login did not synchronize quota")
+			}
+		})
+	}
+}
+
+func TestAuthSessionRequestContextReachesDirectoryAndRecorder(t *testing.T) {
+	r, u := ldapSessionFixture(t)
+	marker := struct{}{}
+	parent, cancel := context.WithTimeout(context.WithValue(context.Background(), marker, "request"), time.Minute)
+	defer cancel()
+	directoryCalls, recorderCalls := 0, 0
+	directory := sessionDirectoryFunc(func(ctx context.Context, id, _ string) (*EnterpriseUser, error) {
+		directoryCalls++
+		if ctx.Value(marker) != "request" || id != *u.ExternalID {
+			t.Fatal("directory did not receive the request context")
+		}
+		return &EnterpriseUser{ExternalID: id, Role: "admin"}, nil
+	})
+	auth := NewAuthService(r, testJWTConfig(), directory, WithSystemBackupSessions(sessionRecorderFunc(func(ctx context.Context, _ systembackupsecurity.LoginSessionPair) error {
+		recorderCalls++
+		deadline, ok := ctx.Deadline()
+		parentDeadline, _ := parent.Deadline()
+		if ctx.Value(marker) != "request" || !ok || !deadline.Before(parentDeadline) {
+			t.Fatal("session recorder did not receive the bounded request context")
+		}
+		return nil
+	}))).(RequestAuthService)
+	pair, err := auth.LoginContext(parent, "alice", "directory-password")
+	if err != nil || pair == nil || directoryCalls != 1 || recorderCalls != 1 {
+		t.Fatal("request-scoped LDAP login failed")
+	}
+	if next, err := auth.RefreshTokenContext(parent, pair.RefreshToken); err != nil || next == nil || recorderCalls != 2 {
+		t.Fatal("request-scoped refresh did not reach the recorder")
+	}
+}
+
+func TestAuthSessionCanceledDirectoryRequestCannotIssue(t *testing.T) {
+	r, _ := ldapSessionFixture(t)
+	ctx, cancel := context.WithCancel(context.Background())
+	directory := sessionDirectoryFunc(func(_ context.Context, id, _ string) (*EnterpriseUser, error) {
+		cancel()
+		return &EnterpriseUser{ExternalID: id, Role: "admin"}, nil
+	})
+	auth := NewAuthService(r, testJWTConfig(), directory, WithSystemBackupSessions(sessionRecorderFunc(func(context.Context, systembackupsecurity.LoginSessionPair) error {
+		t.Fatal("canceled LDAP request reached session registration")
+		return nil
+	}))).(RequestAuthService)
+	if pair, err := auth.LoginContext(ctx, "alice", "directory-password"); pair != nil || !errors.Is(err, context.Canceled) || r.narrowUpdates != 0 || r.fullUpdates != 0 {
+		t.Fatal("canceled LDAP request updated login state or issued tokens")
+	}
+	if pair, err := auth.RefreshTokenContext(ctx, "ignored"); pair != nil || !errors.Is(err, context.Canceled) {
+		t.Fatal("canceled refresh was not rejected before token processing")
+	}
+}
+
+func TestAuthSessionCanceledRecorderCannotReturnTokens(t *testing.T) {
+	r, _ := authSessionFixture(t)
+	ctx, cancel := context.WithCancel(context.Background())
+	auth := NewAuthService(r, testJWTConfig(), nil, WithSystemBackupSessions(sessionRecorderFunc(func(context.Context, systembackupsecurity.LoginSessionPair) error {
+		cancel()
+		return nil
+	}))).(RequestAuthService)
+	if pair, err := auth.LoginContext(ctx, "alice", "verified-password"); pair != nil || !errors.Is(err, systembackupsecurity.ErrLoginSessionUnavailable) {
+		t.Fatal("canceled session registration returned tokens")
+	}
+}

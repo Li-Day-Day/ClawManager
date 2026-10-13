@@ -226,15 +226,43 @@ func readExact(ctx context.Context, store ObjectReader, ref Ref, offset, length 
 	if e != nil || r == nil {
 		return nil, ErrUnavailable
 	}
-	defer r.Close()
 	b, e := io.ReadAll(io.LimitReader(r, length+1))
-	if e != nil {
+	closeErr := r.Close()
+	if e != nil || closeErr != nil || ctx.Err() != nil {
+		wipe(b)
 		return nil, ErrUnavailable
 	}
 	if int64(len(b)) != length {
+		wipe(b)
 		return nil, ErrIntegrity
 	}
 	return b, nil
+}
+
+func openEvidenceEnvelope(ctx context.Context, m Manifest, ref Ref, store ObjectReader, keys Keys) (cipher.AEAD, []byte, error) {
+	header, e := readExact(ctx, store, ref, 0, m.HeaderSize)
+	if e != nil {
+		return nil, nil, e
+	}
+	if !bytes.Equal(header[:8], magic) || int64(binary.BigEndian.Uint32(header[8:12])) != m.HeaderSize-12 || hash(header[12:]) != m.EnvelopeHash {
+		return nil, nil, ErrIntegrity
+	}
+	var env envelope
+	if json.Unmarshal(header[12:], &env) != nil || !bytes.Equal(canonical(env), header[12:]) || env.Schema != Framing || env.Identity != m.Identity || env.Key != m.Key {
+		return nil, nil, ErrIntegrity
+	}
+	wrapped, e := base64.StdEncoding.Strict().DecodeString(env.Wrapped)
+	if e != nil || len(wrapped) < 1 || len(wrapped) > 4096 || base64.StdEncoding.EncodeToString(wrapped) != env.Wrapped {
+		return nil, nil, ErrIntegrity
+	}
+	dek, e := keys.Unwrap(ctx, m.Key, wrapped)
+	defer wipe(dek)
+	if e != nil || len(dek) != 32 {
+		return nil, nil, ErrKey
+	}
+	block, _ := aes.NewCipher(dek)
+	gcm, _ := cipher.NewGCM(block)
+	return gcm, header, nil
 }
 
 // OpenRange authenticates ALL selected frames before returning any plaintext.
@@ -243,34 +271,16 @@ func OpenRange(ctx context.Context, m Manifest, ref Ref, store ObjectReader, key
 	if validateManifest(m) != nil || !ref.valid(true) {
 		return nil, ErrIntegrity
 	}
-	if store == nil || keys == nil {
+	if ctx == nil || ctx.Err() != nil || nilSystemAdapter(store) || nilSystemAdapter(keys) {
 		return nil, ErrUnavailable
 	}
 	if start < 0 || end < start || end >= m.Identity.ContentSize || end-start+1 > MaxResponse {
 		return nil, ErrRange
 	}
-	header, e := readExact(ctx, store, ref, 0, m.HeaderSize)
+	gcm, header, e := openEvidenceEnvelope(ctx, m, ref, store, keys)
 	if e != nil {
 		return nil, e
 	}
-	if !bytes.Equal(header[:8], magic) || int64(binary.BigEndian.Uint32(header[8:12])) != m.HeaderSize-12 || hash(header[12:]) != m.EnvelopeHash {
-		return nil, ErrIntegrity
-	}
-	var env envelope
-	if json.Unmarshal(header[12:], &env) != nil || !bytes.Equal(canonical(env), header[12:]) || env.Schema != Framing || env.Identity != m.Identity || env.Key != m.Key {
-		return nil, ErrIntegrity
-	}
-	wrapped, e := base64.StdEncoding.Strict().DecodeString(env.Wrapped)
-	if e != nil || len(wrapped) < 1 || len(wrapped) > 4096 || base64.StdEncoding.EncodeToString(wrapped) != env.Wrapped {
-		return nil, ErrIntegrity
-	}
-	dek, e := keys.Unwrap(ctx, m.Key, wrapped)
-	defer wipe(dek)
-	if e != nil || len(dek) != 32 {
-		return nil, ErrKey
-	}
-	block, _ := aes.NewCipher(dek)
-	gcm, _ := cipher.NewGCM(block)
 	result := make([]byte, 0, end-start+1)
 	success := false
 	defer func() {

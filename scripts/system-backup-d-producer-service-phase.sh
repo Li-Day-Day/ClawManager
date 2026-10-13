@@ -15,6 +15,14 @@ if [[ "${D_PRODUCER_RECOVERY_ONLY:-0}" == 1 ]]; then
   case "${D_PRODUCER_RECOVERY_TEST:-D}" in
     D) test_target='^TestD(HistoricalRecovery|RecoveryFence|RecoveryFenceRead|RecoveryFenceRecoveryRace)MySQL$'; pass_name='d-producer-recovery-mysql' ;;
     A) test_target='^TestAHistoricalRecoveryMySQL$'; pass_name='a-producer-recovery-mysql' ;;
+    ADeployment) test_target='^TestSystemHistoricalDeploymentGuardMySQL$'; pass_name='a-recovery-deployment-mysql' ;;
+    Schema) test_target='^TestDRecoveryAuthoritySchemaMySQL$'; pass_name='d-recovery-authority-schema-mysql' ;;
+    Manager) test_target='^TestDRecoveryManagerRowMySQL$'; pass_name='d-recovery-manager-row-mysql' ;;
+    AManager) test_target='^TestSystemRecoveryAuthority(Combined|PinnedDecision)?MySQL$'; pass_name='a-recovery-manager-authority-mysql' ;;
+    ARead) test_target='^TestSystemRecoveryAuthorityReadMySQL$'; pass_name='a-recovery-authority-read-mysql' ;;
+    ABootstrap) test_target='^TestRecoveryManagerBootstrapMySQL$'; pass_name='a-recovery-manager-bootstrap-mysql' ;;
+    ARevoke) test_target='^TestRecoveryManagerRevocationMySQL$'; pass_name='a-recovery-manager-revocation-mysql' ;;
+    Authority) test_target='^TestDRecoveryAuthority(Race)?MySQL$'; pass_name='d-recovery-authority-mysql' ;;
     *) return 1 ;;
   esac
 fi

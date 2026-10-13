@@ -181,6 +181,15 @@ func (t *memLocked) Deletable(context.Context) error {
 type testAuth struct{}
 
 func (testAuth) Authenticate(*http.Request) (Actor, error) { return Actor{"admin", "session"}, nil }
+func (testAuth) AuthorizeSensitiveDownload(context.Context, *http.Request, Actor, Record, int64, int64, Locked) error {
+	return nil
+}
+
+type unsteppedTestAuth struct{}
+
+func (unsteppedTestAuth) Authenticate(*http.Request) (Actor, error) {
+	return Actor{"admin", "session"}, nil
+}
 
 func fixture(t *testing.T, size int) (Prepared, []byte, []byte, testKeys) {
 	t.Helper()
@@ -312,9 +321,11 @@ func TestPublishUnknownAndRetentionGC(t *testing.T) {
 }
 
 func TestDownloadAuthAuditRangeAndNoPartialBody(t *testing.T) {
-	for _, name := range []string{"success", "denied", "late-revoke", "tamper", "audit-failure", "multi-range", "duplicate-range", "oversize", "forwarded-http"} {
+	for _, name := range []string{"success", "denied", "late-revoke", "tamper", "audit-failure", "multi-range", "duplicate-range", "oversize", "forwarded-http", "missing-step-up"} {
 		t.Run(name, func(t *testing.T) {
 			s, m, store, plain, _ := serviceFixture(t)
+			original := m.r
+			originalAudits := len(m.audits)
 			h := Handler{s, testAuth{}}
 			r := httptest.NewRequest("GET", Path+m.r.Manifest.Identity.ID, nil)
 			r.TLS = &tls.ConnectionState{}
@@ -346,6 +357,9 @@ func TestDownloadAuthAuditRangeAndNoPartialBody(t *testing.T) {
 				r.TLS = nil
 				r.Header.Set("X-Forwarded-Proto", "https")
 				want = 401
+			case "missing-step-up":
+				h.Auth = unsteppedTestAuth{}
+				want = 401
 			}
 			w := httptest.NewRecorder()
 			h.ServeHTTP(w, r)
@@ -364,6 +378,9 @@ func TestDownloadAuthAuditRangeAndNoPartialBody(t *testing.T) {
 			}
 			if oneOf(name, "denied", "audit-failure", "multi-range", "duplicate-range", "oversize") && store.reads != 0 {
 				t.Fatal("unauthorized provider read")
+			}
+			if name == "missing-step-up" && (m.r.RowVersion != original.RowVersion || m.r.Claim != original.Claim || len(m.audits) != originalAudits || store.reads != 0) {
+				t.Fatal("failed second factor committed claim, audit or provider read")
 			}
 		})
 	}

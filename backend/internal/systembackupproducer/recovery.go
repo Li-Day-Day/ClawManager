@@ -114,6 +114,17 @@ func recoveryScopeKey(scope Scope) ([]byte, error) {
 	return b, nil
 }
 
+// RecoveryScopeKey returns the exact C1 scope key used by historical recovery
+// and its current deployment rows. The returned bytes are a lookup key, not an
+// authorization; callers must still lock and verify current installation and
+// deployment state in D's transaction order.
+func RecoveryScopeKey(scope Scope) ([]byte, error) {
+	if validateTyped(reflect.ValueOf(scope)) != nil {
+		return nil, ErrInvalid
+	}
+	return recoveryScopeKey(scope)
+}
+
 type RecoveryStatAdmission struct {
 	VerifiedProofHash Hash
 	ProofExpiresAt    Timestamp

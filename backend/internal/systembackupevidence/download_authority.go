@@ -2,6 +2,7 @@ package systembackupevidence
 
 import (
 	"context"
+	"database/sql"
 	"encoding/base64"
 	"net/http"
 	"net/url"
@@ -12,6 +13,14 @@ import (
 
 	"clawreef/internal/systembackupsecurity"
 )
+
+// SensitiveDownloadProof is supplied by the A security runtime. VerifyAndConsume
+// must bind a fresh proof to the authenticated actor, evidence ID, claim and
+// byte range, and consume its nonce in the supplied claim/audit transaction.
+// An implementation that only checks a session or RBAC does not satisfy it.
+type SensitiveDownloadProof interface {
+	VerifyAndConsume(context.Context, *sql.Tx, *http.Request, Actor, Record, int64, int64) error
+}
 
 // DownloadAuthorityConfig is deployment-owned. SQLRegistry's mandatory policy
 // still supplies authoritative owner visibility/locking and audit; this adapter
@@ -26,6 +35,7 @@ type DownloadAuthorityConfig struct {
 	Store, Read                                              KeyRef
 	Issuer, Audience, Subject, TokenFile                     string
 	ExpiresAt                                                time.Time
+	SensitiveStepUp                                          SensitiveDownloadProof
 }
 
 type SQLDownloadAuthority struct{ c DownloadAuthorityConfig }
@@ -64,6 +74,22 @@ func (a *SQLDownloadAuthority) AuthenticateContext(r *http.Request) (context.Con
 		return nil, Actor{}, ErrAuth
 	}
 	return context.WithValue(r.Context(), a, actor), downloadActor(actor), nil
+}
+
+func (a *SQLDownloadAuthority) AuthorizeSensitiveDownload(ctx context.Context, request *http.Request, actor Actor, record Record, start, end int64, locked Locked) error {
+	tx, ok := locked.(*sqlLocked)
+	if a == nil || request == nil || ctx == nil || ctx.Err() != nil || nilSystemAdapter(a.c.SensitiveStepUp) ||
+		!ok || tx.tx == nil || tx.registry.DB != a.c.Registry.DB || tx.registry.Installation != a.c.Registry.Installation ||
+		tx.Record().Claim != record.Claim || tx.Record().RowVersion != record.RowVersion ||
+		tx.Record().Manifest.Identity != record.Manifest.Identity ||
+		start < 0 || end < start || end >= record.Manifest.Identity.ContentSize ||
+		!oneOf(record.Manifest.Identity.Classification, "confidential", "sensitive") {
+		return ErrDenied
+	}
+	if err := a.c.SensitiveStepUp.VerifyAndConsume(ctx, tx.tx, request, actor, record, start, end); err != nil {
+		return ErrDenied
+	}
+	return nil
 }
 
 type downloadGrant struct {

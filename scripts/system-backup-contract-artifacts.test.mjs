@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { createHash, createPublicKey, verify } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
@@ -29,6 +29,7 @@ const acceptanceSchema = parseJSON(join(contractDir, 'acceptance-marker.schema.j
 const finalizerSchema = parseJSON(join(contractDir, 'provider-finalizer-request.schema.json'));
 const externalActionSchema = parseJSON(join(contractDir, 'external-action-payload.schema.json'));
 const publicationExamples = parseJSON(join(contractDir, 'publication-redacted-examples.json'));
+const artifactSignatureVector = parseJSON(join(contractDir, 'a-artifact-signature-vectors.json'));
 const installationStateSchema = parseJSON(join(contractDir, 'installation-state.schema.json'));
 const compactTombstoneSchema = parseJSON(join(contractDir, 'compact-tombstone.schema.json'));
 const verifierSchema = parseJSON(join(contractDir, 'verifier-contract.schema.json'));
@@ -812,6 +813,13 @@ test('D-owned config wire records all defaults, redacted references and cross-fi
   const referencePurposes = defs.ConfigReference.properties.purpose.enum;
   assert.deepEqual(values.references.map((entry) => entry.purpose).sort(), [...referencePurposes].sort());
   assert.equal(new Set(values.references.map((entry) => entry.purpose)).size, referencePurposes.length);
+  const signingPurposes = new Set(['capture_signing', 'acceptance_signing', 'catalog_signing']);
+  const signingRefs = values.references.filter((entry) => signingPurposes.has(entry.purpose));
+  assert.equal(signingRefs.length, signingPurposes.size);
+  for (const ref of signingRefs) {
+    assert.equal(values.references.filter((entry) => entry.identity_hash === ref.identity_hash).length, 1, `${ref.purpose} shares a reference identity`);
+  }
+  assert.ok(defs.ConfigValues['x-invariants'].some((rule) => rule.includes('capture_signing') && rule.includes('identity_hash')));
 
   const d = values.durations;
   assert.ok(d.controller_claim_heartbeat_seconds <= d.controller_claim_ttl_seconds / 3);
@@ -1948,6 +1956,8 @@ test('A-owned secret ref union carries only typed redacted identities', () => {
   assert.deepEqual(secretRefSchema.$defs.KubernetesSecretRef.allOf[1].properties.read_mode.const, 'resource_name_get_only');
   assert.deepEqual(secretRefSchema.$defs.ExternalSecretRef.allOf[1].properties.read_mode.const, 'exact_version_only');
   assert.deepEqual(secretRefSchema.$defs.SigningKeyRef.allOf[1].properties.purpose.enum, ['capture_certificate', 'acceptance_record', 'catalog_record', 'provider_proof_issuer', 'strong_auth_issuer']);
+  assert.deepEqual(secretRefSchema.$defs.SigningKeyRef.allOf[2].if.properties.purpose.enum, ['capture_certificate', 'acceptance_record', 'catalog_record']);
+  assert.equal(secretRefSchema.$defs.SigningKeyRef.allOf[2].then.properties.algorithm.const, 'EdDSA');
   assert.equal(secretRefSchema.$defs.ProviderCredentialRef.allOf[1].allOf.length, 13);
   for (const forbidden of ['uri', 'url', 'endpoint', 'credential_bytes', 'secret_value', 'token', 'password', 'private_key', 'key_material', 'raw_response', 'raw_log']) {
     assert.ok(secretRefSchema['x-forbidden-fields'].includes(forbidden));
@@ -2602,6 +2612,26 @@ test('acceptance signs payload only and keeps local reason codes canonical', () 
   const payloadBytes = Buffer.from(canonicalJSON(acceptance.payload), 'utf8');
   const changedSignature = { ...acceptance, signature: { ...acceptance.signature, value: 'different-synthetic-signature' } };
 
+  assert.equal(artifactCommonSchema.$defs.Signature.properties.algorithm.const, 'EdDSA');
+  assert.match(artifactCommonSchema.$defs.Signature['x-protected-header-binding'], /exactly alg=algorithm/);
+  assert.equal(acceptance.signature.algorithm, 'EdDSA');
+  assert.deepEqual(JSON.parse(Buffer.from(acceptance.signature.protected_header, 'base64url').toString('utf8')), {
+    alg: 'EdDSA', key_version: '7', kid: 'acceptance-key-example', purpose: 'acceptance_record',
+    typ: 'clawmanager.system-backup.acceptance.v1',
+  });
+  assert.equal(Buffer.from(acceptance.signature.value, 'base64url').length, 64);
+  assert.equal(artifactSignatureVector.signature_base64url, acceptance.signature.value);
+  assert.equal(artifactSignatureVector.payload_sha256, sha256(payloadBytes));
+  const signingInput = Buffer.from(`${acceptance.signature.protected_header}.${payloadBytes.toString('base64url')}`, 'ascii');
+  assert.equal(artifactSignatureVector.signing_input_sha256, sha256(signingInput));
+  const publicKey = createPublicKey({
+    key: Buffer.concat([Buffer.from('302a300506032b6570032100', 'hex'), Buffer.from(artifactSignatureVector.public_key_base64url, 'base64url')]),
+    format: 'der', type: 'spki',
+  });
+  assert.equal(verify(null, signingInput, publicKey, Buffer.from(acceptance.signature.value, 'base64url')), true);
+  assert.equal(verify(null, payloadBytes, publicKey, Buffer.from(acceptance.signature.value, 'base64url')), false);
+  assert.equal(verify(null, Buffer.from(`a${acceptance.signature.protected_header.slice(1)}.${payloadBytes.toString('base64url')}`, 'ascii'), publicKey, Buffer.from(acceptance.signature.value, 'base64url')), false);
+  assert.equal(verify(null, Buffer.from(`${acceptance.signature.protected_header}.${Buffer.from(canonicalJSON({ ...acceptance.payload, attempt_no: 2 })).toString('base64url')}`, 'ascii'), publicKey, Buffer.from(acceptance.signature.value, 'base64url')), false);
   assert.equal(acceptance.payload.local_reason_codes_hash, sha256(Buffer.from(canonicalJSON(acceptance.payload.local_reason_codes), 'utf8')));
   assert.equal(acceptance.payload.local_acceptance, true);
   assert.deepEqual(acceptance.payload.local_reason_codes, ['eligible']);
@@ -2659,13 +2689,53 @@ test('compact tombstone separates permanent destructive keys from standard expir
   assert.ok(compactTombstoneSchema['x-unique-key'].includes('idempotency_key'));
 });
 
-test('verifier shell owns aggregation but leaves A/B/C check registries pending', () => {
+test('verifier shell owns aggregation and keeps A business checks as draft', () => {
   assert.equal(verifierSchema.additionalProperties, false);
   assert.equal(verifierSchema.properties.status, undefined);
   assert.equal(verifierSchema.properties.warnings, undefined);
   assert.deepEqual(verifierSchema['x-aggregate-order'], ['failed', 'warning', 'passed', 'skipped']);
-  for (const owner of ['A', 'B', 'C']) {
+  for (const owner of ['B', 'C']) {
     assert.equal(verifierSchema['x-owner-check-registries'][owner].status, 'pending_owner_submission');
+  }
+  const a = verifierSchema['x-owner-check-registries'].A;
+  assert.equal(a.status, 'draft');
+  for (const [category, key, definition, count] of [
+    ['users', 'users_backup_validate', 'AUsersBackupCheck', 8],
+    ['ai_gateway', 'ai_gateway_backup_validate', 'AAIGatewayBackupCheck', 11],
+  ]) {
+    assert.equal(a[key].check_schema, `#/$defs/${definition}`);
+    assert.equal(a[key].required_check_count, count);
+    assert.equal(a[key].failure_mapping.mismatch.check_classification, 'integrity');
+    assert.equal(a[key].failure_mapping.mismatch.failure_category, 'validation_failed');
+    assert.equal(a[key].failure_mapping.missing_or_unverified_proof.failure_category, 'evidence_incomplete');
+    const condition = verifierSchema.allOf.find((item) => item.if?.properties?.category?.const === category && item.if?.properties?.mode?.const === 'backup_validate');
+    assert.equal(condition?.then?.properties?.checks?.items?.$ref, `#/$defs/${definition}`);
+    const choices = verifierSchema.$defs[definition].allOf[1].oneOf;
+    const ids = choices.flatMap((choice) => choice.properties.id.enum);
+    assert.equal(ids.length, count);
+    assert.equal(new Set(ids).size, count);
+    assert.ok(ids.every((id) => id.startsWith(`${category}.`)));
+    assert.equal(choices[0].properties.expected.$ref, '#/$defs/ABusinessDigestValue');
+    assert.equal(choices[1].properties.actual.$ref, '#/$defs/ABusinessCountValue');
+  }
+  for (const [category, key, definition, count] of [
+    ['users', 'users_restore_validate', 'AUsersRestoreCheck', 11],
+    ['ai_gateway', 'ai_gateway_restore_validate', 'AAIGatewayRestoreCheck', 13],
+  ]) {
+    assert.equal(a[key].check_schema, `#/$defs/${definition}`);
+    assert.equal(a[key].required_check_count, count);
+    assert.equal(a[key].failure_mapping.count_or_inert_state_mismatch.check_classification, 'integrity');
+    assert.equal(a[key].failure_mapping.count_or_inert_state_mismatch.failure_category, 'normalization_failed');
+    assert.equal(a[key].failure_mapping.missing_or_unverified_target_proof.failure_category, 'evidence_incomplete');
+    const condition = verifierSchema.allOf.find((item) => item.if?.properties?.category?.const === category && item.if?.properties?.mode?.const === 'restore_validate');
+    assert.equal(condition?.then?.properties?.checks?.items?.$ref, `#/$defs/${definition}`);
+    const choices = verifierSchema.$defs[definition].allOf[1].oneOf;
+    const ids = choices.flatMap((choice) => choice.properties.id.enum);
+    assert.equal(ids.length, count);
+    assert.equal(new Set(ids).size, count);
+    assert.ok(ids.every((id) => id.startsWith(`${category}.restore_`)));
+    assert.equal(choices[0].properties.expected.$ref, '#/$defs/ABusinessCountValue');
+    assert.equal(choices[1].properties.actual.$ref, '#/$defs/ABusinessViolationValue');
   }
   assert.equal(verifierSchema['x-owner-check-registries'].D.status, 'draft');
   assert.equal(verifierSchema.$defs.Check.additionalProperties, false);

@@ -659,13 +659,13 @@
                 "provider": "ldap",
                 "enabled": false,
                 "updated_by": 107,
-                "ldap_bind_password_ciphertext": null,
+                "ldap_bind_password_ciphertext": "",
                 "version": 1
               }
             ],
             "can_resume_source_execution": false
           },
-          "normalized_rows_sha256": "3953a2f4a8a442d3466899883d731e41bb7cd38132890bf8420dcd5420720e0a"
+          "normalized_rows_sha256": "5068568b5c112f19697da7b3b2d8b1a1d9c3444cc8a3fe067c0fe5cd72b673ad"
         },
         {
           "name": "secret_ref_version_drift",
@@ -912,7 +912,8 @@
               "display_name": "synthetic-model",
               "provider_type": "openai",
               "is_active": true,
-              "api_key": "SYNTHETIC_REDACTED_KEY"
+              "api_key": "SYNTHETIC_REDACTED_KEY",
+              "api_key_secret_ref": "SYNTHETIC_REDACTED_REF"
             }
           ],
           "context": {
@@ -956,12 +957,13 @@
                 "display_name": "synthetic-model",
                 "provider_type": "openai",
                 "is_active": false,
-                "api_key": null
+                "api_key": null,
+                "api_key_secret_ref": null
               }
             ],
             "can_resume_source_execution": false
           },
-          "normalized_rows_sha256": "d9a0fc9e46e1c60236e1d0f5b6ae5afc8b48ea4c1097ec1b8390160f567d62f4"
+          "normalized_rows_sha256": "d384d46cba095967a1de9d4c2bf93eb6a6ffae7bac2c11aed11d9f6bc4fafac9"
         },
         {
           "name": "secret_ref_missing",
@@ -2024,12 +2026,12 @@
                 "username": "synthetic-user",
                 "role": "user",
                 "is_active": false,
-                "password_hash": null
+                "password_hash": "!system-backup-password-reset-required!"
               }
             ],
             "can_resume_source_execution": false
           },
-          "normalized_rows_sha256": "0f531cc34972ee8ec255e5ae50374bb02ce9aee31603f54381583691780d502a"
+      "normalized_rows_sha256": "2eb1e3f1eade2deec3b1d497b99071f2e09e570a89e4fd915e58ea164dc162e7"
         },
         {
           "name": "identity_mapping_conflict",

@@ -55,7 +55,10 @@ pending. These are inventory counts, not completed acceptance gates.
   `external-action-payload.schema.json`. `artifact-common.schema.json` holds
   shared hashes, timestamps and signing-envelope definitions, while
   `publication-redacted-examples.json` proves exact-byte and checksum binding
-  with synthetic values.
+  with synthetic values. A selected Ed25519 (`EdDSA`) for the three artifact
+  signature purposes; `a-artifact-signature-vectors.json` binds the synthetic
+  acceptance payload to a real test signature verified by Node and Go. The
+  contract remains draft pending B/C/D review of the JWS signing profile.
 - D-owned control-plane drafts now include `installation-state.schema.json`,
   `compact-tombstone.schema.json`, `staging-resource-lifecycle.schema.json`,
   `verifier-contract.schema.json` and
