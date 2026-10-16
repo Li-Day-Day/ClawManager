@@ -6,8 +6,8 @@
   "plan_source": "docs/system-backup-restore-division-plan.md",
   "migration_catalog": {
     "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
-    "file_count": 94,
-    "hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
   },
   "schema_hash": {
     "algorithm": "sha256-information-schema-canonical-v1",
@@ -16,9 +16,9 @@
     "evidence": null
   },
   "summary": {
-    "object_count": 99,
+    "object_count": 100,
     "policy_recorded": 60,
-    "policy_pending": 39,
+    "policy_pending": 40,
     "cross_review_pending": 60
   },
   "objects": [
@@ -338,6 +338,32 @@
       "sources": {
         "migration": [
           "backend/internal/db/migrations/007_add_instance_agent_control_plane.sql"
+        ],
+        "repository_create": [],
+        "repository_alter": [],
+        "deployment_bootstrap": [],
+        "exception": null
+      }
+    },
+    {
+      "object_type": "table",
+      "name": "instance_browser_workers",
+      "owner": "B",
+      "category": "instances",
+      "data_classification": null,
+      "backup_strategy": null,
+      "restore_strategy": null,
+      "excluded_reason": null,
+      "normalizer_id": null,
+      "verifier_id": null,
+      "depends_on": [],
+      "decision_status": "pending_owner_review",
+      "required_cross_reviewers": [],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": null,
+      "sources": {
+        "migration": [
+          "backend/internal/db/migrations/064_add_instance_browser_workers.sql"
         ],
         "repository_create": [],
         "repository_alter": [],

@@ -1,5 +1,13 @@
 # 系统备份与恢复开发流程图
 
+## 2026-10-16 上游同步
+
+合入上游 `323fc6ab`（专属域访问 Cookie 续期）、`42510146`（Lite Browser Worker）和 `5ff16a24`（侧边栏折叠）。保留上游 `064_add_instance_browser_workers.sql` 的文件名及内容；迁移 runner 按完整文件名登记，因此它与既有 `064_reconcile_system_image_settings_schema.sql` 分别执行。
+
+当前迁移 catalog 为 95 文件，SHA-256 为 `2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237`；controller 固定值、Go catalog 检查、生成 registry 及嵌入测试 fixture 同步更新。`instance_browser_workers` 随实例归 B，inventory 共 100 对象，其备份策略和交叉评审仍待完成，合同保持 draft。
+
+下文 94 文件 catalog 及其现场验收均属于此前版本。既有回执不代表新增迁移已在真实安装执行；新版本的实际升级及历史 ledger review 需使用新的 catalog 重新核验。
+
 
 > 更新日期：2026-10-15（北京时间，UTC+08:00；核对至 16:12，同步固定源码六轮索引测量、配置 writer/维护收据 MySQL、Prepare 完整门禁与回填服务候选进度）
 

@@ -62,6 +62,7 @@ func main() {
 	userRepo := repository.NewUserRepository(database)
 	quotaRepo := repository.NewQuotaRepository(database)
 	instanceRepo := repository.NewInstanceRepository(database)
+	browserWorkerRepo := repository.NewBrowserWorkerRepository(database)
 	systemImageSettingRepo := repository.NewSystemImageSettingRepository(database)
 	enterpriseAuthSettingRepo := repository.NewEnterpriseAuthSettingRepository(database)
 	llmModelRepo := repository.NewLLMModelRepository(database)
@@ -147,6 +148,7 @@ func main() {
 	services.SetOpenClawTransferRuntimeRepositories(instanceRepo, bindingRepo, runtimePodRepo)
 	runtimeAgentClient := services.NewRuntimeAgentClient(cfg.Runtime.AgentControlToken)
 	runtimeUpgradeService := services.NewRuntimeUpgradeService(database, rolloutRepo, runtimePodRepo, bindingRepo, runtimeAgentClient, cfg.Runtime.WorkspaceRoot, cfg.Runtime.RedisURL)
+	browserWorkerService := services.NewBrowserWorkerService(browserWorkerRepo, instanceRepo, k8s.GetClient())
 	instanceService := services.NewInstanceService(
 		instanceRepo,
 		quotaRepo,
@@ -156,6 +158,7 @@ func main() {
 		services.WithV2RuntimeLifecycle(runtimePodRepo, bindingRepo, runtimeAgentClient, cfg.Runtime.WorkspaceRoot),
 		services.WithRuntimeUpgradeDeletionGuard(runtimeUpgradeService),
 		services.WithExpandedLLMModelCatalog(llmModelService),
+		services.WithInstanceResourceCleanup(browserWorkerService.DeleteForInstance),
 	)
 	externalAccessService := services.NewInstanceExternalAccessService(instanceExternalAccessRepo)
 	var northboundCoreServer *http.Server
@@ -266,6 +269,7 @@ func main() {
 		services.NewInstanceShellService(),
 		services.WithInstanceProxyRuntimeRepositories(instanceRepo, runtimePodRepo, bindingRepo),
 	)
+	instanceHandler.SetBrowserWorkerService(browserWorkerService)
 	hermesDesktopService := services.NewHermesDesktopService(services.HermesDesktopConfig{
 		ControlUIOrigin: services.HermesControlUIOrigin(cfg.Runtime.Namespace, os.Getenv("CLAWMANAGER_CONTROL_UI_ORIGIN")),
 		Enabled:         services.HermesWebEnabled(os.Getenv("CLAWMANAGER_HERMES_DESKTOP_WEB_ENABLED")),
@@ -408,6 +412,7 @@ func main() {
 	defer leaderCancel()
 
 	startBackground := func(ctx context.Context) {
+		go browserWorkerService.Run(ctx, 30*time.Second)
 		log.Printf("Starting leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
 		syncService.Start()
 		materializeWorker.Start()
@@ -605,6 +610,8 @@ func main() {
 			instances.POST("/:id/config/revisions/publish", instanceHandler.PublishConfigRevision)
 			instances.POST("/:id/access", instanceHandler.GenerateAccessToken)
 			instances.GET("/:id/access", instanceHandler.AccessInstance)
+			instances.GET("/:id/browser-worker", instanceHandler.GetBrowserWorker)
+			instances.POST("/:id/browser-worker/access", instanceHandler.GenerateBrowserWorkerAccess)
 			instances.GET("/:id/shell", instanceHandler.StreamShell)
 			instances.POST("/:id/sync", instanceHandler.ForceSync)
 			instances.GET("/:id/openclaw/export", instanceHandler.ExportOpenClaw)
@@ -939,6 +946,8 @@ func main() {
 		// These routes proxy requests to the actual instance pods
 		api.Any("/instances/:id/proxy", instanceHandler.ProxyInstance)
 		api.Any("/instances/:id/proxy/*path", instanceHandler.ProxyInstance)
+		api.Any("/instances/:id/browser-proxy", instanceHandler.ProxyBrowserWorker)
+		api.Any("/instances/:id/browser-proxy/*path", instanceHandler.ProxyBrowserWorker)
 
 		// WebSocket routes
 		ws := api.Group("/ws")
