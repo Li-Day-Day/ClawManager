@@ -11,7 +11,11 @@ export const systemBackupReadService = createBackupApiReadClient(async (path, si
     const response = await api.get(endpoint, { signal });
     return new Response(JSON.stringify(response.data), {
       status: response.status,
-      headers: { 'X-System-Backup-Data-Source': String(response.headers['x-system-backup-data-source'] ?? '') },
+      headers: {
+        'X-System-Backup-Data-Source': String(response.headers['x-system-backup-data-source'] ?? ''),
+        'X-System-Backup-Origin-Installation-ID': String(response.headers['x-system-backup-origin-installation-id'] ?? ''),
+        'X-System-Backup-Task-Row-Version': String(response.headers['x-system-backup-task-row-version'] ?? ''),
+      },
     });
   } catch (error) {
     if (!axios.isAxiosError(error) || !error.response) throw error;

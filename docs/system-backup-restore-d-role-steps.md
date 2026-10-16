@@ -1,5 +1,23 @@
 # 系统备份/恢复 D 角色开发步骤
 
+【2026-10-16 r61 收尾与暂停交接】[最新完整记录](system-backup-d-round-closeout-20261016-r61.md)保留 r57 完整包、r60/r61 定向测试与独立来源复查、旧 server 冻结基线和准确清理结果。所有本轮验证已终态；用户要求随后暂停。完整 prelocked/operation/receipt/nonce、当前 server 整包及原六项缺口仍未完成，旧回执不扩大覆盖。
+
+【2026-10-16 D 完整事件接口】[四类任务 events API 与独立事件页面](system-backup-d-event-api-20261016.md)已接线，详情 503 时仍能查看事件。依据第 6.2 节及 EventResource 机器合同，事件正文须入库前脱敏，旧“还需 A 读时脱敏”判断已更正。前端 221 项、后端读取 72/493 项、2 项 HTTP 边界测试、MySQL-tag 编译及浏览器 13 项检查通过；本轮临时源码/编译缓存/dist 均已清理。真实 MySQL 新断言仍待执行，按用户要求在本轮结束后暂停目标。
+
+【2026-10-16 D 事件分页与详情 SQL 准备】[本轮交接](system-backup-d-task-event-control-read-20261016.md)补四类任务事件控制记录/同事务组装接点、独立域 HMAC 游标和详情真实 MySQL 探针断言；Linux 读取包 69/470 项、MySQL-tag 编译及冻结复查通过。该阶段仅完成元数据；四类事件 DTO/HTTP 已由上方新交接接通，真实 SQL 仍待执行。
+
+【2026-10-16 D 详情读取独立增量】[四类详情控制字段](system-backup-d-detail-control-read-20261016.md)和同事务后续组装接点已实现，读取包 62 个主测试/413 含子测试通过，新增 7/101，无安装依赖。完整 DTO、A/B/C 来源、实际 SQL 和详情 HTTP 仍待完成。
+
+【2026-10-16 r50/r51/r53】[下载准入审计 ID/原行锚点候选](system-backup-d-download-admission-audit-20261016.md)已交付并通过 434 主/3,246 含子项、seed、Linux 专项探针与清理；新实际 SQL 仅四项审计组件，完整 prelocked/operation/receipt/nonce 尚未接线。前端已有依赖可用，D 已用现有依赖完成 [240 来源 TypeScript/Vite 全构建](evidence/system-backup-d-frontend-build-20261016-r51.json)并清理产物，另[复核已有隔离浏览器回执和图片](evidence/system-backup-d-frontend-receipt-review-20261016-r53.json)，未安装依赖或扩大成真实业务 E2E。完整范围以[最新六项表](system-backup-d-six-scope-readiness-20261015.md)为准，原“缺 tsc/依赖”阻塞已解除，正式共享评审和真实部署/授权/卷/历史仍待完成。
+
+【2026-10-16 r46 健康 SQL 已接收】[独立接收记录](system-backup-d-control-health-mysql-handoff-20261016.md)确认最新远测七项/root、1,302 来源、214 重点 pin、95 文件 replay、七个夹具/候选表/原 namespace UID 与两端清理以及 exit 0。此专项无需重跑；下文旧“健康七项待测”为历史状态。main/正式 schema/grants 和生产授权/容量/独立审计卷/历史/前端完整验收仍待完成，六项整体未关闭。[敏感下载公共 operation 与 nonce 合同](system-backup-d-sensitive-download-admission-contract-20261016.md)已由 D 确定，A 可据此开发候选。
+
+【2026-10-16 r42 新实际回执】[D 独立接收 A 配置 proof 十五项 MySQL](system-backup-d-a-config-proof-review-20261016.md)：1,292 来源、112 重点 pin、十五项/root、两次实际行锁等待、95 文件迁移和原 UID/两端清理齐全，exit 0。关闭该专项待办，不重复运行。健康七项、正式 schema/生产接线、运行材料/卷/历史/前端验收仍未完成。
+
+【2026-10-16 r41】完成 [D 自有健康 observer 与七项 SQL 探针准备](system-backup-d-control-health-mysql-handoff-20261016.md)：1,292 来源冻结、198 主/483 含子项、两种 seed、Linux 探针/95 文件 runner 编译、专属派发与清理均通过。没有执行真实 SQL/SSH 或启用 main，专用远测命令已提供。另 [D 接收 A 081/082 候选评审](system-backup-d-a-migration-review-20261016.md)，11 份输入匹配；正式 config 现有 A/B/C 交叉评审依赖保留，原文/授权/容量/历史/前端缺口及六项整体目标仍未关闭。
+
+【2026-10-16 r40 不等待 B/C 的工作】[本轮交付和剩余真实输入](system-backup-d-independent-work-20261016.md)补 Operation 独立只读入口、HTTP 畸形查询拒绝、D 自有健康 SQL/读取候选和审计写者 UID/GID 预检；Linux 文件初始化八项均通过，不再是 Windows 平台跳过。A 八项实际授权组合已由 [D 独立复核](evidence/system-backup-d-a-authority-review-20261016-r40.json)接收原冻结范围，不重复执行。当前 95 文件 catalog 与旧 94 文件专项分开；未安装依赖或启用生产，完整前端构建/浏览器、健康新 schema/实际 SQL和正式部署仍待验收。
+
 【2026-10-16 r39 七项服务实际 MySQL 接收】[限定回执](evidence/system-backup-d-canonical-backfill-service-mysql-accepted-20261016.json)核对 1,265 来源、七项 PASS、两次真实配置锁等待、94 migration、准确 UID 和两端清理；69 本地路径不存在。正常 exit 0，工具重试/精度反例单列。本服务专项无需重跑，A 八项具体 authority 仍独立待测，运行授权/原文与生产适配仍缺。用户[中文桌面示例截图](evidence/system-backup-d-preview-screenshot-review-20261016.json)主要区域可见，按钮间距已修正，5 项现有检查通过；改后渲染和完整构建待用户验证。无安装或自发远端动作，六项未关闭。
 
 【2026-10-15 r38 新授权专项准备接收】[D 复核回执](system-backup-d-a-authority-preparation-review-20261015.md)已接收 A 1,265 输入的本地准备，独立复算 230/1,525 与三次 seed，69 路径清理，未扩大为八项 MySQL。16:33 服务远测已中断，实际 SQL/远端清理未证明，不能算 PASS 或继续当作活进程；七项服务及八项授权分别待同轮完整回执。没有 SSH、重跑构建或安装，前端保持 r37 供用户测试，六项整体未完成。

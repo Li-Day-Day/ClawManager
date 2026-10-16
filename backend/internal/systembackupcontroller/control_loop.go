@@ -23,6 +23,12 @@ type ControlLoopResult struct {
 	Err          error
 }
 
+// ControlLoopObserver persists only a completed pass. An observation failure
+// stops this loop so a fenced/unknown writer cannot silently keep running.
+type ControlLoopObserver interface {
+	Observe(context.Context, ControlLoopResult) error
+}
+
 // ControlLoop orders the D-owned fail-safe passes. Expired gate owners are
 // fenced first, then kill-switch projection runs before deadline handling.
 // Persistence failures are reported but retried on the next tick. There is
@@ -33,6 +39,7 @@ type ControlLoop struct {
 	KillSwitch   KillSwitchPass
 	Deadline     DeadlineSweepPass
 	Interval     time.Duration
+	Observer     ControlLoopObserver
 	OnResult     func(ControlLoopResult)
 }
 
@@ -73,10 +80,20 @@ func (l ControlLoop) runOnce(ctx context.Context) error {
 	deadlineReport, deadlineErr := l.Deadline.RunOnce(ctx)
 	contextErr := ctx.Err()
 	combinedErr := errors.Join(gateRecoveryErr, killSwitchErr, deadlineErr)
-	if contextErr == nil && l.OnResult != nil && !errors.Is(combinedErr, context.Canceled) && !errors.Is(combinedErr, context.DeadlineExceeded) {
-		l.OnResult(ControlLoopResult{GateRecovery: gateRecoveryReport, KillSwitch: killSwitchReport, Deadline: deadlineReport, Duration: time.Since(started), Err: combinedErr})
+	if contextErr == nil && !errors.Is(combinedErr, context.Canceled) && !errors.Is(combinedErr, context.DeadlineExceeded) {
+		result := ControlLoopResult{GateRecovery: gateRecoveryReport, KillSwitch: killSwitchReport, Deadline: deadlineReport, Duration: time.Since(started), Err: combinedErr}
+		var observationErr error
+		if l.Observer != nil {
+			observationErr = l.Observer.Observe(ctx, result)
+		}
+		if ctx.Err() == nil && l.OnResult != nil {
+			l.OnResult(result)
+		}
+		if observationErr != nil {
+			return fmt.Errorf("controller completed-pass observation: %w", observationErr)
+		}
 	}
-	return contextErr
+	return ctx.Err()
 }
 
 func (l ControlLoop) Run(ctx context.Context) error {

@@ -1,0 +1,88 @@
+**********************
+PowerShell transcript start
+Start time: 20261016150647
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$serverReadLog=Join-Path $PWD 'docs/evidence/system-backup-d-server-read-local-20261016-r54.txt'; $serverReadManifest=Join-Path $PWD 'docs/evidence/system-backup-d-server-read-source-20261016-r54.json'; $serverReadResult=1; Start-Transcript -LiteralPath $serverReadLog -NoClobber; try { & ./scripts/system-backup-d-server-read-validation.ps1 -SourceManifestPath $serverReadManifest; $serverReadResult=0 } finally { Write-Host "d_server_read_exit=$serverReadResult"; Stop-Transcript }
+Process ID: 29428
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-server-read-local-20261016-r54.txt
+LOCAL_SOURCE d-server-read-frozen=yes files=1318 source_sha256=4fafee24dbb2a0b0c8de66f9c64bcccadd2019b8071e2c8fea666159bb687cab
+LOCAL_OWNER server-read-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-b888cbe10d9d4a2f94c99992c6ba25a9 container=codex-d-server-read-b888cbe10d9d4a2f94c99992c6ba25a9
+LOCAL_LIMIT server-build cpus=4 memory=6144m cache=owned-disk work=owned-disk reports=owned-disk module-cache=readonly
+go version go1.26.1 linux/amd64
+LOCAL_STAGE full-cmd-server default-vet=yes buffered-report=yes network=no retry=no
+NATIVE_EXIT cmd-server-tests=0 report-bytes=9743
+{"Time":"2026-10-16T08:37:27.098811723Z","Action":"start","Package":"clawreef/cmd/server"}
+{"Time":"2026-10-16T08:37:30.717819015Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration"}
+{"Time":"2026-10-16T08:37:30.720695937Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration\n"}
+{"Time":"2026-10-16T08:37:30.73619141Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/flag"}
+{"Time":"2026-10-16T08:37:30.754018274Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/flag","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration/flag\n"}
+{"Time":"2026-10-16T08:37:30.790392616Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/flag","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration/flag (0.01s)\n"}
+{"Time":"2026-10-16T08:37:30.802694655Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/flag","Elapsed":0.01}
+{"Time":"2026-10-16T08:37:30.819412852Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/uuid"}
+{"Time":"2026-10-16T08:37:30.830102768Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/uuid","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration/uuid\n"}
+{"Time":"2026-10-16T08:37:30.832743403Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/uuid","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration/uuid (0.00s)\n"}
+{"Time":"2026-10-16T08:37:30.835687936Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/uuid","Elapsed":0}
+{"Time":"2026-10-16T08:37:30.837125092Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/installation"}
+{"Time":"2026-10-16T08:37:30.841803666Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/installation","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration/installation\n"}
+{"Time":"2026-10-16T08:37:30.847373534Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/installation","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration/installation (0.00s)\n"}
+{"Time":"2026-10-16T08:37:30.86023418Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/installation","Elapsed":0}
+{"Time":"2026-10-16T08:37:30.868610259Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/database"}
+{"Time":"2026-10-16T08:37:30.879237683Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/database","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration/database\n"}
+{"Time":"2026-10-16T08:37:30.883213068Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/database","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration/database (0.00s)\n"}
+{"Time":"2026-10-16T08:37:30.886597762Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/database","Elapsed":0}
+{"Time":"2026-10-16T08:37:30.896065013Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/secret"}
+{"Time":"2026-10-16T08:37:30.898590782Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/secret","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration/secret\n"}
+{"Time":"2026-10-16T08:37:30.90050348Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/secret","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration/secret (0.00s)\n"}
+{"Time":"2026-10-16T08:37:30.903441549Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/secret","Elapsed":0}
+{"Time":"2026-10-16T08:37:30.910251795Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/driver"}
+{"Time":"2026-10-16T08:37:30.915513705Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/driver","Output":"=== RUN   TestBackupSessionsRequireExplicitConfiguration/driver\n"}
+{"Time":"2026-10-16T08:37:30.917479466Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/driver","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration/driver (0.00s)\n"}
+{"Time":"2026-10-16T08:37:30.925306266Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration/driver","Elapsed":0}
+{"Time":"2026-10-16T08:37:30.929192203Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration","Output":"--- PASS: TestBackupSessionsRequireExplicitConfiguration (0.02s)\n"}
+{"Time":"2026-10-16T08:37:30.937423181Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupSessionsRequireExplicitConfiguration","Elapsed":0.02}
+{"Time":"2026-10-16T08:37:30.955393756Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureDefaultClosed"}
+{"Time":"2026-10-16T08:37:30.960024541Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureDefaultClosed","Output":"=== RUN   TestBackupReadFixtureDefaultClosed\n"}
+{"Time":"2026-10-16T08:37:30.970260449Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureDefaultClosed","Output":"--- PASS: TestBackupReadFixtureDefaultClosed (0.14s)\n"}
+{"Time":"2026-10-16T08:37:30.975540689Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureDefaultClosed","Elapsed":0.14}
+{"Time":"2026-10-16T08:37:30.979146657Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupReadFixturePaginationAndCursorBinding"}
+{"Time":"2026-10-16T08:37:31.004696039Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupReadFixturePaginationAndCursorBinding","Output":"=== RUN   TestBackupReadFixturePaginationAndCursorBinding\n"}
+{"Time":"2026-10-16T08:37:31.019775855Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupReadFixturePaginationAndCursorBinding","Output":"--- PASS: TestBackupReadFixturePaginationAndCursorBinding (0.01s)\n"}
+{"Time":"2026-10-16T08:37:31.021260647Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupReadFixturePaginationAndCursorBinding","Elapsed":0.01}
+{"Time":"2026-10-16T08:37:31.039027991Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureOverviewAndDetailErrors"}
+{"Time":"2026-10-16T08:37:31.050586683Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureOverviewAndDetailErrors","Output":"=== RUN   TestBackupReadFixtureOverviewAndDetailErrors\n"}
+{"Time":"2026-10-16T08:37:31.054739977Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureOverviewAndDetailErrors","Output":"--- PASS: TestBackupReadFixtureOverviewAndDetailErrors (0.01s)\n"}
+{"Time":"2026-10-16T08:37:31.067983921Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestBackupReadFixtureOverviewAndDetailErrors","Elapsed":0.01}
+{"Time":"2026-10-16T08:37:31.07698635Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions"}
+{"Time":"2026-10-16T08:37:31.091510361Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions","Output":"=== RUN   TestLiveBackupReadRequiresPinnedAuthorityAndSessions\n"}
+{"Time":"2026-10-16T08:37:31.193547505Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions","Output":"--- PASS: TestLiveBackupReadRequiresPinnedAuthorityAndSessions (0.29s)\n"}
+{"Time":"2026-10-16T08:37:31.197327334Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions","Elapsed":0.29}
+{"Time":"2026-10-16T08:37:31.201318374Z","Action":"run","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization"}
+{"Time":"2026-10-16T08:37:31.204613472Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization","Output":"=== RUN   TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization\n"}
+{"Time":"2026-10-16T08:37:31.392014028Z","Action":"output","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization","Output":"--- PASS: TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization (0.20s)\n"}
+{"Time":"2026-10-16T08:37:31.398302805Z","Action":"pass","Package":"clawreef/cmd/server","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization","Elapsed":0.2}
+{"Time":"2026-10-16T08:37:31.404106845Z","Action":"output","Package":"clawreef/cmd/server","Output":"PASS\n"}
+{"Time":"2026-10-16T08:37:31.421621507Z","Action":"output","Package":"clawreef/cmd/server","Output":"ok  \tclawreef/cmd/server\t4.312s\n"}
+{"Time":"2026-10-16T08:37:31.428291493Z","Action":"pass","Package":"clawreef/cmd/server","Elapsed":4.33}
+LOCAL_PASS full-cmd-server-test-and-linux-build=yes release-deployment=no
+LOCAL_REPORT full-cmd-server path=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-server-read-source-20261016-r54.go-report.jsonl bytes=9743 sha256=b2ef279e855f4f77c0f4cd48b7ceae6bfe191958ced7e1b3f370343811042151
+LOCAL_PASS d-server-read-frozen-postcheck=yes dependency-installation=no remote=no
+CLEANED server-read-local-source-cache=True
+d_server_read_exit=0
+**********************
+PowerShell transcript end
+End time: 20261016164242
+**********************

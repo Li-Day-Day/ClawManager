@@ -51,15 +51,19 @@ node .\scripts\system-backup-d-recovery-audit-plan.mjs <reviewed-input.json> <ne
 
 [初始化器](../scripts/system-backup-d-recovery-audit-init.py) 只接受 Linux 非 root 及准确 UID/GID。它逐级用目录 fd 和 `O_NOFOLLOW` 打开固定路径，以 `O_CREAT|O_EXCL` 创建空的 `0600` 普通文件，拒绝已有文件、符号链接和目录换绑；同步文件及目录后重新打开完整路径核对 inode。发生失败时不重试、不截断、不自动删除已创建文件，操作者应检查失败现场。`JOURNAL_FILE_INITIALIZED_NOT_PRODUCTION_ACCEPTANCE` 只记录初始化事实。
 
-管理进程已部署时，在上述只读预检命令额外提供以下四个参数（必须全部提供）：
+管理进程已部署时，在上述只读预检命令额外提供以下六个参数（必须全部提供，UID/GID 与初始化器受审输入一致）：
 
 ```powershell
   -DeploymentName '<reviewed-manager-deployment>' `
   -ManagerContainerName '<reviewed-manager-container>' `
   -JournalMountPath '<reviewed-volume-mount-directory>' `
-  -ExpectedManagerImage '<reviewed-image>@sha256:<digest>'
+  -ExpectedManagerImage '<reviewed-image>@sha256:<digest>' `
+  -ExpectedJournalUID 10001 `
+  -ExpectedJournalGID 10001
 ```
 
 此范围要求最新 observed generation、单副本、`Recreate`，核对 Pod → ReplicaSet → Deployment 准确 UID 链及唯一存活 Running Pod，拒绝终止中/未知旧写者、sidecar/init/ephemeral 写挂载、subPath 和实际镜像/挂载漂移。没有提供管理参数时输出明确标记只核对存储。API 快照不能证明旧节点已围栏，也不能消除核对后的变化。
+
+2026-10-16 增量：同时核对模板和实际 Pod 的有效 UID/GID、`runAsNonRoot`，正确处理容器覆盖 Pod 设置；拒绝 privileged、允许提权、未 drop ALL 或新增 capability 的管理进程，以及正在删除的 PVC/PV/StorageClass。预检仍只读取 API，不证明容器内实际 inode/权限或 CSI 物理容量。Linux 初始化器八项已使用本机已有 Python 镜像、只读源码、非 root、断网与临时文件系统执行通过，不再列为平台跳过；它仍不替代实际持久卷、管理 journal 或 I/O 故障注入验收。
 
 本地 [PowerShell 预检输出](evidence/system-backup-d-recovery-audit-local-20261014-r3.txt) 29 项通过；初始化器最后补核同步后的 owner/group/mode 漂移，[最终增量输出](evidence/system-backup-d-recovery-audit-local-20261014-r4.txt) 中计划生成器 17 项、Python 平台拒绝 1 项通过，7 项 Linux 文件系统测试因 Windows 平台跳过。Node `--test` 子进程曾被沙箱 EPERM 拒绝，随后以同进程入口成功执行，失败输出独立保留。未安装依赖、连接集群、创建卷或启动容器，无测试构建产物及 pycache；Linux 文件系统/故障注入仍待操作者运行。

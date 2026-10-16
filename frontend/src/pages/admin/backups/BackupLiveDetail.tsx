@@ -6,7 +6,7 @@ import type { BackupDetailSelection } from './backupLiveDetail';
 import { systemBackupReadService } from '../../../services/systemBackupReadService';
 import { useBackupText } from './useBackupText';
 import { formatBytes } from './backupReadModel';
-import BackupLiveActivity from './BackupLiveActivity';
+import BackupLiveActivity from './BackupLiveActivity.tsx';
 
 type DetailState = { kind: 'loading' } | { kind: 'error' }
   | { kind: 'ready'; detail: BackupTaskResource[BackupTaskKind] };
@@ -94,14 +94,16 @@ export default function BackupLiveDetail({ selection, close }: { selection: Back
         <button type="button" className={buttonClass} onClick={close}>{b('detailClose')}</button>
       </div>
     </div>
-    {state.kind === 'loading' && <p className="mt-4 text-sm text-slate-500" role="status" aria-busy="true">{b('loading')}</p>}
-    {state.kind === 'error' && <p className="mt-4 text-sm text-red-700" role="alert">{b('readError')}</p>}
-    {state.kind === 'ready' && <>
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={b('detailViews')}>{(['summary', 'events', 'logs'] as const).map((view) =>
-        <button type="button" key={view} className={buttonClass} aria-pressed={section === view} onClick={() => setSection(view)}>{b(view)}</button>)}</div>
-      {section === 'summary' ? <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-3">{fields.map(([name, value]) =>
-        <div key={name} className="min-w-0"><dt className="text-slate-500">{name}</dt><dd className="mt-1 break-words text-slate-900">{value}</dd></div>)}</dl>
-        : <BackupLiveActivity key={`${revision}:${section}`} selection={selection} channel={section} viewEvents={() => setSection('events')} />}
+    <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={b('detailViews')}>{(['summary', 'events', 'logs'] as const).map((view) =>
+      <button type="button" key={view} className={buttonClass} aria-pressed={section === view}
+        disabled={view === 'logs' && state.kind !== 'ready'} onClick={() => setSection(view)}>{b(view)}</button>)}</div>
+    {(section === 'summary' || section === 'logs' && state.kind !== 'ready') && <>
+      {state.kind === 'loading' && <p className="mt-4 text-sm text-slate-500" role="status" aria-busy="true">{b('loading')}</p>}
+      {state.kind === 'error' && <p className="mt-4 text-sm text-red-700" role="alert">{b('readError')}</p>}
+      {state.kind === 'ready' && <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-3">{fields.map(([name, value]) =>
+        <div key={name} className="min-w-0"><dt className="text-slate-500">{name}</dt><dd className="mt-1 break-words text-slate-900">{value}</dd></div>)}</dl>}
     </>}
+    {(section === 'events' || section === 'logs' && state.kind === 'ready') &&
+      <BackupLiveActivity key={`${revision}:${section}`} selection={selection} channel={section} viewEvents={() => setSection('events')} />}
   </section>;
 }

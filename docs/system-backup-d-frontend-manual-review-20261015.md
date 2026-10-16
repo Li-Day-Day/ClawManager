@@ -1,5 +1,9 @@
 # D 前端当前改动与操作者验证入口
 
+【2026-10-16 D 完整事件接口验收】[本轮新增](system-backup-d-event-api-20261016.md)将四类任务事件从完整详情中独立，详情 503 时仍能查看和分页；前端回归 221 项、最终构建、五语言及 375px 浏览器夹具通过。浏览器使用模拟 adapter，不计作真实 MySQL/E2E。下文 194 项/53 项回执保留为前一轮验收记录。
+
+【2026-10-16 完整前端与本地浏览器验收】按用户本轮授权安装锁定依赖，完整 TypeScript/Vite 构建通过，194 项备份前端 Node 检查通过，53 项本地隔离浏览器检查通过，覆盖七种示例状态、八个业务标签、五语言、375px 窄屏、总览降级、四类详情/事件/日志、配置历史与 Operation 分页/详情、403/500 错误边界。发现并修复 Windows 下组件与逻辑文件仅大小写不同导致的导入冲突，三个组件导入显式使用 `.tsx`。验收记录见 [本轮汇总](evidence/system-backup-d-frontend-acceptance-20261016.json) 与 [浏览器逐项记录](evidence/system-backup-d-frontend-browser-acceptance-20261016.json)。下文“缺少依赖/完整构建与浏览器待验收”为历史状态；真实认证/API/生产端到端和未接入操作仍未完成。本轮依赖保留，构建、缓存和临时验收入口在收尾清理，最终结果以汇总 cleanup 为准。
+
 【2026-10-16 用户桌面截图已核对】[截图评审记录](evidence/system-backup-d-preview-screenshot-review-20261016.json)保留用户提供的[上半页](evidence/system-backup-d-preview-desktop-top-20261016.png)和[下半页](evidence/system-backup-d-preview-desktop-lower-20261016.png)原始 PNG。中文“有数据”显式示例已看到五项计数 1/1/1/1/0、配置/监控/就绪独立状态、完整六项依赖、catalog 降级、源写入者无漂移及恢复点 1/最低 2；这些桌面视图未见明显截断。发现“需要关注”的两个按钮横向贴边，现用 flex 换行及 gap-2 修正，5 项现有文案/读取检查通过，无新测试、安装或构建产物。截图在修正前取得，改后布局仍需用户重建确认；完整构建、窄屏、禁用/空态、其他语言和真实读取继续待验证。
 
 【r37 当前入口】已修复 r36 发现的总览阻断：开启既有真实读取开关后，总览 `503/not_ready` 会进入明确的“记录读取”状态，分别显示已验证配置和四类任务列表；未就绪资源单列，健康、恢复就绪和全局计数仍不可用。配置可用时可进入历史。后台四类详情及 events/logs 仍未就绪，选择任务不代表详情源已接线。见[实现范围](system-backup-d-live-records-review-20261015.md)及[六项审计](system-backup-d-six-scope-readiness-20261015.md)。

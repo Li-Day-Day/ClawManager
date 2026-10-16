@@ -1,0 +1,54 @@
+{
+  "kind": "a_auth_http_initial_full_package_failure",
+  "recorded_at": "2026-10-16T04:47:29.955Z",
+  "status": "failed_existing_browser_worker_workspace_fixture;not_full_gate_accepted",
+  "raw_log": "docs/evidence/a-auth-http-local-20261016-121808.txt",
+  "raw_sha256": "ff2f384828968eb162f44c63117ae0944130125f10e5926468a9aee9ca29929f",
+  "source_manifest": "docs/evidence/a-auth-http-source-20261016-121808.json",
+  "source_manifest_sha256": "17300df87a97e368896ec243e6ab9f4b0d1119885712c5b7b44b6746a7a5bad3",
+  "source_sha256": "6df70a888c507a42b87e7c71a81eecac684906bb3ddbf2be8ac312d983234113",
+  "source_files": 1294,
+  "package_results": [
+    {
+      "package": "clawreef/internal/repository",
+      "result": "pass"
+    },
+    {
+      "package": "clawreef/internal/middleware",
+      "result": "pass"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "result": "fail"
+    },
+    {
+      "package": "clawreef/internal/handlers",
+      "result": "pass"
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "result": "pass"
+    }
+  ],
+  "failures": [
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestBrowserWorkerUnifiedDeleteCleansResourcesAndRetriesFailure"
+    }
+  ],
+  "new_auth_http_checks_passed": 30,
+  "credential_log_leak_observed": true,
+  "log_leak_scope": "Default upper/db WARN logs credential query parameters on the closed-pool test; not production credential material",
+  "corrective_changes": [
+    "Use the same database/sql DB or transaction and session context without upper/db argument logging",
+    "Give browser-worker lifecycle test a matching owned workspace root and instance path; keep deletion guards; assert workspace preservation/removal"
+  ],
+  "source_postcheck_not_reached": true,
+  "owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-d1fa349b480d403cb218f90a6f843ee8",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-fd29568da2cd41a69a95163c398cbda9"
+  ],
+  "process_exit": 1,
+  "automatic_test_retries": 0,
+  "followup_required": true
+}

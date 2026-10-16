@@ -1,0 +1,74 @@
+{
+  "kind": "a_sensitive_download_admission_contract_candidate",
+  "status": "proposed_for_d_review_not_runtime_authorization",
+  "contract_version": "system-backup-plan.v12",
+  "production_approval": false,
+  "public_contracts_modified": false,
+  "migration_catalog_modified": false,
+  "operation": {
+    "endpoint": "getSystemBackupEvidence",
+    "method": "GET",
+    "strong_auth_condition": "classification_in_confidential_sensitive",
+    "idempotency_condition": "same_as_strong_auth_condition",
+    "proposed_operation_type": "evidence_download_admission",
+    "proposed_target_type": "evidence",
+    "target_public_id_pattern": "^sev_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "success_meaning": "nonce, audit intent, operation receipt and exact download claim committed atomically; no claim of bytes sent",
+    "admission_http_status": 200,
+    "stream_http_status": [200, 206],
+    "status_relation": "Operation/admission 200 is independent of GET stream full 200 or partial 206; final public Operation semantics require D review"
+  },
+  "signed_request_candidate": {
+    "domain": "clawmanager.system-backup.evidence-download-request.v1",
+    "fields": ["domain", "endpoint", "origin_installation_id", "evidence_id", "subject", "session", "manifest_sha256", "range_present", "range_start", "range_end"],
+    "algorithm": "UTF-8 JCS then lowercase SHA-256",
+    "request_body_fields": ["evidence_id", "range"],
+    "server_derived_fields": ["origin_installation_id", "subject", "session", "manifest_sha256", "range_present", "range_start", "range_end"],
+    "server_derivation": "Authenticate real access JWT and current SQL session/RBAC/owner; load authorized immutable evidence manifest; parse Range against actual content size with existing parser",
+    "session_convention": "Exact existing RegistrationActor.Session digest, identical to signed ProofPayload.session; never the bearer token",
+    "range_semantics": "Inclusive byte offsets; absent Range and explicit full range remain distinct via range_present because response status differs",
+    "idempotency_key": "Separate signed ProofPayload.idempotency_key and transaction unique scope; not a new request-body field",
+    "server_generated_claim": "Not known when proof is signed. Bind it through the immutable admission receipt and nonce.operation_id in the SAME claim/audit transaction",
+    "forbidden_client_assertions": ["actor", "session", "installation", "manifest_sha256", "claim", "owner", "provider_ref", "object_uri", "request_hash"]
+  },
+  "transaction_anchor_candidate": {
+    "nonce_result": "operation_id references new admission operation; response_sha256 stays SQL NULL",
+    "receipt_fields": ["schema_version", "operation_public_id", "origin_installation_id", "evidence_id", "request_hash", "claim_sha256", "claim_expires_at", "range_present", "range_start", "range_end", "admitted_at", "intent_audit_id"],
+    "response_storage": "Separate bounded immutable inline diagnostic evidence under system owner, with exact JCS bytes/hash and retention; no plaintext evidence/provider URI/raw proof/raw nonce",
+    "audit_api_change": "Provide the actual INSERT audit_logs.id from the original transaction, compare the stored row, and use it for the nonce FK; never SELECT MAX or a guessed ID",
+    "atomic_effects": ["audit intent", "claim CAS", "admission operation", "immutable admission receipt", "nonce unique INSERT"],
+    "final_guards": ["current session/credential/revocation", "current owner and RBAC", "original proof expiry", "claim expiry and manifest identity", "all retained nonce HMAC versions", "physical metadata reservation", "fresh SQL UTC after all callbacks"],
+    "commit_unknown": "Withhold provider reads and plaintext; do not automatically consume another nonce or replay the prior admission to send bytes"
+  },
+  "retry_recommendation": {
+    "same_key_same_hash": "Return conflict for a previously committed admission; never resend on the old operation/proof",
+    "same_key_different_hash": "Return idempotency conflict",
+    "after_provider_failure_disconnect_or_revocation": "Keep original nonce/admission immutable; record a separate result audit; a new attempt needs fresh key and proof after current claim/session checks",
+    "transaction_rollback": "No consumed nonce or committed admission; normal proof lifetime and current auth still apply",
+    "result_audit": "Distinguish admission, read failure, cancellation and local write completion; local write completion does not prove client receipt"
+  },
+  "d_sql_changes_required": [
+    "New operation and target ENUM members plus evidence target CHECK",
+    "New synchronous terminal/timing/result constraints for admission operations",
+    "Same-installation target linkage and immutable receipt/claim binding",
+    "Define public Operation response versus private admission receipt and retain both exact representations as needed",
+    "Runtime minimal INSERT/SELECT privileges, retention/GC compatibility and physical capacity",
+    "New append-only reviewed migration; do not edit published 066/075 or reuse maintenance 081/082 proposals"
+  ],
+  "required_acceptance": [
+    "Proof issuance and consumption derive the same server-side canonical request",
+    "TLS, actual JWT, current session, RBAC and owner checks",
+    "Absent/full/closed/open/suffix Range, duplicate headers and changed evidence manifest",
+    "Cross-installation/evidence/session/range/key substitution rejects before provider access",
+    "Atomic rollback of nonce/audit/claim/operation/receipt on each insertion failure",
+    "Concurrent same nonce including historical HMAC key versions allows one admission",
+    "Commit lost reply, old admission retry, expiry and current revocation expose no bytes",
+    "No nonce/proof/bearer/provider locator in persisted audit/receipt or errors"
+  ],
+  "decisions_required_from_d": [
+    "Accept transitive claim binding or select a separately specified two-phase pre-admission protocol",
+    "Approve operation/target names, precise wire errors and public Operation representation",
+    "Approve one-admission-per-key retry policy and result-audit semantics",
+    "Approve exact audit INSERT-ID API, migration, ownership, lifecycle retention and capacity integration"
+  ]
+}

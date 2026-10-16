@@ -1,5 +1,7 @@
 # A：canonical 回填事务编排候选
 
+2026-10-16 A 独立复核：[D 七项完整服务新回执](evidence/system-backup-d-canonical-backfill-service-mysql-accepted-20261016.json)已有同轮原始日志、七个准确 PASS、94 文件迁移及最终退出/清理。[A 接收](evidence/a-d-canonical-backfill-service-review-20261016.json)完成 23 项核对、22 份服务重点文件和 69 条准确本地产物缺席检查。原七项服务待办关闭，不重跑。仅对应早上冻结的 1,265 项输入；当前合并增加 browser-worker migration 等输入，不能据此接收当前整个工作树或新的 catalog。A 八项授权组合独立接收，不能相加为一轮统一成功。旧中断轮远端清理仍未知；真实 grant/原文/target/物理容量、正式迁移及生产接线继续待交付。
+
 2026-10-16 更新：[A 具体授权组合八项 MySQL](system-backup-a-maintenance-authority-mysql-handoff-20261015.md)已[限定接收](evidence/a-maintenance-authority-mysql-accepted-sbk-mig-261016011333-1fdd.json)，实际调用本服务的 apply/observe，完整八项和清理均通过，不重跑。该 root 覆盖授权组合及相应真实暂存/回滚，不执行 D 的独立七项 root；下方旧 16:33 中断记录及其远端清理未知状态继续保留，不由新的 namespace 清理替代。真实授权/原文、正式迁移与生产接线仍未完成。
 
 2026-10-15 远测状态更新：[16:33 操作者日志](evidence/d-canonical-backfill-remote-20261015163349.txt)在 17:23:39 以“管道已被停止”结束，[A 中断核对](evidence/a-canonical-backfill-mysql-interrupted-20261015.json)确认本地 Linux 编译已完成、准确 source/构建目录及 67 个 fixture 均已删除。日志没有七项实际 SQL root、namespace、远端成功或清理证据；不能记作通过，也不能由中断推断远端 scratch 未创建。本轮没有远端查询或重启任务。新增[八项 A 具体授权组合探针](system-backup-a-maintenance-authority-mysql-handoff-20261015.md)已单独完成本地准备，实际 MySQL 同样待操作者验收，两者不互相替代。

@@ -1,0 +1,245 @@
+{
+  "kind": "d-system-backup-task-event-api-review.v1",
+  "date": "2026-10-16",
+  "scope": "Four task event DTO/HTTP routes and independent frontend event view",
+  "public_json_schema_changed": false,
+  "persisted_redacted_messages": true,
+  "contract_basis": "Division plan section 6.2 and EventResource.message.x-redacted-before-persist=true",
+  "successful_response_context_headers": [
+    "X-System-Backup-Data-Source",
+    "X-System-Backup-Origin-Installation-ID",
+    "X-System-Backup-Task-Row-Version"
+  ],
+  "cors_expose_headers_added": true,
+  "backend": {
+    "runtime": "Go 1.26.1 windows/amd64",
+    "default_vet": true,
+    "results": {
+      "r2": {
+        "clawreef/internal/systembackupread": {
+          "passes": 493,
+          "top_level": 72,
+          "failed": [],
+          "skipped": [],
+          "package_pass": true
+        },
+        "clawreef/internal/systembackupsecurity": {
+          "passes": 0,
+          "top_level": 0,
+          "failed": [],
+          "skipped": [],
+          "package_pass": true
+        },
+        "command-line-arguments": {
+          "passes": 2,
+          "top_level": 2,
+          "failed": [],
+          "skipped": [],
+          "package_pass": true
+        }
+      },
+      "r3": {
+        "command-line-arguments": {
+          "passes": 2,
+          "top_level": 2,
+          "failed": [],
+          "skipped": [],
+          "package_pass": true
+        }
+      }
+    },
+    "r2_frozen_files": 1326,
+    "r3_frozen_files": 1327,
+    "r2_source_sha256": "dce92e7b1e41b9fe7e26f3497ad16f30f13a6da06060f4fdde43e6b97ecee533",
+    "r3_source_sha256": "a7cb6d82e125b3fcbfc6300b3bdcdffadefd10b6b66b9a5e33a7a266ac0815f5",
+    "reader_package_unchanged_between_r2_r3": true,
+    "security_package_unchanged_between_r2_r3": true,
+    "focused_source_pins": [
+      {
+        "path": "backend/internal/systembackupread/task_event_dto.go",
+        "sha256": "206a07a2175f8295e76bd7caeb549585c72f035844294c97274bf5ee61aca3c2",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/internal/systembackupread/task_event_dto_test.go",
+        "sha256": "012be11eaa820ebb8d2e583a0b1885a14fa57e2a68237fdaa521f9c5effe0ac0",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/internal/systembackupread/task_event_control.go",
+        "sha256": "827d0e088ff38a4cd767ecaf1c7d7f68f7a5c0ff7eb9be05c3da02b013384bc7",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/internal/systembackupread/task_event_control_test.go",
+        "sha256": "1bb0c3869fb3961bd9d2ab54422cb388749474740a19ea18cc2398de95812335",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/internal/systembackupread/task_event_control_cursor.go",
+        "sha256": "7cdf24fb627f9959582660e1895c660615a78f4155ea62cb3dfa6d390d2ad413",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/d_detail_control_mysql_test.go",
+        "sha256": "596d14a53343821af4f08841e12b129faed235ba17d1fc8fe52ae194497b849a",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+        "sha256": "cfb61dcc20db4e7d6b288e22d97da4d004219b7cda138c243b670fe49aa98956",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/cmd/server/system_backup_read_live.go",
+        "sha256": "b3087a0409a9cf5d6b647abd1bcc9004b5ff428999feec6843d05d095fa75760",
+        "matches_r2": false,
+        "matches_r3": true
+      },
+      {
+        "path": "backend/cmd/server/system_backup_read_live_test.go",
+        "sha256": "5c9cd00efb4f5bdd5dbf3cf2b751a465ffbb09dd30eb1d8abc6153eeb78d203a",
+        "matches_r2": true,
+        "matches_r3": true
+      },
+      {
+        "path": "scripts/system-backup-d-event-api-native-validation.ps1",
+        "sha256": "fc75d995340a206a7cc75d653bc0f0ddb72a03e76a3ac91eb169c4e96f12d4da",
+        "matches_r2": false,
+        "matches_r3": true
+      }
+    ],
+    "mysql_tagged_compile": true,
+    "actual_mysql_executed": false,
+    "full_server_package_gate": false
+  },
+  "frontend": {
+    "tests": 221,
+    "failures": 0,
+    "skips": 0,
+    "typescript_vite_build_exit": 0,
+    "build_warning": "Existing main bundle exceeds 500 kB",
+    "source_unchanged_after_validation": true,
+    "browser_checks": 13,
+    "browser_failed": 0,
+    "browser_transport": "Mock Axios adapter with real React components and service header forwarding; detail always 503",
+    "responsive_width": 375,
+    "real_business_e2e": false
+  },
+  "attempt_notes": [
+    "Two Linux runs passed reader package 72/493 and MySQL-tag compile. Their HTTP phase was interrupted with exit 137 after Windows bind-mount disk waits; both owned containers/source caches removed.",
+    "First native preparation rejected the telemetry scratch name before any Go test; corrected with a separate owned scratch.",
+    "The prepared-cache option initially had a PowerShell quoting/parser error before transcript or tests; script repaired and syntax parsed before final r3.",
+    "Native r2 passed reader 72/493, tagged compile, two HTTP boundary tests and frozen postcheck, then cleaned all owned artifacts.",
+    "r3 reused only this task cache to test the final CORS expose-header addition; two HTTP boundary tests, default vet, frozen postcheck and cleanup passed.",
+    "A request to stop the superseded native r2 Go process found it had already exited successfully; no process was killed."
+  ],
+  "cleanup": [
+    {
+      "path": "frontend/dist",
+      "absent": true
+    },
+    {
+      "path": "frontend/.tmp-d-event-qa-20261016",
+      "absent": true
+    },
+    {
+      "path": "frontend/node_modules/.tmp",
+      "absent": true
+    },
+    {
+      "path": "frontend/node_modules/.vite-temp",
+      "absent": true
+    },
+    {
+      "path": ".tmp-d-index-cache-cff21fb5097f441c8da86b6d1c34754d",
+      "absent": true
+    },
+    {
+      "path": ".tmp-d-index-cache-d1dfce07372a4007943e3e279e003540",
+      "absent": true
+    },
+    {
+      "path": ".tmp-d-index-cache-3c06ce5972284e89b275a5feff82b862",
+      "absent": true
+    },
+    {
+      "path": ".tmp-d-index-cache-6cc0e9c3327046458004505f36a37ce4",
+      "absent": true
+    },
+    {
+      "path": ".tmp-a-evidence-6cc0e9c3327046458004505f36a37ce4",
+      "absent": true
+    },
+    {
+      "path": ".tmp-d-index-cache-95b0099d88a24b71961dfd6b3fbf6bf0",
+      "absent": true
+    },
+    {
+      "path": ".tmp-a-evidence-01b4626c490641ac874e9872330ca0d6",
+      "absent": true
+    }
+  ],
+  "dependencies_installed_this_round": false,
+  "production_enabled": false,
+  "user_requested_pause_after_round": true,
+  "remaining": [
+    "Actual MySQL execution for new detail/event assertions",
+    "Multi-owner report/restore/cleanup/artifact facts for complete detail",
+    "Overview, logs, manifest and mutation flows"
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/system-backup-d-event-api-native-local-20261016-r2.txt",
+      "bytes": 474545,
+      "sha256": "6bdc7d0fb04d04d1c4a4c062fe9668d77f16f91e3ff4bbf0ac33b9739353295d"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-native-source-20261016-r2.json",
+      "bytes": 259531,
+      "sha256": "3ac2a7038d273839553d29f9aab2786cef864392a3b708af56d1eb1d18183380"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-native-local-20261016-r3.txt",
+      "bytes": 3862,
+      "sha256": "8e75ad45f9795e7f14c144b7a7584acd208d26329412e71c280c73c7971d8d3e"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-native-source-20261016-r3.json",
+      "bytes": 259737,
+      "sha256": "f6f26391403fe65a609599d0df882f61bfd87dafcf488937fc7e71de36e85f9b"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-frontend-tests-20261016.txt",
+      "bytes": 15366,
+      "sha256": "ec3817c6d6fb609293abe90d5c6102873128d6bb925807342fbed7b25f5d3f40"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-frontend-build-20261016-r2.txt",
+      "bytes": 929,
+      "sha256": "8851548afbec02bb244baff9bb3ae98a8e42f2aa5fbf8ce7579bcb66aa6964a6"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-browser-20261016.json",
+      "bytes": 1350,
+      "sha256": "9ef999bdc2354ebcd0e78bbec6035a48e53e45f998329c9aa70c816ae9f2fe20"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-desktop-20261016.png",
+      "bytes": 36522,
+      "sha256": "4ec8e3a2e5e452ebd88a1ca4976c1f7ebe58578085546d282b70b74a9ee2a50f"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-event-api-mobile-20261016.png",
+      "bytes": 30943,
+      "sha256": "c5f13aa378d68581742fcd3763724614d30159ff0277533b24d138a67f30547d"
+    }
+  ]
+}

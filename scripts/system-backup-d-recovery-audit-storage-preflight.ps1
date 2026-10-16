@@ -9,15 +9,18 @@ param(
     [ValidatePattern('^[a-z0-9]([-a-z0-9]*[a-z0-9])?$')][string]$DeploymentName='',
     [ValidatePattern('^[a-z0-9]([-a-z0-9]*[a-z0-9])?$')][string]$ManagerContainerName='',
     [string]$JournalMountPath='',
-    [string]$ExpectedManagerImage=''
+    [string]$ExpectedManagerImage='',
+    [ValidateRange(1,2147483647)][int]$ExpectedJournalUID,
+    [ValidateRange(1,2147483647)][int]$ExpectedJournalGID
 )
 
 $ErrorActionPreference='Stop'
 if($DeploymentName){
     if(-not $ManagerContainerName -or $JournalMountPath -notmatch '^/(?:[A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+$' -or
         @($JournalMountPath.Split('/')) -contains '..' -or @($JournalMountPath.Split('/')) -contains '.' -or
-        $ExpectedManagerImage -notmatch '^[A-Za-z0-9./:_-]+@sha256:[a-f0-9]{64}$') { throw 'Deployment preflight requires reviewed container, fixed mount path and immutable image' }
-}elseif($ManagerContainerName -or $JournalMountPath -or $ExpectedManagerImage){throw 'Manager inputs require DeploymentName'}
+        $ExpectedManagerImage -notmatch '^[A-Za-z0-9./:_-]+@sha256:[a-f0-9]{64}$' -or
+        -not $ExpectedJournalUID -or -not $ExpectedJournalGID) { throw 'Deployment preflight requires reviewed container, fixed mount path, immutable image and journal UID/GID' }
+}elseif($ManagerContainerName -or $JournalMountPath -or $ExpectedManagerImage -or $ExpectedJournalUID -or $ExpectedJournalGID){throw 'Manager inputs require DeploymentName'}
 $auditUidPattern='^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
 
 function Get-KubeJson {
@@ -49,7 +52,7 @@ function Convert-KubeQuantity {
 }
 
 $claim=Get-KubeJson -Arguments @('--context',$KubeContext,'--namespace',$Namespace,'get','pvc',$ClaimName,'-o','json')
-if ($claim.metadata.name -ne $ClaimName -or $claim.metadata.namespace -ne $Namespace -or
+if ($claim.metadata.name -ne $ClaimName -or $claim.metadata.namespace -ne $Namespace -or $claim.metadata.deletionTimestamp -or
     $claim.status.phase -ne 'Bound' -or [string]::IsNullOrWhiteSpace($claim.spec.volumeName) -or
     $claim.spec.storageClassName -ne $ExpectedStorageClass -or
     ($claim.spec.volumeMode -and $claim.spec.volumeMode -ne 'Filesystem') -or
@@ -59,7 +62,7 @@ if ($claim.metadata.name -ne $ClaimName -or $claim.metadata.namespace -ne $Names
 $claimUid=[string]$claim.metadata.uid
 if ($claimUid -notmatch $auditUidPattern) { throw 'Audit PVC UID is invalid' }
 $storageClass=Get-KubeJson -Arguments @('--context',$KubeContext,'get','storageclass',$ExpectedStorageClass,'-o','json')
-if($storageClass.metadata.name -ne $ExpectedStorageClass -or $storageClass.metadata.uid -notmatch $auditUidPattern -or
+if($storageClass.metadata.name -ne $ExpectedStorageClass -or $storageClass.metadata.uid -notmatch $auditUidPattern -or $storageClass.metadata.deletionTimestamp -or
     $storageClass.provisioner -ne $ExpectedCSIDriver -or $storageClass.reclaimPolicy -ne 'Retain') { throw 'Audit StorageClass driver or Retain policy is not reviewed' }
 $capacity=Convert-KubeQuantity ([string]$claim.status.capacity.storage)
 $requestedCapacity=Convert-KubeQuantity ([string]$claim.spec.resources.requests.storage)
@@ -67,7 +70,7 @@ if ($capacity -lt $MinCapacityBytes -or $requestedCapacity -lt $MinCapacityBytes
     $capacity -lt $requestedCapacity) { throw 'Audit PVC capacity is below the requested minimum or its own request' }
 
 $volume=Get-KubeJson -Arguments @('--context',$KubeContext,'get','pv',([string]$claim.spec.volumeName),'-o','json')
-if ($volume.metadata.name -ne $claim.spec.volumeName -or $volume.status.phase -ne 'Bound' -or $volume.spec.claimRef.uid -ne $claimUid -or
+if ($volume.metadata.name -ne $claim.spec.volumeName -or $volume.metadata.deletionTimestamp -or $volume.status.phase -ne 'Bound' -or $volume.spec.claimRef.uid -ne $claimUid -or
     $volume.spec.claimRef.name -ne $ClaimName -or $volume.spec.claimRef.namespace -ne $Namespace -or
     $volume.spec.csi.driver -ne $ExpectedCSIDriver -or
     [string]::IsNullOrWhiteSpace($volume.spec.csi.volumeHandle) -or
@@ -107,6 +110,20 @@ if($DeploymentName){
         param($PodSpec)
         $manager=@($PodSpec.containers | Where-Object {$_.name -eq $ManagerContainerName})
         if($manager.Count -ne 1 -or $manager[0].image -ne $ExpectedManagerImage){throw 'Manager image or container identity differs'}
+        # Container settings override Pod settings. Missing non-root identity
+        # cannot be inferred from image metadata or a Running phase.
+        $managerContext=$manager[0].securityContext
+        $effectiveUID=$PodSpec.securityContext.runAsUser
+        $effectiveGID=$PodSpec.securityContext.runAsGroup
+        $effectiveNonRoot=$PodSpec.securityContext.runAsNonRoot
+        if($null -ne $managerContext.runAsUser){$effectiveUID=$managerContext.runAsUser}
+        if($null -ne $managerContext.runAsGroup){$effectiveGID=$managerContext.runAsGroup}
+        if($null -ne $managerContext.runAsNonRoot){$effectiveNonRoot=$managerContext.runAsNonRoot}
+        if($effectiveUID -ne $ExpectedJournalUID -or $effectiveGID -ne $ExpectedJournalGID -or $effectiveNonRoot -ne $true -or
+            $managerContext.privileged -eq $true -or $managerContext.allowPrivilegeEscalation -ne $false -or
+            @($managerContext.capabilities.drop) -notcontains 'ALL' -or $managerContext.capabilities.add){
+            throw 'Manager must use the exact non-root journal writer without privilege escalation or extra capabilities'
+        }
         $mounts=@($manager[0].volumeMounts | Where-Object {$_.name -eq $auditVolumeName})
         if($mounts.Count -ne 1 -or $mounts[0].mountPath -ne $JournalMountPath -or $mounts[0].readOnly -eq $true -or
             $mounts[0].subPath -or $mounts[0].subPathExpr -or ($mounts[0].mountPropagation -and $mounts[0].mountPropagation -ne 'None')){throw 'Manager audit mount path or writable identity differs'}
@@ -162,6 +179,8 @@ foreach ($other in @($allVolumes.items)) {
     capacity_bytes=$capacity
     access_mode='ReadWriteOncePod'
     deployment_preflight_checked=[bool]$DeploymentName
+    journal_writer_uid=$(if($DeploymentName){$ExpectedJournalUID}else{$null})
+    journal_writer_gid=$(if($DeploymentName){$ExpectedJournalGID}else{$null})
     deployment_uid=$deploymentUid
     writer_pod_uid=$writerPodUid
 } | ConvertTo-Json -Compress

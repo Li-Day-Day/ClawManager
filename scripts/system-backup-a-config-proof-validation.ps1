@@ -13,13 +13,15 @@ $proofManifest=[IO.Path]::GetFullPath($SourceManifestPath)
 if([IO.Path]::GetDirectoryName($proofManifest) -ne [IO.Path]::GetFullPath((Join-Path $proofRoot 'docs/evidence')) -or (Test-Path -LiteralPath $proofManifest)){throw 'Manifest must be a new docs/evidence file'}
 $proofPreviousPath=$env:PATH
 . (Join-Path $PSScriptRoot 'system-backup-d-index-source-snapshot.ps1')
+. (Join-Path $PSScriptRoot 'system-backup-a-config-proof-source.ps1')
 try {
     [IO.Directory]::CreateDirectory($proofOwner) | Out-Null
     [IO.File]::WriteAllText((Join-Path $proofOwner 'owner.txt'),[IO.Path]::GetFileName($proofOwner))
-    $proofSnapshot=New-DIndexSourceSnapshot -Root $proofRoot -Destination $proofFrozen
+    $proofSnapshot=New-AConfigProofSourceSnapshot -Root $proofRoot -Owner $proofOwner
     $proofStream=[IO.File]::Open($proofManifest,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
     try{$proofBytes=[Text.Encoding]::UTF8.GetBytes(($proofSnapshot|ConvertTo-Json -Depth 6));$proofStream.Write($proofBytes,0,$proofBytes.Length)}finally{$proofStream.Dispose()}
     Write-Output ('LOCAL_SOURCE config-proof-frozen=yes source_sha256='+$proofSnapshot.source_sha256+' files='+$proofSnapshot.files.Count)
+    Write-Output ('LOCAL_SOURCE config-proof-capture-attempts='+$proofSnapshot.capture_attempts+' stable-copy-required=yes')
     $env:PATH='C:\Program Files\Go\bin;'+$env:PATH
     Push-Location $proofFrozen
     try {

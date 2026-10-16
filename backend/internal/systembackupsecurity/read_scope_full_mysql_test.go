@@ -330,6 +330,7 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 			}
 		}
 	})
+	dCheckDetailControlMySQL(t, db, ownScope, foreignScope, own, first, otherKinds)
 	t.Run("overview_control_complete_counts_and_installation_isolation", func(t *testing.T) {
 		control, e := ownControlReader.ReadOverviewControl(ownScope.Context())
 		mysqlMust(t, e)
@@ -455,6 +456,12 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 	}
 	if execution, e := ownControlReader.ReadTaskExecution(ownScope.Context(), systembackupread.BackupTask, first); !errors.Is(e, ErrRegistrationPermission) || execution.Task().PublicID != "" || len(execution.Attempts()) != 0 || len(execution.JobObservations()) != 0 {
 		t.Fatalf("revoked session retained task execution read: %v", e)
+	}
+	if detail, e := ownControlReader.ReadTaskDetailControl(ownScope.Context(), systembackupread.BackupTask, first); !errors.Is(e, ErrRegistrationPermission) || detail.Execution().Task().PublicID != "" {
+		t.Fatalf("revoked session retained detail control read: %v", e)
+	}
+	if events, e := ownService.ListTaskEventsDTO(ownScope.Context(), systembackupread.BackupTask, first, 2, ""); !errors.Is(e, ErrRegistrationPermission) || events.InstallationID != "" || events.Resource.Items != nil {
+		t.Fatalf("revoked session retained public event read: %v", e)
 	}
 	if promotion, e := ownControlReader.ReadOverviewPromotionControl(ownScope.Context()); !errors.Is(e, ErrRegistrationPermission) || promotion.Control().InstallationState().InstallationID != "" {
 		t.Fatalf("revoked session retained promotion control read: %v", e)

@@ -1,0 +1,66 @@
+**********************
+PowerShell transcript start
+Start time: 20261016164450
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$revalidateRoot=[IO.Path]::GetFullPath($PWD.Path)
+$revalidateID=[guid]::NewGuid().ToString('N')
+$revalidateOwner=Join-Path $revalidateRoot ('.tmp-d-index-cache-'+$revalidateID)
+$revalidateSource=Join-Path $revalidateOwner 'source'
+$revalidateLog=Join-Path $revalidateRoot 'docs/evidence/d-download-binding-source-only-20261016-r61.txt'
+$revalidateManifest=Join-Path $revalidateRoot 'docs/evidence/d-download-binding-source-only-20261016-r61.json'
+$revalidateExpected=Get-Content (Join-Path $revalidateRoot 'docs/evidence/d-download-binding-source-20261016-r60.json') -Raw | ConvertFrom-Json
+$ErrorActionPreference='Stop'
+. ./scripts/system-backup-d-index-source-snapshot.ps1
+. ./scripts/system-backup-a-config-proof-source.ps1
+. ./scripts/system-backup-a-evidence-go-step.ps1
+$revalidateExit=1
+Start-Transcript -LiteralPath $revalidateLog -NoClobber|Out-Null
+try {
+ [IO.Directory]::CreateDirectory($revalidateOwner)|Out-Null
+ [IO.File]::WriteAllText((Join-Path $revalidateOwner 'owner.txt'),[IO.Path]::GetFileName($revalidateOwner))
+ Write-Host ('LOCAL_OWNER source-only='+$revalidateOwner)
+ $revalidateSnapshot=New-AConfigProofSourceSnapshot -Root $revalidateRoot -Owner $revalidateOwner -MaxAttempts 3
+ if($revalidateSnapshot.source_sha256 -ne $revalidateExpected.source_sha256 -or $revalidateSnapshot.files.Count -ne $revalidateExpected.files.Count){throw 'Current source differs from r60; no inherited test acceptance'}
+ if(Test-Path -LiteralPath $revalidateManifest){throw 'Refusing existing revalidation manifest'}
+ [IO.File]::WriteAllText($revalidateManifest,($revalidateSnapshot|ConvertTo-Json -Depth 7))
+ Write-Host ('LOCAL_SOURCE source-only-same-r60=yes files='+$revalidateSnapshot.files.Count+' source_sha256='+$revalidateSnapshot.source_sha256)
+ $revalidateNativeExit=Invoke-AEvidenceNative -FilePath 'node' -Arguments @('-e','process.exit(0)')
+ if($revalidateNativeExit -ne 0){throw 'Native helper status reproduction failed'}
+ Test-DIndexSourceSnapshot -Root $revalidateSource -Manifest $revalidateSnapshot
+ Write-Host 'LOCAL_PASS source-only-same-r60-inputs-postcheck=yes go-rerun=no dependencies-installed=no remote=no'
+ $revalidateExit=0
+} finally {
+ try {
+  if(Test-Path -LiteralPath $revalidateOwner){
+   $revalidateResolved=(Resolve-Path -LiteralPath $revalidateOwner).Path
+   if([IO.Path]::GetDirectoryName($revalidateResolved) -ne $revalidateRoot -or [IO.Path]::GetFileName($revalidateResolved) -ne ('.tmp-d-index-cache-'+$revalidateID) -or ((Get-Item -Force -LiteralPath $revalidateResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) -or [IO.File]::ReadAllText((Join-Path $revalidateResolved 'owner.txt')) -ne [IO.Path]::GetFileName($revalidateResolved)){throw 'Source-only cleanup owner mismatch'}
+   Remove-Item -LiteralPath $revalidateResolved -Recurse -Force
+  }
+  Write-Host ('CLEANED source-only='+(-not(Test-Path -LiteralPath $revalidateOwner)))
+ } finally {Write-Host ('d_source_only_revalidation_exit='+$revalidateExit);Stop-Transcript|Out-Null}
+}
+Process ID: 45452
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER source-only=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-d05344105ac042168715787f3b0abb3d
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE source-only-same-r60=yes files=1330 source_sha256=3a48c5d6b0829fda649ecfd5395acf1ec95328fa836bc6127ee4299977d4fac7
+LOCAL_PASS source-only-same-r60-inputs-postcheck=yes go-rerun=no dependencies-installed=no remote=no
+CLEANED source-only=True
+d_source_only_revalidation_exit=0
+**********************
+PowerShell transcript end
+End time: 20261016164534
+**********************

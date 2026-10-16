@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { backupActivityExpired, readBackupLiveActivity } from './backupLiveActivity';
+import { readBackupLiveEvents } from './backupLiveEvents';
 import type { BackupActivityChannel, BackupActivityPage } from './backupLiveActivity';
 import type { BackupDetailSelection } from './backupLiveDetail';
 import { systemBackupReadService } from '../../../services/systemBackupReadService';
 import { useBackupText } from './useBackupText';
 
+type ActivityPage = BackupActivityPage<'events'> | BackupActivityPage<'logs'>;
+
 type ActivityState = { kind: 'loading' } | { kind: 'error' } | { kind: 'expired' }
-  | { kind: 'ready'; page: BackupActivityPage<BackupActivityChannel> };
+  | { kind: 'ready'; page: ActivityPage };
 
 export default function BackupLiveActivity({ selection, channel, viewEvents }: {
   selection: BackupDetailSelection; channel: BackupActivityChannel; viewEvents: () => void;
@@ -17,11 +20,15 @@ export default function BackupLiveActivity({ selection, channel, viewEvents }: {
   const [busy, setBusy] = useState(false);
   const request = useRef<AbortController | null>(null);
   const { kind, public_id, origin_installation_id, row_version } = selection;
+  const readPage = (selected: BackupDetailSelection, signal: AbortSignal, current?: ActivityPage): Promise<ActivityPage> => {
+    if (channel === 'events') return readBackupLiveEvents(systemBackupReadService, selected, signal, current?.channel === 'events' ? current : undefined);
+    return readBackupLiveActivity(systemBackupReadService, selected, 'logs', signal, current?.channel === 'logs' ? current : undefined);
+  };
   const failed = (error: unknown) => setState({ kind: backupActivityExpired(channel, error) ? 'expired' : 'error' });
   useEffect(() => {
     const controller = new AbortController();
     request.current = controller;
-    readBackupLiveActivity(systemBackupReadService, { kind, public_id, origin_installation_id, row_version }, channel, controller.signal)
+    readPage({ kind, public_id, origin_installation_id, row_version }, controller.signal)
       .then((page) => { if (!controller.signal.aborted) setState({ kind: 'ready', page }); })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) setState({ kind: backupActivityExpired(channel, error) ? 'expired' : 'error' });
@@ -41,7 +48,7 @@ export default function BackupLiveActivity({ selection, channel, viewEvents }: {
     request.current?.abort();
     request.current = controller;
     setBusy(true);
-    readBackupLiveActivity(systemBackupReadService, selection, channel, controller.signal, state.page)
+    readPage(selection, controller.signal, state.page)
       .then((page) => { if (!controller.signal.aborted) setState({ kind: 'ready', page }); })
       .catch((error: unknown) => { if (!controller.signal.aborted) failed(error); })
       .finally(() => { if (!controller.signal.aborted) setBusy(false); });

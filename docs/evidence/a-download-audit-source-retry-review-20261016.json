@@ -1,0 +1,77 @@
+{
+  "kind": "a_D_download_audit_source_capture_retry_fix_review",
+  "recorded_at": "2026-10-16T06:49:37.601Z",
+  "status": "source_only_fix_verified_operator_remote_retry_pending",
+  "checks": {
+    "operator_failure_before_build_or_remote": true,
+    "unaltered_baseline_bytes": true,
+    "only_bounded_capture_and_early_owner_output_changed": true,
+    "only_wrapper_drift_from_387_preparation_pins": true,
+    "stable_actual_source_manifest": true,
+    "PowerShell_7_and_5_1_checked": true,
+    "eight_source_cases_twice_no_Go_SQL_SSH": true,
+    "13_dispatch_bindings_each_host": true,
+    "current_wrapper_helper_and_snapshot_postchecks": true,
+    "source_gate_exit_zero": true,
+    "three_exact_source_fixture_owners_absent": true,
+    "new_source_inputs_still_current": true
+  },
+  "operator_failure": {
+    "log": "docs/evidence/d-download-audit-remote-20261016-144258-2132fd19.txt",
+    "raw_sha256": "d41a896baa3384419bab2e70dc09ba2df81c443afc1644037aef94a07f035473",
+    "process_exit": 1,
+    "source_manifest_absent": "docs/evidence/d-download-audit-remote-20261016-144258-2132fd19-source.json",
+    "before_Go": true,
+    "before_SSH": true,
+    "before_SQL": true,
+    "cleanup_reported": true,
+    "exact_failed_owner_not_logged_by_old_wrapper": true
+  },
+  "baseline_preparation": "docs/evidence/a-download-audit-remote-preparation-review-20261016.json",
+  "baseline_preparation_sha256": "065ca63debbb21bfa9b7bf0955f9134f4454c307cccf65772b58912fe6fb0174",
+  "before_source": "docs/evidence/a-download-audit-wrapper-before-source-retry-20261016.ps1",
+  "before_sha256": "89090bae18588b809bc8a038abb5c07d63cf7c60a60e5dee05ea308b34b6b95b",
+  "patched_wrapper": "scripts/system-backup-d-download-audit-validation.ps1",
+  "patched_wrapper_sha256": "aa7d419776f75aa22b0209ad1de3c22aec1008f98f6cdd18ca42cdeaae98dfa6",
+  "changes": [
+    "reuse existing source-only three-attempt helper",
+    "print exact owner before capture"
+  ],
+  "unchanged_prior_focused_inputs": 386,
+  "remaining_old_focused_drift": [
+    "scripts/system-backup-d-download-audit-validation.ps1"
+  ],
+  "validation_log": "docs/evidence/a-download-audit-source-retry-local-20261016.txt",
+  "validation_log_sha256": "10567ee0124b9254cf64efdd866cdfca0f50f11ec028c89f094270e50a492e2e",
+  "validation_harness": "docs/evidence/a-download-audit-source-retry-check-20261016.ps1",
+  "validation_harness_sha256": "feac78232428ce0c938bd29c740a5b62af8b533223dd4d4ba61ad4050cea4900",
+  "source_manifest": "docs/evidence/a-download-audit-source-retry-source-20261016.json",
+  "source_manifest_sha256": "11168637a72aec07e18765e11a4867ba92980c194fc3f03eae761d6706a97431",
+  "source_sha256": "d5560220082d9a1d1d253c6c2e0bfee72f5f0f631e367bf6222436500a4a95fe",
+  "source_files": 1313,
+  "capture_attempts": 1,
+  "capture_failures": [],
+  "distinct_helper_cases": 8,
+  "helper_test_hosts": [
+    "PowerShell 7.6.5",
+    "Windows PowerShell 5.1"
+  ],
+  "dispatch_bindings": 13,
+  "dispatch_test_hosts": 2,
+  "owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5a24678c9c53409fb68934c61d565066",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-fad5fcfa212f4f149b7737451d797e7d",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-baf66771d46049f9aea3a6897b46a65f"
+  ],
+  "current_manifest_drift": [],
+  "reviewer_sha256": "108e8ce9ff4e0e96514001a86374d14d4fba9d63f3e2482496ab6005f39102d9",
+  "Go_or_container_build_executed": false,
+  "remote_executed": false,
+  "database_executed": false,
+  "dependencies_installed": false,
+  "test_or_SSH_SQL_retry_added": false,
+  "production_adapter_enabled": false,
+  "formal_approval": false,
+  "actual_MySQL_cases": 0,
+  "overall_goal_complete": false
+}

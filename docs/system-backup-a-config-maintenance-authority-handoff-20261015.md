@@ -1,5 +1,7 @@
 # A：canonical 维护的 grant/source 组合校验
 
+2026-10-16 A 已[独立接收 D 七项完整服务原冻结轮](evidence/a-d-canonical-backfill-service-review-20261016.json)，不再把它列作待远测；与下方八项授权组合分别保留范围。当前合并 catalog 已变化，回执没有批准当前整树、真实来源或生产适配。新增[私有会话 holder 候选](../backend/internal/systembackupsecurity/config_maintenance_session_holder.go)以实际 JWT/SQL 会话适配独立核对 grant 的 issuer/principal，[1,912 项完整本地模型检查及清理](evidence/a-maintenance-session-holder-review-20261016.json)通过；不能由会话认证推导维护 grant 或历史原文来源，具体运行材料的[仓库审计](evidence/a-maintenance-materials-audit-20261016.json)仍为暂无可用交付。
+
 2026-10-16 后续：[八项具体组合层 MySQL 专项](system-backup-a-maintenance-authority-mysql-handoff-20261015.md)已取得操作者完整回执并[限定接收](evidence/a-maintenance-authority-mysql-accepted-sbk-mig-261016011333-1fdd.json)。实际私有 authority/apply/observe、六项暂存后漂移/到期回滚、独立当前观察和 installation_state 不变均通过，准确 namespace/UID 及两端清理齐全；不再请求重跑该专项。认证来源仍为合成，真实 holder/grant/archive/target/capacity、原文件及生产门禁保持待交付；下方 r2/本地准备记录按各自历史范围保留。
 
 本增量为 [完整回填事务候选](system-backup-a-config-backfill-service-handoff-20261015.md)的私有 `configMaintenanceAuthority` 实现增加 `pinnedConfigMaintenanceAuthority`。它把五个必须存在的部署来源组合起来：当前安装目标/schema/catalog/ledger 校验、新写 grant 验证、独立当前观察 grant 验证、原归档认证，以及物理 metadata reservation。构造缺任一来源或准确 target/installation/actor/schema/catalog/migration pin 均拒绝；没有生产默认适配、路由或实际运行授权。

@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"clawreef/internal/middleware"
@@ -71,7 +72,7 @@ func registerBackupReadLive(admin *gin.RouterGroup, live *liveBackupRead) {
 		kind := route.kind
 		admin.GET(route.path, func(c *gin.Context) { live.listTasks(c, kind) })
 		admin.GET(route.path+"/:id", unavailable)
-		admin.GET(route.path+"/:id/events", unavailable)
+		admin.GET(route.path+"/:id/events", func(c *gin.Context) { live.listTaskEvents(c, kind) })
 		admin.GET(route.path+"/:id/logs", unavailable)
 	}
 	admin.GET("/system-backups/:id/manifest", unavailable)
@@ -187,7 +188,11 @@ func liveReadListQuery(c *gin.Context, allowStatus bool) (int, string, string, e
 		return 0, "", "", systembackupread.ErrInvalid
 	}
 	limit, cursor, status := 50, "", ""
-	for name, values := range c.Request.URL.Query() {
+	query, err := url.ParseQuery(c.Request.URL.RawQuery)
+	if err != nil {
+		return 0, "", "", systembackupread.ErrInvalid
+	}
+	for name, values := range query {
 		if len(values) != 1 || values[0] == "" {
 			return 0, "", "", systembackupread.ErrInvalid
 		}
@@ -269,4 +274,26 @@ func (l *liveBackupRead) getOperation(c *gin.Context) {
 	}
 	c.Header("X-System-Backup-Data-Source", "live")
 	c.JSON(http.StatusOK, result)
+}
+
+func (l *liveBackupRead) listTaskEvents(c *gin.Context, kind systembackupread.TaskKind) {
+	limit, cursor, _, err := liveReadListQuery(c, false)
+	if err != nil {
+		liveReadError(c, err)
+		return
+	}
+	service, ctx, ok := l.service(c)
+	if !ok {
+		return
+	}
+	result, err := service.ListTaskEventsDTO(ctx, kind, c.Param("id"), limit, cursor)
+	if err != nil {
+		liveReadError(c, err)
+		return
+	}
+	c.Header("X-System-Backup-Data-Source", "live")
+	c.Writer.Header().Add("Access-Control-Expose-Headers", "X-System-Backup-Data-Source, X-System-Backup-Origin-Installation-ID, X-System-Backup-Task-Row-Version")
+	c.Header(systembackupread.TaskEventInstallationHeader, result.InstallationID)
+	c.Header(systembackupread.TaskEventRowVersionHeader, strconv.FormatUint(result.TaskRowVersion, 10))
+	c.JSON(http.StatusOK, result.Resource)
 }

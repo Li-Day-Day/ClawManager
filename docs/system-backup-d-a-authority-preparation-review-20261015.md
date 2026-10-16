@@ -1,5 +1,7 @@
 # D 对 A 维护授权 MySQL 本地准备的独立接收
 
+【2026-10-16 r40】[D 新独立复核](evidence/system-backup-d-a-authority-review-20261016-r40.json)已收到八项实际 MySQL 的原始日志及冻结清单：八项/六项暂存回滚、准确 namespace/UID 与两端清理齐全，69 本地产物不存在，12 项重点来源匹配。关闭下文“八项执行数为 0”的历史待办，不重跑。该原轮为 94 文件 catalog，当前 95 文件目录及其他变化不由它批准；真实认证/归档/物理容量及生产门禁仍独立待交付。
+
 A 的[本地准备回执](evidence/a-maintenance-authority-mysql-local-review-20261015.json)现已交付。D 重新读取原始日志及冻结清单，接收范围为本地准备，不接收八项实际 MySQL 或生产认证。[D r38 回执](evidence/system-backup-d-a-authority-preparation-review-20261015-r38.json)、[来源复算](evidence/system-backup-d-a-authority-preparation-check-20261015-r38.json)及[终态核对](evidence/system-backup-d-a-authority-terminal-check-20261015-r38.json)记录本轮独立结果；未重跑构建或远测。
 
 清单的 1,265 个文件逐项 SHA/大小与当前输入一致，文件集合没有增减，逻辑 SHA 为 `35214503498b44f472823f2340e8f8dbcf6e18f9d0c1d0e71ca69d86a3ae5d09`。原日志、清单和 shell 语法日志的 SHA 均与 A 回执一致。原写入合同、维护摘要合同及正式 066 的原字节匹配；D r35 的前置错绑日志修正也已进入这次 tagged 编译输入。

@@ -1,10 +1,34 @@
 # A 角色开发步骤：users 与 AI Gateway 系统备份/恢复
 
+【2026-10-16 本轮收尾并按用户要求暂停】下载审计四项实际 MySQL 已接收，无需重跑。后续 [LDAP 请求取消修复](system-backup-a-ldap-request-cancellation-20261016.md)及[独立回执](evidence/a-ldap-request-review-20261016.json)固定 1,330 输入，完整 services 包 866 主测试/311 子用例（1,177 项）通过，无跳过；新增真实 TCP/TLS/StartTLS 24 项，旧实现取消反例、默认 vet、源码前后核对、exit 0、29 项独立检查及六条目录/四容器/两卷清理齐全。此前四次未进入测试的失败与一处原生 stdout 未进 transcript 的限制保留，不重复执行已通过套件。实际企业目录/realm/本人 MFA、真实维护材料、D 完整下载准入及正式共享批准仍未完成；后续目标暂停，恢复后从这些边界继续。
+
 > 本文是 A 的执行导航，不重新定义公共合同。公共范围、状态机、字段语义、错误映射、验收标准以 [多部署形态下的系统备份/恢复四人分工计划](./system-backup-restore-division-plan.md) 的 v12 版本为准；机器合同以 `contracts/system-backup/v12/` 为准。
 >
 > A 的业务域：`users`、`ai_gateway`。A 的跨域职责：Admin audit/redaction、strong-auth/nonce、权限配置 API、Secret bundle、KEK、三类签名 key、evidence store adapter/registry/GC、provider-proof，以及 evidence/download 安全。
 
-## 当前下一步（2026-10-09，系统 producer 生产接线）
+## 当前下一步（2026-10-16，不依赖 B/C 的 A 工作线）
+
+【2026-10-16 下载审计真实四项已接收】操作者 [14:52 新轮](evidence/d-download-audit-remote-20261016-145206-9924db6e.txt)的[A 限定回执](evidence/a-download-audit-mysql-accepted-sbk-mig-261016070211-49af.json)核对 1,314 来源、MySQL 8.4.8、四项/root、95 文件迁移、实际载荷 pin、四份夹具、namespace/原 UID/两端清理、exit 0 和 17 项独立检查；准确本地 owner/container 确认不存在。388/389 重点 pin 匹配，另一份 tagged D 读取探针的当前漂移明确排除。该存储专项关闭，无需重跑；下方待四项远测的描述保留为历史，完整下载准入及正式批准仍未完成。
+
+【2026-10-16 审计远测源码捕获失败已修】首次 14:42 尝试只在源码稳定复制阶段失败，未进入 Go/SSH/MySQL；[修复回执](evidence/a-download-audit-source-retry-review-20261016.json)验证 D 入口 source-only 最多三次捕获、准确 owner 提前输出，未改变后续构建/派发/SQL。八项 helper 与 13 项绑定在 PowerShell 7/5.1 均通过，真实 1,313 输入快照/postcheck、三条准确测试路径清理及 12 项独立检查通过；本轮不重跑整包或远测。[完整操作者命令](system-backup-a-download-audit-mysql-handoff-20261016.md)可重新执行，真实审计四项仍待新轮结果。
+
+【2026-10-16 D 审计四项远测准备及勘误已核对】[完整操作者命令](system-backup-a-download-audit-mysql-handoff-20261016.md)与[准备回执](evidence/a-download-audit-remote-preparation-review-20261016.json)独立核对同一 source 的两包 3,246 项、6 项 seed、17 项检查、387 份重点 pin 和准确 source/container 清理；本轮未重跑构建或远测。D 勘误已修正空内容/key 说明，保留原决议指纹。实际审计四项仍待操作者执行及回传，既有 proof 十五项无需重跑；完整下载准入、真实维护材料和正式共享批准仍未完成。
+
+【2026-10-16 D 下载审计存储已独立复核】[A 说明](system-backup-a-download-audit-review-20261016.md)及[回执](evidence/a-download-audit-review-20261016.json)固定 1,310 项输入，evidence 整包 196 主测试/1,224 子用例（1,420 项，其中新增 A 检查 27 项），无跳过；20 项复核、默认 vet、exit 0、源码/D 实现 postcheck、137 份重点 pin 和八条准确 owner 清理均通过。实际 INSERT ID 与同事务原行锚点的独立存储待办已关闭；下方“审计 ID 未完成”仅指完整准入装配及实际 MySQL，prelocked 锁前缀、operation/receipt/公共快照、容量和原子 nonce 仍待 D 交付。本地 SQL transport 模型不替代远测或生产授权。
+
+【2026-10-16 D 下载决议已接收，A canonical/非消费 proof 核心已本地接收】[新交接](system-backup-a-sensitive-download-candidate-20261016.md)固定 D 决议 `8b14d080...d73d8eac`，实现完整 Manifest 与规范 Range 的共享 JCS/hash、严格 header、实际 Ed25519 与完整声明 HMAC 候选、原始期限重查和材料擦除；不执行 SQL/nonce/provider 或新增可成功消费的 adapter。[回执](evidence/a-sensitive-download-candidate-review-20261016.json)固定 1,302 项输入，security/evidence 两包 426 主测试/2,759 子用例（3,185 项），其中新增 94 项、无跳过；默认 vet、源码及 D 决议 postcheck、exit 0、四条准确 owner 缺席均已核对，278 份重点来源匹配。初轮 AMR 夹具失败原样保留，修订未放宽校验。已指出 D 空内容 `0/0` 的前提与现 parser/Manifest 不符；当前 adapter 拒绝空内容。等待 D 选择方案的待办关闭，准确 prelocked 事务、实际 MFA/会话装配、审计 ID/operation/receipt/nonce/容量及共享正式迁移仍待完成，下方“待 D 决定”均按此限定更新。
+
+【2026-10-16 已按新授权补齐依赖并完成 HTTP 本地整包门禁】用户后续明确允许安装；锁定的 `compress v1.18.0` 已下载并通过原 `go.sum` 校验，未升级版本或改写模块文件。[最新交接](system-backup-a-auth-http-validation-20261016.md)与[验收回执](evidence/a-auth-http-review-20261016.json)固定 1,295 项输入，repository/services/middleware/handlers/server 五包、1,010 主测试/364 子用例（1,374 项）、默认 vet、frozen postcheck 与最终 exit 0 通过；七项 Unix 权限/符号链接检查按平台条件跳过，不计成功。新增 30 项真实 handler/AuthService/JWT 本地检查；修复登录状态 SQL 失败时密码哈希可能进入 ORM 参数日志的问题，并校正一项既有 workspace 删除夹具而未放宽生产保护。初轮失败完整保留，六条准确安装/测试/源码目录确认删除，安装依赖缓存保留。下方“缺依赖导致整包 HTTP 未验证”是历史状态，以本条为准；真实目录、本人 MFA、运行授权和正式迁移仍未接收。
+
+【2026-10-16 proof 十五项真实 MySQL 已接收，专项关闭】操作者 [11:06–11:24 完整日志](evidence/a-config-proof-mysql-remote-20261016-110614-b99f5f47.txt)及[独立验收](evidence/a-config-proof-mysql-accepted-sbk-mig-261016032334-5226.json)核对通过：冻结 1,292 项输入，第一次捕获成功；44 项不同本地 Go 检查、11 项派发、默认 vet、MySQL 8.4.8 的 95 文件正式迁移与 15/15 用例、两个实际 state/config 行锁等待、exit 0 和清理记录齐全。准确源码 owner 独立确认不存在，远端及内层缓存以同轮清理报告为据。254 份重点输入仍匹配；一份并行 D 控制面脚本漂移及新增输入不据此接收为当前整个树。无需重跑，不放行真实维护 grant、配置 writer、旧行回填或生产部署；下方“十五项待远测/待验收”均是历史状态，以本条为准。
+
+【2026-10-16 proof 两次源码冻结失败已核对并修订准备入口】10:26/10:30 操作者尝试都因复制期间源变动在本地退出，未建立 manifest 或进入编译/SSH/MySQL；原失败日志及两个准确 owner 清理记录已保留。[准备修订回执](evidence/a-config-proof-source-retry-review-20261016.json)验证仅对源内容/集合变化最多捕获三次，每次丢弃准确自有的部分副本，仍要求 before/after 完全一致，成功后下游仅派发一次。八个场景分别在 PowerShell 7/5.1 通过，原五项快照与十一项派发检查通过，真实当前 1,288 项副本/postcheck 和九条本地目录缺席核对通过。未重建 Go 或执行远测；[完整操作者命令](system-backup-a-config-proof-mysql-handoff-20261015.md)参数不变，十五项实际 SQL 仍待验收。
+
+【2026-10-16 A 独立复核 D 七项完整回填服务】[A 接收回执](evidence/a-d-canonical-backfill-service-review-20261016.json)逐项对照 D 08:34:36 原日志：七个准确叶子、23 项检查、两次实际配置行锁等待、94 文件迁移、binary/input/runner pin、exit 0 与同轮清理均通过，69 条准确本地产物路径不存在。22 个服务重点输入仍匹配；当前合并已新增 browser-worker migration 等九项输入，另有旧输入变化及并行读取接线，故仅接收原冻结服务，不接受最新整个工作树。旧“D 七项待回执”待办在本范围关闭，不重跑已通过套件；合成授权/容量、旧中断轮远端清理未知、真实材料和正式迁移的限制继续保留。
+
+后续执行导航见[A 独立工作线](system-backup-a-independent-work-20261016.md)：proof 15 项真实 MySQL 已完成限定接收；私有会话 holder 本地门禁、敏感下载及 081/082 的 A 候选评审已交付，仍缺正式 D 决策和真实维护材料。仓库没有的运行材料保持缺口，不再索要同一批路径。下方按日期保留的旧“待远测/待回执”描述以各项最新限定接收为准。
+
+【2026-10-16 proof 与私有会话 holder 本地门禁已完成】[proof 回执](evidence/a-config-proof-mysql-local-review-20261016.json)固定 1,274 项输入、正式 95 文件 catalog，proof/seed 共 44 项不同 Go 检查、11 项派发、默认 vet、Linux 探针/runner 和退出/清理通过；15 项真实 MySQL 仍由操作者执行，[完整命令已更新](system-backup-a-config-proof-mysql-handoff-20261015.md)。[私有 holder 回执](evidence/a-maintenance-session-holder-review-20261016.json)固定 1,282 项输入，完整 security/config 252 主测试/1,660 子用例（1,912 项）通过，默认 vet、exit 0、四个准确 owner 及 161 条夹具路径删除均已核对；首次 300 秒包级超时原日志保留，最终 900 秒门禁通过，两份 Go 实现字节相同。[下载及 081/082 的 A 候选评审](system-backup-a-download-and-migrations-review-20261016.md)已交付；[仓库材料审计](evidence/a-maintenance-materials-audit-20261016.json)确认未发现可用维护 grant/holder 协议或认证旧原文，按用户要求记缺口，不再索要同一批路径。SQL transport/grant 仍是模型，整包 HTTP 依赖预检仍受缺失 compress 依赖阻断；未安装依赖或启用生产入口。
 
 【2026-10-16 维护授权组合八项真实 MySQL 已接收】操作者 [08:58:02 原日志](evidence/a-maintenance-authority-remote-20261016-085802-222.txt)的八项指定用例、MySQL 8.4.8 完整 94 文件迁移重放及远测 exit 0 全部核对通过，见[限定接收](evidence/a-maintenance-authority-mysql-accepted-sbk-mig-261016011333-1fdd.json)。namespace `sbk-mig-261016011333-1fdd` / UID `f48845de-1f0a-4130-b347-c7e44927b7bc` 与远端 scratch 报告清理，八份 owned 数据清理通过，准确本地两层目录及 67 个 fixture 共 69 路径独立确认不存在。1,265 项输入与当前一致；和旧本地清单内容相同、排列不同，总摘要分别保留。该专项待办关闭，不重跑；五类认证/容量来源仍为合成，不交付真实运行 grant 或旧 canonical 原文，不代替 D 独立七项服务回执、正式迁移和生产接线验收。下方“八项尚未远测”为 10 月 15 日历史状态，以本条为准。
 

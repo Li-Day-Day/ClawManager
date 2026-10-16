@@ -1,6 +1,12 @@
 # A 敏感 evidence 下载二次鉴权：v12 事务合同缺口
 
-状态：A 接线候选，等待 D 确认公共操作、nonce 结果锚点及正式迁移；不得将敏感下载标为可用。
+状态：D 已在 [10 月 16 日合同决定](system-backup-d-sensitive-download-admission-contract-20261016.md)确认公共 operation、单阶段 claim 绑定、nonce 同事务锚点及重试语义；A 可依准确合同实现候选。前置锁/审计 ID/收据及受审正式迁移仍待实现，不得将敏感下载标为可用。
+
+D 后续已提供[真实 INSERT-ID 与封闭审计 anchor 候选](system-backup-d-download-admission-audit-20261016.md)，包含 Stage/同事务原行复查；当前 SQLPolicy/HTTP 仍未接入，不能据此消费 nonce。另 [r47 勘误](evidence/system-backup-d-sensitive-download-erratum-20261016-r47.json)确认当前 Manifest/准入拒绝空内容，保留原机器决议 hash 和 A 已冻结向量；原 `0/0` 仅为未来 canonical 编码，不再称为当前 parser 行为。
+
+后续 [A canonical/proof 候选](system-backup-a-sensitive-download-candidate-20261016.md)已实现并按新冻结轮限定接收：security/evidence 两包 3,185 项检查通过，含 94 项新增检查。它只计算绑定和验证结果，不满足现有消费接口或 D 的 prelocked 前缀。空内容约定与现 parser/Manifest 的差异已明确记录，当前没有放行空 Manifest。
+
+2026-10-16：[A 具体方案与迁移评审](system-backup-a-download-and-migrations-review-20261016.md)及[机器候选](evidence/a-sensitive-download-admission-candidate-20261016.json)已补签名前 request 与事务内新 claim 的时序处理。D 已确认通过同事务不可变 receipt/operation/nonce 外键间接绑定，旧文“request hash 至少包含 claim”和“待 D 选择”由新决定取代；未据此启用生产 adapter。新决定还要求在锁 evidence 前准备 nonce/operation 前缀，不能在现有回调中倒序补锁。
 
 ## 已实现的 A 边界
 

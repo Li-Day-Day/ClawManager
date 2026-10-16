@@ -1,0 +1,262 @@
+**********************
+PowerShell transcript start
+Start time: 20261016153910
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ldapStamp=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8); $ldapLog=Join-Path $PWD.Path ('docs/evidence/a-ldap-request-local-'+$ldapStamp+'.txt'); $ldapSource=Join-Path $PWD.Path ('docs/evidence/a-ldap-request-source-'+$ldapStamp+'.json'); Start-Transcript -LiteralPath $ldapLog -NoClobber|Out-Null; $ldapExit=1; try { & './scripts/system-backup-a-ldap-request-validation.ps1' -SourceManifestPath $ldapSource; $ldapExit=0 } catch { Write-Output ('LDAP_REQUEST_ERROR='+$_.Exception.Message) } finally { Write-Output ('a_ldap_request_exit='+$ldapExit); Write-Output ('ldap_request_log='+$ldapLog); Write-Output ('ldap_request_source='+$ldapSource); Stop-Transcript|Out-Null }; exit $ldapExit
+Process ID: 24920
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER ldap-request-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-dc94a690e6ab4afaa69b0727ea226f9a container=codex-a-ldap-request-dc94a690e6ab4afaa69b0727ea226f9a
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE ldap-request=yes files=1325 source_sha256=ac2b47ff87cc92e85263d55489b9cee5b06fc977931d0c3e0e242fcfccd9aeee baseline_sha256=2c45d8640704ff7bea1a5afa3fa5761a3e4152b581329a1fe9e7d1915aee18d8
+go version go1.26.1 linux/amd64
+LOCAL_STAGE ldap-old-source-negative-control exact-cancel-case=yes default-vet=yes retry=no
+SIGQUIT: quit
+PC=0x492f41 m=0 sigcode=0
+
+goroutine 0 gp=0x1189e20 m=0 mp=0x118bd20 [idle]:
+runtime.futex(0x118be78, 0x80, 0x0, 0x0, 0x0, 0x0)
+	runtime/sys_linux_amd64.s:569 +0x21 fp=0x7ffd1e8f91f8 sp=0x7ffd1e8f91f0 pc=0x492f41
+runtime.futexsleep(0x7962b5ba0dd6?, 0x1e8f9270?, 0x461bc8?)
+	runtime/os_linux.go:73 +0x30 fp=0x7ffd1e8f9248 sp=0x7ffd1e8f91f8 pc=0x44c9b0
+runtime.notesleep(0x118be78)
+	runtime/lock_futex.go:47 +0x87 fp=0x7ffd1e8f9280 sp=0x7ffd1e8f9248 pc=0x422907
+runtime.mPark(...)
+	runtime/proc.go:1967
+runtime.stopm()
+	runtime/proc.go:3008 +0x8c fp=0x7ffd1e8f92b0 sp=0x7ffd1e8f9280 pc=0x457e0c
+runtime.findRunnable()
+	runtime/proc.go:3796 +0xec8 fp=0x7ffd1e8f9480 sp=0x7ffd1e8f92b0 pc=0x4599c8
+runtime.schedule()
+	runtime/proc.go:4164 +0xb1 fp=0x7ffd1e8f94c0 sp=0x7ffd1e8f9480 pc=0x45ab11
+runtime.park_m(0x2feaa5bb8960)
+	runtime/proc.go:4304 +0x285 fp=0x7ffd1e8f9520 sp=0x7ffd1e8f94c0 pc=0x45afa5
+runtime.mcall()
+	runtime/asm_amd64.s:496 +0x55 fp=0x7ffd1e8f9538 sp=0x7ffd1e8f9520 pc=0x48f935
+
+goroutine 1 gp=0x2feaa5bb81e0 m=nil [chan receive, 34 minutes]:
+runtime.gopark(0x8?, 0x0?, 0xd5?, 0x87?, 0x2feaa5c1c1c0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5c127a8 sp=0x2feaa5c12788 pc=0x489b4e
+runtime.chanrecv(0x2feaa5c1c1c0, 0x0, 0x1)
+	runtime/chan.go:667 +0x4ae fp=0x2feaa5c12820 sp=0x2feaa5c127a8 pc=0x41c4ee
+runtime.chanrecv1(0x2feaa5be19a0?, 0x2feaa5ceab40?)
+	runtime/chan.go:509 +0x12 fp=0x2feaa5c12848 sp=0x2feaa5c12820 pc=0x41c012
+cmd/go/internal/modload.loadFromRoots(0x2feaa5c185a0, {0xc48dc0, 0x11abce0}, {{{0x0, 0x0}, 0x2feaa5c99950, 0x0, 0x0, {0x0, 0x0}, ...}, ...})
+	cmd/go/internal/modload/load.go:1169 +0x590 fp=0x2feaa5c12c78 sp=0x2feaa5c12848 pc=0x895270
+cmd/go/internal/modload.LoadPackages(0x2feaa5c185a0, {0xc48dc0, 0x11abce0}, {{0x0, 0x0}, 0x0, 0x0, 0x0, {0x0, 0x0}, ...}, ...)
+	cmd/go/internal/modload/load.go:372 +0x57c fp=0x2feaa5c12fa0 sp=0x2feaa5c12c78 pc=0x88ffdc
+cmd/go/internal/load.PackagesAndErrors(0x2feaa5c185a0, {0xc48dc0?, 0x11abce0?}, {0x0, 0x1, 0x0, 0x0, 0x0, 0x0}, {0x2feaa5be0db0, ...})
+	cmd/go/internal/load/pkg.go:2929 +0x365 fp=0x2feaa5c13268 sp=0x2feaa5c12fa0 pc=0x8f1e85
+cmd/go/internal/test.runTest({0xc48dc0, 0x11abce0}, 0x117be20, {0x2feaa5bd60d0, 0x9, 0x9})
+	cmd/go/internal/test/test.go:714 +0x49a fp=0x2feaa5c139a0 sp=0x2feaa5c13268 pc=0xa0e61a
+main.invoke(0x117be20, {0x2feaa5bd60c0, 0xa, 0xa})
+	cmd/go/main.go:340 +0x8c3 fp=0x2feaa5c13cc8 sp=0x2feaa5c139a0 pc=0xa37043
+main.main()
+	cmd/go/main.go:219 +0xecb fp=0x2feaa5c13f48 sp=0x2feaa5c13cc8 pc=0xa3618b
+runtime.main()
+	runtime/proc.go:290 +0x2d5 fp=0x2feaa5c13fe0 sp=0x2feaa5c13f48 pc=0x453095
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5c13fe8 sp=0x2feaa5c13fe0 pc=0x491401
+
+goroutine 2 gp=0x2feaa5bb8780 m=nil [force gc (idle), 7 minutes]:
+runtime.gopark(0x18dff6301262?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf2fa8 sp=0x2feaa5bf2f88 pc=0x489b4e
+runtime.goparkunlock(...)
+	runtime/proc.go:468
+runtime.forcegchelper()
+	runtime/proc.go:375 +0xb3 fp=0x2feaa5bf2fe0 sp=0x2feaa5bf2fa8 pc=0x4533b3
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf2fe8 sp=0x2feaa5bf2fe0 pc=0x491401
+created by runtime.init.7 in goroutine 1
+	runtime/proc.go:363 +0x1a
+
+goroutine 3 gp=0x2feaa5bb8960 m=nil [GC sweep wait]:
+runtime.gopark(0x1?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf3788 sp=0x2feaa5bf3768 pc=0x489b4e
+runtime.goparkunlock(...)
+	runtime/proc.go:468
+runtime.bgsweep(0x2feaa5c00000)
+	runtime/mgcsweep.go:324 +0x151 fp=0x2feaa5bf37c8 sp=0x2feaa5bf3788 pc=0x43d191
+runtime.gcenable.gowrap1()
+	runtime/mgc.go:214 +0x17 fp=0x2feaa5bf37e0 sp=0x2feaa5bf37c8 pc=0x42e537
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf37e8 sp=0x2feaa5bf37e0 pc=0x491401
+created by runtime.gcenable in goroutine 1
+	runtime/mgc.go:214 +0x66
+
+goroutine 4 gp=0x2feaa5bb8b40 m=nil [GC scavenge wait]:
+runtime.gopark(0x9c6cb4?, 0x47fa9c?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf3f78 sp=0x2feaa5bf3f58 pc=0x489b4e
+runtime.goparkunlock(...)
+	runtime/proc.go:468
+runtime.(*scavengerState).park(0x1189340)
+	runtime/mgcscavenge.go:425 +0x49 fp=0x2feaa5bf3fa8 sp=0x2feaa5bf3f78 pc=0x43ac09
+runtime.bgscavenge(0x2feaa5c00000)
+	runtime/mgcscavenge.go:658 +0x59 fp=0x2feaa5bf3fc8 sp=0x2feaa5bf3fa8 pc=0x43b199
+runtime.gcenable.gowrap2()
+	runtime/mgc.go:215 +0x17 fp=0x2feaa5bf3fe0 sp=0x2feaa5bf3fc8 pc=0x42e4f7
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf3fe8 sp=0x2feaa5bf3fe0 pc=0x491401
+created by runtime.gcenable in goroutine 1
+	runtime/mgc.go:215 +0xa5
+
+goroutine 5 gp=0x2feaa5bb90e0 m=nil [GOMAXPROCS updater (idle), 34 minutes]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf4788 sp=0x2feaa5bf4768 pc=0x489b4e
+runtime.goparkunlock(...)
+	runtime/proc.go:468
+runtime.updateMaxProcsGoroutine()
+	runtime/proc.go:7095 +0xe7 fp=0x2feaa5bf47e0 sp=0x2feaa5bf4788 pc=0x461887
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf47e8 sp=0x2feaa5bf47e0 pc=0x491401
+created by runtime.defaultGOMAXPROCSUpdateEnable in goroutine 1
+	runtime/proc.go:7083 +0x37
+
+goroutine 6 gp=0x2feaa5bb92c0 m=nil [finalizer wait, 34 minutes]:
+runtime.gopark(0x4628d5?, 0x11ad3c0?, 0x13?, 0x0?, 0x2feaa5bf2670?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf2620 sp=0x2feaa5bf2600 pc=0x489b4e
+runtime.runFinalizers()
+	runtime/mfinal.go:210 +0x107 fp=0x2feaa5bf27e0 sp=0x2feaa5bf2620 pc=0x42d4a7
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf27e8 sp=0x2feaa5bf27e0 pc=0x491401
+created by runtime.createfing in goroutine 1
+	runtime/mfinal.go:172 +0x3d
+
+goroutine 7 gp=0x2feaa5bb94a0 m=nil [cleanup wait, 34 minutes]:
+runtime.gopark(0x0?, 0x0?, 0x0?, 0x0?, 0x0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf4f68 sp=0x2feaa5bf4f48 pc=0x489b4e
+runtime.goparkunlock(...)
+	runtime/proc.go:468
+runtime.(*cleanupQueue).dequeue(0x1189960)
+	runtime/mcleanup.go:522 +0xd4 fp=0x2feaa5bf4fa0 sp=0x2feaa5bf4f68 pc=0x42a2f4
+runtime.runCleanups()
+	runtime/mcleanup.go:718 +0x45 fp=0x2feaa5bf4fe0 sp=0x2feaa5bf4fa0 pc=0x42a965
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf4fe8 sp=0x2feaa5bf4fe0 pc=0x491401
+created by runtime.(*cleanupQueue).createGs in goroutine 1
+	runtime/mcleanup.go:672 +0xa5
+
+goroutine 8 gp=0x2feaa5bb9680 m=nil [GC worker (idle)]:
+runtime.gopark(0x192b032b1792?, 0x2?, 0x26?, 0x7?, 0x0?)
+	runtime/proc.go:462 +0xce fp=0x2feaa5bf5740 sp=0x2feaa5bf5720 pc=0x489b4e
+runtime.gcBgMarkWorker(0x2feaa5c1c1c0)
+	runtime/mgc.go:1791 +0xeb fp=0x2feaa5bf57c8 sp=0x2feaa5bf5740 pc=0x43100b
+runtime.gcBgMarkStartWorkers.gowrap1()
+	runtime/mgc.go:1695 +0x17 fp=0x2feaa5bf57e0 sp=0x2feaa5bf57c8 pc=0x430ef7
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5bf57e8 sp=0x2feaa5bf57e0 pc=0x491401
+created by runtime.gcBgMarkStartWorkers in goroutine 1
+	runtime/mgc.go:1695 +0x105
+
+goroutine 9 gp=0x2feaa5bb9860 m=3 mp=0x2feaa5bf7008 [syscall]:
+syscall.Syscall(0x3, 0x4, 0x0, 0x0)
+	syscall/syscall_linux.go:74 +0x25 fp=0x2feaa5d56ea0 sp=0x2feaa5d56e40 pc=0x4aeec5
+syscall.Close(0x2feaa5f01260?)
+	syscall/zsyscall_linux_amd64.go:335 +0x25 fp=0x2feaa5d56ed0 sp=0x2feaa5d56ea0 pc=0x4ac845
+internal/poll.(*SysFile).destroy(...)
+	internal/poll/fd_unixjs.go:24
+internal/poll.(*FD).destroy(0x2feaa60401e0)
+	internal/poll/fd_unix.go:82 +0x51 fp=0x2feaa5d56f00 sp=0x2feaa5d56ed0 pc=0x502311
+internal/poll.(*FD).decref(0x3b?)
+	internal/poll/fd_mutex.go:213 +0x53 fp=0x2feaa5d56f20 sp=0x2feaa5d56f00 pc=0x501313
+internal/poll.(*FD).Close(0x2feaa60401e0)
+	internal/poll/fd_unix.go:105 +0x45 fp=0x2feaa5d56f48 sp=0x2feaa5d56f20 pc=0x5023a5
+os.(*file).close(0x2feaa60401e0)
+	os/file_unix.go:315 +0x85 fp=0x2feaa5d56fa0 sp=0x2feaa5d56f48 pc=0x5117c5
+os.(*File).Close(...)
+	os/file_posix.go:23
+cmd/go/internal/modindex.getFileInfo({0x2feaa6187dc0, 0x33}, {0x2feaa6036e29, 0x7}, 0x2feaa5dc37a0)
+	cmd/go/internal/modindex/build.go:271 +0x56d fp=0x2feaa5d57080 sp=0x2feaa5d56fa0 pc=0x84b6cd
+cmd/go/internal/modindex.importRaw({0x2feaa5d5ac60, 0x2e}, {0x2feaa6187d2f, 0x4})
+	cmd/go/internal/modindex/scan.go:220 +0x40c fp=0x2feaa5d57300 sp=0x2feaa5d57080 pc=0x8597ac
+cmd/go/internal/modindex.indexModule.func1({0x2feaa6187d00, 0x33}, {0xc48f80, 0x2feaa5ffe7c0}, {0x0?, 0x0?})
+	cmd/go/internal/modindex/scan.go:72 +0x13b fp=0x2feaa5d573a0 sp=0x2feaa5d57300 pc=0x858e5b
+cmd/go/internal/fsys.walkDir({0x2feaa6187d00, 0x33}, {0xc48f80, 0x2feaa5ffe7c0}, 0x2feaa5d575c0)
+	cmd/go/internal/fsys/walk.go:30 +0x50 fp=0x2feaa5d57460 sp=0x2feaa5d573a0 pc=0x5fb930
+cmd/go/internal/fsys.walkDir({0x2feaa5d5ad20, 0x2f}, {0xc48fb8, 0x2feaa5fba220}, 0x2feaa5d575c0)
+	cmd/go/internal/fsys/walk.go:52 +0x26f fp=0x2feaa5d57520 sp=0x2feaa5d57460 pc=0x5fbb4f
+cmd/go/internal/fsys.WalkDir({0x2feaa5d5ad20, 0x2f}, 0x2feaa5d575c0)
+	cmd/go/internal/fsys/walk.go:20 +0x75 fp=0x2feaa5d57580 sp=0x2feaa5d57520 pc=0x5fb815
+cmd/go/internal/modindex.indexModule({0x2feaa5d5ac60, 0x2e})
+	cmd/go/internal/modindex/scan.go:60 +0xdc fp=0x2feaa5d57600 sp=0x2feaa5d57580 pc=0x858cbc
+cmd/go/internal/modindex.openIndexModule.func1()
+	cmd/go/internal/modindex/read.go:198 +0xf2 fp=0x2feaa5d576f0 sp=0x2feaa5d57600 pc=0x851612
+cmd/internal/par.(*ErrCache[...]).Do.func1()
+	cmd/internal/par/work.go:119 +0x13 fp=0x2feaa5d57700 sp=0x2feaa5d576f0 pc=0x7fb813
+cmd/internal/par.(*Cache[...]).Do(0xc51da0, {0x2feaa5d5ac60, 0x2e}, 0x2feaa5d57790)
+	cmd/internal/par/work.go:160 +0x111 fp=0x2feaa5d57768 sp=0x2feaa5d57700 pc=0x7fba11
+cmd/internal/par.(*ErrCache[...]).Do(0x0?, {0x2feaa5d5ac60?, 0x0?}, 0x2e?)
+	cmd/internal/par/work.go:118 +0x38 fp=0x2feaa5d577b8 sp=0x2feaa5d57768 pc=0x7fb7b8
+cmd/go/internal/modindex.openIndexModule({0x2feaa5d5ac60?, 0x2e?}, 0x3b?)
+	cmd/go/internal/modindex/read.go:185 +0x4b fp=0x2feaa5d57810 sp=0x2feaa5d577b8 pc=0x8514eb
+cmd/go/internal/modindex.GetModule({0x2feaa5d5ac60, 0x2e})
+	cmd/go/internal/modindex/read.go:176 +0x106 fp=0x2feaa5d57850 sp=0x2feaa5d57810 pc=0x851446
+cmd/go/internal/modindex.GetPackage({0x2feaa5d5ac60, 0x2e}, {0x2feaa5f84780, 0x31})
+	cmd/go/internal/modindex/read.go:134 +0x2b fp=0x2feaa5d578a8 sp=0x2feaa5d57850 pc=0x85112b
+cmd/go/internal/modload.dirInModule.func2()
+	cmd/go/internal/modload/import.go:771 +0x2f fp=0x2feaa5d578f0 sp=0x2feaa5d578a8 pc=0x87db4f
+cmd/internal/par.(*ErrCache[...]).Do.func1()
+	cmd/internal/par/work.go:119 +0x13 fp=0x2feaa5d57900 sp=0x2feaa5d578f0 pc=0x8b4c93
+cmd/internal/par.(*Cache[...]).Do(0xc519a0, {0x2feaa5f84780, 0x31}, 0x2feaa5d57990)
+	cmd/internal/par/work.go:160 +0x111 fp=0x2feaa5d57968 sp=0x2feaa5d57900 pc=0x8b4eb1
+cmd/internal/par.(*ErrCache[...]).Do(0x1?, {0x2feaa5f84780?, 0x41866e?}, 0x7?)
+	cmd/internal/par/work.go:118 +0x38 fp=0x2feaa5d579b8 sp=0x2feaa5d57968 pc=0x8b4c38
+cmd/go/internal/modload.dirInModule({0x2feaa5f4e8b1, 0x20}, {0x2feaa5f4e8b1?, 0x1d}, {0x2feaa5d5ac60, 0x2e}, 0x0)
+	cmd/go/internal/modload/import.go:767 +0x24d fp=0x2feaa5d57a90 sp=0x2feaa5d579b8 pc=0x87d96d
+cmd/go/internal/modload.importFromModules(0x2feaa5c185a0, {0xc48dc0, 0x11abce0}, {0x2feaa5f4e8b1, 0x20}, 0x2feaa5c72230, 0x0, 0x0)
+	cmd/go/internal/modload/import.go:439 +0xd16 fp=0x2feaa5d57e38 sp=0x2feaa5d57a90 pc=0x879d16
+cmd/go/internal/modload.(*loader).load(0x2feaa5cf2000, 0x2feaa5c185a0, {0xc48dc0, 0x11abce0}, 0x2feaa5df29c0)
+	cmd/go/internal/modload/load.go:1859 +0xb5 fp=0x2feaa5d57f28 sp=0x2feaa5d57e38 pc=0x899d95
+cmd/go/internal/modload.(*loader).pkg.func1.1()
+	cmd/go/internal/modload/load.go:1673 +0x27 fp=0x2feaa5d57f60 sp=0x2feaa5d57f28 pc=0x8989e7
+cmd/internal/par.(*Queue).Add.func1()
+	cmd/internal/par/queue.go:58 +0x57 fp=0x2feaa5d57fe0 sp=0x2feaa5d57f60 pc=0x600d17
+runtime.goexit({})
+	runtime/asm_amd64.s:1771 +0x1 fp=0x2feaa5d57fe8 sp=0x2feaa5d57fe0 pc=0x491401
+created by cmd/internal/par.(*Queue).Add in goroutine 1
+	cmd/internal/par/queue.go:56 +0x1cd
+
+rax    0xca
+rbx    0x0
+rcx    0x492f43
+rdx    0x0
+rdi    0x118be78
+rsi    0x80
+rbp    0x7ffd1e8f9238
+rsp    0x7ffd1e8f91f0
+r8     0x0
+r9     0x0
+r10    0x0
+r11    0x286
+r12    0x7ffd1e8f9290
+r13    0x1
+r14    0x1189e20
+r15    0x1
+rip    0x492f41
+rflags 0x286
+cs     0x33
+fs     0x0
+gs     0x0
+LDAP_REQUEST_GO_CONTAINER_EXIT=1
+LOCAL_CLEANUP ldap-request-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-dc94a690e6ab4afaa69b0727ea226f9a removed=True
+PS>TerminatingError(): "LDAP request validation failed exit=1; no automatic retry"
+LDAP_REQUEST_ERROR=LDAP request validation failed exit=1; no automatic retry
+a_ldap_request_exit=1
+ldap_request_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ldap-request-local-20261016-153910-4062e7d6.txt
+ldap_request_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ldap-request-source-20261016-153910-4062e7d6.json
+**********************
+PowerShell transcript end
+End time: 20261016161641
+**********************

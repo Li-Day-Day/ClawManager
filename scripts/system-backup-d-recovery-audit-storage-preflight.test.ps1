@@ -13,6 +13,10 @@ $auditFixtureJson=@'
 '@
 function New-AuditFixture {
     $data=$auditFixtureJson | ConvertFrom-Json
+    foreach($podSpec in @($data.deployment.spec.template.spec,$data.pods.items[0].spec)){
+        $podSpec | Add-Member securityContext ([pscustomobject]@{runAsNonRoot=$true;runAsUser=10001;runAsGroup=10001})
+        $podSpec.containers[0] | Add-Member securityContext ([pscustomobject]@{allowPrivilegeEscalation=$false;capabilities=[pscustomobject]@{drop=@('ALL');add=@()}})
+    }
     $data | Add-Member -NotePropertyName claims -NotePropertyValue ([pscustomobject]@{items=@($data.pvc)})
     $data | Add-Member -NotePropertyName volumes -NotePropertyValue ([pscustomobject]@{items=@($data.pv)})
     return $data
@@ -37,7 +41,7 @@ function kubectl {
 }
 function Invoke-AuditFixture([bool]$Manager=$true){
     $parameters=@{KubeContext='reviewed';Namespace='isolated';ClaimName='audit';ExpectedStorageClass='audit-retain';ExpectedCSIDriver='reviewed.example.csi';MinCapacityBytes=1073741824}
-    if($Manager){$parameters.DeploymentName='manager';$parameters.ManagerContainerName='manager';$parameters.JournalMountPath='/audit';$parameters.ExpectedManagerImage='example.test/manager@sha256:'+('a'*64)}
+    if($Manager){$parameters.DeploymentName='manager';$parameters.ManagerContainerName='manager';$parameters.JournalMountPath='/audit';$parameters.ExpectedManagerImage='example.test/manager@sha256:'+('a'*64);$parameters.ExpectedJournalUID=10001;$parameters.ExpectedJournalGID=10001}
     return (& (Join-Path $PSScriptRoot 'system-backup-d-recovery-audit-storage-preflight.ps1') @parameters | ConvertFrom-Json)
 }
 $global:recoveryAuditFixtureCalls=@();$global:recoveryAuditFixtureData=New-AuditFixture
@@ -47,7 +51,25 @@ Write-Output 'PASS exact manager chain, mounted claim, Retain and single writer'
 $global:recoveryAuditFixtureData=New-AuditFixture
 if((Invoke-AuditFixture $false).deployment_preflight_checked){throw 'Storage-only result claimed manager validation'}
 Write-Output 'PASS storage-only scope stays explicit'
+$global:recoveryAuditFixtureData=New-AuditFixture
+foreach($podSpec in @($global:recoveryAuditFixtureData.deployment.spec.template.spec,$global:recoveryAuditFixtureData.pods.items[0].spec)){
+    $podSpec.containers[0].securityContext.capabilities.PSObject.Properties.Remove('add')
+}
+if(-not (Invoke-AuditFixture).deployment_preflight_checked){throw 'Omitted optional added capabilities should be accepted'}
+Write-Output 'PASS absent optional capability additions do not invent privileges'
 $cases=@(
+    @{Name='terminating PVC';Change={$global:recoveryAuditFixtureData.pvc.metadata | Add-Member deletionTimestamp '2026-10-16T00:00:00Z'}},
+    @{Name='terminating PV';Change={$global:recoveryAuditFixtureData.pv.metadata | Add-Member deletionTimestamp '2026-10-16T00:00:00Z'}},
+    @{Name='terminating StorageClass';Change={$global:recoveryAuditFixtureData.sc.metadata | Add-Member deletionTimestamp '2026-10-16T00:00:00Z'}},
+    @{Name='missing writer identity';Change={$global:recoveryAuditFixtureData.deployment.spec.template.spec.PSObject.Properties.Remove('securityContext')}},
+    @{Name='wrong writer UID';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.securityContext.runAsUser=10002}},
+    @{Name='container overrides writer UID as root';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext | Add-Member runAsUser 0}},
+    @{Name='container overrides writer GID';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext | Add-Member runAsGroup 10002}},
+    @{Name='container disables nonroot';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext | Add-Member runAsNonRoot $false}},
+    @{Name='privileged manager';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext | Add-Member privileged $true}},
+    @{Name='manager privilege escalation';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext.allowPrivilegeEscalation=$true}},
+    @{Name='manager retains capabilities';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext.capabilities.drop=@()}},
+    @{Name='manager adds capabilities';Change={$global:recoveryAuditFixtureData.pods.items[0].spec.containers[0].securityContext.capabilities.add=@('DAC_OVERRIDE')}},
     @{Name='PVC block mode';Change={$global:recoveryAuditFixtureData.pvc.spec.volumeMode='Block'}},
     @{Name='malformed UID';Change={$global:recoveryAuditFixtureData.pvc.metadata.uid='-'*36}},
     @{Name='mixed access modes';Change={$global:recoveryAuditFixtureData.pvc.spec.accessModes+=@('ReadWriteMany')}},
@@ -84,4 +106,4 @@ foreach($case in $cases){
     if(-not $rejected){throw ('Invalid snapshot accepted: '+$case.Name)}
     Write-Output ('PASS rejects '+$case.Name)
 }
-Write-Output ('PASS audit preflight fixtures cases='+($cases.Count+2)+' cluster_actions=none products=none')
+Write-Output ('PASS audit preflight fixtures cases='+($cases.Count+3)+' cluster_actions=none products=none')

@@ -5,7 +5,7 @@ import test from 'node:test';
 import { systemBackupTranslations, backupLocaleTags, formatBackupDate } from '../src/lib/systemBackupI18n.ts';
 import { backupEntryPoints, previewScenarios, formatBytes } from '../src/pages/admin/backups/backupReadModel.ts';
 import { createBackupPreview, defaultPreviewCopy, previewBackupSource } from '../src/pages/admin/backups/backupPreview.ts';
-import { backupStatuses, drillStatuses, simpleTaskStatuses } from '../src/types/systemBackupContract.ts';
+import { backupStatuses, drillStatuses, simpleTaskStatuses, operationTypes } from '../src/types/systemBackupContract.ts';
 
 // Node 24 runs these tests without installing frontend dependencies. Resolve
 // extensionless local TS imports only while loading the real i18n registry.
@@ -49,6 +49,7 @@ test('entry points, scenarios, execution states and page message calls have tran
   const liveActivity = readFileSync(new URL('../src/pages/admin/backups/BackupLiveActivity.tsx', import.meta.url), 'utf8');
   const liveConfig = readFileSync(new URL('../src/pages/admin/backups/BackupLiveConfigHistory.tsx', import.meta.url), 'utf8');
   const overview = readFileSync(new URL('../src/pages/admin/backups/BackupOverviewReadout.tsx', import.meta.url), 'utf8');
+  const operations = readFileSync(new URL('../src/pages/admin/backups/BackupLiveOperations.tsx', import.meta.url), 'utf8');
   const keys = [
     ...backupEntryPoints.flatMap((entry) => [entry.label, entry.description]),
     ...previewScenarios.map((scenario) => `scenario_${scenario}`),
@@ -59,9 +60,11 @@ test('entry points, scenarios, execution states and page message calls have tran
     ...[...liveActivity.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
     ...[...liveConfig.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
     ...[...overview.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
+    ...[...operations.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
+    ...operationTypes.map((kind) => `status_${kind}`),
   ];
   for (const locale of Object.keys(systemBackupTranslations)) {
-    for (const key of keys) assert.ok(translate(locale, `systemBackup.${key}`), `${locale}.${key}`);
+    for (const key of keys) assert.ok(systemBackupTranslations[locale][key], `${locale}.${key}`);
   }
   for (const file of ['SystemBackupsPage.tsx', 'BackupLiveWorkspace.tsx', 'BackupLiveDetail.tsx', 'BackupLiveActivity.tsx', 'BackupLiveConfigHistory.tsx', 'BackupOverviewReadout.tsx', 'backupLiveDetail.ts', 'backupLiveActivity.ts', 'backupLiveConfig.ts', 'backupLiveRecords.ts', 'backupReadModel.ts', 'backupPreview.ts', 'useBackupText.ts']) {
     const code = readFileSync(new URL(`../src/pages/admin/backups/${file}`, import.meta.url), 'utf8');

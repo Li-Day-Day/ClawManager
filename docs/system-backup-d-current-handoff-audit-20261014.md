@@ -1,5 +1,15 @@
 # D 当前完成审计与正式接线输入
 
+【2026-10-16 r50/r51/r53】[D 真实审计 ID 与同事务原行锚点](system-backup-d-download-admission-audit-20261016.md)已通过 434 主/3,246 含子项、seed/专属 Linux 探针、冻结复查和清理；候选已准备独立四项 MySQL，不消费 nonce 或启用生产 adapter。前端现有依赖不再缺失，D 的 [240 来源完整 TypeScript/Vite 构建](evidence/system-backup-d-frontend-build-20261016-r51.json)已通过并清理；[收到的组件浏览器回执](evidence/system-backup-d-frontend-receipt-review-20261016-r53.json)限定记录 53 自报/20 DOM、五语言和桌面/375px 图片，不代表真实 backend/授权。当前 95 catalog/100 inventory，strict 40 policy/60 reviews/4 missing 仍未通过。D 未安装依赖，原六项生产范围未完成，旧“缺前端依赖/构建未过”仅作历史。
+
+【2026-10-16 r46】[D 健康七项 MySQL 接收](system-backup-d-control-health-mysql-handoff-20261016.md)关闭此前实际 SQL 待办：当前来源无漂移，修复后探针与 runner/capsule pin、95 文件 replay、七项/root 及全部清理/exit 0 通过，无需重跑。仍为候选 schema、synthetic read scope 与 fixture root grants，main 未启用；其余真实部署/容量/审计/历史/前端及正式评审缺口继续保留。下方“健康七项待测”均为历史。敏感下载的 [D 公共操作/nonce 事务决定](system-backup-d-sensitive-download-admission-contract-20261016.md)已供 A 候选实现使用，不代表运行适配已完成。
+
+【2026-10-16 r42】[D 新独立接收](system-backup-d-a-config-proof-review-20261016.md)关闭 A proof 十五项实际 SQL 待办：当前 95 文件、两次真实行锁等待、十五叶子/root、准确 UID 清理与终态 exit 0 已核对。该 root 不覆盖 D 健康七项或正式生产写入。当前仍无可用本地 MySQL/context/前端依赖，维护材料/独立审计卷/历史输入及正式交叉评审仍缺；不将本轮新接收当作整体完成。
+
+【2026-10-16 r41】[健康控制循环及独立 SQL 交接](system-backup-d-control-health-mysql-handoff-20261016.md)已完成 1,292 项本地冻结、198/483 回归、实际 capsule seed、Linux 探针/runner 编译和清理；七项真实 MySQL 仍待操作者回执，没有 SSH 或生产启用。A 081/082 的 [11 份候选输入接收及依赖修正](system-backup-d-a-migration-review-20261016.md)明确 config 正式策略要求 A/B/C，不能将原 A/D 独立准备扩大为正式 schema 已不依赖 B/C。完整目标继续未完成。
+
+【2026-10-16 r40】[不依赖 B/C 的本轮改动及验收边界](system-backup-d-independent-work-20261016.md)：新增 Operation 独立只读入口、畸形 query 拒绝、D 健康持久化/读取候选及管理 journal 写者身份预检；Linux 初始化器八项已执行通过。A 八项实际 authority MySQL 已按原 1,265 输入轮 [D 独立接收](evidence/system-backup-d-a-authority-review-20261016-r40.json)，无需重跑。当前 catalog 已变化为 95 文件，未据旧 94 文件轮批准当前树。健康新 schema 未正式化/安装，完整前端构建因缺 tsc 阻断；真实 A/部署材料及原六项生产端到端缺口继续保留。
+
 【2026-10-16 r39 七项服务远测与桌面截图】[D 私有服务 MySQL 回执](evidence/system-backup-d-canonical-backfill-service-mysql-accepted-20261016.json)接收 08:34:36 run：1,265 输入无漂移，七项服务 PASS、实际双 worker 锁等待、94 fresh replay、准确 namespace UID 及两端清理，69 本地路径不存在，exit 0；一次工具崩溃同命令重试及三个预期反例保留。只覆盖 synthetic authority/capacity 下的实际私有服务，不替代 A 八项具体组合层或生产认证，本服务无需重跑。用户[桌面示例截图](evidence/system-backup-d-preview-screenshot-review-20261016.json)已确认主要区域可见，并修正关注按钮贴边；5 项现有检查通过，改后浏览器及完整构建仍待用户验证。未安装依赖、未自行 SSH，六项整体未完成。
 
 【2026-10-15 r38 授权专项本地准备及中断终态】[D 独立复核](system-backup-d-a-authority-preparation-review-20261015.md)接收 A 新专项的本地准备：1,265 输入/集合当前无漂移，230/1,525 与三次各 3/22 seed 可由日志复算，69 本地路径均不存在；八项实际 MySQL 尚未执行。16:33 服务日志已于 17:23:39 中断，未证明 SQL/namespace/远端退出或清理，69 本地路径不存在，不能继续按运行中等待或记 PASS。未重跑已接收专项、未 SSH/安装/构建；前端保持 r37，六项整体仍未完成。

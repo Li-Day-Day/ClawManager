@@ -1,0 +1,215 @@
+{
+  "kind": "a_independent_d_canonical_backfill_service_mysql_review",
+  "recorded_at": "2026-10-16T01:57:12.391Z",
+  "status": "accepted_for_exact_frozen_seven_case_service_only",
+  "receipt": "docs/evidence/system-backup-d-canonical-backfill-service-mysql-accepted-20261016.json",
+  "receipt_sha256": "9b5f009c8caac2cab66e6bfa50fd7c288aef9c0801d88a8c1a22e064ecf79c99",
+  "raw_transcript": "docs/evidence/d-canonical-backfill-remote-20261016-083436-235.txt",
+  "raw_sha256": "11cfdf44d8616a2e120d9ff06046067f43708536122f7e0f79ef37150133fbd5",
+  "source_manifest": "docs/evidence/d-canonical-backfill-remote-20261016-083436-235-source.json",
+  "source_sha256": "cce6428a4579a26fbe0d95c2403131567fa942d35fe704e69b7a174845ee7835",
+  "source_files": 1265,
+  "checks": {
+    "raw_hash": true,
+    "manifest_hash": true,
+    "manifest_digest": true,
+    "current_snapshot_digest": true,
+    "comparison_snapshot_1274_files": true,
+    "seven_exact_cases": true,
+    "no_remote_failure": true,
+    "root_pass": true,
+    "run_identity": true,
+    "namespace_cleanup": true,
+    "remote_cleanup": true,
+    "local_cleanup": true,
+    "frozen_postcheck": true,
+    "exit_zero": true,
+    "probe_pin": true,
+    "local_probe_pin": true,
+    "runner_pin": true,
+    "fresh_94": true,
+    "owned_installation_cleanup": true,
+    "owned_receipt_cleanup": true,
+    "two_observed_waits": true,
+    "local_69_paths_absent": true,
+    "service_22_pins_current": true
+  },
+  "cases": [
+    {
+      "name": "service_apply_replay_nochange",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_audit_failure_rollback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_receipt_failure_rollback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_final_revoke_rollback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_capacity_expiry_after_callback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_lost_commit_observe_only",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_observed_lock_single_apply",
+      "starts": 1,
+      "passes": 1
+    }
+  ],
+  "namespace": "sbk-mig-261016005638-22b8",
+  "namespace_uid": "df21e81b-ea71-4fd7-87a8-a33290d62c68",
+  "local_paths_independently_absent": 69,
+  "current_source_manifest": "docs/evidence/a-config-proof-mysql-source-20261016-095009.json",
+  "current_source_sha256": "5c70c5c7235e51f1701fea438e9d09dc12e7557aebfe5c293eed463d58850176",
+  "comparison_snapshot_live_drift": [
+    "backend/cmd/server/system_backup_read_live_test.go",
+    "backend/cmd/server/system_backup_read_live.go"
+  ],
+  "input_set_comparison_scope": "09:50 local proof snapshot; subsequent concurrent additions not attested",
+  "current_input_drift": [
+    "backend/cmd/server/main.go",
+    "backend/cmd/server/system_backup_read_live.go",
+    "backend/cmd/server/system_backup_read_live_test.go",
+    "backend/internal/db/runtime_manifest_test.go",
+    "backend/internal/handlers/instance_handler.go",
+    "backend/internal/migrationcatalog/catalog_test.go",
+    "backend/internal/services/instance_service.go",
+    "backend/internal/systembackupbusinessa/testdata/schema-registry.json",
+    "backend/internal/systembackupcontroller/bootstrap.go",
+    "contracts/system-backup/v12/cross-owner-review-requests.json",
+    "contracts/system-backup/v12/schema-registry.json",
+    "docs/system-backup-restore-schema-inventory.json"
+  ],
+  "current_added_inputs": [
+    "backend/internal/db/migrations/064_add_instance_browser_workers.sql",
+    "backend/internal/handlers/browser_worker_handler_test.go",
+    "backend/internal/handlers/browser_worker_handler.go",
+    "backend/internal/models/browser_worker.go",
+    "backend/internal/repository/browser_worker_repository.go",
+    "backend/internal/services/browser_worker_service_test.go",
+    "backend/internal/services/browser_worker_service.go",
+    "backend/internal/services/file_ownership_unix.go",
+    "backend/internal/services/file_ownership_windows.go"
+  ],
+  "current_removed_inputs": [],
+  "current_worktree_accepted": false,
+  "current_focused_service_pins": [
+    {
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "match": true
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash_a_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity_a_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_a_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_mysql_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_precision_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_row.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_row_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_a_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_mysql_test.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+      "match": true
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_test.go",
+      "match": true
+    },
+    {
+      "path": "docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+      "match": true
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "match": true
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "match": true
+    },
+    {
+      "path": "scripts/system-backup-d-config-canonical-backfill-phase.sh",
+      "match": true
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "match": true
+    }
+  ],
+  "authentication_denials_before_upload": 2,
+  "socket_close_diagnostics_preserved": 4,
+  "prior_interrupted_run_cleanup": "unproven; new run does not attest old run cleanup",
+  "a_eight_case_authority": "separately accepted; not combined with seven cases",
+  "synthetic_authority": true,
+  "synthetic_capacity": true,
+  "production_approval": false,
+  "reviewer_reran_mysql_or_ssh": false,
+  "dependencies_installed": false,
+  "limits": [
+    "Frozen 94-migration run only; current merged catalog adds browser-worker migration",
+    "No actual grant/archive/current-target/physical-capacity authentication",
+    "Formal 081/082, actual installation upgrade and human MFA remain pending"
+  ]
+}

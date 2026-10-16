@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	pd "clawreef/internal/systembackupproducer"
 )
@@ -51,11 +52,30 @@ func newDSystemPublicationFixture(t *testing.T, configure func(*dIntegrationFixt
 	if err != nil {
 		t.Fatal(err)
 	}
+	// TLS/STS fixture construction above can outlive a capacity sample. The
+	// in-memory SQL clock otherwise stays at fixture creation while D's real
+	// post-commit clock advances. Sample actual time before this NEW admission;
+	// keep every original claim/budget/owner deadline unchanged. This mirrors
+	// the existing fresh SQL sample before FinishPublication, not a lease refresh.
+	f.d.now = time.Now().UTC().Truncate(time.Microsecond)
 	claim, err := publication.ClaimPublication(context.Background(), f.handle, f.claimRequest)
 	if err != nil || claim == nil {
 		t.Fatal("D claim", err)
 	}
 	return f, x, execution, claim
+}
+
+func TestSystemPublicationClaimAfterSlowLocalSetup(t *testing.T) {
+	var originalClaim, originalBudget, originalOwner pd.Timestamp
+	f, _, _, claim := newDSystemPublicationFixture(t, func(f *dIntegrationFixture, _ *systemSTSTestFixture) {
+		originalClaim, originalBudget, originalOwner = f.claimRequest.ExpiresAt, f.claimRequest.BudgetUntil, f.history.OwnerWriteExpiresAt
+		// Reproduce setup longer than the existing five-second sample freshness.
+		// No provider call or claim transaction has begun during this delay.
+		time.Sleep(6 * time.Second)
+	})
+	if claim == nil || f.claimRequest.ExpiresAt != originalClaim || f.claimRequest.BudgetUntil != originalBudget || f.history.OwnerWriteExpiresAt != originalOwner {
+		t.Fatal("setup refresh changed original execution deadlines")
+	}
 }
 
 type publicationCountingAuthority struct {

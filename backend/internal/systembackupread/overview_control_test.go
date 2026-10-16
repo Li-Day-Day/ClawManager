@@ -15,6 +15,7 @@ import (
 )
 
 type overviewFixture struct {
+	health                                             []driver.Value
 	state                                              []driver.Value
 	tasks, operations                                  [][]driver.Value
 	queries                                            []string
@@ -106,6 +107,14 @@ func (c *overviewConn) QueryContext(_ context.Context, query string, args []driv
 	var columns []string
 	var values [][]driver.Value
 	switch query {
+	case controlHealthSQL:
+		if len(args) != 1 {
+			return nil, errors.New("health query unscoped")
+		}
+		columns = strings.Split("schema,installation,config,epoch,owner,sequence,controller,database,checked,expiry,interval", ",")
+		if c.f.health != nil {
+			values = [][]driver.Value{c.f.health}
+		}
 	case overviewInstallationSQL:
 		if len(args) != 1 {
 			return nil, errors.New("installation query parameter mismatch")

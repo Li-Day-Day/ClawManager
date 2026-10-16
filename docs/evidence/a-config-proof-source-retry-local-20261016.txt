@@ -1,0 +1,69 @@
+**********************
+PowerShell transcript start
+Start time: 20261016104509
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'; Start-Transcript -Path 'docs/evidence/a-config-proof-source-retry-local-20261016.txt' -NoClobber; $captureExit=1; try { & ./scripts/system-backup-a-config-proof-source.test.ps1; & ./scripts/system-backup-d-index-source-snapshot.test.ps1; & "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -File ./scripts/system-backup-a-config-proof-source.test.ps1; if($LASTEXITCODE -ne 0){throw 'Windows PowerShell 5.1 capture regression failed'}; $captureExit=0 } finally { Write-Host "a_config_proof_source_retry_exit=$captureExit"; Stop-Transcript }; exit $captureExit
+Process ID: 34956
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-proof-source-retry-local-20261016.txt
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PASS proof-source-stable capture-calls=1 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PASS proof-source-one-drift capture-calls=2 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source file set changed while snapshot was copied: backend/added.go"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source file set changed while snapshot was copied: backend/added.go
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PASS proof-source-file-set-drift capture-calls=2 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 3/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=3 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+>> TerminatingError(): "Source changed while snapshot was copied"
+PASS proof-source-persistent-drift capture-calls=3 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Snapshot input is redirected"
+>> TerminatingError(): "Snapshot input is redirected"
+PASS proof-source-unrelated-error capture-calls=1 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+PS>TerminatingError(): "Refusing partial proof source cleanup outside its owned directory"
+>> TerminatingError(): "Refusing partial proof source cleanup outside its owned directory"
+PASS proof-source-unsafe-owner capture-calls=1 no-build-or-remote=yes
+PASS proof source capture: 6 cases; source-only fakes, no Go/SSH/database
+LOCAL_CLEANUP proof-source-test-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-9b91fb75f61342d096bce1cadc78079d removed=True
+PASS copies all selected source inputs, rejects raw run artifacts, verifies read-only snapshot
+PASS later working-tree edits do not change frozen source
+PS>TerminatingError(): "Refusing existing source snapshot"
+PASS rejects snapshot overwrite
+PS>TerminatingError(): "Frozen grouped source file set drift"
+PASS rejects an added build input in frozen snapshot
+PS>TerminatingError(): "Frozen grouped source snapshot drift"
+PASS rejects copied-source mutation before another remote run
+CLEANED source snapshot fixture=True
+
+a_config_proof_source_retry_exit=0
+**********************
+PowerShell transcript end
+End time: 20261016104541
+**********************

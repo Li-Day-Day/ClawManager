@@ -1,0 +1,140 @@
+{
+  "kind": "d_a_081_082_review_reception",
+  "recorded_at": "2026-10-16T03:01:11.499Z",
+  "status": "candidate_boundaries_received_formal_promotion_pending",
+  "a_receipt": "docs/evidence/a-download-and-migrations-review-20261016.json",
+  "a_receipt_sha256": "dbe34b7d4ba45d82743d764da10039f422510b5d6ae6c1e80b193cef6c26ac10",
+  "pins_verified": [
+    {
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "size": 6518,
+      "sha256": "292e0f7b5c02d24e5cc2b49c2b9ff9c8db0ceb5671b72d08c6c03ddf2778455d"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "size": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+      "size": 3157,
+      "sha256": "c24af0413ff6b8dd98c3b7eb59b8c6dade70c385c5f49e48302bb07b98b1ed84"
+    },
+    {
+      "path": "docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+      "size": 881,
+      "sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1"
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+      "size": 15522,
+      "sha256": "ccf50c06b7afcc47d4374b5c92ae4619056caf90a638f82145b0d6eec920c63a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill.go",
+      "size": 14631,
+      "sha256": "7fe2a1eed2e484fe3cb29bfd0be29c4cc2a748170c8f43c4ed7a315c01a3f6eb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "size": 8643,
+      "sha256": "dd7a4e23e79b97f1701c978dc816686d5b3d3221752b69fb256d0bebb3e064a3"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_authority.go",
+      "size": 7543,
+      "sha256": "550e816a7fb449ba12aa51b4666eb3ace83d6e5782d1f90477ae24a2095f1f7b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "size": 16051,
+      "sha256": "a2894ece393371698f361aa1708564a691278ee1690ae2ce8e463c6cdcafdba0"
+    },
+    {
+      "path": "docs/evidence/a-sensitive-download-admission-candidate-20261016.json",
+      "size": 6287,
+      "sha256": "b3c05f3688edf66b0fb7b133ed745958d7f7396c79a546631ad1f14bdc0b9614"
+    }
+  ],
+  "migration_catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+  },
+  "existing_config_policy": {
+    "object_type": "table",
+    "name": "system_backup_configs",
+    "owner": "D",
+    "data_classification": "confidential",
+    "backup_strategy": "metadata_only",
+    "restore_strategy": "reference_only",
+    "excluded_reason": null,
+    "normalizer_id": null,
+    "verifier_id": "system_backup.configs.reference.verify.v1",
+    "depends_on": [],
+    "decision_status": "owner_recorded",
+    "required_cross_reviewers": [
+      "A",
+      "B",
+      "C"
+    ],
+    "approved_cross_reviewers": [],
+    "redacted_explanation": "Immutable configuration versions contain only closed scalar policy and redacted identity/version references; provider and security material is never restored."
+  },
+  "proposed_maintenance_receipt_policy": {
+    "status": "d_owner_proposal_not_registered",
+    "owner": "D",
+    "data_classification": "confidential",
+    "backup_strategy": "metadata_only",
+    "restore_strategy": "reference_only",
+    "normalizer_id": null,
+    "verifier_id": "system_backup.config_maintenance_receipts.reference.verify.v1",
+    "depends_on": [
+      "table:system_backup_configs",
+      "table:audit_logs"
+    ],
+    "proposed_cross_reviewers": [
+      "A"
+    ],
+    "approved_cross_reviewers": [],
+    "installation_lifetime_replay_and_original_response": true,
+    "automatic_delete_gc": false,
+    "business_restore": false
+  },
+  "proposed_control_health_policy": {
+    "status": "d_owner_proposal_not_registered",
+    "owner": "D",
+    "data_classification": "internal",
+    "backup_strategy": "metadata_only",
+    "restore_strategy": "reference_only",
+    "normalizer_id": null,
+    "verifier_id": "system_backup.control_health.reference.verify.v1",
+    "depends_on": [
+      "table:system_backup_configs",
+      "table:system_backup_installation_state"
+    ],
+    "proposed_cross_reviewers": [
+      "A"
+    ],
+    "approved_cross_reviewers": [],
+    "business_restore": false,
+    "reuse_source_observation_or_writer_token": false
+  },
+  "bc_dependency_correction": "The existing formal system_backup_configs policy requires A/B/C cross review. A/D can prepare and validate the additive changes independently, but cannot complete formal shared-schema approval without the recorded reviewers.",
+  "pending": [
+    "Actual installed ledger/old SQL and reviewed upgrade identity",
+    "Current formal schema/catalog cross reviews and live schema evidence",
+    "Receipt/audit immutability, runtime least-privilege and external GC/lifetime retention",
+    "Physical row/index/audit allocation and concurrent reservation adapter",
+    "Exact formal-file fresh/upgrade acceptance; original canonical and runtime authorization for any actual backfill"
+  ],
+  "formal_registry_updated": false,
+  "formal_migrations_added": false,
+  "sensitive_download_proposal_adopted": false,
+  "production_approval": false
+}

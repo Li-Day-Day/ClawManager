@@ -88,6 +88,12 @@ func TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization(t *testing.T) 
 		want int
 	}{
 		{"/api/v1/admin/system-backups", http.StatusUnauthorized},
+		{"/api/v1/admin/system-backups/sbk_00000000-0000-4000-8000-000000000001/events", http.StatusUnauthorized},
+		{"/api/v1/admin/system-restore-drills/sdr_00000000-0000-4000-8000-000000000001/events", http.StatusUnauthorized},
+		{"/api/v1/admin/system-backup-preflights/spf_00000000-0000-4000-8000-000000000001/events", http.StatusUnauthorized},
+		{"/api/v1/admin/system-backup-artifact-verifications/sav_00000000-0000-4000-8000-000000000001/events", http.StatusUnauthorized},
+		{"/api/v1/admin/system-backups/sbk_00000000-0000-4000-8000-000000000001/events?status=pending", http.StatusBadRequest},
+		{"/api/v1/admin/system-backups/sbk_00000000-0000-4000-8000-000000000001/events?limit=0", http.StatusBadRequest},
 		{"/api/v1/admin/system-backup-operations", http.StatusUnauthorized},
 		{"/api/v1/admin/system-backup-operations/sop_00000000-0000-4000-8000-000000000001", http.StatusUnauthorized},
 		{"/api/v1/admin/system-backup-config", http.StatusUnauthorized},
@@ -99,6 +105,11 @@ func TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization(t *testing.T) 
 		{"/api/v1/admin/system-backup-config/versions/9007199254740992", http.StatusBadRequest},
 		{"/api/v1/admin/system-backup-config/versions/1?unexpected=1", http.StatusBadRequest},
 		{"/api/v1/admin/system-backups?status=pending&status=failed", http.StatusBadRequest},
+		{"/api/v1/admin/system-backups?limit=%", http.StatusBadRequest},
+		{"/api/v1/admin/system-backups?limit=10&status=%ZZ", http.StatusBadRequest},
+		{"/api/v1/admin/system-backups?limit=10;status=failed", http.StatusBadRequest},
+		{"/api/v1/admin/system-backup-operations?cursor=%FF%", http.StatusBadRequest},
+		{"/api/v1/admin/system-backup-config/versions?limit=2&ignored=%ZZ", http.StatusBadRequest},
 		{"/api/v1/admin/system-backup-operations?status=running", http.StatusBadRequest},
 		{"/api/v1/admin/system-backups/sbk_00000000-0000-4000-8000-000000000001", http.StatusServiceUnavailable},
 	} {

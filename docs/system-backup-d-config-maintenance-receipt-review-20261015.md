@@ -1,5 +1,7 @@
 # D：离线 canonical 回填的维护收据评审提案
 
+【2026-10-16 r40】A 八项具体 authority 的实际 MySQL 已按 [D 独立回执](evidence/system-backup-d-a-authority-review-20261016-r40.json)接收其原 1,265 输入/94 文件冻结轮；与下方七项服务保持独立范围，两者均无需重跑。当前合并已为 95 文件 catalog，真实认证/旧原文/target/容量、正式 081/082 和生产接线仍缺，不能由旧回执放行当前整树。
+
 【2026-10-16 七项私有服务 MySQL 已接收】[限定接收回执](evidence/system-backup-d-canonical-backfill-service-mysql-accepted-20261016.json)核对操作者 [08:34:36 原日志](evidence/d-canonical-backfill-remote-20261016-083436-235.txt)及[源码清单](evidence/d-canonical-backfill-remote-20261016-083436-235-source.json)：1,265 项输入当前逐项/集合匹配；MySQL 8.4.8、94 项 fresh replay、七个服务叶子各一次 PASS、两次实际配置行锁等待。准确 namespace `sbk-mig-261016005638-22b8` / UID `df21e81b-ea71-4fd7-87a8-a33290d62c68`、七组 installation/收据/审计/config 清理及两端 scratch/cache 均有成功标记，69 个本地路径独立确认不存在，终态 exit 0。无需再跑本服务专项。
 
 本次完整 security 为 230 主测试/1,525 子测试；精度 2/4 已包含其中，三次 seed 各 1/7 是重复覆盖。一次 Windows `asm.exe 0xc0000043` 仅重试同条 test/vet 命令，三个 overlay 精度反例按预期 exit 1，正常断言无重试；两次上传前密码拒绝也保留。正式服务的 apply/replay/nochange、分开的观察、audit/receipt/final 回滚、容量回调过期、真实提交回复丢失与双 worker 单次写入均由该冻结探针验证。授权与物理容量仍为 synthetic，不能据此接收 A 八项具体 authority、真实认证或生产回填。新 run 的清理不证明旧 16:33 中断 run 的远端候选目录状态。

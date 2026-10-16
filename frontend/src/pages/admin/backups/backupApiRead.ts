@@ -553,8 +553,13 @@ function listQuery(limit: number | undefined, cursor: string | undefined, maximu
   return query ? `?${query}` : '';
 }
 
+export interface BackupActivityContext {
+  origin_installation_id: string;
+  minimum_row_version: number;
+}
+
 export function createBackupApiReadClient(transport: BackupReadTransport) {
-  async function get<T>(path: string, signal: AbortSignal): Promise<T> {
+  async function get<T>(path: string, signal: AbortSignal, context?: BackupActivityContext): Promise<T> {
     const response = await transport(path, signal);
     if (signal.aborted) throw new DOMException('Read canceled', 'AbortError');
     if (response.headers.get('X-System-Backup-Data-Source') === 'fixture') {
@@ -568,13 +573,23 @@ export function createBackupApiReadClient(transport: BackupReadTransport) {
     if (!response.ok) {
       throw new BackupReadError(response.status, record(body) && typeof body.code === 'string' ? body.code : 'invalid_response');
     }
+    if (context !== undefined) {
+      if (response.headers.get('X-System-Backup-Data-Source') !== 'live') throw new BackupReadError(response.status, 'invalid_response');
+      if (response.headers.get('X-System-Backup-Origin-Installation-ID') !== context.origin_installation_id) {
+        throw new BackupReadError(response.status, 'installation_changed');
+      }
+      const version = response.headers.get('X-System-Backup-Task-Row-Version') ?? '';
+      if (!/^[1-9][0-9]*$/.test(version) || !Number.isSafeInteger(Number(version)) || Number(version) < context.minimum_row_version) {
+        throw new BackupReadError(response.status, 'snapshot_changed');
+      }
+    }
     if (!record(body)) throw new BackupReadError(response.status, 'invalid_response');
     if (signal.aborted) throw new DOMException('Read canceled', 'AbortError');
     return body as T;
   }
 
-  async function page<T>(path: string, signal: AbortSignal, maximum: number, validItem: (value: unknown) => boolean): Promise<BackupReadPage<T>> {
-    const body = await get<BackupReadPage<T>>(path, signal);
+  async function page<T>(path: string, signal: AbortSignal, maximum: number, validItem: (value: unknown) => boolean, context?: BackupActivityContext): Promise<BackupReadPage<T>> {
+    const body = await get<BackupReadPage<T>>(path, signal, context);
     if (Object.keys(body).sort().join(',') !== 'consistency,items,next_cursor' || !Array.isArray(body.items)
       || body.items.length > maximum || !body.items.every(validItem)
       || (body.next_cursor !== null && !validCursor(body.next_cursor))
@@ -643,11 +658,11 @@ export function createBackupApiReadClient(transport: BackupReadTransport) {
       return result;
     },
     activity<K extends 'events' | 'logs'>(kind: BackupTaskKind, id: string, channel: K, signal: AbortSignal,
-      options: { limit?: number; cursor?: string } = {}): Promise<BackupReadPage<K extends 'events' ? EventResource : LogEntryResource>> {
+      options: { limit?: number; cursor?: string; context?: BackupActivityContext } = {}): Promise<BackupReadPage<K extends 'events' ? EventResource : LogEntryResource>> {
       const maximum = channel === 'events' ? 500 : 1000;
       return page<K extends 'events' ? EventResource : LogEntryResource>(
         `${taskPath(kind, id)}/${channel}${listQuery(options.limit, options.cursor, maximum)}`,
-        signal, options.limit ?? 50, (item) => validActivity(channel, item, kind, id));
+        signal, options.limit ?? 50, (item) => validActivity(channel, item, kind, id), options.context);
     },
   };
 }

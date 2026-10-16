@@ -6,10 +6,11 @@ import type { BackupLiveData, BackupLiveState } from './backupLiveSource';
 import { startBackupLivePolling } from './backupLivePolling';
 import { useBackupText } from './useBackupText';
 import { systemBackupReadService } from '../../../services/systemBackupReadService';
-import BackupLiveDetail from './BackupLiveDetail';
+import BackupLiveDetail from './BackupLiveDetail.tsx';
 import type { BackupDetailSelection } from './backupLiveDetail';
 import BackupLiveConfigHistory from './BackupLiveConfigHistory';
 import BackupOverviewReadout from './BackupOverviewReadout';
+import BackupLiveOperations from './BackupLiveOperations.tsx';
 
 const liveSource = createBackupLiveSource(systemBackupReadService);
 type TaskGroup = 'backups' | 'drills' | 'preflights' | 'verifications';
@@ -72,7 +73,7 @@ export default function BackupLiveWorkspace({ fallback }: { fallback: ReactNode 
     };
   }, [revision]);
 
-  if (state.kind === 'unavailable') return <>{fallback}</>;
+  if (state.kind === 'unavailable') return <div className="space-y-5">{fallback}<BackupLiveOperations installation={null} /></div>;
   if (state.kind === 'loading') return <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500" role="status" aria-busy="true">{b('loading')}</div>;
   if (state.kind === 'error') return <div className="rounded-xl border border-red-200 bg-red-50 p-6" role="alert">
     <h2 className="font-medium text-red-800">{b('loadFailed')}</h2>
@@ -132,6 +133,7 @@ export default function BackupLiveWorkspace({ fallback }: { fallback: ReactNode 
         className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 disabled:opacity-50" onClick={() => loadMore(group.key)}>{paging?.kind === group.key && !paging.error ? b('loadingMore') : b('loadMore')}</button>
         {paging?.kind === group.key && paging.error && <p className="mt-2 text-sm text-red-700" role="alert">{b('readError')}</p>}</div>}</>}
     </section>; })}
+    <BackupLiveOperations key={installation ?? 'unknown-installation'} installation={installation} />
     <section className="grid gap-3 sm:grid-cols-3">{backupEntryPoints.filter((entry) => ['catalog', 'retention', 'baseline'].includes(entry.tab)).map((entry) =>
       <div key={entry.tab} className="rounded-xl border border-slate-200 bg-white p-4"><h2 className="text-sm font-semibold text-slate-800">{b(entry.label)}</h2><p className="mt-2 text-xs text-slate-500">{b('comingSoon')}</p></div>)}</section>
   </div>;

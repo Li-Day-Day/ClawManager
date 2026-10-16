@@ -1,0 +1,43 @@
+**********************
+PowerShell transcript start
+Start time: 20261016160753
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& ./scripts/system-backup-d-event-api-native-validation.ps1 -SourceManifestPath "$PWD/docs/evidence/system-backup-d-event-api-native-source-20261016-r3.json" -LogPath "$PWD/docs/evidence/system-backup-d-event-api-native-local-20261016-r3.txt" -PreparedScratchPath "$PWD/.tmp-a-evidence-01b4626c490641ac874e9872330ca0d6" -HTTPOnly
+Process ID: 33312
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SOURCE event-api-native=yes source_sha256=a7cb6d82e125b3fcbfc6300b3bdcdffadefd10b6b66b9a5e33a7a266ac0815f5 files=1327
+LOCAL_OWNER event-api-native=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-95b0099d88a24b71961dfd6b3fbf6bf0
+LOCAL_PASS isolated-go-telemetry=off
+
+LOCAL_STAGE native-live-read-http-focused default-vet=yes
+{"Time":"2026-10-16T16:21:04.9790318+08:00","Action":"start","Package":"command-line-arguments"}
+{"Time":"2026-10-16T16:21:09.9483945+08:00","Action":"run","Package":"command-line-arguments","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions"}
+{"Time":"2026-10-16T16:21:09.9494048+08:00","Action":"output","Package":"command-line-arguments","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions","Output":"=== RUN   TestLiveBackupReadRequiresPinnedAuthorityAndSessions\n"}
+{"Time":"2026-10-16T16:21:12.8321385+08:00","Action":"output","Package":"command-line-arguments","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions","Output":"--- PASS: TestLiveBackupReadRequiresPinnedAuthorityAndSessions (0.51s)\n"}
+{"Time":"2026-10-16T16:21:12.8321385+08:00","Action":"pass","Package":"command-line-arguments","Test":"TestLiveBackupReadRequiresPinnedAuthorityAndSessions","Elapsed":0.51}
+{"Time":"2026-10-16T16:21:12.9990921+08:00","Action":"run","Package":"command-line-arguments","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization"}
+{"Time":"2026-10-16T16:21:12.9990921+08:00","Action":"output","Package":"command-line-arguments","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization","Output":"=== RUN   TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization\n"}
+{"Time":"2026-10-16T16:21:12.9990921+08:00","Action":"output","Package":"command-line-arguments","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization","Output":"--- PASS: TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization (1.04s)\n"}
+{"Time":"2026-10-16T16:21:12.9990921+08:00","Action":"pass","Package":"command-line-arguments","Test":"TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization","Elapsed":1.04}
+{"Time":"2026-10-16T16:21:12.9990921+08:00","Action":"output","Package":"command-line-arguments","Output":"PASS\n"}
+{"Time":"2026-10-16T16:21:13.0531114+08:00","Action":"output","Package":"command-line-arguments","Output":"ok  \tcommand-line-arguments\t8.010s\n"}
+{"Time":"2026-10-16T16:21:13.0696695+08:00","Action":"pass","Package":"command-line-arguments","Elapsed":8.091}
+LOCAL_PASS event-api-native-http=yes http-only=True frozen-postcheck=yes actual-mysql=no dependency-installation=no production-enabled=no
+CLEANED event-api-native-source-build-cache=True
+**********************
+PowerShell transcript end
+End time: 20261016162227
+**********************

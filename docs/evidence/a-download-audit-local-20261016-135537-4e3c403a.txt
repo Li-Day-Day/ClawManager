@@ -1,0 +1,38 @@
+**********************
+PowerShell transcript start
+Start time: 20261016135538
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$auditStamp=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8); $auditLog=Join-Path (Get-Location).Path ('docs/evidence/a-download-audit-local-'+$auditStamp+'.txt'); $auditSource=Join-Path (Get-Location).Path ('docs/evidence/a-download-audit-source-'+$auditStamp+'.json'); Start-Transcript -LiteralPath $auditLog -NoClobber | Out-Null; $auditExit=1; try { & './docs/evidence/a-download-audit-review-20261016.ps1' -SourceManifestPath $auditSource; $auditExit=0 } catch { Write-Output ('DOWNLOAD_AUDIT_ERROR='+$_.Exception.Message) } finally { Write-Output ('a_download_audit_exit='+$auditExit); Write-Output ('audit_review_log='+$auditLog); Write-Output ('audit_review_source='+$auditSource); Stop-Transcript | Out-Null }; exit $auditExit
+Process ID: 2496
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+OWNED download-audit-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-13d83a90bba04cd2ae5eb05d991d3b3f scratch=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-ffe04248b510419c9049251d3578e02e
+LOCAL_SOURCE download-audit-review=yes source_sha256=7defaeb3eb9fd85b36f2d56677a30744e55991644c84d94c18ccf5ea46c4c235 files=1310 audit_sha256=eda7fc282dafae4471161ea7984db0c4b9e7bd91abe1649c674b2c55769c9c2f
+LOCAL_PASS isolated-go-telemetry=off
+LOCAL_STAGE download-audit-evidence-full default-vet=yes retry=no dependency-downloads=no sql-transport=model
+{"ImportPath":"crypto/internal/fips140/sha512","Action":"build-output","Output":"crypto/internal/fips140/sha512: C:\\Program Files\\Go\\pkg\\tool\\windows_amd64\\compile.exe: exit status 0xc0000043\n"}
+{"ImportPath":"crypto/internal/fips140/sha512","Action":"build-fail"}
+DOWNLOAD_AUDIT_GO_EXIT=-1
+LOCAL_CLEANUP download-audit-review-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-ffe04248b510419c9049251d3578e02e removed=True
+LOCAL_CLEANUP download-audit-review-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-13d83a90bba04cd2ae5eb05d991d3b3f removed=True
+PS>TerminatingError(): "Download audit review failed (exit=-1); no automatic retry"
+DOWNLOAD_AUDIT_ERROR=Download audit review failed (exit=-1); no automatic retry
+a_download_audit_exit=1
+audit_review_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-local-20261016-135537-4e3c403a.txt
+audit_review_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-source-20261016-135537-4e3c403a.json
+**********************
+PowerShell transcript end
+End time: 20261016141036
+**********************
