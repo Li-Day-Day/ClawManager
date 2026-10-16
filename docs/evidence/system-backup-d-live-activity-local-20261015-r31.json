@@ -1,0 +1,125 @@
+{
+  "kind": "d_live_task_activity_local_candidate",
+  "recorded_at": "2026-10-15T08:31:31.4204758Z",
+  "status": "node_read_pagination_and_i18n_pass_ui_build_pending",
+  "raw_log": "docs/evidence/system-backup-d-live-activity-local-20261015-r31.txt",
+  "raw_sha256": "8618aff3371c7cbb6cf8b7c4220abd133037ea60573e1712a0cd5a0da52d7f3e",
+  "command": "node --test-isolation=none --test frontend/scripts/system-backups.test.mjs frontend/scripts/system-backups-live-detail.test.mjs frontend/scripts/system-backups-live-activity.test.mjs frontend/scripts/system-backups-i18n.test.mjs",
+  "exit_code": 0,
+  "tests": 101,
+  "failed": 0,
+  "skipped": 0,
+  "targeted_new_main_tests": 11,
+  "targeted_new_subtests": 29,
+  "normal_runs": 2,
+  "preliminary_tests": 98,
+  "final_rerun_reason": "Added later-page/final-permission error coverage and explicit completed-page narrowing; both normal runs passed, no failed assertion retries",
+  "source_pins_scope": "post-run files, not frozen build manifest",
+  "source_pins": [
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+      "sha256": "f5cd5f8a25f53bf87ab340d1bdc31ccf470d6d9042a6e2df31c75970516a16ae"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveDetail.tsx",
+      "sha256": "f5580a0a7a4f605a0379fc75bd0854a859c178d1be6cbaeafdd9a6ce701ccd83"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveDetail.ts",
+      "sha256": "c44592bb7eb7635ef4c687dc56932fe97f69559190c6077c1dfc7f1ce3bc772b"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupApiRead.ts",
+      "sha256": "cba2ce7bb4ffac69dca47c864a86c42b7b226ead6ce05db129c77d0af312d524"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupReadModel.ts",
+      "sha256": "c56658618488ae5a4ee0c146c0ebcec6868eb690ac9a521d48012bbec4a37d66"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupPreview.ts",
+      "sha256": "4dc6b7536071ba09642ffad2d078dc809fd11f689ca4300f8cfd085a4237e2ab"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/useBackupText.ts",
+      "sha256": "90a90e149b2cf5aa71e524ef3727dc3a3951a11b32100c117cac2fa5c88522fd"
+    },
+    {
+      "path": "frontend/src/types/systemBackupContract.ts",
+      "sha256": "be8642700b263dd74798e014f1ae7d153c6dd8c4491b6323c35468f1b359c0f2"
+    },
+    {
+      "path": "frontend/src/services/systemBackupReadService.ts",
+      "sha256": "496931f4dde8b5203279dc0746f3c07c74179a2f84fae52b213c9290c935cd80"
+    },
+    {
+      "path": "frontend/src/lib/systemBackupI18n.ts",
+      "sha256": "46988b6794735d16ca8be853d7b944321fe869f0e967b89b7f6a6f331a476bd8"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-detail.test.mjs",
+      "sha256": "b09ba6bf384788bccf0cb6fe7ab9d996acd51ba7ea0fe375820d02d249a03156"
+    },
+    {
+      "path": "frontend/scripts/system-backups.test.mjs",
+      "sha256": "3e01f066790663db21a609daba7d8d5550599608a4ab4bcd5ae651367cf187cb"
+    },
+    {
+      "path": "frontend/scripts/system-backups-i18n.test.mjs",
+      "sha256": "814f7f82401b0eea2fca114f7b81228a1d8c384c4720d2c847cdba19c7d1ab5b"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveActivity.ts",
+      "sha256": "a993349ad23fd07fb8d8534222b16cf917f1854cbb5c65b642129d5e7cde7fc6"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveActivity.tsx",
+      "sha256": "57b071c1df7214718b566c5e3857312442fbd48431c8c0825a41faa6e5b44b69"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-activity.test.mjs",
+      "sha256": "1f1d61627a4269bc386130af0c1ac370e7f50a566f7014a1b45d2fe4a7a53935"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-activity-resources.schema.json",
+      "sha256": "035633cde22b5f4deffb61cfcc370014c7ba5a9066c9d0123c3d5eadcbf2797f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-api-common.schema.json",
+      "sha256": "40a8cbafbfa4697835901eea4fad8b5e8fd4a6eb287fa4f866992e848b16a990"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-errors.json",
+      "sha256": "ca0877f799600cba34d7fef0966b8757ff7f6975539da98c0e9d19ca4df72b83"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "sha256": "22d92c3586c5c1b9f6e30e4cf9f433196f3fa851421fa538ee62173a3004b5ad"
+    }
+  ],
+  "implementation": [
+    "on-demand events/logs for all four task types",
+    "50 items per request with opaque cursor round trip",
+    "selected task identity/installation/minimum row version checked before and after every fetched page",
+    "continuations bound to task/installation/kind/minimum-version/channel",
+    "cursor loops and consistency changes rejected",
+    "identical event DTOs preserved because no event ID is exposed",
+    "failures do not return complete empty collections",
+    "logs_expired presentation restricted to logs and non-authentication 4xx",
+    "cancel on view change/unmount/refresh; late completion discarded",
+    "event truncation indicated; event/log text rendered as React text"
+  ],
+  "dependencies_installed": false,
+  "tests_generated_build_artifacts": false,
+  "project_node_modules_present": false,
+  "typescript_vite_build_verified": false,
+  "react_browser_verified": false,
+  "real_api_or_bc_runtime_executed": false,
+  "production_enabled": false,
+  "limits": [
+    "Node executes TypeScript read logic and translation checks; TSX is inspected as source only",
+    "No frontend compiler or rendering dependencies installed; full build/browser verification remains pending",
+    "Task checks before/after a page are observational boundaries, not a cross-request SQL snapshot",
+    "The public activity/Owner backend and production deployment retain their original gates"
+  ]
+}

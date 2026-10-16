@@ -1,0 +1,54 @@
+**********************
+PowerShell transcript start
+Start time: 20261015081710
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+Start-Transcript -LiteralPath 'docs/evidence/system-backup-d-index-snapshot-local-20261015-r2.txt' -NoClobber; try{ & .\scripts\system-backup-d-index-source-snapshot.test.ps1; & .\scripts\system-backup-d-index-group-input.test.ps1; & 'C:\Program Files\nodejs\node.exe' scripts/system-backup-d-index-group-report.test.mjs; if($LASTEXITCODE -ne 0){throw 'Grouped snapshot verification failed'} }finally{Stop-Transcript}; git diff --check -- scripts/system-backup-d-index-group-validation.ps1
+Process ID: 20708
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/system-backup-d-index-snapshot-local-20261015-r2.txt
+PASS copies all selected source inputs, rejects raw run artifacts, verifies read-only snapshot
+PASS later working-tree edits do not change frozen source
+PS>TerminatingError(): "Refusing existing source snapshot"
+PASS rejects snapshot overwrite
+PS>TerminatingError(): "Frozen grouped source file set drift"
+PASS rejects an added build input in frozen snapshot
+PS>TerminatingError(): "Frozen grouped source snapshot drift"
+PASS rejects copied-source mutation before another remote run
+CLEANED source snapshot fixture=True
+PASS valid run-owned shared cache input
+PS>TerminatingError(): "IndexSuiteCache ownership marker mismatch"
+PASS rejected input AdminReadIndexCandidate,IndexSuiteCache,AdminReadOnly
+PS>TerminatingError(): "IndexSuiteCache must be a run-owned grouped cache"
+PASS rejected input AdminReadIndexCandidate,IndexSuiteCache,AdminReadOnly
+PS>TerminatingError(): "IndexSuiteCache requires the index candidate profile"
+PASS rejected input IndexSuiteCache
+PS>TerminatingError(): "AdminReadIndexVariant requires AdminReadIndexCandidate"
+PASS rejected input AdminReadIndexVariant
+PS>TerminatingError(): "Cannot validate argument on parameter 'AdminReadIndexVariant'. The argument "unsafe" does not belong to the set "all,page,status" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again."
+PASS rejected input AdminReadIndexCandidate,AdminReadIndexVariant,AdminReadOnly
+CLEANED grouped cache input fixture=True
+PASS exact forward/reverse group plan and wrapper syntax
+CLEANED grouped-index-build-cache=True
+PASS actual suite finalizer cleanup failure=False
+CLEANED grouped-index-build-cache=True
+PS>TerminatingError(): "synthetic measurement failure"
+PASS actual suite finalizer cleanup failure=True
+PASS grouped inputs; no Go, SSH, dependency installation or retained build products
+
+**********************
+PowerShell transcript end
+End time: 20261015081723
+**********************

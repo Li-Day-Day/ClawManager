@@ -1,0 +1,213 @@
+{
+  "kind": "d_config_maintenance_receipt_isolated_mysql_probe_local_preflight",
+  "round": "r27",
+  "recorded_at": "2026-10-15T07:24:21.3944351Z",
+  "status": "local_ready_real_mysql_not_run",
+  "native_exit": 0,
+  "normal_security_main_pass": 207,
+  "normal_security_sub_pass": 1395,
+  "seed_main_pass_executions": 3,
+  "seed_sub_pass_executions": 21,
+  "seed_modes": [
+    "tagged Go test",
+    "standalone Windows executable empty CWD synthetic capsule",
+    "standalone Windows executable empty CWD actual frozen PowerShell capsule"
+  ],
+  "total_main_pass_executions": 210,
+  "total_sub_pass_executions": 1416,
+  "maintenance_private_and_a_audit_time_tests_in_normal_totals": true,
+  "independent_a_counterfactual_not_executed_in_this_run": true,
+  "dispatch_profiles": [
+    "general A 11 cases",
+    "D writer default",
+    "A writer security",
+    "D maintenance receipt storage"
+  ],
+  "default_vet_enabled": true,
+  "assertion_retries": 0,
+  "known_tool_crash_retries": 0,
+  "linux_probe_compiled": true,
+  "linux_probe_binary_sha256": "f648578fbbe141a04cc9edc0d817de929c56a467181814d2097a7dd45c776168",
+  "actual_capsule_sha256": "4480d7e0f017f87ba22c38a76c89212f922f6b408149f2dfd3b8967a544fd3a3",
+  "actual_capsule_detached_validation_pass": true,
+  "migration_runner_compiled": true,
+  "migration_binary_sha256": "4a988db232064014f9da5188fcae02976189d6da9c9e547a8f54233ef45d83ff",
+  "candidate_081_lf_sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1",
+  "candidate_082_lf_sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87",
+  "source_manifest": "docs/evidence/system-backup-d-maintenance-receipt-probe-source-20261015-r27.json",
+  "source_manifest_sha256": "aa8bafb5bca5d2743a8ecc410aef01b9fabfefa10d3174e87a0c68b0749c2a46",
+  "source_sha256": "8d060afde6ef5c5de1ae77022adbd82db5ea3999e486eae048575340f5a88122",
+  "source_files": 1251,
+  "source_pins": [
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "size": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity.go",
+      "size": 7438,
+      "sha256": "270bc9df869a7679c50b6c63ac4397ec43e37af7a98ea7c13b3173c6412014d6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_row.go",
+      "size": 8829,
+      "sha256": "37210ff32bc09793b29c39661a010833f1ca58c687dd43055097948765898b62"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_a_test.go",
+      "size": 3319,
+      "sha256": "dafc8ca1eb6575e2bd8807d88cb78cc7a16948c05d9870405cc42356b85c229f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_mysql_test.go",
+      "size": 26218,
+      "sha256": "1e420d12edc99c724608c6949db95c99f07ee92b8e11a3465eb8924ffd121a12"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+      "size": 14791,
+      "sha256": "00eade3b0d844d5691490e17dac98f47ef5300f14a3ba6ad31611e430bed8a6d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_test.go",
+      "size": 23857,
+      "sha256": "150baead7578be2e7ad4ec998946f65dc8700fb5d5d774416131ddfa3a7255d2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt.go",
+      "size": 7127,
+      "sha256": "fd91500aede239e044f778467781a2a1d4d07aa3dfe04e5e65ec96e54903038d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_maintenance_candidate_082.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 42447,
+      "sha256": "ef319c22f619b24751a4620558486413fc367e13b515fff3e5564a64db825c8c"
+    },
+    {
+      "path": "scripts/system-backup-d-config-maintenance-receipt-phase.sh",
+      "size": 3026,
+      "sha256": "f717fe5a1cf29662a45e7450fb306143d4333cd0c2acc544be0faa863a7aeb5e"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-dispatch.test.ps1",
+      "size": 5726,
+      "sha256": "35eb60db3f6c1990011bea7d10d74c44b5b57e7ecf80306efd52cbc991754a91"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "size": 3697,
+      "sha256": "98e7143eef6f3745eccf6f0946893abc61d4e81bcf22f739c6f45555dafd37c0"
+    }
+  ],
+  "frozen_postcheck_pass": true,
+  "all_manifest_files_match_current": true,
+  "transcript": "docs/evidence/system-backup-d-maintenance-receipt-probe-local-20261015-r27.txt",
+  "transcript_sha256": "030ef073640fddc4bf018075d2666473759a23a811fe00c3f672b6f0110888db",
+  "generated_paths_checked_absent": 68,
+  "generated_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationHTTPLargeConfigKeepsFullSQLBytesAndBoundedOper1588691894\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationHTTPRealTLSJWTWriterAndOriginalReplay4062883426\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationHTTPUnknownCommitObservesOnceWithoutRewriting2727327908\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACactive885438641\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACaudit-missin105031097\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACcanonical-mi1711303905\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACdatabase213863790\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACduplicate-ri474579438\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACmaterialized3204040931\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACnull-destruc989043327\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACnull-securit952691007\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACoriginal-bot3401852146\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACoriginal-des2456728478\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACoriginal-sec1956154088\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACpassword-cha249366051\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACregistry-cor1764849752\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACregistry-mis1744510357\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACrevoked-befo3148732826\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACrevoked240488132\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACrotated-curr2148139125\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACrotated-curr2588112135\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACrotated-prov1843165821\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayActualSQLSessionAndFileRBACsession-shor2563805646\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayAuthorizerRejectsDifferentReceipteviden1582919117\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayAuthorizerRejectsDifferentReceiptexpire1924666433\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayAuthorizerRejectsDifferentReceiptoperat291523498\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayAuthorizerRejectsDifferentReceiptrespon1813971429\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayAuthorizerRejectsDifferentReceiptversio111762252\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigMutationReplayAuthorizerRequiresFixedDeploymentSources1441373002\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotrollback1079169430\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotrollback2122398411\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotrollback497553812\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotrollback605675194\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotupdateSy1544977745\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotupdateSy2126493353\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotupdateSy3389447435\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreKeepsPrivateReadSnapshotupdateSy3770715885\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS1053026522\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS1795966589\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS2092321372\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS2176853730\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS2990120471\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS3839472860\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS411522250\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLrollbackS984109062\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys2268747528\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys2476052584\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys3047323729\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys3247233680\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys3601247635\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys436839158\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys624207050\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationAActualStoreRejectsContradictorySQLupdateSys691057463\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationReadFinalGuardRechecksOriginalSQLAndCurrentPe2756129200\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationReadFinalGuardRechecksOriginalSQLAndCurrentPe3732089560\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationReadFinalGuardRechecksOriginalSQLAndCurrentPe584754881\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreFailureAfterResponseRollsBackAllEffects16347731\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftbody-corr3632616869\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftcurrent-r3018907990\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftexpired2776572544\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftexternal-2543356132\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftextra-chu2549539569\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftlegacy-co4265962770\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftoperation348353219\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftoperation3551809611\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationStoreRejectsSQLOrSavedResponseDriftresult-re3889450963\\001",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-72c5065ff57e48ccb6faf7d9aeadc7f2\\source\\.tmp-a-evidence-e4e3e038413e4163b031964a2fba7b0b\\tmp\\TestConfigOperationWriterStoresExactTerminalOperationAndReplaysO56500874\\001"
+  ],
+  "remote_requested": false,
+  "ssh_executed": false,
+  "real_mysql_executed": false,
+  "dependencies_installed": false,
+  "formal_migration_promoted": false,
+  "historical_backfill_executed": false,
+  "runtime_grant_issued": false,
+  "production_approval": false,
+  "remote_root_test": "TestDConfigMaintenanceReceiptMySQL",
+  "remote_cases_prepared_not_executed": [
+    "fill_commit_replay_nochange",
+    "caller_rollback",
+    "receipt_failure_atomic_rollback",
+    "result_audit_failure_atomic_rollback",
+    "constraints_and_retention",
+    "lost_commit_reply_observation",
+    "observed_config_lock_replay"
+  ],
+  "limits": [
+    "Local preflight and compilation do not prove actual InnoDB behavior.",
+    "Remote storage probe uses generated owned rows and synthetic admission/source pins; it is not an authenticated maintenance writer.",
+    "Actual historical canonical source, installation-bound runtime grant, source/grant authentication and production readiness remain absent.",
+    "Formal 081/082, ownership/retention/capacity and production routing remain unapproved.",
+    "Previously accepted writer/index remote evidence is retained separately and does not cover the new storage probe."
+  ]
+}

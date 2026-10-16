@@ -1,0 +1,25 @@
+{
+  "kind": "a_config_response_content_setup_failure",
+  "recorded_at": "2026-10-15T10:41:45.5669520+08:00",
+  "status": "failed_before_test_assertions",
+  "source_manifest": "docs/evidence/a-config-response-content-source-20261015.json",
+  "source_sha256": "236120161e3f977290f6fd6431347aafa329319390556dc938da1af2b497474c",
+  "source_files": 1175,
+  "log": "docs/evidence/a-config-response-content-local-20261015.txt",
+  "log_sha256": "3fe5642bc8155c0f5fd235a9fa69fe5fee24ab9587e0ba009e892f280553c0dc",
+  "exit": 1,
+  "test_assertions_run": 0,
+  "vet_completed": false,
+  "tool_crash_retry_count": 0,
+  "cause": "Parallel response implementations used the same new security filename; D storage bridge imported evidence, which already imports security, creating a setup-time import cycle",
+  "resolution": "A canonical builder/test moved to distinct config_response_canonical filenames; D subsequently split combination logic into systembackupconfig and kept typed preparation in security; no test/file exclusion used",
+  "cleanup_paths": [
+    ".tmp-a-evidence-393df5a7b3d3481da45d862095d614a8",
+    ".tmp-d-index-cache-455112c2fc624ae09a75c7375de6b510"
+  ],
+  "cleanup_independently_absent": true,
+  "dependencies_installed": false,
+  "ssh_run": false,
+  "mysql_run": false,
+  "production_approved": false
+}

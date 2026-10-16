@@ -1,0 +1,64 @@
+{
+  "kind": "d_index_group_stage2_local",
+  "date": "2026-10-14",
+  "complete": false,
+  "production_approved": false,
+  "dependency_installation": false,
+  "remote_actions": false,
+  "checks": {
+    "node_tests": 79,
+    "node_failures": 0,
+    "per_run_full_ad_http_gate": "PASS",
+    "suite_original_measurement_recomputation": "PASS",
+    "cache_cleanup_on_success_and_failure": "PASS actual finalizer with synthetic owned fixture",
+    "failure_not_masked": "PASS",
+    "fixture_products_removed": true,
+    "PowerShell_wrapper_syntax": "PASS"
+  },
+  "evidence": [
+    {
+      "path": "docs/evidence/system-backup-d-index-group-node-local-20261014-r2.txt",
+      "sha256": "743e6efea0bcb5bc8da78b51cd9977af818333fa267af03dc3c59eb086658f6a"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-index-group-script-local-20261014-r5.txt",
+      "sha256": "d4ea54974596ad40187ce16d437f95fadb1c942ca780b9fcc96ccd7f109532d4"
+    }
+  ],
+  "source_inputs": [
+    {
+      "path": "scripts/system-backup-d-index-group-report.mjs",
+      "sha256": "50076457ab89897921ddca1a145241516e49f73874ba7828023b2f52ba3b7df3"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-report.test.mjs",
+      "sha256": "d0caf6d4bd9328625160f23bc7817a213bf5fd3dff16a885f4316a64e91693c0"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-verify.mjs",
+      "sha256": "20073a0b8409c9c535556f6abd814825ef7caddeaba3013b7b582bc93f8999f5"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-validation.ps1",
+      "sha256": "4342cf3cf2e803e3c2a898d10fd140add0702ad2ff110ba21b588cb14b27af37"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-input.test.ps1",
+      "sha256": "da1fe8f183bf8a6d8d00ffd319ebd094928c4275e8d222cc547095b175c29eab"
+    }
+  ],
+  "go_gate": {
+    "session_id": 53443,
+    "status": "still_running",
+    "restart": false,
+    "first_linux_authority_binary_observed": true,
+    "full_profile_exit": null,
+    "products": "owned scratch retained while actual build is running; helper finally must remove them at end"
+  },
+  "remaining": [
+    "final local Linux build/cleanup receipt",
+    "operator grouped MySQL suite",
+    "representative workload and index decision",
+    "other original D/A production and Owner gates"
+  ]
+}

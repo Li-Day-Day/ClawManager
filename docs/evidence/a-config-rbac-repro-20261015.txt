@@ -1,0 +1,20 @@
+A RBAC stage=repro default-vet=yes offline=yes
+ATTEMPT=1 COMMAND=go test -count=1 -v -p=1 -run ^TestConfigMutationRBAC(RequiresRepresentableAdminSubjects|PreservesValidSubjectBoundary)$ ./internal/systembackupsecurity
+=== RUN   TestConfigMutationRBACRequiresRepresentableAdminSubjects
+=== RUN   TestConfigMutationRBACRequiresRepresentableAdminSubjects/utf8-overflow
+    config_mutation_rbac_a_contract_test.go:27: unrepresentable last admin counted as a usable binding <nil>
+=== RUN   TestConfigMutationRBACRequiresRepresentableAdminSubjects/ascii-overflow
+    config_mutation_rbac_a_contract_test.go:27: unrepresentable last admin counted as a usable binding <nil>
+--- FAIL: TestConfigMutationRBACRequiresRepresentableAdminSubjects (0.04s)
+    --- FAIL: TestConfigMutationRBACRequiresRepresentableAdminSubjects/utf8-overflow (0.02s)
+    --- FAIL: TestConfigMutationRBACRequiresRepresentableAdminSubjects/ascii-overflow (0.01s)
+=== RUN   TestConfigMutationRBACPreservesValidSubjectBoundary
+=== RUN   TestConfigMutationRBACPreservesValidSubjectBoundary/ascii-256-bytes
+=== RUN   TestConfigMutationRBACPreservesValidSubjectBoundary/utf8-256-bytes
+--- PASS: TestConfigMutationRBACPreservesValidSubjectBoundary (0.02s)
+    --- PASS: TestConfigMutationRBACPreservesValidSubjectBoundary/ascii-256-bytes (0.01s)
+    --- PASS: TestConfigMutationRBACPreservesValidSubjectBoundary/utf8-256-bytes (0.01s)
+FAIL
+FAIL	clawreef/internal/systembackupsecurity	2.209s
+FAIL
+GO_EXIT=1

@@ -1,0 +1,72 @@
+{
+  "kind": "a_config_success_wire_contract_audit",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T12:21:13.9183639+08:00",
+  "finding_id": "A-CONFIG-WIRE-01",
+  "status": "open",
+  "owners": [
+    "A",
+    "D"
+  ],
+  "operation_ids": [
+    "updateSystemBackupConfig",
+    "rollbackSystemBackupConfig"
+  ],
+  "contract_response_ref": "#/components/responses/Operation",
+  "contract_schema_ref": "task-operation.schema.json#/$defs/Operation",
+  "contract_schema_version": "system-backup-operation.v1",
+  "candidate_schema_ref": "admin-control-resources.schema.json#/$defs/ConfigResource",
+  "candidate_schema_version": "system-backup-config.v1",
+  "missing_operation_fields": [
+    "public_id",
+    "operation_type",
+    "target_type",
+    "target_public_id",
+    "actor_type",
+    "actor_id",
+    "endpoint",
+    "idempotency_key",
+    "request_hash",
+    "status",
+    "retryable",
+    "failure_category",
+    "deadline_at",
+    "updated_at"
+  ],
+  "forbidden_config_fields_in_operation": [
+    "version",
+    "active",
+    "effective_enabled",
+    "config",
+    "created_by",
+    "change_reason"
+  ],
+  "candidate_source": "configMutationResponse constructs ConfigResourceDTO and CanonicalConfigMutationResponse delegates to it",
+  "evidence": [
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "sha256": "22d92c3586c5c1b9f6e30e4cf9f433196f3fa851421fa538ee62173a3004b5ad"
+    },
+    {
+      "path": "contracts/system-backup/v12/task-operation.schema.json",
+      "sha256": "0976c9daab459f627bb5d402b208358867124596777a20d69fea5b30575cf38c"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "sha256": "3ff86691021df10288456573993404b82f9eef0d2effa0fe51eae00535142f80"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_response_canonical.go",
+      "sha256": "3881249a9ee2baf066cbe0ce870e8b28ce1a6823e63d15e74a95b1d10cd03250"
+    }
+  ],
+  "next_required_change": "Provide exact canonical Operation response and align writer, evidence/receipt hashes and byte-for-byte replay before HTTP deployment; review any proposed public contract change explicitly",
+  "production_http_enabled": false,
+  "production_approved": false,
+  "local_config_content_tests_do_not_close_finding": true,
+  "handoff": "docs/system-backup-a-registration-contract-alignment-20261015.md"
+}

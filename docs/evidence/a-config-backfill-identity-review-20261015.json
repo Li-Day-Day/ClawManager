@@ -1,0 +1,124 @@
+{
+  "kind": "a_config_canonical_backfill_identity_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T13:36:20.7267758+08:00",
+  "status": "accepted_local_identity_algorithms_for_d_implementation",
+  "scope": "Exact locked-row/source agreement, immutable row identity and source provenance digest representation; not source authentication, runtime grant, migration approval or a maintenance writer",
+  "profiles": [
+    "a-config-canonical-backfill-row.v1",
+    "a-config-canonical-backfill-provenance.v1"
+  ],
+  "contract": "docs/evidence/a-config-backfill-identity-contract-20261015.json",
+  "contract_sha256": "712c8206d7408872c35ce882f5310530c10fc9e646203f389011fe05cb39f5d4",
+  "source_manifest": "docs/evidence/a-config-backfill-identity-source-20261015-r2.json",
+  "source_sha256": "a0e4cddd75aa0dfed8301899736e9577a7d744e21fd9be9e501e92996c78e0d7",
+  "source_files": 1235,
+  "source_manifest_sha256": "cbb41155e4ce73fc6cc1f4b46218854f33ed5163573e31fc044f9652f570852a",
+  "log": "docs/evidence/a-config-backfill-identity-local-20261015-r2.txt",
+  "log_sha256": "156df8c4a66ea3e61793f41f8db3cee1b527dd1b3bbd7bc81670500007e5d4ae",
+  "targeted_main": 7,
+  "targeted_sub": 182,
+  "full_main": 204,
+  "full_sub": 1207,
+  "full_unique_checks": 1411,
+  "full_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 68.404,
+      "main_pass": 184,
+      "subtest_pass": 1094
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 11.104,
+      "main_pass": 20,
+      "subtest_pass": 113
+    }
+  ],
+  "targeted_repeats_not_added": true,
+  "materialized_columns": 126,
+  "independent_vectors": 4,
+  "counterfactual": {
+    "expected_child_failures": 2,
+    "exit": 1,
+    "mutation": "Replace only the two SQL character-count upper bounds with byte-count upper bounds in temporary Go overlay",
+    "original_source_unchanged": true,
+    "source_sha256": "913498590b880d590058f3af1806c3148d115ce6cafca8a807910a33d6db9e81"
+  },
+  "node": {
+    "log": "docs/evidence/a-config-backfill-identity-vectors-local-20261015-r2.txt",
+    "log_sha256": "7740f70bf8baa6354bee5cb627d895737558cb27cac779464f18a975a9b77bb0",
+    "pass": 3,
+    "fail": 0,
+    "exit": 0,
+    "prior_failure_log": "docs/evidence/a-config-backfill-identity-vectors-local-20261015.txt",
+    "prior_failure": "Test generator used capacities instead of existing capacity group; failed before vector generation; corrected test only"
+  },
+  "prior_superseded_record": "docs/evidence/a-config-backfill-identity-superseded-20261015.json",
+  "exit": 0,
+  "default_vet": true,
+  "tool_crash_retries": 0,
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity_a_test.go",
+      "size": 11235,
+      "sha256": "93ea23fd5298935bd827cb3efd9a58d505f91a418a7a04ffe2b26b9290df9961"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity.go",
+      "size": 7110,
+      "sha256": "8bbc1b894a5a95bb3723b0e5d1d97c7c7b5c57656d0ef463601aa5c3bed4ebaa"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_backfill_identity_vectors.json",
+      "size": 49285,
+      "sha256": "8cd7945183850a9ec2f72e0b8f51c1ca4bb323999b24d9e41d1f896467f67e2a"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-identity-validation.ps1",
+      "size": 7160,
+      "sha256": "164db4ba792693016ef345cb979b84904098ffa45e4c1689439fe7de62a41fc5"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-identity.test.mjs",
+      "size": 6928,
+      "sha256": "13a618c167c0ebf673a103ab858a659c24e06b30ca633b9782f7369e6022d75f"
+    }
+  ],
+  "all_existing_live_inputs_match": true,
+  "live_drift_paths": [],
+  "new_live_paths_outside_frozen_scope": [],
+  "original_contract_and_schema_pins_unchanged": [
+    {
+      "path": "docs/evidence/a-config-canonical-write-contract-20261014.json",
+      "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-contract-20261015.json",
+      "sha256": "fdd8ecfa71201c36a9b88c5f4ab0987fe6e8722ae2a5bbfd2c72113fb418ca0d"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    }
+  ],
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-46b03b14348740489fd49085ce781f12",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3f7f0ebbc13d4b03b92382c5f3237c60"
+  ],
+  "fixture_paths_independently_confirmed_absent": 92,
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "real_mysql": false,
+  "runtime_grants_issued": 0,
+  "original_historical_canonical_delivered": 0,
+  "sql_executed": false,
+  "production_approved": false,
+  "remaining": [
+    "Independently authenticated source authority and exact original manifest/files",
+    "Purpose-specific runtime write and observation grant profiles and installation instances",
+    "D independent maintenance writer, durable receipt/audit lifecycle and formal 081/082 review",
+    "Actual MySQL backfill locking/concurrency/rollback/unknown commit acceptance"
+  ]
+}

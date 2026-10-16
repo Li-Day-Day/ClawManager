@@ -58,9 +58,15 @@ func (c BootstrapConfig) References() []BootstrapSecretRef {
 var bootstrapVersion = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$`)
 
 func DecodeBootstrapConfig(raw []byte) (BootstrapConfig, error) {
+	return decodeConfigValues(raw, false)
+}
+
+// Shared validation keeps bootstrap disabled while allowing the D mutation
+// decoder to validate both enabled states without reconstructing ConfigValues.
+func decodeConfigValues(raw []byte, allowEnabled bool) (BootstrapConfig, error) {
 	fail := func() (BootstrapConfig, error) { return BootstrapConfig{}, ErrBootstrapConfig }
 	var v bootstrapValues
-	if decodePinnedRegistry(raw, registrationHash(string(raw)), &v) != nil || v.Enabled || (v.AlertProfile != "production" && v.AlertProfile != "development") {
+	if decodePinnedRegistry(raw, registrationHash(string(raw)), &v) != nil || (!allowEnabled && v.Enabled) || (v.AlertProfile != "production" && v.AlertProfile != "development") {
 		return fail()
 	}
 	// json.Number.UnmarshalJSON also accepts quoted numbers. Reject those at

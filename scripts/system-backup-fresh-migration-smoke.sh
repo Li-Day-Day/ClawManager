@@ -24,8 +24,10 @@ CONTROLLER_GRANT_DRIFT_SMOKE="${CONTROLLER_GRANT_DRIFT_SMOKE:-0}"
 D_DB_INVARIANT_SMOKE="${D_DB_INVARIANT_SMOKE:-0}"
 D_HISTORY_CLI_SMOKE="${D_HISTORY_CLI_SMOKE:-0}"
 A_BUSINESS_HISTORY_SMOKE="${A_BUSINESS_HISTORY_SMOKE:-0}"
+A_BUSINESS_RESTORE_SMOKE="${A_BUSINESS_RESTORE_SMOKE:-0}"
 [[ "$D_HISTORY_CLI_SMOKE" == 0 || "$D_HISTORY_CLI_SMOKE" == 1 ]] || { echo 'invalid history CLI mode' >&2; exit 1; }
 [[ "$A_BUSINESS_HISTORY_SMOKE" == 0 || "$A_BUSINESS_HISTORY_SMOKE" == 1 ]] || { echo 'invalid A business history mode' >&2; exit 1; }
+[[ "$A_BUSINESS_RESTORE_SMOKE" == 0 || ( "$A_BUSINESS_RESTORE_SMOKE" == 1 && "$A_BUSINESS_HISTORY_SMOKE" == 1 ) ]] || { echo 'A business restore requires its dedicated business phase' >&2; exit 1; }
 if [[ "$A_BUSINESS_HISTORY_SMOKE" == 1 ]]; then
   [[ "$D_DB_INVARIANT_SMOKE" == 0 && "$D_HISTORY_CLI_SMOKE" == 0 && "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 0 && "${CONTROLLER_ENABLED_SMOKE:-0}" == 0 && "${D_SCHEMA_COMPARE:-0}" == 0 && "${SCHEMA_CAPTURE:-0}" == 0 && "${DDL_CAPTURE:-0}" == 0 && -s "${D_MIGRATION_BINARY:-}" && -s "${A_BUSINESS_BINARY:-}" && "${A_BUSINESS_BINARY_SHA256:-}" =~ ^[a-f0-9]{64}$ && -s scripts/system-backup-a-business-history-phase.sh ]] || { echo 'A business history requires dedicated pinned inputs' >&2; exit 1; }
   [[ "$(sha256sum "$A_BUSINESS_BINARY" | cut -d' ' -f1)" == "$A_BUSINESS_BINARY_SHA256" ]] || { echo 'A business history binary checksum mismatch' >&2; exit 1; }

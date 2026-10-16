@@ -10,6 +10,7 @@ import { previewBackupSource } from './backupPreview';
 import BackupLiveWorkspace from './BackupLiveWorkspace';
 import { liveBackupReadEnabled } from './backupLiveSource';
 import { useBackupText } from './useBackupText';
+import BackupOverviewReadout from './BackupOverviewReadout';
 
 const tabs = [
   ['overview', 'overview'], ...backupEntryPoints.map((entry) => [entry.tab, entry.label] as const),
@@ -68,23 +69,8 @@ function Overview({ data, navigate }: { data: BackupSnapshot; navigate: (tab: Ta
       <div><div className="mb-3 flex items-center gap-2 text-xs font-medium tracking-widest text-slate-300"><ShieldCheck className="h-4 w-4" aria-hidden="true" />{b('readiness')}</div><h2 className="text-xl font-semibold">{o.backup_recovery_readiness ? b('readyTitle') : b('notReadyTitle')}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">{o.backup_recovery_readiness ? b('readyNote') : b('notReadyNote')}</p><div className="mt-4 flex flex-wrap gap-2"><Badge value={o.matrix} /><Badge value={o.baseline_present ? 'passed' : 'unknown'} label={o.baseline_present ? b('baselinePresent') : b('baselineAbsent')} /><Badge value={data.promotionHealth} label={b('baselineHealthSummary', { status: statusLabel(data.promotionHealth) })} /></div></div>
       <div className="flex flex-col justify-center gap-3 border-slate-700 lg:border-l lg:pl-6"><span className="text-xs text-slate-400">{b('observedAt')}</span><span className="font-mono text-sm">{date(o.observed_at)}</span><span className="text-xs text-slate-400">{b('configSummary', { version: number(o.config_version), status: o.effective_enabled ? b('enabled') : b('disabled') })}</span></div>
     </section>
-    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">{[
-      [b('activeTasks'), o.active_task_count, 'backups'], [b('unresolved'), o.finalization_unknown_count, 'backups'],
-      [b('cleanupBacklog'), o.cleanup_backlog_count, 'drills'], [b('activeOperations'), o.active_operation_count, 'drills'],
-    ].map(([label, value, tab]) => <button key={label} onClick={() => navigate(tab as Tab)} className={`${panelClass} p-5 text-left transition hover:border-slate-400 focus-visible:outline-rose-500`}><span className="text-xs text-slate-500">{label}</span><div className="mt-3 flex items-center justify-between"><span className="text-3xl font-semibold tabular-nums text-slate-900">{typeof value === 'number' ? number(value) : value}</span><ArrowRight className="h-4 w-4 text-slate-400" aria-hidden="true" /></div></button>)}</div>
+    <BackupOverviewReadout overview={o} navigate={navigate} />
     <EntryGrid navigate={navigate} />
-    <div className="grid gap-5 xl:grid-cols-2">
-      <Panel title={b('dependencies')} note={b('dependenciesNote')}><div className="space-y-4">{[
-        [b('controller'), o.controller_health], [b('database'), o.database_health], [b('artifactStore'), o.artifact_target_health],
-        [b('evidenceStore'), o.evidence_store_health], [b('catalog'), o.catalog_health], [b('sourceWriters'), o.source_writer_state],
-      ].map(([name, status]) => <div key={name} className="flex items-center justify-between gap-3 text-sm"><span className="text-slate-700">{name}</span><Badge value={status} /></div>)}</div></Panel>
-      <Panel title={b('attention')} note={b('attentionNote')}><div className="space-y-4">
-        {o.shortage_failure_domains.map((domain) => <div key={domain.target_failure_domain_id} className="rounded-lg border border-amber-200 bg-amber-50 p-4"><div className="flex items-center gap-2 text-sm font-medium text-amber-900"><TriangleAlert className="h-4 w-4" aria-hidden="true" />{b('shortage')}</div><p className="mt-2 break-all text-xs text-amber-800">{domain.target_failure_domain_id}</p><p className="mt-1 text-sm text-amber-800">{b('shortageCount', { available: number(domain.eligible_usable_recovery_points), minimum: number(domain.minimum_recovery_points) })}</p></div>)}
-        {o.finalization_unknown_count > 0 && <button className={`${buttonClass} w-full justify-between`} onClick={() => navigate('backups')}>{b('inspectUnresolved')}<ArrowRight className="h-4 w-4" /></button>}
-        {o.cleanup_backlog_count > 0 && <button className={`${buttonClass} w-full justify-between`} onClick={() => navigate('drills')}>{b('inspectCleanup')}<ArrowRight className="h-4 w-4" /></button>}
-        <p className="text-xs leading-5 text-slate-500">{b('monitoringNote', { status: o.monitoring_armed ? b('enabled') : b('disabled') })}</p>
-      </div></Panel>
-    </div>
   </div>;
 }
 

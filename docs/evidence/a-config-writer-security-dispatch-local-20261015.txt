@@ -1,0 +1,67 @@
+**********************
+PowerShell transcript start
+Start time: 20261015135109
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+Start-Transcript -LiteralPath 'docs/evidence/a-config-writer-security-dispatch-local-20261015.txt' -NoClobber
+try {
+    & '.\scripts\system-backup-d-config-writer-dispatch.test.ps1'
+    & '.\scripts\system-backup-d-config-writer-dispatch.test.ps1' -SecurityOnly
+    & '.\scripts\system-backup-a-evidence-dispatch.test.ps1'
+    $writerSecurityGuard=$false
+    try { & '.\scripts\system-backup-a-evidence-validation.ps1' -ConfigWriterSecurityOnly } catch {
+        if($_.Exception.Message -eq 'ConfigWriterSecurityOnly requires ConfigWriterOnly'){$writerSecurityGuard=$true}else{throw}
+    }
+    if(-not $writerSecurityGuard){throw 'Unbound security-only profile accepted'}
+    Write-Host 'PASS security-only-requires-writer-profile before-artifacts=yes'
+    $writerSecurityBash='C:\Program Files\Git\bin\bash.exe'
+    if(-not(Test-Path -LiteralPath $writerSecurityBash)){throw 'Existing Git Bash missing; do not install'}
+    & $writerSecurityBash -n './scripts/system-backup-a-config-writer-security-phase.sh' 2>&1 | ForEach-Object {Write-Host $_}
+    if($LASTEXITCODE -ne 0){throw 'Security-only phase shell syntax failed'}
+    Write-Host 'PASS security-only-phase bash-n=yes executed=no remote=no dependencies-installed=no'
+} finally {Stop-Transcript}
+Process ID: 28596
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-writer-security-dispatch-local-20261015.txt
+PS>TerminatingError(): "Choose the config proof or writer profile separately"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS config-writer-dispatch payload/seed/phase/exclusive-profile/hash/full-catalog/preflight; no remote actions or build artifacts
+PS>TerminatingError(): "Choose the config proof or writer profile separately"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS config-writer-dispatch payload/seed/phase/exclusive-profile/hash/full-catalog/preflight; no remote actions or build artifacts
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS>TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+PS>TerminatingError(): "ConfigWriterSecurityOnly requires ConfigWriterOnly"
+PASS security-only-requires-writer-profile before-artifacts=yes
+      1 [main] bash (41404) C:\Program Files\Git\bin\..\usr\bin\bash.exe: *** fatal error - couldn't create signal pipe, Win32 error 5
+**********************
+PowerShell transcript end
+End time: 20261015135120
+**********************

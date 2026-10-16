@@ -1,0 +1,82 @@
+**********************
+PowerShell transcript start
+Start time: 20261014111915
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$dIndexRoot=(Get-Location).Path
+$dIndexScratch=Join-Path $dIndexRoot ('.tmp-a-evidence-'+[guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $dIndexScratch | Out-Null
+Start-Transcript -Path (Join-Path $dIndexRoot 'docs/evidence/system-backup-d-index-writer-baseline-local-20261014.txt')
+try {
+  Write-Output ('D_INDEX_WRITER_SCRATCH='+$dIndexScratch)
+  $env:GOPROXY='off';$env:GOSUMDB='off';$env:GOTOOLCHAIN='local';$env:GOFLAGS='-mod=readonly -p=1';$env:GOMAXPROCS='1';$env:CGO_ENABLED='0';$env:GOWORK='off';$env:GO111MODULE='on'
+  $env:GOOS='windows';$env:GOARCH='amd64'
+  $env:GOCACHE=Join-Path $dIndexScratch 'cache';$env:GOTMPDIR=Join-Path $dIndexScratch 'tmp'
+  New-Item -ItemType Directory -Path $env:GOCACHE,$env:GOTMPDIR | Out-Null
+  . (Join-Path $dIndexRoot 'scripts/system-backup-a-evidence-go-step.ps1')
+  Initialize-AEvidenceTelemetry -Scratch $dIndexScratch
+  Set-Location (Join-Path $dIndexRoot 'backend')
+  Invoke-AEvidenceGoStep -Arguments @('test','-tags','systembackup_mysql','-run','^TestDAdminReadIndexSeed$','-count=1','-v','./internal/systembackupread') -Stage 'test-vet'
+  Write-Output 'PASS D_INDEX_WRITER_SEED_TEST_AND_VET'
+  $env:GOOS='linux'
+  $dIndexBin=Join-Path $dIndexScratch 'd-admin-read-index.test'
+  Invoke-AEvidenceGoStep -Arguments @('test','-c','-tags','systembackup_mysql','-o',$dIndexBin,'./internal/systembackupread') -Stage 'mysql-probe-build'
+  Write-Output ('D_INDEX_WRITER_BINARY_SHA256='+(Get-FileHash -Algorithm SHA256 -LiteralPath $dIndexBin).Hash.ToLowerInvariant())
+  Write-Output 'D_INDEX_WRITER_LOCAL_EXIT=0'
+} finally {
+  Set-Location $dIndexRoot
+  $dIndexResolved=[IO.Path]::GetFullPath($dIndexScratch)
+  if ([IO.Path]::GetDirectoryName($dIndexResolved) -ne $dIndexRoot -or [IO.Path]::GetFileName($dIndexResolved) -notmatch '^\.tmp-a-evidence-[a-f0-9]{32}$') { throw 'Refusing cleanup outside owned workspace directory' }
+  if ((Get-Item -Force -LiteralPath $dIndexResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Refusing cleanup of a reparse point' }
+  Remove-Item -LiteralPath $dIndexResolved -Recurse -Force
+  Write-Output ('CLEANED D_INDEX_WRITER_LOCAL_CACHE='+(-not (Test-Path -LiteralPath $dIndexResolved)))
+  Stop-Transcript
+}
+Process ID: 40904
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-index-writer-baseline-local-20261014.txt
+D_INDEX_WRITER_SCRATCH=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-62aa2bdf546742eeb99f1eebb3c7d55c
+LOCAL_PASS isolated-go-telemetry=off
+=== RUN   TestDAdminReadIndexSeed
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/complete_balanced_pairs
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/SQL_failure_1
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/SQL_failure_2
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/SQL_failure_3
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/canceled_before_SQL
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/stop_after_complete_pair
+=== RUN   TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/invalid_loop_bounds
+=== RUN   TestDAdminReadIndexSeed/ddl_overlap_excludes_nonoverlapping_pairs
+--- PASS: TestDAdminReadIndexSeed (0.07s)
+    --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/complete_balanced_pairs (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/SQL_failure_1 (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/SQL_failure_2 (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/SQL_failure_3 (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/canceled_before_SQL (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/stop_after_complete_pair (0.00s)
+        --- PASS: TestDAdminReadIndexSeed/writer_baselines_and_ddl_share_bounded_pairs/invalid_loop_bounds (0.00s)
+    --- PASS: TestDAdminReadIndexSeed/ddl_overlap_excludes_nonoverlapping_pairs (0.00s)
+PASS
+ok  	clawreef/internal/systembackupread	2.025s
+PASS D_INDEX_WRITER_SEED_TEST_AND_VET
+D_INDEX_WRITER_BINARY_SHA256=ba5661274b2ea62a582b0654d9465bfcfe691b45e86f0d2cc5502857b3b9e285
+D_INDEX_WRITER_LOCAL_EXIT=0
+CLEANED D_INDEX_WRITER_LOCAL_CACHE=True
+**********************
+PowerShell transcript end
+End time: 20261014113223
+**********************

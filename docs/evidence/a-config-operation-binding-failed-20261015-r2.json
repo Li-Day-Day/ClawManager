@@ -1,0 +1,28 @@
+{
+  "kind": "a_config_operation_binding_failed_frozen_gate",
+  "date": "2026-10-15",
+  "status": "target_and_counterfactual_pass_full_regression_failed",
+  "log": "docs/evidence/a-config-operation-binding-local-20261015-r2.txt",
+  "log_sha256": "9d5890162c8f77ce04b547de4bfb5324f087a3a5ef3f283db5b5b58946475bec",
+  "source": "docs/evidence/a-config-operation-binding-source-20261015-r2.json",
+  "source_sha256": "3c978322318ff7937a5b80c86698c5ac3734a5ba09e0fe12cd012d9c4757320b",
+  "source_files": 1223,
+  "exit": 1,
+  "targeted_main": 3,
+  "targeted_sub": 9,
+  "expected_counterfactual_failures": 2,
+  "actual_full_failure": [
+    "TestConfigMutationHTTPRealTLSJWTWriterAndOriginalReplay (0.37s)"
+  ],
+  "failure": "HTTP update then rollback encountered an endpoint/key scope error in the single-receipt SQL model",
+  "next": "Review D r18 scope correction and independently validate actual SQL response adapter",
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-d6e815e2af1548db96ecc015642998ec",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5163b84e380947bfb1c58b5d42a3714e"
+  ],
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "mysql_run": false,
+  "production_approved": false
+}

@@ -1,10 +1,12 @@
 package systembackupbusinessa
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"database/sql"
 	"database/sql/driver"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -15,14 +17,27 @@ import (
 	"testing"
 )
 
-func registryFixture(t *testing.T, freeze bool) map[string]any {
-	t.Helper()
+// Test-only snapshot: standalone MySQL probes cannot read the source checkout.
+// The repository test below keeps it byte-for-byte equal to the draft registry.
+// registryFixture's synthetic approvals are confined to this test binary.
+//
+//go:embed testdata/schema-registry.json
+var businessRegistryFixtureJSON []byte
+
+func TestEmbeddedBusinessRegistryFixtureMatchesCanonical(t *testing.T) {
 	raw, err := os.ReadFile("../../../contracts/system-backup/v12/schema-registry.json")
 	if err != nil {
 		t.Fatal(err)
 	}
+	if !bytes.Equal(raw, businessRegistryFixtureJSON) {
+		t.Fatal("embedded business registry fixture drifted; synchronize testdata/schema-registry.json with the canonical registry")
+	}
+}
+
+func registryFixture(t *testing.T, freeze bool) map[string]any {
+	t.Helper()
 	var document map[string]any
-	if err := json.Unmarshal(raw, &document); err != nil {
+	if err := json.Unmarshal(businessRegistryFixtureJSON, &document); err != nil {
 		t.Fatal(err)
 	}
 	if freeze {

@@ -1,0 +1,26 @@
+{
+  "kind": "a_config_backfill_identity_superseded_frozen_gate",
+  "date": "2026-10-15",
+  "status": "passed_snapshot_superseded_before_sql_character_budget_correction",
+  "log": "docs/evidence/a-config-backfill-identity-local-20261015.txt",
+  "log_sha256": "9910592c22af2e5d234bb80b8ffec0d855e358291e0bf93dcb0f97fe17a5cbb1",
+  "source": "docs/evidence/a-config-backfill-identity-source-20261015.json",
+  "source_sha256": "dc27ccd7a775f3c5d93c97056b01f158c549ede036ba31ba0c352ec30cd082a4",
+  "source_files": 1235,
+  "targeted_main": 6,
+  "targeted_sub": 180,
+  "full_main": 203,
+  "full_sub": 1205,
+  "exit": 0,
+  "default_vet": true,
+  "current_candidate_accepted": false,
+  "superseded_reason": "Old SQL created_by/change_reason must follow 128/512 Unicode character limits, not new-request UTF-8 byte budgets; add both positive boundary tests and byte-budget overlay negative control",
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-84aee70c6fed4e1b98ad32c758e7f5c7",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-ebc0ceea662642de9d454ce61cd51417"
+  ],
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "production_approved": false
+}

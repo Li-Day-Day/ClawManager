@@ -194,7 +194,7 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	if signed["header_name"] != StrongAuthProofHeader || signed["header_value"] == "" {
 		t.Fatal("missing proof header")
 	}
-	call(strongAuthBase+"/proof", access, proofBody, "", 403)
+	call(strongAuthBase+"/proof", access, proofBody, "", 401)
 	var evidenceBefore int
 	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence").Scan(&evidenceBefore))
 	first := call(ProviderRegistrationPath, access, r, signed["header_value"], 201)

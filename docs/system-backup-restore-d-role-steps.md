@@ -1,5 +1,57 @@
 # 系统备份/恢复 D 角色开发步骤
 
+【2026-10-16 r39 七项服务实际 MySQL 接收】[限定回执](evidence/system-backup-d-canonical-backfill-service-mysql-accepted-20261016.json)核对 1,265 来源、七项 PASS、两次真实配置锁等待、94 migration、准确 UID 和两端清理；69 本地路径不存在。正常 exit 0，工具重试/精度反例单列。本服务专项无需重跑，A 八项具体 authority 仍独立待测，运行授权/原文与生产适配仍缺。用户[中文桌面示例截图](evidence/system-backup-d-preview-screenshot-review-20261016.json)主要区域可见，按钮间距已修正，5 项现有检查通过；改后渲染和完整构建待用户验证。无安装或自发远端动作，六项未关闭。
+
+【2026-10-15 r38 新授权专项准备接收】[D 复核回执](system-backup-d-a-authority-preparation-review-20261015.md)已接收 A 1,265 输入的本地准备，独立复算 230/1,525 与三次 seed，69 路径清理，未扩大为八项 MySQL。16:33 服务远测已中断，实际 SQL/远端清理未证明，不能算 PASS 或继续当作活进程；七项服务及八项授权分别待同轮完整回执。没有 SSH、重跑构建或安装，前端保持 r37 供用户测试，六项整体未完成。
+
+【2026-10-15 r37 真实记录独立入口】总览 `503/not_ready` 时，已接线配置及四类列表可分别读取，未就绪资源单列，健康/恢复就绪/全局计数仍明确不可用；配置、安装、分页和取消校验保留。[本轮范围](system-backup-d-live-records-review-20261015.md)及 [180 项 Node PASS](evidence/system-backup-d-live-records-local-20261015-r37.json)已归档。修复下文 r36 的前端入口阻断，后端总览/详情/活动未就绪边界保持。无依赖安装或构建产物，完整构建及截图由用户测试，六项整体未完成。
+
+【2026-10-15 r36 六项范围审计】[逐项状态与证据](system-backup-d-six-scope-readiness-20261015.md)校正 A 十五表旧待跑项：隔离 MySQL 已通过，B/D 生产组合仍缺。当前真实总览/详情/活动路由仍为 503，overview-first 前端尚不能到达新记录/历史入口，保留明确实现待办。schema 清单自洽检查通过，严格合同仍未冻结；未安装、构建、SSH 或改写批准，六项整体未完成。
+
+【2026-10-15 r35 新授权专项分发检查】A 已实现独立具体 authority MySQL root；D 核对四个旧档位、新档位及 11 项既有 evidence 分发通过，不再重复探针。仅修正前置错绑分支的过度日志表述，gofmt 解析通过。[范围与回执](system-backup-d-a-authority-mysql-dispatch-review-20261015.md)明确未运行 Go 构建、Bash 或 MySQL，新的实际 SQL 结果仍 pending；前端 r33 保持供用户截图，六项整体未完成。
+
+【2026-10-15 r34 A 私有授权组合评审】D 已按 [限定范围](system-backup-d-a-maintenance-authority-review-20261015.md)接收 A r2：1,261 冻结输入及集合当前匹配，日志可复算定向 11/80、完整 250/1,638、两组反例及清理。没有把模型 callback 当作真实授权/原归档/安装/物理容量，也没有把 generic MySQL admission 当作新 authority 的实际 SQL 验收。运行材料与生产门禁保留，前端 r33 保持待用户截图，六项整体未完成。
+
+【2026-10-15 r33 共享总览待用户截图】补齐真实/显式示例共用总览的五类计数、依赖健康、监控原因和不足域展示。[本轮改动及用户验证入口](system-backup-d-frontend-manual-review-20261015.md)明确 `/admin/backups` 的示例/窄屏/多语言验证范围，140 项 Node 检查通过。用户确认暂无依赖环境，将测试并发截图；本地未安装依赖、无构建产物，完整编译/浏览器及实际 API 仍待验证，六项目标未关闭。
+
+【2026-10-15 r32 配置历史只读入口】真实配置卡片增加按需分页历史及单版本参数展示，所有读取绑定当前安装/版本/行版本/生效状态；JSON 展示不替代旧 canonical 原文。[实现及本地验证](system-backup-d-live-config-review-20261015.md)记录一次正常运行 140 项 Node 检查通过，五语言齐全，无依赖安装/构建产物。完整前端构建、浏览器、真实 API、运行写授权和生产端到端仍未完成。
+
+【2026-10-15 r31 事件/日志只读入口】在四类真实详情中增加按需事件/日志分页、日志过期后的事件入口和取消处理；每页前后核对所选任务，事件内容不作状态权威。[实现及本地验证](system-backup-d-live-activity-review-20261015.md)记录最终 101 项 Node 检查通过，五语言齐全，无依赖安装及构建产物。实际活动 adapter、TSX/TypeScript/Vite 构建、浏览器、Owner 来源和真实端到端仍待完成，生产门禁不变。
+
+【2026-10-15 r30 前端四类详情只读入口】真实列表已接入备份/演练/预检/校验详情，核对选择身份与行版本，取消后拒绝迟到结果，复用现有读取合同与认证。[实现及本地验证](system-backup-d-live-detail-review-20261015.md)记录 61 项 Node 检查和五语言检查通过；未安装依赖、无构建产物。完整 TSX/TypeScript/Vite 构建、浏览器、事件/日志 UI 和实际 Owner/端到端仍待完成，不据本轮关闭前端或六项整体目标。
+
+【2026-10-15 r29 实际私有回填服务探针已备好】已对齐正式 TIMESTAMP(0) 审计精度，并以恢复旧表达式的三个精确反例证明回归有效；新独立 root 直接调用私有 apply/observe，覆盖七组真实 SQL 场景及完整 installation_state 不变性。[最终本地回执](evidence/system-backup-d-canonical-backfill-service-local-20261015-r29.json)接收安全包 219 / 1,445、三种 seed 共 3 / 21、实际胶囊和 Linux 编译，正常 exit 0，1,258 输入及文件集合当前匹配，68 路径删除，无依赖安装。r28 漏声明编译失败已保留并修正；一次已知 Windows 工具崩溃仅重试同命令。已接收的存储远测不重复，新服务使用 [BackfillServiceOnly 完整命令](system-backup-d-config-maintenance-receipt-review-20261015.md)。真实服务 MySQL、运行授权/旧原文、正式迁移及生产接线仍待完成。
+
+
+【2026-10-15 维护收据真实 MySQL 已接收】[限定验收回执](evidence/system-backup-d-maintenance-receipt-mysql-accepted-20261015.json)核对 15:25:47 run 的 1,254 文件冻结清单：七组存储场景与九项约束检查、实际配置行锁等待、94 个正式 migration 全部通过。namespace 精确 UID、七个 owned fixture 及两端 scratch/cache 报告清理，日志内本地临时路径独立确认不存在。该回执只覆盖当轮 frozen storage/test-only caller；当前 SQL 组件新增负观察/最终复查的时钟下界，新摘要已单列，不能据旧 run 接收该增量或完整私有服务。旧 storage 专项无需重复，实际服务使用下文 -BackfillServiceOnly 的独立入口；production_approval=no。
+
+
+【2026-10-15 r27 维护收据 MySQL 探针已备好】[独立收据远测入口与完整命令](system-backup-d-config-maintenance-receipt-review-20261015.md)已覆盖七个实际 SQL 场景，单独选择 -MaintenanceReceiptsOnly，不重复旧 writer/index 远测。[本地冻结回执](evidence/system-backup-d-maintenance-receipt-probe-local-20261015-r27.json)接收安全包 207 / 1,395、三种 seed 共 3 / 21、实际胶囊独立验证与 Linux 探针/迁移 runner 编译，native exit 0、无重试；1,251 输入终态及当前匹配，68 个生成路径确认删除。A 的原始审计时间绑定修复和回归已纳入冻结版本；真实 082 MySQL、实际来源/运行授权、正式 migration 和生产接线仍待验收，production_approval=no。
+
+
+【2026-10-15 writer 真实 MySQL 已接收】[本轮验收回执](evidence/system-backup-d-config-writer-mysql-accepted-20261015.json)核对 14:28:59 的完整日志与 1,243 文件冻结清单：8 项 writer 与 A 的 6 项安全子用例全部 PASS，94 个正式 migration 精确重放通过。writer 二进制 `70492dc3…3570`、输入 `8d60cc48…cd2f` 与本轮 marker 一致；namespace 精确 UID、远端 scratch、本地缓存报告清理，68 个日志内本地临时路径独立确认不存在。首轮 1364 失败证据保留，本轮关闭其 writer 重跑待办，不重复旧远测。当前四份 backfill 输入已变更，此回执只接收当轮冻结 writer 候选；readiness/capacity 仍为 synthetic，production_approval=no，不能关闭旧原文/运行授权、实际回填、正式 081/082 或生产接线门禁。
+
+
+【2026-10-15 最新状态】六组读取/索引远测已严格接收，无需重跑旧组。writer 首轮真实 MySQL 因共享夹具遗漏 installation-state 必填列而失败，夹具及本地/独立 seed 已修；[r25 本地验证](evidence/system-backup-d-config-writer-fixture-fix-local-20261015-r25.json)通过完整安全包、守卫反例、Node 和 Linux 编译，生成路径已删除，未安装依赖。下一步由操作者按[新时间戳命令](system-backup-d-config-writer-mysql-candidate-20261015.md)重跑 writer 八项。六项整体目标及当前运行材料缺口以[D 当前审计](system-backup-d-current-handoff-audit-20261014.md)为准，未启用生产写入或旧原文回填。
+
+【2026-10-14 分组索引本地门禁关闭】[最终回执](evidence/system-backup-d-index-group-final-local-20261014.json)确认同一编译进程退出 0，Windows 测试/tagged seed/默认 vet/Linux 编译通过，自有目录清理并确认不存在；报告/完成回执 79 项、派发 8 项及共享缓存的成功/失败清理检查通过。新的分组探针摘要 `8f45b751…f9c2c` 尚未真实 MySQL 执行；操作者完整命令见[分组交接](system-backup-d-index-group-review-20261014.md)。不重跑旧 v2-r2，不把本地通过等同于分组决议或正式 migration。
+
+【2026-10-14 不依赖 B/C 的分组索引增量】[page/status/all 对照入口](system-backup-d-index-group-review-20261014.md)将九条候选拆为 5/4/9 条，两轮反向次序、六个独立隔离环境，沿用 171 对一致性与写流/权限/HTTP/清理门禁并核对实际 DDL 与跨轮指纹。当前是新测量入口，分组远测/代表性负载/正式迁移仍待完成。
+
+【2026-10-14 v2-r2 联合验收通过】[完整回执与索引取舍](system-backup-d-admin-read-index-v2-r2-remote-20261014.md)已接收：measurement_version=2 两段写流基线、171 对查询一致、A/D/HTTP 与 migration 全部 PASS；execution/双连接快照、控制计数和 promotion 三项子断言同轮通过。指纹匹配、准确 UID/两端目录清理、最终退出 0。下方早先“新版真实 MySQL”“执行/快照断言”“promotion 新增真实 MySQL”待回执状态已关闭，无需重复运行。分组索引/代表性负载、正式配置迁移与写入、完整 Owner 来源/生产接线仍待完成。
+
+【2026-10-14 原范围收敛审计】[六项剩余工作及权威交接清单](system-backup-d-current-handoff-audit-20261014.md)保留最初目标：正式读源迁移/索引、完整总览详情、A 规范化与 D/B 生产编排、恢复管理部署/审计、实际升级/激活、页面和端到端。当前严格合同与激活输入拒绝，inventory 自身一致；八份既有 D→A 候选评审输入无漂移，仍无生产 normalizer 调用/B Batch proof 方法。已向用户请求正式 A/B/C 材料位置，未登记批准或将目标记为完成。
+
+【2026-10-14 当前基线数据库来源】[promotion 记录及绑定读取](system-backup-d-promotion-control-read-20261014.md)已实现同安装/当前 matrix、backup/drill/evidence/创建配置的同快照核对；创建版本与当前可变版本分开，可用性丢失不抹掉记录。读取包 256 项/默认 vet 本地通过；新增真实 MySQL、资格/证据语义与当前七组健康来源仍待完成，完整总览和 PromotionResource 未开放。
+
+【2026-10-14 索引写流基线】[候选 DDL 前后相同写流对照](system-backup-d-index-writer-baseline-20261014.md)与报告 v2 已实现；强制两段无 DDL 的完整均衡样本、DDL 重叠子集及计数/次序/版本检查。汇总器边界测试和 seed/编译回执见新交接，首轮归档报告未改动；新版真实 MySQL、分组索引和代表性负载仍待完成，未编号正式 migration。
+
+【2026-10-14 任务详情执行来源】[四类 attempt/Job observation 同快照读取](system-backup-d-task-execution-read-20261014.md)已实现；attempt 通过安装范围任务 JOIN 定界，Job 绑定准确任务/attempt/phase，保留全部执行 unit 并拒绝损坏或孤立记录。详情事务使用 RepeatableRead，内部 builder 无事务控制方法；新增四类真实 SQL 与双连接快照竞争断言待新回执。完整公共 phase/generation 规则、A/B/C 报告/恢复/artifact 来源及详情 HTTP 仍未完成。
+
+【2026-10-14 总览控制表与组合恢复评审】[总览内部组件及同事务组装接点](system-backup-d-overview-control-20261014.md)已实现；安装/config、四类任务和 Operation 全量状态组计数受 A 授权、最终复查及提交确认保护，不能直接序列化为完整总览。真实 MySQL 新增总览计数/跨安装隔离断言已在[索引档位回执](system-backup-d-admin-read-index-remote-20261014.md)通过，无需另跑相同输入。另完成[A 十五表组合入口与 B proof 接口候选评审](system-backup-d-a-business-batch-review-20261014.md)，关闭该新增接口的 D 交接评审缺口，不批准 registry/schema 或生产恢复。完整 Owner 事实、完整总览和生产写入仍待验收。
+
+【2026-10-14 D 读源正式化与评审增量】[配置/索引/总览正式化交接](system-backup-d-read-source-formalization-20261014.md)已明确 canonical 与索引分开评审、旧行独立回填授权和总览逐字段 Owner 来源，并补五表候选索引隔离测量及完整回执汇总入口。候选 bootstrap 的真实提交/回滚专项已通过，以[最新回执](system-backup-d-config-http-candidate-20261013.md)末尾为准，不再列为待执行。另完成[A 六处规范化边界的限定源码评审](system-backup-d-a-normalization-boundary-review-20261014.md)，未批准 registry/schema 或真实恢复放行。[索引远端测量](system-backup-d-admin-read-index-remote-20261014.md)已通过并形成读写/空间决议；九条候选暂不整体转 migration，代表性负载、正式迁移、生产接线与完整页面仍待完成。
+
 【2026-10-08 候选 DDL 远程验收通过】[八表候选 DDL 的隔离 MySQL 验收](system-backup-d-producer-ddl-remote-20261008.md)已收到完整回传：MySQL 8.4.8 上 27/27 检查通过，覆盖约束、执行计划及双连接行锁/gap lock；退出码 0，namespace 和两端临时目录均报告清理完成。DDL/探针指纹及全部检查名称与当前源码一致，无需重跑。原准备文档“26 项”为计数笔误；完整粘贴原文和结构化回执已归档，并修正 PowerShell transcript 漏记原生输出的问题。本轮不代表完整 producer 服务真实数据库联调、生产 authority/provider 或正式 migration 已批准。
 
 【2026-10-08 A/D 本地联调】[真实私有句柄到结果收据的跨包用例](system-backup-d-producer-ad-integration-20261008.md)已通过：D 公开服务串联 A 实际 pending/claim/finish/result SQL，验证共同提交、14 类失败回滚和精确重放。两包冻结快照 176 个顶层测试/含子测试 1777 项、默认 vet 和 Linux 交叉编译通过；产物已清理。两份并行 STS 文件的后续版本不由该快照背书。生产 authority/evaluator/投影、真实 provider/MySQL、独立历史恢复和 V01–V10 仍待完成。
@@ -326,3 +378,5 @@ D 负责 `resources` 业务域（系统镜像、出站例外、安全扫描、�
 建议先交付：① P0-0a 盘点/capability 证据；② 完整机器合同与 parity（通过后才称冻结）；③ P0-0b migration/registry/DDL 迁移；④ P0-0b 权限隔离与 controller 骨架。随后按 P0a、P0b、P0c 分别提交可验收集成，避免把 Console、promotion 或四矩阵捆成前一阶段的不可验证大分支。
 
 只使用仓库已有依赖，不自行安装。测试/构建开始前记录已有产物和资源，结束后只清理本次 run 创建且有所有权标记的内容；具体清理口径完全引用主计划第 17.5 节。
+
+2026-10-14 后续：已接收 A 的 canonical 写入安全实现合同，原文与具体运行写授权仍暂无。D 当前实现增量、081 独立迁移提案及离线维护收据设计见 [canonical 实现交接](system-backup-d-config-canonical-implementation-20261014.md)；恢复审计存储的暂停计划生成器与严格只读预检见 [部署准备](system-backup-d-recovery-audit-deployment-preflight-20261012.md)。这些局部交付不替代 writer、A 生产权限适配或实际环境验收。

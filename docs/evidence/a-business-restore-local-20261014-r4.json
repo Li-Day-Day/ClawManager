@@ -1,0 +1,245 @@
+{
+  "kind": "a_business_fifteen_table_probe_local_validation_r4",
+  "date": "2026-10-14",
+  "result": "local_pass_caller_policy_projection_fix_remote_pending",
+  "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/system-backup-a-evidence-validation.ps1 -BusinessRestoreOnly -BuildParallelism 1",
+  "exit": 0,
+  "stdout": {
+    "path": "docs/evidence/a-business-restore-local-20261014-r4.txt",
+    "sha256": "10edf84b18a16ec00f7676a298e34f32ea9823a3ad3d6508380dbb844f65e640",
+    "kind": "captured local tool stdout, not a remote transcript"
+  },
+  "root_cause": "Probe reflected joined users.username/email db tags from models.NorthboundCallerPolicy as policy-owned SQL columns; migration 057 defines six policy columns.",
+  "fix": {
+    "scope": "restore_rows_mysql_test.go only",
+    "excluded_join_fields": [
+      "Username",
+      "Email"
+    ],
+    "regression": "TestABusinessRestoreMySQLSeed/caller-policy-table-columns-only",
+    "strict_unknown_column_rejection_preserved": true,
+    "table_specific_closure_diagnostics": true
+  },
+  "checks": {
+    "full_a_package_default_vet": "pass",
+    "tagged_seed_caller_policy_and_generated_username": "pass",
+    "compiled_windows_seed_from_empty_directory": "pass",
+    "linux_amd64_probe": "pass",
+    "linux_amd64_migration_cli": "pass",
+    "writable_columns": 220,
+    "readback_columns": 221
+  },
+  "tool_failure": {
+    "observed": "internal/runtime/gc vet.exe exit status 0xc0000043",
+    "failed_stage": "mysql-probe-build",
+    "failed_attempts": 1,
+    "same_command_same_cache_retry": true,
+    "final_result": "pass",
+    "vet_disabled": false,
+    "test_assertion_failure_observed": false
+  },
+  "hashes": {
+    "linux_mysql_probe_sha256": "c992cb570395a3b865c26ab1ef6646e3b641739fdbf56fda8e4c988ce45dc7ef",
+    "extra_ddl_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "migration_cli_sha256": "0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab"
+  },
+  "source_inputs": [
+    {
+      "file": "backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore_test.go",
+      "sha256": "acee8dc6eb65db36b38384fbc9f1ca241071a44f29c5e82910724de6e0e9e630"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore.go",
+      "sha256": "793bd0fdc8b7c2a68b36172aa618f6138c2f67a0a1bbd3b24da2f6081d493a7a"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/ai_gateway_history_restore_test.go",
+      "sha256": "adedc397d04d8ae3fb4472277676aebde4cae218d8f3e2d1928d7f0a32f9fca1"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/ai_gateway_history_restore.go",
+      "sha256": "238ee8324f5fb868c4cf7501ad2c4d549cfa223058baff4d54214d7c940f09ce"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/audit_event_restore_test.go",
+      "sha256": "596535fe3ec57b5cd7036c7c4a0badcd7f8163a082a201d6eaf37ab8aca3b009"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/audit_event_restore.go",
+      "sha256": "a20c75583a819856bc506405d0e1372a19997e1cdc8e9d5d670094bb37d5e32f"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/business_restore_test.go",
+      "sha256": "a5e4e4e627a48f0fbe21724a86536cbc48bb76e71017bdd18f4d77087f9d4610"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/business_restore.go",
+      "sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/capture_test.go",
+      "sha256": "fe7e301a5a7fa5eef462ca83fa0a6e26e32a854720d91ec4699b7cbbe82ebc57"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/capture.go",
+      "sha256": "ffb9e2e31c82a79cdd9bab722ec1892eddbb7ace51aae40f7f06eb529dada8c0"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/chat_message_restore_test.go",
+      "sha256": "46685abca6ecd2a9dccd3eb1cbd6da9850d80928480f40d6cdd0a33e82461633"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/chat_message_restore.go",
+      "sha256": "1b3a406a8949fa4a364f48a02185629c61a9b3d3884b8dbbe92ec7425b3ca41b"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/chat_session_restore_test.go",
+      "sha256": "4b6ca4ada17b7b96cf51614882ea91d75dcec541476f012c9e9685d6bb097612"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/chat_session_restore.go",
+      "sha256": "fd74e4fc46c2b9c0c39f0336c2bf0334c08800a0ebd355e16fd7677884e64eb8"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/cost_record_restore_test.go",
+      "sha256": "dabf5d418ab8fbefc625ffa1d418054c490e95b6e7e105c1dfa21266e29252c5"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/cost_record_restore.go",
+      "sha256": "a642b0a8355ed31df5c4ad1f15378ad1645091bec7c99e31ef78b988c5b41752"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/enterprise_auth_restore_test.go",
+      "sha256": "91d5f9f20ef30248cd0278727da56e81a79bcc383eae23792e66730fad64b5d1"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/enterprise_auth_restore.go",
+      "sha256": "a5fa8310b8c8fef1c915c437aa75a19d8a67d56dd93c77176fd08a2b257d11cd"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/gateway_alias_restore_test.go",
+      "sha256": "93ae77c42c5c97ec95f257c7f28cd39bb8326cecf8d805c63cabdc45f0d3cb88"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/gateway_alias_restore.go",
+      "sha256": "d116270c6ff2e04fa035212411c54abf45abbcf762b34a2de5c84145cfef2097"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/history_rows_mysql_test.go",
+      "sha256": "b38317772aa6e527d510b67649405a4d41d56f1bed47c818b36c51068b67c369"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/llm_model_restore_test.go",
+      "sha256": "e7afaaf173e06386c3ffbe34d6757fab19410a32602c10eeddd4691db6c6ee59"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/llm_model_restore.go",
+      "sha256": "25965f7d24f434df1ad6fb6686fb0c1a44ea35c663357fbcc8e217547d6aa30d"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/model_invocation_restore_test.go",
+      "sha256": "d1093da2f1bfa88cb80c1f9d27d44d8ee1ef26bff1134f3537cfe463c598f0a5"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/model_invocation_restore.go",
+      "sha256": "5193b0697daf9b704f95ee3f0edfe53c117c49404e576956b2c8d263a7edb24e"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/northbound_caller_policy_restore_test.go",
+      "sha256": "29819b0e09d237d48244de1377713983a1d856e9047ccc724730ab6ad19356ec"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/northbound_caller_policy_restore.go",
+      "sha256": "fcf865b41cadce5c4ede5518f16b3d82939565efbc95c5b0fce24b48c679c76e"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/northbound_challenge_restore_test.go",
+      "sha256": "448e492e538345b4c55293f499dd86fa9e45fd4ab9a4969846ea84ef993704e5"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/northbound_challenge_restore.go",
+      "sha256": "aebe0c93c1e00e2dfb4411a626b9de5d49065b12bb2aaec4198239c7315a6422"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/northbound_session_restore_test.go",
+      "sha256": "a5920c8e7c4644ab8a9f6e0ba0e8320b98cc551b07297bd9e05339fed66c2aab"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/northbound_session_restore.go",
+      "sha256": "7550506732ad197dc43b7e596546da0b02c4d3b908d1614b96fef02063e155a3"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/quota_restore_test.go",
+      "sha256": "4d69b5bcc1dbf8f0e017a9fd325bd1bf9d475806efb3c2824a93c048b4a32cf7"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/quota_restore.go",
+      "sha256": "64276002b936c6afabebf68e34e084f0321dcdab496a188eeb2586d7dcc5a374"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+      "sha256": "ed1d72558419cacb696001099596548e37b85d659e7d964fcbbb48ebb5683723"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/restore_verify_test.go",
+      "sha256": "537424cc98bc7e48f2483c5aa1aceff522970bbb07b14217bdaee863b9755f18"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/restore_verify.go",
+      "sha256": "2e00d5d2dda4d93f3007fe1e8e12fa837bcd7435befca52200c173d3804ee0b8"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/risk_hit_restore_test.go",
+      "sha256": "e20c681900b9ddb7445177345a34c75c381e3192179c58580a2786566c48c1bf"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/risk_hit_restore.go",
+      "sha256": "db8d7914d6893cf025a0dd2e790b0ebf32e504eb17aeef44598d6be2dd36134a"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/risk_rule_restore_test.go",
+      "sha256": "d003d221dd875678266d15601b4fd5a56decb50c53e0448babbbd8067bde2c84"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/risk_rule_restore.go",
+      "sha256": "0bff346b2a82beaf1d865c94902545ca3302edb712d65282d0199159c53bcbb6"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/testdata/schema-registry.json",
+      "sha256": "6a7cbe2c3d267cd1877301d37fe2549c312a85c5e71b4a9dfe7a6b125a929ec3"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/users_restore_test.go",
+      "sha256": "a306ea66bfd1d21a88c2cb772f6151b55ce901d5c7eb48d2cb58886c248e9a81"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/users_restore.go",
+      "sha256": "bbe2c0c31d4ffbca0d11149698bb665b99ffc45621b51d5751ffa0bcd426694b"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/verifier_test.go",
+      "sha256": "ea3f9c9c56d315c954c7c361ed92977ae0d2845490fb0dfbf0f7a99db69b8176"
+    },
+    {
+      "file": "backend/internal/systembackupbusinessa/verifier.go",
+      "sha256": "67dce0a4361e3fcfcabd4fcd342fa0342e9ca4dbb73b30b319500cd42dfdc480"
+    }
+  ],
+  "source_drift_since_snapshot": 0,
+  "snapshot_scope": "45 A package Go files/assets, captured during the gate and compared after completion; not a frozen whole-checkout/dependency graph",
+  "cleanup": {
+    "scratch": ".tmp-a-evidence-99c05896ccbe41b18798748dd02921c5",
+    "reported": true,
+    "directory_absent": true,
+    "retained_build_products": false
+  },
+  "dependency_installation": false,
+  "remote_execution_by_agent": false,
+  "real_mysql_fix_rerun": false,
+  "production_approved": false,
+  "failed_operator_receipt": "docs/evidence/a-business-restore-mysql-failed-sbk-mig-261014071142-71e1.json",
+  "limits": [
+    "Operator must rerun BusinessRestoreOnly with a newly built probe; previous failed transcript remains failed.",
+    "No B production proof/writer, C integration, registry freeze or integrated large-smoke acceptance."
+  ]
+}

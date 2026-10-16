@@ -1,0 +1,56 @@
+{
+  "kind": "d_review_a_authority_mysql_probe_dispatch",
+  "recorded_at": "2026-10-15T09:12:56.6608284Z",
+  "status": "dispatch_compatible_and_go_log_correction_only_actual_mysql_pending",
+  "raw_log": "docs/evidence/system-backup-d-a-authority-dispatch-local-20261015-r35.txt",
+  "raw_sha256": "ee7bdcd8be1576a96ce0b3301223392871985f4ecb419ebd4cee1af9e7e2fb35",
+  "pre_review_source_pins": "docs/evidence/system-backup-d-a-authority-dispatch-source-20261015-r35.json",
+  "pre_review_source_pins_sha256": "42cbb44622646f1d6cdc5c7fcc27c11e923e1287dafff9ec72a669248cbc1741",
+  "native_exit": 0,
+  "existing_d_profiles": [
+    "default-writer",
+    "writer-security",
+    "receipt-storage",
+    "backfill-service"
+  ],
+  "existing_evidence_dispatch_cases": 11,
+  "new_authority_profile_exclusive": true,
+  "mixed_profile_early_rejection_verified": true,
+  "script_pins_unchanged_after_check": true,
+  "inspected_actual_root": "TestAConfigMaintenanceAuthorityMySQL",
+  "inspected_actual_cases": [
+    "grant_target_mismatch",
+    "independent_observation",
+    "grant_same_version_bytes_drift",
+    "archive_verifier_drift",
+    "installed_target_drift",
+    "grant_expires_after_staging",
+    "source_expires_after_staging",
+    "capacity_expires_after_staging"
+  ],
+  "d_correction": {
+    "path": "backend/internal/systembackupsecurity/config_maintenance_authority_a_mysql_test.go",
+    "prior_sha256": "b19ac7108544d3e8ef3f5b89472d3c69a73bf2883d96dc121c41a8433f4ad47c",
+    "current_sha256": "ca6eacb5cebb61ee8cd4a50aa1425aa9165b33aaef6e30e1f305e7c32d7b6526",
+    "change": "Only split the target-mismatch pre-write rejection log from the other staged-rollback logs; no assertion, SQL, timing or production change",
+    "gofmt_parse_exit": 0,
+    "gofmt_diff_empty": true,
+    "go_tagged_compile_executed_by_d": false
+  },
+  "bash_n_executed_by_d": false,
+  "go_tests_or_build_executed_by_d": false,
+  "real_mysql_executed_by_d": false,
+  "signature_holder_archive_target_capacity_authentication_suppliers": "synthetic only",
+  "dependencies_installed": false,
+  "generated_build_artifacts": false,
+  "ssh_or_remote_restart_by_d": false,
+  "frontend_r33_pins_unchanged": true,
+  "production_approval": false,
+  "limits": [
+    "Dispatch tests parse/evaluate assignments and reject invalid profiles before runtime work; no actual remote shell",
+    "Eight SQL scenarios are inspected test code, not executed MySQL results",
+    "Go file changed only in result logging after dispatch source postcheck; current file has gofmt parser check, not a tagged build receipt",
+    "New A harness is independent; no duplicate D probe or rerun of accepted writer/storage/index is requested",
+    "Operator backfill-service attempt and new concrete authority root retain separate evidence scopes"
+  ]
+}

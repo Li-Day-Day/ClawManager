@@ -1,10 +1,12 @@
 import { BackupReadError } from './backupApiRead.ts';
 import type { BackupTaskKind, BackupTaskListResource } from './backupApiRead.ts';
 import { readFirstBackupTaskPage, readNextBackupTaskPage } from './backupReadPages.ts';
-import type { BackupPageReader, BackupPagedTasks } from './backupReadPages.ts';
+import type { BackupPagedTasks } from './backupReadPages.ts';
 import type { ConfigResource, OverviewResource } from '../../../types/systemBackupContract';
+import { backupReadNotReady, readBackupRecords, loadMoreBackupRecords } from './backupLiveRecords.ts';
+import type { BackupRecordsClient, BackupRecordsData } from './backupLiveRecords.ts';
 
-export interface BackupLiveClient extends BackupPageReader {
+export interface BackupLiveClient extends BackupRecordsClient {
   overview(signal: AbortSignal): Promise<OverviewResource>;
   config(signal: AbortSignal): Promise<ConfigResource>;
 }
@@ -21,12 +23,13 @@ export interface BackupLiveData {
 export type BackupLiveState =
   | { kind: 'unavailable' }
   | { kind: 'error' }
+  | { kind: 'records'; data: BackupRecordsData }
   | { kind: 'ready'; data: BackupLiveData };
 
 // Reads are observational. Retry errors with a bounded delay; never spin on
 // a missing adapter or keep a successful snapshot indefinitely stale.
 export function nextBackupReadDelay(state: BackupLiveState, failures: number): number {
-  if (state.kind === 'ready') return 30_000;
+  if (state.kind === 'ready' || state.kind === 'records') return 30_000;
   if (state.kind === 'unavailable') return 60_000;
   return Math.min(60_000, 5_000 * 2 ** Math.min(Math.max(failures - 1, 0), 4));
 }
@@ -38,7 +41,15 @@ export function createBackupLiveSource(client: BackupLiveClient) {
     async read(signal: AbortSignal): Promise<BackupLiveState> {
       try {
         signal.throwIfAborted();
-        const overview = await client.overview(signal);
+        let overview: OverviewResource;
+        try {
+          overview = await client.overview(signal);
+        } catch (error) {
+          signal.throwIfAborted();
+          if (!backupReadNotReady(error)) throw error;
+          const data = await readBackupRecords(client, signal);
+          return data === null ? { kind: 'unavailable' } : { kind: 'records', data };
+        }
         const config = await client.config(signal);
         signal.throwIfAborted();
         if (overview.origin_installation_id !== config.origin_installation_id
@@ -74,6 +85,9 @@ export function createBackupLiveSource(client: BackupLiveClient) {
           || (error.status === 503 && error.code === 'not_ready'))) return { kind: 'unavailable' };
         return { kind: 'error' };
       }
+    },
+    loadMoreRecords(kind: BackupTaskKind, baseline: BackupRecordsData, signal: AbortSignal): Promise<BackupRecordsData> {
+      return loadMoreBackupRecords(client, kind, baseline, signal);
     },
     async loadMore<K extends BackupTaskKind>(kind: K, current: BackupPagedTasks<BackupTaskListResource>,
       baseline: OverviewResource, signal: AbortSignal): Promise<BackupPagedTasks<BackupTaskListResource>> {

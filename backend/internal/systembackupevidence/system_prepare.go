@@ -15,8 +15,8 @@ import (
 // The producer binding hash must include all C1 fixed snapshot versions. A
 // renewal/replacement invalidates this call, even if the new lease is longer.
 func PrepareSystemCapability(ctx context.Context, i Identity, key KeyRef, source Source, authority ContentAuthority, keys Keys, dst io.Writer) (Prepared, error) {
-	if !i.validExternal() || i.OwnerType != "system" || i.Type != "capability_snapshot" || i.Media != "application/json" || i.ContentSize > MaxCapabilityContent ||
-		!key.valid() || source == nil || dst == nil || nilSystemAdapter(authority) || nilSystemAdapter(keys) || ctx.Err() != nil {
+	if ctx == nil || !i.validExternal() || i.OwnerType != "system" || i.Type != "capability_snapshot" || i.Media != "application/json" || i.ContentSize > MaxCapabilityContent ||
+		!key.valid() || source == nil || nilSystemAdapter(dst) || nilSystemAdapter(authority) || nilSystemAdapter(keys) || ctx.Err() != nil {
 		return Prepared{}, ErrInvalid
 	}
 	baseline, err := authority.AuthorizeContent(ctx, i)

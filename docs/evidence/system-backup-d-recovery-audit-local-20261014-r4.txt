@@ -1,0 +1,27 @@
+**********************
+PowerShell transcript start
+Start time: 20261014171254
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+Start-Transcript -LiteralPath 'docs/evidence/system-backup-d-recovery-audit-local-20261014-r4.txt' -NoClobber; try { & 'C:\Program Files\nodejs\node.exe' scripts/system-backup-d-recovery-audit-plan.test.mjs; if($LASTEXITCODE -ne 0){throw 'Audit plan regression failed'}; & 'C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -B scripts/system-backup-d-recovery-audit-init.test.py; if($LASTEXITCODE -ne 0){throw 'Audit initializer regression failed'} } finally { Stop-Transcript }; $auditReceipt=Get-Content -Raw -LiteralPath 'docs/evidence/system-backup-d-recovery-audit-local-20261014.json' | ConvertFrom-Json; $auditReceipt.recorded_at=[DateTimeOffset]::Now.ToString('o'); $auditReceipt.tests.linux_filesystem_tests_skipped=7; $auditReceipt.source_and_output_pins=@($auditReceipt.source_and_output_pins | ForEach-Object {[ordered]@{path=$_.path;sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath $_.path).Hash.ToLowerInvariant()}})+@([ordered]@{path='docs/evidence/system-backup-d-recovery-audit-local-20261014-r4.txt';sha256=(Get-FileHash -Algorithm SHA256 -LiteralPath 'docs/evidence/system-backup-d-recovery-audit-local-20261014-r4.txt').Hash.ToLowerInvariant()}); $auditReceipt | ConvertTo-Json -Depth 8 | Set-Content -Encoding utf8 -LiteralPath 'docs/evidence/system-backup-d-recovery-audit-local-20261014.json'
+Process ID: 25464
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/system-backup-d-recovery-audit-local-20261014-r4.txt
+
+
+**********************
+PowerShell transcript end
+End time: 20261014171258
+**********************

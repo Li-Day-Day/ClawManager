@@ -119,6 +119,8 @@ func (k KeyRef) valid() bool {
 // Keys must resolve the dedicated evidence KEK by exact immutable identity and
 // version, never a default/latest key. Implementations must erase plaintext DEK
 // copies and map all provider errors to ErrKey without credential text.
+// Wrap borrows its DEK input read-only for the synchronous call; it must not
+// retain or return an alias to that input. Preparation erases the borrowed copy.
 type Keys interface {
 	Wrap(context.Context, KeyRef, []byte) ([]byte, error)
 	Unwrap(context.Context, KeyRef, []byte) ([]byte, error)

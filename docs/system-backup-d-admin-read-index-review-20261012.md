@@ -30,3 +30,11 @@ EXPLAIN ANALYZE SELECT id,public_id,origin_installation_id,task_type,actor_type,
 ## Operation 列表增量
 
 `system_backup_operations` 的 D 内部列表现按 `origin_installation_id=? AND id<? ORDER BY id DESC LIMIT ?` 分页。现有 `(origin_installation_id, public_id)`、`(origin_installation_id, result_config_version)` 等索引不能直接按安装范围提供 `id` 顺序；候选 DDL 增加 `(origin_installation_id,id)`。使用包含多页操作、不同安装和不同状态的隔离数据库，比较新增前后的 `MAX(id)`、第一页和续页 `EXPLAIN ANALYZE`、扫描行数、读延迟及写入成本后再决定是否编号 migration。该候选没有执行。
+
+## 2026-10-14 测量入口增量
+
+已新增五表候选索引的隔离 MySQL 测量探针及独立档位，完整命令、采样范围、输出与清理判据见[正式化交接](system-backup-d-read-source-formalization-20261014.md)。该入口先形成合成热缓存基线，再评审真实分布和并发写入；不自动批准候选 DDL 或正式 migration。
+
+## 2026-10-14 远程回执已接收
+
+[完整测量与 D 决议](system-backup-d-admin-read-index-remote-20261014.md)接收 MySQL 8.4.8 上 171 对查询结果一致、源表结构不变、DDL 并发写入重叠、A/D/HTTP PASS、清理和退出 0。上文“没有真实 MySQL 回执/候选未执行”描述 10 月 12 日状态；本轮候选已在随机隔离库执行，生产未执行。MAX(id) 与部分状态页有收益，普通页及写入/尾延迟结果混合，新增空间 8.25 MiB；九条索引暂不整体编号 migration，继续分组和代表性负载评审。

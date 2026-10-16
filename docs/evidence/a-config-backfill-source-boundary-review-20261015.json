@@ -1,0 +1,73 @@
+{
+  "kind": "a_config_backfill_source_boundary_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T11:50:58.6605861+08:00",
+  "status": "accepted_frozen_read_source_bytes_and_cancellation_boundary",
+  "scope": "Read-only original-source verification, not maintenance writer/provenance/grant approval",
+  "source_manifest": "docs/evidence/a-config-backfill-source-snapshot-20261015.json",
+  "source_sha256": "7252dca45159df131ba02766a6c6396dcadecaaa1b413e77c9e103365a8bec71",
+  "source_files": 1202,
+  "source_manifest_sha256": "9e009a68d977811024d59da0433daba875443216954664542ccd97fd1df74212",
+  "log": "docs/evidence/a-config-backfill-source-local-20261015.txt",
+  "log_sha256": "e443e6ab0b420c02ea62a9bbc5aa6c9cef8e95152c9f90a9a4df5d29cd86a905",
+  "before_source_pin": {
+    "path": "backend/internal/systembackupread/config_backfill_source.go",
+    "size": 3383,
+    "sha256": "a1d9695ca748b7303925b8c7b9086612e9e66481a2f4825810b5104ecf37c897"
+  },
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupread/config_backfill_source_boundary_a_test.go",
+      "size": 4296,
+      "sha256": "558e9ac8bfbf584fb0a9bd81b7a99a25d026837a628b317ef22eb366391b012c"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_backfill_source.go",
+      "size": 3668,
+      "sha256": "6cafc4a6cfe824895f6f577402a360f46874c624b0c72298a66d9950113cf8ad"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-source-validation.ps1",
+      "size": 4404,
+      "sha256": "502cdad16627581dc0f619a4dfe5e9dad689a10cfac1f3576447c7b4a66c3b06"
+    }
+  ],
+  "current_other_existing_input_drift": [
+    "backend/internal/systembackupconfig/response_replay_authority_test.go",
+    "backend/internal/systembackupconfig/response_replay_authority.go",
+    "backend/internal/systembackupsecurity/config_mutation_replay_authority_test.go",
+    "backend/internal/systembackupsecurity/config_mutation_transaction.go"
+  ],
+  "targeted_main": 4,
+  "targeted_sub": 11,
+  "full_read_main": 52,
+  "full_read_sub": 217,
+  "full_unique_checks": 269,
+  "new_boundary_main": 2,
+  "new_boundary_sub": 11,
+  "targeted_repeats_not_added": true,
+  "exit": 0,
+  "default_vet": true,
+  "tool_crash_retries": 0,
+  "frozen_postcheck": true,
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-df8f00254b5f4079a6182cd75e508deb",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2488baf3b4e148df934e19d9e5d2116d"
+  ],
+  "cleanup_independently_confirmed": true,
+  "original_contract_and_066_pins_unchanged": {
+    "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+    "docs/evidence/a-config-canonical-write-contract-20261014.json": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+    "docs/evidence/a-config-canonical-maintenance-digest-contract-20261015.json": "fdd8ecfa71201c36a9b88c5f4ab0987fe6e8722ae2a5bbfd2c72113fb418ca0d"
+  },
+  "sql": "strict model driver; no real MySQL",
+  "source_mutation": "synchronous callbacks; no concurrent-race claim",
+  "dependencies_installed": false,
+  "remote_run": false,
+  "mysql_run": false,
+  "backfill_write_run": false,
+  "runtime_grant_issued": false,
+  "historical_originals_delivered": false,
+  "production_approved": false,
+  "handoff": "docs/system-backup-a-config-backfill-source-boundary-20261015.md"
+}

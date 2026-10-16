@@ -1,0 +1,33 @@
+**********************
+PowerShell transcript start
+Start time: 20261015171146
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+Start-Transcript -Path '.\docs\evidence\a-maintenance-authority-mysql-shell-local-20261015-r2.txt' -NoClobber
+try {
+    & 'C:\Program Files\Git\bin\bash.exe' -n scripts/system-backup-a-config-maintenance-authority-phase.sh
+    if($LASTEXITCODE -ne 0){throw 'Authority phase shell syntax check failed'}
+    Write-Host 'PASS authority phase bash -n only; script body not executed; no remote actions or dependencies'
+} finally {Stop-Transcript}
+Process ID: 24820
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is .\docs\evidence\a-maintenance-authority-mysql-shell-local-20261015-r2.txt
+
+PASS authority phase bash -n only; script body not executed; no remote actions or dependencies
+**********************
+PowerShell transcript end
+End time: 20261015171146
+**********************

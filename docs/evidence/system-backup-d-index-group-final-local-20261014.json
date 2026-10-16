@@ -1,0 +1,121 @@
+{
+  "kind": "d_index_group_final_local",
+  "date": "2026-10-14",
+  "owner": "D",
+  "local_gate_complete": true,
+  "local_exit": 0,
+  "remote_actions": false,
+  "real_mysql_run": false,
+  "dependency_installation": false,
+  "production_approved": false,
+  "checks": {
+    "windows_authority_read_tests": "PASS focused scope tests",
+    "windows_d_read_package": "PASS",
+    "tagged_index_seed": "PASS including closed subsets and writer stream",
+    "windows_http_source_tests": "PASS",
+    "tagged_a_mysql_seed": "PASS real_mysql=not_run",
+    "default_vet": "enabled and passed",
+    "linux_authority_http_index_migration_compile": "PASS",
+    "reporter_and_completion_tests": 79,
+    "reporter_failures": 0,
+    "production_dispatch_cases": 8,
+    "profile_cache_guards_and_actual_finalizer": "PASS with owned fixtures",
+    "legacy_reports_unchanged": "PASS",
+    "PowerShell_wrapper_syntax": "PASS",
+    "local_bash_syntax": "not_verified: signal pipe Win32 error 5; mandatory remote bash -n added"
+  },
+  "binaries": {
+    "authority": "c4ba30b52786f437e49b5ec21e8290c760361f6bcba1729e593f85cb89b48385",
+    "authority_ddl": "1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2",
+    "migration": "0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab",
+    "http": "2adc8f11dfef91f67584ecf22774f05238de2e19cceb38a856b19074f097b64c",
+    "index": "8f45b751582221e187c7a847725da323a279902cda4a89b93193543be8cf9c2c"
+  },
+  "source_inputs": [
+    {
+      "path": "backend/internal/systembackupread/page_index_mysql_test.go",
+      "sha256": "f81052e28b3e3878c3ad7d342768c2134027606d0f53900931e02123c9ee99ae"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "317dd4bcfd715049da89460791ef70ed0aadde1eb6b21b6df5eca0dd8308490b"
+    },
+    {
+      "path": "scripts/system-backup-a-admin-read-phase.sh",
+      "sha256": "850f37a9ada38b2c58bf17db228bc4f59acce087347fbf7bf2ac7a1ea1a47dab"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-dispatch.test.ps1",
+      "sha256": "eb86f222c07fe8e20f22a441dc951bd7a01b02100800a89f45bd0a9e558540c4"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-validation.ps1",
+      "sha256": "4342cf3cf2e803e3c2a898d10fd140add0702ad2ff110ba21b588cb14b27af37"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-input.test.ps1",
+      "sha256": "da1fe8f183bf8a6d8d00ffd319ebd094928c4275e8d222cc547095b175c29eab"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.mjs",
+      "sha256": "c247a43b42d6b8b2be2ca52cbd6b6c3995327704e85a2377e60d320273c97185"
+    },
+    {
+      "path": "scripts/system-backup-d-index-report-fixture.mjs",
+      "sha256": "02cc2db3a331db9d2f431a19ec51072d37e28f8b14592cb724c12e25271bf444"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.test.mjs",
+      "sha256": "a0e91f6ef25c14e067448adf61a1bc408a8c3ea71bbf0909ed10ac92d87a4628"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-report.mjs",
+      "sha256": "50076457ab89897921ddca1a145241516e49f73874ba7828023b2f52ba3b7df3"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-report.test.mjs",
+      "sha256": "d0caf6d4bd9328625160f23bc7817a213bf5fd3dff16a885f4316a64e91693c0"
+    },
+    {
+      "path": "scripts/system-backup-d-index-groups.mjs",
+      "sha256": "5b3da88eeeddad45d241086210765f8302cc45edcd58d86aa4dd392cbbb52b8e"
+    },
+    {
+      "path": "docs/system-backup-d-admin-read-index-candidate-20261012.sql",
+      "sha256": "ed1d7a7b64375b69dd34e25f588afad87d7c4bbd4600e8e0e915c93d869a4874"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-verify.mjs",
+      "sha256": "20073a0b8409c9c535556f6abd814825ef7caddeaba3013b7b582bc93f8999f5"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/system-backup-d-index-group-local-20261014.txt",
+      "sha256": "ca2385a3a5eceb6776276f059f1a24c9ce4138775830bbc0944eb2dabc4e8d20"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-index-group-node-local-20261014-r2.txt",
+      "sha256": "743e6efea0bcb5bc8da78b51cd9977af818333fa267af03dc3c59eb086658f6a"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-index-group-script-local-20261014-r5.txt",
+      "sha256": "d4ea54974596ad40187ce16d437f95fadb1c942ca780b9fcc96ccd7f109532d4"
+    }
+  ],
+  "cleanup": {
+    "owned_scratch": "C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-a-evidence-50adccc934c44779b9e81f0c10f5f0f9",
+    "reported": true,
+    "directory_absent": true,
+    "retained_test_build_products": false
+  },
+  "verification_scope": "Group Go source matches the pre-build progress pin. Script/report changes during the Go build were separately checked by Node and PowerShell; no entire dependency graph freeze asserted.",
+  "previous_progress_preserved": true,
+  "remote_next": "scripts/system-backup-d-index-group-validation.ps1 -Remote -BuildParallelism 1 -SshTarget root@10.130.14.23",
+  "remaining": [
+    "six-run grouped MySQL receipts and suite verification",
+    "representative workload/FK/lock-wait budgets and formal index decision",
+    "canonical formal migration and A write authorization/update/rollback/backfill",
+    "remaining original D Owner/production and end-to-end gates"
+  ]
+}

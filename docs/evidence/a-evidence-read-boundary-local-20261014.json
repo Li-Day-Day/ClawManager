@@ -1,0 +1,79 @@
+{
+  "kind": "a_evidence_verified_read_boundary_local_validation",
+  "date": "2026-10-14",
+  "result": "local_pass",
+  "scope": "A existing detached/Range verified reads; local component safety, not committed artifact or production integration acceptance",
+  "command": "go test -count=1 -v -p=1 ./internal/systembackupevidence",
+  "workdir": "backend",
+  "platform": "windows/amd64",
+  "default_vet": true,
+  "exit": 0,
+  "checks": {
+    "main_tests": 169,
+    "subtests": 1240,
+    "total_pass_checks": 1409,
+    "manifest_snapshot_both_paths": "pass (valid input corrupted and invalid hash repaired in synchronous provider callbacks)",
+    "final_stat_cancellation": "pass",
+    "canceled_unwrap_no_frame_read_and_dek_zeroed": "pass",
+    "typed_nil_reader": "pass",
+    "error_reader_closed": "pass",
+    "already_canceled_read_zero_provider_calls": "pass"
+  },
+  "stdout": {
+    "path": "docs/evidence/a-evidence-read-boundary-local-20261014.txt",
+    "sha256": "5fa07cf5c1816247430f887cb064a235fc884aae0621315e2b2cafa8ad600b2e",
+    "kind": "complete captured local execution stdout, including host-stream Go output reconstructed from lossless tool chunks; not a remote transcript"
+  },
+  "tool_crash_observed": false,
+  "source_inputs": [
+    {
+      "file": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "036c576f90b9d159ee053025f6dbd72cd6cf927610c62ec84f5d60b175ab5d84"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/detached_verify.go",
+      "sha256": "9c2184e78d7a6f72194d27b13afe1f87d4047b03db8cd205dbf3b6d6378ee41d"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/read_snapshot_test.go",
+      "sha256": "18271a509d4d3fe0f57a7a6bb3c6850546ddd7da49544f4e4e1a72b40075dad0"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/types.go",
+      "sha256": "8b50d3c9f67a769967b49f509a736a36edd91e58d7fe110dd79c1f2f1d449c01"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "c4d4b2cc03f2c64b2a99f2f5413d101cb8198cdb9be795b2cd8f319107a6fd4b"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/system_prepare.go",
+      "sha256": "158b2374797063c1a2730bf969a1b6d26e8c0d5a6208e8e02a1a447bd452cb71"
+    }
+  ],
+  "source_drift_since_snapshot": 0,
+  "source_snapshot_scope": "Six relevant core/helper/fixture files sampled during the gate and compared afterward; not an immutable whole dependency graph",
+  "cleanup": {
+    "scratch": ".tmp-a-evidence-72bc2d4eaea7479fa796d6f8f3ed689d",
+    "reported": true,
+    "directory_absent": true,
+    "retained_build_products": false
+  },
+  "offline": {
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "module_mode": "readonly",
+    "telemetry": "off in owned scratch"
+  },
+  "dependency_installation": false,
+  "ssh": false,
+  "real_mysql": false,
+  "linux_cross_compile": false,
+  "production_approved": false,
+  "limits": [
+    "Caller must not concurrently mutate manifest chunks during the initial snapshot copy.",
+    "Trusted bootstrap, signed/committed artifact provenance, cross-owner signature profile and real provider admission remain separate requirements.",
+    "BusinessRestoreOnly remote result is reserved for operator notification and was not inspected or rerun in this turn."
+  ]
+}

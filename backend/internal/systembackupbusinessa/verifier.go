@@ -87,7 +87,8 @@ func KnownVerificationFailureCategory(err error) (string, bool) {
 		errors.Is(err, ErrRiskHitRestore), errors.Is(err, ErrChatSessionRestore),
 		errors.Is(err, ErrChatMessageRestore), errors.Is(err, ErrModelInvocationRestore),
 		errors.Is(err, ErrAuditEventRestore), errors.Is(err, ErrCostRecordRestore),
-		errors.Is(err, ErrAIGatewayCrossTableRestore), errors.Is(err, ErrAIGatewayHistoryRestore):
+		errors.Is(err, ErrAIGatewayCrossTableRestore), errors.Is(err, ErrAIGatewayHistoryRestore),
+		errors.Is(err, ErrBusinessRestore):
 		return "normalization_failed", true
 	case errors.Is(err, ErrCaptureEvidenceIncomplete):
 		return "evidence_incomplete", true

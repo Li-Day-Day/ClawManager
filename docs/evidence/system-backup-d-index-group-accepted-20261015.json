@@ -1,0 +1,176 @@
+{
+  "kind": "d_index_group_frozen_remote_acceptance",
+  "verified_at": "2026-10-15T01:50:23.947Z",
+  "status": "strict_six_run_comparison_accepted",
+  "suite_directory": "docs/evidence/d-index-groups-20261015003501-c2d5ec5c/",
+  "strict_verifier": "scripts/system-backup-d-index-group-verify.mjs",
+  "strict_verifier_exit": 0,
+  "rounds": 2,
+  "runs": 6,
+  "source_files": 1152,
+  "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c",
+  "source_manifest_sha256": "4804769b43c3ee9a245dd1844c55e00a78d766bb107bbc90ebc323b0226fe5e8",
+  "report_sha256": "374bbc66e1270f0e103ba682e9dc0bfffb94ae23d571ab3c668e545d13f2116f",
+  "suite_receipt_sha256": "20f379147ac40d1afca4783d640b29b21a86c9684b3cb808363f83f677163591",
+  "cache_absent": true,
+  "query_pairs": 1026,
+  "binary_pins": {
+    "index": "a2f1dfce272f4850930b8784f8ec545eab639fa11d2ef85d4a11ad859938ae15",
+    "http": "8bf7ade3a83d8680a14f3943892eaba0fd34c2bb0f803812e4a812a335e4aa59",
+    "authority": "c939cd18f490ee17041a245f9be345b76c867e72871161552973fccd2ff1e254"
+  },
+  "run_receipts": [
+    {
+      "round": 1,
+      "variant": "page",
+      "run": "sbk-mig-261015011534-70a0",
+      "namespace_uid": "2789cb41-9533-4d9d-9e39-a3de71c23dfd",
+      "transcript_sha256": "c9e5b347611446147ba0be4261c0522e213e8e0077956f6cb5d4a178b93380bc",
+      "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c"
+    },
+    {
+      "round": 1,
+      "variant": "status",
+      "run": "sbk-mig-261015012255-08f5",
+      "namespace_uid": "dded23e4-7fc5-47db-b603-b29488287aa8",
+      "transcript_sha256": "861ec27217d8531741a28a948b9ca73cf53760d5e7054c9ee2c63c3ee9c48383",
+      "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c"
+    },
+    {
+      "round": 1,
+      "variant": "all",
+      "run": "sbk-mig-261015012708-5b50",
+      "namespace_uid": "474384ab-bf04-44a8-98ae-b96338570c8b",
+      "transcript_sha256": "4fd8a396d3ca2a45b5185ec8c86fae8258577987ffdad90aec91ff272f376384",
+      "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c"
+    },
+    {
+      "round": 2,
+      "variant": "all",
+      "run": "sbk-mig-261015013131-3711",
+      "namespace_uid": "811062f8-2907-45bd-b76e-5b2fbaf1f9cb",
+      "transcript_sha256": "1bae1e32a376ea5772b499c151e21193e1815bded4482961c58ae1f21cebe9a2",
+      "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c"
+    },
+    {
+      "round": 2,
+      "variant": "status",
+      "run": "sbk-mig-261015013603-7db3",
+      "namespace_uid": "7083367c-63b3-4374-b8be-efb3c1d26cae",
+      "transcript_sha256": "8fa5c0184399724dfde9c24bcf151b9523dc13b287e38e50f7f87c469ac80136",
+      "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c"
+    },
+    {
+      "round": 2,
+      "variant": "page",
+      "run": "sbk-mig-261015014341-7865",
+      "namespace_uid": "f080126b-5371-4fce-9797-637caec90920",
+      "transcript_sha256": "b2e4012d6de1940a4122acfbaa7e89e573d19e0dd4a0db884c59949ea48858e8",
+      "source_sha256": "594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c"
+    }
+  ],
+  "variants": {
+    "page": {
+      "ddl_seconds": [
+        1.606404,
+        1.523635
+      ],
+      "total_secondary_index_bytes_added": [
+        2473984,
+        2457600
+      ],
+      "table_round_p95_ratio_summaries": {
+        "cutoff": {
+          "count": 10,
+          "min": 0.057320024198427105,
+          "median": 0.1466102519116994,
+          "max": 0.2951945080091533
+        },
+        "page": {
+          "count": 10,
+          "min": 0.767820950696798,
+          "median": 1.0757943529033673,
+          "max": 1.1423509104163698
+        },
+        "status_page": {
+          "count": 8,
+          "min": 0.8957926731722925,
+          "median": 1.0333077210961292,
+          "max": 1.207388285207556
+        }
+      }
+    },
+    "status": {
+      "ddl_seconds": [
+        1.696333,
+        1.025679
+      ],
+      "total_secondary_index_bytes_added": [
+        4030464,
+        4063232
+      ],
+      "table_round_p95_ratio_summaries": {
+        "cutoff": {
+          "count": 10,
+          "min": 0.46526946107784434,
+          "median": 0.9723552015437971,
+          "max": 8.058637083993661
+        },
+        "page": {
+          "count": 10,
+          "min": 0.8972321964739638,
+          "median": 1.0043974779488494,
+          "max": 1.0856139030857035
+        },
+        "status_page": {
+          "count": 8,
+          "min": 0.8680643440309501,
+          "median": 0.9771270226336085,
+          "max": 1.0885796699420207
+        }
+      }
+    },
+    "all": {
+      "ddl_seconds": [
+        2.214706,
+        1.899996
+      ],
+      "total_secondary_index_bytes_added": [
+        6602752,
+        8650752
+      ],
+      "table_round_p95_ratio_summaries": {
+        "cutoff": {
+          "count": 10,
+          "min": 0.06859070464767617,
+          "median": 0.11129971412902138,
+          "max": 0.32602739726027397
+        },
+        "page": {
+          "count": 10,
+          "min": 0.9120510707719945,
+          "median": 1.0479137402539096,
+          "max": 1.1310961272564866
+        },
+        "status_page": {
+          "count": 8,
+          "min": 0.9700086724042225,
+          "median": 1.093510077089718,
+          "max": 1.1330181348545474
+        }
+      }
+    }
+  },
+  "ratio_summary_definition": "median/min/max across the per-table/per-round median paired p95 ratios; not a pooled p95 or production latency",
+  "synthetic": true,
+  "production_approved": false,
+  "index_migration_promoted": false,
+  "remote_rerun_by_this_agent": false,
+  "limitations": [
+    "Synthetic 12000-row distribution; FK not cloned; warm cache",
+    "Separate run-owned MySQL instances and reversed rounds reduce order bias but do not remove host variation",
+    "Result hashes compared within each run; dynamic timestamp columns prevent cross-run byte equivalence",
+    "Status-only does not alter operations; its measurements are a control",
+    "No representative production workload, explicit budget or migration approval established"
+  ]
+}

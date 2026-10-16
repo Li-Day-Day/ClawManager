@@ -1,0 +1,94 @@
+{
+  "kind": "a_config_operation_response_codec_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T12:40:47.5168746+08:00",
+  "profile": "a-config-operation-response.v1",
+  "status": "accepted_local_public_operation_codec_not_wired",
+  "scope": "Complete public Operation JCS codec, strict parser and bounded inline representation; not writer/receipt integration or deployment",
+  "source_manifest": "docs/evidence/a-config-operation-response-source-20261015.json",
+  "source_sha256": "210be78fedc497fa09f57cbd20cd5793c47703df7854bd7ec262a463642e474a",
+  "source_files": 1216,
+  "source_manifest_sha256": "62915e5a52008cd2ecb68dc51c9da7ab8337f6ae9f5fb4da064782558ac6b9e8",
+  "log": "docs/evidence/a-config-operation-response-local-20261015.txt",
+  "log_sha256": "ec619650ffc5b14ee1adeb5b5c78ccd06e2d1bc68ba319b04c8c56c12d5c631e",
+  "targeted_main": 5,
+  "targeted_sub": 41,
+  "full_main": 183,
+  "full_sub": 952,
+  "full_unique_checks": 1135,
+  "full_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 31.383,
+      "main_pass": 163,
+      "subtest_pass": 839
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 6.18,
+      "main_pass": 20,
+      "subtest_pass": 113
+    }
+  ],
+  "targeted_repeats_not_added": true,
+  "independent_vector_count": 2,
+  "maximum_supported_field_body_bytes": 1232,
+  "inline_limit_bytes": 8192,
+  "bound_scope": "succeeded config_update profile v1 only, all supported identifiers/numbers/timestamps at maximum lengths",
+  "node": {
+    "log": "docs/evidence/a-config-operation-response-contract-20261015-r2.txt",
+    "log_sha256": "436133e812107804d0c8bce5517fdbe978f928acf899afd11dd9f543c429270a",
+    "pass": 3,
+    "fail": 0,
+    "exit": 0,
+    "prior_failure_log": "docs/evidence/a-config-operation-response-contract-20261015.txt",
+    "prior_failure": "validator /$defs/ pointer slice off by one, corrected in test; production schema and vectors unchanged"
+  },
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_response_a_test.go",
+      "size": 7941,
+      "sha256": "c3169dea34bbf95a5b1a6e137e499e09ea6cda6647f7cb44bdc26e1512e8534c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_response.go",
+      "size": 5596,
+      "sha256": "ae74ca430c2813267873d96c3f3096ee6980a54e4da46c76095ab86d3bdf5ec6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_operation_response_vectors.json",
+      "size": 3810,
+      "sha256": "d186a812a555c54f25e528ed2537a4582d5be6df8cd115fab7c9a8f09ed92fef"
+    },
+    {
+      "path": "scripts/system-backup-a-config-operation-response-validation.ps1",
+      "size": 4515,
+      "sha256": "5747edcdf2dbf8157900e8283826a2610b3cd11f49c58a8050e5323e1e37b0dc"
+    },
+    {
+      "path": "scripts/system-backup-a-config-operation-response.test.mjs",
+      "size": 4526,
+      "sha256": "f68c9a7c61b25828ba0f8dcef4f52621f04225dc9092260e76e3aa6a7631f255"
+    }
+  ],
+  "current_other_existing_input_drift": [],
+  "exit": 0,
+  "default_vet": true,
+  "tool_crash_retries": 0,
+  "frozen_postcheck": true,
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-4696dea9485943eeac5b2131304fdec3",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-42fa58613b204bf684ae58944153e28a"
+  ],
+  "cleanup_independently_confirmed": true,
+  "wire_finding": "A-CONFIG-WIRE-01",
+  "wire_finding_status": "open",
+  "writer_response_integration_complete": false,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "mysql_run": false,
+  "runtime_grant_issued": false,
+  "production_http_changed": false,
+  "production_approved": false,
+  "handoff": "docs/system-backup-a-config-operation-response-20261015.md"
+}

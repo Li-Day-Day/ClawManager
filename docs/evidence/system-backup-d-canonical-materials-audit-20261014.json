@@ -1,0 +1,199 @@
+{
+  "kind": "d_canonical_materials_intake_audit",
+  "date": "2026-10-14",
+  "scope": "Current repository checkout: source, contracts, A/D handoffs, deployment inputs and archived evidence; no remote or external storage inspected",
+  "result": "暂无正式可用交付",
+  "user_instruction": "Inspect available repository materials; if missing record unavailable rather than requesting the same paths again",
+  "findings": {
+    "write_contract": {
+      "policy_status": "draft",
+      "manifest_status": "draft",
+      "operations": [
+        {
+          "operation_id": "updateSystemBackupConfig",
+          "method": "PUT",
+          "path": "/admin/system-backup-config",
+          "required_permissions": [
+            "system_backup.configure"
+          ],
+          "conditional_permissions": [
+            {
+              "when": "config_security_boundary_change",
+              "required_permissions": [
+                "system_backup.security_configure"
+              ]
+            },
+            {
+              "when": "config_protection_reduction",
+              "required_permissions": [
+                "system_backup.destructive"
+              ]
+            }
+          ],
+          "recent_strong_auth": "conditional",
+          "strong_auth_condition": "security_boundary_or_protection_reduction",
+          "idempotency_required": true,
+          "kill_switch": "allowed_when_disabled",
+          "success_http_status": 200,
+          "completion_mode": "synchronous"
+        },
+        {
+          "operation_id": "rollbackSystemBackupConfig",
+          "method": "POST",
+          "path": "/admin/system-backup-config/rollback",
+          "required_permissions": [
+            "system_backup.configure"
+          ],
+          "conditional_permissions": [
+            {
+              "when": "config_security_boundary_change",
+              "required_permissions": [
+                "system_backup.security_configure"
+              ]
+            },
+            {
+              "when": "config_protection_reduction",
+              "required_permissions": [
+                "system_backup.destructive"
+              ]
+            }
+          ],
+          "recent_strong_auth": "conditional",
+          "strong_auth_condition": "security_boundary_or_protection_reduction",
+          "idempotency_required": true,
+          "kill_switch": "allowed_when_disabled",
+          "success_http_status": 200,
+          "completion_mode": "synchronous"
+        }
+      ],
+      "admin_openapi_reviews": [
+        {
+          "artifact_ids": [
+            "admin_openapi"
+          ],
+          "required_reviewers": [
+            "A",
+            "B",
+            "C"
+          ],
+          "approved_reviewers": []
+        }
+      ],
+      "approved_production_write_or_backfill_handoff_found": false
+    },
+    "implementation": {
+      "non_test_go_files_scanned": 449,
+      "bootstrap": "Existing offline disabled-v1 INSERT only; rejects existing installation/config",
+      "update_rollback_backfill_production_service_found": false,
+      "backfill": "VerifyConfigBackfillSource is read-only; private receipt is not write authorization",
+      "http": "Only config GET/version GET routes in live read handler",
+      "operation_label_limit": "Bootstrap records config_update; that label alone does not establish an update API/service"
+    },
+    "original_sources": {
+      "usable_installation_version_bound_historical_canonical_delivery_found": false,
+      "examples": [
+        {
+          "path": "contracts/system-backup/v12/admin-control-redacted-examples.json",
+          "status": "draft",
+          "source_class": "redacted_contract_example",
+          "registry_count": 9,
+          "reference_count": 20,
+          "accepted_as_original_historical_source": false
+        },
+        {
+          "path": "backend/cmd/server/system_backup_read_control_fixture_data.json",
+          "status": "draft",
+          "source_class": "server_test_fixture",
+          "registry_count": 9,
+          "reference_count": 20,
+          "accepted_as_original_historical_source": false
+        }
+      ],
+      "candidate_lab": {
+        "path": "deployments/k8s/system-backup-provider-lab/registration-bootstrap-d-admin-7d01a0782656f2af361b56e5/bootstrap-admission.json",
+        "candidate_only": true,
+        "config_schema_sha256": "0f6224f3c5f499102ad9148f40bf4e2a3997cd144fe82e898c6740f85c7532bc",
+        "current_config_schema_sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865",
+        "schema_pin_matches": false,
+        "accepted_as_write_authority_or_original_source": false
+      },
+      "historical_inventory": {
+        "path": "docs/evidence/system-backup-a-active-config-inventory-zhanghui08-20260923.txt",
+        "date": "2026-09-23",
+        "config_rows": 0,
+        "limit": "Historical observation only; not a current live row count"
+      }
+    }
+  },
+  "actions": {
+    "dependency_installation": false,
+    "remote_actions": false,
+    "tests_builds": false,
+    "production_writes": false,
+    "registry_approvals_changed": false
+  },
+  "limits": [
+    "Absence is limited to this checkout and inspected repository sources; external A materials are not inferred absent",
+    "Draft operations and synthetic bootstrap/HTTP receipts do not authorize production mutation or old-row backfill",
+    "Existing nine-registry/twenty-ref samples do not prove original installed-version bytes"
+  ],
+  "next": "Record canonical production write/backfill prerequisites as unavailable; continue the prepared operator grouped-index suite and other work supported by real inputs",
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/admin-operation-policy.json",
+      "sha256": "fd259612635e5707dc98432f0a273de85d9d2b216e13fcfce58e9a4b3fbe4737"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "e116e29974872b9ebcf7d267748847a442cb1da2c10d2da268d223da60017c8e"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "sha256": "0df58467415015293f2cd4f5ca04db2182a2fb585b11c2e4a15128a3eb7114ba"
+    },
+    {
+      "path": "deployments/k8s/system-backup-provider-lab/registration-bootstrap-d-admin-7d01a0782656f2af361b56e5/bootstrap-admission.json",
+      "sha256": "72445d92d1790ea171c61c01e3651270b1a7b1c0bb95f3bfe647bebd79a9672f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-redacted-examples.json",
+      "sha256": "51a28169fd6b5ac15af4a076c62fa7b70e5e8023c892931214a3a713a5f7063f"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_control_fixture_data.json",
+      "sha256": "47d1b29bba47c8a7c923780e00ab0a6ad3380999f7f53bab8d1484bb6a5d4c85"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "25876e8991a02d3c855f98d89cfde2a02bffbcfe9b1ec4fb8978d75679fb959f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_canonical_candidate.go",
+      "sha256": "590bc4cbef87f9f76a146b04ebece02f424d60c399985aceb68443f7624c28df"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_backfill_source.go",
+      "sha256": "a1d9695ca748b7303925b8c7b9086612e9e66481a2f4825810b5104ecf37c897"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "sha256": "e332f361bacae48a9ccb0cb6af0517b78985d7772853bf0000cc8ee147ee74dc"
+    },
+    {
+      "path": "docs/system-backup-d-read-source-formalization-20261014.md",
+      "sha256": "b977fdbb363bb69e02b93237f34c4f57e990dfb100fd89672702644f49b9cc84"
+    },
+    {
+      "path": "docs/system-backup-d-config-http-candidate-20261013.md",
+      "sha256": "6a2fc2ebf02cb533300f295763487551e5bed18697cd6129d0d872a057ead60a"
+    },
+    {
+      "path": "docs/evidence/system-backup-a-active-config-inventory-zhanghui08-20260923.txt",
+      "sha256": "246daac8ce4e809c222396a5bfc5e75b32a409e32278e3344cfcff9d046b48fd"
+    }
+  ]
+}

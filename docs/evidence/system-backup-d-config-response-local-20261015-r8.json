@@ -1,0 +1,117 @@
+{
+  "kind": "d_config_response_pipeline_frozen_local",
+  "round": "r8",
+  "recorded_at": "2026-10-15T10:56:50.3157780+08:00",
+  "status": "full_local_pass_before_exact_chunk_cardinality_followup",
+  "main_pass": 152,
+  "subtest_pass": 744,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 37.104,
+      "main_pass": 141,
+      "subtest_pass": 689
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 2.448,
+      "main_pass": 7,
+      "subtest_pass": 32
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "seconds": 3.917,
+      "main_pass": 4,
+      "subtest_pass": 23
+    }
+  ],
+  "exit": 0,
+  "vet_enabled": true,
+  "tool_crash_retries": 0,
+  "source_sha256": "5f1019203093972f5486de905da367f274d5c5394c39bfd5348e6bfe46126925",
+  "source_files": 1188,
+  "snapshot_manifest_sha256": "a87141fc700acae80ae348ab6835b9059c6e83eefbbfb8c20f13a4ee82b3dce3",
+  "transcript_sha256": "e874651dd205cea0cacbdccbafe3eb29d6b8173f2b36b63f569da07044fb3886",
+  "changed_source_pins_verified": [
+    {
+      "path": "backend/internal/systembackupconfig/response_content_test.go",
+      "size": 5766,
+      "sha256": "52b2ccfa094668eb0f9fbcf2e58e4ec256dd1f9e1a872cbc5fc8e40818b8387c"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_content.go",
+      "size": 6638,
+      "sha256": "af83dcdae002f570a7e8075d26b59f795bbb7bea5b9b621c41fd7cdbf1bb41e0"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_fixture_test.go",
+      "size": 5377,
+      "sha256": "23494e9bd265c3a9e45a3e319d69a6f297582735941ffa8c4e3413869ba00590"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_helpers.go",
+      "size": 1724,
+      "sha256": "19a32fd19d08f0688017b2a2cb8384c13a2df3d43023ba65e53d5780107ab16c"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_pipeline.go",
+      "size": 8028,
+      "sha256": "1900713f78ff747a3532209adee8ee27c2c904b6d3f43b62a1f95d821356fa74"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_read.go",
+      "size": 3236,
+      "sha256": "d9b0dfab32cc878c765930da37d65ea2b3c8b75743e789ba9365074bfd39c4c6"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_sql_test.go",
+      "size": 9652,
+      "sha256": "f97ffa578f7ab6325a970ae0f1e1bd4d3c91c1bec35a4eccde06f639331c7621"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_stage.go",
+      "size": 4865,
+      "sha256": "0013dcba254bc9f1d92550983f267731d18870816c2a08bfc64d9a03d9217bd4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_guard_test.go",
+      "size": 1968,
+      "sha256": "129f787e412514400dc8d6ba10ea5fe8bd1a084c72f19fc8945b2a4779058c33"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_preparation.go",
+      "size": 3054,
+      "sha256": "a316661215141e69ef880f494fa22f6b7863bbd146d70ee42504685d311515a8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+      "size": 24317,
+      "sha256": "57626a5844b392e5498164204edef4cfc8d081da0a2d2abed93f7b7dc77d1a07"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 36845,
+      "sha256": "2c28d9304b6c67228449813c9bc616f4830a4a6ccbaa5f0baf1e7d537aaaccab"
+    },
+    {
+      "path": "scripts/system-backup-d-config-mutation-local-validation.ps1",
+      "size": 5072,
+      "sha256": "c223996200fad635f857f9d20e8469659a587701b155e4160a0ce587707bc418"
+    }
+  ],
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-c6284d6445c04150b0b9297243d6416e",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-ba655a833f4f404c8e2f5348c76dc4d1"
+  ],
+  "cleanup_confirmed": true,
+  "crypto": "real AES-GCM KEK wrapping and SBEV full-object roundtrip",
+  "sql": "model drivers",
+  "known_followup": "r9 must reject additional database chunk rows, not only compare chunk 0",
+  "full_responses_adapter_complete": false,
+  "runtime_sources_complete": false,
+  "producer_publication_implemented": false,
+  "mysql_run": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "remote_run": false
+}

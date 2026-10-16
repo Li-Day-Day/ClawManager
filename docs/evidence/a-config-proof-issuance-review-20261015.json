@@ -1,0 +1,155 @@
+{
+  "kind": "a_config_mutation_totp_proof_issuance_local_review",
+  "recorded_at": "2026-10-15T10:15:47.0043052+08:00",
+  "date": "2026-10-15",
+  "status": "accepted_local_proof_issuer_and_existing_http_extension",
+  "reviewer_kind": "Codex A-role implementation review; not a human/deployment signature",
+  "scope": "Actual existing JWT, bcrypt, AES-GCM, TOTP, Ed25519 issuer and Verify; controlled SQL/authorization model; no production write acceptance",
+  "http": {
+    "method": "POST",
+    "path": "/api/v1/admin/system-backup-strong-auth/proof",
+    "required_config_fields": [
+      "password",
+      "code",
+      "endpoint",
+      "idempotency_key",
+      "request"
+    ],
+    "allowed_config_endpoints": [
+      "updateSystemBackupConfig",
+      "rollbackSystemBackupConfig"
+    ],
+    "request_hash": "server-derived a-config-mutation-request-hash.v1 from trusted installation and authenticated admin ID",
+    "response": "existing header_name/header_value proof transport",
+    "outer_limit_bytes": 270336,
+    "inner_limit_bytes": 262144,
+    "legacy_provider_and_confirm_compatible": true
+  },
+  "source_snapshot": {
+    "manifest": "docs/evidence/a-config-proof-issuance-source-20261015-r2.json",
+    "manifest_sha256": "801bde3613e6032432bd21c74a2cfff628433030c39afa56d2561de3a09aa0ad",
+    "source_sha256": "0c6599ed25d7cc4bdb65abd54f7ba9a9b5bc8ee95c936744cf884664b8c5dd8a",
+    "files": 1170,
+    "post_test_frozen_check": "passed before LOCAL_PASS",
+    "current_existing_input_drift": [
+      "backend/internal/systembackupsecurity/config_mutation_resolver_test.go",
+      "backend/internal/systembackupsecurity/config_mutation_resolver.go",
+      "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+      "backend/internal/systembackupsecurity/config_mutation_transaction.go"
+    ],
+    "missing_inputs": []
+  },
+  "reviewed_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_request.go",
+      "size": 6117,
+      "sha256": "a85430c0e1bbca2d75202ad4c383c9f53bddb43ce6d1da14181648fe10a395f0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session.go",
+      "size": 2761,
+      "sha256": "8ef1e2903fd7da0e52093eda5a379a5916e0356d5396769d124fd2b635c8e31d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_totp_test.go",
+      "size": 18279,
+      "sha256": "bd7b06906cf309f6d0b433ed355081aca2162b4663c340a735f11b17e3f8ac5b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_totp.go",
+      "size": 2675,
+      "sha256": "774452deced3552ff8ff16616fb48b5e1a00a61426d32be231fc8b4f8c53fb06"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_api.go",
+      "size": 8498,
+      "sha256": "734f55f7fe973f1df2c605fff67e92efef01d068c42e80aa80784644108749a4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_runtime.go",
+      "size": 13164,
+      "sha256": "89122a1363a43020b7df775cc7e2cb69381156989082ae48516eaa1ad6321e5e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "size": 20767,
+      "sha256": "bf1ea22e52a6e88f3330db886805efb35de792ea536dd94a1a535e349cb11449"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_sql.go",
+      "size": 12833,
+      "sha256": "d97aacfcbb4b209dc6914efbb0882d6b2ec5d55105c477f4746832839d9c3a56"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp.go",
+      "size": 5737,
+      "sha256": "2b4e323f1ba52a4c5458ac12857edf6955d0dd83e1f3578e5c58e657806db0a4"
+    }
+  ],
+  "validation": {
+    "command": "go test -count=1 -v -p=1 ./internal/systembackupsecurity",
+    "log": "docs/evidence/a-config-proof-issuance-local-20261015-r2.txt",
+    "log_sha256": "fe74c998293c035ba3e139c7f293010bd2f059dbcc005ce1d90720c65aac284f",
+    "main_pass": 134,
+    "subtest_pass": 643,
+    "total_checks": 777,
+    "new_proof_main_pass": 6,
+    "new_proof_subtest_pass": 30,
+    "package_seconds": 18.952,
+    "exit": 0,
+    "vet_enabled": true,
+    "tool_crash_retries": 0
+  },
+  "baseline": {
+    "manifest": "docs/evidence/a-config-proof-issuance-source-20261015.json",
+    "source_sha256": "c704d40971d7f81cef90bbfb3b110868dfa1f623701833fdd6e7aa456d657f80",
+    "log": "docs/evidence/a-config-proof-issuance-local-20261015.txt",
+    "log_sha256": "0cfd1c9b9efcb51f74d3b974979f91593cc9f6abc9bc437ed0a0315618d884a9",
+    "exit": 1,
+    "main_pass": 127,
+    "subtest_pass": 589,
+    "main_fail": 2,
+    "subtest_fail": 4,
+    "tool_crash_retries": 0,
+    "cause": "Test Verify RequestBinding omitted issuer/audience/subject/session; actual verifier correctly rejected missing issuer",
+    "correction": "Test-only complete independent binding; negative tests change one of endpoint/hash/key/subject/session at a time; production code not weakened",
+    "cleanup_paths": [
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-bfdcfe75e85640708545f61119c4d09b",
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-15645b5d873b445881db53079ab62f4c"
+    ],
+    "cleanup_independently_absent": true
+  },
+  "invariants": [
+    "explicit database/installation pin required for config proof",
+    "existing current credential-bound session required; no session enrollment/refresh",
+    "confirmed MFA and same-tx current security_admin callback",
+    "server computes strict full business request hash",
+    "TOTP step and audit committed before returning signed proof",
+    "final same-tx authorization/session/fresh UTC after signer and callbacks",
+    "failure/unknown commit returns empty proof",
+    "wrong/reused TOTP keeps durable rejection throttle",
+    "no raw password, bearer token or proof nonce in audit"
+  ],
+  "final_cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-5cfec5ffdc5c4122ae9010fe2171d436",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-37cd43d5e5e6414da632b55ae5f10c99"
+  ],
+  "final_cleanup_independently_absent": true,
+  "dependencies_installed": false,
+  "ssh_run": false,
+  "mysql_run": false,
+  "ddl_executed": false,
+  "config_proof_http_implemented": true,
+  "production_proof_runtime_activated": false,
+  "production_configuration_write_http_registered": false,
+  "runtime_sources_complete": false,
+  "runtime_write_grants_issued": 0,
+  "historical_canonical_originals_delivered": 0,
+  "production_approved": false,
+  "remaining": [
+    "real MySQL locking/concurrency/rollback and TOTP single-use acceptance",
+    "current production mutation authority/owner resource adapters and full response evidence",
+    "deployment issuer/key/nonce/capacity inputs and directory revocation integration",
+    "formal 081/082 migration, independent maintenance writer/grant and original canonical files"
+  ]
+}

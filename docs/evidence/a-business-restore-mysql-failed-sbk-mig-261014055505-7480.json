@@ -1,0 +1,61 @@
+{
+  "kind": "a_business_restore_mysql_remote_failure",
+  "date": "2026-10-14",
+  "result": "failed_fixture_file_not_packaged",
+  "run_namespace": "sbk-mig-261014055505-7480",
+  "namespace_uid": "f8543764-a936-4d07-b77f-31567f4a139a",
+  "mysql_version": "8.4.8",
+  "sources": [
+    {
+      "kind": "operator_console_attachment_archived_verbatim",
+      "path": "docs/evidence/a-business-restore-mysql-console-sbk-mig-261014055505-7480.txt",
+      "sha256": "b73148cb558c64f0a46c3b5b9c082c942fbc27c991539d023122dcf663c7f55e"
+    },
+    {
+      "kind": "operator_powershell_transcript",
+      "path": "docs/evidence/a-business-restore-mysql-remote-20261014-133105.txt",
+      "sha256": "1f1e7c965a0ff0201295ec41fffa8815aa11c8bbe104f8d7fa690ad69e92a80b"
+    }
+  ],
+  "observed": {
+    "dispatch_regression_cases_passed": 5,
+    "local_a_package_and_offline_seed": "pass",
+    "probe_binary_sha256": "8d6dfbc41b491c05aaa1563e7b4e60a12f51f43192cb4009f544a26d4003306c",
+    "migration_binary_sha256": "0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab",
+    "catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "fresh_migration_replay": "pass",
+    "pinned_migration_runner": "pass",
+    "probe_random_database_full_catalog_replayed": 94,
+    "remote_phase_pass": false,
+    "wrapper_exit": 1
+  },
+  "current_catalog_audit": {
+    "catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "current_files": 94,
+    "remote_applied_files": 94,
+    "exact_filenames_match": true
+  },
+  "failure": {
+    "test": "TestABusinessRestoreRowsMySQL",
+    "message": "open ../../../contracts/system-backup/v12/schema-registry.json: no such file or directory",
+    "root_cause": "registryFixture in capture_test.go opened a checkout-relative JSON file; the remote MySQL pod received only the compiled probe binary.",
+    "stage": "After run-owned database migration and bootstrap seed removal, during fixture construction; before normalization/15-table writes and SELECT-only reader creation.",
+    "all_fifteen_table_mysql_checks_passed": false
+  },
+  "cleanup_observed": {
+    "run_owned_database": true,
+    "namespace_with_exact_uid": true,
+    "remote_scratch": true,
+    "local_build_cache": true
+  },
+  "reader_account": "Not reached in code before failure; no reader creation/privilege validation claimed.",
+  "scope_limits": [
+    "Migration substage success is not complete business restore acceptance.",
+    "No B production dump/target authority or writer acceptance.",
+    "No registry freeze, historical migration equivalence or production approval."
+  ],
+  "fix": "Embed a test-only exact registry snapshot; enforce canonical-byte parity in repository tests; execute the compiled seed from an empty directory locally before SSH, and in the remote pod before the SQL test.",
+  "fix_validation": "docs/evidence/a-business-restore-local-20261014-r3.json",
+  "remote_execution_by_agent": false,
+  "production_approved": false
+}

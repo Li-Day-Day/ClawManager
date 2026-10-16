@@ -1,0 +1,26 @@
+**********************
+PowerShell transcript start
+Start time: 20261014170242
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& 'C:\Program Files\Go\bin\gofmt.exe' -w backend/internal/systembackupsecurity/config_bootstrap.go backend/internal/systembackupsecurity/config_mutation_values.go backend/internal/systembackupsecurity/config_mutation_request.go backend/internal/systembackupsecurity/config_mutation_test.go; $auditTranscript = 'docs/evidence/system-backup-d-recovery-audit-local-20261014-r2.txt'; Start-Transcript -LiteralPath $auditTranscript -NoClobber; try { & 'C:\Program Files\nodejs\node.exe' --test scripts/system-backup-d-recovery-audit-plan.test.mjs; if ($LASTEXITCODE -ne 0) { throw 'Node audit plan tests failed' }; & .\scripts\system-backup-d-recovery-audit-storage-preflight.test.ps1; & 'C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -B scripts/system-backup-d-recovery-audit-init.test.py; if ($LASTEXITCODE -ne 0) { throw 'Python tests failed' } } finally { Stop-Transcript }; git diff --check
+Process ID: 42576
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/system-backup-d-recovery-audit-local-20261014-r2.txt
+
+**********************
+PowerShell transcript end
+End time: 20261014170243
+**********************

@@ -12,3 +12,5 @@
 共同的 `task` 字段由 [GetTaskBase](../backend/internal/systembackupread/task_detail_base.go) 固定列投影取得。`system_backup_attempts` 不带安装 ID，后续关联必须先在同一事务内取得受信安装的任务行，再按准确 `target_type`、`target_public_id` 与 attempt/phase 定界；不能把外部请求的任务 ID 直接用于跨安装 attempt 查询。Job observation、check result 虽含安装 ID，也仍须同时绑定任务类型、准确 ID 与受信安装。所有详情字段只读出合同允许的摘要和登记引用；不选择 `config_snapshot_json`、失败消息、check expected/actual JSON、provider locator 或恢复资源清单。
 
 当前代码的 `readTaskInTransaction` 在同一事务中完成基础 Task 读取、内部详情构建回调和最终授权复查。回调失败、授权撤销、数据库错误或缺少权威事实均不返回部分详情；缺行经过最终复查才返回 `not_found`。回调尚未实现四类完整 DetailResource，也未注册生产 HTTP 路由。接入前需 A 提供正式 `system_backup.read` 会话/安装授权，并由相应 Owner 签收字段来源、脱敏和跨表一致性；使用隔离 MySQL 验证真实数据与撤权竞争后再启用。
+
+2026-10-14 后续：[执行记录贡献与事务接点](system-backup-d-task-execution-read-20261014.md)已实现安装绑定 attempt JOIN、Job observation 的完整读取和关联/闭集校验。详情事务改为 RepeatableRead 并包装内部 SQL 接口，供完整详情 builder 同快照接入；A 正式读授权已有之前的独立验收，新增执行/快照竞争 MySQL 断言须以新回执验证。公共单一当前 phase/generation、A/B/C 其余来源和完整详情仍待完成，不能直接序列化内部贡献或把已有 TaskList PASS 当详情上线。

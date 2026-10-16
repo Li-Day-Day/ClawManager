@@ -1,0 +1,96 @@
+{
+  "kind": "a_config_canonical_write_contract_review",
+  "date": "2026-10-14",
+  "reviewer_role": "A",
+  "reviewer_kind": "Codex local A-role contract review; not a human or deployment signature",
+  "thread_id": "01a1390e-a2dc-7a60-afea-b746cced6b18",
+  "status": "accepted_for_d_implementation",
+  "contract_id": "a-config-canonical-write-security.v1",
+  "contract_sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+  "scope": "A-owned authorization, strong-auth, idempotency, audit and exact-source requirements for D canonical config writers; not deployment authorization or whole-v12 freeze",
+  "inputs": [
+    {
+      "path": "docs/evidence/a-config-canonical-write-contract-20261014.json",
+      "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-policy.json",
+      "sha256": "fd259612635e5707dc98432f0a273de85d9d2b216e13fcfce58e9a4b3fbe4737"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "sha256": "22d92c3586c5c1b9f6e30e4cf9f433196f3fa851421fa538ee62173a3004b5ad"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-mutation-requests.schema.json",
+      "sha256": "a84a5fcf5f5a02ce6a186f38c057440f6ea7cd622d63376c31a997cd73c2bbca"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json",
+      "sha256": "ff3aaf4780f207cec5b7a864fc8c36b958ad750bdb2b6c9c26d017fc02005805"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-nonce-ledger.schema.json",
+      "sha256": "d08a8eb8f1f542458a2238d02c496bc14edb2fbe799b90d18da3638aafff3da5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "sha256": "f370b6be9136ccded93e9a6ff7dcf9a8dc83ca2308cc6beb9784e4c112045aa2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "25876e8991a02d3c855f98d89cfde2a02bffbcfe9b1ec4fb8978d75679fb959f"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_backfill_source.go",
+      "sha256": "a1d9695ca748b7303925b8c7b9086612e9e66481a2f4825810b5104ecf37c897"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-canonical-materials-audit-20261014.json",
+      "sha256": "8dfc856c8afb5f2ad06b8b8859e1ac0935e55b03ab077c0430a4d5d1875daf0e"
+    },
+    {
+      "path": "docs/evidence/system-backup-a-active-config-inventory-zhanghui08-20260923.txt",
+      "sha256": "246daac8ce4e809c222396a5bfc5e75b32a409e32278e3344cfcff9d046b48fd"
+    }
+  ],
+  "validation": {
+    "operation_policy_and_schema_binding": "pass",
+    "synthetic_request_vectors": "generated; Go/runtime parity not claimed",
+    "dependencies_installed": false,
+    "builds": false,
+    "remote_actions": false
+  },
+  "original_canonical_delivery": {
+    "status": "not_available_in_current_checkout",
+    "accepted_files": [],
+    "rejected_classes": [
+      "redacted example",
+      "server fixture",
+      "candidate lab bundle",
+      "hash/materialized-row reconstruction"
+    ],
+    "historical_zero_config_inventory_not_current_state": true
+  },
+  "production_grant_delivery": {
+    "status": "not_available_in_current_checkout",
+    "authorization_instances_issued": 0
+  },
+  "d_remaining": [
+    "formal migration review and runtime writer",
+    "full ConfigValues mutation decoder",
+    "current RBAC/MFA/nonce/audit transaction adapters",
+    "typed offline backfill receipt ledger",
+    "independently authenticated per-installation grant and original version-bound bytes"
+  ],
+  "public_contract_registry_approvals_changed": false,
+  "production_approved": false
+}

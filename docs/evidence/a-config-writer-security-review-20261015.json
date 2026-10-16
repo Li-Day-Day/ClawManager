@@ -1,0 +1,131 @@
+{
+  "kind": "a_config_writer_security_mysql_local_preparation_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T14:44:49.3485706+08:00",
+  "status": "accepted_frozen_local_preparation_actual_mysql_cases_not_run",
+  "scope": "Six added writer MySQL security scenarios compiled, actual issuer expiry/observed row wait logic prepared; no database execution or maintenance grant",
+  "source_manifest": "docs/evidence/a-config-writer-security-source-20261015-r3.json",
+  "source_sha256": "bd35ae7fc7330407bfb51c64df742d87be74b6096fdd9ab2db34a619b4dcd787",
+  "source_files": 1243,
+  "source_manifest_sha256": "adb5ff65f9abf888ba6b3e6fdda15aa4b994cafe2b27017cda6ba6cfd1133906",
+  "log": "docs/evidence/a-config-writer-security-local-20261015-r3.txt",
+  "log_sha256": "168190acb8d32f68b9d2fc47ee1b5e8a993bf3b1381b055f48e4e3171b4407d8",
+  "normal_security_main": 195,
+  "normal_security_sub": 1293,
+  "normal_security_seconds": 24.061,
+  "tagged_seed": {
+    "main": 2,
+    "sub": 16,
+    "seconds": 2.605
+  },
+  "detached_seed": {
+    "main": 2,
+    "sub": 16,
+    "empty_cwd": true,
+    "repeated_executions_not_added": true
+  },
+  "expected_byte_budget_control_failures": 2,
+  "byte_budget_control_exit": 1,
+  "control_source_sha256": "50508cde34c0a6387dd13d6d8fabc2ce68fd3fe9ba5dada88b7d1e19078aa05f",
+  "linux_probe_sha256": "03b896c363b8b874ed84c44f6144c9d655b62eb87abe15be2ab26a17f657bb6d",
+  "input_capsule_sha256": "f5f9eaef4e20b3620caf48304154705f4ae27a0adfa37a7e6f0b06b9f408a999",
+  "migration_runner_sha256": "caf766a72e57b0b8956653387c15ba9109efc329cf10a5b20e88352adf54f978",
+  "new_mysql_leaf_cases_compiled": 6,
+  "mysql_leaf_cases_executed": 0,
+  "security_only_pattern": "^TestDConfigWriterMySQL$/^a_security$",
+  "default_writer_leaf_cases_compiled": 14,
+  "exit": 0,
+  "default_vet": true,
+  "known_tool_crash_retries": 2,
+  "assertion_retries": 0,
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_fixture_schema_test.go",
+      "size": 2975,
+      "sha256": "bd4905ae31b670c9dcc6e8a90b9a01587ca6242449c52bb10706eb10c87547bd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_mysql_seed_test.go",
+      "size": 4098,
+      "sha256": "7f077595196e759588a5e80979a85c33b0a4d3e79c1a82981e87e8df0b722250"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_mysql_test.go",
+      "size": 26631,
+      "sha256": "a304a16dfb1ebb34f2e93ca01ed09c8dfd58d6260a053b4420ba78a8e766227a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_writer_mysql_test.go",
+      "size": 27668,
+      "sha256": "a517b6820f81c0cd18b516db9c4e01e1f67e44ffb00241cd3a1e90befd7549e8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_writer_security_a_mysql_test.go",
+      "size": 14348,
+      "sha256": "1203bd7423d60256e17ab348ff7822e8531332361152357cb964de786e5434ae"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_proof_installation_schema_065.sql",
+      "size": 1991,
+      "sha256": "197dca000c3d0f1d48df5370cc64d2ef49dee4a01b4a9d629a0e6311740840ce"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-byte-control.ps1",
+      "size": 2366,
+      "sha256": "3638e5f0c33b7a2b570d81c9a4cb383016203531bc4b1a6ea6e6cb4d516007df"
+    },
+    {
+      "path": "scripts/system-backup-a-config-writer-security-phase.sh",
+      "size": 2942,
+      "sha256": "a51e4cb7e7f64c23c8c6ccc9dec8822a02f7724f6d876a0403e5c9eb341529eb"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 39919,
+      "sha256": "f56fa6e3c28a001c57a8d30f661b49af75d0b630e7b42ae30bbf1f00659df491"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-dispatch.test.ps1",
+      "size": 4716,
+      "sha256": "f8d91ad09e7a9b40941c7e1c6a31b866de15a671cfa24ae08d3fe877a1b2e479"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "size": 3343,
+      "sha256": "dc39dbfcc1d7731228bc6c28e7f2fde544928b9c07766d4d3f9a01a24b167ec8"
+    }
+  ],
+  "all_existing_live_inputs_match": false,
+  "live_drift_paths": [
+    "backend/internal/systembackupsecurity/config_backfill_identity_a_test.go",
+    "backend/internal/systembackupsecurity/config_backfill_identity.go",
+    "backend/internal/systembackupsecurity/testdata/config_backfill_identity_vectors.json",
+    "scripts/system-backup-a-config-backfill-identity.test.mjs"
+  ],
+  "new_live_paths_outside_frozen_scope": [
+    "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+    "backend/internal/systembackupsecurity/config_maintenance_receipt.go"
+  ],
+  "live_drift_scope": "Only later pure backfill DECIMAL implementation/test/vector changes; separate identity r4 gate, not used by the six writer scenarios",
+  "prior_records": [
+    "docs/evidence/a-config-writer-security-superseded-20261015.json",
+    "docs/evidence/a-config-writer-security-failed-20261015-r2.json"
+  ],
+  "prior_operator_remote_failure": "docs/evidence/system-backup-d-config-writer-mysql-failed-20261015.json",
+  "dispatch_log": "docs/evidence/a-config-writer-security-dispatch-local-20261015.txt",
+  "dispatch_scope": "Both profile dispatch modes and 11 existing dispatch cases passed; initial Git Bash failed before syntax validation",
+  "shell_log": "docs/evidence/a-config-writer-security-shell-local-20261015-r2.txt",
+  "shell_syntax_pass": true,
+  "shell_body_executed": false,
+  "cleanup_roots": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1ca906fb721e45c3a125c40a5ab84819"
+  ],
+  "fixture_paths_independently_absent": 67,
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "production_approved": false,
+  "runtime_grants_issued": 0,
+  "backfill_executed": false,
+  "handoff": "docs/system-backup-a-config-writer-security-mysql-handoff-20261015.md"
+}

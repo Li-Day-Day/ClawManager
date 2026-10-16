@@ -166,6 +166,7 @@ type VerificationResult struct {
 type FailureCode string
 
 const (
+	FailureRequired      FailureCode = "strong_auth_required"
 	FailureInvalid       FailureCode = "strong_auth_invalid"
 	FailureInvalidIssuer FailureCode = "strong_auth_invalid_issuer"
 	FailureExpired       FailureCode = "strong_auth_expired"
@@ -184,7 +185,12 @@ func (e *VerificationError) Error() string {
 	return string(e.Code) + ": " + e.err.Error()
 }
 
-func (e *VerificationError) Unwrap() error { return e.err }
+func (e *VerificationError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.err
+}
 
 func verificationError(code FailureCode, message string) error {
 	return &VerificationError{Code: code, err: errors.New(message)}
@@ -398,26 +404,8 @@ func Verify(proof Proof, request RequestBinding, cfg VerifyConfig) (Verification
 		}
 	}
 
-	authTime, expiresAt, err := parseTimes(payload)
-	if err != nil {
-		return VerificationResult{}, verificationError(FailureInvalid, err.Error())
-	}
-	now := cfg.Now.UTC()
-	if now.IsZero() {
-		now = time.Now().UTC()
-	}
-	clockSkew := cfg.ClockSkew
-	if clockSkew < 0 {
-		return VerificationResult{}, verificationError(FailureInvalid, "strong-auth clock skew is invalid")
-	}
-	if cfg.MaxAge <= 0 {
-		return VerificationResult{}, verificationError(FailureInvalid, "strong-auth max age is invalid")
-	}
-	if authTime.After(now.Add(clockSkew)) || now.Sub(authTime) > cfg.MaxAge+clockSkew {
-		return VerificationResult{}, verificationError(FailureExpired, "strong-auth authentication time is outside the allowed window")
-	}
-	if !expiresAt.After(now) || !expiresAt.After(authTime) {
-		return VerificationResult{}, verificationError(FailureExpired, "strong-auth proof is expired")
+	if err := verifyProofTimeAt(payload, cfg.Now, cfg.MaxAge, cfg.ClockSkew); err != nil {
+		return VerificationResult{}, err
 	}
 
 	canonical, err := CanonicalPayload(payload)
@@ -472,6 +460,34 @@ func Verify(proof Proof, request RequestBinding, cfg VerifyConfig) (Verification
 		}
 	}
 	return VerificationResult{}, verificationError(FailureInvalid, "strong-auth active nonce HMAC key is unavailable")
+}
+
+// Temporal validation alone is NOT proof verification or authority. A caller
+// that has already verified the immutable proof can use this after its final
+// adapter/SQL calls with a fresh database time, without rerunning an adapter
+// that could itself delay past expiry.
+func verifyProofTimeAt(payload ProofPayload, now time.Time, maxAge, clockSkew time.Duration) error {
+	authTime, expiresAt, err := parseTimes(payload)
+	if err != nil {
+		return verificationError(FailureInvalid, err.Error())
+	}
+	now = now.UTC()
+	if now.IsZero() {
+		now = time.Now().UTC()
+	}
+	if clockSkew < 0 {
+		return verificationError(FailureInvalid, "strong-auth clock skew is invalid")
+	}
+	if maxAge <= 0 {
+		return verificationError(FailureInvalid, "strong-auth max age is invalid")
+	}
+	if authTime.After(now.Add(clockSkew)) || now.Sub(authTime) > maxAge+clockSkew {
+		return verificationError(FailureExpired, "strong-auth authentication time is outside the allowed window")
+	}
+	if !expiresAt.After(now) || !expiresAt.After(authTime) {
+		return verificationError(FailureExpired, "strong-auth proof is expired")
+	}
+	return nil
 }
 
 func parseTimes(payload ProofPayload) (time.Time, time.Time, error) {

@@ -101,7 +101,13 @@ func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fail(400, "validation_failed")
 		return
 	}
-	raw, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 24*1024))
+	bodyLimit := int64(24 * 1024)
+	if r.URL.Path == strongAuthBase+"/proof" {
+		// A full config request may itself occupy 256 KiB. Bound the extra
+		// password/code/selector wrapper separately; the decoder limits request.
+		bodyLimit = 262144 + 8192
+	}
+	raw, err := io.ReadAll(http.MaxBytesReader(w, r.Body, bodyLimit))
 	if err != nil {
 		fail(413, "payload_too_large")
 		return
@@ -156,27 +162,48 @@ func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var request *ProviderProofRegistration
+		var configRequest *ConfigMutationRequest
+		var configKey string
 		if r.URL.Path == strongAuthBase+"/proof" {
-			if !providerFieldSet(fields, "password", "code", "request") {
-				fail(400, "validation_failed")
-				return
+			if _, config := fields["endpoint"]; config {
+				var endpoint string
+				if !providerFieldSet(fields, "password", "code", "endpoint", "idempotency_key", "request") || json.Unmarshal(fields["endpoint"], &endpoint) != nil || json.Unmarshal(fields["idempotency_key"], &configKey) != nil || !validIdempotencyKey(configKey) {
+					fail(400, "validation_failed")
+					return
+				}
+				decoded, err := DecodeConfigMutationRequest(endpoint, fields["request"])
+				if err != nil {
+					fail(400, "validation_failed")
+					return
+				}
+				configRequest = &decoded
+			} else {
+				if !providerFieldSet(fields, "password", "code", "request") {
+					fail(400, "validation_failed")
+					return
+				}
+				decoded, err := DecodeProviderProofRegistration(fields["request"])
+				if err != nil {
+					fail(400, "validation_failed")
+					return
+				}
+				request = &decoded
 			}
-			decoded, err := DecodeProviderProofRegistration(fields["request"])
-			if err != nil {
-				fail(400, "validation_failed")
-				return
-			}
-			request = &decoded
 		} else if !providerFieldSet(fields, "password", "code") {
 			fail(400, "validation_failed")
 			return
 		}
-		proof, err := a.TOTP.VerifyAndIssue(r.Context(), actor, password, code, request)
+		var proof Proof
+		if configRequest != nil {
+			proof, err = a.TOTP.VerifyConfigMutationAndIssue(r.Context(), actor, password, code, *configRequest, configKey)
+		} else {
+			proof, err = a.TOTP.VerifyAndIssue(r.Context(), actor, password, code, request)
+		}
 		if err != nil {
 			failTOTP(fail, err)
 			return
 		}
-		if request == nil {
+		if request == nil && configRequest == nil {
 			_ = json.NewEncoder(w).Encode(map[string]bool{"confirmed": true})
 			return
 		}
@@ -194,7 +221,7 @@ func failTOTP(f func(int, string), err error) {
 	case ErrRegistrationPermission:
 		f(403, "permission_denied")
 	case ErrTOTPRejected:
-		f(403, "strong_auth_invalid")
+		f(401, "strong_auth_invalid")
 	default:
 		status, code := registrationHTTPError(err)
 		f(status, code)

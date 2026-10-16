@@ -1,12 +1,13 @@
 # 系统备份与恢复开发流程图
 
-> 更新日期：2026-10-13（北京时间，UTC+08:00；核对至 16:09 完整回执，同步任务/Operation 与配置 HTTP/MySQL 验收、canonical 写入候选、A 的 15 表规范化及跨表校验）
->
+
+> 更新日期：2026-10-15（北京时间，UTC+08:00；核对至 16:12，同步固定源码六轮索引测量、配置 writer/维护收据 MySQL、Prepare 完整门禁与回填服务候选进度）
+
 > 依据：当前工作树（含未提交修改）、[四人分工与开发门禁](system-backup-restore-division-plan.md#16-四人分工和开发门禁)、[A 阶段步骤](system-backup-restore-a-role-steps.md)、[D 阶段步骤](system-backup-restore-d-role-steps.md)、[v12 合同清单](../contracts/system-backup/v12/contract-manifest.json)及下文链接的验收记录。阶段表示开发顺序，不代表日历排期。
 >
 > **当前仍处于 P0-0a 合同冻结前；P0-0b 已完成若干代码和现场验收子项，五个 P0 阶段均未完整通过。**
 
-> 本次将 10 月 13 日增量并入当前状态；下文明确标日期的旧验收仍只适用于原范围。配置 HTTP 修复后的 r2 已在 16:09 收到完整通过回执，正式迁移、生产写入/回填、总览和完整页面仍未完成。
+> A 十五表、D v2-r2、固定源码六轮分组索引、配置 writer 8+6 项及维护收据存储 7 项均有独立通过回执。完整回填服务已有本地门禁，最新验证仍未取得远端完成回执；正式迁移、生产 Owner 接线、完整页面及发布门禁尚未完成。
 
 ## 2026-09-30 主项目合并与备份兼容性收敛
 
@@ -21,7 +22,7 @@
 
 以下阶段说明保留各轮验收的时间与范围；93 文件现场回执、旧 fresh/live schema 比较和镜像封装仍只覆盖原版本。最新 94 文件 fresh 重放已有独立回执，但不自动替代新版全库 schema 采集或实际安装升级。
 
-本轮主要变化：A 正式读授权与 D 四类任务列表/Operation 的 HTTP/MySQL 专项已通过，配置 canonical 候选列、内部读路及配置 HTTP 也已取得完整隔离 MySQL 回执。配置 HTTP 首轮因探针打包遗漏退出 1，修复后的 r2 已通过；显式 bootstrap 同事务写入仍为已接线且本地测试通过的候选。A 的 15 表已具备候选规范化入口及网关跨表映射校验，仍缺 B 真实 proof、目标写入和编排接入。前端 43 项、合同 70 项、A 对象夹具 3 项本地检查通过。94 文件、99 对象、34 draft/4 missing/0 frozen 不变；生产授权与审计存储、B/C、正式迁移、总览和完整页面、真实备份恢复仍未闭合。
+本轮主要变化：固定源码的 page/status/all 正反六轮测量已通过，旧六轮因 A/HTTP 二进制漂移被整套拒绝，不能改判。配置 update/rollback、Operation 响应与真实 session/RBAC/TOTP adapter 完成 8 项 writer + 6 项安全 MySQL 验收；独立维护收据存储完成 7 场景/9 项约束验收。完整 canonical 回填 apply/observe 已实现并通过本地门禁，16:03 新验证尚无远端完成回执；081/082 仍为正式 runner 外提案，原始 canonical 文件、生产写授权与宿主未交付。evidence Prepare 两包完整门禁已通过。本文复跑前端 43、合同 70、A fixture 3、索引汇总 84、审计计划 17、Operation/回填身份 7 项及六轮证据复验；94 文件、99 对象、34 draft/4 missing/0 frozen 不变。
 
 ## 横向开发流程
 
@@ -29,10 +30,10 @@
 flowchart LR
     S["01 · 能力摸底<br/>provider lab / issuer / 隔离 RWX 通过<br/>生产授权 / 源卷 / 真实容量链路待验"]
     A["02 · P0-0a 合同冻结<br/>34 草案 / 4 缺失 / 0 冻结<br/>注册/撤权及组合专项通过 / 十项证据未齐"]
-    B["03 · P0-0b 安全与控制面<br/>94 文件重放 / 迁移互斥 / 会话验收通过<br/>实际升级 / collector / 激活待验"]
+    B["03 · P0-0b 安全与控制面<br/>94 文件 / 会话 / 配置 writer 专项通过<br/>实际升级 / 回填远验 / collector / 激活待验"]
     C["04 · P0a 备份闭环<br/>A 统计/校验候选已有 / B proof 待接<br/>capture → artifact → catalog 待验"]
-    D["05 · P0b 恢复侧能力<br/>A 15 表规范化及跨表校验候选<br/>真实目标写入 / 隔离演练待验"]
-    U["06 · P0b 页面<br/>任务/Operation/配置 HTTP 隔离专项通过<br/>正式迁移 / 总览 / 生产部署待验"]
+    D["05 · P0b 恢复侧能力<br/>A 十五表隔离 MySQL / D 限定评审通过<br/>B 真实 proof / writer / 编排待接"]
+    U["06 · P0b 页面<br/>HTTP / bootstrap / 固定源码六轮索引通过<br/>完整来源 / 索引正式取舍 / 生产部署待验"]
     E["07 · P0c 运维闭环<br/>prune / promotion / 监控 / 四矩阵"]
     G(["08 · P0 发布验收"])
     J["09 · P1 前置<br/>独立 control database / journal"]
@@ -56,10 +57,10 @@ flowchart LR
 
 | 人员 | 按开发顺序的接入和交付 | 当前可确认的程度 |
 | --- | --- | --- |
-| **A**（实际开发人未填写） | **P0-0a 接入** users、AI Gateway 策略和合同评审 → P0-0b 审计、脱敏、强认证 → P0a Secret、KEK、签名、证据 → P0b 只读证据验证 → P0c 安全告警。 | 15 项策略/45 份 fixture 已登记；15 表规范化、备份统计/恢复只读校验及网关跨表映射候选已有本地记录。注册/撤权、组合管理和 ARead 保持分段 PASS；Admin 正式读授权新增完整 HTTP/MySQL 验收。真实 B proof/目标写入、敏感下载 nonce 锚点、生产授权审批与独立审计卷仍待完成。 |
+| **A**（实际开发人未填写） | **P0-0a 接入** users、AI Gateway 策略和合同评审 → P0-0b 审计、脱敏、强认证 → P0a Secret、KEK、签名、证据 → P0b 只读证据验证 → P0c 安全告警。 | 15 项策略/45 份 fixture 保持；十五表 MySQL、evidence Prepare 完整门禁及配置 writer 的 6 项真实安全场景已通过。Operation/身份与回填候选已有本地评审；真实 B proof/writer、完整回填远验、生产编排、敏感下载和审计部署仍缺。 |
 | **B**（实例域标注 **ltt**） | **P0-0a 接入**实例及 CSI/HostPath 能力确认 → P0-0b participant、runner、relay → P0a capture、checkpoint、staging → P0b 隔离恢复资源、normalizer、cleanup → P0c 资源收敛。 | 23 个对象策略、status-relay 和 restore target 合同待提交。D 已有 Job observation/drill resource 控制表，但真实 participant、capture/checkpoint、runner 与恢复资源执行尚待交接；CSI/源卷矩阵仍有阻断。 |
 | **C**（Teams 域标注 **hxc**） | **P0-0a 接入** Teams、Skill Hub、Redis、对象存储能力确认 → P0a artifact、finalizer、catalog → P0b catalog import 与 artifact 读取验证 → P0c artifact health、prune provider。 | 16 个对象策略、recovery catalog 与 catalog scan/record 合同待提交；另有 3 张 catalog 控制表待 C 明确字段、D 组织归属/migration。尚无可验收的 artifact 和灾备发现闭环。 |
-| **D**（资源域标注 **zh**） | **P0-0a 起持续牵头**机器合同与归属盘点 → P0-0b migration、controller → P0a resources 数据模块与备份编排 → **P0b `/admin/backups` API/Console** → P0c promotion、监控及发布证据。 | 45 项对象决议已登记；任务列表/Operation 的 A ScopeProvider、HTTP 和真实 MySQL 专项通过，配置 canonical 内部读路与 HTTP r2 通过。显式同事务 bootstrap 为本地测试通过的候选；总览/完整详情、索引负载、正式迁移/部署、B/C 和激活仍待交付。恢复管理十项统一证据缺口不变。 |
+| **D**（资源域标注 **zh**） | **P0-0a 起持续牵头**机器合同与归属盘点 → P0-0b migration、controller → P0a resources 数据模块与备份编排 → **P0b `/admin/backups` API/Console** → P0c promotion、监控及发布证据。 | 45 项对象决议保持；v2-r2、固定源码六轮索引、配置 writer 8+6 项及维护收据存储已通过。完整回填服务 r29 本地通过、远验未完；081/082 正式迁移、完整总览/详情、生产部署与 B/C 接线仍待完成。 |
 
 表中的 **ltt / hxc / zh** 是主计划分别在实例、Teams、资源管理业务域标注的实际开发人；主计划没有填写 A 的实际开发人，也没有为每人提供具体开工日期。
 
@@ -85,7 +86,7 @@ flowchart LR
 | D 数据库原语 | 9 月 23 日[六组探针](evidence/system-backup-d-database-invariants-20260923.json)保持原范围；10 月 9 日[双向互斥回执](evidence/system-backup-d-migration-capture-mysql-20261009.json)在当前 94 文件 fresh 基线上通过 MySQL 8.4.8 七个子项。真实 DDL 持有 advisory lock 时 capture 等待，已提交 gate 时实际 embedded migration runner 在 DDL/ledger 写入前拒绝；另覆盖 UTC、连接死亡/锁释放、claim 和受保护写事务。 | 最新证据为操作者输出，namespace/UID 与两端缓存报告清理，未提供独立 wrapper 退出码；不代表实际安装升级、B rollout preflight/participant ACK 或生产 capture。gate 表存在但 ledger 缺失的失败关闭分支仍仅有离线测试。 |
 | provider-proof 事务与 HTTP | A 的严格解码/验签/Prepare/Stage 已由 D 的 [`ProviderRegistrationService.Register`](../backend/internal/systembackupsecurity/providerproof_transaction.go)串联；独立 `cmd/system-backup-registration` HTTPS 服务实现 `POST /api/v1/admin/system-backup-provider-proofs`。最新 [9/9 隔离验收](evidence/system-backup-d-runtime-migration-mysql-sbk-mig-260928072119-004e.json)覆盖真实 MySQL、HTTPS/JWT/MFA、首次 201、同键重试、冲突、nonce 重放、审计回滚、退出/配置/角色撤销；bootstrap 嵌套 3/3 通过，总耗时 1.54 秒。 | 使用合成用户/密钥、provider 事实、nonce/容量及 bootstrap admission；不是已部署服务或真实管理员本人 MFA。记录为操作者回传，单独进程退出码为 null，资源报告清理。真实 commit 断连、跨安装 HMAC 轮换并发、失败 HTTP 审计和完整跨 Owner 评审仍未验收；前次统计 SQL 失败记录保留。 |
 | 认证、观察与运行时接线 | JWT/TOTP/TransitSigner、配置/数据库 pin、nonce ref 及容量组件已实现。管理员 access/refresh 原子登记、父 refresh 单次消费、凭据绑定及按安装退出撤销已完成 [MySQL 15/15](system-backup-a-login-sessions-mysql-20260930.md)；repository `UpdateLoginState` 在完整 94 文件 users 结构上完成 [MySQL 22/22](system-backup-a-login-state-mysql-20260930.md)。登录会话开关仍默认关闭。 | 两套数据库验收分别绑定其源码/DDL，不等于 HTTP 登录/刷新/退出、真实 LDAP bind/撤销事件或登录到下载端到端通过。S3 observer 仍仅支持 external_action 的 provider_presence；完整 services/handlers/server 验证受离线依赖缺口阻断。实际 runtime 表、会话开关、身份/TLS/collector 及共享容量其他写路径仍待部署验收。 |
-| 首次配置事务与命令入口 | [`ConfigBootstrapService.Bootstrap`](../backend/internal/systembackupsecurity/config_bootstrap_transaction.go)已实现严格解码、数据库/管理员绑定、v1 enabled=false、installation pointer、operation/audit/容量同事务提交；隔离 MySQL 覆盖回滚、并发及拒绝路径。[bootstrap CLI](system-backup-d-bootstrap-entry-20260928.md)及 Docker 构建入口已交付，支持 requirements/check/apply，九类 registry、20 类 ref 和跨资源策略 admission 编排已落地。 | `linkedOwnerAdapters()` 仍为空，requirements 明确报告 **30 项未接线检查**并阻断；现有隔离事务测试使用 synthetic admission。真实 Owner 实现/完整输入、配置更新与回滚安全、部署和激活尚缺；初始化只产生 disabled v1，`-check-activation` 不创建或激活配置。 |
+| 首次配置事务与命令入口 | [`ConfigBootstrapService.Bootstrap`](../backend/internal/systembackupsecurity/config_bootstrap_transaction.go)已实现严格解码、数据库/管理员绑定、v1 enabled=false、installation pointer、operation/audit/容量同事务提交；隔离 MySQL 覆盖回滚、并发及拒绝路径。[bootstrap CLI](system-backup-d-bootstrap-entry-20260928.md)及 Docker 构建入口已交付，支持 requirements/check/apply，九类 registry、20 类 ref 和跨资源策略 admission 编排已落地。 | `linkedOwnerAdapters()` 仍为空，requirements 明确报告 **30 项未接线检查**并阻断；现有隔离事务测试使用 synthetic admission。真实 Owner 实现/完整输入、配置更新/回滚生产接线、部署和激活尚缺（候选安全专项见下文）；初始化只产生 disabled v1，`-check-activation` 不创建或激活配置。 |
 
 ### A 外置证据与恢复组件
 
@@ -175,26 +176,47 @@ flowchart LR
 
 - **分段结果与失败修复：** 10 日八项统一尝试只完成 D/A/Schema，ADeployment 本地替身缺少 LockReferences 而停止，未进入该项 SSH。12 日前段 D/A/Schema/ADeployment 的终端原文未保存，Manager 只有会话中的部分输出。Authority 续测通过；AManager 因探针未装配 users/audit_logs，PinnedDecision 与 Combined 失败并清理。随后仅对 AManager/ABootstrap/ARevoke 补准确 001 建表语句，修订 DDL SHA-256 为 `2474fbc894ada0607ec88e5a2a0d9056a249798d8e07e48d76f7e090aaec0f82`。
 - **修订后接收：** [AManager/ARead 续测原文](evidence/system-backup-d-amanager-resume-20261012.txt)确认 AManager 三项通过、run `sbk-mig-261012075716-7b8b`，ARead 随后通过，两项均报告数据库/namespace/两端缓存清理；[ABootstrap/ARevoke 接收](system-backup-a-bootstrap-revoke-mysql-remote-20261012.md)对应 run `sbk-mig-261012073839-3121` 与 `sbk-mig-261012075004-30ff`，各自 MySQL PASS、94 文件重放及清理齐全。ARevoke 依据保存的操作者粘贴原文，原 transcript 只覆盖 ABootstrap；未另印显式 REMOTE_EXIT=0，不补造退出码。失败记录保持原结论，分段 PASS 不构成十项统一入口单次成功。
-- **独立审计部署：** [预检与验收清单](system-backup-d-recovery-audit-deployment-preflight-20261012.md)要求专用 PVC/PV、物理容量预留、单写者/旧写者围栏、预置文件权限及 fsync/容量/重启/接管故障证据。只读存储预检脚本已有本地语法和模拟 JSON 检查，未连接现场；卷绑定和申请容量不代表物理预留或 journal 业务持久化已验收。
+- **独立审计部署准备：** [预检与初始化交接](system-backup-d-recovery-audit-deployment-preflight-20261012.md)新增可评审的专用 PVC/暂停初始化 Job 生成器，固定镜像 digest、Never 拉取、ReadWriteOncePod、非 root 和禁用 SA token；示例占位镜像拒绝。Linux 初始化器使用目录 fd/O_NOFOLLOW/O_EXCL 创建 0600 文件，fsync 后复核 inode/权限，失败不截断或自动删除现场。预检核对 Retain、CSI/容量/别名及可选 Pod→RS→Deployment 单写者链。[本地回执](evidence/system-backup-d-recovery-audit-local-20261014.json)为 Node 17、PowerShell 29、Python 平台拒绝 1 项通过，7 项 Linux 文件系统测试跳过。本次另复跑 Node 17 项；尚未创建卷/部署管理进程，物理预留、现场权限/fsync、故障/围栏及生产授权继续待验。
 - **签名与敏感下载：** 当前草案固定三类 artifact 签名为 Ed25519/EdDSA，acceptance 签名输入改为 protected_header 与 JCS payload 的 JWS 组合；配置要求三类 signing identity 彼此且与其他 ref 隔离。见 [v12 说明](../contracts/system-backup/v12/README.md)，本轮合同 70 项通过，仍待 B/C/D 评审。另有[敏感下载缺口](system-backup-a-sensitive-download-contract-gap-20261012.md)：confidential/sensitive 下载已在同一 claim/audit 事务调用二次鉴权，缺适配器时拒绝且不读 provider；但现行操作政策无条件强认证要求、nonce 无成功准入结果锚点、审计接口不返回 audit ID。需修合同/正式迁移并接生产 proof，不能借其他 operation 或失败响应伪造锚点。
 
-### 2026-10-13 A 业务备份与恢复候选
+### 2026-10-13～14 A 业务备份与恢复候选
 
 - **统计与验证边界：** [A 交接](system-backup-a-business-verify-handoff-20261013.md)及 [systembackupbusinessa](../backend/internal/systembackupbusinessa/capture.go)覆盖 users 六表、AI Gateway 九表。捕获 scope 要求独立 pin、冻结 registry、schema evidence 和完整评审；当前 draft 仍会拒绝构造。只读 RepeatableRead 事务一次返回 15 表 InnoDB/行数，不能自行证明与 B dump 同一 checkpoint。B proof 认证后，备份校验输出 users 8 项/AI Gateway 11 项 check，恢复只读校验输出 11 项/13 项并复查目标 proof；元数据不包含 PartResult 状态、staging 或 eligibility。
 - **15 表候选规范化：** 已有完整行候选入口，账号停用并使用不可认证密码占位值；北向 challenge/session/policy 失活，企业认证用明确空串清除密码以避免继承环境凭据，模型同时清空直接 key 与 Secret ref。Gateway 别名到期仍须 B 清除实例直连 token；风险规则停用还须阻止启动补种和提前放行流量。聊天/调用/审计/风险正文脱敏，成本使用精确 DECIMAL 字符串，SQL NULL 保持明确语义。纯转换不执行目标 SQL，不能当作生产恢复已完成。
-- **跨表一致性与本地记录：** [网关映射检查](../backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore.go)要求 users/models/sessions 与调用、审计、成本、风险、消息引用一致，拒绝同源 trace 拆分、异源合并及复用来源 trace。须在各表 B proof 通过后、写入前调用，目前未接入 B 写入器。交接记录已补充完整 A 包回归：首次本机编译器 0xc0000043，使用同源码、GOMAXPROCS=1/-p=1 离线重试退出 0，两次缓存清理；本次只读核对该记录，另复跑 A fixture 3/3 和合同 70/70。真实 B proof、目标占用/时钟/写权限、SQL 写入、大数据量及跨 Owner 签收仍待验。
+- **跨表一致性与本地记录：** [网关映射检查](../backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore.go)要求 users/models/sessions 与调用、审计、成本、风险、消息引用一致，拒绝同源 trace 拆分、异源合并及复用来源 trace。须在各表 B proof 通过后、写入前调用，目前未接入 B 写入器。交接记录已补充完整 A 包回归：首次本机编译器 0xc0000043，使用同源码、GOMAXPROCS=1/-p=1 离线重试退出 0，两次缓存清理；本次只读核对该记录，另复跑 A fixture 3/3 和合同 70/70。真实 B proof、生产目标占用/时钟/写权限与 SQL writer、跨 Owner 大数据量及完整签收仍待验；下文隔离 SQL 专项已有独立 PASS。
+- **十五表统一入口及限定评审：** [NormalizeBusinessForRestore](../backend/internal/systembackupbusinessa/business_restore.go)固定 binding/输入副本、15 表 dump 计数和统一用户/模型/实例映射；要求 Batch 与所有逐表 proof（含空表），初次认证后转换，最终复查失败或取消返回零结果。它只返回候选 SQL 行，不产生写许可、COMMIT 收据或 PartResult。[D 六处规范化边界](system-backup-d-a-normalization-boundary-review-20261014.md)及[十五表组合评审](system-backup-d-a-business-batch-review-20261014.md)已接收各自候选语义，后者绑定八份源码；不改变 registry 的 approved reviewer、schema 冻结或恢复放行。
+- **十五表 SQL 专项已通过：** [15:58 开始的完整原文](evidence/a-business-restore-mysql-remote-20261014-155831.txt)及[接收记录](evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json)对应 run `sbk-mig-261014083514-40ca`、UID `8027bfb2-4ec0-47ac-bf56-96eeffddd906`、MySQL 8.4.8。94 文件重放后，220 个可写字段/221 个回读字段、整批回滚、五条真实 FK、collation 唯一性、SELECT-only 权限、24 项只读检查、NULL/精确金额及 users/quotas 各 1001 行均 PASS。探针 `c992cb570395a3b865c26ab1ef6646e3b641739fdbf56fda8e4c988ce45dc7ef` 与 r4 相同，读账号/随机库/准确 UID namespace/两端缓存清理齐全，最终 `A_BUSINESS_RESTORE_REMOTE_EXIT=0`。这是 synthetic proof/writer 的限定 SQL 验收，不是 B 生产写入或 integrated large-smoke；无需重跑本专项或先跑三表专项。
+- **十五表失败历史与修复：** 上午派发插值错误、[13:31 registry fixture 缺失](evidence/a-business-restore-mysql-failed-sbk-mig-261014055505-7480.json)及[14:46 列闭合失败](evidence/a-business-restore-mysql-failed-sbk-mig-261014071142-71e1.json)仍保留各自退出 1。独立二进制已嵌入测试 registry，并增加仓库 parity/空目录/Pod seed；后一次修正策略表反射投影误收 users JOIN 的 Username/Email。最终从 222 个候选可写字段收敛为正式表的 220 个，生成列 local_username_key 仅回读。r4 本地和后续成功远测已关闭这两项缺口；B writer 也必须排除关联 DTO 字段和数据库生成列。
+- **生产接点仍缺：** [A 生产审计](evidence/a-business-production-handoff-audit-20261014.json)中“十五表远测未证明”已由新回执补齐，原源码检索的生产接线缺口仍无新完成证据。B 须认证真实 dump/checkpoint、Secret/ref、统一映射、目标时间/容量/占用/权限与启动 fence，并在真实写事务再次复查；D 才能组合 A SELECT-only 验证和 B 隔离/停止/清理事实。当前 draft scope 继续拒绝构造，限定评审和 SQL fixture PASS 不代替 registry/live schema 冻结、生产调用或发布矩阵。
+
+### 2026-10-14 evidence 本地边界修订
+
+- **只读校验已验证：** [固定 manifest/取消/reader 清理](system-backup-a-evidence-read-boundary-20261014.md)为 VerifyDetachedEvidence/OpenRange 复制并验证 chunk 快照，阻止同步 provider 回调改写已验证输入；最终 Stat、Unwrap 和返回前复查取消，失败擦除 DEK/明文，typed nil 或 reader+error 安全拒绝并关闭资源。[本地记录](evidence/a-evidence-read-boundary-local-20261014.json)显示 169 个主测试/1240 个子测试及默认 vet 通过、退出 0、缓存清理。该快照早于之后的 Prepare 改动，不自动覆盖新代码或真实 provider。
+- **正文 Prepare 完整本地门禁已通过：** [边界交接](system-backup-a-evidence-prepare-boundary-20261014.md)修复旧实现 13 个取消点中 12 个失效、第二遍 Close 错误被忽略及 Wrap 改写借用 DEK：增加取消检查、两遍单次关闭、typed nil/错误附带 reader 清理及私有 AES key/借用副本隔离与擦除。[完成记录](evidence/a-evidence-prepare-boundary-local-20261014.json)绑定 973 份输入：定向 9 主/37 子、完整 evidence+producer 252 主/1817 子及默认 vet 通过、退出 0、无重试，独占缓存已清理；定向用例不与完整用例重复相加。旧“runs 为空/只有开头”状态已由完整输出替代。失败仍可能留下部分密文，调用者须丢弃；Prepared 不授予登记/上传权限。本地 TLS/模型验证不覆盖真实 provider 或后来新增的配置 mutation 代码。
 
 ### 真实集成与页面
 
 - **任务与 Operation 真实读取：** [查询边界](system-backup-d-live-read-query-boundary-20261012.md)及 [A 正式读授权](system-backup-a-admin-read-scope-20261012.md)已接入四类任务列表、Operation 列表/详情；每请求从已登记 access session 获取 actor，从独立部署 pin 获取安装/config/RBAC，在同一读事务授权并最终复查，使用独立 HMAC 游标。SQL/配置故障返回 503，撤权或缺席返回 403，认证失败返回 401；成功 DTO 标记 live。内部共同 Task 详情仍不等于完整详情。
-- **配置 canonical 候选与新写：** [评审](system-backup-d-config-read-canonical-source-review-20261012.md)确认 066 的展开列不能恢复原 registry/ref 数组顺序及准确 hash。可空 canonical_config_json 候选列、active/历史/列表读取、hash/size/展开列比对与旧行原文只读核对器已有隔离 MySQL PASS。现有 [ConfigBootstrapService.Bootstrap](../backend/internal/systembackupsecurity/config_bootstrap_transaction.go)新增显式 `CanonicalSnapshot` 开关，同一事务写准确 canonical 字节、配置/安装状态、操作收据与审计；默认仍用现有 schema。这是候选接线及本地原子性测试结果，正式 migration、生产开关、旧行受审原文回填及真实 bootstrap 提交/回滚验收尚未完成，不得猜数组顺序、改旧 hash 或借任务快照回填。
-- **完整详情与活动来源：** [四类详情交接](system-backup-d-detail-source-handoff-20261012.md)要求 attempt/Job/check 与 A/B/C 证明在同一授权事务组装，回调/最终复查失败不返回部分结果。共同 Task 不是完整详情，事件 message 尚缺 A 脱敏来源证明，日志只存 evidence 引用，总览各状态仍需各 Owner 事实；后端保持未就绪。客户端新增配置、operation、活动、总览和四类详情的闭集/关联校验只约束响应，不能产生权威事实。
+- **配置 canonical writer 与响应已实现：** [A 安全合同](system-backup-a-config-canonical-write-handoff-20261014.md)及 [D 实现](system-backup-d-config-canonical-implementation-20261014.md)已推进至 ConfigMutationService：当前授权/幂等收据/旧行核对后解锁准备，再在 RepeatableRead 事务追加新版本、CAS active 指针并写 Operation、nonce 和审计，提交前复查权限/会话/MFA/容量/截止时间。rollback 从已验证历史 ref 追加新版本，不倒写旧行；未知提交只用 ObserveCommitted 核对。公共成功体已统一为完整 Operation（a-config-operation-response.v1），早期 ConfigResource/诊断响应属于废弃试验，不能再列为当前公共协议。响应正文、准备与重放绑定由 security、systembackupconfig 和 evidence 组件承担；候选 HTTP adapter 已存在，尚未挂入生产 server 路由。
+- **配置 writer 的真实 MySQL 已通过：** [接收回执](evidence/system-backup-d-config-writer-mysql-accepted-20261015.json)及 [A 安全交接](system-backup-a-config-writer-security-mysql-handoff-20261015.md)绑定 1243 份输入、MySQL 8.4.8、run sbk-mig-261015064313-7655，94 文件重放后隔离应用候选 081；8 个 writer 场景与 6 个安全场景全部通过。覆盖实际 HTTP update/replay/rollback、Operation/审计失败原子回滚、同键并发/CAS、提交回包丢失只读核对、撤权/损坏收据拒绝，以及真实 session 锁等待撤销/过期、CAS 后 session/proof 过期、解锁准备期间撤销和减少保留期的 MFA。退出 0、准确 UID namespace/两端缓存清理及 68 条本地产物缺席已记录。13:38 首轮因 fixture 漏填 065 必填字段而失败，保留原结论；14:28 修正轮通过，不改正式 065/066。readiness/容量仍是合成输入，不等于生产启用或后来代码自动获验收。
+
+- **081/082 与维护收据存储：** [081 canonical 提案](system-backup-d-config-canonical-081-proposal-20261014.sql)与 [082 维护收据提案](system-backup-d-config-maintenance-082-proposal-20261015.sql)仍在 runner/catalog 外；前者仅追加 nullable canonical 字节和 CHECK，后者独立记录永久幂等键、准确结果与两条 audit ID，不借 config_update 冒充回填。[存储接收回执](evidence/system-backup-d-maintenance-receipt-mysql-accepted-20261015.json)绑定 1254 份输入及 run sbk-mig-261015074138-2f70：94 文件重放并隔离应用两提案后，7 场景/9 项约束通过，含原文重放/新键无变更、调用者回滚、收据/结果审计失败原子回滚、UNIQUE/FK/CHECK/保留边界、未知提交新事务核对及真实 config 行锁竞争。退出 0，七套 fixture、准确 UID namespace/缓存清理齐全。该轮只验收私有存储，不调用完整回填服务；之后 SQL 时钟下界增量也未包含于此快照。
+
+- **完整回填服务已有本地验收，远端仍待完成：** [私有 apply/observe](../backend/internal/systembackupsecurity/config_canonical_backfill.go)要求当前维护授权、锁定完整原行/来源和准确原文，仅允许 NULL→准确 canonical 或无变更，并在同事务完成收据、真实 audit ID、容量及最终授权/原截止时间复查；观察使用独立读授权，未知提交不得盲重写。[A r2](system-backup-a-config-backfill-service-handoff-20261015.md)固定 1258 份输入，定向 11 主/50 子、完整 security+config 239 主/1558 子、vet 及两组预期失败反例通过，缓存/92 条产物路径清理；[D r29](evidence/system-backup-d-canonical-backfill-service-local-20261015-r29.json)本地 security 219 主/1445 子、3 组 seed 3 主/21 子及实际 Linux capsule 编译通过，68 条产物路径清理，记录同轮一次 Windows 工具重试；r28 编译失败保留。审计 created_at 为 TIMESTAMP(0)，写入已改为 UTC_TIMESTAMP()，其余时钟保持微秒，防止半秒舍入制造未来审计时间；不放宽排序约束或修改 001/066。[16:03 新日志](evidence/d-canonical-backfill-remote-20261015160358.txt)仍在验证途中，无完整 MySQL/退出/清理回执，不能沿用存储 7 场景宣称服务 7 场景通过。原始 canonical、真实维护 grant/issuer、来源/容量/保留策略 adapter 和生产宿主仍缺。
+
+- **身份与公共错误边界同步：** [回填身份修订](system-backup-a-config-backfill-identity-handoff-20261015.md)按 066 的 UTF-8 字节上限约束文本、拒绝非 NULL 空 reason，并保留 DECIMAL(4,2) 精度；actor 使用稳定 issuer+subject，grant 身份/版本与请求摘要分域，换版本不重开永久幂等键空间。[注册错误合同](system-backup-a-registration-contract-alignment-20261015.md)将 strong_auth_required/invalid/invalid_issuer/expired/replayed 对齐 401、权限 403、输入 400、签名/checksum/version 冲突 409、已分类依赖/存储不可用 503、未分类内部错误 500；缺 proof 只在当前认证和幂等判定后拒绝，不占用键，已提交成功重放无需新 proof。该轮本地 177 主/911 子与合同 70 项通过，不替代真实 provider-proof 新远验。
+- **完整详情与活动来源：** [四类详情交接](system-backup-d-detail-source-handoff-20261012.md)新增 D 执行记录贡献：共同 Task、全部 attempt 与当前 Job observation 在同一 RepeatableRead 快照读取，按安装/任务/attempt/phase 绑定并校验，心跳不冒充业务进度；Owner builder 仍须在同一事务完成并最终复查权限。内部类型禁止 JSON，不能自行选择公共 current_phase/job_generation。A 报告/脱敏、B 隔离/清理、C artifact/catalog、events/logs 仍缺权威接线，完整详情 HTTP 继续 503。
 
 - **HTTP 接线与部署开关：** [server live handler](../backend/cmd/server/system_backup_read_live.go)由 `SYSTEM_BACKUP_READ_LIVE_ENABLED=true` 显式选择，要求已启用 SQLLoginSessions、独立部署 pin 文件/SHA-256 和至少 32 字节的游标密钥；装配失败保持未就绪。配置 active、版本列表及版本详情 GET 已接到同一授权和 canonical 校验。关闭 live 时保留独立 [fixture 入口](system-backup-d-page-read-fixture.md)，真实客户端仍拒绝 fixture。总览、catalog/prune/promotion、四类完整详情、events/logs/manifest 继续 503；页面首屏需要总览，因此部分端点通过仍不足以使完整页面可用。
 - **任务/Operation 完整远端回执：** [首轮](evidence/d-admin-read-live-http-mysql-remote-20261013.txt)因跨安装 fixture 配置快照外键不符失败；修正后的 [r2](evidence/d-admin-read-live-http-mysql-remote-20261013-r2.txt)通过，[r3](evidence/d-admin-read-live-http-mysql-remote-20261013-r3.txt)补稳定分页续取并通过。r3 在 `sbk-mig-261013040654-18e9`、UID `edd4b2cb-8f79-4ad4-832c-c0418e601170` 完成 94 文件 replay，A 授权、D 完整 066/067/080 与 HTTP 三个探针均 PASS；HTTP 二进制 `5f6c9068ee5f4ba90803be1a543a117ff31ff59cb18a23732bcd601a8ab2cf15`，两项 wrapper EXIT=0 及数据库/namespace/两端清理齐全。覆盖四类列表、续页、Operation、200/400/401/403/503、隔离/撤权/来源标记，不包含配置 HTTP、完整页面或正式部署。
 - **配置内部读路隔离回执：** [完整 transcript](evidence/d-config-canonical-candidate-mysql-remote-20261013.txt)在 `sbk-mig-261013061113-2539`、UID `eaa8215d-3281-4c07-9118-363a24168488` 重放 94 文件后，`TestDConfigCanonicalCandidateMySQL` PASS，验证旧行缺快照、pin/版本切换、hash/展开列漂移及撤权。候选 DDL SHA-256 为 `2a4ee20f3a7f9ed50f5f402165345ec8e4cfc1cdeaa25d8eda3464e1e0567fe9`，二进制为 `bec0a11c0e017be3bfd92ca7a5a432ea9f51d6e00babf7a984f8bca8a8f86ceb`；同轮退出 0 与清理齐全。它证明未编号 DDL 和内部读路，不是生产 migration/旧行回填或配置 HTTP 验收。
 - **配置 HTTP 首轮失败、r2 通过：** [首次远端](evidence/d-config-live-http-mysql-remote-20261013.txt)在 `sbk-mig-261013071511-70df` 重放迁移后、专项启动前退出 1，清理完成；打包列表遗漏新增 HTTP 测试文件，已补文件并增加缺测试名错误。[r2 完整 transcript](evidence/d-config-live-http-mysql-remote-20261013-r2.txt)于 16:09 结束，在 `sbk-mig-261013080755-10e4`、UID `3f0200de-a8fd-4f0b-8463-3829f46f7798` 完成 94 文件 replay；同轮 A 授权、D 完整 schema、任务 HTTP、canonical 及 `TestDAdminReadConfigHTTPMySQL` 五个探针均 PASS。HTTP 二进制 `295de0e0e8d0261194cd0ddd5447e6b06aa4b3d16042ec8d2089791a0fc59680`、A/canonical 二进制 `85bbd6d74362c2ec6777c291d3e0f1203b205c9fb605149f65a5971f1dda7c32` 与本地一致，候选 DDL 同前；最终 `D_CONFIG_LIVE_HTTP_REMOTE_EXIT=0`、run-owned 数据库/准确 UID namespace/两端缓存清理齐全。配置 Gin handler 在真实 MySQL 上验证 active/历史/分页、旧行失败关闭、200/400/401/403/503 与撤权。测试复制同一已核对配置字节模拟回填，不批准生产回填；未调用完整 bootstrap 生产事务，也不证明服务已部署或页面已上线。详见 [候选交接](system-backup-d-config-http-candidate-20261013.md)。
-- **分页索引仍待负载评审：** [候选索引](system-backup-d-admin-read-index-review-20261012.md)包含四类任务各两条 `(origin_installation_id,id)` / `(origin_installation_id,status,id)`，以及 Operation 一条 `(origin_installation_id,id)`。尚无实际分布的 EXPLAIN ANALYZE、P50/P95、写入/更新成本与索引占用回执；功能分页 PASS 不代替性能评审或批准正式迁移。
+- **bootstrap 真实事务专项已通过：** [完整回执](evidence/d-config-bootstrap-canonical-mysql-remote-20261013.txt)在 `sbk-mig-261013092726-1154`、UID `5214782a-fc6e-4daa-b682-9869450060e0` 完成 94 文件 replay；`bootstrap_canonical_commit_and_receipt_rollback` 验证准确字节/hash/size、配置/安装状态/操作和审计提交，以及收据 trigger 失败后的全量回滚。探针 `1294e9c066c8a5036d0b2b60beaabb943e218bfaba763629589a49ff70091a5d`、同轮读取探针、退出 0 与清理齐全。13 日 16:09 的 r2 未调用 bootstrap 是历史范围，后续本专项已关闭该缺口；synthetic admission 仍不批准正式迁移或生产激活。
+- **总览控制与 promotion 来源：** [控制计数](system-backup-d-overview-control-20261014.md)固定安装/config，读取四类任务及 Operation 全量状态分组，避免用首屏数量推算总数；LastEffectiveEnabled 只表示 controller 上次持久化状态。[当前 promotion 组件](system-backup-d-promotion-control-read-20261014.md)在同一事务校验当前 matrix 的 active promotion 与 backup/drill/evidence/创建配置绑定，合法版本推进或 artifact 退化不抹掉历史记录。两组件及[执行记录](system-backup-d-task-execution-read-20261014.md)只提供内部来源和同事务 builder 接点，不能代替实时生效状态、七组健康、资格决议或完整 DTO。总览/详情 HTTP 仍未开放，root 隔离探针也不证明生产 SELECT 权限。
+- **分页索引仍待代表性负载决议：** [候选索引](system-backup-d-admin-read-index-review-20261012.md)包含四类任务各两条 `(origin_installation_id,id)` / `(origin_installation_id,status,id)`，以及 Operation 一条 `(origin_installation_id,id)`。[五表真实 MySQL 隔离测量](system-backup-d-admin-read-index-remote-20261014.md)已通过 171 对结果核对并取得计划、P50/P95、写入/更新、空间与 DDL 写流回执；合成热缓存收益混合，新增空间 8.25 MiB。九条候选暂不整体转 migration；继续分组、真实分布及并发负载评审，功能和候选 PASS 不批准正式迁移。
+- **索引首轮与 v2 失败历史：** 首轮 run `sbk-mig-261014021937-5c65`、UID `1313a1b6-8a80-4090-9a6f-14c06783bc7a` 的 171 对查询、控制计数、A/D/HTTP、退出 0 及清理完整，汇总器仍接收。新版[同写流 DDL 前后基线](system-backup-d-index-writer-baseline-20261014.md)在 [v2 原文](evidence/d-admin-read-index-mysql-remote-20261014-v2.txt)中已测量两段各 30 对基线、171 对查询和 94 对 DDL 重叠写入；索引/A 授权/full-schema 三项 PASS，包含执行快照、控制计数及 promotion 退化子断言。但随后 HTTP fixture 与 promotion fixture 复用全局 public_id，MySQL 1062 导致退出 1，缺最终 wrapper EXIT=0，不能接收为新版完整报告。
+- **v2-r2 联合验收已通过：** [完整接收](system-backup-d-admin-read-index-v2-r2-remote-20261014.md)及[原文](evidence/d-admin-read-index-mysql-remote-20261014-v2-r2.txt)对应 run `sbk-mig-261014071158-68a6`、UID `8d32d1ec-db06-4a0d-a82e-38c312b28a67`。隔离 fixture 前缀后，索引/A 授权/full-schema/HTTP 同轮 PASS，execution/双连接快照、控制计数和 promotion 退化子项均已验收；A/D 探针 `c4ba30b52786f437e49b5ec21e8290c760361f6bcba1729e593f85cb89b48385`。171 对查询一致，两段无 DDL 基线各 30 对，144 对与 DDL 重叠；数据库/准确 UID namespace/两端缓存清理、最终 EXIT=0 齐全。重叠写入 P95 88.088 ms 是客户端观测，不是生产锁等待因果结论；旧 v2 失败不改判，已通过的联合专项不再列待重测。
+- **固定源码六轮分组测量已通过：** [冻结源码交接](system-backup-d-index-group-source-freeze-20261015.md)明确旧目录 d-index-groups-20261014082443-8b4f65ad 虽六项逐次 PASS，组合仍因 A/HTTP binary 漂移拒绝；共享缓存不等于固定源码。[新证据目录](evidence/d-index-groups-20261015003501-c2d5ec5c)及[接收回执](evidence/system-backup-d-index-group-accepted-20261015.json)固定 1152 份输入（SHA-256 594cf6595174949428f16e04d9166882ad165e2f7412ac0c900a222e411ec84c），page/status/all 正反六轮的 A SQL、D HTTP、索引探针全部通过，共 1026 对查询；report、suite-complete、source-snapshot 与原文齐全，退出 0、准确 UID 清理及独占目录缺席均通过，本轮 verifier 复验通过。按各表/轮查询 P95 比值取中位数，page/status/all 的 cutoff 比为 0.1466/0.9724/0.1113，分页比为 1.0758/1.0044/1.0479；page/all 明显改善 cutoff，但普通分页没有稳定普遍收益。仅支持继续评估较小 page 组，不能批准全部九条索引；每表 1.2 万合成行、热缓存、LIKE 无 FK，代表性生产负载/预算和正式 migration 取舍仍待验。
 
 - **页面体验与国际化：** 八入口及中/英/日/韩/德五语言保持；本轮 **43/43** Node 检查通过，覆盖来源隔离、列表/详情形状、闭集响应、分页取消、跨安装/版本漂移、刷新退避和不重叠调度，并新增未知字节数不得显示为已测得 0 的检查。浏览器计时、语言切换及完整 Vite/tsc 仍未验收；本机无 node_modules。
 
@@ -217,15 +239,15 @@ flowchart LR
 ## 下一步交接顺序
 
 1. **重新绑定实际升级输入：** 核查当前现场 ledger、用户重名和结构，恢复三条旧原文/应用来源并取得 B/D 签收，确定新增 063 与 only-080 的受审迁移顺序。缺 063 时不直接调用 only-080；不改 hash、删 ledger 或改名 SQL 绕过。准备对应当前 catalog 的正式 runner、完整审查输入/检查点/窗口，执行时持锁复核身份/gate，按批准后的完整集合验收。94 文件 CLI 八项已完成固定材料的真实 DB 与指定故障恢复验收，不重复成功套件；实际安装升级和更广故障边界仍是独立事项。
-2. **沿用正式报告卷完成真实部署：** 保留已准备的 PVC，不重跑创建入口；受审升级完成后建立专用逐表 SELECT 账号/Secret，验收真实 collector 更新/过期和跨节点 HTTP/bootstrap 消费。补六类 registry、20 类 ref、完整配置及 30 项 Owner 检查实现，部署身份/TLS/登录撤销接线。会话 15/15、登录状态 22/22 已完成，接下来补完整 HTTP/server、真实 LDAP/目录撤销、登录到下载端到端，再进行本人 MFA 和配置初始化/激活；config_update/回滚、commit 不明及跨安装轮换并发仍待验。
+2. **沿用正式报告卷完成真实部署：** 保留已准备的 PVC，不重跑创建入口；受审升级完成后建立专用逐表 SELECT 账号/Secret，验收真实 collector 更新/过期和跨节点 HTTP/bootstrap 消费。补六类 registry、20 类 ref、完整配置及 30 项 Owner 检查实现，部署身份/TLS/登录撤销接线。会话 15/15、登录状态 22/22 已完成，接下来补完整 HTTP/server、真实 LDAP/目录撤销、登录到下载端到端，再进行本人 MFA 和配置初始化/激活；config_update/回滚和 commit 不明已有下述隔离候选验收，生产接线及跨安装轮换并发仍待验。
 3. **补 B/C 合同与正式 evidence 集成：** B 提交 23 项对象策略及 restore target/status relay；C 提交 16 项策略、两份 catalog 合同及三张 catalog 表字段。D 组织 catalog/GC 正式 migration、归属/交叉评审及完整 SQLPolicy、宿主/指标接线；A/C 补真实 STS/read ACL、provider profile、候选 SQL 执行计划、下载/GC 和生产授权集成。已通过的 25/25 不重复运行，也不能代替真实 provider 或完整控制表约束验收。
 4. **收敛恢复管理的生产部署与证据：** 首位管理者注册/离线撤权、固定决策/journal、A/D 组合和 ARead 已有独立 MySQL PASS，转而补受信授权文件/证书审批与固定摘要来源、独立审计卷/物理预留/单写者/故障注入、完整历史 authority 和 C Stat。分段结果只接收其原范围，十项统一回执缺口不得用旧轮次拼接。另由 A/D 冻结敏感下载操作、nonce 结果锚点、审计 ID 与迁移，接生产 proof 前保持失败关闭。
-5. **评审正式读源迁移并建立最终 schema：** 任务/Operation、配置内部读路及配置 HTTP r2 的限定专项已通过，无需重复成功套件。评审 canonical 与分页索引的正式追加迁移、生产同事务写入及旧行受审原文回填，补真实 bootstrap 提交/回滚和索引 EXPLAIN/读写成本；隔离候选 PASS 不批准真实安装升级或生产开关。最终恢复/GC/catalog/读源对象确定后，再采集、评审和登记 schema/capability evidence，当前仍为 99 对象/94 文件。
-6. **完成页面事实与 A/B/C 恢复交接：** 为已接线的 live 路由补正式会话登记、部署 pin 和密钥，并交付总览、完整详情/events/logs 的权威来源与同事务复查，随后完成 Vite/浏览器验收。B 须认证 A 的 source/dump 同 checkpoint、15 表真实来源及映射、目标时钟/占用/写权限，并把网关跨表检查接在各表 proof 之后、目标写入之前；补真实隔离 MySQL、大数据量和 D 交叉评审。完整顺序保持 B capture → A evidence → C committed artifact/catalog → D 编排/只读验证 → B 隔离演练 → 页面/P0c；五阶段与四矩阵仍须全部验收，生产恢复属 P1。
+5. **完成回填服务远验并收敛正式配置/索引交付：** 配置 writer 8+6、维护收据存储 7 场景/9 约束、固定源码六轮索引已通过，不重复这些成功专项。接收完整 apply/observe 的新 MySQL 七场景原文、源码/候选 DDL pin、总退出和清理回执；缺失时保持未验收。补原始 canonical 与具体安装授权、真实 readiness/容量/维护身份及响应存储接线，再评审 081/082 的正式目录和历史升级路径，挂接生产 writer。索引按代表性负载与预算决定取舍，旧混合二进制轮次仍拒绝；最终 schema/capability 证据须对应正式对象集合采集评审。
+6. **完成真实 Owner 与页面接线：** A 十五表 SQL/权限/回滚/有界批次已通过，不重复成功专项。B 需提供真实源/目标 proof 与事务 writer，D 接入十五表规范化、SELECT-only 验证和资源/停止/清理；合成写入不代替生产编排或 large-smoke。补总览/详情七组健康、writer/backlog/failure-domain、当前部署和 A/B/C 来源，沿同事务 builder 组装；再验收 Vite/浏览器和真实链路。Prepare 修订已有固定源码的完整本地门禁，后续补真实 provider/生产调用验证；审计存储须补 Linux/现场权限、物理预留与围栏故障验收；生产恢复仍属 P1。
 
 ## 本轮文档核对记录
 
-2026-10-13 核对 A/D 正式读权限与 HTTP 接线、任务/Operation 完整远端回执、canonical 候选专项、配置 HTTP 首轮失败及 16:09 完整通过的 r2、A 的 15 表规范化/跨表校验及文档；下表为本轮无构建输出的本地检查。Go 结果引用对应交接记录，远程结果仅据归档原文，本次未连接集群或运行 Go 构建。
+2026-10-15 16:12 核对当前工作树、固定源码六轮索引、writer/维护收据 MySQL、Prepare 完整结果、Operation/公共错误合同及回填服务本地记录；16:03 新回填验证仍未完成。下表为本次实际运行的只读检查；Go 与远端结果引用对应原文，本次未运行这些构建/远测，也未安装依赖。
 
 | 本地只读检查 | 结果 |
 | --- | --- |
@@ -238,9 +260,13 @@ flowchart LR
 | `node scripts/system-backup-a-object-fixtures.test.mjs` | 本轮 3/3 通过；覆盖 15 表合成向量、行边界、凭据失活、映射与精确金额，不代替 B 真实 proof 或 SQL 写入。 |
 | `node scripts/system-backup-d-activation-inputs.mjs` | 退出 1，activation_input_rejected；已核实旧公开候选包的 config_schema_sha256 与当前 schema 不同，未执行远程操作。历史退出 2/BLOCKED 不是当前结果。 |
 | `node --test --test-isolation=none frontend/scripts/system-backups.test.mjs frontend/scripts/system-backups-i18n.test.mjs` | 本轮 43/43 通过；客户端边界/分页/调度/五语言，不替代真实 HTTP、Vite/tsc 和浏览器验收。 |
-| 本文链接、代码围栏、表格与 `git diff --check` | 131 个本地链接目标存在；围栏配对、表格列数及空白检查通过。 |
+| `node --test --test-isolation=none scripts/system-backup-d-admin-read-index-report.test.mjs scripts/system-backup-d-index-group-report.test.mjs` | 本轮 84/84 通过；含成功报告精确重算、旧 v2/混合源码拒绝、分组次序/摘要/完成与源码冻结收据检查。 |
+| `node scripts/system-backup-d-index-group-verify.mjs docs/evidence/d-index-groups-20261015003501-c2d5ec5c` | PASS；6 runs，独占缓存已不存在；不授予生产审批。 |
+| `node --test --test-isolation=none scripts/system-backup-d-recovery-audit-plan.test.mjs` | 本轮 17/17 通过；仅本地计划与输入边界，不创建卷或运行初始化 Job。 |
+| `node --test --test-isolation=none scripts/system-backup-a-config-operation-response.test.mjs scripts/system-backup-a-config-backfill-identity.test.mjs` | 本轮 7/7 通过；完整 Operation/JCS 向量及 066 UTF-8 字节/reason 约束。 |
+| 本文链接、代码围栏、表格与 `git diff --check` | 167 个本地链接目标存在；围栏配对、表格列数及空白检查通过。 |
 
-当前结论以较晚完整证据为准：12 日恢复管理各分项保持原范围；13 日 Admin 读授权、任务/Operation HTTP、配置 canonical 内部读路及配置 HTTP r2 均有完整通过回执。配置 HTTP 首轮失败保持历史结论；A 的 15 表和跨表校验仍是候选与本地夹具。十项统一成功、生产授权与审计部署、B/C、正式迁移/激活、总览和完整页面仍未闭合。
+当前结论以对应源码的完整证据为准：A 十五表、D v2-r2、固定源码六轮索引、配置 writer 8+6、维护收据存储及 Prepare 本地完整门禁已通过；早期失败与混合源码拒绝保留历史结论。完整回填服务已有本地验收，新验证尚无远端完成回执；存储层验收不扩大到完整服务或之后的时钟修订。081/082 正式迁移、原文/授权、B/C 生产适配、registry/live schema、激活、完整页面与发布门禁仍未闭合。
 
 本次仅更新本文，未安装依赖、未执行 Go 测试/构建或远端操作；Node 检查未产生构建产物，其他任务的源码、缓存和证据保持原样。
 

@@ -1,0 +1,177 @@
+{
+  "kind": "d_a_authority_mysql_preparation_independent_review",
+  "recorded_at": "2026-10-15T09:53:41.7002250Z",
+  "status": "accepted_for_frozen_local_preparation_only",
+  "source_manifest": "docs/evidence/a-maintenance-authority-mysql-source-20261015.json",
+  "source_manifest_sha256": "7fd51d42959348355669cecb63d17ca0cd33ab8c02f7c1e25831808173fbeb1b",
+  "source_sha256": "35214503498b44f472823f2340e8f8dbcf6e18f9d0c1d0e71ca69d86a3ae5d09",
+  "source_files": 1265,
+  "raw_log": "docs/evidence/a-maintenance-authority-mysql-local-20261015.txt",
+  "raw_sha256": "759582fa9d60393b5b828923daf0930355762627483a08136c057d1e5ec3f729",
+  "normal_exit_from_terminal_log": 0,
+  "default_vet_from_command_and_marker": true,
+  "retries_reported_by_a": 0,
+  "current_input_drift": [],
+  "current_added_or_removed_inputs": [],
+  "full_security": {
+    "main": 230,
+    "sub": 1525
+  },
+  "seed": {
+    "invocations": 3,
+    "main_per_invocation": 3,
+    "sub_per_invocation": 22,
+    "repeated_coverage_not_added": true
+  },
+  "local_cleanup": {
+    "owned_roots_and_fixture_paths": 69,
+    "all_independently_absent": true,
+    "fixture_paths_confirmed_in_raw": 67
+  },
+  "linux_probe_sha256": "aec66bf5d43e5bce2bbf946ba9d3ba2084476fdbfa765c0f4bb77b198b5d8860",
+  "inputs_sha256": "4480d7e0f017f87ba22c38a76c89212f922f6b408149f2dfd3b8967a544fd3a3",
+  "linux_migration_runner_sha256": "7b3689676deceb159de2ed0ee5181c28fe03f6361b9db9f825de841911fd54c6",
+  "shell_syntax_log": "docs/evidence/a-maintenance-authority-mysql-shell-local-20261015-r2.txt",
+  "shell_syntax_sha256": "3f1b45097cdcadcd44185db7a03694d0c994b8d9dc8be60255415a229a8246d4",
+  "prior_sandbox_shell_failure_retained": "docs/evidence/a-maintenance-authority-mysql-shell-local-20261015.txt",
+  "focused_source_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_mysql_test.go",
+      "size": 16530,
+      "sha256": "d7d33008afd919ada66849f2cc9873f4d6ee69248514df2e50a911d4e7faa9b6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill.go",
+      "size": 14631,
+      "sha256": "7fe2a1eed2e484fe3cb29bfd0be29c4cc2a748170c8f43c4ed7a315c01a3f6eb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority_a_mysql_test.go",
+      "size": 13283,
+      "sha256": "ca6eacb5cebb61ee8cd4a50aa1425aa9165b33aaef6e30e1f305e7c32d7b6526"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority.go",
+      "size": 13868,
+      "sha256": "ca29ecb65d2e8762bee8267f7acbea8807e24a1086041896115fd34077b5f90f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_mysql_test.go",
+      "size": 26449,
+      "sha256": "d3ed1efad6da063ec2137fbd747aa807348e15c15cd8afb178dc3acbf5202028"
+    },
+    {
+      "path": "docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+      "size": 881,
+      "sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1"
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-dispatch.test.ps1",
+      "size": 4984,
+      "sha256": "00ecaf2835f1ad9fab72c0b6bfa1426fc5303524288ddbc0a73945af66927ac7"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-mysql-validation.ps1",
+      "size": 4035,
+      "sha256": "7724e4b9b4e11a72c570c8ab4feb84419b0eb8b4b22afcb895045a25a098082d"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-phase.sh",
+      "size": 3099,
+      "sha256": "18e42524402137a9ce2acdc713c078538decdbb2e00c3cebf2414e98bf064636"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 44417,
+      "sha256": "c2f684ad2c85834bfd964b404b7f8747dfbdcc3829b6983d3ed089fbfd2bea8e"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-dispatch.test.ps1",
+      "size": 6320,
+      "sha256": "44564ee1a7740cf7ccb7c9e244e64b441d3c7847de4f94980706c6a6b6e7a010"
+    }
+  ],
+  "immutable_pins": [
+    {
+      "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+      "path": "docs/evidence/a-config-canonical-write-contract-20261014.json"
+    },
+    {
+      "sha256": "fdd8ecfa71201c36a9b88c5f4ab0987fe6e8722ae2a5bbfd2c72113fb418ca0d",
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-contract-20261015.json"
+    },
+    {
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql"
+    }
+  ],
+  "reference_pins": [
+    {
+      "path": "docs/evidence/a-maintenance-authority-mysql-local-review-20261015.json",
+      "sha256": "a7709f08a9da7e316b693ca7777aa31df7af3143e407a0d15e89614feb779f21"
+    },
+    {
+      "path": "docs/evidence/a-canonical-backfill-mysql-interrupted-20261015.json",
+      "sha256": "3f19ed93e2e8a0579fbccd9253b29726221a5b13dbba2c353f8dc8ef817f6d06"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-a-authority-preparation-check-20261015-r38.json",
+      "sha256": "caefd9335e2b3e7bbe15b01eb8777bbf8db08472d27355234386f3293b820d0d"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-a-authority-terminal-check-20261015-r38.json",
+      "sha256": "407534df6dc9472f5db5cbc1c0fe0edc3bf377a4ab4171ac106dfed9025964ee"
+    }
+  ],
+  "authority_mysql": {
+    "root": "TestAConfigMaintenanceAuthorityMySQL",
+    "expected_leaves": 8,
+    "recorded_actual_starts": 0,
+    "accepted": false
+  },
+  "service_operator_attempt": {
+    "raw_log": "docs/evidence/d-canonical-backfill-remote-20261015163349.txt",
+    "raw_sha256": "29f49161c481cd9957516ecb7d2816e72e98637be4f4c2cda76a4c6d8f924310",
+    "manifest": "docs/evidence/d-canonical-backfill-remote-20261015163349-source.json",
+    "manifest_sha256": "76babf147547e6f0334932929c3fa925db4a0a2e013c9e7c8ec1e1ba480ad47f",
+    "source_sha256": "b588695c230c987fca19009a34c8b74fd4f576e40d00ca9ea7735a6fe837abeb",
+    "source_files": 1261,
+    "status": "terminal_interrupted_after_local_preparation",
+    "ended_at": "2026-10-15T17:23:39+08:00",
+    "cause": "not established",
+    "recorded_mysql_starts": 0,
+    "recorded_namespace_identities": 0,
+    "remote_success_proven": false,
+    "remote_cleanup_proven": false,
+    "local_paths_checked_absent": 69,
+    "potential_remote_scratch": "/tmp/clawmanager-a-evidence-f2dd505dc118443f93ae8b601f91a8a1",
+    "remote_scratch_existence": "unknown; derived candidate only; no remote query",
+    "accepted": false
+  },
+  "d_actions": {
+    "read_and_recomputed_existing_evidence": true,
+    "builds_rerun": false,
+    "ssh_executed": false,
+    "dependencies_installed": false,
+    "build_artifacts_created": false,
+    "other_threads_messaged": false,
+    "frontend_changed": false,
+    "registry_or_migrations_changed": false
+  },
+  "synthetic_verified_facts": true,
+  "actual_authentication": false,
+  "production_approval": false,
+  "remaining": [
+    "D seven-case service and A eight-case concrete-authority MySQL need separate complete same-run receipts",
+    "Interrupted remote start/outcome and exact scratch cleanup remain unproven; do not treat terminal log as remote cleanup",
+    "Actual runtime actor/holder/grant/archive/target/capacity adapters and original canonical bytes absent",
+    "Formal migration, historical upgrade, Owner reads and production B/A/C/D integration remain open",
+    "Frontend full build/screenshots pending user; r37 Node checks are not browser proof",
+    "Six original scopes remain incomplete"
+  ]
+}

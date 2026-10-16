@@ -101,7 +101,7 @@ type StrongAuthProofIssuer struct {
 // is no public method that accepts an arbitrary auth_time or method assertion.
 func (s StrongAuthProofIssuer) issue(ctx context.Context, actor RegistrationActor, binding RequestBinding, now time.Time) (Proof, error) {
 	empty := Proof{}
-	if s.Signer == nil || s.Key.Purpose != "strong_auth_issuer" || s.Key.Revoked || s.Audience == "" || s.Lifetime < time.Minute || s.Lifetime > 5*time.Minute || now.Before(s.Key.NotBefore) || now.Add(s.Lifetime).After(s.Key.NotAfter) || binding.Endpoint != ProviderRegistrationEndpoint || !providerHashPattern.MatchString(binding.RequestHash) || !validIdempotencyKey(binding.IdempotencyKey) {
+	if s.Signer == nil || s.Key.Purpose != "strong_auth_issuer" || s.Key.Revoked || s.Audience == "" || s.Lifetime < time.Minute || s.Lifetime > 5*time.Minute || now.Before(s.Key.NotBefore) || now.Add(s.Lifetime).After(s.Key.NotAfter) || !totpProofEndpoint(binding.Endpoint) || !providerHashPattern.MatchString(binding.RequestHash) || !validIdempotencyKey(binding.IdempotencyKey) {
 		return empty, ErrRegistrationUnavailable
 	}
 	nonce := make([]byte, 32)
@@ -126,6 +126,10 @@ func (s StrongAuthProofIssuer) issue(ctx context.Context, actor RegistrationActo
 		return empty, ErrRegistrationUnavailable
 	}
 	return Proof{SchemaVersion: ProofSchemaVersion, Payload: p, Signature: signature}, nil
+}
+
+func totpProofEndpoint(endpoint string) bool {
+	return endpoint == ProviderRegistrationEndpoint || endpoint == ConfigUpdateEndpoint || endpoint == ConfigRollbackEndpoint
 }
 
 func wipeSecret(b []byte) {

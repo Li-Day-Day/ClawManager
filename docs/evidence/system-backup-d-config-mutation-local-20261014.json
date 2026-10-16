@@ -1,0 +1,76 @@
+{
+  "kind": "d_config_mutation_decoder_and_request_hash_local",
+  "recorded_at": "2026-10-14T17:15:16.8816955+08:00",
+  "status": "local_implementation_pass_not_runtime_writer",
+  "a_review_status": "accepted_for_d_implementation",
+  "a_input_pins_matched_at_receipt": 13,
+  "approved_contract_sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+  "approved_input_change": "config_bootstrap.go extracted shared decoder; disabled bootstrap semantics preserved and regression-tested; A prior signoff retained unchanged",
+  "validation": {
+    "command": "go test -count=1 -v -p=1 ./internal/systembackupsecurity",
+    "main_tests_passed": 91,
+    "subtests_passed": 405,
+    "mutation_main_tests_passed": 5,
+    "a_request_vectors_passed": 2,
+    "package_seconds": 46.424,
+    "default_vet": true,
+    "tool_crash_retry": false,
+    "exit_code": 0
+  },
+  "cleanup": {
+    "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-dd55691820a34ffd870de1d6ae4e3c6c",
+    "reported_removed": true,
+    "independently_absent": true
+  },
+  "dependencies_installed": false,
+  "remote_actions": false,
+  "mysql_run": false,
+  "migration_066_sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+  "migration_081_status": "number proposed; SQL outside runner/catalog; not executed/reviewed for deployment",
+  "runtime_writer_complete": false,
+  "production_approved": false,
+  "original_canonical_files_available": false,
+  "production_grants_available": false,
+  "source_and_output_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+      "sha256": "634034b7a652a5293c12c0af9109bfbb70b5f0b4afcdb0b751ff3dc02e4a202b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_values.go",
+      "sha256": "9353022ae63da27d80ded4a786f62e0b1b5613ce72ce10678b63b466450922f8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_request.go",
+      "sha256": "a85430c0e1bbca2d75202ad4c383c9f53bddb43ce6d1da14181648fe10a395f0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_test.go",
+      "sha256": "143d030feb8f8a97976ff642e0dbcbf3506206ad3ad44137fb2ef62d4824402a"
+    },
+    {
+      "path": "scripts/system-backup-d-config-mutation-local-validation.ps1",
+      "sha256": "d27cda6c8478c5ea565b5ffc24420b574172c38be8a2db68cf99d3490869bd86"
+    },
+    {
+      "path": "docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+      "sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-write-contract-20261014.json",
+      "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-write-signoff-20261014.json",
+      "sha256": "82586678b795db0a1d6f2c7cd409c7b6ede18193db683f0baa1f5376bac8de88"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-request-vectors-20261014.json",
+      "sha256": "fbb7955e87987f6811c2b721de38087a4a80ba3a736be9b29ac2bc9f311178de"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-config-mutation-local-20261014.txt",
+      "sha256": "e29470a2e2af4c6d122c0990896f4f43af8063572515bfe730ef75169748d15a"
+    }
+  ]
+}

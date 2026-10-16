@@ -1,0 +1,69 @@
+A RBAC stage=targeted default-vet=yes offline=yes
+ATTEMPT=1 COMMAND=go test -count=1 -v -p=1 -run ^TestConfigMutationRBAC ./internal/systembackupsecurity
+=== RUN   TestConfigMutationRBACRequiresRepresentableAdminSubjects
+=== RUN   TestConfigMutationRBACRequiresRepresentableAdminSubjects/ascii-overflow
+=== RUN   TestConfigMutationRBACRequiresRepresentableAdminSubjects/utf8-overflow
+--- PASS: TestConfigMutationRBACRequiresRepresentableAdminSubjects (0.07s)
+    --- PASS: TestConfigMutationRBACRequiresRepresentableAdminSubjects/ascii-overflow (0.05s)
+    --- PASS: TestConfigMutationRBACRequiresRepresentableAdminSubjects/utf8-overflow (0.02s)
+=== RUN   TestConfigMutationRBACPreservesValidSubjectBoundary
+=== RUN   TestConfigMutationRBACPreservesValidSubjectBoundary/ascii-256-bytes
+=== RUN   TestConfigMutationRBACPreservesValidSubjectBoundary/utf8-256-bytes
+--- PASS: TestConfigMutationRBACPreservesValidSubjectBoundary (0.02s)
+    --- PASS: TestConfigMutationRBACPreservesValidSubjectBoundary/ascii-256-bytes (0.01s)
+    --- PASS: TestConfigMutationRBACPreservesValidSubjectBoundary/utf8-256-bytes (0.02s)
+=== RUN   TestConfigMutationRBACCurrentPermissionsAndSemanticComparison
+=== RUN   TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/viewer
+=== RUN   TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/operator
+=== RUN   TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/config_admin
+=== RUN   TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/security_admin
+--- PASS: TestConfigMutationRBACCurrentPermissionsAndSemanticComparison (0.15s)
+    --- PASS: TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/viewer (0.12s)
+    --- PASS: TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/operator (0.02s)
+    --- PASS: TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/config_admin (0.01s)
+    --- PASS: TestConfigMutationRBACCurrentPermissionsAndSemanticComparison/security_admin (0.01s)
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/self-grant
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/subject-and-self-grant
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/last-admin
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/other-binding-config-admin
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/other-binding-security-admin
+=== RUN   TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/self-demotion
+--- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges (0.06s)
+    --- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/self-grant (0.01s)
+    --- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/subject-and-self-grant (0.01s)
+    --- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/last-admin (0.01s)
+    --- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/other-binding-config-admin (0.01s)
+    --- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/other-binding-security-admin (0.01s)
+    --- PASS: TestConfigMutationRBACSelfGrantLastAdminAndOtherBindingChanges/self-demotion (0.02s)
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk/config_admin/retention
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk/config_admin/resolved-security
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk/config_admin/resolved-reduction
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk/security_admin/retention
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk/security_admin/resolved-security
+=== RUN   TestConfigMutationRBACProtectionAndResolverRisk/security_admin/resolved-reduction
+--- PASS: TestConfigMutationRBACProtectionAndResolverRisk (0.06s)
+    --- PASS: TestConfigMutationRBACProtectionAndResolverRisk/config_admin/retention (0.01s)
+    --- PASS: TestConfigMutationRBACProtectionAndResolverRisk/config_admin/resolved-security (0.01s)
+    --- PASS: TestConfigMutationRBACProtectionAndResolverRisk/config_admin/resolved-reduction (0.01s)
+    --- PASS: TestConfigMutationRBACProtectionAndResolverRisk/security_admin/retention (0.01s)
+    --- PASS: TestConfigMutationRBACProtectionAndResolverRisk/security_admin/resolved-security (0.00s)
+    --- PASS: TestConfigMutationRBACProtectionAndResolverRisk/security_admin/resolved-reduction (0.01s)
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/foreign-installation
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/built-in-role-override
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/null-bindings
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/duplicate-actor
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/noncanonical-actor
+=== RUN   TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/unknown-role
+--- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries (0.11s)
+    --- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/foreign-installation (0.01s)
+    --- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/built-in-role-override (0.01s)
+    --- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/null-bindings (0.02s)
+    --- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/duplicate-actor (0.03s)
+    --- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/noncanonical-actor (0.01s)
+    --- PASS: TestConfigMutationRBACRejectsUnpinnedAndMalformedRegistries/unknown-role (0.03s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	2.970s
+GO_EXIT=0

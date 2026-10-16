@@ -30,6 +30,10 @@ func (r *Reader) VerifyConfigBackfillSource(ctx context.Context, version uint64,
 	if version == 0 || version > maxJSONSafeInteger || len(source) < 2 || len(source) > 262144 {
 		return VerifiedConfigBackfillSource{}, ErrInvalid
 	}
+	// Freeze the original before validation or any SQL/authority callback. A
+	// caller-owned buffer must not replace the bytes after their hash/columns
+	// have already been verified, including during the final read recheck.
+	source = append([]byte(nil), source...)
 	if _, ok := validConfigValues(source); !ok {
 		return VerifiedConfigBackfillSource{}, ErrInvalid
 	}
@@ -73,7 +77,7 @@ WHERE c.origin_installation_id=? AND c.version=? FOR SHARE`
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return VerifiedConfigBackfillSource{}, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return VerifiedConfigBackfillSource{}, ErrUnavailable
 	}
 	if missing {

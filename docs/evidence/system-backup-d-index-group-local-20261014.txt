@@ -1,0 +1,43 @@
+**********************
+PowerShell transcript start
+Start time: 20261014153105
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$groupLocalLog=Join-Path (Get-Location) 'docs/evidence/system-backup-d-index-group-local-20261014.txt'; if(Test-Path -LiteralPath $groupLocalLog){throw 'Refusing to overwrite local evidence'}; Start-Transcript -Path $groupLocalLog; try { & .\scripts\system-backup-d-index-group-validation.ps1 -BuildParallelism 1; if(-not $?){throw 'Local grouped index validation failed'}; Write-Output 'D_INDEX_GROUP_LOCAL_EXIT=0' } finally {Stop-Transcript}
+Process ID: 7868
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-index-group-local-20261014.txt
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE admin-read-auth-local=yes full-task-query-local=no remote-full-schema-probe=yes real_mysql=not_run
+ok  	clawreef/internal/systembackupsecurity	1.631s
+ok  	clawreef/internal/systembackupread	2.195s
+ok  	clawreef/internal/systembackupread	1.855s
+ok  	command-line-arguments	2.394s
+=== RUN   TestAAdminReadMySQLSeed
+--- PASS: TestAAdminReadMySQLSeed (0.00s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	5.251s
+LOCAL_PASS admin-read-seed=yes real_mysql=not_run
+LOCAL_PASS a-admin-read-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=c4ba30b52786f437e49b5ec21e8290c760361f6bcba1729e593f85cb89b48385 ddl_sha256=1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab
+LOCAL_PASS d-admin-read-http-probe-compiled=yes http_binary_sha256=2adc8f11dfef91f67584ecf22774f05238de2e19cceb38a856b19074f097b64c real_mysql=not_run
+LOCAL_PASS d-admin-read-index-probe-compiled=yes binary_sha256=8f45b751582221e187c7a847725da323a279902cda4a89b93193543be8cf9c2c real_mysql=not_run production_migration=no
+CLEANED local-registration-build-cache=True
+LOCAL_PASS grouped-index-seed-and-compile=yes variants=page,status,all real_mysql=not_run
+D_INDEX_GROUP_LOCAL_EXIT=0
+**********************
+PowerShell transcript end
+End time: 20261014160927
+**********************

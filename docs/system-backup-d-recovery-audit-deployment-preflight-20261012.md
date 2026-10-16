@@ -21,7 +21,7 @@
 
 ## 只读 PVC/PV 预检入口
 
-专用卷创建后，操作者可从仓库根目录运行下列命令，替换实际 context、namespace、claim 名、受审 StorageClass/CSI driver 和最低容量。脚本只调用 `kubectl get`，核对 PVC/PV 的准确 UID 绑定、`Bound`、CSI 卷标识、`ReadWriteOncePod`、文件系统卷模式，以及申请/绑定/实际容量，并拒绝同 namespace 另一 PVC 复用该 PV 或另一 PV 指向相同 CSI 卷。它不创建或修改集群对象，也不执行远程 MySQL 测试。
+专用卷创建后，操作者可从仓库根目录运行下列命令，替换实际 context、namespace、claim 名、受审 StorageClass/CSI driver 和最低容量。脚本只调用 `kubectl get`，核对 PVC/PV 的准确 UID 绑定、`Bound`、CSI 卷标识、仅 `ReadWriteOncePod`、文件系统卷模式，以及申请/绑定/实际容量。2026-10-14 增量要求 StorageClass provisioner 匹配 CSI driver，StorageClass/PV 均为 `Retain`；核对全 namespace PVC 和完整 PV 清单，拒绝别名与分页遗漏。它不创建或修改集群对象，也不执行远程 MySQL 测试。
 
 ```powershell
 & .\scripts\system-backup-d-recovery-audit-storage-preflight.ps1 `
@@ -38,3 +38,28 @@
 当前缺少已签收的 StorageClass/后端容量、生产管理进程及其单写者部署、文件初始化与权限配置、跨节点围栏和故障注入回执。因此本清单处于**待部署验收**，不解除恢复管理和生产入口的默认关闭状态。
 
 2026-10-12 本地增量：预检补拒 `Block` 卷，并核对 PVC 申请量不低于最低容量且绑定容量不低于申请量。PowerShell 语法与模拟 `kubectl` 的正常绑定、块卷拒绝和申请量大于绑定量拒绝均通过；未连接实际集群。
+
+## 2026-10-14：可评审部署计划与初始化入口
+
+新增 [计划生成器](../scripts/system-backup-d-recovery-audit-plan.mjs) 和 [输入示例](../deployments/k8s/system-backup-recovery-audit.input.example.json)。先将示例复制到受审输入，填写真实预加载 Python 3 镜像 digest、StorageClass、独立容量、非 root UID/GID 和固定路径。示例镜像是明确占位值，生成器会拒绝直接使用它。生成命令只写一个不存在的新本地文件：
+
+```powershell
+node .\scripts\system-backup-d-recovery-audit-plan.mjs <reviewed-input.json> <new-plan.json>
+```
+
+输出为 PVC 与 **suspend=true** 的一次性初始化 Job，`ReadWriteOncePod`、`Retain` 另由预检核对，镜像 `imagePullPolicy=Never`，不自动 apply、拉取镜像或启动 Job。Job 禁用 ServiceAccount token、使用只读根文件系统并移除全部 capabilities；没有恢复管理 Deployment 或运行写授权。`journalMaxBytes+headroomBytes` 必须严格小于申请量，这只是配置预算，后端物理预留仍需现场证据。
+
+[初始化器](../scripts/system-backup-d-recovery-audit-init.py) 只接受 Linux 非 root 及准确 UID/GID。它逐级用目录 fd 和 `O_NOFOLLOW` 打开固定路径，以 `O_CREAT|O_EXCL` 创建空的 `0600` 普通文件，拒绝已有文件、符号链接和目录换绑；同步文件及目录后重新打开完整路径核对 inode。发生失败时不重试、不截断、不自动删除已创建文件，操作者应检查失败现场。`JOURNAL_FILE_INITIALIZED_NOT_PRODUCTION_ACCEPTANCE` 只记录初始化事实。
+
+管理进程已部署时，在上述只读预检命令额外提供以下四个参数（必须全部提供）：
+
+```powershell
+  -DeploymentName '<reviewed-manager-deployment>' `
+  -ManagerContainerName '<reviewed-manager-container>' `
+  -JournalMountPath '<reviewed-volume-mount-directory>' `
+  -ExpectedManagerImage '<reviewed-image>@sha256:<digest>'
+```
+
+此范围要求最新 observed generation、单副本、`Recreate`，核对 Pod → ReplicaSet → Deployment 准确 UID 链及唯一存活 Running Pod，拒绝终止中/未知旧写者、sidecar/init/ephemeral 写挂载、subPath 和实际镜像/挂载漂移。没有提供管理参数时输出明确标记只核对存储。API 快照不能证明旧节点已围栏，也不能消除核对后的变化。
+
+本地 [PowerShell 预检输出](evidence/system-backup-d-recovery-audit-local-20261014-r3.txt) 29 项通过；初始化器最后补核同步后的 owner/group/mode 漂移，[最终增量输出](evidence/system-backup-d-recovery-audit-local-20261014-r4.txt) 中计划生成器 17 项、Python 平台拒绝 1 项通过，7 项 Linux 文件系统测试因 Windows 平台跳过。Node `--test` 子进程曾被沙箱 EPERM 拒绝，随后以同进程入口成功执行，失败输出独立保留。未安装依赖、连接集群、创建卷或启动容器，无测试构建产物及 pycache；Linux 文件系统/故障注入仍待操作者运行。

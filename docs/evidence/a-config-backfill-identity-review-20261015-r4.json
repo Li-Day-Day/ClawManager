@@ -1,0 +1,140 @@
+{
+  "kind": "a_config_canonical_backfill_identity_corrected_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T14:51:41.9308604+08:00",
+  "status": "accepted_corrected_frozen_local_identity_algorithms",
+  "finding": "A-BACKFILL-SCHEMA-01",
+  "finding_status": "resolved_in_frozen_revision",
+  "scope": "Exact formal SQL byte/nonempty constraints and fixed DECIMAL text, full immutable row/source equality and provenance digest representation; not grant/source authentication or actual backfill",
+  "contract": "docs/evidence/a-config-backfill-identity-contract-20261015-r2.json",
+  "contract_sha256": "d9f7ac1916a2a7441594cd42ec6bf755c1036a2a2270f99ae312ce8efac1e6cb",
+  "source_manifest": "docs/evidence/a-config-backfill-identity-source-20261015-r4.json",
+  "source_sha256": "4b260ea10349f623c795d7b19b812ed55ffdfb052300728d37b31bcf304fd63e",
+  "source_files": 1243,
+  "source_manifest_sha256": "dca08676cd8f3e7accf6142d71d0e9db5952e0363e2ccee633bc487f0f4e5ce1",
+  "log": "docs/evidence/a-config-backfill-identity-local-20261015-r4.txt",
+  "log_sha256": "82c121f2442106462283524ec8254ff1ce295fb2d576fd04db1ee5259e5415e1",
+  "targeted_main": 9,
+  "targeted_sub": 192,
+  "full_main": 216,
+  "full_sub": 1412,
+  "full_unique_checks": 1628,
+  "full_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 63.49,
+      "main_pass": 196,
+      "subtest_pass": 1299
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 28.157,
+      "main_pass": 20,
+      "subtest_pass": 113
+    }
+  ],
+  "targeted_repeats_not_added": true,
+  "materialized_columns": 126,
+  "independent_vectors": 7,
+  "fixed_decimal_vectors": [
+    "1.00",
+    "1.50",
+    "2.00"
+  ],
+  "node": {
+    "log": "docs/evidence/a-config-backfill-identity-vectors-local-20261015-r4.txt",
+    "log_sha256": "797181d887f39e638db28d44fa4da032932f44c87032117b6dfe22ca06be26e6",
+    "pass": 4,
+    "fail": 0,
+    "exit": 0
+  },
+  "counterfactual": {
+    "expected_child_failures": 2,
+    "exit": 1,
+    "mutation": "Replace only OCTET_LENGTH byte upper bounds with Unicode character upper bounds",
+    "source_unchanged": true,
+    "source_sha256": "aa138570542970b32f8ca0945220292353b2895afe2609b18aec4ba9e0340c7a"
+  },
+  "original_review_withdrawn_for_sql_validity": "docs/evidence/a-config-backfill-identity-review-20261015.json",
+  "correction_audit": "docs/evidence/a-config-backfill-identity-schema-audit-20261015.json",
+  "preserved_old_contract_and_schema": [
+    {
+      "path": "docs/evidence/a-config-canonical-write-contract-20261014.json",
+      "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-contract-20261015.json",
+      "sha256": "fdd8ecfa71201c36a9b88c5f4ab0987fe6e8722ae2a5bbfd2c72113fb418ca0d"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "docs/evidence/a-config-backfill-identity-contract-20261015.json",
+      "sha256": "712c8206d7408872c35ce882f5310530c10fc9e646203f389011fe05cb39f5d4"
+    }
+  ],
+  "previously_valid_vector_hashes_unchanged": [
+    0,
+    2,
+    3
+  ],
+  "old_empty_reason_vector_scope": "Impossible formal SQL state; preserved as historical vector, now rejected; replaced by valid nonempty reason vector",
+  "exit": 0,
+  "default_vet": true,
+  "known_tool_crash_retries": 0,
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity_a_test.go",
+      "size": 12716,
+      "sha256": "d6cbdae043ce214eb4b20c4eb718fedb431895965af20f51dccd87f366673eb0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity.go",
+      "size": 7438,
+      "sha256": "270bc9df869a7679c50b6c63ac4397ec43e37af7a98ea7c13b3173c6412014d6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_backfill_identity_vectors.json",
+      "size": 118731,
+      "sha256": "bdcf7f84c340ac2d7af5374d2d33707453163503b178fde26e0141d7d18e4a9f"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-byte-control.ps1",
+      "size": 2366,
+      "sha256": "3638e5f0c33b7a2b570d81c9a4cb383016203531bc4b1a6ea6e6cb4d516007df"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-identity-validation.ps1",
+      "size": 4741,
+      "sha256": "8e6b5ec2d057bf48d77c11eb5f1f00a64ddd890f81d3c8ff5872626af9ce20b1"
+    },
+    {
+      "path": "scripts/system-backup-a-config-backfill-identity.test.mjs",
+      "size": 8553,
+      "sha256": "ae831e3c9afff5e27600bd62ee81bddd7819016da716e27556a2873d1fcde050"
+    }
+  ],
+  "all_existing_live_inputs_match": true,
+  "live_drift_paths": [],
+  "new_live_paths_outside_frozen_scope": [
+    "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+    "backend/internal/systembackupsecurity/config_maintenance_receipt_test.go",
+    "backend/internal/systembackupsecurity/config_maintenance_receipt.go"
+  ],
+  "new_D_receipt_implementation_not_accepted_by_this_gate": true,
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-9d1e4378fef34ec3bd20400a703bca17",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1caa97c1da26460ea056a3d5de258728"
+  ],
+  "fixture_paths_independently_absent": 92,
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "real_mysql": false,
+  "runtime_grants_issued": 0,
+  "historical_originals_accepted": 0,
+  "backfill_executed": false,
+  "production_approved": false
+}

@@ -1,0 +1,54 @@
+**********************
+PowerShell transcript start
+Start time: 20261015123221
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+. ./scripts/system-backup-a-evidence-go-step.ps1
+Start-Transcript -Path './docs/evidence/a-config-operation-response-contract-20261015.txt' -NoClobber
+try{$operationNodeExit=Invoke-AEvidenceNative -FilePath (Get-Command node).Source -Arguments @('scripts/system-backup-a-config-operation-response.test.mjs');if($operationNodeExit -ne 0){throw 'Operation schema/vector gate failed'}}finally{Stop-Transcript}
+& 'C:\Program Files\Go\bin\gofmt.exe' -w backend/internal/systembackupsecurity/config_operation_response.go backend/internal/systembackupsecurity/config_operation_response_a_test.go
+Process ID: 41736
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is ./docs/evidence/a-config-operation-response-contract-20261015.txt
+✔ operation vectors follow the existing config mutation success references (1.7094ms)
+✖ complete vector bodies satisfy closed Operation fields and referenced scalar constraints (5.2463ms)
+✔ independent vectors have exact top-level JCS bytes and SHA-256 (1.4452ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22.5478
+
+✖ failing tests:
+
+test at scripts\system-backup-a-config-operation-response.test.mjs:47:1
+✖ complete vector bodies satisfy closed Operation fields and referenced scalar constraints (5.2463ms)
+  TypeError: Cannot read properties of undefined (reading '$ref')
+      at scalar (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-a-config-operation-response.test.mjs:18:14)
+      at scalar (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-a-config-operation-response.test.mjs:21:12)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-a-config-operation-response.test.mjs:53:54)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+**********************
+PowerShell transcript end
+End time: 20261015123222
+**********************

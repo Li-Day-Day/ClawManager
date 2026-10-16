@@ -1,0 +1,111 @@
+{
+  "kind": "d_index_group_local_progress",
+  "date": "2026-10-14",
+  "owner": "D",
+  "complete": false,
+  "real_mysql_run": false,
+  "remote_actions": false,
+  "dependency_installation": false,
+  "production_approved": false,
+  "checks": {
+    "reporter_tests": {
+      "pass": 64,
+      "fail": 0
+    },
+    "production_dispatch_cases": 8,
+    "owned_cache_input_guards": "PASS",
+    "cache_fixture_cleanup": "PASS",
+    "PowerShell_wrapper_syntax": "PASS",
+    "exact_forward_reverse_plan": "PASS",
+    "legacy_success_reports_unchanged": "PASS",
+    "legacy_failed_v2_still_rejected": "PASS",
+    "local_bash_syntax": "not_verified: Git Bash signal pipe Win32 error 5; remote bash -n required",
+    "windows_go_read_authority": "PASS",
+    "windows_go_read_package": "PASS",
+    "windows_tagged_index_seed": "PASS",
+    "windows_http": "PASS",
+    "remaining_go_gate": "running: security tagged seed and Linux probe/migration compilation"
+  },
+  "running_session": {
+    "session_id": 53443,
+    "shell_pid": 7868,
+    "owned_scratch": "C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-a-evidence-50adccc934c44779b9e81f0c10f5f0f9",
+    "restarted": false
+  },
+  "transcripts": [
+    {
+      "path": "docs/evidence/system-backup-d-index-group-node-local-20261014.txt",
+      "sha256": "f14a90588c5da1788efa59bf54b20516802702ba513a5f507c3e11ae84e8008b",
+      "mutable_while_running": false
+    },
+    {
+      "path": "docs/evidence/system-backup-d-index-group-script-local-20261014-r3.txt",
+      "sha256": "55cc97a13cb8742a2461069af7b0da68468d48ebb9c7e0b94a4ae2da95f55a04",
+      "mutable_while_running": false
+    },
+    {
+      "path": "docs/evidence/system-backup-d-index-group-local-20261014.txt",
+      "sha256": "e98a19e323a374b91dbe0b44f335c99bb4d39b9a34232d325d8b92b0e2d6b621",
+      "mutable_while_running": true
+    }
+  ],
+  "source_inputs": [
+    {
+      "path": "backend/internal/systembackupread/page_index_mysql_test.go",
+      "sha256": "f81052e28b3e3878c3ad7d342768c2134027606d0f53900931e02123c9ee99ae"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "317dd4bcfd715049da89460791ef70ed0aadde1eb6b21b6df5eca0dd8308490b"
+    },
+    {
+      "path": "scripts/system-backup-a-admin-read-phase.sh",
+      "sha256": "850f37a9ada38b2c58bf17db228bc4f59acce087347fbf7bf2ac7a1ea1a47dab"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-dispatch.test.ps1",
+      "sha256": "eb86f222c07fe8e20f22a441dc951bd7a01b02100800a89f45bd0a9e558540c4"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-validation.ps1",
+      "sha256": "7f4e9fb501b70217bcf4461e725726f02e763a2fad7e586ae8931c367aa157a1"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-input.test.ps1",
+      "sha256": "67a5fb2fd6313348392b717b9792daf9098f5789e6749c37404c2cf710323374"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.mjs",
+      "sha256": "c247a43b42d6b8b2be2ca52cbd6b6c3995327704e85a2377e60d320273c97185"
+    },
+    {
+      "path": "scripts/system-backup-d-index-report-fixture.mjs",
+      "sha256": "02cc2db3a331db9d2f431a19ec51072d37e28f8b14592cb724c12e25271bf444"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.test.mjs",
+      "sha256": "a0e91f6ef25c14e067448adf61a1bc408a8c3ea71bbf0909ed10ac92d87a4628"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-report.mjs",
+      "sha256": "98a352cb1b5e6e9639284f9420750023d62d6bbf99aafe1391c3ba9e9c73a43f"
+    },
+    {
+      "path": "scripts/system-backup-d-index-group-report.test.mjs",
+      "sha256": "e71d2f70ab9fecbcd82566d4b6399aa3d0fb7b210d4fd80f1d950b476595ba8c"
+    },
+    {
+      "path": "scripts/system-backup-d-index-groups.mjs",
+      "sha256": "5b3da88eeeddad45d241086210765f8302cc45edcd58d86aa4dd392cbbb52b8e"
+    },
+    {
+      "path": "docs/system-backup-d-admin-read-index-candidate-20261012.sql",
+      "sha256": "ed1d7a7b64375b69dd34e25f588afad87d7c4bbd4600e8e0e915c93d869a4874"
+    }
+  ],
+  "limits": [
+    "Progress snapshot; not the final local compile/cleanup receipt",
+    "Remote grouped suite and representative workload decision are still pending",
+    "Earlier r2 script harness had no source directory in its dynamic block; permanent input test supplies the source directory and r3 passes; original failed output retained"
+  ]
+}

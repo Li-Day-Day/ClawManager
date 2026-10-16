@@ -1,0 +1,59 @@
+{
+  "kind": "a_business_restore_mysql_failed_operator_receipt",
+  "date": "2026-10-14",
+  "result": "failed",
+  "production_approved": false,
+  "transcript": {
+    "path": "docs/evidence/a-business-restore-mysql-remote-20261014-144644.txt",
+    "sha256": "c4ca94bb5470768d4ad6135e26285ef9a1292e0bb214181572c24e3d3cf9b30c"
+  },
+  "run": "sbk-mig-261014071142-71e1",
+  "namespace_uid": "4f34fddd-c799-4b54-afab-ad8a57edd161",
+  "mysql_version": "8.4.8",
+  "wrapper_exit": 1,
+  "hashes": {
+    "migration_runner": "0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab",
+    "catalog": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "probe": "9d19d84a2e8ac08657d2db6ab94c71609cd3b1961633c44b85526f6835998a84"
+  },
+  "passed_stages": [
+    "5 offline dispatch regressions",
+    "local full A package and seed",
+    "standalone Windows seed",
+    "bundle checksum",
+    "94 fresh migrations and pinned runner",
+    "pod standalone seed",
+    "94 pinned migrations in run-owned business database"
+  ],
+  "failure": {
+    "stage": "metadata closure before writes and reader creation",
+    "diagnosis": "Probe reflection includes read-DTO users.username and users.email join fields as northbound_caller_policies columns. Migration 057 defines six policy-owned columns; the probe expected eight.",
+    "test": "TestABusinessRestoreRowsMySQL",
+    "diagnosis_basis": [
+      "backend/internal/models/northbound_admin.go",
+      "backend/internal/db/migrations/057_add_northbound_admin_settings.sql",
+      "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go"
+    ],
+    "message": "incomplete migrated-column closure"
+  },
+  "cleanup_reported": {
+    "reader_account": "not created before failure",
+    "run_owned_database": true,
+    "remote_scratch": true,
+    "local_cache": true,
+    "actual_pending_marker": false,
+    "namespace_exact_uid": true
+  },
+  "unreached_checks": [
+    "15-table SQL write and full-column roundtrip",
+    "transaction rollback",
+    "foreign-key and collation rejection",
+    "SELECT-only account and 24 checks",
+    "nullable and bounded-volume batches"
+  ],
+  "r3_probe_hash_matches": true,
+  "fix_scope": "test-only SQL projection excludes two joined fields; six-column seed regression and table-specific closure diagnostics",
+  "local_fix_validation": "docs/evidence/a-business-restore-local-20261014-r4.json",
+  "remote_execution_by_agent": false,
+  "remote_cleanup_independently_rechecked": false
+}

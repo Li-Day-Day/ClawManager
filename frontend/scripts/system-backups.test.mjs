@@ -616,10 +616,14 @@ test('live reads require an explicit build-time opt-in', () => {
   assert.equal(liveBackupReadEnabled('1'), true);
 });
 
-test('live read source keeps fixture and not-ready responses unavailable', async () => {
+test('live read source keeps fixture and wholly unavailable resources unavailable', async () => {
   for (const error of [new BackupReadError(200, 'fixture_source'), new BackupReadError(503, 'not_ready')]) {
     const client = { async overview() { throw error; }, async config() { throw new Error('unreachable'); },
       async list() { throw new Error('unreachable'); } };
+    if (error.code === 'not_ready') {
+      client.config = async () => { throw error; };
+      client.list = async () => { throw error; };
+    }
     assert.deepEqual(await createBackupLiveSource(client).read(new AbortController().signal), { kind: 'unavailable' });
   }
 });

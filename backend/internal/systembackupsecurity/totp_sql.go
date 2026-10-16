@@ -18,6 +18,7 @@ type SQLTOTPService struct {
 	DB *sql.DB
 	// Required for enrollment and proof issuance. Check the current pinned
 	// security_admin grant on this transaction, not in an earlier HTTP precheck.
+	// The callback must not commit or perform network I/O.
 	Authorize func(context.Context, *sql.Tx, RegistrationActor) error
 	// Required by the runtime loader. Nil is retained for isolated library
 	// tests and the existing app-owned logout hook on its own database.
@@ -162,12 +163,30 @@ func (s SQLTOTPService) BeginEnrollment(ctx context.Context, a RegistrationActor
 // confirms enrollment but does not authorize a mutation: a fresh code must
 // then be supplied to issue a request-bound proof.
 func (s SQLTOTPService) VerifyAndIssue(ctx context.Context, a RegistrationActor, password, code string, request *ProviderProofRegistration) (Proof, error) {
+	var binding *RequestBinding
+	if request != nil {
+		digest, err := ProviderProofRequestSHA256(*request)
+		if err != nil {
+			return Proof{}, err
+		}
+		binding = &RequestBinding{Endpoint: ProviderRegistrationEndpoint, RequestHash: digest, IdempotencyKey: request.IdempotencyKey}
+	}
+	return s.verifyAndIssue(ctx, a, password, code, binding, false)
+}
+
+// No exported method accepts an arbitrary request hash or asserted MFA time.
+func (s SQLTOTPService) verifyAndIssue(ctx context.Context, a RegistrationActor, password, code string, binding *RequestBinding, configMutation bool) (Proof, error) {
 	empty := Proof{}
 	tx, st, now, credential, err := s.lock(ctx, a, password)
 	if err != nil {
 		return empty, err
 	}
 	defer tx.Rollback()
+	if configMutation {
+		if err = s.checkConfigProofSession(ctx, tx, a, now); err != nil {
+			return empty, err
+		}
+	}
 	if !st.credential.Valid || !constantString(st.credential.String, credential) || !st.confirmed && (!st.pending.Valid || !now.Before(st.pending.Time)) {
 		return empty, s.reject(ctx, tx, a, st, now)
 	}
@@ -180,35 +199,40 @@ func (s SQLTOTPService) VerifyAndIssue(ctx context.Context, a RegistrationActor,
 	if !ok {
 		return empty, s.reject(ctx, tx, a, st, now)
 	}
-	if !st.confirmed && request != nil || st.confirmed && request == nil {
+	if !st.confirmed && binding != nil || st.confirmed && binding == nil {
 		return empty, ErrTOTPRejected
 	}
 	var proof Proof
-	if request != nil {
-		digest, e := ProviderProofRequestSHA256(*request)
-		if e != nil {
-			return empty, e
-		}
-		proof, err = s.Issuer.issue(ctx, a, RequestBinding{Endpoint: ProviderRegistrationEndpoint, RequestHash: digest, IdempotencyKey: request.IdempotencyKey}, now)
+	if binding != nil {
+		proof, err = s.Issuer.issue(ctx, a, *binding, now)
 		if err != nil {
 			return empty, err
 		}
 	}
 	// Never revive a logged-out token. A new login generates a distinct token.
-	_, err = tx.ExecContext(ctx, `INSERT INTO system_backup_admin_sessions(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE expires_at=LEAST(expires_at,VALUES(expires_at))`, s.InstallationID, a.Session, a.UserID, a.Subject, credential, a.SessionExpiresAt.UTC())
-	if err != nil {
-		return empty, ErrRegistrationUnavailable
-	}
-	if err = CheckRegistrationSession(ctx, tx, s.InstallationID, a); err != nil {
-		return empty, err
+	// Config proof issuance requires an already recorded current login. It may
+	// not enroll a missing token or refresh an existing session as a side effect.
+	if !configMutation {
+		_, err = tx.ExecContext(ctx, `INSERT INTO system_backup_admin_sessions(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE expires_at=LEAST(expires_at,VALUES(expires_at))`, s.InstallationID, a.Session, a.UserID, a.Subject, credential, a.SessionExpiresAt.UTC())
+		if err != nil {
+			return empty, ErrRegistrationUnavailable
+		}
+		if err = CheckRegistrationSession(ctx, tx, s.InstallationID, a); err != nil {
+			return empty, err
+		}
 	}
 	_, err = tx.ExecContext(ctx, "UPDATE system_backup_totp_credentials SET confirmed=TRUE,pending_until=NULL,last_step=?,failures=0,locked_until=NULL WHERE origin_installation_id=? AND user_id=?", step, s.InstallationID, a.UserID)
 	if err != nil {
 		return empty, ErrRegistrationUnavailable
 	}
-	details, _ := json.Marshal(map[string]bool{"enrollment_confirmed": !st.confirmed, "proof_issued": request != nil})
+	details, _ := json.Marshal(map[string]bool{"enrollment_confirmed": !st.confirmed, "proof_issued": binding != nil})
 	if _, err = tx.ExecContext(ctx, "INSERT INTO audit_logs(user_id,action,resource_type,details) VALUES (?,'system_backup.strong_auth.verified','system_backup',?)", a.UserID, string(details)); err != nil {
 		return empty, ErrRegistrationUnavailable
+	}
+	if configMutation {
+		if err = s.finalConfigProofCheck(ctx, tx, a, now); err != nil {
+			return empty, err
+		}
 	}
 	if tx.Commit() != nil {
 		return empty, ErrRegistrationCommitUnknown

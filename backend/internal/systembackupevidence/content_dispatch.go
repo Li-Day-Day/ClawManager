@@ -23,6 +23,7 @@ type ContentAuthorization struct {
 	ValidUntil           time.Time
 	Capability           *CapabilityContentPolicy
 	JobLog               *JobLogPolicy
+	ConfigResponse       *ConfigResponseContentPolicy
 }
 
 // ContentDispatcher allows only the implemented body profiles. A second live
@@ -31,7 +32,7 @@ type ContentAuthorization struct {
 type ContentDispatcher struct{ authority ContentAuthority }
 
 func NewContentDispatcher(a ContentAuthority) (*ContentDispatcher, error) {
-	if a == nil {
+	if nilSystemAdapter(a) {
 		return nil, ErrRedaction
 	}
 	return &ContentDispatcher{authority: a}, nil
@@ -43,7 +44,7 @@ func contentValidator(a ContentAuthorization, i Identity) (Redactor, string, err
 	}
 	switch i.Type {
 	case "capability_snapshot":
-		if a.Capability == nil || a.JobLog != nil {
+		if a.Capability == nil || a.JobLog != nil || a.ConfigResponse != nil {
 			return nil, "", ErrRedaction
 		}
 		v, err := NewCapabilityRedactor(*a.Capability)
@@ -52,7 +53,7 @@ func contentValidator(a ContentAuthorization, i Identity) (Redactor, string, err
 		}
 		return v, hash(canonical(v.policy)), nil
 	case "job_log_chunk":
-		if a.JobLog == nil || a.Capability != nil {
+		if a.JobLog == nil || a.Capability != nil || a.ConfigResponse != nil {
 			return nil, "", ErrRedaction
 		}
 		v, err := NewJobLogRedactor(*a.JobLog)
@@ -60,6 +61,15 @@ func contentValidator(a ContentAuthorization, i Identity) (Redactor, string, err
 			return nil, "", ErrRedaction
 		}
 		return v, logPolicyHash(v.policy), nil
+	case "diagnostic":
+		if a.ConfigResponse == nil || a.Capability != nil || a.JobLog != nil {
+			return nil, "", ErrRedaction
+		}
+		v, err := NewConfigResponseRedactor(*a.ConfigResponse)
+		if err != nil {
+			return nil, "", ErrRedaction
+		}
+		return v, v.policyHash(), nil
 	default:
 		return nil, "", ErrRedaction
 	}
@@ -71,7 +81,7 @@ func logPolicyHash(p JobLogPolicy) string {
 }
 
 func (d *ContentDispatcher) Validate(ctx context.Context, i Identity, src io.Reader) error {
-	if d == nil || d.authority == nil || src == nil || ctx.Err() != nil || !i.validExternal() || !oneOf(i.Type, "capability_snapshot", "job_log_chunk") {
+	if d == nil || nilSystemAdapter(d.authority) || nilSystemAdapter(src) || ctx == nil || ctx.Err() != nil || !i.validExternal() || !oneOf(i.Type, "capability_snapshot", "job_log_chunk", "diagnostic") {
 		return ErrRedaction
 	}
 	before, err := d.authority.AuthorizeContent(ctx, i)

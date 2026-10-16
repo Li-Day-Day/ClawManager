@@ -180,14 +180,11 @@ func (r *Reader) ListTasks(ctx context.Context, request PageRequest) (TaskPage, 
 	} else if cutoff == ^uint64(0) {
 		return TaskPage{}, ErrInvalid
 	}
-	query := "SELECT " + taskProjectionColumns + " FROM " + table.name +
-		" WHERE origin_installation_id=? AND id<?"
+	query := taskPageSQL(table, request.Status != "")
 	args := []any{installation, upper}
 	if request.Status != "" {
-		query += " AND status=?"
 		args = append(args, request.Status)
 	}
-	query += " ORDER BY id DESC LIMIT ?"
 	args = append(args, request.Limit+1)
 	rows, err := tx.QueryContext(ctx, query, args...)
 	if err != nil {

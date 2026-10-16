@@ -90,13 +90,13 @@ func (h ProviderRegistrationHTTP) ServeHTTP(w http.ResponseWriter, r *http.Reque
 	var proof Proof
 	headers := r.Header.Values(StrongAuthProofHeader)
 	if len(headers) > 1 {
-		fail(400, "strong_auth_invalid")
+		fail(400, "validation_failed")
 		return
 	}
 	if len(headers) == 1 {
 		proof, err = DecodeStrongAuthHeader(headers[0])
 		if err != nil {
-			fail(400, "strong_auth_invalid")
+			fail(400, "validation_failed")
 			return
 		}
 	}
@@ -162,18 +162,24 @@ func registrationHTTPError(err error) (int, string) {
 		return 409, "idempotency_conflict"
 	case errors.Is(err, ErrRegistrationCommitUnknown):
 		return 503, "provider_registration_commit_unknown"
+	case errors.Is(err, ErrRegistrationUnavailable), errors.Is(err, ErrProviderEvidenceStorage):
+		return 503, "provider_registration_unavailable"
 	case errors.As(err, &p):
-		if p.Code == ProviderVersionConflict {
-			return 409, p.Error()
+		if p == nil {
+			return 503, "provider_registration_unavailable"
 		}
-		return 400, p.Error()
+		if p.Code == ProviderValidationFailed {
+			return 400, p.Error()
+		}
+		return 409, p.Error()
 	case errors.As(err, &a):
+		if a == nil {
+			return 503, "provider_registration_unavailable"
+		}
 		switch a.Code {
-		case FailureInvalid, FailureInvalidIssuer, FailureExpired:
-			return 403, string(a.Code)
-		case FailureReplayed:
-			return 409, string(a.Code)
+		case FailureRequired, FailureInvalid, FailureInvalidIssuer, FailureExpired, FailureReplayed:
+			return 401, string(a.Code)
 		}
 	}
-	return 503, "provider_registration_unavailable"
+	return 500, "internal_error"
 }

@@ -80,17 +80,20 @@ func prepareExternal(ctx context.Context, i Identity, key KeyRef, source Source,
 	if i.ContentSize > MaxContent {
 		return fail(ErrCapacity)
 	}
-	if !i.validExternal() || !key.valid() || source == nil || redactor == nil || keys == nil || dst == nil {
+	if ctx == nil || !i.validExternal() || !key.valid() || source == nil || nilSystemAdapter(redactor) || nilSystemAdapter(keys) || nilSystemAdapter(dst) {
 		return fail(ErrInvalid)
 	}
-	r, err := source()
-	if err != nil || r == nil {
+	r, err := openPrepareSource(ctx, source)
+	if err != nil {
 		return fail(ErrUnavailable)
 	}
 	h := sha256.New()
 	count := &countReader{r: io.LimitReader(r, i.ContentSize+1)}
 	err = redactor.Validate(ctx, i, io.TeeReader(count, h))
 	closeErr := r.Close()
+	if ctx.Err() != nil {
+		return fail(ErrUnavailable)
+	}
 	if err != nil {
 		return fail(ErrRedaction)
 	}
@@ -98,12 +101,21 @@ func prepareExternal(ctx context.Context, i Identity, key KeyRef, source Source,
 		return fail(ErrIntegrity)
 	}
 	dek := make([]byte, 32)
+	defer wipe(dek)
 	if _, err = rand.Read(dek); err != nil {
 		return fail(ErrKey)
 	}
-	defer wipe(dek)
-	wrapped, err := keys.Wrap(ctx, key, dek)
-	if err != nil || len(wrapped) == 0 || len(wrapped) > 4096 {
+	// Keep the AES key private. Wrap borrows a read-only copy for this call;
+	// erase it immediately and again on return if an adapter retains it.
+	wrapDEK := append([]byte(nil), dek...)
+	defer wipe(wrapDEK)
+	wrapped, err := keys.Wrap(ctx, key, wrapDEK)
+	unchanged := bytes.Equal(wrapDEK, dek)
+	wipe(wrapDEK)
+	if ctx.Err() != nil {
+		return fail(ErrUnavailable)
+	}
+	if err != nil || !unchanged || len(wrapped) == 0 || len(wrapped) > 4096 {
 		return fail(ErrKey)
 	}
 	block, _ := aes.NewCipher(dek)
@@ -117,15 +129,15 @@ func prepareExternal(ctx context.Context, i Identity, key KeyRef, source Source,
 	copy(prefix, magic)
 	binary.BigEndian.PutUint32(prefix[8:], uint32(len(header)))
 	objectHash := sha256.New()
-	writer := io.MultiWriter(dst, objectHash)
+	writer := io.MultiWriter(prepareWriter{ctx, dst}, objectHash)
 	if err = writeAll(writer, prefix); err != nil {
 		return fail(ErrUnavailable)
 	}
 	if err = writeAll(writer, header); err != nil {
 		return fail(ErrUnavailable)
 	}
-	r, err = source()
-	if err != nil || r == nil {
+	r, err = openPrepareSource(ctx, source)
+	if err != nil {
 		return fail(ErrUnavailable)
 	}
 	defer r.Close()
@@ -144,7 +156,11 @@ func prepareExternal(ctx context.Context, i Identity, key KeyRef, source Source,
 		}
 		length := min(ChunkSize, i.ContentSize-offset)
 		b := buffer[:length]
-		if _, err = io.ReadFull(r, b); err != nil {
+		_, err = io.ReadFull(r, b)
+		if ctx.Err() != nil {
+			return fail(ErrUnavailable)
+		}
+		if err != nil {
 			return fail(ErrIntegrity)
 		}
 		plainHash.Write(b)
@@ -165,8 +181,21 @@ func prepareExternal(ctx context.Context, i Identity, key KeyRef, source Source,
 		frameOffset += c.FrameLength
 	}
 	var extra [1]byte
+	defer wipe(extra[:])
 	n, endErr := io.ReadFull(r, extra[:])
+	if ctx.Err() != nil {
+		return fail(ErrUnavailable)
+	}
 	if n != 0 || endErr != io.EOF || hex.EncodeToString(plainHash.Sum(nil)) != i.ContentHash {
+		return fail(ErrIntegrity)
+	}
+	// Close can report a delayed staging failure. Do not publish a Prepared
+	// until both source passes have completed and closed successfully.
+	closeErr = r.Close()
+	if ctx.Err() != nil {
+		return fail(ErrUnavailable)
+	}
+	if closeErr != nil {
 		return fail(ErrIntegrity)
 	}
 	m.ObjectSize = frameOffset
@@ -175,7 +204,68 @@ func prepareExternal(ctx context.Context, i Identity, key KeyRef, source Source,
 	if validateManifest(m) != nil {
 		return fail(ErrIntegrity)
 	}
+	if ctx.Err() != nil {
+		return fail(ErrUnavailable)
+	}
 	return Prepared{m}, nil
+}
+
+// Sources and staging writers are trusted synchronous adapters. Context checks
+// stop subsequent I/O even when an adapter ignores cancellation during a call;
+// they cannot interrupt an adapter that blocks without returning.
+type prepareReader struct {
+	ctx    context.Context
+	source io.ReadCloser
+	closed bool
+}
+
+func openPrepareSource(ctx context.Context, source Source) (*prepareReader, error) {
+	if ctx.Err() != nil {
+		return nil, ErrUnavailable
+	}
+	r, err := source()
+	if err != nil || nilSystemAdapter(r) || ctx.Err() != nil {
+		if !nilSystemAdapter(r) {
+			_ = r.Close()
+		}
+		return nil, ErrUnavailable
+	}
+	return &prepareReader{ctx: ctx, source: r}, nil
+}
+
+func (r *prepareReader) Read(b []byte) (int, error) {
+	if err := r.ctx.Err(); err != nil {
+		return 0, err
+	}
+	n, err := r.source.Read(b)
+	if canceled := r.ctx.Err(); canceled != nil {
+		return n, canceled
+	}
+	return n, err
+}
+
+func (r *prepareReader) Close() error {
+	if r.closed {
+		return nil
+	}
+	r.closed = true
+	return r.source.Close()
+}
+
+type prepareWriter struct {
+	ctx context.Context
+	dst io.Writer
+}
+
+func (w prepareWriter) Write(b []byte) (int, error) {
+	if err := w.ctx.Err(); err != nil {
+		return 0, err
+	}
+	n, err := w.dst.Write(b)
+	if canceled := w.ctx.Err(); canceled != nil {
+		return n, canceled
+	}
+	return n, err
 }
 
 type countReader struct {
@@ -215,6 +305,19 @@ func validateManifest(m Manifest) error {
 	return nil
 }
 
+// Freeze the bounded chunk index before provider/key callbacks can mutate a
+// caller-owned slice. Callers must not concurrently write it during this copy.
+func snapshotReadManifest(m Manifest) (Manifest, error) {
+	if len(m.Chunks) < 1 || len(m.Chunks) > 1024 {
+		return Manifest{}, ErrIntegrity
+	}
+	m.Chunks = append([]Chunk(nil), m.Chunks...)
+	if validateManifest(m) != nil {
+		return Manifest{}, ErrIntegrity
+	}
+	return m, nil
+}
+
 // ObjectReader is scoped to one registered immutable version. Range must return
 // exactly length bytes or fail; Stat must establish provider SHA-256 (not ETag).
 type ObjectReader interface {
@@ -222,8 +325,14 @@ type ObjectReader interface {
 }
 
 func readExact(ctx context.Context, store ObjectReader, ref Ref, offset, length int64) ([]byte, error) {
+	if ctx == nil || ctx.Err() != nil || nilSystemAdapter(store) {
+		return nil, ErrUnavailable
+	}
 	r, e := store.Range(ctx, ref, offset, length)
-	if e != nil || r == nil {
+	if e != nil || nilSystemAdapter(r) {
+		if !nilSystemAdapter(r) {
+			_ = r.Close()
+		}
 		return nil, ErrUnavailable
 	}
 	b, e := io.ReadAll(io.LimitReader(r, length+1))
@@ -260,6 +369,9 @@ func openEvidenceEnvelope(ctx context.Context, m Manifest, ref Ref, store Object
 	if e != nil || len(dek) != 32 {
 		return nil, nil, ErrKey
 	}
+	if ctx.Err() != nil {
+		return nil, nil, ErrUnavailable
+	}
 	block, _ := aes.NewCipher(dek)
 	gcm, _ := cipher.NewGCM(block)
 	return gcm, header, nil
@@ -268,7 +380,9 @@ func openEvidenceEnvelope(ctx context.Context, m Manifest, ref Ref, store Object
 // OpenRange authenticates ALL selected frames before returning any plaintext.
 // The complete chunk index/root is checked on every range, not client supplied.
 func OpenRange(ctx context.Context, m Manifest, ref Ref, store ObjectReader, keys Keys, start, end int64) ([]byte, error) {
-	if validateManifest(m) != nil || !ref.valid(true) {
+	var err error
+	m, err = snapshotReadManifest(m)
+	if err != nil || !ref.valid(true) {
 		return nil, ErrIntegrity
 	}
 	if ctx == nil || ctx.Err() != nil || nilSystemAdapter(store) || nilSystemAdapter(keys) {
@@ -320,6 +434,9 @@ func OpenRange(ctx context.Context, m Manifest, ref Ref, store ObjectReader, key
 	}
 	if full && (hash(result) != m.Identity.ContentHash || hex.EncodeToString(objectHash.Sum(nil)) != m.ObjectHash) {
 		return nil, ErrIntegrity
+	}
+	if ctx.Err() != nil {
+		return nil, ErrUnavailable
 	}
 	success = true
 	return result, nil

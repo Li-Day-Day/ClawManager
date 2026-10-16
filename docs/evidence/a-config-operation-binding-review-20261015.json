@@ -1,0 +1,125 @@
+{
+  "kind": "a_config_operation_writer_store_replay_http_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T13:13:19.6232584+08:00",
+  "status": "accepted_frozen_local_candidate",
+  "finding_id": "A-CONFIG-WIRE-01",
+  "finding_status": "resolved_in_frozen_candidate_not_production_approval",
+  "scope": "Public Operation writer/evidence/receipt/replay bytes and terminal SQL facts, actual SQL adapter/session/file RBAC and TLS HTTP over model SQL transport; no actual MySQL or installation grants",
+  "source_manifest": "docs/evidence/a-config-operation-binding-source-20261015-r3.json",
+  "source_sha256": "1b30acb271a4eff285d1583b0a835cd65dbbce11373bf7e1288c0a80d30843f1",
+  "source_files": 1224,
+  "source_manifest_sha256": "152aa56b595635634912424384ce03f7cdfc6607175416f1771fee3dcfdefd34",
+  "log": "docs/evidence/a-config-operation-binding-local-20261015-r3.txt",
+  "log_sha256": "be078ba65ac273a00e45b69558cdd580539ddc5605aa1a9aecbaee2dc0092d7c",
+  "targeted_main": 6,
+  "targeted_sub": 37,
+  "full_main": 197,
+  "full_sub": 1025,
+  "full_unique_checks": 1222,
+  "full_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 23.477,
+      "main_pass": 177,
+      "subtest_pass": 912
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 3.286,
+      "main_pass": 20,
+      "subtest_pass": 113
+    }
+  ],
+  "targeted_repeats_not_added": true,
+  "counterfactual": {
+    "expected_child_failures": 2,
+    "exit": 1,
+    "normal_source_unchanged": true,
+    "mutation": "Remove only private Stage response buffer copy using a temporary Go overlay",
+    "source_sha256": "07ad260e63c1c9fdc75ca32b852db20a6ed71a41f116d8daf2cc2e8bca2633a5"
+  },
+  "prior_failed_records": [
+    "docs/evidence/a-config-operation-binding-failed-20261015.json",
+    "docs/evidence/a-config-operation-binding-failed-20261015-r2.json"
+  ],
+  "exit": 0,
+  "default_vet": true,
+  "tool_crash_retries": 0,
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_http_test.go",
+      "size": 13518,
+      "sha256": "44d4b38243d454698c61459e5bb9243848370e6ef400ee850f6e67c19f30a445"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_http.go",
+      "size": 6053,
+      "sha256": "65bb8a99b766649d513dc7284e401365ab883c02edcee504c837d950afd73092"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+      "size": 27039,
+      "sha256": "acc659e7aa3d20d57832c96f93fb25befcaddd034db77100baff8e5d503aea2d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 39906,
+      "sha256": "a9e54d0f8fc78667875ea1c3a14a82cf5d67bf6027db798844a9cefd529def2b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_binding_a_test.go",
+      "size": 9002,
+      "sha256": "4a89159eaec215e84f417a24cd569c50f7aececb640a2542ed019952678dfe67"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_preparation.go",
+      "size": 3789,
+      "sha256": "655052299372beb3d0433fc3889881139cfe4c86379944e5dab906dca65a04f3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_response.go",
+      "size": 5596,
+      "sha256": "ae74ca430c2813267873d96c3f3096ee6980a54e4da46c76095ab86d3bdf5ec6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_store_a_test.go",
+      "size": 9862,
+      "sha256": "25fd9f10f8b19faac7e211c0ac9cd2863212c81579cc08dc59e1be23beca23d0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_store.go",
+      "size": 12788,
+      "sha256": "4ec4ae97efa652ded6c24432129ec5b000e3e9fcdbf9faa86b21bd3971b459ef"
+    },
+    {
+      "path": "scripts/system-backup-a-config-operation-binding-validation.ps1",
+      "size": 7144,
+      "sha256": "21d62ebf593d64b63ac964e8501510254544381404f1e2eb808b4416bbc0e35c"
+    }
+  ],
+  "all_existing_live_inputs_match": true,
+  "live_drift_paths": [],
+  "new_live_paths_outside_frozen_scope": [],
+  "prior_schema_codec_vectors_unchanged": true,
+  "prior_codec_record": "docs/evidence/a-config-operation-response-review-20261015.json",
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-40b25100d26a41ccbd3f4afc701ed038",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-36de390de4894acfb51a03d62b34e4cf"
+  ],
+  "fixture_paths_independently_confirmed_absent": 117,
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "real_mysql": false,
+  "production_http_enabled": false,
+  "runtime_grants_issued": 0,
+  "original_historical_canonical_delivered": 0,
+  "production_approved": false,
+  "remaining_gates": [
+    "Actual MySQL mutation concurrency, lock/revocation, audit failure and unknown commit acceptance",
+    "Formal 081/082 migration and separate maintenance writer/receipt review",
+    "Actual installation materials, current ref readiness and production route composition",
+    "Purpose-specific runtime write/observation grants and trusted historical canonical originals"
+  ]
+}

@@ -1,5 +1,107 @@
 # A：users / AI Gateway 备份校验交接（draft）
 
+## 2026-10-14 最新远测：十五表 MySQL 专项已接收
+
+操作者交付的 [15:58 完整 transcript](evidence/a-business-restore-mysql-remote-20261014-155831.txt)已核对，run `sbk-mig-261014083514-40ca`，namespace UID `8027bfb2-4ec0-47ac-bf56-96eeffddd906`，MySQL `8.4.8`，最终 `A_BUSINESS_RESTORE_REMOTE_EXIT=0`。详见[限定接收记录](evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json)。
+
+完整列写入/回读及事务回滚、五条正式 FK 与 collation 唯一性负测、SELECT-only 权限与最终 proof 回滚、SQL NULL 和精确金额，以及 users/quotas 各 1001 行的有界批次均 PASS。十五表包含 220 个可写字段、221 个回读字段；本地与 Pod 独立 seed、完整 A 包门禁和 8 项离线派发检查也通过。读账号、随机业务库、准确 UID namespace、远端 scratch 和本地构建缓存均有清理记录；A 未另外执行 SSH 或远端清理复查。
+
+Linux 探针 SHA-256 `c992cb570395a3b865c26ab1ef6646e3b641739fdbf56fda8e4c988ce45dc7ef`、迁移 CLI `0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab`均与 r4 相同。94 份迁移的准确文件名及重算 catalog `0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93`匹配；44 份 A Go 源码加一份嵌入资产在接收核对时零漂移。
+
+本次关闭独立 registry 夹具、策略表真实列投影和十五表隔离 MySQL 专项待办，无需重跑本专项或三表专项。来源/目标 proof 和事务 writer 仍是合成测试夹具；B 真实证明与写入、D 生产编排、registry/live schema 冻结及 integrated large-smoke.v1/发布矩阵仍待完成。以下失败和本地修订记录保留历史范围，以本节为最新状态。
+
+## 2026-10-14 14:46 历史远测：策略表列投影失败与修复
+
+操作者已交付 [14:46 开始的完整 transcript](evidence/a-business-restore-mysql-remote-20261014-144644.txt)，run `sbk-mig-261014071142-71e1`、namespace UID `4f34fddd-c799-4b54-afab-ad8a57edd161`。本地完整 A 包、空目录编译后 seed、bundle 摘要、94 份 fresh migration/pinned runner、Pod 内 seed，以及随机业务库同 catalog 重放均通过。Linux 探针摘要 `9d19d84a2e8ac08657d2db6ab94c71609cd3b1961633c44b85526f6835998a84` 与 r3 相同，上一轮 registry 运行时文件依赖已被本次远端 seed 覆盖。
+
+随后 `TestABusinessRestoreRowsMySQL` 在 SQL 列闭合检查处报 `incomplete migrated-column closure`，最终 `A_BUSINESS_RESTORE_REMOTE_EXIT=1`。随机库、准确 UID namespace、远端 scratch、本地缓存均报告清理完成；读账号尚未创建，十五表写入/回读、回滚、FK/唯一性、权限及有界数据量阶段尚未执行。[失败审计](evidence/a-business-restore-mysql-failed-sbk-mig-261014071142-71e1.json)保留这一轮的原始结果，不接收为专项通过。
+
+本地源码定位到探针反射投影误收 `models.NorthboundCallerPolicy.Username/Email` 的 `db` tag：它们来自 users JOIN，而正式 migration 057 的策略表只有 `user_id/enabled/scopes_json/created_at/updated_at/updated_by` 六列。测试探针现显式排除这两个关联字段，并新增带非空关联值的六列回归；未知真实列仍拒绝，列闭合错误增加表名、计数与缺失列诊断。修订后 seed 的十五表投影为 220 个可写字段、221 个回读字段。B 后续实际 writer 同样必须只使用各表自有 SQL 列，不能按 DTO 的所有 `db` tag 自动 INSERT 关联字段。生产模型、规范化器、正式迁移和 registry 门禁均未改动。下一轮仍由操作者运行下方完整 `-BusinessRestoreOnly` 命令；不重复三表专项或已通过的 A/D 管理读取专项。
+
+修复后的 [r4 本地记录](evidence/a-business-restore-local-20261014-r4.json)与[完整输出](evidence/a-business-restore-local-20261014-r4.txt)已通过完整 A 包回归/默认 vet、六列与生成列 seed、空目录中的编译后 Windows seed、Linux 探针和迁移 CLI 编译，最终退出 0。Linux 构建首次因本机 `internal/runtime/gc vet.exe 0xc0000043` 失败，同命令、同隔离缓存一次重试后通过，未关闭 vet。44 份 Go 源码及一份嵌入资产在门禁中采样与结束核对时零漂移；该检查不声称冻结整个依赖图。新 Linux 探针 SHA-256 为 `c992cb570395a3b865c26ab1ef6646e3b641739fdbf56fda8e4c988ce45dc7ef`，迁移 CLI 摘要仍为 `0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab`。本轮 scratch、缓存及二进制均已清理，并独立确认准确目录不存在；未安装依赖或执行 SSH。真实 SQL 修复验收仍需新一轮完整回执，不把 r4 编译成功扩大为十五表远测通过。
+
+## 2026-10-14 下午：独立探针丢失 registry 夹具，已修复并补门禁
+
+操作者运行 `sbk-mig-261014055505-7480` / namespace UID `f8543764-a936-4d07-b77f-31567f4a139a` 的[失败回执](evidence/a-business-restore-mysql-failed-sbk-mig-261014055505-7480.json)已归档，原始[控制台附件](evidence/a-business-restore-mysql-console-sbk-mig-261014055505-7480.txt)和[完整 transcript](evidence/a-business-restore-mysql-remote-20261014-133105.txt)均保留。5 项派发回归、bundle 校验、94 份 fresh migration 与 pinned runner 均通过；随机业务库也重放了同一 94 份迁移。当前迁移文件集合及 catalog SHA-256 `0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93` 与本轮逐项一致。
+
+随后 `TestABusinessRestoreRowsMySQL` 构造来源夹具时，`registryFixture` 尝试打开 `../../../contracts/system-backup/v12/schema-registry.json`；MySQL Pod 只有编译后二进制，因此失败。这个运行时文件依赖是 A 探针打包的遗漏，本地 `go test` 在仓库目录下通过未覆盖这一条件。十五表写入、完整列回读、FK/唯一性、SELECT-only 和有界数据量验证均未开始，不能接收为专项通过。随机库、准确 UID namespace、远端 scratch 和本地 cache 清理标记均齐全，wrapper 退出 1；读账号创建尚未到达。
+
+修复将原字节 registry 测试快照放入 A 包 `testdata/schema-registry.json`，仅通过 `_test.go` 的 `go:embed` 编入测试二进制。正常仓库回归逐字节比较它与正式 registry，漂移即失败；每次调用仍解析为独立 map。合成 frozen/reviewer 状态仍只在测试内使用，正式 registry 的 draft 状态和生产 `CaptureScope` 严格门禁均未修改。
+
+两个业务 profile 现在都会在本地编译 Windows tagged 探针，进入没有仓库文件的空目录运行完整十五表 seed；只有这一步通过才继续 Linux 编译与后续 SSH。Pod 内校验二进制摘要后也先运行相同 seed，再运行实际 SQL 用例。其他读取 verifier 合同或运行时源码的测试保留为仓库内 parity 测试，不属于独立探针选择的 seed/SQL 用例。修订后的 [r3 本地记录](evidence/a-business-restore-local-20261014-r3.json)及[完整捕获输出](evidence/a-business-restore-local-20261014-r3.txt)已通过完整 A 包测试/默认 vet、registry 原字节 parity、tagged seed、空目录中的编译后 Windows seed、Linux 探针与迁移 CLI 编译，退出 0。44 份 A Go 源码加一份嵌入资产前后摘要一致；独立确认空目录条目为 0、旧相对 registry 路径不存在。一次 Windows `net/url compile.exe 0xc0000043` 在原命令、同缓存有限重试后通过，未关闭 vet。缓存与二进制均已清理、未安装依赖、未执行远端测试。新 Linux 探针 SHA-256 为 `9d19d84a2e8ac08657d2db6ab94c71609cd3b1961633c44b85526f6835998a84`，迁移 CLI 仍为 `0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab`。r2 不覆盖独立运行条件；下一次仍使用下方完整 `-BusinessRestoreOnly` 命令，脚本会重新编译，需以新一轮指纹和 SQL 结果接收。
+
+## 2026-10-14：远端启动失败修复与本地核对
+
+上午三表与十五表两轮均在解包后、启动 MySQL harness 前失败，未获得真实 MySQL 通过证据。保留原始 [三表 transcript](evidence/a-business-history-mysql-remote-20261014-102734.txt) 和 [十五表 transcript](evidence/a-business-restore-mysql-remote-20261014-102704.txt)。两份文件均包含 `=kubernetes-admin@kubernetes: command not found`、远端 scratch 与本地 cache 清理以及退出 1；用户补充的控制台输出包含本地测试/编译和 bundle 摘要校验成功，不能把它们算作远端 SQL 验收。
+
+原因是我在加入 Bash 预检时写成 `$evidenceBashPreflightKUBE_CONTEXT`，PowerShell 将其整体解析为未定义变量，吞掉了 `KUBE_CONTEXT` 环境变量名。现已改为显式 `${evidenceBashPreflight}KUBE_CONTEXT`，并把 Bash 预检改为对三份脚本分别执行 `bash -n`。新增 [离线派发回归](../scripts/system-backup-a-evidence-dispatch.test.ps1)直接提取生产脚本的 profile 赋值和命令字符串，覆盖默认/三表/十五表三种情况，并确认两种业务档位都能拦住原缺陷；5 项已通过。`-Remote` 在编译和首次 SSH 前自动运行这项门禁。回归不连接网络，也不执行生成的 shell 命令，因此不冒充 Bash 或 MySQL 验收。
+
+另在本地核对迁移时发现 `049`/`078` 的 `users.local_username_key` 为正式生成列。探针已将可写列和回读列分开：222 个可写字段不包含该列，完整回读额外校验其值；本地用户应等于目标 username，非本地用户应为 SQL NULL。元数据须证明它是 `STORED GENERATED`，未知列或可写列变成生成列仍拒绝。`DEFAULT_GENERATED` 时间默认值不误算作生成列。后续远测须使用本次修订后新编译的探针，不能沿用上午的二进制摘要。B 实际写入器也须排除这类数据库生成列，保留其正式生成表达式、唯一键和 collation，由 MySQL 计算后再验证，不能把完整回读字段列表直接用于 INSERT。
+
+同日 [D 新组合接口评审](system-backup-d-a-business-batch-review-20261014.md)已接收十五表组合入口和初次/最终 B proof 的候选语义。A 本地核对其 8 份源码摘要全部匹配，关闭“组合接口尚未被 D 候选评审”的交接缺口；真实 B 证明/事务写入、D 生产编排、registry 冻结及恢复放行仍各自待完成。
+
+修订后[本地门禁记录](evidence/a-business-restore-local-20261014-r2.json)及[完整捕获输出](evidence/a-business-restore-local-20261014-r2.txt)：完整 A 包测试（默认 vet）、tagged seed 与生成列子用例、Linux/amd64 MySQL 探针和迁移 CLI 编译全部通过，退出 0。44 份 A 包 Go 源码在验证前后无漂移；不是整个仓库的冻结快照。该轮探针 SHA-256 为 `8d6dfbc41b491c05aaa1563e7b4e60a12f51f43192cb4009f544a26d4003306c`。本轮 scratch、缓存与二进制已清理，并独立确认目录不存在；未安装依赖、未执行 SSH 或真实 MySQL。[命令派发与失败回执记录](evidence/a-business-dispatch-fix-local-20261014.json)另列 5 项派发回归、21 项工具/日志回归及两份 D 评审的指纹核对。
+
+按用户安排，远端测试留到下午约 14:00 用户有空时执行；本轮继续本地工作，不自动发起远测。下一轮只需下方 `-BusinessRestoreOnly` 完整专项，无须再先跑三表档位。
+
+随后按当前工作树做了[生产接线审计](evidence/a-business-production-handoff-audit-20261014.json)：排除测试文件后，整个 `backend` 未找到 A 业务包的导入、十五表规范化入口的调用点或 B 整批 proof 的具体方法实现；匹配仅限 A 接口定义和入口内部调用。该次审计时 r2 记录的 44 份 A 源码零漂移；此后测试夹具修订以本页顶部 r3 记录为准。registry 当前为 `draft`，schema hash 为 `pending_live_evidence`，严格 scope 构造继续拒绝。这里确认的是本工作树的待接点；B 外部代码和未收到的远端结果不在本次证明范围。候选源码评审、本地测试和后续 MySQL 专项各自独立，不据此宣布真实恢复链路完成。下一步分别等待操作者十五表回执、B 的真实来源/目标证明与事务写入器、D 的生产调用和跨 Owner 冻结/发布门禁。
+
+## 2026-10-14：15 表真实 schema MySQL 探针（待修订后远端回执）
+
+新增 `-BusinessRestoreOnly` 独立档位及 [`restore_rows_mysql_test.go`](../backend/internal/systembackupbusinessa/restore_rows_mysql_test.go)。它复用 run ID/namespace UID/二进制摘要固定的隔离 MySQL harness，在本轮随机 `abiz_` 库用 D 的 `ApplyPinnedMigrations` 重放完整正式 catalog，保留原 FK、唯一键、collation 和列类型；不使用 `CREATE TABLE LIKE` 或删减 DDL。catalog 摘要由同轮 harness 的独立 pin 输入，并与探针内嵌 catalog 比较，迁移目标同时绑定实际 server UUID 和准确数据库名。
+
+探针只删除这一本轮随机库里迁移生成的默认 admin/配额测试种子，不启动应用或访问生产业务行。数据库内有独立随机 ownership marker；清理前同时核对源 namespace marker、server UUID 和该随机 marker。新读账号使用独立随机密码，只获 15 张 A 表和 ownership marker 的表级 SELECT，无全局/库级权限或 grant option；测试结束删除读账号、随机库、探针二进制和本轮 namespace。
+
+拟验收范围：
+
+- 统一入口产出的 15 表完整可写列写入并逐列回读，包含数据库计算的 `users.local_username_key` 回读校验，字段集合必须与真实 `information_schema.COLUMNS` 完全闭合；金额保持十进制字符串，JSON 比较语义值，SQL NULL 与空串严格区分。
+- 整批末尾注入 duplicate key 后确认 15 表及 B 实例夹具均回滚；正式迁移的五条 A FK 均对悬空引用拒绝，用户名和邮箱按目标 collation 拒绝冲突。当前 gateway 历史中的多项引用没有物理 FK，不能把这五项扩大为它们已有数据库约束。
+- 真实 SELECT-only 账号执行 `SQLRestoreVerifier` 的 24 项计数/失活检查；UPDATE/DELETE/INSERT/DDL、源库读取和控制表读取必须被 MySQL 权限拒绝。独立读 proof 的末尾失败不得返回部分 check。
+- 第二批验证可空字段和 LDAP 明确清除语义；另一个有界批次包含 1001 用户、1001 配额及其余各表一行。该规模不代替跨 Owner 的 `large-smoke.v1` 发布门禁。
+
+来源/目标证明及写入器均为明确标记的测试夹具，实际 SQL/凭据/FK 结果需操作者远测后才可接收；不是 B 的生产 dump 认证或恢复事务实现。本地 `-BusinessRestoreOnly` 门禁已通过完整 A 包回归、无 MySQL 的 tagged seed、Linux 探针与迁移 CLI 编译，结果见上方 r2 记录。PowerShell parser、5 项派发回归及两种互斥档位的前置拒绝已验证；本机 Git Bash 因 `Win32 error 5` 在启动时失败，未完成 `bash -n`，须由远端执行时验证，不能记为语法通过。
+
+本地门禁通过并冻结代码后，由操作者执行新的完整专项；旧三表专项没有成功远端回执时，可直接选择此更完整的档位，无须先运行两遍：
+
+```powershell
+Set-Location 'C:\Users\zhanghui08\Desktop\clawmanager\ClawManager'
+$aRestoreLog = Join-Path 'docs\evidence' ('a-business-restore-mysql-remote-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.txt')
+Start-Transcript -Path $aRestoreLog -NoClobber
+$aRestoreSavedPreference = $ErrorActionPreference
+try {
+  # Forward child output through this host so the transcript captures it.
+  $ErrorActionPreference = 'Continue'
+  $global:LASTEXITCODE = $null
+  & powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\system-backup-a-evidence-validation.ps1 -BusinessRestoreOnly -Remote -BuildParallelism 1 -SshTarget 'root@10.130.14.23' 2>&1 | ForEach-Object { Write-Host $_.ToString() }
+  $aRestoreExit = $LASTEXITCODE
+  Write-Output "A_BUSINESS_RESTORE_REMOTE_EXIT=$aRestoreExit"
+  if ($null -eq $aRestoreExit -or $aRestoreExit -ne 0) { throw 'A fifteen-table MySQL validation failed; retain the complete transcript' }
+} finally {
+  $ErrorActionPreference = $aRestoreSavedPreference
+  Stop-Transcript
+}
+```
+
+上午旧的外层 transcript 未捕获子 PowerShell 的全部 stdout；上述命令显式将子进程输出转发到当前 host，stderr 本身不作为失败结论，保留真正退出码。已用本地模拟子进程验证 stdout/stderr、含空格参数以及 0/37 两种退出码；不需要 SSH 或 Go 编译。仍须保留整份文件，若终端有额外未落盘内容一并提供。
+
+接收须同时具备本地 `LOCAL_PASS a-business-standalone-seed=yes checkout-fixtures=absent`、Pod 内 seed PASS、同轮 fresh migration 与 pinned migration runner PASS、`TestABusinessRestoreRowsMySQL` 全部阶段及最终 PASS、`PASS a-business-restore-mysql`、读账号/随机库/准确 UID namespace/远端 scratch/本地构建缓存的 CLEANED、指纹一致及 `A_BUSINESS_RESTORE_REMOTE_EXIT=0`，且没有 `CLEANUP_PENDING`。任何失败或缺失均保留原始记录，不拼接不同轮次。该回执仍不关闭 B 的真实证明器/写入器、D 生产编排、registry 冻结或完整大数据量恢复。
+
+## 2026-10-14：15 表统一规范化接线候选
+
+新增 [`NormalizeBusinessForRestore`](../backend/internal/systembackupbusinessa/business_restore.go)，将 users 六表与 AI Gateway 九表组合为一个候选批次。输入是现有各表的来源投影和映射；网关的 users/model 映射同时用于生成依赖行和历史 FK，B 的一份 instances 映射同时用于网关历史和 token 别名。任一表的来源计数与封存 dump 计数不一致、跨表映射漂移、缺少 proof、转换失败或最终授权检查失败，均不返回任何候选行。
+
+`BusinessRestoreBinding` 绑定原 `CaptureEvidence` 的 registry/schema/checkpoint/capture-context/evidence，以及 B 提供的隔离目标身份摘要和目标数据库时间。来源必须完整覆盖 15 表，不能省略空表。入口先复制所有切片、map 与指针字段，再向证明器传独立副本；证明器修改输入或调用方在同步回调期间修改原输入，不能改变这轮实际转换值。调用方仍不得在复制期间并发写原数据，否则属于 Go 数据竞争。
+
+新增 B-owned `BusinessRestoreSourceProofVerifier` 候选接口，须分别实现 `VerifyBusinessRestoreSources` 与 `RecheckBusinessRestoreSources`。初次检查必须认证整批投影（包括空表）、同一封存 dump/checkpoint/evidence、Secret/ref 准确版本、全部依赖映射、目标配额容量、隔离身份与数据库时间、目标占用/唯一性、启动 fence 和 restore-write 权限；最终检查复核同一输入绑定及当前授权。现有企业认证、模型、规则、token 别名和网关各表 proof 仍全部必需，不以整批证明替代。B 必须在实际 SQL 写事务内再次验证隔离身份和写权限；A 的最终检查与之后的 SQL 写入之间没有原子性保证。
+
+`BusinessRestoreRows` 只包含 15 表的完整候选行，没有成功状态、eligibility、目标写入回执或 `PartResult`。本轮不执行恢复 SQL，不开启生产路由，也不修改公共 wire schema 或 registry 的 draft 状态。B 的真实证明器/目标写入器、D 的合同交叉评审和实际编排、全表 MySQL FK/唯一键/权限及大数据量验收仍待完成。
+
+远端 `-BusinessHistoryOnly` 仍仅验证下文的三张历史表列兼容性，不覆盖新 15 表组合入口或真实 B proof。不得用该专项通过扩大宣称整体恢复已完成。
+
+同日新增的 [D 限定源码评审](system-backup-d-a-normalization-boundary-review-20261014.md)覆盖 users 停用、企业认证明确清除、模型双凭据清除、别名到期、风险规则启动门禁及原网关历史六表映射，并接收既有只读校验接口的边界。A 核对其机器记录中的 12 份输入原字节摘要均与当时源码一致。该首份记录未覆盖新组合入口；随后 [D 组合接口评审](system-backup-d-a-business-batch-review-20261014.md)已补齐该候选评审，8 份指纹本轮核对一致。两份评审均未批准 registry 交叉评审列表、合同冻结或真实恢复放行。
+
+本轮[本地验收记录](evidence/a-business-restore-local-20261014.json)：最终源码的完整 Go 业务包回归（默认 vet）退出 0，最终 Linux/amd64 MySQL tagged 探针和迁移 CLI 编译退出 0；共享合同测试 70/70，A 对象向量测试 3/3。最终验证前后 43 份 A 包 Go 源码摘要无变化；这不是整个仓库的冻结快照。初始 profile 与源码补充重叠，其结果不能代替最终记录；一次新增负测因误把合法历史 role 当成非法输入而失败，改用负数消息序号后全包通过，失败输出仍保留。各轮缓存、遥测目录和二进制均已清理，未安装依赖、未连接真实 MySQL。
+
 ## 三张网关历史表的隔离 MySQL 探针（待远端回执）
 
 新增 `backend/internal/systembackupbusinessa/history_rows_mysql_test.go`（`systembackup_mysql` 标签）及 `scripts/system-backup-a-business-history-phase.sh`。`-BusinessHistoryOnly` 档位先用本机现有 Go 依赖跑 A 包测试并编译 Linux 探针和当前迁移 CLI；`-Remote` 才会创建带 run ID/UID 的临时命名空间，在其空库重放当前迁移。探针只在该命名空间的 MySQL Pod 内创建身份标记和随机 `abiz_` 库，以 `CREATE TABLE ... LIKE` 复制三张正式迁移表，将 A 候选规范化产生的 `model_invocations`、`audit_events`、`cost_records` 完整行写入并回读脱敏字段、终态及精确金额。测试和脚本验证二进制摘要及目标身份，并在结束时清理随机库、探针文件和临时命名空间。
@@ -9,10 +111,20 @@
 远端环境由操作员执行，建议在仓库根目录运行并保存完整回执：
 
 ```powershell
-powershell -NoProfile -File .\scripts\system-backup-a-evidence-validation.ps1 -BusinessHistoryOnly -Remote *> .\docs\evidence\a-business-history-mysql-remote-20261013.txt
+Set-Location 'C:\Users\zhanghui08\Desktop\clawmanager\ClawManager'
+$aBusinessLog = Join-Path 'docs\evidence' ('a-business-history-mysql-remote-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.txt')
+Start-Transcript -Path $aBusinessLog -NoClobber
+try {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\system-backup-a-evidence-validation.ps1 -BusinessHistoryOnly -Remote -BuildParallelism 1 -SshTarget 'root@10.130.14.23'
+  $aBusinessExit = $LASTEXITCODE
+  Write-Output "A_BUSINESS_HISTORY_REMOTE_EXIT=$aBusinessExit"
+  if ($aBusinessExit -ne 0) { throw 'A business history MySQL validation failed; retain the complete transcript' }
+} finally {
+  Stop-Transcript
+}
 ```
 
-通过门槛：命令退出 0，日志同时含 `PASS fresh-migration-replay`、`PASS pinned-migration-runner`、`PASS A business history rows fit migrated MySQL columns`、`PASS a-business-history-mysql`、`CLEANED A business run-owned database`、`CLEANED namespace=`、`CLEANED remote-registration-scratch=yes` 和 `CLEANED local-registration-build-cache=True`，且没有 `CLEANUP_PENDING`。这是合成 B proof 投影的列兼容性探针；仍不能作为真实 dump 认证、B 生产写入器、跨表 FK、权限或大数据量恢复的通过证明。
+通过门槛：命令退出 0，完整 transcript 同时含 `PASS fresh-migration-replay`、`PASS pinned-migration-runner`、`PASS A business history rows fit migrated MySQL columns`、`PASS a-business-history-mysql`、`CLEANED A business run-owned database`、`CLEANED namespace=`、`CLEANED remote-registration-scratch=yes`、`CLEANED local-registration-build-cache=True` 和 `A_BUSINESS_HISTORY_REMOTE_EXIT=0`，且没有 `CLEANUP_PENDING`，同轮探针及迁移 CLI 指纹一致。源码或脚本变化后以新运行的摘要为准，不拼接不同轮次输出。这是合成 B proof 投影的列兼容性探针；仍不能作为真实 dump 认证、B 生产写入器、跨表 FK、权限或大数据量恢复的通过证明。
 
 日期：2026-10-13。范围是 A 拥有的 `users` 六表和 `ai_gateway` 九表。对应代码在 [`systembackupbusinessa`](../backend/internal/systembackupbusinessa/capture.go)，check ID 和 expected/actual 闭集在 [v12 verifier 合同](../contracts/system-backup/v12/verifier-contract.schema.json)。这份交接不是 P0a 完成证明。
 

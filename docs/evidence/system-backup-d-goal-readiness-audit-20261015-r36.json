@@ -1,0 +1,413 @@
+{
+  "kind": "d_full_six_scope_readiness_audit",
+  "recorded_at": "2026-10-15T09:31:13.1708576Z",
+  "objective": "接着做",
+  "status": "incomplete_goal_remains_active",
+  "original_scope_count": 6,
+  "scopes": [
+    {
+      "id": 1,
+      "name": "canonical formal migration and representative indexes",
+      "status": "incomplete",
+      "accepted": "frozen writer/storage and six-run synthetic indexes; private service/authority models and local candidates",
+      "remaining": [
+        "actual original canonical source and installation write/observation authority",
+        "physical allocation/lifetime retention/current target authenticators",
+        "formal 081/082 and production assembly",
+        "representative read/write workload and index decision"
+      ],
+      "next": "Accept each new service/authority remote only for its own frozen inputs; no repeat of accepted storage/writer/index"
+    },
+    {
+      "id": 2,
+      "name": "complete overview and four detail resources",
+      "status": "incomplete",
+      "accepted": "bounded read/control/execution/promotion and task-list/operation HTTP evidence",
+      "remaining": [
+        "current Owner health, writer/backlog/failure-domain authority",
+        "public overview/detail/activity handlers still unavailable",
+        "actual HTTP/browser integration"
+      ],
+      "next": "Implement Owner-bound full read composition; an explicit records-only availability view can separately expose already-wired config/lists without inventing overview facts"
+    },
+    {
+      "id": 3,
+      "name": "A normalization and D restore orchestration",
+      "status": "incomplete",
+      "accepted": "docs/evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json",
+      "accepted_scope": "A bounded isolated fifteen-table MySQL, synthetic B proofs/writer",
+      "remaining": [
+        "B authenticated dump/target/clock/fence/transaction writer",
+        "D production NormalizeBusinessForRestore call",
+        "live schema/registry freeze and integrated large smoke"
+      ],
+      "next": "Do not rerun old BusinessRestoreOnly; production proof/writer adapters are required"
+    },
+    {
+      "id": 4,
+      "name": "recovery manager production entry and audit storage",
+      "status": "incomplete_unverified_production",
+      "accepted": "existing limited authority/journal and volume preflight candidates",
+      "remaining": [
+        "real management mTLS and upper authorization adapters",
+        "independent physical reserved audit volume/path/capacity",
+        "single-writer takeover and real IO fault evidence"
+      ],
+      "next": "Use actual reviewed deployment/volume/authority inputs before production composition"
+    },
+    {
+      "id": 5,
+      "name": "real historical upgrade and activation",
+      "status": "incomplete_unverified_real_installation",
+      "accepted": "94-file fresh replay and synthetic history only",
+      "remaining": [
+        "actual historical SQL/ledger and current-catalog review",
+        "real installation upgrade/deployment evidence",
+        "human MFA and activation transaction evidence"
+      ],
+      "next": "Preserve historical review pins; do not rewrite hashes or replace actual history with fresh replay"
+    },
+    {
+      "id": 6,
+      "name": "frontend and real end-to-end",
+      "status": "incomplete_user_build_screenshot_and_runtime_pending",
+      "accepted": "r30-r33 read UI candidates and 140 Node checks; explicit preview shares overview layout",
+      "remaining": [
+        "TypeScript/Vite build and browser screenshots",
+        "unavailable full read routes and real B-to-A-to-C-to-D",
+        "four deployment matrices and large-data acceptance"
+      ],
+      "next": "User will test fixed r33; do not install dependencies or treat preview screenshots as real API evidence"
+    }
+  ],
+  "gates": [
+    {
+      "command": "node scripts/system-backup-schema-inventory.mjs --check",
+      "native_exit": 0,
+      "raw": "docs/evidence/system-backup-d-schema-readiness-20261015-r36.txt",
+      "raw_sha256": "14082faaaf0cd6b5ead5d31bdc337bc28283d7ae35f517e183862b77fef60939",
+      "scope": "inventory internal consistency, not complete schema",
+      "summary": {
+        "plan_business_tables": 98,
+        "plan_control_tables": 32,
+        "plan_control_without_inventory": 3,
+        "inventoried_objects": 99,
+        "migration_objects": 98,
+        "without_migration": 0,
+        "unassigned": 0,
+        "repository_runtime_create": 0,
+        "repository_runtime_alter": 0,
+        "deployment_bootstrap_create": 0
+      },
+      "gaps": {
+        "plan_control_without_inventory": [
+          "system_backup_catalog_imports",
+          "system_backup_catalog_records",
+          "system_backup_catalog_scan_states"
+        ],
+        "without_migration": [],
+        "unassigned": [],
+        "repository_runtime_create": [],
+        "repository_runtime_alter": [],
+        "deployment_bootstrap_create": []
+      }
+    },
+    {
+      "command": "node scripts/system-backup-contract-check.mjs --check --strict",
+      "native_exit": 1,
+      "raw": "docs/evidence/system-backup-d-contract-readiness-20261015-r36.txt",
+      "raw_sha256": "1404458aa3e125641345fd05c45acff9ce657262e263dbf45480e09fbff91bda",
+      "scope": "real current strict blockers; no registry writes",
+      "summary": {
+        "object_count": 99,
+        "policy_recorded": 60,
+        "policy_pending": 39,
+        "cross_review_pending": 60
+      },
+      "blockers": {
+        "plan_control_without_inventory": [
+          "system_backup_catalog_imports",
+          "system_backup_catalog_records",
+          "system_backup_catalog_scan_states"
+        ],
+        "missing_artifacts": [
+          "recovery_catalog_records",
+          "restore_target",
+          "status_relay",
+          "catalog_scan_record"
+        ],
+        "draft_artifacts": [
+          "registry_enums",
+          "hash_algorithms",
+          "schema_registry",
+          "admin_openapi",
+          "task_operation_dto",
+          "status_failure_enums",
+          "manifest_system_backup_v1",
+          "artifact_index",
+          "provider_finalizer_request",
+          "committed_marker",
+          "acceptance_marker",
+          "control_evidence_sidecar",
+          "strong_auth_proof_nonce",
+          "strong_auth_nonce_ledger",
+          "provider_proof_registration",
+          "secret_ref",
+          "restore_drill_resource_lifecycle",
+          "job_observation_cursor",
+          "verifier_contract",
+          "metrics_alert_registry",
+          "staging_resource_lifecycle",
+          "maintenance_participant_state",
+          "external_action_payload",
+          "evidence_chunk_log",
+          "dependency_provider_capability",
+          "compact_tombstone",
+          "installation_state",
+          "source_writer_check_state",
+          "runner_collector_normalizer_interfaces",
+          "audit_cursor_redacted_examples",
+          "go_typescript_dto_parity",
+          "capability_evidence",
+          "producer_authority",
+          "cross_owner_reviews"
+        ],
+        "policy_pending": [
+          "table:backup_schedules",
+          "table:backups",
+          "table:custom_team_templates",
+          "table:instance_agents",
+          "table:instance_commands",
+          "table:instance_config_revisions",
+          "table:instance_desired_state",
+          "table:instance_external_access",
+          "table:instance_runtime_bindings",
+          "table:instance_runtime_status",
+          "table:instance_skills",
+          "table:instance_usage",
+          "table:instances",
+          "table:northbound_operations",
+          "table:openclaw_config_bundle_items",
+          "table:openclaw_config_bundle_skills",
+          "table:openclaw_config_bundles",
+          "table:openclaw_config_resources",
+          "table:openclaw_injection_snapshots",
+          "table:persistent_volumes",
+          "table:runtime_pods",
+          "table:runtime_rollouts",
+          "table:runtime_upgrade_audits",
+          "table:runtime_upgrade_items",
+          "table:skill_blobs",
+          "table:skill_hub_tag_assignments",
+          "table:skill_hub_tags",
+          "table:skill_package_materialize_jobs",
+          "table:skill_scan_results",
+          "table:skill_versions",
+          "table:skills",
+          "table:team_event_outbox",
+          "table:team_events",
+          "table:team_members",
+          "table:team_tasks",
+          "table:team_work_items",
+          "table:team_workflow_phases",
+          "table:teams",
+          "table:workspace_file_audits"
+        ],
+        "cross_review_pending": [
+          "table:audit_events",
+          "table:audit_logs",
+          "table:chat_messages",
+          "table:chat_sessions",
+          "table:cost_records",
+          "table:egress_private_exceptions",
+          "table:enterprise_auth_settings",
+          "table:instance_gateway_token_aliases",
+          "table:llm_models",
+          "table:model_invocations",
+          "table:northbound_admin_settings",
+          "table:northbound_auth_challenges",
+          "table:northbound_caller_policies",
+          "table:northbound_sessions",
+          "table:northbound_settings_audit",
+          "table:risk_hits",
+          "table:risk_rules",
+          "table:schema_migrations",
+          "table:security_scan_configs",
+          "table:security_scan_job_items",
+          "table:security_scan_jobs",
+          "table:security_scan_reports",
+          "table:system_artifact_lease_states",
+          "table:system_artifact_leases",
+          "table:system_backup_admin_revocations",
+          "table:system_backup_admin_sessions",
+          "table:system_backup_alert_states",
+          "table:system_backup_artifact_verifications",
+          "table:system_backup_attempts",
+          "table:system_backup_check_results",
+          "table:system_backup_compact_tombstones",
+          "table:system_backup_configs",
+          "table:system_backup_dependency_health",
+          "table:system_backup_events",
+          "table:system_backup_evidence",
+          "table:system_backup_evidence_chunks",
+          "table:system_backup_external_actions",
+          "table:system_backup_installation_state",
+          "table:system_backup_job_observations",
+          "table:system_backup_log_chunks",
+          "table:system_backup_metadata_reservations",
+          "table:system_backup_operations",
+          "table:system_backup_preflights",
+          "table:system_backup_promotions",
+          "table:system_backup_provider_capabilities",
+          "table:system_backup_prune_items",
+          "table:system_backup_prune_runs",
+          "table:system_backup_source_writer_check_states",
+          "table:system_backup_staging_resources",
+          "table:system_backup_strong_auth_nonces",
+          "table:system_backup_totp_credentials",
+          "table:system_backups",
+          "table:system_image_settings",
+          "table:system_maintenance_locks",
+          "table:system_maintenance_mutation_leases",
+          "table:system_maintenance_participants",
+          "table:system_restore_drill_resources",
+          "table:system_restore_drills",
+          "table:user_quotas",
+          "table:users"
+        ],
+        "schema_hash_pending": true
+      }
+    }
+  ],
+  "migration_catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 94,
+    "hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
+  },
+  "business_isolated_acceptance_reverified": {
+    "record": "docs/evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json",
+    "transcript_sha256_matches": true,
+    "source_files_checked": 45,
+    "current_drift": 0,
+    "phases": [
+      "PASS A business fifteen-table complete-column roundtrip and rollback",
+      "PASS A business formal FK and collation uniqueness rejection",
+      "PASS A business SELECT-only permissions, NULL mismatch and final-proof rollback",
+      "PASS A business SQL NULL preservation and exact decimal roundtrip",
+      "PASS A business bounded-volume users=1001 quotas=1001 other_tables=1"
+    ],
+    "production_approved": false,
+    "source_target_proofs_and_writer": "synthetic test fixtures, not B production implementation"
+  },
+  "current_live_route_boundary": {
+    "source": "backend/cmd/server/system_backup_read_live.go",
+    "implemented": [
+      "active config",
+      "config versions list/detail",
+      "four task lists",
+      "operation list/detail"
+    ],
+    "explicit_503_not_ready": [
+      "overview",
+      "four task details",
+      "task events/logs",
+      "catalog/prune/promotion routes"
+    ],
+    "frontend_overview_first": true,
+    "consequence": "Current real workspace cannot reach its new records/history/detail UI while overview remains 503; preview is only layout evidence"
+  },
+  "a_preparation_observed": {
+    "thread_id": "01a1390e-a2dc-7a60-afea-b746cced6b18",
+    "thread_snapshot_cursor": "dc8dc439-49a2-449b-8225-52da20b4ce30:2",
+    "turn_status": "inProgress",
+    "log": "docs/evidence/a-maintenance-authority-mysql-local-20261015.txt",
+    "log_terminal_local_exit": 0,
+    "source_files": 1265,
+    "source_sha256": "35214503498b44f472823f2340e8f8dbcf6e18f9d0c1d0e71ca69d86a3ae5d09",
+    "tagged_linux_compile_reported": true,
+    "d_corrected_probe_log_in_frozen_source": true,
+    "real_mysql_run": false,
+    "full_final_acceptance_by_d": false
+  },
+  "source_pins_scope": "current audit inputs, not a frozen runtime/build grant",
+  "source_pins": [
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "86c6a1f1616900fe0ec226d43a11e3c3b86835e81cef9d2915982fdc8e58d306"
+    },
+    {
+      "path": "docs/system-backup-restore-schema-inventory.json",
+      "sha256": "6148bc83e845a4e92fdce4742e1a91d1d6a51c40d89ca90f1c820a4c8071d671"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "sha256": "0df58467415015293f2cd4f5ca04db2182a2fb585b11c2e4a15128a3eb7114ba"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "sha256": "6a7cbe2c3d267cd1877301d37fe2549c312a85c5e71b4a9dfe7a6b125a929ec3"
+    },
+    {
+      "path": "scripts/system-backup-schema-inventory.mjs",
+      "sha256": "ab87d58a2836a22e079781cf05b396f8df3ed4b590999f8dc07b1877882c4300"
+    },
+    {
+      "path": "scripts/system-backup-contract-check.mjs",
+      "sha256": "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "sha256": "e332f361bacae48a9ccb0cb6af0517b78985d7772853bf0000cc8ee147ee74dc"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/business_restore.go",
+      "sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveSource.ts",
+      "sha256": "e04b0b41422854e799c41e121fffd9153797544ad6b5ddaedf70b9df4d3a8461"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+      "sha256": "90fd952054a0b103929117bdd63744646c451536cec45d1fca2380ebb8fcbc50"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-index-group-accepted-20261015.json",
+      "sha256": "31d490d8f6c2eb64407aaf6297824cf3a4c8b6c8d25def16a0ec586d8859eb23"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-config-writer-mysql-accepted-20261015.json",
+      "sha256": "16d4010d9e6980ef210b415746ef670f16c1ca42b6d7fc7840f1d7a382967fe6"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-maintenance-receipt-mysql-accepted-20261015.json",
+      "sha256": "f7e38bb5d721904d9ec9a5944e773a36fa51e42594a40bb5d96c039c7430d52c"
+    },
+    {
+      "path": "docs/evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json",
+      "sha256": "52fdb3f997674d428bb72268fdc7e1ac3346bef3117dbc299a5320cf2eb3decd"
+    },
+    {
+      "path": "docs/evidence/a-business-restore-mysql-remote-20261014-155831.txt",
+      "sha256": "3dc4b1092a7cc784f4ffe5e2cd0f6abb5f65a5b40d4040f26ddca0aab7ab5917"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-overview-ui-local-20261015-r33.json",
+      "sha256": "dc949600aa89c442b67776802ad191d4d6f77a624eef0d48901cbae4f7139162"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-a-maintenance-authority-review-20261015-r34.json",
+      "sha256": "5f9129b07b00818d475719c1e38b69882bc8086c7bcf7dec6feee1ff6bb99eb1"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-a-authority-dispatch-review-20261015-r35.json",
+      "sha256": "4bc17559f59544e0b0cb481687cb822c9deb0c1d11ed67a7314471d306347e5c"
+    }
+  ],
+  "dependencies_installed": false,
+  "build_artifacts_generated": false,
+  "registry_or_formal_migration_written": false,
+  "ssh_by_d": false,
+  "new_test_or_remote_run_requested": false,
+  "frontend_source_changed": false
+}

@@ -75,8 +75,7 @@ func (r *Reader) listOperations(ctx context.Context, request operationPageReques
 		if request.before != 0 {
 			upper = request.before
 		}
-		rows, err := tx.QueryContext(ctx, `SELECT id,`+operationProjectionColumns+` FROM system_backup_operations
-WHERE origin_installation_id=? AND id<? ORDER BY id DESC LIMIT ?`, installation, upper, request.limit+1)
+		rows, err := tx.QueryContext(ctx, operationPageSQL, installation, upper, request.limit+1)
 		if err != nil {
 			return operationPage{}, ErrUnavailable
 		}

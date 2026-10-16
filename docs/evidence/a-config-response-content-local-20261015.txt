@@ -1,0 +1,22 @@
+LOCAL_SOURCE config-response-frozen=yes source_sha256=236120161e3f977290f6fd6431347aafa329319390556dc938da1af2b497474c files=1175
+LOCAL_PASS isolated-go-telemetry=off
+LOCAL_STAGE config-response-targeted
+# clawreef/internal/systembackupsecurity
+package clawreef/internal/systembackupsecurity
+	imports clawreef/internal/systembackupevidence from config_mutation_response_content.go
+	imports clawreef/internal/systembackupsecurity from capability_content.go: import cycle not allowed
+FAIL	clawreef/internal/systembackupsecurity [setup failed]
+FAIL	clawreef/internal/systembackupevidence [setup failed]
+# clawreef/internal/systembackupevidence
+package clawreef/internal/systembackupsecurity
+	imports clawreef/internal/systembackupevidence from config_mutation_response_content.go
+	imports clawreef/internal/systembackupsecurity from capability_content.go: import cycle not allowed
+FAIL
+LOCAL_CLEANUP config-response-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-393df5a7b3d3481da45d862095d614a8 removed=True
+LOCAL_CLEANUP config-response-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-455112c2fc624ae09a75c7375de6b510 removed=True
+Exception: C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\scripts\system-backup-a-evidence-go-step.ps1:42
+Line |
+  42 |              throw "Evidence $Stage gate failed (exit=$aEvidenceStepEx …
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Evidence test-vet gate failed (exit=1, attempt=1); remote validation has not started; dependencies will not be
+     | installed

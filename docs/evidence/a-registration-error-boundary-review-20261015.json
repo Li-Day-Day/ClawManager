@@ -1,0 +1,99 @@
+{
+  "kind": "a_registration_error_boundary_frozen_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T12:04:46.8576003+08:00",
+  "status": "accepted_local_closed_errors_and_typed_nil_traversal",
+  "scope": "A shared registration/config strong-auth failure mapping and HTTP error boundary; not deployment approval",
+  "source_manifest": "docs/evidence/a-registration-error-boundary-source-20261015.json",
+  "source_sha256": "5dd44a332d7b5f817a45f0db05f2f09904afc5c8a981e33297d7e63387b33304",
+  "source_files": 1204,
+  "source_manifest_sha256": "957968e9c5b8bc4f5eccb8f2b5c53252b8b5c6e2cca68afbb73f83a83c9cb06b",
+  "log": "docs/evidence/a-registration-error-boundary-local-20261015.txt",
+  "log_sha256": "aab5d5e80801704eb89a94030026de827dcdf5d8c1abcc869c97fb334fb557ff",
+  "before_production_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_http.go",
+      "size": 5911,
+      "sha256": "63b31cd610d1687bd3ce5ce0c07cb697ac70787923a4503e05b98f1f8ad0de52"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 16972,
+      "sha256": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "size": 20767,
+      "sha256": "bf1ea22e52a6e88f3330db886805efb35de792ea536dd94a1a535e349cb11449"
+    }
+  ],
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_http.go",
+      "size": 5935,
+      "sha256": "d3bd9cd7868629a08c6a523aa54d8a2032f925efc741573f7f567483242824f4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 17291,
+      "sha256": "9a6732f2c98c6d2bd10ab95b0db44d6d0412d95c32db4fd107758171ce6f2083"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_error_boundary_a_test.go",
+      "size": 5308,
+      "sha256": "ba20a647adcb979a9192ff2fb86ec9baab84c5c91abbd2a5edb70d2bd2059543"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "size": 20799,
+      "sha256": "37c81707bc6ec9b9bfc27b702512b7d07b4797e8cff780fa3735de1cc0d0eb16"
+    },
+    {
+      "path": "scripts/system-backup-a-registration-error-boundary-validation.ps1",
+      "size": 4473,
+      "sha256": "63bfb23a46aa9430026003d8c0e42f4cc6543fe65866badd891650e0a08befdc"
+    }
+  ],
+  "current_other_existing_input_drift": [
+    "backend/internal/systembackupsecurity/config_mutation_response_preparation.go",
+    "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+    "backend/internal/systembackupsecurity/config_mutation_transaction.go"
+  ],
+  "targeted_main": 3,
+  "targeted_sub": 34,
+  "full_main": 163,
+  "full_sub": 841,
+  "full_unique_checks": 1004,
+  "full_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 39.445,
+      "main_pass": 148,
+      "subtest_pass": 757
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 4.734,
+      "main_pass": 15,
+      "subtest_pass": 84
+    }
+  ],
+  "targeted_repeats_not_added": true,
+  "http_failure_scenarios": 17,
+  "exit": 0,
+  "default_vet": true,
+  "tool_crash_retries": 0,
+  "frozen_postcheck": true,
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-56f62c9db45b47bf9aedc7fdc7560aac",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-05cbfbf305124b9da4d495f2d4cf41a5"
+  ],
+  "cleanup_independently_confirmed": true,
+  "sql": "transaction model; real HTTP registration handler/service, synthetic actors and injected authority failures",
+  "dependencies_installed": false,
+  "remote_run": false,
+  "mysql_run": false,
+  "runtime_grant_issued": false,
+  "production_approved": false,
+  "handoff": "docs/system-backup-a-registration-error-boundary-20261015.md"
+}

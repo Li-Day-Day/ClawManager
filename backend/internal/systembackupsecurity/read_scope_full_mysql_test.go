@@ -21,6 +21,37 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// Establish a plain consistent read after real A authorization, then commit a
+// Job change on another connection before D reads its task/execution rows. This
+// would expose mixed times under ReadCommitted; RepeatableRead must retain the
+// earlier observation while the final A permission check remains current.
+type dTaskExecutionSnapshotScope struct {
+	base    *SystemBackupReadScope
+	taskID  string
+	advance func(context.Context) error
+}
+
+func (s dTaskExecutionSnapshotScope) AuthorizeRead(ctx context.Context, tx *sql.Tx) (string, error) {
+	installation, err := s.base.AuthorizeRead(ctx, tx)
+	if err != nil {
+		return "", err
+	}
+	var id string
+	if err = tx.QueryRowContext(ctx, "SELECT public_id FROM system_backups WHERE origin_installation_id=? AND public_id=?", installation, s.taskID).Scan(&id); err != nil {
+		return "", err
+	}
+	if id != s.taskID {
+		return "", ErrRegistrationUnavailable
+	}
+	if err = s.advance(ctx); err != nil {
+		return "", err
+	}
+	return installation, nil
+}
+func (s dTaskExecutionSnapshotScope) RecheckRead(ctx context.Context, tx *sql.Tx, installation string) error {
+	return s.base.RecheckRead(ctx, tx, installation)
+}
+
 // This test runs only in the fresh migration namespace. It uses the complete
 // migrated 066/067/080 schema, not the narrower A authorization probe DDL.
 func TestDAdminReadFullSchemaMySQL(t *testing.T) {
@@ -113,8 +144,11 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 	}
 	ownService, ownScope := newService(own)
 	foreignService, foreignScope := newService(foreign)
+	// This probe and the following live HTTP probe share the migrated database.
+	// Public IDs are globally unique, so installation isolation alone cannot
+	// separate fixtures. Reserve UUID prefix 000000d1 for full-schema resources.
 	seedBackup := func(installation, suffix string) string {
-		publicID := "sbk_00000000-0000-4000-8000-0000000000" + suffix
+		publicID := "sbk_000000d1-0000-4000-8000-0000000000" + suffix
 		_, e := db.ExecContext(ctx, `INSERT INTO system_backups
 		(public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,request_id,
 		 config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,deadline_at,
@@ -135,9 +169,9 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 		kind systembackupread.TaskKind
 		id   string
 	}{
-		{systembackupread.DrillTask, "sdr_00000000-0000-4000-8000-000000000001"},
-		{systembackupread.PreflightTask, "spf_00000000-0000-4000-8000-000000000001"},
-		{systembackupread.VerificationTask, "sav_00000000-0000-4000-8000-000000000001"},
+		{systembackupread.DrillTask, "sdr_000000d1-0000-4000-8000-000000000001"},
+		{systembackupread.PreflightTask, "spf_000000d1-0000-4000-8000-000000000001"},
+		{systembackupread.VerificationTask, "sav_000000d1-0000-4000-8000-000000000001"},
 	}
 	_, err = db.ExecContext(ctx, `INSERT INTO system_restore_drills
 		(public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,request_id,
@@ -192,7 +226,7 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 		}
 	}
 	for i := 1; i <= 3; i++ {
-		id := "sop_00000000-0000-4000-8000-00000000000" + strconv.Itoa(i)
+		id := "sop_000000d1-0000-4000-8000-00000000000" + strconv.Itoa(i)
 		_, err = db.ExecContext(ctx, `INSERT INTO system_backup_operations
 		(public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,
 		 idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,
@@ -219,6 +253,172 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 	if _, err := foreignService.ListOperationDTO(foreignScope.Context(), 2, *operations.NextCursor); !errors.Is(err, systembackupread.ErrDenied) {
 		t.Fatalf("cross-install operation cursor was accepted: %v", err)
 	}
+	// D's partial overview contribution reads complete status groups under the
+	// real A request scope. It must not derive totals from the earlier pages or
+	// include another installation's rows; this is not a full OverviewResource.
+	ownControlReader, err := systembackupread.NewReader(db, ownScope)
+	mysqlMust(t, err)
+	foreignControlReader, err := systembackupread.NewReader(db, foreignScope)
+	mysqlMust(t, err)
+	t.Run("task_execution_scoped_attempts_and_progress", func(t *testing.T) {
+		targets := append([]struct {
+			kind systembackupread.TaskKind
+			id   string
+		}{{systembackupread.BackupTask, first}}, otherKinds...)
+		phases := map[systembackupread.TaskKind]string{
+			systembackupread.BackupTask: "capture", systembackupread.DrillTask: "restore",
+			systembackupread.PreflightTask: "preflight", systembackupread.VerificationTask: "verify",
+		}
+		for index, target := range targets {
+			phase := phases[target.kind]
+			for _, attempt := range []int{1, 2} {
+				_, e := db.ExecContext(ctx, `INSERT INTO system_backup_attempts
+				(target_type,target_public_id,attempt_no,phase,status,started_at)
+				VALUES(?,?,?,?,'running',UTC_TIMESTAMP(6))`, string(target.kind), target.id, attempt, phase)
+				mysqlMust(t, e)
+			}
+			jobUID := "00000000-0000-4000-8000-00000000002" + strconv.Itoa(index)
+			_, e := db.ExecContext(ctx, `INSERT INTO system_backup_job_observations
+			(schema_version,origin_installation_id,target_type,target_public_id,attempt_no,phase,job_unit_key,
+			job_uid,job_generation,relay_identity_ref,relay_identity_version,relay_identity_bound_at,relay_identity_expires_at,
+			last_accepted_sequence,last_accepted_body_sha256,last_observed_status,last_observed_at,
+			progress_sequence,progress_digest_sha256,last_business_progress_at)
+			VALUES('system-backup-job-observation.v1',?,?,?,2,?,'source_mysql',?,2,'fixture-relay','v1',
+			UTC_TIMESTAMP(6),UTC_TIMESTAMP(6)+INTERVAL 1 MINUTE,5,REPEAT('a',64),'running',UTC_TIMESTAMP(6),3,REPEAT('b',64),UTC_TIMESTAMP(6))`,
+				own, string(target.kind), target.id, phase, jobUID)
+			mysqlMust(t, e)
+			snapshot, e := ownControlReader.ReadTaskExecution(ownScope.Context(), target.kind, target.id)
+			mysqlMust(t, e)
+			attempts, jobs := snapshot.Attempts(), snapshot.JobObservations()
+			if snapshot.Task().PublicID != target.id || len(attempts) != 2 || len(jobs) != 1 ||
+				jobs[0].InstallationID != own || jobs[0].AttemptNumber != 2 || jobs[0].Generation != 2 || jobs[0].Phase != phase || !jobs[0].BusinessProgressAt.Valid {
+				t.Fatal("task execution snapshot lost scoped history/current progress", snapshot.Task(), attempts, jobs)
+			}
+			if _, e = foreignControlReader.ReadTaskExecution(foreignScope.Context(), target.kind, target.id); !errors.Is(e, systembackupread.ErrNotFound) {
+				t.Fatal("foreign task execution was visible", e)
+			}
+			// A later relay observation/heartbeat alone must retain the recorded
+			// business-progress time, even when its accepted sequence advances.
+			before := jobs[0].BusinessProgressAt
+			_, e = db.ExecContext(ctx, `UPDATE system_backup_job_observations SET
+			last_accepted_sequence=6,last_observed_at=UTC_TIMESTAMP(6),row_version=row_version+1 WHERE job_uid=?`, jobUID)
+			mysqlMust(t, e)
+			after, e := ownControlReader.ReadTaskExecution(ownScope.Context(), target.kind, target.id)
+			mysqlMust(t, e)
+			if got := after.JobObservations(); len(got) != 1 || got[0].AcceptedSequence != 6 || !got[0].BusinessProgressAt.Time.Equal(before.Time) {
+				t.Fatal("heartbeat changed business progress", got)
+			}
+			if target.kind == systembackupread.BackupTask {
+				racedScope := dTaskExecutionSnapshotScope{base: ownScope, taskID: target.id, advance: func(ctx context.Context) error {
+					_, e := db.ExecContext(ctx, `UPDATE system_backup_job_observations SET
+					last_accepted_sequence=7,progress_sequence=7,last_observed_at=UTC_TIMESTAMP(6),
+					last_business_progress_at=UTC_TIMESTAMP(6),row_version=row_version+1 WHERE job_uid=?`, jobUID)
+					return e
+				}}
+				racedReader, e := systembackupread.NewReader(db, racedScope)
+				mysqlMust(t, e)
+				raced, e := racedReader.ReadTaskExecution(ownScope.Context(), target.kind, target.id)
+				mysqlMust(t, e)
+				if got := raced.JobObservations(); len(got) != 1 || got[0].AcceptedSequence != 6 || !got[0].BusinessProgressAt.Time.Equal(before.Time) {
+					t.Fatal("task detail mixed observations across transaction snapshots", got)
+				}
+				var currentSequence int
+				mysqlMust(t, db.QueryRowContext(ctx, "SELECT last_accepted_sequence FROM system_backup_job_observations WHERE job_uid=?", jobUID).Scan(&currentSequence))
+				if currentSequence != 7 {
+					t.Fatal("snapshot race did not commit the competing observation")
+				}
+			}
+		}
+	})
+	t.Run("overview_control_complete_counts_and_installation_isolation", func(t *testing.T) {
+		control, e := ownControlReader.ReadOverviewControl(ownScope.Context())
+		mysqlMust(t, e)
+		state := control.InstallationState()
+		if state.InstallationID != own || state.ConfigVersion != 1 || state.LastEffectiveEnabled ||
+			control.TaskStatusCounts(systembackupread.BackupTask)["pending"] != 4 || control.OperationStatusCounts()["pending"] != 3 {
+			t.Fatal("overview control state/counts do not match committed own rows", state)
+		}
+		for _, kind := range []systembackupread.TaskKind{systembackupread.DrillTask, systembackupread.PreflightTask, systembackupread.VerificationTask} {
+			if control.TaskStatusCounts(kind)["pending"] != 1 {
+				t.Fatal("overview omitted task category", kind)
+			}
+		}
+		foreignControl, e := foreignControlReader.ReadOverviewControl(foreignScope.Context())
+		mysqlMust(t, e)
+		if foreignControl.TaskStatusCounts(systembackupread.BackupTask)["pending"] != 1 || foreignControl.OperationStatusCounts()["pending"] != 0 {
+			t.Fatal("overview counts crossed installation boundary")
+		}
+	})
+	t.Run("overview_current_promotion_binding_and_availability_loss", func(t *testing.T) {
+		empty, e := ownControlReader.ReadOverviewPromotionControl(ownScope.Context())
+		mysqlMust(t, e)
+		if _, present := empty.CurrentPromotion(); present {
+			t.Fatal("empty promotion table invented a baseline")
+		}
+		backupID := seedBackup(own, "91")
+		drillID := "sdr_000000d1-0000-4000-8000-000000000091"
+		evidenceID := "sev_000000d1-0000-4000-8000-000000000091"
+		promotionID := "spm_000000d1-0000-4000-8000-000000000091"
+		_, e = db.ExecContext(ctx, `UPDATE system_backups SET status='succeeded',can_cancel=FALSE,
+		started_at=created_at,finished_at=UTC_TIMESTAMP(6),task_purpose='acceptance',
+		requested_parts='mysql,redis,object_storage,workspace,deployment_resources,secret_bundle',
+		artifact_state='committed',artifact_usable=TRUE,artifact_unusable_reason='none',artifact_committed_at=UTC_TIMESTAMP(6),
+		artifact_uri='fixture-artifact',artifact_immutable_version='v1',artifact_checksum=REPEAT('a',64),
+		manifest_uri='fixture-manifest',manifest_immutable_version='v1',manifest_checksum=REPEAT('a',64),
+		index_uri='fixture-index',index_immutable_version='v1',index_checksum=REPEAT('a',64),
+		marker_uri='fixture-marker',marker_immutable_version='v1',marker_checksum=REPEAT('a',64),
+		acceptance_uri='fixture-acceptance',acceptance_immutable_version='v1',acceptance_checksum=REPEAT('b',64),
+		artifact_registration_id='registration-fixture-91',artifact_registration_hash=REPEAT('c',64),consistency='strong',
+		acceptance_eligible=TRUE,eligibility_reason_codes='eligible',eligibility_decision_hash=REPEAT('d',64),
+		eligibility_decided_at=UTC_TIMESTAMP(6),row_version=3,prune_guard_version=2 WHERE origin_installation_id=? AND public_id=?`, own, backupID)
+		mysqlMust(t, e)
+		_, e = db.ExecContext(ctx, `INSERT INTO system_backup_evidence
+		(public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,inline_payload,
+		content_checksum,content_size_bytes,media_type,encryption,redaction_classification,observed_health,expires_at)
+		VALUES(?,'drill',?,'verifier_report','inline','{}',SHA2('{}',256),2,'application/json','none','public','healthy',UTC_TIMESTAMP(6)+INTERVAL 1 HOUR)`, evidenceID, drillID)
+		mysqlMust(t, e)
+		_, e = db.ExecContext(ctx, `INSERT INTO system_restore_drills
+		(public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,request_id,
+		config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,status,can_cancel,deadline_at,started_at,finished_at,
+		source_artifact_type,source_public_id,source_manifest_checksum,source_acceptance_checksum,target_profile,restore_target_config_ref,restore_target_config_hash,
+		cleanup_policy,cleanup_status,verifier_aggregate_status,verifier_passed,verifier_report_evidence_public_id,verifier_report_evidence_sha256,
+		consistency,acceptance_eligible,eligibility_reason_codes,eligibility_decision_hash,eligibility_decided_at)
+		VALUES(?,?,'admin',?,'DFullBaseline','d-full-baseline-drill-91',REPEAT('a',64),'d-full-baseline-drill-91',
+		1,'{}',2,SHA2('{}',256),'succeeded',FALSE,UTC_TIMESTAMP(6)+INTERVAL 1 HOUR,UTC_TIMESTAMP(6),UTC_TIMESTAMP(6),
+		'backup',?,REPEAT('a',64),REPEAT('b',64),'single-node','fixture-target',REPEAT('c',64),
+		'delete-on-success','succeeded','passed',1,?,SHA2('{}',256),'strong',TRUE,'eligible',REPEAT('d',64),UTC_TIMESTAMP(6))`,
+			drillID, own, strconv.FormatInt(userID, 10), backupID, evidenceID)
+		mysqlMust(t, e)
+		_, e = db.ExecContext(ctx, `INSERT INTO system_backup_promotions
+		(public_id,origin_installation_id,matrix_key,backup_public_id,drill_public_id,manifest_checksum,acceptance_checksum,
+		artifact_registration_id,artifact_registration_hash,eligibility_decision_hash,drill_evidence_public_id,drill_evidence_hash,
+		source_backup_row_version,source_drill_row_version,source_prune_guard_version,config_version,
+		creation_artifact_health,creation_artifact_access_health,creation_kek_health,creation_signature_health,
+		creation_catalog_health,creation_evidence_health,creation_attestation_health,creation_health_snapshot_sha256,creation_health_observed_at,created_by)
+		VALUES(?,?,'k8s-single-node',?,?,REPEAT('a',64),REPEAT('b',64),'registration-fixture-91',REPEAT('c',64),REPEAT('d',64),?,SHA2('{}',256),
+		3,1,2,1,'healthy','healthy','healthy','healthy','healthy','healthy','healthy',REPEAT('f',64),UTC_TIMESTAMP(6),?)`,
+			promotionID, own, backupID, drillID, evidenceID, strconv.FormatInt(userID, 10))
+		mysqlMust(t, e)
+		bound, e := ownControlReader.ReadOverviewPromotionControl(ownScope.Context())
+		mysqlMust(t, e)
+		p, present := bound.CurrentPromotion()
+		if !present || p.PublicID != promotionID || p.Backup.PublicID != backupID || p.Drill.SourcePublicID != backupID || p.Evidence.OwnerPublicID != drillID || p.Evidence.ContentSHA256 != registrationHash("{}") {
+			t.Fatal("promotion source/evidence binding lost", p, present)
+		}
+		cross, e := foreignControlReader.ReadOverviewPromotionControl(foreignScope.Context())
+		mysqlMust(t, e)
+		if _, present := cross.CurrentPromotion(); present {
+			t.Fatal("promotion crossed installation boundary")
+		}
+		_, e = db.ExecContext(ctx, "UPDATE system_backups SET artifact_state='corrupt',artifact_usable=FALSE,artifact_unusable_reason='corrupt',row_version=row_version+1 WHERE public_id=?", backupID)
+		mysqlMust(t, e)
+		changed, e := ownControlReader.ReadOverviewPromotionControl(ownScope.Context())
+		mysqlMust(t, e)
+		p, present = changed.CurrentPromotion()
+		if !present || p.Backup.ArtifactUsable || p.Backup.ArtifactState != "corrupt" || p.SourceBackupRowVersion != 3 || p.Backup.RowVersion != 4 || p.CreationHealth[0] != "healthy" {
+			t.Fatal("current availability erased or rewrote creation baseline", p, present)
+		}
+	})
 	tx, err := db.BeginTx(ownScope.Context(), &sql.TxOptions{Isolation: sql.LevelReadCommitted})
 	mysqlMust(t, err)
 	defer tx.Rollback()
@@ -249,6 +449,15 @@ func TestDAdminReadFullSchemaMySQL(t *testing.T) {
 	}
 	if _, err := ownService.ListOperationDTO(ownScope.Context(), 2, ""); !errors.Is(err, ErrRegistrationPermission) {
 		t.Fatalf("revoked session retained operation read: %v", err)
+	}
+	if control, e := ownControlReader.ReadOverviewControl(ownScope.Context()); !errors.Is(e, ErrRegistrationPermission) || control.InstallationState().InstallationID != "" {
+		t.Fatalf("revoked session retained overview control read: %v", e)
+	}
+	if execution, e := ownControlReader.ReadTaskExecution(ownScope.Context(), systembackupread.BackupTask, first); !errors.Is(e, ErrRegistrationPermission) || execution.Task().PublicID != "" || len(execution.Attempts()) != 0 || len(execution.JobObservations()) != 0 {
+		t.Fatalf("revoked session retained task execution read: %v", e)
+	}
+	if promotion, e := ownControlReader.ReadOverviewPromotionControl(ownScope.Context()); !errors.Is(e, ErrRegistrationPermission) || promotion.Control().InstallationState().InstallationID != "" {
+		t.Fatalf("revoked session retained promotion control read: %v", e)
 	}
 	t.Log("PASS full 066/067/080 schema, real rows, pagination, cross-install cursor, revocation lock")
 }

@@ -119,7 +119,7 @@ func systemPreparationHash(g SystemPreparationAuthorization) string {
 }
 
 func (p *SystemTransitPreparer) Prepare(ctx context.Context, i Identity, src Source, dst io.Writer) (Prepared, error) {
-	if p == nil || p.closed.Load() || !i.validExternal() || i.OwnerType != "system" || i.Type != "capability_snapshot" || i.Media != "application/json" || i.ContentSize > MaxCapabilityContent || src == nil || dst == nil {
+	if p == nil || ctx == nil || ctx.Err() != nil || p.closed.Load() || !i.validExternal() || i.OwnerType != "system" || i.Type != "capability_snapshot" || i.Media != "application/json" || i.ContentSize > MaxCapabilityContent || src == nil || nilSystemAdapter(dst) {
 		return Prepared{}, ErrDenied
 	}
 	g, err := p.authorize(ctx, i)

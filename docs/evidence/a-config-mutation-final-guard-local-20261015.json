@@ -1,0 +1,197 @@
+{
+  "kind": "a_d_config_mutation_incremental_review_and_final_guard_validation",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T01:01:36.618Z",
+  "reviewer_role": "A",
+  "reviewer_kind": "Codex local A-role implementation review; not human/deployment signature",
+  "status": "accepted_local_candidate_with_required_integration_gates",
+  "contract": {
+    "id": "a-config-canonical-write-security.v1",
+    "path": "docs/evidence/a-config-canonical-write-contract-20261014.json",
+    "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+    "public_contracts_remain": "draft",
+    "old_signoff_preserved": true,
+    "old_signoff_source_delta_reviewed": [
+      {
+        "file": "backend/internal/systembackupsecurity/strongauth.go",
+        "before": "f370b6be9136ccded93e9a6ff7dcf9a8dc83ca2308cc6beb9784e4c112045aa2",
+        "current": "bf1ea22e52a6e88f3330db886805efb35de792ea536dd94a1a535e349cb11449"
+      }
+    ]
+  },
+  "review_scope": [
+    "D complete ConfigValues/request hash and update/rollback candidate orchestration",
+    "A late database-time/session/MFA/expiry guards",
+    "A consumed/final nonce verification binding consistency"
+  ],
+  "reproduction": {
+    "path": "docs/evidence/a-config-mutation-final-guard-repro-20261015.txt",
+    "sha256": "baafa36444c75405956c6902510401585af4f4f6871e5366b72b72fc9cd1b38b",
+    "go_exit": 1,
+    "main_tests_failed": 3,
+    "negative_leaf_scenarios_committed": 7,
+    "valid_control_scenarios_passed": 2,
+    "vet_tool_crash_observed": true,
+    "vet_pass": false,
+    "before_source_sample": "docs/evidence/a-config-mutation-review-before-20261015.json",
+    "frozen_dependency_graph": false,
+    "model_fixture_changed_in_parallel": true
+  },
+  "local_validation": {
+    "platform": "windows/amd64",
+    "go_version": "go1.26.1",
+    "default_vet": true,
+    "runs": [
+      {
+        "stage": "targeted",
+        "attempt": 1,
+        "exit": 0,
+        "command": "go test -count=1 -v -p=1 -run ^TestConfigMutationA ./internal/systembackupsecurity"
+      },
+      {
+        "stage": "full",
+        "attempt": 1,
+        "exit": 0,
+        "command": "go test -count=1 -v -p=1 ./internal/systembackupsecurity ./internal/systembackupread"
+      }
+    ],
+    "tool_crash_retries": 0,
+    "targeted": {
+      "main_tests": 5,
+      "subtests": 10
+    },
+    "full": {
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupsecurity",
+          "duration": "40.387s",
+          "main_tests": 101,
+          "subtests": 440
+        },
+        {
+          "package": "clawreef/internal/systembackupread",
+          "duration": "4.551s",
+          "main_tests": 50,
+          "subtests": 206
+        }
+      ],
+      "main_tests": 151,
+      "subtests": 646,
+      "total_checks": 797
+    },
+    "stdout": {
+      "path": "docs/evidence/a-config-mutation-final-guard-local-20261015.txt",
+      "sha256": "4d9f72910e26728c13616605411c89f205d7ace889152e3a80d61a5d52c0a10d"
+    },
+    "source_snapshot": {
+      "path": "docs/evidence/a-config-mutation-final-guard-source-snapshot-20261015.json",
+      "sha256": "62cb319794dff348a5fcae1c475a01f17b2df9b349267e5ed75bf89c17bfcd53",
+      "file_count": 978,
+      "current_existing_input_drift": [],
+      "added_current_files_not_tested": [
+        "backend/internal/systembackupsecurity/config_mutation_rbac.go",
+        "backend/internal/systembackupsecurity/config_mutation_rbac_test.go"
+      ],
+      "whole_current_tree_acceptance": false
+    },
+    "current_core_inputs": [
+      {
+        "file": "backend/internal/systembackupsecurity/strongauth.go",
+        "sha256": "bf1ea22e52a6e88f3330db886805efb35de792ea536dd94a1a535e349cb11449"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+        "sha256": "6e4c37fe078e1233b303ad572e3d551d893bf96d3d71d5a5a2e97c2db0a54f9c"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_mutation_a_contract_test.go",
+        "sha256": "46b91d3a39f19d60d4f62a3dc1333ec717830440c16e1d34e12f9b50e868f422"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+        "sha256": "116b218dc3314ac426956b415d525db886f5e38fca567996305ee0cac6bbc9d4"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_mutation_request.go",
+        "sha256": "a85430c0e1bbca2d75202ad4c383c9f53bddb43ce6d1da14181648fe10a395f0"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_mutation_values.go",
+        "sha256": "9353022ae63da27d80ded4a786f62e0b1b5613ce72ce10678b63b466450922f8"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_mutation_test.go",
+        "sha256": "143d030feb8f8a97976ff642e0dbcbf3506206ad3ad44137fb2ef62d4824402a"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_bootstrap.go",
+        "sha256": "634034b7a652a5293c12c0af9109bfbb70b5f0b4afcdb0b751ff3dc02e4a202b"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+        "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+        "sha256": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978"
+      },
+      {
+        "file": "backend/internal/systembackupsecurity/registration_api.go",
+        "sha256": "6dfd6ad9c7ba32e958aafa77bc92d0f9289f6c1ac44579ea99b0372a9b39ad33"
+      }
+    ],
+    "offline": {
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOTOOLCHAIN": "local",
+      "GOFLAGS": "-mod=readonly -p=1",
+      "GOWORK": "off",
+      "telemetry": "owned scratch directory"
+    }
+  },
+  "closed_findings": [
+    {
+      "id": "A-CFG-01",
+      "problem": "Final database time preceded authority/key/response/target callbacks, allowing stale temporal bounds at commit/replay",
+      "resolution": "After final callbacks and target check, query new DB time; check deadline, authenticated token bounds and already verified proof age/expiry locally; no further adapters before commit",
+      "status": "local_model_verified"
+    },
+    {
+      "id": "A-CFG-02",
+      "problem": "Final successful Verify result ignored despite nonce HMAC binding changing after original consumption",
+      "resolution": "Require same active HMAC/version and stable existing historical candidates; permit newly introduced version candidates",
+      "status": "local_model_verified"
+    }
+  ],
+  "runtime_approval": {
+    "production_approved": false,
+    "authorization_instances_issued": 0,
+    "original_canonical_files_delivered": 0,
+    "public_registry_approval_flags_changed": false,
+    "migration_066_unchanged": true,
+    "candidate_081_promoted": false,
+    "offline_backfill_writer_accepted": false
+  },
+  "cleanup": {
+    "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-config-review-final-3e28a1c734bc42838c24d3c071ca5587",
+    "reported": true,
+    "independently_absent": true,
+    "retained_build_products": false,
+    "failed_cache_copy_also_cleaned": true
+  },
+  "dependencies_installed": false,
+  "ssh": false,
+  "real_mysql": false,
+  "linux_cross_compile": false,
+  "required_next": [
+    "Review/validate newly added RBAC helper outside this frozen gate",
+    "Concrete current session/revocation/RBAC/MFA/ref/registry/capacity/response evidence adapters; model callbacks do not authorize deployment",
+    "Formal 081/schema/catalog and isolated MySQL concurrent idempotency/nonce/key rotation/late-expiry/rollback/unknown-commit gates",
+    "Independent maintenance receipt ledger and version-bound originals plus specific write grant before real backfill"
+  ],
+  "limits": [
+    "Local SQL model is not InnoDB locking, cross-connection atomicity or COMMIT acknowledgement semantics proof",
+    "Temporal-only helper is private and cannot replace full signature/issuer/nonce verification or live authorization",
+    "No authenticated production grant or historical canonical original was created by this review"
+  ]
+}

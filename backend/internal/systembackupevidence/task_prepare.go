@@ -51,7 +51,7 @@ type taskPreparation struct {
 // validation, JWT exchange, encryption or staging. On any error discard dst:
 // it may contain ciphertext, but no usable Prepared is returned.
 func (p *TaskPreparer) Prepare(ctx context.Context, i Identity, src Source, dst io.Writer) (Prepared, error) {
-	if p == nil || p.closed.Load() || !p.authority.accepts(i) || src == nil || dst == nil {
+	if p == nil || ctx == nil || ctx.Err() != nil || p.closed.Load() || !p.authority.accepts(i) || src == nil || nilSystemAdapter(dst) {
 		return Prepared{}, ErrDenied
 	}
 	grant, err := p.authority.authorizeKey(ctx, nil, &p.c.Transit.Key)

@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "scope": "Version-two isolated index DDL same-stream before/after writer baselines",
+  "measurement_version": 2,
+  "production_approved": false,
+  "real_mysql_run": false,
+  "dependency_installation": false,
+  "checks": {
+    "tagged_seed_and_default_vet": "PASS",
+    "go_top_level_tests": 1,
+    "go_named_checks_including_subtests": 10,
+    "linux_tagged_index_probe_compile": "PASS",
+    "reporter_node_tests": 36,
+    "reporter_node_tests_status": "PASS",
+    "original_measured_report_byte_structure_preserved": "PASS (parsed JSON equality)",
+    "local_handoff_links": "PASS",
+    "exit": 0
+  },
+  "binary_sha256": {
+    "index_mysql_probe": "ba5661274b2ea62a582b0654d9465bfcfe691b45e86f0d2cc5502857b3b9e285"
+  },
+  "transcript": {
+    "path": "docs/evidence/system-backup-d-index-writer-baseline-local-20261014.txt",
+    "sha256": "8e3e43866b7cb2848434d335117582628a1a14ea66c4057f40528d91fa4cfa56"
+  },
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupread/page_index_mysql_test.go",
+      "sha256": "f67e9df554a91ece3726b9b566fd21743d19712f33c39c823e9e6795016e2dd2"
+    },
+    {
+      "path": "backend/internal/systembackupread/page_sql.go",
+      "sha256": "f4ddd3f51b6d3bc3767b520c2b78f860503ec6937a67239b2b56db5a5c458a15"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.mjs",
+      "sha256": "a5105efd16ad3ed61024c6772e8209bac1be26c06da7dc27152488fad2f82e9c"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.test.mjs",
+      "sha256": "c756c226d01022c5cfd0a5ae02156216ef0de24e23549229282c3cd5918ecb53"
+    }
+  ],
+  "cleanup": {
+    "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-62aa2bdf546742eeb99f1eebb3c7d55c",
+    "reported": true,
+    "directory_absent": true,
+    "retained_build_products": false
+  },
+  "remote_pending": [
+    "Version-two complete same-run scope and baseline/DDL/baseline measurements",
+    "171 before/after result pairs and unchanged source schema",
+    "Current A authority/full-schema/HTTP probe PASS and hashes",
+    "Matching run-owned database, namespace UID and both ends scratch/cache cleanup",
+    "D_ADMIN_READ_INDEX_REMOTE_EXIT=0 and complete version-two report"
+  ],
+  "limitations": [
+    "No new MySQL or remote run; local fixtures are not measurements",
+    "Ratios are sequential synthetic observations, not causal or production blocking budgets",
+    "Index grouping, representative distributions, true FK/concurrent workloads and formal migration remain pending",
+    "Scoped source manifest does not freeze the complete dependency graph"
+  ]
+}

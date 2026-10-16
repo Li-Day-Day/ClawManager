@@ -30,7 +30,9 @@ type DetachedEvidenceScope struct {
 // returning plaintext or retaining more than one chunk. It never treats a
 // missing/uncertain provider response as proof of absence or health.
 func VerifyDetachedEvidence(ctx context.Context, scope DetachedEvidenceScope, m Manifest, ref Ref, source VerifiedObjectReader, keys Keys) error {
-	if validateManifest(m) != nil || !ref.valid(true) {
+	var err error
+	m, err = snapshotReadManifest(m)
+	if err != nil || !ref.valid(true) {
 		return ErrIntegrity
 	}
 	if ctx == nil || nilSystemAdapter(source) || nilSystemAdapter(keys) || ctx.Err() != nil ||
@@ -43,8 +45,11 @@ func VerifyDetachedEvidence(ctx context.Context, scope DetachedEvidenceScope, m 
 		return ErrIntegrity
 	}
 	checkObject := func() error {
+		if ctx.Err() != nil {
+			return ErrUnavailable
+		}
 		info, err := source.Stat(ctx, ref)
-		if err != nil {
+		if err != nil || ctx.Err() != nil {
 			return ErrUnavailable
 		}
 		if info.Version != ref.ImmutableVersion || info.SHA256 != m.ObjectHash || info.Size != m.ObjectSize {

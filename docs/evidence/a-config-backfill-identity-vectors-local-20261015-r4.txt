@@ -1,0 +1,52 @@
+**********************
+PowerShell transcript start
+Start time: 20261015143418
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& 'C:\Program Files\Go\bin\gofmt.exe' -w 'backend/internal/systembackupsecurity/config_backfill_identity.go' 'backend/internal/systembackupsecurity/config_backfill_identity_a_test.go'
+Start-Transcript -LiteralPath 'docs/evidence/a-config-backfill-identity-vectors-local-20261015-r4.txt' -NoClobber
+try {
+    & node '.\scripts\system-backup-a-config-backfill-identity.test.mjs' --replace-vectors 2>&1|ForEach-Object {Write-Host $_}
+    if($LASTEXITCODE -ne 0){throw 'Fixed decimal independent vectors failed'}
+} finally {Stop-Transcript}
+$identityDecimalExit=1
+Start-Transcript -LiteralPath 'docs/evidence/a-config-backfill-identity-local-20261015-r4.txt' -NoClobber
+try {
+    & '.\scripts\system-backup-a-config-backfill-identity-validation.ps1' -BuildParallelism 1 -SourceManifestPath (Join-Path $PWD 'docs/evidence/a-config-backfill-identity-source-20261015-r4.json')
+    $identityDecimalExit=0
+} finally {
+    Write-Host "a_config_backfill_identity_exit=$identityDecimalExit"
+    Stop-Transcript
+}
+exit $identityDecimalExit
+Process ID: 38032
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-backfill-identity-vectors-local-20261015-r4.txt
+✔ independent backfill identity vectors have exact JCS and SHA-256 (14.1647ms)
+✔ row fingerprint covers every formal 066 config column except the separately checked canonical field (7.0766ms)
+✔ row and provenance identities use separate domains and exact nullable/text facts (0.5358ms)
+✔ formal 066 CHECK constraints use UTF-8 byte limits and forbid empty nonnull reasons (30.7516ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 78.5028
+**********************
+PowerShell transcript end
+End time: 20261015143420
+**********************

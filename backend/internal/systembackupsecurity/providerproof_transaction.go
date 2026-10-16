@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"regexp"
 	"strconv"
 	"time"
@@ -145,6 +146,11 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 	if !errors.Is(err, sql.ErrNoRows) {
 		return empty, ErrProviderEvidenceStorage
 	}
+	// Committed retries above need no new proof. A fresh request with no proof
+	// has the contract's required classification, before key/nonce loading.
+	if reflect.DeepEqual(proof, Proof{}) {
+		return empty, &VerificationError{Code: FailureRequired, err: errors.New("strong-auth required")}
+	}
 	var now time.Time
 	var offset int64
 	if tx.QueryRowContext(ctx, `SELECT UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))`).Scan(&now, &offset) != nil || now.IsZero() || offset != 0 {
@@ -250,7 +256,15 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 func registrationBoundaryError(err error) error {
 	var auth *VerificationError
 	if errors.As(err, &auth) {
-		return &VerificationError{Code: auth.Code, err: errors.New("strong-auth rejected")}
+		if auth != nil {
+			switch auth.Code {
+			case FailureRequired, FailureInvalid, FailureInvalidIssuer, FailureExpired, FailureReplayed:
+				return &VerificationError{Code: auth.Code, err: errors.New("strong-auth rejected")}
+			}
+		}
+		// A typed error is not permission to publish an arbitrary adapter code.
+		// Nil and unknown classifications are unavailable, with no private cause.
+		return ErrRegistrationUnavailable
 	}
 	if errors.Is(err, ErrRegistrationPermission) {
 		return ErrRegistrationPermission

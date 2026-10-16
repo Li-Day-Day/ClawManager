@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "status": "failed",
+  "production_approved": false,
+  "transcript": {
+    "path": "docs/evidence/d-admin-read-index-mysql-remote-20261014-v2.txt",
+    "sha256": "ed611add7af274566179cf6aac28bf0100e9bc312cf4ca49dedcff0d1aeb1521"
+  },
+  "run": "sbk-mig-261014060237-5358",
+  "namespace_uid": "aaf327ff-679d-4f80-acda-43c2f89c2698",
+  "measurement_database": "didx_c1280eb1edeba7c584528634",
+  "observations_only": {
+    "index_probe_pass": true,
+    "measurement_version": 2,
+    "identical_query_pairs": 171,
+    "writer_baselines": [
+      {
+        "autocommit": true,
+        "ddl_in_progress": false,
+        "elapsed_us": 226072,
+        "insert_delete_pair_us": {
+          "p50": 2122,
+          "p95": 66715
+        },
+        "kind": "ddl_writer_baseline",
+        "phase": "before",
+        "table_write_pairs": {
+          "system_backup_artifact_verifications": 6,
+          "system_backup_operations": 6,
+          "system_backup_preflights": 6,
+          "system_backups": 6,
+          "system_restore_drills": 6
+        },
+        "write_pairs": 30
+      },
+      {
+        "autocommit": true,
+        "ddl_in_progress": false,
+        "elapsed_us": 203121,
+        "insert_delete_pair_us": {
+          "p50": 2469,
+          "p95": 60324
+        },
+        "kind": "ddl_writer_baseline",
+        "phase": "after",
+        "table_write_pairs": {
+          "system_backup_artifact_verifications": 6,
+          "system_backup_operations": 6,
+          "system_backup_preflights": 6,
+          "system_backups": 6,
+          "system_restore_drills": 6
+        },
+        "write_pairs": 30
+      }
+    ],
+    "ddl": {
+      "concurrent_writes_measured": true,
+      "elapsed_us": 1701391,
+      "insert_delete_pair_us": {
+        "p50": 2846,
+        "p95": 91527
+      },
+      "kind": "ddl",
+      "overlapping_insert_delete_pair_us": {
+        "p50": 2846,
+        "p95": 91527
+      },
+      "overlapping_table_write_pairs": {
+        "system_backup_artifact_verifications": 19,
+        "system_backup_operations": 19,
+        "system_backup_preflights": 19,
+        "system_backups": 18,
+        "system_restore_drills": 19
+      },
+      "overlapping_write_pairs": 94,
+      "table_write_pairs": {
+        "system_backup_artifact_verifications": 19,
+        "system_backup_operations": 19,
+        "system_backup_preflights": 19,
+        "system_backups": 19,
+        "system_restore_drills": 19
+      },
+      "write_pairs": 95,
+      "writer_loop_limit": 10000
+    },
+    "authority_probe_pass": true,
+    "full_schema_probe_pass": true,
+    "full_schema_subtests_pass": [
+      "task_execution_scoped_attempts_and_progress",
+      "overview_control_complete_counts_and_installation_isolation",
+      "overview_current_promotion_binding_and_availability_loss"
+    ]
+  },
+  "failure": {
+    "test": "TestDAdminReadLiveHTTPMySQL",
+    "mysql_code": 1062,
+    "key": "system_backups.uk_sb_backup_public",
+    "public_id": "sbk_00000000-0000-4000-8000-000000000091",
+    "reason": "Sequential full-schema promotion fixture and live HTTP fixture reused a globally unique public_id in the same migrated database",
+    "remote_command_exit": 1,
+    "final_wrapper_exit_zero": false
+  },
+  "cleanup_reported": {
+    "measurement_database": true,
+    "namespace_uid": true,
+    "remote_scratch": true,
+    "local_cache": true,
+    "actual_pending_marker": false
+  },
+  "reporter_before_fix": "Cleanup remains pending: exception guidance was misclassified as an emitted cleanup marker",
+  "reporter_after_fix": "Final wrapper exit=0 missing: failed run remains rejected",
+  "remediation": {
+    "full_schema_resource_uuid_prefix": "000000d1",
+    "live_http_resource_uuid_prefix": "00000000",
+    "preserve_failed_transcript": true,
+    "remote_rerun_by_operator_only": true,
+    "next_transcript": "docs/evidence/d-admin-read-index-mysql-remote-20261014-v2-r2.txt"
+  },
+  "limitations": [
+    "Failure audit, not a successful full profile receipt or approved index report",
+    "Reported cleanup from operator transcript; no new remote inspection performed",
+    "Passing subtests do not establish production Owner adapters or approval"
+  ]
+}

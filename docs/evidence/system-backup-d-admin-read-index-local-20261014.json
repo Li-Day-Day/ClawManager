@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-14",
+  "scope": "D admin page index candidate local tests and Linux compilation",
+  "remote_mysql_run": false,
+  "production_migration_approved": false,
+  "dependency_installation": false,
+  "validation_script_exit_code": 0,
+  "checks": [
+    "A SystemBackupReadScope tests and vet",
+    "D systembackupread package tests and vet",
+    "Gin live read source tests and vet",
+    "A admin read MySQL seed without database",
+    "final D index seed/schema/input/distribution/percentile tests and vet",
+    "Linux A/D MySQL probe compilation",
+    "Linux Gin HTTP probe compilation",
+    "Linux D index MySQL probe compilation",
+    "Linux migration runner compilation",
+    "PowerShell syntax",
+    "Git Bash syntax",
+    "Node shared contract 70/70",
+    "Node index report 16/16",
+    "D normalization review input hashes unchanged"
+  ],
+  "binary_sha256": {
+    "index": "ac08bf5d3aecc8b4d8beb5f96203a57aa32eb686e62f53e9db7a6172ae49e7d9",
+    "authority": "d9782a5dc362e077e5c11af93ba570450e431aaee4bac5292b3e2e2a6179bc79",
+    "http": "bb25d8eb9ceea33c2414b077a70fc32f6867987c2376e1335ec70b59f62b28a8",
+    "migration": "0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab"
+  },
+  "index_ddl_normalized_sha256": "ed1d7a7b64375b69dd34e25f588afad87d7c4bbd4600e8e0e915c93d869a4874",
+  "cleanup": {
+    "script_reported": true,
+    "owned_directory_absent": true,
+    "build_products_retained": false
+  },
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupread/page_index_mysql_test.go",
+      "sha256": "24291e8600f79ea94cc2bdb8f4a13fb5dd5b2d6cd45a1d1e1a87e1c67feaaab6"
+    },
+    {
+      "path": "backend/internal/systembackupread/page_sql.go",
+      "sha256": "f4ddd3f51b6d3bc3767b520c2b78f860503ec6937a67239b2b56db5a5c458a15"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_pages.go",
+      "sha256": "54d677011d3e6429e3d8c50e71759b55d437a00db0a6087d86438a7826b19907"
+    },
+    {
+      "path": "backend/internal/systembackupread/operation_list.go",
+      "sha256": "14301f3cbaa16fbabcea971ae8b5fb6ada3d83624d8f3021b18f3a762bd304ab"
+    },
+    {
+      "path": "scripts/system-backup-a-admin-read-phase.sh",
+      "sha256": "3c820ad8c490aaaca0da1ee67f4f7af7470085026b9a8ba0e0af767b666ab96f"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "6b3bce8a3c7393f25eb81cc3fc03f9ba9a4cd6651f39d45456acd5768b51f990"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.mjs",
+      "sha256": "8764b9f89c74c835c4add437cd32de13b3d9c870722e7b532415322aeb929e60"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.test.mjs",
+      "sha256": "96feb56ebf4961205e49435e39c0a27189f343b346e29a3b5a54e60e8af8527e"
+    },
+    {
+      "path": "docs/system-backup-d-admin-read-index-candidate-20261012.sql",
+      "sha256": "ed1d7a7b64375b69dd34e25f588afad87d7c4bbd4600e8e0e915c93d869a4874"
+    }
+  ]
+}

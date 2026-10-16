@@ -1,0 +1,26 @@
+{
+  "kind": "a_config_operation_binding_failed_frozen_gate",
+  "date": "2026-10-15",
+  "status": "target_and_counterfactual_pass_full_regression_failed",
+  "log": "docs/evidence/a-config-operation-binding-local-20261015.txt",
+  "log_sha256": "cd4e0b56a646b11dbe450a6a0850126d0850cf42859cd35ebe8fad3ca75a29da",
+  "source": "docs/evidence/a-config-operation-binding-source-20261015.json",
+  "source_sha256": "9559eda70430f49c2787990d27134fc0a8749ea6b6944502112005352383789c",
+  "source_files": 1222,
+  "exit": 1,
+  "targeted_main": 2,
+  "targeted_sub": 6,
+  "expected_counterfactual_failures": 2,
+  "actual_full_failure": "TestConfigMutationACommitClockAfterFinalBoundaries/session-expiry",
+  "failure": "Operation response deadline now capped by session expiry masked permission denial as generic unavailable",
+  "repair": "Prioritize expired authenticated session after final fresh-clock/monotonicity check, before generic readiness deadlines; do not weaken the existing test",
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-18969584f856492e85da1d4950d77351",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-11f89cc8ff46493ba8f1ed5568f1feab"
+  ],
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "mysql_run": false,
+  "production_approved": false
+}

@@ -1,0 +1,33 @@
+crypto/internal/fips140deps/cpu: C:\Program Files\Go\pkg\tool\windows_amd64\vet.exe: exit status 0xc0000043
+=== RUN   TestConfigMutationACommitClockAfterFinalBoundaries
+=== RUN   TestConfigMutationACommitClockAfterFinalBoundaries/operation-deadline
+    config_mutation_a_contract_test.go:81: rejected final facts committed configuration/nonce/audit: err=<nil> status=200 rows=2 writes=[audit audit config cas evidence operation audit]
+=== RUN   TestConfigMutationACommitClockAfterFinalBoundaries/session-expiry
+    config_mutation_a_contract_test.go:81: rejected final facts committed configuration/nonce/audit: err=<nil> status=200 rows=2 writes=[audit audit config cas evidence operation audit]
+=== RUN   TestConfigMutationACommitClockAfterFinalBoundaries/still-valid
+--- FAIL: TestConfigMutationACommitClockAfterFinalBoundaries (2.12s)
+    --- FAIL: TestConfigMutationACommitClockAfterFinalBoundaries/operation-deadline (2.02s)
+    --- FAIL: TestConfigMutationACommitClockAfterFinalBoundaries/session-expiry (0.07s)
+    --- PASS: TestConfigMutationACommitClockAfterFinalBoundaries/still-valid (0.03s)
+=== RUN   TestConfigMutationAStrongAuthFinalFacts
+=== RUN   TestConfigMutationAStrongAuthFinalFacts/proof-expiry
+    config_mutation_a_contract_test.go:145: rejected final facts committed configuration/nonce/audit: err=<nil> status=200 rows=2 writes=[audit audit config cas evidence operation nonce audit]
+=== RUN   TestConfigMutationAStrongAuthFinalFacts/mfa-age
+    config_mutation_a_contract_test.go:145: rejected final facts committed configuration/nonce/audit: err=<nil> status=200 rows=2 writes=[audit audit config cas evidence operation nonce audit]
+=== RUN   TestConfigMutationAStrongAuthFinalFacts/active-nonce-key-drift
+    config_mutation_a_contract_test.go:145: rejected final facts committed configuration/nonce/audit: err=<nil> status=200 rows=2 writes=[audit audit config cas evidence operation nonce audit]
+=== RUN   TestConfigMutationAStrongAuthFinalFacts/historical-nonce-key-drift
+    config_mutation_a_contract_test.go:145: rejected final facts committed configuration/nonce/audit: err=<nil> status=200 rows=2 writes=[audit audit config cas evidence operation nonce audit]
+=== RUN   TestConfigMutationAStrongAuthFinalFacts/still-valid
+--- FAIL: TestConfigMutationAStrongAuthFinalFacts (0.85s)
+    --- FAIL: TestConfigMutationAStrongAuthFinalFacts/proof-expiry (0.05s)
+    --- FAIL: TestConfigMutationAStrongAuthFinalFacts/mfa-age (0.17s)
+    --- FAIL: TestConfigMutationAStrongAuthFinalFacts/active-nonce-key-drift (0.53s)
+    --- FAIL: TestConfigMutationAStrongAuthFinalFacts/historical-nonce-key-drift (0.05s)
+    --- PASS: TestConfigMutationAStrongAuthFinalFacts/still-valid (0.04s)
+=== RUN   TestConfigMutationAReplaySessionExpiresDuringFinalAuthority
+    config_mutation_a_contract_test.go:176: expired replay returned response or changed committed operation <nil> 200 [audit audit config cas evidence operation audit]
+--- FAIL: TestConfigMutationAReplaySessionExpiresDuringFinalAuthority (0.85s)
+FAIL
+FAIL	clawreef/internal/systembackupsecurity	9.376s
+FAIL

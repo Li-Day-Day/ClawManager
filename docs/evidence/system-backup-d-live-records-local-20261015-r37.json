@@ -1,0 +1,179 @@
+{
+  "kind": "d_independent_live_records_local_candidate",
+  "recorded_at": "2026-10-15T09:50:39.8524669Z",
+  "status": "node_regression_and_i18n_pass_operator_build_screenshots_pending",
+  "raw_log": "docs/evidence/system-backup-d-live-records-local-20261015-r37.txt",
+  "raw_sha256": "0f00a7d87ee3b55d38a450fd9270da5e20124941230135d387a02cf5a3d72d52",
+  "command": "node --test-isolation=none --test frontend/scripts/system-backups.test.mjs frontend/scripts/system-backups-live-detail.test.mjs frontend/scripts/system-backups-live-activity.test.mjs frontend/scripts/system-backups-live-config.test.mjs frontend/scripts/system-backups-live-records.test.mjs frontend/scripts/system-backups-i18n.test.mjs",
+  "exit_code": 0,
+  "tests": 180,
+  "passed": 180,
+  "failed": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "normal_runs": 1,
+  "retries": 0,
+  "new_main_tests": 15,
+  "new_subtests": 25,
+  "source_pins_scope": "post-run source and reference pins; not frozen build manifest or evidence of unchanged inputs during run",
+  "source_pins": [
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "sha256": "e332f361bacae48a9ccb0cb6af0517b78985d7772853bf0000cc8ee147ee74dc"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_list.go",
+      "sha256": "11e2642d476845eacac2bd8de3c51bf1ed63b280e115d58546e690e5c8c3b899"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_projection.go",
+      "sha256": "f1401f31e2dfec5b0fc67396f944ccec861c6eb78d44336203822fb0f3ef67e1"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-activity-resources.schema.json",
+      "sha256": "035633cde22b5f4deffb61cfcc370014c7ba5a9066c9d0123c3d5eadcbf2797f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-api-common.schema.json",
+      "sha256": "40a8cbafbfa4697835901eea4fad8b5e8fd4a6eb287fa4f866992e848b16a990"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-redacted-examples.json",
+      "sha256": "51a28169fd6b5ac15af4a076c62fa7b70e5e8023c892931214a3a713a5f7063f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-errors.json",
+      "sha256": "ca0877f799600cba34d7fef0966b8757ff7f6975539da98c0e9d19ca4df72b83"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "sha256": "22d92c3586c5c1b9f6e30e4cf9f433196f3fa851421fa538ee62173a3004b5ad"
+    },
+    {
+      "path": "frontend/scripts/system-backups-i18n.test.mjs",
+      "sha256": "2563d428c1aa574bec698e3a4edf37ddc111963d2318daa7d94b3b86291f7c5d"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-activity.test.mjs",
+      "sha256": "1f1d61627a4269bc386130af0c1ac370e7f50a566f7014a1b45d2fe4a7a53935"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-config.test.mjs",
+      "sha256": "38ced246a760ab04be6c4a6e3ad0ae497addfc20bc94fec69c96c3b57bb861a8"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-detail.test.mjs",
+      "sha256": "b09ba6bf384788bccf0cb6fe7ab9d996acd51ba7ea0fe375820d02d249a03156"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-records.test.mjs",
+      "sha256": "a08973b07d264089d81d9080cd5e6b7a81e0067db3d20986f122696377492cb6"
+    },
+    {
+      "path": "frontend/scripts/system-backups.test.mjs",
+      "sha256": "172b8d5a4914e8367d5d74a0f7057667b12301f5433d79db52268f2ce37b53a3"
+    },
+    {
+      "path": "frontend/src/lib/systemBackupI18n.ts",
+      "sha256": "58decad888adaed4e94eb2d07901c9296ee474eda17c32af58881fea39f84090"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupApiRead.ts",
+      "sha256": "cba2ce7bb4ffac69dca47c864a86c42b7b226ead6ce05db129c77d0af312d524"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveActivity.ts",
+      "sha256": "a993349ad23fd07fb8d8534222b16cf917f1854cbb5c65b642129d5e7cde7fc6"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveActivity.tsx",
+      "sha256": "57b071c1df7214718b566c5e3857312442fbd48431c8c0825a41faa6e5b44b69"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveConfig.ts",
+      "sha256": "ac3eaa1a933a22dc91994327bc0a5b7dfda51e9782fa3fe08f97ff23e7455035"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveConfigHistory.tsx",
+      "sha256": "f98f507bdd5cc32c00513222bb3e407d2d89f14246a96889fdb3dc966d679888"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveDetail.ts",
+      "sha256": "c44592bb7eb7635ef4c687dc56932fe97f69559190c6077c1dfc7f1ce3bc772b"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveDetail.tsx",
+      "sha256": "f5580a0a7a4f605a0379fc75bd0854a859c178d1be6cbaeafdd9a6ce701ccd83"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveRecords.ts",
+      "sha256": "d8606b4da0cd686ce96640ba14ccab4acdf5326864135565c05c5b4e6ce92385"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+      "sha256": "569a4dca6959dd5c7ec1afc893d180c42cc53d009a2961c78540b24b81c65a6e"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupOverviewReadout.tsx",
+      "sha256": "c63110e0acbadab0325d867b1464059df4bca593c9a8db8e628d834553c63481"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupPreview.ts",
+      "sha256": "4dc6b7536071ba09642ffad2d078dc809fd11f689ca4300f8cfd085a4237e2ab"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupReadModel.ts",
+      "sha256": "c56658618488ae5a4ee0c146c0ebcec6868eb690ac9a521d48012bbec4a37d66"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/SystemBackupsPage.tsx",
+      "sha256": "65baf891e7c97a469337d463b47c64fc269a2df2d71c50f4a1ce8c1653bfa8bb"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/useBackupText.ts",
+      "sha256": "90a90e149b2cf5aa71e524ef3727dc3a3951a11b32100c117cac2fa5c88522fd"
+    },
+    {
+      "path": "frontend/src/router/index.tsx",
+      "sha256": "7cf31da5055541f6ccc12a92448d12cb799aa175bf47182aae9720bdbfb48ea6"
+    },
+    {
+      "path": "frontend/src/services/systemBackupReadService.ts",
+      "sha256": "496931f4dde8b5203279dc0746f3c07c74179a2f84fae52b213c9290c935cd80"
+    },
+    {
+      "path": "frontend/src/types/systemBackupContract.ts",
+      "sha256": "be8642700b263dd74798e014f1ae7d153c6dd8c4491b6323c35468f1b359c0f2"
+    }
+  ],
+  "coverage": [
+    "overview 503/not_ready exposes independently validated config and four task lists",
+    "per-resource unavailable distinct from authenticated empty list",
+    "all resources unavailable retains unavailable state",
+    "401/403/other errors do not publish partial records; fixture does not become live",
+    "config availability/install/version/row/effective baseline checked before and after reads",
+    "config baseline primitives copied before async callbacks",
+    "installation checked across config and nonempty task pages; unknown stays null",
+    "opaque cursor pagination rejects duplicates, loops, consistency drift and cross-installation",
+    "aborted initial reads and continuation discarded",
+    "full overview read resumes after source recovery",
+    "existing detail/activity/config-history and five-language regressions"
+  ],
+  "limits": [
+    "mock HTTP responses only; no actual API, MySQL or B/A/C/D end-to-end run",
+    "no TSX type checking, full frontend build, React rendering or browser verification",
+    "backend overview/detail/activity Owner sources remain not_ready",
+    "records do not provide health, recovery readiness or global counters",
+    "production grant and old canonical originals still absent",
+    "six original scopes remain incomplete"
+  ],
+  "dependencies_installed": false,
+  "frontend_node_modules_present": false,
+  "build_artifacts_created": false,
+  "build_artifact_cleanup": "not applicable: Node tests created no build products; raw evidence retained",
+  "production_approval": false
+}
