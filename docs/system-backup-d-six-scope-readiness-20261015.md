@@ -1,5 +1,43 @@
 # D 六项原始范围的当前验收审计
 
+【2026-10-20 r87 直接引用组件收尾与暂停】[本轮交接](system-backup-d-download-gc-direct-references-20261020.md)接收 collector 必需直接引用目录及闭合 metadata/FK 守卫，当前 GC 24/308 加 A 独立对照 1/4、producer seed/脱离各 22、Windows/Linux probe/runner、默认 vet、最终 postcheck/退出 0 通过。[独立回执](evidence/d-download-gc-direct-20261020-r87-review.json)按未变测试与当前受影响测试分轮接收集合 729/5,925；保留整体失败，不声明单次完整四包成功。1,445 输入接收时零漂移，十个自有目录/构建产物清理，无安装或远端执行。完整 policy、其他业务依赖/原绑定、实际 InnoDB/权限/DDL freeze、现场物理预算和生产启用仍缺，原六项未完成；按用户要求本轮后暂停。producer 十八项实际回执仍待操作者回传，已接收四任务十二项不重跑。
+
+【2026-10-20 r78 GC 任务资格增量】[独立复核](evidence/d-download-gc-task-20261020-r78-review.json)接收四任务/local backup 的原期限、终态、artifact/hold、inventory、lease/state、promotion/retry 具体 SQL 守卫与 collector 回滚模型：新六根/117、全部 GC 18/242；r77 四完整包 **722/5,855**通过，后续 Linux 编译异常整体 exit 1 保留，r78 准确同源补齐三 seed/脱离各 22、跨平台 probe/runner、最终 postcheck/退出 0。1,442 输入接收时零漂移，五快照/一缓存清理，无安装/远端执行。[组件边界](system-backup-d-download-gc-task-eligibility-20261020.md)仍缺其他直接/逻辑引用、system 原绑定、完整 policy、实际 InnoDB/受限账号/DDL freeze、物理预算及生产启用；原六项继续未完成。producer 十八项实际回执仍待操作者回传，已接收四任务十二项不重跑。
+
+【2026-10-20 r73 GC 前置增量】[独立复核](evidence/d-download-gc-early-20261020-r73-review.json)接收必需早期审计引用/直接授权/结构指纹守卫：GC 十二根/125、四完整包 **716/5,738**、producer 三 seed/脱离各 22、跨平台构建、冻结 postcheck/退出 0；1,437 输入当前零漂移，三自有目录与七份暂存草稿已清理，无安装/远端执行。该阶段为候选 config→receipt→user/group 锁序和模型权限验证，不覆盖完整 owner/ref/hold、实际 InnoDB/受限账号/触发器及 DDL freeze、物理容量或生产启用；原六项保持未完成。已接收四任务十二项不重跑；producer 十八项尚无新的实际回执。
+
+【2026-10-20 GC 本地候选及 producer 门禁修正接收】[独立复核](evidence/d-download-retention-gc-20261020-r71-review.json)接收 r70 两完整包 561/4,383、GC 七根/73/native HTTP 一根/5，r71 同来源完成 producer 三 seed/22、tagged seed/22、脱离源码/22、跨平台 probe/runner、最终 postcheck/退出 0；1,429 输入当前零漂移，十个准确自有目录已清理。r68 四包失败及 r70 编译器异常导致的整体 exit 1 均保留，不声称单次四包整轮成功。[GC 范围](system-backup-d-download-retention-gc-20261020.md)实际 owner/ref/hold/当前授权适配器、InnoDB/FK/最小权限、物理容量、批次与墓碑二次回收仍缺，没有生产启用。[producer 用户失败](evidence/d-download-producer-local-failure-20261020-104149.json)仅为旧 HTTP/2 三秒成功夹具，十八项远端未开始；修正后可按新命令重试。旧四任务十二项接收不受影响，原六项继续未完成。
+
+【2026-10-20 四任务实际 SQL 增量接收】[原始回执独立复核](evidence/d-download-task-chain-actual-accepted-20261020.json)已接收用户冻结 1,424 输入的十二叶子/一个 root，MySQL 8.4.8、具体 `SQLTaskDownloadOwners`、两类准确连接引用锁、全部 pin/95 文件/原 UID、十二子库及两端清理、postcheck/最终退出 0。该专项不再待跑；其任务、issuer/容量材料及 provider transport 为隔离测试，当前十份部署/容量变化单列。producer 十八项实际 SQL、完整 GC 与真实引用保护、现场身份/物理预算/权限、生产装配/历史/四矩阵及六项整体仍未完成。
+
+【2026-10-20 下载本地门禁修复与新冻结命令】[独立交接](system-backup-d-download-journal-windows-20261020.md)修正 Windows 打开文件替换夹具，补相同字节/大小及直接追加反例；D 同时负责原 producer 编译竞态，未把两轮本地失败算成远端执行。原冻结五完整包 709/5,624、四 seed/脱离各 19、跨平台 probe/runner及 postcheck/退出 0；新的冻结入口实际本地两包 553/4,309、seed/脱离各 19、编译/postcheck/退出 0，四个自有目录均清理。当前 A registration HTTPS 主入口新增/修改三份来源不由该冻结背书，原六项仍未完成。四任务十二项和 producer 十八项的新命令各自从固定副本运行，仍待用户实际远测及 D 接收，旧 MFA 九项/准入结果二十四项不重跑。
+
+【2026-10-20 producer 新专项原冻结准备接收】[十八项交接](system-backup-d-download-producer-mysql-20261020.md)与前一轮四任务十二项分开：新增真实 C1 scope/完整投影、历史写期限/撤销状态读取、manifest/receipt 独立核对、实际行锁/空区间和回滚探针。r59 原 1,415 来源五完整包 700/5,569、三 seed/脱离各 22、Windows/Linux probe/runner 与 postcheck/退出 0，六个准确自有目录均已清理。当前七份并发 journal 差异明确不由原冻结覆盖，用户命令先重验当前来源；实际十八项尚待用户运行，未据本地或新 journal 候选关闭原六项。
+
+【2026-10-19 四任务下载链新十二项已准备】[新专项及用户执行命令](system-backup-d-download-task-chain-mysql-20261019.md)复用具体四任务表，补完整准入/HTTP/provider 策略/独立结果、迟到 owner 回滚及准确连接的逻辑引用等待。r53 四完整包 693/5,532 及原冻结跨平台 probe 通过；r54 另对幂等键修正后的当前 1,408 来源执行四 seed/脱离各 19 项并清理。真实十二项仍待用户运行及 D 独立接收，未执行 SSH；它不覆盖 producer 实际锁/投影、现场物理材料、正式权限或原六项整体。
+
+【2026-10-19 二十四项实际 SQL 接收】[D 原始回执复核](evidence/d-download-admission-actual-accepted-20261019.json)接收原 F8 冻结的十三准入加十一结果/组叶子、两 root、24 子库、95 文件与准确 pin/原 UID/两端清理/退出 0。生产及 SQL probe 当前匹配，普通测试三处异常返回另由 r52 接收；该专项和 MFA 九项不再待跑。实际 owner/材料/容量/provider 仍 synthetic，真实四任务/producer 引用范围、正式 schema/grants/组 GC/墓碑、现场身份/卷/物理预算、生产装配/历史/四矩阵及原六项继续未完成，下方旧“二十四项待回执”保留为接收前状态。
+
+【2026-10-19 r52 持久组接收】[SQL 保留组事实/摘要与结果事务](system-backup-d-download-retention-group-20261019.md)已补有界持久重建、十九 nonce 关联、严格 audit、同数据库/事务与共享失败后不复活；缺结果不给完整摘要。[r52](evidence/d-download-retention-group-packages-20261019-r52-review.json)四完整包 693/5,532、新七根/109、seed/脱离 checkout 各 12、Windows/Linux 构建、冻结 postcheck/退出 0，1,402 来源当前零漂移与六目录清理均通过，无依赖安装。MFA 九项真实 SQL 已独立接收，不重复该原签发专项；本轮新完整准入十三加结果/组十一项尚待自身实际回执。原 owner/正式迁移/权限/组 GC/物理容量/部署/历史/前后端及六项整体继续未完成；server 本轮未重跑。
+
+【2026-10-19 MFA 实际回执接收与持久事实增量】[D 独立接收 MFA 九项](evidence/d-download-mfa-actual-accepted-20261019.json)核对原冻结 1,399 输入、实际 MySQL 九叶子/root、95 文件 catalog、全部 pin、原 UID 和九子库/两端清理/退出 0；重点 MFA pin 当前无漂移。该专项关闭待跑，不扩大为人员 MFA、完整下载/结果/GC 或生产授权。新 [保留组持久读取](system-backup-d-download-retention-group-20261019.md)复核 SQL Operation/receipt/nonce/审计与摘要并接入结果事务，r49 定向 36/299、新七根/109 通过，r50 完整验证尚在进行；当前完整准入十三项及结果十一项实际 SQL 仍待同轮回执，原六项不缩减。
+
+【2026-10-19 r47 下载结果保留增量】[不可变结果关联/FK/准确原组与 L3 锁](system-backup-d-download-result-retention-20261019.md)已接候选结果事务，引用目录从 23 增至 25 列；不改原准入 receipt，也没有自动安装正式 schema/grants 或实现完整组 GC。五完整包含当前 server 692/5,435、新四根/36、tagged/脱离 checkout seed 各 12 项和 Windows/Linux probe/runner、冻结 postcheck/退出 0 均通过，三个自有目录清理、无依赖安装。[r47 复核](evidence/d-download-result-retention-packages-20261019-r47-review.json)只接收原 1,397 输入：当前原 Go/SQL/胶囊 pin 匹配，但 A 三份并发启动诊断脚本新增/变更以 exit 1 单列，不能声称当前全来源一致。原准入十三项及新结果八项实际 SQL 未执行；其他 owner、物理容量/身份、正式迁移/grants/GC 和原六项继续未完成。
+
+【2026-10-19 r45 最新下载范围】[producer 历史 owner/公开 claim 清理](system-backup-d-download-producer-owner-20261019.md)补四任务之外的 system/capability_snapshot 原 C1 绑定、显式 Root、streaming 引用和 L3/L4/L5 空区间修正，以及公开下载撤权/取消后的独立准确清理。[r45](evidence/d-download-producer-owner-packages-20261019-r45-review.json)四完整包 682/5,387，D 新十根/50、A 原绑定一根/6、native/body 三根/23，默认 vet/无跳过/退出 0；1,394 输入接收时零漂移及累计十五个自有目录清理。没有安装依赖；仍为 scripted SQL/行数据/容量/材料夹具，未验收实际 InnoDB、物理预算、部署 provider、正式 schema/grants/GC 或生产 main。其他 owner 缺原证据写入绑定时继续拒绝；原六项完整范围保持未完成，未重跑当前 server/前端/浏览器。
+
+【2026-10-19 四任务 owner/ref 候选更新】[实际任务行/原期限/hold/23 列引用与用途受限策略](system-backup-d-download-task-owner-20261019.md)已补当前会话/RBAC、chunk 前任务校验、L3/L4/L5 引用前缀及撤权后结果事务组合。[r32](evidence/d-download-task-owner-packages-20261019-r32-review.json)确认三个完整包 596/4,547、新增十根/66，默认 vet/无跳过/退出 0；1,388 来源当前零漂移，六个准确自有目录已清理。该阶段关闭四类任务 owner 查询实现待办，SQL transport/行数据/容量仍为模型；其他 owner 的真实来源、实际 InnoDB/元数据可见性/grants、物理预算、结果保留组 GC、正式迁移与生产装配仍未完成。原六项范围不缩减，本轮未重跑当前 server、前端或浏览器。
+
+【2026-10-19 HTTP/runtime 与结果候选更新】[原子准入到二进制响应、结果审计/claim CAS](system-backup-d-download-http-result-20261019.md)已接 runtime factory，私有下载不回落到旧行锁后 proof 回调；public/internal、头后撤权、准确错误决议、native HTTP/1/HTTP/2 deadline/擦除和 TLS STS/S3/Transit 均有模型范围回归。[r27](evidence/d-download-http-packages-20261019-r27-review.json)核对四完整包 592/4,493、D 新十三根/91 项与 A 新 native 两根/9 项、默认 vet/无跳过/退出 0；1,380 输入当前零漂移及六个准确自有目录清理齐全。下方“HTTP/runtime/结果审计尚未实现”按历史冻结范围保留；生产 main、真实 owner/容量、完整 MySQL、结果保留组 GC/grants、正式迁移和原六项整体仍未完成。
+
+【2026-10-19 提交后下载候选更新】[绑定与 SQL/provider 检查](system-backup-d-download-committed-binding-20261019.md)已接封闭的单次提交后凭据、原期限/Range、完整配置/当前会话与原准入组复查、准确加密帧授权和回调后的独立最终读取。[r22](evidence/d-download-committed-packages-20261019-r22-review.json)接收三完整包 570/4,365，新八组/72 项及正常对象范围解密，默认 vet/无跳过/退出 0；1,374 来源当前无漂移，两个源码快照和外部自有缓存均已清理。该候选尚未由 HTTP/runtime 强制启用，结果审计、实际 owner/物理预算、正式 schema/grants 与整链真实 MySQL仍缺；原六项整体未关闭。
+
+【2026-10-19 公共读取候选更新】[下载准入公共 Operation 与 GET 合同](system-backup-d-download-public-read-20261019.md)已接草案 enum/严格 schema、原授权 SQL 列表详情和前端客户端/五语言，条件 proof/key 与二进制 200/206 已声明。[r18](evidence/d-download-public-review-20261019-r18.json)核对 Go security/evidence/read 全包 560 主/4,275 含子项、Node 355、同一 277 前端输入的 TypeScript/Vite 分阶段构建、共 1,691 输入无漂移及八个自有目录清理；首轮导入环、缺冻结输入、编译器退出和 runner loader 失败均保留。该候选关闭下方“公共 Operation enum/读源/前端尚未包含”的实现待办，未关闭正式评审/迁移、实际 owner/容量/整链 MySQL 或 HTTP/provider 接线；六项整体仍 active。
+
+【2026-10-19 下载整链候选更新】[事务服务与实际安全模块适配](system-backup-d-download-admission-transaction-20261019.md)已把 claim/nonce、Operation/receipt/audit、完整 config/材料/会话/容量检查接成单一事务提交，并通过当前 server 同轮检查。[r13](evidence/d-download-admission-chain-review-20261019-r13.json)确认 1,356 来源、三个完整包 483/3,674、无跳过/默认 vet/退出 0、当前源码零漂移及两个准确自有目录清理。该结果仍是 native scripted SQL/synthetic owner/容量事实；不覆盖真实 InnoDB/物理预算/生产 owner。公共 Operation enum/读源/前端、新 schema/grants、HTTP/提交后 provider 和整链真实 MySQL仍待接通；六项整体未完成。下方旧“claim/nonce 未组合、当前 server 未整包接收”按原历史来源保留，不再描述本轮候选。
+
+【2026-10-19 恢复推进】[下载锁前缀、键锁与存储候选](system-backup-d-download-admission-locks-20261019.md)已落盘；包括部分锁、原 proof 绑定、准确 Operation/私有 receipt/公共快照写入及回读，不等于完整 nonce 原子准入。[r5 独立接收](evidence/d-download-admission-final-review-20261019-r5.json)确认两个完整包 462/3,548、1,343 冻结来源、当前零漂移和五个准确目录清理通过。schema 未安装/批准，真实材料、完整事务与六项缺口仍保留。四类事件路由已接真实读取，新增事件/详情实际 SQL 验收仍待执行；下方旧 events 全部 503 的判断已更正。
+
 【2026-10-16 r61 本轮收尾，按用户要求随后暂停】[完整交接](system-backup-d-round-closeout-20261016-r61.md)记录 r57 两包 439/3,327 和清理 exit 0；r60 绑定相关 19/190 测试通过、原 wrapper 源码枚举 exit 1 保留，r61 同 1,330 来源独立 source-only postcheck/清理 exit 0；r54 完整旧 server 基线 6/12 与 Linux 构建/清理 exit 0，仅覆盖旧来源，当前漂移/新增未获整包接收。5 个专属容器、6 个专属目录均确认不存在。本轮不再有运行中的验证；完整 nonce 原子准入与六项原始范围仍未完成。
 
 【2026-10-16 r56/r57 收据内容推进】[私有 receipt/公共 Operation 内容组件](system-backup-d-download-admission-content-20261016.md)已实现严格闭集 JCS、独立摘要/长度/事实比对；新增 4 主/80 含子项通过。r56 完整门禁因既有发布夹具的陈旧 SQL 时钟失败，exit 1 并清理，未接收为整包通过；仅修复测试夹具在新 claim 前的采样时刻并增加六秒慢设置回归，r57 正在复验。原 server r54 仍执行；完整预锁、持久 receipt/operation/nonce 原子准入及原六项范围继续未完成。
@@ -49,7 +87,7 @@
 
 ## 当前真实页面的具体限制
 
-`backend/cmd/server/system_backup_read_live.go` 已接入 active config、配置历史/单版本、四类任务列表与 Operation 列表/详情；总览、四类详情、任务 events/logs 和 catalog/prune/promotion 仍直接注册为 `503 not_ready`。
+`backend/cmd/server/system_backup_read_live.go` 已接入 active config、配置历史/单版本、四类任务列表、四类任务 events 与 Operation 列表/详情；总览、四类详情、任务 logs 和 catalog/prune/promotion 仍为 `503 not_ready`。事件可独立于完整详情读取，真实 SQL 新断言仍需验收，见[事件 API 交接](system-backup-d-event-api-20261016.md)。
 
 前端已分离总览与已接线记录：总览 503 时仍可读取当前配置、版本历史、四类列表和 Operation，独立资源按实际可用性显示。这一 r37/r40 修复和 r51 完整构建解除旧 overview-first/缺 tsc 阻断；仍缺 Owner 的总览、详情/活动来源继续显式 unavailable。示例模式及本地 API 夹具都不能证明当前安装的数据、授权或生产后端已经就绪。
 

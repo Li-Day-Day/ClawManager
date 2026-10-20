@@ -7,7 +7,7 @@ function Get-DIndexSourceFiles {
         $files=@(& rg --files --hidden backend contracts scripts docs)
         if($LASTEXITCODE -ne 0){throw 'Cannot enumerate grouped build inputs'}
         return @($files | ForEach-Object {$_.Replace('\','/')} | Where-Object {
-            ($_ -notmatch '^docs/' -or $_ -match '^docs/[^/]+\.sql$' -or $_ -in @('docs/system-backup-restore-schema-inventory.json','docs/evidence/a-config-canonical-request-vectors-20261014.json','docs/evidence/a-config-canonical-maintenance-digest-vectors-20261015.json','docs/evidence/system-backup-provider-issuer-d-issuer-d7f0a14ec84d78927620d25f.registry.json')) -and
+            ($_ -notmatch '^docs/' -or $_ -match '^docs/[^/]+\.sql$' -or $_ -in @('docs/system-backup-restore-schema-inventory.json','docs/evidence/a-config-canonical-request-vectors-20261014.json','docs/evidence/a-config-canonical-maintenance-digest-vectors-20261015.json','docs/evidence/system-backup-provider-issuer-d-issuer-d7f0a14ec84d78927620d25f.registry.json','docs/evidence/system-backup-d-sensitive-download-contract-20261016.json')) -and
             $_ -notmatch '(?:^|/)(?:\.git|node_modules|vendor|uploads|cache|dist|build|__pycache__)(?:/|$)' -and
             $_ -match '\.(?:go|mod|sum|sql|json|md|txt|sh|ps1|mjs|yaml|yml|tmpl|html|pem)$'
         } | Sort-Object -CaseSensitive)

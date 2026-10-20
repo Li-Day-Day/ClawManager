@@ -1,0 +1,108 @@
+{
+  "kind": "d_independent_mfa_nine_actual_mysql_acceptance",
+  "status": "accepted_frozen_mfa_issuance_nine_only",
+  "recorded_at": "2026-10-19T08:01:35.870Z",
+  "log": "docs/evidence/a-download-mfa-mysql-remote-20261019-153234-9c7cba5d.txt",
+  "log_sha256": "4791850e6e1af9f9d1ec62f69d0af0fe04c5aa929ab10bb2d22be900c51c470a",
+  "source": "docs/evidence/a-download-mfa-mysql-remote-source-20261019-153234-9c7cba5d.json",
+  "source_manifest_sha256": "17a543800b70e569c91e9b7a9e94d57dab14dd909b4828f3ab08d56a800c2b6c",
+  "source_files": 1399,
+  "source_sha256": "47a48cc3b11db4cebc3abbefbc17f3596c27a5dd378b3be91e5fa9289d103002",
+  "local_stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 253,
+      "all": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 283,
+      "all": 2135
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 1,
+      "all": 8
+    }
+  ],
+  "ordinary_main": 536,
+  "ordinary_all": 4120,
+  "seed_all": 8,
+  "detached_seed_all": 8,
+  "namespace": "sbk-mig-261019074200-5d04",
+  "namespace_uid": "85af61d4-eec0-42c5-9627-0ca132621fdb",
+  "mysql_version": "8.4.8",
+  "probe_sha256": "cec6de9e99641997bfa458e064a4bf6b0620c5a070d38120194cdb6cf9705895",
+  "inputs_sha256": "c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f",
+  "migration_runner_sha256": "01e90f585868e7b190605c6a32705a2741b5543f68fa951e418505b300568895",
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+  },
+  "actual_case_names": [
+    "http_issue_step_replay",
+    "concurrent_step_once",
+    "final_owner_revocation_rollback",
+    "final_manifest_change_rollback",
+    "audit_failure_rollback",
+    "unknown_actual_commit_no_proof",
+    "late_actual_commit_no_proof",
+    "original_material_expiry",
+    "observed_L0_wait_original_expiry"
+  ],
+  "actual_case_count": 9,
+  "cleaned_databases": [
+    "amfa_16da6547f6d36a8c76d0f5c5930f0632",
+    "amfa_ed7a9cec4ab4f4cedf66c9e79df30bd0",
+    "amfa_ee218569eeaa3b8383655f74d4516d7a",
+    "amfa_4883c7b144392212b1e5e9123f8743e6",
+    "amfa_34fa67947fc7b1a81d4bbc86be74befa",
+    "amfa_7724030e872d75b175c0a6d26c5823cc",
+    "amfa_7dfdf739d6fc8946ebde7e3a9361d828",
+    "amfa_62f826d706112c2b6ea2b0aa56994230",
+    "amfa_eee78d16a4fa8fe956f94e6ce6d6a2fd"
+  ],
+  "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2611d64df6b54ba2a950b0563411a030",
+  "local_owner_absent": true,
+  "current_mfa_focus_files": 280,
+  "current_mfa_focus_drift": [],
+  "current_pinned_drift": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_records.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_result.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_result_retention_mysql_test.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_result_retention_test.go",
+      "reason": "changed"
+    },
+    {
+      "path": "scripts/system-backup-a-download-admission-dispatch.test.ps1",
+      "reason": "changed"
+    },
+    {
+      "path": "scripts/system-backup-a-download-admission-phase.sh",
+      "reason": "changed"
+    }
+  ],
+  "newer_inputs_not_covered": true,
+  "actual_mysql": true,
+  "human_mfa": false,
+  "provider_read": false,
+  "admission_nonce_consumed": false,
+  "dependencies_installed_by_D": false,
+  "production_approved": false,
+  "limitations": "Executed synthetic MFA issuer/owner/material on actual isolated MySQL and original 95 migration catalog. Does not accept full download admission/result/retention group, newer D group reader, deployed providers, physical capacity, formal grants/GC, human MFA, production or original six scopes."
+}

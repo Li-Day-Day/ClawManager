@@ -1,0 +1,142 @@
+{
+  "kind": "d_download_historical_producer_owner_frozen_review",
+  "source_files": 1390,
+  "source_sha256": "a33c3334f36b74d23331f4add24d10d2f7e838ee1c4871dd07fcc25bc8430a31",
+  "capture_attempts": 1,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 253,
+      "all_pass": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 276,
+      "all_pass": 2077
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main_pass": 75,
+      "all_pass": 519
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "main_pass": 75,
+      "all_pass": 784
+    }
+  ],
+  "go_main_pass": 679,
+  "go_all_pass": 5365,
+  "new_roots": [
+    "TestProducerDownloadProjectionCatalogMatchesActualPersistenceDDL",
+    "TestProducerDownloadReceiptsAndHoldsBindOriginalEvidence",
+    "TestProducerDownloadRootIsConfiguredAndNeverInferred",
+    "TestProducerDownloadPreviewOriginalHistoryAndNoExecutionLease",
+    "TestProducerDownloadRejectsCorruptOrMissingHistory",
+    "TestProducerDownloadActualAdmissionProviderAndRevokedResult",
+    "TestProducerDownloadOptionalEmptyRangesRespectL3L4L5",
+    "TestProducerDownloadResultRejectsChangedOriginalBinding"
+  ],
+  "new_all_pass": 34,
+  "current_source_drift": [
+    {
+      "path": "scripts/system-backup-a-manifest-path.test.ps1",
+      "reason": "new"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "reason": "changed"
+    }
+  ],
+  "current_sources_match": false,
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-874929552c624792b9953f308c5a927c",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-948a4780ba07431ebf3a03759543e719",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-ba5ad3d11ee34c3c9d136cdd260edb1d",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-eae3d3fafa694aa5ab3228723123376c",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-152360456d0a45f4a2007130da553447",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-producer-owner-20261019-r33",
+      "exists": false
+    }
+  ],
+  "attempts": [
+    {
+      "prefix": "d-download-producer-owner-focused-20261019-r33",
+      "source_sha256": "cfcbe95497ec2c70dbd288a27dc21a4b90596caa9fe30ea05509ad51208fc0a9",
+      "go_sha256": "9e9eace9dc39928d97bae991a323ea751b42a6b97c6b2fd4f406fc2a41eb59b7",
+      "native_exit": 0,
+      "accepted_only_for_its_frozen_sources": true,
+      "preserved_failed_run": false
+    },
+    {
+      "prefix": "d-download-producer-owner-focused-20261019-r34",
+      "source_sha256": "33a72c7e309e037ad976608a07bd054db44a6e7f65a45dd8a32da35f05307414",
+      "go_sha256": "1e0d9620958070cb4be5c0412ca4d394f2b32c54040523fe812496f90aac7f07",
+      "native_exit": 0,
+      "accepted_only_for_its_frozen_sources": true,
+      "preserved_failed_run": false
+    },
+    {
+      "prefix": "d-download-producer-owner-packages-20261019-r35",
+      "source_sha256": "3490789dfdd85cb5f439021e38be55bfdbdf1af6909a20fbc8bd28dd653ad169",
+      "go_sha256": "c0412d10299cb8631d141bd1aad783f2cdbb27c8e4c069ea813be8a4f179dbcd",
+      "native_exit": 0,
+      "accepted_only_for_its_frozen_sources": true,
+      "preserved_failed_run": false
+    },
+    {
+      "prefix": "d-download-producer-owner-packages-20261019-r36",
+      "source_sha256": "ccda637b7658a246b2aada606e179409da3e29f0c847aa53c17a29dbd0e56ac9",
+      "go_sha256": "688bd2c2954ea44b90a3ebea96b7c21b4a8fbbe63a22488c2638fa3c69178e0a",
+      "native_exit": 1,
+      "accepted_only_for_its_frozen_sources": false,
+      "preserved_failed_run": true
+    },
+    {
+      "prefix": "d-download-producer-owner-packages-20261019-r37",
+      "source_sha256": "a33c3334f36b74d23331f4add24d10d2f7e838ee1c4871dd07fcc25bc8430a31",
+      "go_sha256": "70ba8c0874308832e7925b73057c051b4030651f74bfac79c1ab234f63aa1ae9",
+      "native_exit": 0,
+      "accepted_only_for_its_frozen_sources": true,
+      "preserved_failed_run": false
+    }
+  ],
+  "preceding_full_run": {
+    "prefix": "d-download-producer-owner-packages-20261019-r35",
+    "subsequent_inputs": [
+      "backend/internal/systembackupevidence/download_producer_owner_test.go",
+      "backend/internal/systembackupevidence/download_producer_owner.go",
+      "backend/internal/systembackupevidence/download_task_owner.go"
+    ],
+    "scope": "Before streaming receipt/ref scans and original manifest validation in independent result locking."
+  },
+  "log_hashes": {
+    "go": "70ba8c0874308832e7925b73057c051b4030651f74bfac79c1ab234f63aa1ae9",
+    "native": "6f1f9805f81d6921f992c6779f9ad90f0d07d876c11f893bfde2fb3d06d89d62",
+    "source": "a1ff6f0c648370761ecc5ba1941f8e7f48372de48e38e4391af77ecd5b0b48fe"
+  },
+  "installed_dependencies": false,
+  "actual_mysql": false,
+  "producer_codec_full_package_rerun": true,
+  "current_server_rerun": false,
+  "production_main_enabled": false,
+  "formal_schema_or_grants_installed": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Actual SQL owners for four tasks plus historical producer capability evidence, strict C1 projections, session/RBAC/config, atomic admission, committed SQL S3/frame/unwrap checks and independent result on scripted SQL and synthetic rows/reports/materials. No actual InnoDB/grants/GC, physical capacity, deployed provider, other owner write-deadline sources, production main, historical deployment or full original-goal acceptance."
+}

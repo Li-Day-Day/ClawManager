@@ -37,7 +37,7 @@ type SQLLoginSessions struct {
 
 // RevokeUserSessions uses the same database pin as issuance and refresh.
 func (s *SQLLoginSessions) RevokeUserSessions(ctx context.Context, userID int) error {
-	if s == nil {
+	if s == nil || s.db == nil {
 		return ErrLoginSessionUnavailable
 	}
 	return (SQLTOTPService{DB: s.db, DatabaseIdentity: &s.identity, InstallationID: s.installation}).RevokeUserSessions(ctx, userID)
@@ -50,8 +50,21 @@ func NewSQLLoginSessions(db *sql.DB, identity DatabaseIdentity, installation str
 	return &SQLLoginSessions{db: db, identity: identity, installation: installation, secret: append([]byte(nil), secret...)}, nil
 }
 
+// Close erases this recorder's owned key without closing the caller's DB.
+// The owner must drain all users of the recorder before Close.
+func (s *SQLLoginSessions) Close() {
+	if s == nil {
+		return
+	}
+	for n := range s.secret {
+		s.secret[n] = 0
+	}
+	s.secret = nil
+	s.db = nil
+}
+
 func (s *SQLLoginSessions) token(raw, kind string) (RegistrationActor, error) {
-	if len(raw) == 0 || len(raw) > 8192 {
+	if s == nil || len(s.secret) < 32 || len(raw) == 0 || len(raw) > 8192 {
 		return RegistrationActor{}, ErrLoginSessionRejected
 	}
 	var claims struct {
@@ -70,7 +83,7 @@ func (s *SQLLoginSessions) token(raw, kind string) (RegistrationActor, error) {
 // It never grants RBAC permissions or MFA, and does not turn a GET into session
 // enrollment. Refresh requires a still-live, credential-bound parent row.
 func (s *SQLLoginSessions) RecordPair(ctx context.Context, p LoginSessionPair) error {
-	if s == nil || p.UserID <= 0 || !providerHashPattern.MatchString(p.CredentialSHA256) || ctx.Err() != nil {
+	if s == nil || s.db == nil || len(s.secret) < 32 || p.UserID <= 0 || !providerHashPattern.MatchString(p.CredentialSHA256) || ctx == nil || ctx.Err() != nil {
 		return ErrLoginSessionRejected
 	}
 	access, err := s.token(p.AccessToken, "access")

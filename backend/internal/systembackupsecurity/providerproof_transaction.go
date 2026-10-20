@@ -225,15 +225,17 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 	if err != nil {
 		return empty, ErrRegistrationUnavailable
 	}
-	// Recheck age/expiry at the last write, not just at transaction start.
-	// A future auth_time accepted within skew must not violate ledger ordering.
+	// The ledger records server-side proof acceptance, not the issuer's signed
+	// auth_time (which may be in the future within the configured clock skew).
+	// Preserve the original age/expiry ceiling and reject a SQL clock that moved
+	// behind the actual verification sample while callbacks/writes were running.
 	res, err = tx.ExecContext(ctx, `INSERT INTO system_backup_strong_auth_nonces
 		(origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,
 		authenticated_at,expires_at,consumed_at,operation_id,audit_log_id,retain_until)
 		SELECT ?,?,?,?,?,?,?,?,?,?,?,UTC_TIMESTAMP(6),?,?,?
 		WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<? AND UTC_TIMESTAMP(6)<=?`,
 		s.InstallationID, registrationHash(proof.Payload.Issuer), registrationHash(actor.Subject), registrationHash(actor.Session), vr.NonceHMAC, vr.NonceHMACKeyVersion,
-		ProviderRegistrationEndpoint, digest, r.IdempotencyKey, authAt, expiresAt, operationID, intentID, expiresAt.Add(cfg.ControlRetention), authAt, expiresAt, authAt.Add(cfg.StrongAuthMaxAge+cfg.ClockSkew))
+		ProviderRegistrationEndpoint, digest, r.IdempotencyKey, now, expiresAt, operationID, intentID, expiresAt.Add(cfg.ControlRetention), now, expiresAt, authAt.Add(cfg.StrongAuthMaxAge).Add(cfg.ClockSkew))
 	if err != nil {
 		return empty, ErrProviderEvidenceStorage
 	}
@@ -254,6 +256,9 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 }
 
 func registrationBoundaryError(err error) error {
+	if err == ErrSensitiveDownloadRequest {
+		return ErrSensitiveDownloadRequest
+	}
 	var auth *VerificationError
 	if errors.As(err, &auth) {
 		if auth != nil {

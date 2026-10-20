@@ -1,0 +1,144 @@
+**********************
+PowerShell transcript start
+Start time: 20261019090437
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$aNonceRemotePrepLog=Join-Path $PWD.Path 'docs/evidence/a-nonce-mysql-local-preparation-20261019-r2.txt'
+$aNonceRemotePrepSource=Join-Path $PWD.Path 'docs/evidence/a-nonce-mysql-local-source-20261019-r2.json'
+$aNonceRemotePrepExit=1
+Start-Transcript -LiteralPath $aNonceRemotePrepLog -NoClobber|Out-Null
+try {
+    & .\scripts\system-backup-d-config-writer-validation.ps1 -NonceTimeOnly -BuildParallelism 2 -SourceManifestPath $aNonceRemotePrepSource
+    $aNonceRemotePrepExit=0
+} finally {
+    Write-Host ('a_nonce_mysql_preparation_exit='+$aNonceRemotePrepExit)
+    Stop-Transcript|Out-Null
+}
+if($aNonceRemotePrepExit -ne 0){exit $aNonceRemotePrepExit}
+Process ID: 13064
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER config-writer-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-f84e0a51f3ca4e86916ce657e3c69fac
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE config-writer-frozen=yes source_sha256=f3bd69eb38ecaa2aa02f22d4f23902a404a69e31747ccff7c821fde2d228eb98 files=1347
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS>TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+PS>TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+>> TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+>> TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+>> TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+PASS nonce-acceptance-dispatch: exact new root/seed/phase, binary/input/UID pins, full-catalog, preflight, cleanup and exclusive profile; no build or remote
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE config-writer-candidate=yes synthetic-readiness=yes synthetic-capacity=yes production-approval=no backfill=no real_mysql=not_run
+VALIDATION_SCOPE nonce-time-increment-only=yes synthetic-issuer-authority-capacity=yes human-mfa=no real_mysql=not_run
+=== RUN   TestASensitiveDownloadNonceAcceptanceTime
+=== RUN   TestASensitiveDownloadNonceAcceptanceTime/-1m0s
+=== RUN   TestASensitiveDownloadNonceAcceptanceTime/3s
+--- PASS: TestASensitiveDownloadNonceAcceptanceTime (0.01s)
+    --- PASS: TestASensitiveDownloadNonceAcceptanceTime/-1m0s (0.01s)
+    --- PASS: TestASensitiveDownloadNonceAcceptanceTime/3s (0.00s)
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/past_auth
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/clock_regression
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert
+--- PASS: TestAProviderNonceUsesSQLAcceptanceTime (0.18s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/past_auth (0.00s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew (0.15s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew (0.00s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/clock_regression (0.00s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert (0.00s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert (0.00s)
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/past_auth
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/clock_regression
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert
+--- PASS: TestAConfigNonceUsesSQLAcceptanceTime (0.87s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/past_auth (0.12s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew (0.10s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew (0.25s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/clock_regression (0.06s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert (0.20s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert (0.14s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	4.392s
+=== RUN   TestDConfigWriterMySQLSeed
+=== RUN   TestDConfigWriterMySQLSeed/kind
+=== RUN   TestDConfigWriterMySQLSeed/ddl-bytes
+=== RUN   TestDConfigWriterMySQLSeed/ddl-pin
+=== RUN   TestDConfigWriterMySQLSeed/catalog
+=== RUN   TestDConfigWriterMySQLSeed/unknown
+=== RUN   TestDConfigWriterMySQLSeed/digest
+=== RUN   TestDConfigWriterMySQLSeed/duplicate-field
+--- PASS: TestDConfigWriterMySQLSeed (0.24s)
+    --- PASS: TestDConfigWriterMySQLSeed/kind (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-bytes (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-pin (0.01s)
+    --- PASS: TestDConfigWriterMySQLSeed/catalog (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/unknown (0.01s)
+    --- PASS: TestDConfigWriterMySQLSeed/digest (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/duplicate-field (0.00s)
+=== RUN   TestANonceAcceptanceMySQLSeed
+--- PASS: TestANonceAcceptanceMySQLSeed (0.00s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	5.946s
+=== RUN   TestDConfigWriterMySQLSeed
+=== RUN   TestDConfigWriterMySQLSeed/kind
+=== RUN   TestDConfigWriterMySQLSeed/ddl-bytes
+=== RUN   TestDConfigWriterMySQLSeed/ddl-pin
+=== RUN   TestDConfigWriterMySQLSeed/catalog
+=== RUN   TestDConfigWriterMySQLSeed/unknown
+=== RUN   TestDConfigWriterMySQLSeed/digest
+=== RUN   TestDConfigWriterMySQLSeed/duplicate-field
+--- PASS: TestDConfigWriterMySQLSeed (0.12s)
+    --- PASS: TestDConfigWriterMySQLSeed/kind (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-bytes (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-pin (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/catalog (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/unknown (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/digest (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/duplicate-field (0.00s)
+=== RUN   TestANonceAcceptanceMySQLSeed
+--- PASS: TestANonceAcceptanceMySQLSeed (0.00s)
+PASS
+LOCAL_PASS config-standalone-seed=yes checkout-fixtures=absent writer-candidate=True real_mysql=not_run
+LOCAL_PASS a-nonce-acceptance-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=d9d7aad1c8bbce23814b2ef50a9fc8ca931d859cfa0bcc7e94e36ed38372b4f0 ddl_sha256=1f3d471d06063aac77c50e1588ffa342a211f2407b94c77e607bfe90e46e2460
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=2b954daf0e0f5cbd34037e40453e4939fa11d19b920e86780f937fe2982e22be
+CLEANED local-registration-build-cache=True
+LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=False
+LOCAL_CLEANUP config-writer-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-f84e0a51f3ca4e86916ce657e3c69fac removed=True
+a_nonce_mysql_preparation_exit=0
+**********************
+PowerShell transcript end
+End time: 20261019092208
+**********************

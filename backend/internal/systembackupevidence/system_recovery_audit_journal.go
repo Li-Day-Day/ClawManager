@@ -45,6 +45,7 @@ type recoveryAuditJournalEntry struct {
 	Bootstrap  *RecoveryManagerExternalAuditRecord           `json:"bootstrap,omitempty"`
 	Authority  *RecoveryAuthorityExternalAuditRecord         `json:"authority,omitempty"`
 	Revocation *RecoveryManagerRevocationExternalAuditRecord `json:"revocation,omitempty"`
+	Download   *downloadFailureJournalRecord                 `json:"download,omitempty"`
 }
 
 func (j *RecoveryAuditJournal) AppendRecoveryManagerAudit(ctx context.Context, record RecoveryManagerExternalAuditRecord) error {

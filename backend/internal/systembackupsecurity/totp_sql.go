@@ -176,12 +176,19 @@ func (s SQLTOTPService) VerifyAndIssue(ctx context.Context, a RegistrationActor,
 
 // No exported method accepts an arbitrary request hash or asserted MFA time.
 func (s SQLTOTPService) verifyAndIssue(ctx context.Context, a RegistrationActor, password, code string, binding *RequestBinding, configMutation bool) (Proof, error) {
+	return s.verifyAndIssueBounded(ctx, a, password, code, binding, configMutation, nil)
+}
+
+func (s SQLTOTPService) verifyAndIssueBounded(ctx context.Context, a RegistrationActor, password, code string, binding *RequestBinding, configMutation bool, bounds *totpProofBounds) (Proof, error) {
 	empty := Proof{}
 	tx, st, now, credential, err := s.lock(ctx, a, password)
 	if err != nil {
 		return empty, err
 	}
 	defer tx.Rollback()
+	if bounds != nil && (bounds.validate == nil || !now.Before(bounds.until)) {
+		return empty, ErrRegistrationUnavailable
+	}
 	if configMutation {
 		if err = s.checkConfigProofSession(ctx, tx, a, now); err != nil {
 			return empty, err
@@ -209,6 +216,11 @@ func (s SQLTOTPService) verifyAndIssue(ctx context.Context, a RegistrationActor,
 			return empty, err
 		}
 	}
+	if bounds != nil {
+		if err = bounds.validate(ctx, tx, proof, now); err != nil {
+			return empty, registrationBoundaryError(err)
+		}
+	}
 	// Never revive a logged-out token. A new login generates a distinct token.
 	// Config proof issuance requires an already recorded current login. It may
 	// not enroll a missing token or refresh an existing session as a side effect.
@@ -229,13 +241,25 @@ func (s SQLTOTPService) verifyAndIssue(ctx context.Context, a RegistrationActor,
 	if _, err = tx.ExecContext(ctx, "INSERT INTO audit_logs(user_id,action,resource_type,details) VALUES (?,'system_backup.strong_auth.verified','system_backup',?)", a.UserID, string(details)); err != nil {
 		return empty, ErrRegistrationUnavailable
 	}
+	var finalClock totpProofClock
 	if configMutation {
-		if err = s.finalConfigProofCheck(ctx, tx, a, now); err != nil {
+		if finalClock, err = s.finalConfigProofClock(ctx, tx, a, now); err != nil {
 			return empty, err
 		}
 	}
+	if bounds != nil && !finalClock.now.Before(bounds.until) {
+		return empty, ErrRegistrationUnavailable
+	}
 	if tx.Commit() != nil {
 		return empty, ErrRegistrationCommitUnknown
+	}
+	// A slow/unknown commit cannot refresh the original authorization or proof
+	// lifetime. A consumed step is not automatically retried after this failure.
+	if bounds != nil {
+		postCommit := finalClock.now.Add(time.Since(finalClock.started))
+		if ctx.Err() != nil || !postCommit.Before(bounds.until) || !postCommit.Before(a.SessionExpiresAt) || !postCommit.Before(now.Add(s.Issuer.Lifetime)) {
+			return empty, ErrRegistrationUnavailable
+		}
 	}
 	return proof, nil
 }

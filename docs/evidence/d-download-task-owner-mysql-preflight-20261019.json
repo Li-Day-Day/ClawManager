@@ -1,0 +1,35 @@
+{
+  "kind": "d_download_task_owner_local_mysql_preflight",
+  "observed_at_utc": "2026-10-19T05:10:59Z",
+  "checks": [
+    {
+      "check": "docker_engine",
+      "chunk_id": "0a9cb1",
+      "wall_time_seconds": 2.897441,
+      "exit_code": 1,
+      "original_token_count": 57,
+      "output": "\nfailed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified.\n"
+    },
+    {
+      "check": "kubectl_current_context",
+      "chunk_id": "37b2f1",
+      "wall_time_seconds": 3.2892799,
+      "exit_code": 1,
+      "original_token_count": 9,
+      "output": "error: current-context is not set\n"
+    },
+    {
+      "check": "mysql_cli",
+      "chunk_id": "beacd6",
+      "wall_time_seconds": 4.5669123,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "{\r\n  \"mysql_cli_available\": false\r\n}\r\n"
+    }
+  ],
+  "dependencies_installed": false,
+  "daemon_started": false,
+  "kubernetes_context_changed": false,
+  "remote_dispatched": false,
+  "actual_mysql_run": false
+}

@@ -1,0 +1,165 @@
+{
+  "kind": "d_independent_task_owner_download_chain_actual_mysql_acceptance",
+  "status": "accepted_frozen_twelve_cases",
+  "recorded_at": "2026-10-20T02:45:05.269Z",
+  "log": "docs/evidence/d-download-task-chain-remote-20261020-100708.txt",
+  "log_sha256": "cf90342a4fb8fa12dff0c6967660cb389030972a18fa2429db814feb0d7be98d",
+  "source": "docs/evidence/d-download-task-chain-remote-20261020-100708-source.json",
+  "source_manifest_sha256": "006bb1a12414abfbd98e13b21ea790d92307b5242222d6a15b52e65275dec8f0",
+  "source_files": 1424,
+  "source_sha256": "29bea1a7cc6df2f81d289929e2ea8060561f6736f471508671ef6314c1ac1d60",
+  "local_stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 254,
+      "all": 2010
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 299,
+      "all": 2299
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 4,
+      "all": 19
+    }
+  ],
+  "ordinary_main": 553,
+  "ordinary_all": 4309,
+  "seed_all": 19,
+  "detached_seed_all": 19,
+  "namespace": "sbk-mig-261020023644-2ae7",
+  "namespace_uid": "c56f480d-61ae-4cf0-91e7-5e57ffd01818",
+  "mysql_version": "8.4.8",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "probe_sha256": "c747b7a345107ea33397091295aa7b82560496a9db06dd00e00d8ecbfad82633",
+  "inputs_sha256": "c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f",
+  "migration_runner_sha256": "c6b3b8442d272b1ba5cdf8382b5d918a21eed90822f1ee75ed9707fba647f08b",
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+  },
+  "actual_case_names": [
+    "backup_http_result",
+    "backup_late_owner_rollback",
+    "drill_http_result",
+    "drill_late_owner_rollback",
+    "preflight_http_result",
+    "preflight_late_owner_rollback",
+    "artifact_verify_http_result",
+    "artifact_verify_late_owner_rollback",
+    "revoked_result",
+    "result_link_rollback",
+    "existing_task_reference_lock",
+    "empty_event_reference_lock"
+  ],
+  "actual_case_count": 12,
+  "actual_root_count": 1,
+  "cleaned_databases": [
+    "amfa_925cc6a4ec246970a57f873ca7e08da5",
+    "amfa_788df6cb5faeda11c442ad43a107a300",
+    "amfa_c4e7dc3f4c2679afbdbf8cbfb690d724",
+    "amfa_802b0196e361737505ef04e1c9bf56d7",
+    "amfa_047105837b800d4750c29fe4ea25cdce",
+    "amfa_1a6689516bb479208f88b29b9cf93abd",
+    "amfa_f885aef14c4e46e1852ebe8d6da472d1",
+    "amfa_f625104a7aa2ed4b0cf64e48671b5846",
+    "amfa_bab95997c1243cd9a08468aa302840ed",
+    "amfa_70ce8709d4551b885e82b4e11ff9c617",
+    "amfa_26510c60d4e25846503b536b53495ed7",
+    "amfa_27aa2b23f0ba60f78f230ef3f706c0c3"
+  ],
+  "observed_exact_reference_locks": [
+    {
+      "table": "system_backup_preflights",
+      "holder": 57,
+      "writer": 59
+    },
+    {
+      "table": "system_backup_events",
+      "holder": 62,
+      "writer": 64
+    }
+  ],
+  "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-747307a024f64cb784153af145b5fc6f",
+  "local_owner_absent": true,
+  "current_pinned_drift": [
+    {
+      "path": "backend/cmd/system-backup-registration/download_deployment.go",
+      "reason": "changed",
+      "frozen_sha256": "75b78599c5ec189de98d8af8bc065af711fab14681adf32d4e5bc01011302598",
+      "current_sha256": "577e563b76a7e0c46dc4995682c1c8137326de7e86803f6cbd3b50703b056925"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_grants.go",
+      "reason": "changed",
+      "frozen_sha256": "1af65290a289f81640e2b751edb4113d31518e0d096521512fdf4517ceb08d44",
+      "current_sha256": "ec3f808c3a0be862457385309ec695b7c3952da54f7c20f9975273d607c59487"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/main.go",
+      "reason": "changed",
+      "frozen_sha256": "056a8f86f8aa2c73e4ecebadecb58752b1ae5c61772383a5f3d8736ec62116d4",
+      "current_sha256": "e7af9ef30e43b8cf91246d73ffd260a000335d59bb8418d2c4245e1f9057cccd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions.go",
+      "reason": "changed",
+      "frozen_sha256": "dbe0fd6d17f5c7b0589cd510a2e67bd31ad1c87dbc3242b800e43e423c01a845",
+      "current_sha256": "c4c57961f527a2fddd0d89fbc850b89ce43e3a8dfed50ce7f5a182791b544e83"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_measurement_test.go",
+      "reason": "changed",
+      "frozen_sha256": "c2a052c15b3e1d147a86cc67a19ec023b60ae21e6a1750949f7d285328581af1",
+      "current_sha256": "e1f1c753bdb957824135ff078f2a9b2fc8bf760460b7416eced0aa378b651e5d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_measurement.go",
+      "reason": "changed",
+      "frozen_sha256": "519afbe75a8ccd706b94af5372fbdcc8974dbec23a3fdca47b39e2da0662bab7",
+      "current_sha256": "5027b2bedbb2f85df3c18ba3c953644633de97fe713337baa9271aa876c2a8d2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_source_test.go",
+      "reason": "changed",
+      "frozen_sha256": "a6665ada3515891e44110655e91900f511497b7b21b3bf447bf9a9039a7718bf",
+      "current_sha256": "1c1a27cfb4b608ab248c6dcc5e129a651a011b5b5a22aadd48f7b68da5744e8b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_source.go",
+      "reason": "changed",
+      "frozen_sha256": "1fdbef70d47a601b6ef55aa2165514c69b7ecb35f805c4078609c93573d7be3b",
+      "current_sha256": "7a443b046d85e3605a5bfacc7bb0bc1739c705b685177f135d362e055d472744"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-deployment.mjs",
+      "reason": "changed",
+      "frozen_sha256": "1fb98e93bb98be00b97df1b922151ef245bf4b9e8eb9719b2bfc8361570b146d",
+      "current_sha256": "277a4b7c19493d382ff4238e6ff65727931df5f02825f48135b53fe88f9b2ee3"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-deployment.test.mjs",
+      "reason": "changed",
+      "frozen_sha256": "da979c174bb826d6f51574c6525ceec825626c7fb8508385b1e0b40fe6da06c6",
+      "current_sha256": "8b7aeca2e40022ff240079b3ce6eb9f0889a17e5476f15468a27ef1c93ec4171"
+    }
+  ],
+  "critical_probe_phase_cleanup_pins_match": true,
+  "known_windows_compile_crash_retry_count": 1,
+  "ssh_main_and_cleanup_exit_checked": true,
+  "socket_diagnostic_count": 4,
+  "actual_mysql": true,
+  "owner_adapter": "SQLTaskDownloadOwners",
+  "production_tasks": false,
+  "human_mfa": false,
+  "provider_transport": "synthetic",
+  "capacity_materials": "synthetic",
+  "dependencies_installed_by_D": false,
+  "production_approved": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Only this frozen twelve-case isolated four-task SQL chain is accepted. Producer eighteen-case actual SQL, current GC candidate, deployed provider/KMS/human MFA, physical capacity, production roles, historical activation and original six scopes remain open. Current-source differences are recorded separately; this receipt does not validate newly added files."
+}

@@ -50,6 +50,7 @@ type RegistrationAPI struct {
 	TOTP                 SQLTOTPService
 	Attestation          ProviderAttestationService
 	AuthorizeObservation func(context.Context, RegistrationActor, ProviderProofTarget) error
+	DownloadProofTargets SensitiveDownloadProofTargets
 }
 
 func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -163,6 +164,7 @@ func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		var request *ProviderProofRegistration
 		var configRequest *ConfigMutationRequest
+		var downloadRequest *SensitiveDownloadProofSelector
 		var configKey string
 		if r.URL.Path == strongAuthBase+"/proof" {
 			if _, config := fields["endpoint"]; config {
@@ -171,12 +173,21 @@ func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					fail(400, "validation_failed")
 					return
 				}
-				decoded, err := DecodeConfigMutationRequest(endpoint, fields["request"])
-				if err != nil {
-					fail(400, "validation_failed")
-					return
+				if endpoint == SensitiveDownloadEndpoint {
+					decoded, err := DecodeSensitiveDownloadProofSelector(fields["request"])
+					if err != nil {
+						fail(400, "validation_failed")
+						return
+					}
+					downloadRequest = &decoded
+				} else {
+					decoded, err := DecodeConfigMutationRequest(endpoint, fields["request"])
+					if err != nil {
+						fail(400, "validation_failed")
+						return
+					}
+					configRequest = &decoded
 				}
-				configRequest = &decoded
 			} else {
 				if !providerFieldSet(fields, "password", "code", "request") {
 					fail(400, "validation_failed")
@@ -194,7 +205,9 @@ func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var proof Proof
-		if configRequest != nil {
+		if downloadRequest != nil {
+			proof, err = a.TOTP.VerifySensitiveDownloadAndIssue(r.Context(), actor, password, code, *downloadRequest, configKey, a.DownloadProofTargets)
+		} else if configRequest != nil {
 			proof, err = a.TOTP.VerifyConfigMutationAndIssue(r.Context(), actor, password, code, *configRequest, configKey)
 		} else {
 			proof, err = a.TOTP.VerifyAndIssue(r.Context(), actor, password, code, request)
@@ -203,7 +216,7 @@ func (a RegistrationAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			failTOTP(fail, err)
 			return
 		}
-		if request == nil && configRequest == nil {
+		if request == nil && configRequest == nil && downloadRequest == nil {
 			_ = json.NewEncoder(w).Encode(map[string]bool{"confirmed": true})
 			return
 		}

@@ -94,8 +94,26 @@
         { "if": { "properties": { "target_type": { "const": "prune_run" } }, "required": ["target_type"] }, "then": { "properties": { "target_public_id": { "$ref": "admin-api-common.schema.json#/$defs/PruneRunPublicId" } } } },
         { "if": { "properties": { "target_type": { "const": "promotion" } }, "required": ["target_type"] }, "then": { "properties": { "target_public_id": { "$ref": "admin-api-common.schema.json#/$defs/PromotionPublicId" } } } },
         { "if": { "properties": { "target_type": { "const": "matrix" } }, "required": ["target_type"] }, "then": { "properties": { "target_public_id": { "type": "string", "enum": ["k8s-cluster", "k3s-cluster", "k8s-single-node", "k3s-single-node"] } } } },
-        { "if": { "properties": { "target_type": { "const": "system" } }, "required": ["target_type"] }, "then": { "properties": { "target_public_id": { "$ref": "admin-api-common.schema.json#/$defs/InstallationId" } } } }
-      ]
+        { "if": { "properties": { "target_type": { "const": "system" } }, "required": ["target_type"] }, "then": { "properties": { "target_public_id": { "$ref": "admin-api-common.schema.json#/$defs/InstallationId" } } } },
+        { "if": { "properties": { "target_type": { "const": "evidence" } }, "required": ["target_type"] }, "then": { "properties": { "target_public_id": { "$ref": "admin-api-common.schema.json#/$defs/EvidencePublicId" } } } },
+        {
+          "if": { "anyOf": [{ "properties": { "operation_type": { "const": "evidence_download_admission" } }, "required": ["operation_type"] }, { "properties": { "target_type": { "const": "evidence" } }, "required": ["target_type"] }] },
+          "then": {
+            "required": ["result_resource_public_id", "result_config_version", "failure_message", "http_status", "started_at", "finished_at"],
+            "properties": {
+              "operation_type": { "const": "evidence_download_admission" }, "target_type": { "const": "evidence" },
+              "actor_type": { "const": "admin" }, "actor_id": { "pattern": "^[1-9][0-9]*$" },
+              "endpoint": { "const": "getSystemBackupEvidence" }, "status": { "const": "succeeded" },
+              "result_resource_public_id": { "const": null }, "result_config_version": { "const": null },
+              "retryable": { "const": false }, "failure_category": { "const": "none" }, "failure_message": { "const": null }, "http_status": { "const": 200 },
+              "started_at": { "type": "string", "format": "date-time", "pattern": "Z$" }, "finished_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+              "created_at": { "pattern": "Z$" }, "updated_at": { "pattern": "Z$" }, "deadline_at": { "pattern": "Z$" }
+            }
+          }
+        }
+      ],
+      "x-invariants": ["evidence_download_admission actor_id is the canonical positive signed-INT admin ID", "download admission created_at, started_at, finished_at and updated_at denote the same original SQL UTC instant; deadline_at is strictly later", "admission success does not assert provider access or client receipt of any bytes"],
+      "x-storage-migration-proposal": "docs/system-backup-d-download-admission-schema-proposal-20261019.sql"
     },
     "TaskList": {
       "type": "object",

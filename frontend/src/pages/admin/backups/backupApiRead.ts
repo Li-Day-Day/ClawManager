@@ -88,7 +88,7 @@ const operationFields = new Set([
 const operationTargetPrefixes: Record<string, string> = {
   backup: 'sbk_', backup_staging: 'sbs_', external_action: 'sxa_', drill: 'sdr_', restore_resource: 'srr_',
   preflight: 'spf_', artifact_verify: 'sav_', catalog_scan: 'scs_', catalog_import: 'sci_',
-  prune_run: 'spr_', promotion: 'spm_',
+  prune_run: 'spr_', promotion: 'spm_', evidence: 'sev_',
 };
 const operationResultPrefixes: Record<string, string> = {
   provider_proof_register: 'sev_', promotion_create: 'spm_', catalog_scan: 'scs_', catalog_import: 'sci_',
@@ -354,6 +354,18 @@ function validOperation(value: unknown, expectedId?: string): value is SystemBac
     || value.finished_at !== null && !validDateTime(value.finished_at)
     || value.http_status !== null && (typeof value.http_status !== 'number' || !Number.isInteger(value.http_status)
       || value.http_status < 100 || value.http_status > 599)) return false;
+  if (value.operation_type === 'evidence_download_admission' || value.target_type === 'evidence') {
+    const admitted = operationUTCInstant(value.created_at);
+    const deadline = operationUTCInstant(value.deadline_at);
+    return value.operation_type === 'evidence_download_admission' && value.target_type === 'evidence'
+      && value.endpoint === 'getSystemBackupEvidence' && value.actor_type === 'admin'
+      && /^[1-9][0-9]*$/.test(value.actor_id) && Number(value.actor_id) <= 2147483647
+      && value.status === 'succeeded' && value.http_status === 200 && !value.retryable && value.failure_category === 'none'
+      && value.result_resource_public_id === null && value.result_config_version === null
+      && admitted !== null && deadline !== null && deadline > admitted
+      && operationUTCInstant(value.started_at) === admitted && operationUTCInstant(value.finished_at) === admitted
+      && operationUTCInstant(value.updated_at) === admitted;
+  }
   const terminal = value.status === 'succeeded' || value.status === 'failed';
   if (value.status === 'pending' && (value.started_at !== null || value.finished_at !== null)
     || value.status === 'running' && (value.started_at === null || value.finished_at !== null)
@@ -368,6 +380,16 @@ function validOperation(value: unknown, expectedId?: string): value is SystemBac
   return resultPrefix === undefined ? value.result_resource_public_id === null
     : typeof value.result_resource_public_id === 'string'
       && new RegExp(`^${resultPrefix}[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$`).test(value.result_resource_public_id);
+}
+// Preserve sub-millisecond SQL precision when checking the immutable admission
+// instant and deadline. Date.parse alone truncates distinct microseconds.
+function operationUTCInstant(value: unknown): bigint | null {
+  if (typeof value !== 'string') return null;
+  const parts = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?Z$/.exec(value);
+  if (!parts) return null;
+  const milliseconds = Date.parse(`${parts[1]}Z`);
+  if (!Number.isFinite(milliseconds) || new Date(milliseconds).toISOString().slice(0, 19) !== parts[1]) return null;
+  return BigInt(milliseconds) * 1000000n + BigInt((parts[2] ?? '').padEnd(9, '0'));
 }
 function validTask(kind: BackupTaskKind, value: unknown, expectedId?: string): boolean {
   if (!record(value) || !exactFields(value, detailFields[kind])

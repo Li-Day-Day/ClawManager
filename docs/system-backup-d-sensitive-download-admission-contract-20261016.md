@@ -1,5 +1,7 @@
 # D 已确认：敏感下载公共 operation 与 nonce 事务合同
 
+【2026-10-19 公共草案增量】本决议的公共 enum/Operation schema、GET 条件 proof/key 与二进制 200/206、错误 profile、Go/TypeScript 公共读取已由[新交接](system-backup-d-download-public-read-20261019.md)实现并按 r18 验证。下文“尚未包含新类型”是本决议初次形成时的状态；正式共享评审/迁移和 HTTP/provider 生产接线仍未完成，不据本轮启用下载或登记他人批准。
+
 【r47 勘误与实现推进】[勘误](evidence/system-backup-d-sensitive-download-erratum-20261016-r47.json)纠正下文旧的空内容说明：当前 Manifest 拒绝 size=0，`parseRange("",0)` 实际为 `0/-1`；当前下载准入应拒绝空内容。A 的 `0/0` 仅为未来编码向量，不代表现有 parser 支持。原机器决议保留原字节供 A 已冻结回执复算，本勘误对该字段优先。key 继续限制 `[A-Za-z0-9._:-]{16,128}`。D 已实现独立的实际审计 INSERT-ID/封闭 anchor/同事务原行复查候选，见 [实现边界](system-backup-d-download-admission-audit-20261016.md)；尚不等于完整前置锁或 nonce 消费。
 
 D 接受 [A 的 10 月 16 日方案](system-backup-a-download-and-migrations-review-20261016.md)中的单阶段 GET、事务内 claim 间接绑定、一次准入和 operation 锚点。准确字段、锁序、错误码及待修改来源以[机器决议](evidence/system-backup-d-sensitive-download-contract-20261016.json)为准。A 可以据此实现和验证候选适配器，不再等待 D 在这几个方案之间选择。

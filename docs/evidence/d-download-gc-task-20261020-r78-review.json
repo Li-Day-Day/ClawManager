@@ -1,0 +1,210 @@
+{
+  "kind": "d_download_gc_task_eligibility_local_review",
+  "recorded_at": "2026-10-20T05:06:40.903Z",
+  "frozen_validation_passed": true,
+  "current_sources_match": true,
+  "current_pinned_drift": [],
+  "current_added_inputs": [],
+  "current_missing_inputs": [],
+  "current_file_list": {
+    "path": "docs/evidence/d-download-gc-task-20261020-r78-current-files.txt",
+    "sha256": "4e01788ba89897eeddf52e91eca26828bdc6263ae8c76b5db56ab707c1d0bdd9",
+    "files": 1442
+  },
+  "focused": {
+    "source_files": 1442,
+    "source_sha256": "0ce20792189a9d2b75b8c70b20f51f78b2fda136b7288b3367c3e5d078826078",
+    "source_manifest_sha256": "a048ebb19c7f02a011ee42022c19c32cd5d23bbf4eaa979c4850446bbad7c28f",
+    "jsonl_sha256": "29cd326e5b91e3ef77908d1cc1e03ce066a6d518daeaa41f35b73f920eabad92",
+    "native_sha256": "be6d810caf6af436705359fcc2c2aadf9ed67824f59715bae34ee9e4c934f3ac",
+    "main": 18,
+    "all": 242,
+    "task_main": 6,
+    "task_all": 117,
+    "gc_main": 18,
+    "gc_all": 242,
+    "packages": [
+      "clawreef/internal/systembackupevidence"
+    ],
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-ee1c092ea25f499b95a4f8ed4f489ee5",
+    "owner_absent": true,
+    "package_exit": 0,
+    "exit": 0,
+    "final_frozen_postcheck": true
+  },
+  "full": {
+    "source_files": 1442,
+    "source_sha256": "0ce20792189a9d2b75b8c70b20f51f78b2fda136b7288b3367c3e5d078826078",
+    "source_manifest_sha256": "a048ebb19c7f02a011ee42022c19c32cd5d23bbf4eaa979c4850446bbad7c28f",
+    "jsonl_sha256": "b9df08353735c848d3054f1c193851dac89e6da9cec45d53312c5a9d327883df",
+    "native_sha256": "ca40b2dd7b664631cb46ed66edd20804a4293a8913b63575715470e516822848",
+    "main": 722,
+    "all": 5855,
+    "task_main": 6,
+    "task_all": 117,
+    "gc_main": 18,
+    "gc_all": 242,
+    "packages": [
+      "clawreef/internal/systembackupsecurity",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupevidence"
+    ],
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5d539b6ad9b042b9a00819db3d37ba38",
+    "owner_absent": true,
+    "package_exit": 0,
+    "exit": 1,
+    "final_frozen_postcheck": false
+  },
+  "focused_to_full_source_changes": [],
+  "initial_compile_failure": {
+    "run": 74,
+    "tests_started": 0,
+    "kind": "windows_asm_compile_0xc0000043",
+    "log_sha256": "2eea8f7cda82706d98f344397b8a21eb2c5e77bc0eb44b4bcd9337d8c2dcc695",
+    "preserved": true,
+    "failure_to_next_source_changes": [
+      {
+        "path": "backend/internal/systembackupevidence/download_gc_role_a_mysql_test.go",
+        "kind": "added"
+      },
+      {
+        "path": "scripts/system-backup-a-download-gc-role-phase.sh",
+        "kind": "added"
+      },
+      {
+        "path": "scripts/system-backup-a-evidence-validation.ps1",
+        "kind": "changed"
+      },
+      {
+        "path": "scripts/system-backup-d-config-writer-validation.ps1",
+        "kind": "changed"
+      }
+    ],
+    "D_task_sources_unchanged_on_next_attempt": true,
+    "exact_same_source_recovery": false
+  },
+  "initial_vet_failure": {
+    "run": 75,
+    "tests_started": 0,
+    "kind": "test_helper_variadic_forwarding",
+    "log_sha256": "30f1dbbba731a62dfe4447bf13ba25200c9bbb37b2e79a49e03d727b1cb432e0",
+    "preserved": true,
+    "vet_to_focused_source_changes": [
+      {
+        "path": "backend/internal/systembackupevidence/download_gc_role_a_mysql_test.go",
+        "kind": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_task_test.go",
+        "kind": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_task.go",
+        "kind": "changed"
+      },
+      {
+        "path": "scripts/system-backup-a-download-gc-role-dispatch.test.ps1",
+        "kind": "added"
+      }
+    ],
+    "repair": "Use canonical array keys, retain default vet; add required InnoDB base-table checks and negative tests."
+  },
+  "producer_seeds": 22,
+  "detached_seeds": 22,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "259f04a19eff2d0909f9207e7ac680212b675db5c3045f93bc6302f73939966f"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "d45689d5726ad4a5da8b1cde89da41ac66934218eddffcbcb8101c9c7ad14e7a"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "a563d0475d2f08d70a9e032cf5e6db5378536a05eec94c6c74768cdac6b9672c"
+    }
+  ],
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+  },
+  "cleanup": {
+    "kind": "d_download_gc_task_local_cleanup",
+    "remote_run": false,
+    "paths": [
+      {
+        "run": 74,
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-add4d867ced8410ab4ec1a86356b1cc1",
+        "kind": "snapshot",
+        "absent": true
+      },
+      {
+        "run": 75,
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a928eb554ed447168a6b284c875e7f4c",
+        "kind": "snapshot",
+        "absent": true
+      },
+      {
+        "run": 76,
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-ee1c092ea25f499b95a4f8ed4f489ee5",
+        "kind": "snapshot",
+        "absent": true
+      },
+      {
+        "run": 77,
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5d539b6ad9b042b9a00819db3d37ba38",
+        "kind": "snapshot",
+        "absent": true
+      },
+      {
+        "run": 78,
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-535ce98f9cae46a6b5c249dc604885e0",
+        "kind": "snapshot",
+        "absent": true
+      },
+      {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-gc-task-20261020-r74",
+        "kind": "owned_cache",
+        "absent": true
+      }
+    ],
+    "recorded_at": "2026-10-20T05:06:36.1272102Z",
+    "dependencies_installed": false
+  },
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "actual_owner_concurrency": false,
+  "production_approved": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Concrete four-task/local-backup eligibility, settled inventory, expired lease and retained promotion/retry guards execute over scripted SQL, including collector rollback. Not a full GC policy: other operation/audit/nonce/evidence/FK/logical references, artifact-dependent tasks/imports, system producer original binding, authority/revocation, privileged trigger/program review and DDL freeze remain required. No global lock-order/real InnoDB/minimum-role/physical-capacity proof or production activation.",
+  "reviewer_sha256": "77c0da4cc6898f76a727f470bd74d757e6d682f60193e9cd0cae34a347bbccf3",
+  "probe_recovery": {
+    "run": 78,
+    "source_files": 1442,
+    "source_sha256": "0ce20792189a9d2b75b8c70b20f51f78b2fda136b7288b3367c3e5d078826078",
+    "source_manifest_sha256": "a048ebb19c7f02a011ee42022c19c32cd5d23bbf4eaa979c4850446bbad7c28f",
+    "jsonl_sha256": "153deda7b0c84dcf6921798870c7b8f81b657280d6493978c4b1f0b91affb37e",
+    "native_sha256": "abf6bf8cb208256a85d31c41c42160237c24a2f7e6679d84b038f5886db8bf12",
+    "main": 3,
+    "all": 22,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-535ce98f9cae46a6b5c249dc604885e0",
+    "owner_absent": true,
+    "exact_same_source": true,
+    "exit": 0,
+    "final_frozen_postcheck": true
+  },
+  "full_probe_failure": {
+    "run": 77,
+    "kind": "windows_vet_0xc0000043_during_linux_cross_compile",
+    "preserved": true,
+    "stderr_sha256": "9dd9e1f36eaa5fcbf9c76a05debc74c90bafd0287706fa27fa672793e590e18d",
+    "ordinary_packages_passed": true,
+    "ordinary_package_postcheck": true,
+    "final_postcheck": false,
+    "overall_exit": 1
+  }
+}

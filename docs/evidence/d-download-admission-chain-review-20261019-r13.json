@@ -1,0 +1,105 @@
+{
+  "kind": "d_download_admission_chain_frozen_native_review",
+  "source_files": 1356,
+  "source_sha256": "65c1c7e44c69a8837bc0c29061004e5fe13e8436e8fb9a15eca6772e3728a510",
+  "capture_attempts": 1,
+  "capture_failures": [],
+  "log_sha256": "2350f5352918f5f9ec76589fb41dc8fc298cfe2b9706ab1c628480db416bccac",
+  "native_sha256": "fc1e19fd106d47447bf479d6094820dbc9f1acc7a87c0b552644f6217e7bb31d",
+  "listing_sha256": "6672fe4213e5d36a5548da7af1ebbb2de2ed7c9fed6858537755c610f708c3f7",
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 248,
+      "all_pass": 1913,
+      "terminal": "pass",
+      "skipped": 0
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 229,
+      "all_pass": 1749,
+      "terminal": "pass",
+      "skipped": 0
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "main_pass": 6,
+      "all_pass": 12,
+      "terminal": "pass",
+      "skipped": 0
+    }
+  ],
+  "main_pass": 483,
+  "all_pass": 3674,
+  "transaction_and_environment_roots": [
+    "TestSensitiveDownloadNonceUseOriginalProofAndSharedSingleAttempt",
+    "TestSensitiveDownloadNonceUseFailuresCannotRecover",
+    "TestDownloadAdmissionTransactionCommitsAllOriginalRowsOnce",
+    "TestDownloadAdmissionTransactionClaimOwnershipAndVersion",
+    "TestDownloadAdmissionTransactionEveryFailureRollsBackWholeGroup",
+    "TestDownloadAdmissionTransactionKeyAndNonceReplayOrdering",
+    "TestDownloadAdmissionTransactionUnknownOrLateCommitNeverReturnsCapability",
+    "TestDownloadAdmissionTransactionOriginalTransportSnapshotAndFutureAuth",
+    "TestDownloadAdmissionPinnedEnvironmentCombinesRealModules",
+    "TestDownloadAdmissionPinnedEnvironmentRejectsChangedSourcesAtomically",
+    "TestDownloadAdmissionPinnedEnvironmentRequiresDeploymentInputs",
+    "TestAAdmissionFinalCallbackCannotReplaceOriginalRows",
+    "TestAAdmissionFinalAuditJSONFormattingIsEquivalent",
+    "TestAAdmissionRejectsTransportBeforeOpeningTransaction",
+    "TestAAdmissionProofAndHistoryFailuresPrecedeKeyOrNonceEffects"
+  ],
+  "transaction_and_environment_all_pass": 114,
+  "current_source_drift": [],
+  "current_frozen_source_matches": true,
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-955878144cb243cab544b8a6b612047f",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-20261019-chain",
+      "exists": false
+    }
+  ],
+  "preserved_failed_runs": [
+    {
+      "path": "docs/evidence/d-download-admission-chain-smoke-20261019-r6.jsonl",
+      "sha256": "d86132c1dd7ccc5345f9cb8bb793dd331ab602be3d4bb15332edb85075912ed9",
+      "failed_test_or_package_events": 1,
+      "accepted_as_pass": false
+    },
+    {
+      "path": "docs/evidence/d-download-admission-chain-focused-20261019-r7.jsonl",
+      "sha256": "1eb6b20de90132ac4ce93ace01bed6c3e874c36acbfb2d73c7a1059586ffa6d4",
+      "failed_test_or_package_events": 11,
+      "accepted_as_pass": false
+    },
+    {
+      "path": "docs/evidence/d-download-admission-pinned-focused-20261019-r9.jsonl",
+      "sha256": "b610efa6ba6647f049760de31fea5420e1afd2d60d9bc7278d729b24c52af3ed",
+      "failed_test_or_package_events": 15,
+      "accepted_as_pass": false
+    },
+    {
+      "path": "docs/evidence/d-download-admission-pinned-focused-20261019-r10.jsonl",
+      "sha256": "f8831b5a4579908086b14766dadc735266a845e622f0f1210b6e4b1aa5f743e9",
+      "failed_test_or_package_events": 14,
+      "accepted_as_pass": false
+    },
+    {
+      "path": "docs/evidence/d-download-admission-pinned-smoke-20261019-r11.jsonl",
+      "sha256": "57dfd5249e82d5367b11052a64d95299f9c92db06b4ee3e5d6f0d5f9054ca750",
+      "failed_test_or_package_events": 2,
+      "accepted_as_pass": false
+    }
+  ],
+  "installed_dependencies": false,
+  "actual_mysql": false,
+  "transaction_composition_implemented": true,
+  "full_admission_complete": false,
+  "http_runtime_wired": false,
+  "production_enabled": false,
+  "formal_schema_approval": false,
+  "limitations": "Complete three-package native tests, real crypto/session/RBAC/file/capacity code over scripted SQL and synthetic owner/material/capacity facts. Does not prove InnoDB concurrency/FK/grants, physical capacity, reviewed owner adapter, HTTP/postcommit provider path, real deployment, historical upgrade or the six original scopes."
+}

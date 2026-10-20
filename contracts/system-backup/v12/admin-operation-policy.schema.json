@@ -83,13 +83,19 @@
         "conditional_permissions": { "type": "array", "items": { "$ref": "#/$defs/ConditionalPermission" } },
         "recent_strong_auth": { "enum": ["none", "required", "conditional"] },
         "strong_auth_condition": {
-          "enum": [null, "always", "security_boundary_or_protection_reduction", "releases_last_recovery_point_hold"]
+          "enum": [null, "always", "security_boundary_or_protection_reduction", "releases_last_recovery_point_hold", "evidence_classification_confidential_or_sensitive"]
         },
         "idempotency_required": { "type": "boolean" },
+        "idempotency_condition": { "const": "evidence_classification_confidential_or_sensitive" },
         "kill_switch": { "enum": ["allowed_when_disabled", "requires_effective_enabled"] },
         "success_http_status": { "enum": [200, 201, 202] },
         "completion_mode": { "enum": ["synchronous", "asynchronous"] }
-      }
+      },
+      "allOf": [{
+        "if": { "properties": { "operation_id": { "const": "getSystemBackupEvidence" } }, "required": ["operation_id"] },
+        "then": { "required": ["idempotency_condition"], "properties": { "recent_strong_auth": { "const": "conditional" }, "strong_auth_condition": { "const": "evidence_classification_confidential_or_sensitive" }, "idempotency_required": { "const": false }, "idempotency_condition": { "const": "evidence_classification_confidential_or_sensitive" } } },
+        "else": { "not": { "required": ["idempotency_condition"] } }
+      }]
     },
     "ErrorStatus": {
       "type": "object",

@@ -35,6 +35,9 @@ type SensitiveDownloadAuthenticator interface {
 type Handler struct {
 	Service Service
 	Auth    Authenticator
+	// Runtime's legacy path handles only public/internal rows. Check the
+	// classification under the actual lock, before claim/audit effects.
+	publicOnly bool
 }
 
 func parseRange(value string, size int64) (int64, int64, bool, error) {
@@ -160,6 +163,9 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if record.Manifest.Identity.ID != id {
 			return ErrIntegrity
 		}
+		if h.publicOnly && !oneOf(record.Manifest.Identity.Classification, "public", "internal") {
+			return ErrDownloadAdmissionNotReady
+		}
 		permission := permissions(record.Manifest.Identity.Classification)
 		if permission == nil {
 			return ErrIntegrity
@@ -251,7 +257,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		e = bound.AuthorizeDownload(ctx, actor, record)
 	}
 	if e != nil {
-		s.finishDownload(claim, id, actor, record.RowVersion, sensitive, "rejected")
+		s.finishDownload(claim, id, actor, record.RowVersion, sensitive, "rejected", record)
 		s.Failure(context.WithoutCancel(ctx), id, boundary(e).Error())
 		fail(boundary(e))
 		return
@@ -271,12 +277,26 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if writeErr != nil || n != len(data) {
 		outcome = "interrupted"
 	}
-	s.finishDownload(claim, id, actor, record.RowVersion, sensitive, outcome)
+	s.finishDownload(claim, id, actor, record.RowVersion, sensitive, outcome, record)
 }
 
-func (s Service) finishDownload(claim, id string, actor Actor, version int64, sensitive bool, outcome string) {
+func (s Service) finishDownload(claim, id string, actor Actor, version int64, sensitive bool, outcome string, original Record) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+	if !sensitive {
+		if finisher, ok := s.Registry.(interface {
+			finishPublicDownload(context.Context, Record) (bool, error)
+		}); ok {
+			if handled, err := finisher.finishPublicDownload(ctx, original); handled {
+				if err != nil {
+					failureContext, stop := context.WithTimeout(context.Background(), 5*time.Second)
+					s.Failure(failureContext, id, "download_audit_or_release_failed")
+					stop()
+				}
+				return
+			}
+		}
+	}
 	e := s.Registry.WithLocked(ctx, id, func(tx Locked) error {
 		r := tx.Record()
 		if r.RowVersion != version || r.Claim != claim {

@@ -38,7 +38,10 @@ type DownloadAuthorityConfig struct {
 	SensitiveStepUp                                          SensitiveDownloadProof
 }
 
-type SQLDownloadAuthority struct{ c DownloadAuthorityConfig }
+type SQLDownloadAuthority struct {
+	c       DownloadAuthorityConfig
+	journal *DownloadFailureJournal
+}
 
 var _ BoundDownloadAuthenticator = (*SQLDownloadAuthority)(nil)
 var _ S3WebIdentityAuthority = (*SQLDownloadAuthority)(nil)
@@ -66,14 +69,15 @@ func (a *SQLDownloadAuthority) Authenticate(r *http.Request) (Actor, error) {
 }
 
 func (a *SQLDownloadAuthority) AuthenticateContext(r *http.Request) (context.Context, Actor, error) {
-	if a == nil || r == nil || r.TLS == nil || !time.Now().Before(a.c.ExpiresAt) {
+	if a == nil || r == nil || r.TLS == nil || !time.Now().Before(a.c.ExpiresAt) || a.journal != nil && a.journal.Check() != nil {
 		return nil, Actor{}, ErrAuth
 	}
 	actor, err := (systembackupsecurity.JWTRegistrationAuthenticator{Secret: a.c.JWTSecret}).Authenticate(r)
 	if err != nil || r.Context().Err() != nil {
 		return nil, Actor{}, ErrAuth
 	}
-	return context.WithValue(r.Context(), a, actor), downloadActor(actor), nil
+	ctx := withVerifiedDownloadActor(r.Context(), a.c.Registry, actor)
+	return context.WithValue(ctx, a, actor), downloadActor(actor), nil
 }
 
 func (a *SQLDownloadAuthority) AuthorizeSensitiveDownload(ctx context.Context, request *http.Request, actor Actor, record Record, start, end int64, locked Locked) error {
@@ -103,13 +107,21 @@ func (a *SQLDownloadAuthority) AuthorizeDownload(ctx context.Context, actor Acto
 	g, err := a.authorize(ctx)
 	if err != nil || g.actor != actor || g.record.Ref != r.Ref || g.record.RowVersion != r.RowVersion || g.record.Claim != r.Claim ||
 		hash(canonical(g.record.Manifest)) != hash(canonical(r.Manifest)) {
+		if c := committedDownloadFrom(ctx); c != nil {
+			c.fail()
+		}
 		return ErrDenied
 	}
 	return nil
 }
 
 func (a *SQLDownloadAuthority) AuthorizeS3(ctx context.Context, scope S3Scope) (S3WebIdentityGrant, error) {
-	deny := func() (S3WebIdentityGrant, error) { return S3WebIdentityGrant{}, ErrDenied }
+	deny := func() (S3WebIdentityGrant, error) {
+		if c := committedDownloadFrom(ctx); c != nil {
+			c.fail()
+		}
+		return S3WebIdentityGrant{}, ErrDenied
+	}
 	if scope.Object != (ObjectInfo{}) || !scope.Deadline.IsZero() ||
 		!(scope.Operation == S3Stat && scope.Offset == 0 && scope.Length == 0 || scope.Operation == S3Range && scope.Offset >= 0 && scope.Length > 0 && scope.Length <= ChunkSize+28) {
 		return deny()
@@ -118,11 +130,18 @@ func (a *SQLDownloadAuthority) AuthorizeS3(ctx context.Context, scope S3Scope) (
 	if err != nil || scope.Ref != g.record.Ref || scope.Operation == S3Range && scope.Offset > g.record.Manifest.ObjectSize-scope.Length {
 		return deny()
 	}
+	if c := committedDownloadFrom(ctx); c != nil && (!c.live(ctx, a) || !c.allowsS3(scope)) {
+		return deny()
+	}
 	token, expiry, err := readProjectedToken(a.c.TokenFile, a.c.Issuer, a.c.Audience, a.c.Subject)
 	if err != nil {
 		return deny()
 	}
 	if ctx.Err() != nil || !time.Now().Before(g.until) {
+		wipe(token)
+		return deny()
+	}
+	if c := committedDownloadFrom(ctx); c != nil && !c.live(ctx, a) {
 		wipe(token)
 		return deny()
 	}
@@ -138,9 +157,21 @@ type DownloadKeys struct {
 	Keys      Keys
 }
 
-func (k DownloadKeys) Wrap(context.Context, KeyRef, []byte) ([]byte, error) { return nil, ErrKey }
+func (k DownloadKeys) Wrap(ctx context.Context, _ KeyRef, _ []byte) ([]byte, error) {
+	if c := committedDownloadFrom(ctx); c != nil {
+		c.fail()
+	}
+	return nil, ErrKey
+}
 
-func (k DownloadKeys) Unwrap(ctx context.Context, key KeyRef, wrapped []byte) ([]byte, error) {
+func (k DownloadKeys) Unwrap(ctx context.Context, key KeyRef, wrapped []byte) (plain []byte, resultErr error) {
+	defer func() {
+		if resultErr != nil {
+			if c := committedDownloadFrom(ctx); c != nil {
+				c.fail()
+			}
+		}
+	}()
 	if k.Authority == nil || k.Keys == nil || len(wrapped) == 0 || len(wrapped) > 4096 {
 		return nil, ErrKey
 	}

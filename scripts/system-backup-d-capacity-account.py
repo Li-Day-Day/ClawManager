@@ -40,7 +40,7 @@ def execute(plan, tables, run=subprocess.run):
           'test -n "$MYSQL_ROOT_PASSWORD"; MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysql --user=root --batch --raw --skip-column-names --default-character-set=utf8mb4'],query)
     try:
         require(re.fullmatch(r'[A-Za-z0-9_]{1,64}',plan['database']))
-        require(tables and len(tables)==len(set(tables)) and all(re.fullmatch(r'(system_backup_|system_restore_)[A-Za-z0-9_]+|audit_logs',t) for t in tables))
+        require({'audit_logs','system_backup_configs','system_backups'}<=set(tables) and len(tables)==len(set(tables)) and all(re.fullmatch(r'(system_backup_|system_restore_)[A-Za-z0-9_]+|system_backups|audit_logs',t) for t in tables))
         before=identity()
         require(sql('SELECT @@server_uuid;').strip()==plan['server_uuid'])
         phase='required-tables'

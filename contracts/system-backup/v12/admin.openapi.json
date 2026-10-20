@@ -18,7 +18,12 @@
   "security": [{ "adminBearer": [] }],
   "paths": {
     "/admin/system-backup-overview": { "get": { "operationId": "getSystemBackupOverview", "responses": { "200": { "$ref": "#/components/responses/Overview" }, "default": { "$ref": "#/components/responses/Error" } } } },
-    "/admin/system-backup-evidence/{id}": { "get": { "operationId": "getSystemBackupEvidence", "parameters": [{ "$ref": "#/components/parameters/EvidenceId" }], "responses": { "200": { "$ref": "#/components/responses/Resource" }, "default": { "$ref": "#/components/responses/Error" } } } },
+    "/admin/system-backup-evidence/{id}": { "get": {
+      "operationId": "getSystemBackupEvidence",
+      "description": "Single-phase evidence bytes. Confidential/sensitive evidence requires a fresh exact-request proof and key; successful admission is committed before provider access. Existing keys conflict and never replay bytes. Unknown commit returns not_ready. Errors after headers terminate the stream and use a result audit.",
+      "parameters": [{ "$ref": "#/components/parameters/EvidenceId" }, { "$ref": "#/components/parameters/EvidenceRange" }, { "$ref": "#/components/parameters/EvidenceIdempotencyKey" }, { "$ref": "#/components/parameters/EvidenceStrongAuthProof" }],
+      "responses": { "200": { "$ref": "#/components/responses/EvidenceBytes" }, "206": { "$ref": "#/components/responses/EvidenceRangeBytes" }, "default": { "$ref": "#/components/responses/Error" } }
+    } },
     "/admin/system-backup-provider-proofs": { "post": { "operationId": "registerSystemBackupProviderProof", "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }], "responses": { "201": { "$ref": "#/components/responses/OperationCreated" }, "default": { "$ref": "#/components/responses/Error" } } } },
     "/admin/system-backup-operations/{id}": { "get": { "operationId": "getSystemBackupOperation", "parameters": [{ "$ref": "#/components/parameters/OperationId" }], "responses": { "200": { "$ref": "#/components/responses/Operation" }, "default": { "$ref": "#/components/responses/Error" } } } },
     "/admin/system-backup-config": {
@@ -113,6 +118,9 @@
       "Version": { "name": "version", "in": "path", "required": true, "schema": { "type": "integer", "minimum": 1 } },
       "MatrixKey": { "name": "matrix_key", "in": "path", "required": true, "schema": { "enum": ["k8s-cluster", "k3s-cluster", "k8s-single-node", "k3s-single-node"] } },
       "IdempotencyKey": { "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "$ref": "admin-api-common.schema.json#/$defs/IdempotencyKey" } },
+      "EvidenceIdempotencyKey": { "name": "Idempotency-Key", "in": "header", "required": false, "x-required-when": "evidence_classification_confidential_or_sensitive", "schema": { "$ref": "admin-api-common.schema.json#/$defs/IdempotencyKey" } },
+      "EvidenceStrongAuthProof": { "name": "X-Strong-Auth-Proof", "in": "header", "required": false, "x-required-when": "evidence_classification_confidential_or_sensitive", "description": "Single base64 proof header, bound to the original installation/evidence/manifest/actor/session/normalized Range/key. Never a request body.", "schema": { "type": "string", "minLength": 1, "maxLength": 16384 } },
+      "EvidenceRange": { "name": "Range", "in": "header", "required": false, "description": "At most one bytes range. Repeated headers, multiple ranges and invalid/out-of-bounds offsets are rejected before admission effects.", "schema": { "type": "string" } },
       "Cursor": { "name": "cursor", "in": "query", "required": false, "schema": { "$ref": "admin-api-common.schema.json#/$defs/Cursor" } },
       "Limit": { "name": "limit", "in": "query", "required": false, "schema": { "$ref": "admin-api-common.schema.json#/$defs/PageLimit" } },
       "LogLimit": { "name": "limit", "in": "query", "required": false, "schema": { "$ref": "admin-api-common.schema.json#/$defs/LogPageLimit" } }
@@ -124,7 +132,10 @@
     },
     "headers": {
       "Location": { "description": "Canonical API location of the created task, operation or resource.", "required": true, "schema": { "$ref": "admin-api-common.schema.json#/$defs/Location" } },
-      "RetryAfter": { "description": "Minimum polling or retry delay in seconds.", "schema": { "$ref": "admin-api-common.schema.json#/$defs/RetryAfterSeconds" } }
+      "RetryAfter": { "description": "Minimum polling or retry delay in seconds.", "schema": { "$ref": "admin-api-common.schema.json#/$defs/RetryAfterSeconds" } },
+      "EvidenceOperation": { "description": "Committed evidence_download_admission Operation ID; required for confidential/sensitive evidence. Does not assert delivery of bytes.", "x-required-when": "evidence_classification_confidential_or_sensitive", "schema": { "$ref": "admin-api-common.schema.json#/$defs/OperationPublicId" } },
+      "EvidenceNoStore": { "required": true, "schema": { "const": "no-store" } },
+      "EvidenceContentRange": { "required": true, "schema": { "type": "string", "pattern": "^bytes [0-9]+-[0-9]+/[0-9]+$" } }
     },
     "requestBodies": {
       "Cancel": { "required": true, "content": { "application/json": { "schema": { "$ref": "admin-mutation-requests.schema.json#/$defs/CancelRequest" } } } },
@@ -143,6 +154,8 @@
     "responses": {
       "Error": { "description": "Redacted system-backup API error", "content": { "application/json": { "schema": { "$ref": "admin-api-common.schema.json#/$defs/Error" } } } },
       "Resource": { "description": "Resource", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Resource" } } } },
+      "EvidenceBytes": { "description": "Evidence plaintext after current authorization and confirmed admission where required. Content-Type comes from immutable Manifest media_type; the body is never an Operation/receipt envelope.", "headers": { "Cache-Control": { "$ref": "#/components/headers/EvidenceNoStore" }, "X-System-Backup-Operation-Id": { "$ref": "#/components/headers/EvidenceOperation" } }, "content": { "*/*": { "schema": { "type": "string", "format": "binary" } } } },
+      "EvidenceRangeBytes": { "description": "Normalized single evidence byte range after current authorization and confirmed admission where required, with Content-Type from immutable Manifest media_type.", "headers": { "Cache-Control": { "$ref": "#/components/headers/EvidenceNoStore" }, "X-System-Backup-Operation-Id": { "$ref": "#/components/headers/EvidenceOperation" }, "Content-Range": { "$ref": "#/components/headers/EvidenceContentRange" } }, "content": { "*/*": { "schema": { "type": "string", "format": "binary" } } } },
       "List": { "description": "Paginated resources", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/List" } } } },
       "Overview": { "description": "Bounded system-backup control-plane overview", "content": { "application/json": { "schema": { "$ref": "admin-control-resources.schema.json#/$defs/OverviewResource" } } } },
       "Config": { "description": "Redacted immutable system-backup configuration version", "content": { "application/json": { "schema": { "$ref": "admin-control-resources.schema.json#/$defs/ConfigResource" } } } },

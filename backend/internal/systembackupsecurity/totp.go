@@ -129,7 +129,7 @@ func (s StrongAuthProofIssuer) issue(ctx context.Context, actor RegistrationActo
 }
 
 func totpProofEndpoint(endpoint string) bool {
-	return endpoint == ProviderRegistrationEndpoint || endpoint == ConfigUpdateEndpoint || endpoint == ConfigRollbackEndpoint
+	return endpoint == ProviderRegistrationEndpoint || endpoint == ConfigUpdateEndpoint || endpoint == ConfigRollbackEndpoint || endpoint == SensitiveDownloadEndpoint
 }
 
 func wipeSecret(b []byte) {

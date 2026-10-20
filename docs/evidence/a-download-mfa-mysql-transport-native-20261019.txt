@@ -1,0 +1,28 @@
+**********************
+PowerShell transcript start
+Start time: 20261019115222
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$mfaNativeQAExit=1; Start-Transcript -LiteralPath docs/evidence/a-download-mfa-mysql-transport-native-20261019.txt -NoClobber | Out-Null; try { & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/system-backup-a-download-mfa-dispatch.test.ps1 2>&1 | ForEach-Object { Write-Host $_.ToString() }; if($LASTEXITCODE -ne 0){throw 'MFA PS5.1 dispatch failed'}; & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/system-backup-a-nonce-acceptance-dispatch.test.ps1 2>&1 | ForEach-Object { Write-Host $_.ToString() }; if($LASTEXITCODE -ne 0){throw 'Nonce PS5.1 dispatch failed'}; & node scripts/system-backup-a-download-mfa-inputs.mjs 2>&1 | ForEach-Object { Write-Host $_.ToString() }; if($LASTEXITCODE -ne 0){throw 'MFA capsule mirror failed'}; $mfaNativeQAExit=0 } finally { Write-Host ('download_mfa_native_transport_check_exit='+$mfaNativeQAExit); Stop-Transcript | Out-Null }; exit $mfaNativeQAExit
+Process ID: 36104
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PASS download-mfa-dispatch: exact new root/seed/package/phase, binary/input/UID pins, full catalog, preflight, cleanup and exclusive profile; no build or remote
+PASS nonce-acceptance-dispatch: exact new root/seed/phase, binary/input/UID pins, full-catalog, preflight, cleanup and exclusive profile; no build or remote
+{"output":"backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json","catalog":"2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237","files":95,"canonical":"14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1","ownership":"e4d031f9ce28e22bc85744ff6a85d2de23a640347a004c507673955ad0c96793","sql_executed":false}
+download_mfa_native_transport_check_exit=0
+**********************
+PowerShell transcript end
+End time: 20261019115229
+**********************

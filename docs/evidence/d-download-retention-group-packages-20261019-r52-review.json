@@ -1,0 +1,148 @@
+{
+  "kind": "d_download_retention_group_frozen_review",
+  "prefix": "d-download-retention-group-packages-20261019-r52",
+  "frozen_validation_passed": true,
+  "source_files": 1402,
+  "source_sha256": "64a5641c8e0eb9d0f788054e80685739e49dfa8b6a0596a78d92a5eab8552b3f",
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 253,
+      "all": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 290,
+      "all": 2244
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main": 75,
+      "all": 519
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "main": 75,
+      "all": 784
+    }
+  ],
+  "main": 693,
+  "all": 5532,
+  "new_roots": [
+    "TestDownloadRetentionGroupReconstructsWithoutOriginalCapability",
+    "TestDownloadRetentionGroupL3ProjectionAndCanonicalBindings",
+    "TestDownloadRetentionGroupNonceAssociationsAndAmbiguity",
+    "TestDownloadRetentionGroupStrictAuditsAndOriginalResult",
+    "TestDownloadRetentionGroupFinalMismatchPoisonsValueCopies",
+    "TestDownloadRetentionGroupIndependentResultFailureRollsBack",
+    "TestDownloadRetentionGroupMissingInputsFailBeforeSQL"
+  ],
+  "new_all": 109,
+  "seed_main": 2,
+  "seed_all": 12,
+  "detached_seed_all": 12,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "449cd66e00b7b6efaa93922be615c5411ce2955f8e79200df7be0eedc05ac47a"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "3cd139de70cb1dd01443708bc269e6aa2dd86b1a361fabb7253efc212efa9344"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "4597dd90e5ab97ed4879a99612448f23be136cc5e5de80cc5a7cc3183cf253d5"
+    }
+  ],
+  "actual_sql_cases_prepared": [
+    "result_audit_delete_restrict",
+    "admission_delete_restrict",
+    "parent_retention_update_restrict",
+    "retention_group_fk",
+    "intent_group_fk",
+    "installation_group_fk",
+    "link_insert_rollback",
+    "duplicate_result_rejected",
+    "cold_group_after_revocation",
+    "cold_group_duplicate_nonce",
+    "cold_group_corrupt_intent"
+  ],
+  "admission_cases_prepared": 13,
+  "actual_sql_prepared_total": 24,
+  "ownership_sha256": "dc0687839ce07646688b7a53d3c7ddda20ea5b269999d499a0730e2d2e0f50a9",
+  "catalog_sha256": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237",
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-eb7081dc53534484b86a9aaac43d9ad7",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-bdecd041889d44808f18c276bb88eae8",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-af0da544e5b34b49bfd51f1c069a492e",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-b80784fd581d4d519df139afa89fa838",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-db69eddef0f54e8d8085a2225b205e0c",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-retention-group-20261019-r48",
+      "exists": false
+    }
+  ],
+  "attempts": [
+    {
+      "prefix": "d-download-retention-group-focused-20261019-r48",
+      "exit": 1,
+      "source_sha256": "8b6aa1dc472812383dd26ac84f42bb1eb05239b9a6f55e2e4d25b99638a25458",
+      "raw_go_sha256": "1ed9309d7366612c5489989351b2cbd772e1a60500b9faf123041ba5c27b698c"
+    },
+    {
+      "prefix": "d-download-retention-group-focused-20261019-r49",
+      "exit": 0,
+      "source_sha256": "f8b279bbe42889b3594349d975a701db55c6b818c975060be020b9217d85b11e",
+      "raw_go_sha256": "9ee9c3b4e044acc7b61b17ff0df5cb95014a9e1230021dc0a907a99b6fc8001f"
+    },
+    {
+      "prefix": "d-download-retention-group-packages-20261019-r50",
+      "exit": 1,
+      "source_sha256": "f8b279bbe42889b3594349d975a701db55c6b818c975060be020b9217d85b11e",
+      "raw_go_sha256": "5ff9e2e7cb633f8fc9133d974d4bc8134012c1ff8a5bca9297931a5a6a27f30b"
+    },
+    {
+      "prefix": "d-download-retention-group-packages-20261019-r51",
+      "exit": 0,
+      "source_sha256": "f8b279bbe42889b3594349d975a701db55c6b818c975060be020b9217d85b11e",
+      "raw_go_sha256": "cb7113c8e5390e3ee47c4aba7717faeeeac878d81767ecf5750ed187de17ef28"
+    },
+    {
+      "prefix": "d-download-retention-group-packages-20261019-r52",
+      "exit": 0,
+      "source_sha256": "64a5641c8e0eb9d0f788054e80685739e49dfa8b6a0596a78d92a5eab8552b3f",
+      "raw_go_sha256": "bf58f0ebc171cc5198b965839f500d62f579e9c859eba7a64ae35002573f3297"
+    }
+  ],
+  "current_source_drift": [],
+  "current_sources_match": true,
+  "post_r51_input_changes": [
+    "backend/internal/systembackupevidence/download_retention_group_test.go"
+  ],
+  "post_r51_change_reason": "Three SQL-driver test callback parse/encode failure branches record Error and return instead of Goexit while database/sql holds its connection lock. Current complete packages/seed/probes rerun; production inputs unchanged.",
+  "dependencies_installed": false,
+  "new_retention_group_actual_mysql_executed": false,
+  "current_server_rerun": false,
+  "production_enabled": false,
+  "formal_schema_or_grants_installed": false,
+  "group_gc_delete_implemented": false,
+  "original_six_scopes_complete": false,
+  "separate_mfa_mysql_acceptance": "docs/evidence/d-download-mfa-actual-accepted-20261019.json",
+  "limitations": "Bounded persisted group reconstruction and result transaction checks on scripted SQL/rows/materials/capacity. Eleven result/group InnoDB leaves compiled, not executed; old MFA nine is separately accepted only for its frozen issuance scope. No group deletion/tombstone/grants/physical capacity, other owner binding, production assembly, historical activation or full original six-scope completion."
+}

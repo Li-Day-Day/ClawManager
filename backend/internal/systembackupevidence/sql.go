@@ -110,6 +110,20 @@ func (s SQLRegistry) WithLocked(ctx context.Context, id string, fn func(Locked) 
 }
 
 func (s SQLRegistry) load(ctx context.Context, tx *sql.Tx, id string) (Record, error) {
+	if nilSystemAdapter(s.Policy) {
+		return Record{}, ErrUnavailable
+	}
+	return s.loadManifest(ctx, tx, id, true, s.Policy.OwnerDeadline)
+}
+
+// Both paths decode exactly the same immutable envelope/chunks. The preview
+// caller supplies its purpose-specific current owner authorization and never
+// takes the evidence/chunk FOR UPDATE locks that belong to admission's L9.
+func (s SQLRegistry) loadManifest(ctx context.Context, tx *sql.Tx, id string, locking bool, owner func(context.Context, *sql.Tx, Identity) (time.Time, error)) (Record, error) {
+	lock := ""
+	if locking {
+		lock = " FOR UPDATE"
+	}
 	r := Record{}
 	r.Manifest.Identity.Installation = s.Installation
 	r.Manifest.Identity.ID = id
@@ -126,7 +140,7 @@ func (s SQLRegistry) load(ctx context.Context, tx *sql.Tx, id string) (Record, e
 storage_identity_hash,storage_ref_version,storage_relative_key,storage_immutable_version,content_checksum,content_size_bytes,
 object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_count,chunk_list_root,media_type,encryption,kek_identity_hash,kek_version,envelope_hash,
 redaction_classification,claim_owner,claim_expires_at,expires_at,protected_until,row_version,created_at,storage_provider_role,storage_relative_key_hash,envelope_framing_version
-FROM system_backup_evidence WHERE public_id=? FOR UPDATE`, id).Scan(&dbID, &i.OwnerType, &i.OwnerID, &i.Type, &r.State, &r.Failure,
+FROM system_backup_evidence WHERE public_id=?`+lock, id).Scan(&dbID, &i.OwnerType, &i.OwnerID, &i.Type, &r.State, &r.Failure,
 		&identity, &version, &key, &immutable, &i.ContentHash, &i.ContentSize, &objectHash, &objectSize, &chunkSize, &count, &root, &i.Media, &encryption, &kekIdentity, &kekVersion, &envelopeHash,
 		&i.Classification, &claim, &until, &r.ExpiresAt, &protected, &r.RowVersion, &r.CreatedAt, &role, &keyHash, &framing)
 	if e != nil {
@@ -146,7 +160,7 @@ FROM system_backup_evidence WHERE public_id=? FOR UPDATE`, id).Scan(&dbID, &i.Ow
 	r.ProtectedUntil = protected.Time
 	// Owner deadline is NOT an evidence-table field; policy must resolve the
 	// immutable owner's actual deadline. The SQL adapter requires this resolver.
-	r.OwnerDeadline, e = s.Policy.OwnerDeadline(ctx, tx, *i)
+	r.OwnerDeadline, e = owner(ctx, tx, *i)
 	if e != nil {
 		return r, ErrUnavailable
 	}
@@ -159,7 +173,7 @@ FROM system_backup_evidence WHERE public_id=? FOR UPDATE`, id).Scan(&dbID, &i.Ow
 	if count < 1 || count > 1024 || chunkSize.Int64 != ChunkSize {
 		return r, ErrIntegrity
 	}
-	rows, e := tx.QueryContext(ctx, `SELECT chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE`, dbID)
+	rows, e := tx.QueryContext(ctx, `SELECT chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index`+lock, dbID)
 	if e != nil {
 		return r, ErrUnavailable
 	}

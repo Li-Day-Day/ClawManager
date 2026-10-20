@@ -10,6 +10,14 @@ function planFixture() {
     mysql_pod: 'mysql-test', mysql_pod_uid: 'mysql-test-uid', mysql_container: 'mysql', mysql_node: 'test-node', mysql_data_pvc: 'mysql-test-data',
     server_uuid: '11111111-2222-3333-4444-555555555555', collector_db_user: 'capacity_reader', collector_uid: 999, credentials_secret: 'capacity-test-dsn', report_pvc: 'capacity-test-report' };
 }
+test('capacity source covers every registered backup/restore control table including base backup tasks',()=>{
+ const registry=JSON.parse(readFileSync(resolve(root,'contracts/system-backup/v12/schema-registry.json')));
+ const expected=registry.objects.filter(o=>o.object_type==='table'&&(o.name.startsWith('system_backup')||o.name.startsWith('system_restore_')||o.name==='audit_logs')).map(o=>o.name).sort();
+ assert.ok(expected.includes('system_backups'));
+ assert.deepEqual(capacityTables(),expected);
+ const rendered=renderCapacityDeployment(planFixture());
+ assert.ok(rendered.source.tables.includes('system_backups'));
+});
 function fakeEnvironment() {
   const plan = planFixture(), rendered = renderCapacityDeployment(plan);
   const registry = JSON.parse(readFileSync(resolve(root, 'contracts/system-backup/v12/schema-registry.json')));

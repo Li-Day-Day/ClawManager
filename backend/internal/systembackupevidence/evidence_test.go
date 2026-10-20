@@ -326,7 +326,7 @@ func TestDownloadAuthAuditRangeAndNoPartialBody(t *testing.T) {
 			s, m, store, plain, _ := serviceFixture(t)
 			original := m.r
 			originalAudits := len(m.audits)
-			h := Handler{s, testAuth{}}
+			h := Handler{Service: s, Auth: testAuth{}}
 			r := httptest.NewRequest("GET", Path+m.r.Manifest.Identity.ID, nil)
 			r.TLS = &tls.ConnectionState{}
 			r.Header.Set("Range", "bytes=1048570-1048590")

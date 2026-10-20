@@ -16,6 +16,8 @@ type DownloadRuntimeConfig struct {
 	S3        S3STSConfig
 	Transit   []DownloadTransitConfig
 	Failure   func(context.Context, string, string)
+	Admission *DownloadAdmissionService
+	Results   *SQLDownloadResults
 }
 
 // DownloadRuntime is ready to mount at Path on the existing TLS Admin server.
@@ -23,10 +25,12 @@ type DownloadRuntimeConfig struct {
 // drain requests before Close, and supply the existing authoritative SQLPolicy.
 type DownloadRuntime struct {
 	handler   Handler
+	admitted  *admittedDownloadHandler
 	authority *SQLDownloadAuthority
 	sts       *S3STSCredentials
 	store     *S3Store
 	keys      *DownloadTransit
+	journal   *DownloadFailureJournal
 	closed    atomic.Bool
 }
 
@@ -55,16 +59,26 @@ func NewDownloadRuntime(c DownloadRuntimeConfig) (*DownloadRuntime, error) {
 	if err != nil {
 		return fail(err)
 	}
-	r.handler = Handler{Auth: authority, Service: Service{Registry: a.Registry, Store: downloadReadStore{r.store}, Keys: r.keys, Failure: c.Failure}}
+	r.handler = Handler{Auth: authority, Service: Service{Registry: a.Registry, Store: downloadReadStore{r.store}, Keys: r.keys, Failure: c.Failure}, publicOnly: true}
+	if c.Admission != nil || c.Results != nil {
+		r.admitted, err = newAdmittedDownloadHandler(c.Admission, authority, c.Results, r.handler.Service, r.handler)
+		if err != nil {
+			return fail(err)
+		}
+	}
 	return r, nil
 }
 
 func (r *DownloadRuntime) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if r == nil || r.closed.Load() {
+	if r == nil || r.closed.Load() || r.journal != nil && r.journal.Check() != nil {
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusServiceUnavailable)
 		io.WriteString(w, `{"code":"artifact_unavailable","message":"artifact_unavailable"}`)
+		return
+	}
+	if r.admitted != nil {
+		r.admitted.ServeHTTP(w, req)
 		return
 	}
 	r.handler.ServeHTTP(w, req)
@@ -76,6 +90,9 @@ func (r *DownloadRuntime) Close() {
 		r.sts.Close()
 		if r.authority != nil {
 			wipe(r.authority.c.JWTSecret)
+		}
+		if r.journal != nil {
+			r.journal.Close()
 		}
 	}
 }

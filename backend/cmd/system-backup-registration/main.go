@@ -6,11 +6,9 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -24,12 +22,15 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintln(os.Stderr, "registration startup/check failed; no activation performed")
+		fmt.Fprintln(os.Stderr, "registration startup/check/listener/shutdown failed")
 		os.Exit(1)
 	}
 }
 func run() error {
 	runtimePath := flag.String("runtime", "", "SHA-pinned runtime JSON path")
+	downloadPath := flag.String("download-runtime", "", "optional SHA-pinned evidence download deployment JSON")
+	liveReadyURL := flag.String("check-live-url", "", "check-activation only: HTTPS loopback download readiness URL")
+	probeServerName := flag.String("probe-server-name", "", "check-live-url only: mounted server certificate hostname")
 	bootstrapConfig := flag.String("check-bootstrap-config", "", "offline ConfigValues structure check only; no provider admission or activation")
 	check := flag.Bool("check-activation", false, "read-only registration runtime check against active config; not full configuration admission")
 	capacityReport := flag.String("collect-capacity", "", "write capacity reports from the MySQL data-volume sidecar")
@@ -38,6 +39,9 @@ func run() error {
 	address := flag.String("listen", "127.0.0.1:9443", "HTTPS listen address")
 	flag.Parse()
 	capacityMode := *capacityReport != "" || *checkCapacity
+	if err := validateDownloadMode(downloadMode{runtime: *runtimePath, deployment: *downloadPath, liveURL: *liveReadyURL, serverName: *probeServerName, digest: os.Getenv("SYSTEM_BACKUP_DOWNLOAD_RUNTIME_SHA256"), dsn: os.Getenv("SYSTEM_BACKUP_DOWNLOAD_DSN_FILE"), capacity: capacityMode, bootstrap: *bootstrapConfig != "", check: *check}); err != nil {
+		return err
+	}
 	if flag.NArg() != 0 || (*checkCapacity && *capacityReport != "") || (capacityMode && (*capacityConfig == "" || *runtimePath != "" || *check || *bootstrapConfig != "")) || (!capacityMode && *capacityConfig != "") {
 		return fmt.Errorf("conflicting modes or missing capacity pins")
 	}
@@ -83,6 +87,9 @@ func run() error {
 	}
 	if err != nil {
 		return err
+	}
+	if (*downloadPath != "" || *liveReadyURL != "") && (cfg.User == "" || cfg.MultiStatements || strings.EqualFold(cfg.User, "root")) {
+		return errDownloadDeployment
 	}
 	if capacityMode && (cfg.DBName != collector.Database || cfg.User != collector.User || cfg.MultiStatements) {
 		return fmt.Errorf("capacity database mismatch")
@@ -138,25 +145,54 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	var download *loadedDownload
+	closeDownload := true
+	defer func() {
+		if closeDownload {
+			download.Close()
+		}
+	}()
+	if *downloadPath != "" {
+		downloadDB, downloadAccount, openErr := openDownloadDatabase(os.Getenv("SYSTEM_BACKUP_DOWNLOAD_DSN_FILE"), os.Getenv("SYSTEM_BACKUP_REGISTRATION_DSN_FILE"), cfg)
+		if openErr != nil {
+			return openErr
+		}
+		defer downloadDB.Close()
+		download, err = loadDownloadDeployment(ctx, app, downloadDB, *downloadPath, os.Getenv("SYSTEM_BACKUP_DOWNLOAD_RUNTIME_SHA256"), os.Getenv("SYSTEM_BACKUP_REGISTRATION_RUNTIME_SHA256"), downloadAccount)
+		if err != nil {
+			return err
+		}
+	}
 	if *check {
 		probe, done := context.WithTimeout(ctx, 15*time.Second)
 		defer done()
 		if err = app.CheckActivation(probe); err != nil {
 			return err
 		}
+		if *liveReadyURL != "" {
+			if err = checkLiveDownloadReadiness(probe, *liveReadyURL, *probeServerName, os.Getenv("SYSTEM_BACKUP_REGISTRATION_TLS_CERT_FILE"), os.Getenv("SYSTEM_BACKUP_DOWNLOAD_RUNTIME_SHA256")); err != nil {
+				return err
+			}
+			fmt.Println("PASS live-download-readiness=true configuration-and-journal-only=true download-journal-opened-by-probe=false provider-admission=not-run production-approval=no")
+		}
 		fmt.Println("PASS registration-runtime-check=true full-config-admission=not-run configuration-mutated=false human-mfa-acceptance=not-run")
+		if download != nil {
+			fmt.Println("PASS download-runtime-composition=true startup-grants-pins-match=yes provider-admission=not-run human-mfa-acceptance=not-run production-approval=no")
+		}
 		return nil
+	}
+	handler, err := mountDownloadHTTP(app.API, download)
+	if err != nil {
+		return err
 	}
 	server := security.RegistrationHTTPServer(*address, app.API)
-	go func() {
-		<-ctx.Done()
-		shutdown, done := context.WithTimeout(context.Background(), 10*time.Second)
-		defer done()
-		_ = server.Shutdown(shutdown)
-	}()
-	err = server.ListenAndServeTLS(os.Getenv("SYSTEM_BACKUP_REGISTRATION_TLS_CERT_FILE"), os.Getenv("SYSTEM_BACKUP_REGISTRATION_TLS_KEY_FILE"))
-	if errors.Is(err, http.ErrServerClosed) {
-		return nil
-	}
+	server.Handler = handler
+	// A forced close may leave handlers alive. Only a confirmed drain permits
+	// erasing their keys; otherwise return failure and let process exit own them.
+	closeDownload = false
+	drained, err := serveRegistrationHTTP(ctx, server, func() error {
+		return server.ListenAndServeTLS(os.Getenv("SYSTEM_BACKUP_REGISTRATION_TLS_CERT_FILE"), os.Getenv("SYSTEM_BACKUP_REGISTRATION_TLS_KEY_FILE"))
+	}, 10*time.Second)
+	closeDownload = drained
 	return err
 }

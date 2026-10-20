@@ -41,17 +41,23 @@ func (s SQLTOTPService) checkConfigProofSession(ctx context.Context, tx *sql.Tx,
 }
 
 func (s SQLTOTPService) finalConfigProofCheck(ctx context.Context, tx *sql.Tx, actor RegistrationActor, issuedAt time.Time) error {
+	_, err := s.finalConfigProofClock(ctx, tx, actor, issuedAt)
+	return err
+}
+
+func (s SQLTOTPService) finalConfigProofClock(ctx context.Context, tx *sql.Tx, actor RegistrationActor, issuedAt time.Time) (totpProofClock, error) {
 	if err := s.Authorize(ctx, tx, actor); err != nil {
-		return registrationBoundaryError(err)
+		return totpProofClock{}, registrationBoundaryError(err)
 	}
 	if err := s.checkConfigProofSession(ctx, tx, actor, issuedAt); err != nil {
-		return err
+		return totpProofClock{}, err
 	}
 	// The signer or final callbacks may have taken time. Observe fresh database
 	// UTC after them; no callback follows this temporal check before commit.
+	started := time.Now()
 	now, err := configMutationClock(ctx, tx)
 	if err != nil || now.Before(issuedAt) || !configMutationSessionAt(actor, now) || !now.Before(issuedAt.Add(s.Issuer.Lifetime)) || now.Before(s.Issuer.Key.NotBefore) || !now.Before(s.Issuer.Key.NotAfter) {
-		return ErrRegistrationUnavailable
+		return totpProofClock{}, ErrRegistrationUnavailable
 	}
-	return nil
+	return totpProofClock{now: now, started: started}, nil
 }

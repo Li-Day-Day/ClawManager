@@ -1,0 +1,44 @@
+=== RUN   TestADownloadAdmissionMySQLSeed
+=== RUN   TestADownloadAdmissionMySQLSeed/detached_embedded_config
+=== RUN   TestADownloadAdmissionMySQLSeed/historical_config_projection
+=== RUN   TestADownloadAdmissionMySQLSeed/independent_encrypted_object
+--- PASS: TestADownloadAdmissionMySQLSeed (1.01s)
+    --- PASS: TestADownloadAdmissionMySQLSeed/detached_embedded_config (0.31s)
+    --- PASS: TestADownloadAdmissionMySQLSeed/historical_config_projection (0.64s)
+    --- PASS: TestADownloadAdmissionMySQLSeed/independent_encrypted_object (0.01s)
+=== RUN   TestASQLTaskDownloadOwnersMySQLSeed
+    download_task_owner_a_mysql_test.go:59: PASS SQL task owner seed; actual_mysql=not_run production_tasks=no
+--- PASS: TestASQLTaskDownloadOwnersMySQLSeed (0.77s)
+=== RUN   TestDTaskOwnerDownloadChainMySQLSeed
+=== RUN   TestDTaskOwnerDownloadChainMySQLSeed/current_config_fk
+=== RUN   TestDTaskOwnerDownloadChainMySQLSeed/backup
+=== RUN   TestDTaskOwnerDownloadChainMySQLSeed/drill
+=== RUN   TestDTaskOwnerDownloadChainMySQLSeed/preflight
+=== RUN   TestDTaskOwnerDownloadChainMySQLSeed/artifact_verify
+=== NAME  TestDTaskOwnerDownloadChainMySQLSeed
+    download_task_owner_chain_mysql_test.go:82: PASS task owner chain seed; actual_mysql=not_run provider_transport=synthetic
+--- PASS: TestDTaskOwnerDownloadChainMySQLSeed (0.95s)
+    --- PASS: TestDTaskOwnerDownloadChainMySQLSeed/current_config_fk (0.56s)
+    --- PASS: TestDTaskOwnerDownloadChainMySQLSeed/backup (0.04s)
+    --- PASS: TestDTaskOwnerDownloadChainMySQLSeed/drill (0.08s)
+    --- PASS: TestDTaskOwnerDownloadChainMySQLSeed/preflight (0.15s)
+    --- PASS: TestDTaskOwnerDownloadChainMySQLSeed/artifact_verify (0.08s)
+=== RUN   TestASensitiveDownloadMFAMySQLSeed
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/duplicate
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/unknown
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/trailing
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/catalog
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/ddl
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/budget
+=== NAME  TestASensitiveDownloadMFAMySQLSeed
+    sensitive_download_mfa_mysql_test.go:148: PASS download MFA seed; real_mysql=not_run human_mfa=no production_approval=no
+--- PASS: TestASensitiveDownloadMFAMySQLSeed (0.38s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells (0.31s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/duplicate (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/unknown (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/trailing (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/catalog (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/ddl (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/budget (0.00s)
+PASS

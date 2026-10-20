@@ -15,6 +15,8 @@ CONTEXT="${KUBE_CONTEXT:-kubernetes-admin@kubernetes}"
 SOURCE_NAMESPACE="${SOURCE_NAMESPACE:-clawmanager-zhanghui08-system}"
 EXPECTED_APP_DIGEST="${EXPECTED_APP_DIGEST:-4f8ed9600eff963103feec1fcc23f37397ef48ce3961e7542c41e4e0faed7cdd}"
 TEST_NODE="${TEST_NODE:-node1}"
+MYSQL_STARTUP_ONLY="${MYSQL_STARTUP_ONLY:-0}"
+[[ "$MYSQL_STARTUP_ONLY" == 0 || "$MYSQL_STARTUP_ONLY" == 1 ]] || { echo 'invalid MySQL startup diagnostic mode' >&2; exit 1; }
 SCHEMA_CAPTURE="${SCHEMA_CAPTURE:-0}"
 DDL_CAPTURE="${DDL_CAPTURE:-0}"
 D_SCHEMA_COMPARE="${D_SCHEMA_COMPARE:-0}"
@@ -33,6 +35,15 @@ if [[ "$A_BUSINESS_HISTORY_SMOKE" == 1 ]]; then
   [[ "$(sha256sum "$A_BUSINESS_BINARY" | cut -d' ' -f1)" == "$A_BUSINESS_BINARY_SHA256" ]] || { echo 'A business history binary checksum mismatch' >&2; exit 1; }
 fi
 test_image_pull_policy=IfNotPresent
+if [[ "$MYSQL_STARTUP_ONLY" == 1 ]]; then
+  # Match the offline image policy used by the A evidence harness. This mode
+  # stops before migrations and must never dispatch another smoke phase.
+  for mode in SCHEMA_CAPTURE DDL_CAPTURE D_SCHEMA_COMPARE CONTROLLER_ENABLED_SMOKE CONTROLLER_TRANSITION_SMOKE CONTROLLER_GRANT_DRIFT_SMOKE D_DB_INVARIANT_SMOKE D_HISTORY_CLI_SMOKE A_BUSINESS_HISTORY_SMOKE A_BUSINESS_RESTORE_SMOKE D_PROVIDER_REGISTRATION_SMOKE D_FRESH_BASELINE; do
+    [[ "${!mode:-0}" == 0 ]] || { echo 'MySQL startup diagnostic requires an exclusive run' >&2; exit 1; }
+  done
+  [[ -z "${D_MIGRATION_BINARY:-}" ]] || { echo 'MySQL startup diagnostic cannot run migrations' >&2; exit 1; }
+  test_image_pull_policy=Never
+fi
 if [[ "$D_HISTORY_CLI_SMOKE" == 1 ]]; then
   [[ "$D_DB_INVARIANT_SMOKE" == 1 && "${D_HISTORY_REVIEW_SMOKE:-0}" == 1 && "${D_PROVIDER_REGISTRATION_SMOKE:-0}" == 0 && -z "${D_INVARIANT_IMAGE:-}" && -s "${D_HISTORY_CLI_BINARY:-}" && "${D_HISTORY_CLI_SHA256:-}" =~ ^[0-9a-f]{64}$ && -s scripts/system-backup-d-history-cli-phase.sh ]] || { echo 'history CLI requires dedicated pinned history inputs' >&2; exit 1; }
   [[ "$(sha256sum "$D_HISTORY_CLI_BINARY" | cut -d' ' -f1)" == "$D_HISTORY_CLI_SHA256" ]] || { echo 'history CLI checksum mismatch' >&2; exit 1; }
@@ -103,6 +114,42 @@ cleanup() {
   exit "$status"
 }
 trap cleanup EXIT
+
+# Read only this run's resources before the EXIT trap removes them. Avoid
+# describe/YAML/Secret dumps and database logs, which can expose init inputs.
+diagnose_mysql_startup() {
+  local current_uid pod_uid pod_identity
+  printf 'MYSQL_STARTUP_DIAGNOSTIC namespace=%s uid=%s node=%s\n' "$RUN_NAMESPACE" "$RUN_NAMESPACE_UID" "$TEST_NODE" >&2
+  current_uid="$(kubectl --context="$CONTEXT" --request-timeout=10s get namespace "$RUN_NAMESPACE" -o jsonpath='{.metadata.uid}' 2>/dev/null)" || current_uid=''
+  if [[ -z "$RUN_NAMESPACE_UID" || "$current_uid" != "$RUN_NAMESPACE_UID" ]]; then
+    echo 'MYSQL_STARTUP_DIAGNOSTIC skipped: namespace identity unavailable or changed' >&2
+    return 0
+  fi
+  pod_identity="$(kubectl --context="$CONTEXT" --request-timeout=10s --namespace="$RUN_NAMESPACE" get pod mysql -o jsonpath='{.metadata.uid}{" "}{.metadata.labels.clawmanager\.io/test-run}' 2>/dev/null)" || pod_identity=''
+  pod_uid="${pod_identity%% *}"
+  if [[ -z "$pod_uid" || "$pod_identity" != "$pod_uid $RUN_ID" ]]; then
+    echo 'MYSQL_STARTUP_DIAGNOSTIC pod identity unavailable' >&2
+    return 0
+  fi
+  kubectl --context="$CONTEXT" --request-timeout=10s --namespace="$RUN_NAMESPACE" get pod mysql \
+    -o jsonpath='{ "POD phase="}{.status.phase}{" node="}{.spec.nodeName}{" reason="}{.status.reason}{"\n"}{range .status.conditions[*]}{"CONDITION "}{.type}{"="}{.status}{" reason="}{.reason}{"\n"}{end}{range .status.containerStatuses[*]}{"CONTAINER "}{.name}{" ready="}{.ready}{" restarts="}{.restartCount}{" waiting="}{.state.waiting.reason}{" terminated="}{.state.terminated.reason}{" exit="}{.state.terminated.exitCode}{" last_reason="}{.lastState.terminated.reason}{" last_exit="}{.lastState.terminated.exitCode}{" imageID="}{.imageID}{"\n"}{end}' >&2 || true
+  kubectl --context="$CONTEXT" --request-timeout=10s --namespace="$RUN_NAMESPACE" get events --field-selector="involvedObject.uid=$pod_uid" \
+    -o jsonpath='{range .items[*]}{"EVENT "}{.type}{" reason="}{.reason}{" count="}{.count}{" message="}{.message}{"\n"}{end}' >&2 || true
+  kubectl --context="$CONTEXT" --request-timeout=10s get node "$TEST_NODE" \
+    -o jsonpath='{range .status.conditions[*]}{"NODE_CONDITION "}{.type}{"="}{.status}{" reason="}{.reason}{"\n"}{end}{"NODE_ALLOCATABLE cpu="}{.status.allocatable.cpu}{" memory="}{.status.allocatable.memory}{" ephemeral-storage="}{.status.allocatable.ephemeral-storage}{"\n"}' >&2 || true
+  echo 'MYSQL_STARTUP_DIAGNOSTIC end; database logs and secrets omitted' >&2
+}
+
+wait_for_mysql() {
+  local status
+  if kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" wait pod/mysql --for=condition=Ready --timeout=240s >/dev/null; then
+    return 0
+  else
+    status=$?
+  fi
+  diagnose_mysql_startup
+  return "$status"
+}
 
 for tool in kubectl mktemp find sort diff od tr; do
   command -v "$tool" >/dev/null || { printf 'missing existing tool: %s\n' "$tool" >&2; exit 1; }
@@ -289,7 +336,11 @@ spec:
     - name: mysql-init
       configMap: {name: mysql-init}
 EOF
-kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" wait pod/mysql --for=condition=Ready --timeout=240s >/dev/null
+wait_for_mysql
+if [[ "$MYSQL_STARTUP_ONLY" == 1 ]]; then
+  echo 'MYSQL_STARTUP_PASS readiness=yes image_pull_policy=Never migrations=not_run mfa_cases=not_run'
+  exit 0
+fi
 
 mysql_query() {
   kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" exec pod/mysql -- sh -c \

@@ -31,18 +31,11 @@ func collectRegistrationCapacity(ctx context.Context, db *sql.Conn, expected Cap
 	if !found {
 		return r, ErrRegistrationUnavailable
 	}
-	var stat syscall.Statfs_t
-	if syscall.Statfs(datadir, &stat) != nil || stat.Bsize <= 0 {
-		return r, ErrRegistrationUnavailable
-	}
-	if uint64(stat.Bavail) > uint64(1<<62)/uint64(stat.Bsize) {
-		return r, ErrRegistrationUnavailable
-	}
-	r.AvailableBytes = int64(stat.Bavail) * stat.Bsize
-	var tableCount int
-	err = db.QueryRowContext(ctx, `SELECT COALESCE(SUM(DATA_LENGTH+INDEX_LENGTH),0),COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND (LEFT(TABLE_NAME,14)='system_backup_' OR LEFT(TABLE_NAME,15)='system_restore_' OR TABLE_NAME='audit_logs')`).Scan(&r.AllocatedBytes, &tableCount)
-	if err != nil || tableCount != len(expected.Tables) || r.AllocatedBytes < 0 || db.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&r.ObservedAt) != nil {
-		return r, ErrRegistrationUnavailable
-	}
-	return r, nil
+	return measureRegistrationCapacity(ctx, db, expected, func() (int64, error) {
+		var stat syscall.Statfs_t
+		if syscall.Statfs(datadir, &stat) != nil || stat.Bsize <= 0 || uint64(stat.Bavail) > uint64(1<<62)/uint64(stat.Bsize) {
+			return 0, ErrRegistrationUnavailable
+		}
+		return int64(stat.Bavail) * stat.Bsize, nil
+	})
 }

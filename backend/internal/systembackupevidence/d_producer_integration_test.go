@@ -253,6 +253,14 @@ func (f *dIntegrationFixture) step(stage string) error {
 	ctx := context.Background()
 	switch stage {
 	case "pending":
+		// Fixture construction/file loading may exceed the five-second capacity
+		// observation window on a slow host. Model a fresh SQL clock before this
+		// NEW admission, as the real database does; preserve all original owner,
+		// claim and budget deadlines. Delays injected inside audit/guard remain
+		// observable and must still fail the existing expiry tests.
+		if !f.realDB {
+			f.d.now = time.Now().UTC().Truncate(time.Microsecond)
+		}
 		out, err := f.pending.AdmitPending(ctx, f.handle, f.pendingRequest)
 		if err == nil && out.RunVersion != "3" {
 			f.t.Fatal("pending version", out)
@@ -274,6 +282,16 @@ func (f *dIntegrationFixture) step(stage string) error {
 	}
 	f.t.Fatal(stage)
 	return pd.ErrInvalid
+}
+
+func TestDProducerPendingAfterSlowLocalSetup(t *testing.T) {
+	f := newDIntegrationFixture(t)
+	budget, owner, claim, authority := f.pendingRequest.BudgetUntil, f.history.OwnerWriteExpiresAt, f.claimRequest.ExpiresAt, f.until
+	time.Sleep(6 * time.Second)
+	f.advance("pending")
+	if f.pendingRequest.BudgetUntil != budget || f.history.OwnerWriteExpiresAt != owner || f.claimRequest.ExpiresAt != claim || !f.until.Equal(authority) {
+		t.Fatal("setup clock sample extended an original execution deadline")
+	}
 }
 func (f *dIntegrationFixture) advance(stages ...string) {
 	f.t.Helper()

@@ -111,7 +111,12 @@ type systemPublicationTestFixture struct {
 func newSystemPublicationTestFixture(t *testing.T) *systemPublicationTestFixture {
 	t.Helper()
 	f := newSystemPendingTestFixture(t)
-	if _, e := f.run(t, false, nil); e != nil {
+	// This transaction only seeds historical committed state for the next
+	// operation. A known commit with expired execution permission still left
+	// that state in SQL; it grants no permission to call a provider. Keep the
+	// production five-second check and reject unknown/uncommitted outcomes.
+	seed, e := f.run(t, false, nil)
+	if !seed.Committed() || e != nil && e != pd.ErrCommittedExpired {
 		t.Fatal(e)
 	}
 	ca := &systemClaimTestAuthority{sample: f.d.now}
@@ -276,7 +281,9 @@ func TestSystemPublicationClaimFinalGuard(t *testing.T) {
 			f := newSystemPublicationTestFixture(t)
 			before := cloneSystemPendingRow(f.d.row)
 			chunks := cloneSystemPendingChunks(f.d.chunks)
+			mutated := false
 			r, e := f.claimRun(t, false, func(facts *pd.ClaimFacts) {
+				mutated = true
 				switch mode {
 				case "owner":
 					f.d.row["claim_owner"] = "other"
@@ -304,7 +311,7 @@ func TestSystemPublicationClaimFinalGuard(t *testing.T) {
 					facts.Readback = true
 				}
 			})
-			if e == nil || r.Committed() || !reflect.DeepEqual(before, f.d.row) || !reflect.DeepEqual(chunks, f.d.chunks) {
+			if !mutated || e == nil || r.Committed() || !reflect.DeepEqual(before, f.d.row) || !reflect.DeepEqual(chunks, f.d.chunks) {
 				t.Fatal("claim guard allowed drift or partial commit", e)
 			}
 		})

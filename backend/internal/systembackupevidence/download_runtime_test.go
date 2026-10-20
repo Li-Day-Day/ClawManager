@@ -67,7 +67,7 @@ func downloadRuntimeFixture(t *testing.T) (DownloadRuntimeConfig, *downloadTrans
 	return c, x, &requests
 }
 
-func TestDownloadRuntimeHTTPWithSTSAndTransit(t *testing.T) {
+func TestDownloadLegacyHTTPWithSTSAndTransit(t *testing.T) {
 	for _, revoked := range []bool{false, true} {
 		t.Run(fmt.Sprint(revoked), func(t *testing.T) {
 			c, x, requests := downloadRuntimeFixture(t)
@@ -85,6 +85,19 @@ func TestDownloadRuntimeHTTPWithSTSAndTransit(t *testing.T) {
 			m.r.ClaimUntil = time.Time{}
 			m.r.RowVersion = 1
 			f.db.onBegin = func(int) {
+				// This test makes real TLS/STS/S3/Transit calls. Let its SQL
+				// clock advance for each new transaction instead of replaying
+				// fixture-creation time past the production 5s freshness bound.
+				// Session, owner, material and claim expirations remain original.
+				stamp := time.Now().UTC().Truncate(time.Microsecond)
+				for n := range f.db.plan {
+					switch f.db.plan[n].match {
+					case "SELECT @@server_uuid":
+						f.db.plan[n].values[2] = stamp
+					case "SELECT UTC_TIMESTAMP(6)":
+						f.db.plan[n].values[0] = stamp
+					}
+				}
 				f.db.plan[7].values[23] = m.r.Claim
 				f.db.plan[7].values[24] = m.r.ClaimUntil
 				f.db.plan[7].values[27] = m.r.RowVersion
@@ -94,7 +107,12 @@ func TestDownloadRuntimeHTTPWithSTSAndTransit(t *testing.T) {
 			}
 			runtime.handler.Service.Registry = downloadMemoryRegistry{memoryRegistry: m, actor: f.actor}
 			runtime.handler.Auth = downloadTestAuthenticator{SQLDownloadAuthority: runtime.authority, stepUp: f.stepUp}
-			server := httptest.NewTLSServer(runtime)
+			// Preserve this older assembly test's explicit synthetic legacy
+			// callback scope. The mounted runtime now rejects private rows unless
+			// the new concrete admission/result path is supplied (tested below).
+			legacy := runtime.handler
+			legacy.publicOnly = false
+			server := httptest.NewTLSServer(legacy)
 			defer server.Close()
 			r, _ := http.NewRequest("GET", server.URL+Path+f.record.Manifest.Identity.ID, nil)
 			r.Header = f.request.Header.Clone()
@@ -142,9 +160,114 @@ func TestDownloadRuntimeHTTPWithSTSAndTransit(t *testing.T) {
 	}
 }
 
+func TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit(t *testing.T) {
+	for _, mode := range []string{"success", "revoked_after_decrypt", "revoked_after_headers"} {
+		t.Run(mode, func(t *testing.T) {
+			cfg, x, requests := downloadRuntimeFixture(t)
+			f, a := uncommittedConfiguredFixture(t, func(f *admissionTxFixture) {
+				f.initial.Manifest = x.f.record.Manifest
+				f.initial.Ref.ImmutableVersion = x.f.record.Ref.ImmutableVersion
+				f.request.Header.Set("Range", "bytes=0-20")
+			})
+			a.c.Issuer, a.c.Audience, a.c.Subject = cfg.Authority.Issuer, cfg.Authority.Audience, cfg.Authority.Subject
+			writeCommittedProviderToken(t, a)
+			cfg.Authority = a.c
+			cfg.S3.Store.Identity, cfg.S3.Store.Version = a.c.Store.Identity, a.c.Store.Version
+			cfg.Admission = f.service
+			cfg.Results = resultFixture(t, f)
+			failures := 0
+			cfg.Failure = func(context.Context, string, string) { failures++ }
+			runtime, err := NewDownloadRuntime(cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer runtime.Close()
+			if runtime.admitted == nil {
+				t.Fatal("new admission not mounted")
+			}
+			if mode == "revoked_after_decrypt" {
+				policy := f.service.registry.Policy.(*committedTestPolicy)
+				policy.onAuthorize = func() {
+					if x.decrypts.Load() > 0 {
+						f.db.sessionRevoked = true
+					}
+				}
+			}
+			server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if mode == "revoked_after_headers" {
+					runtime.ServeHTTP(runtimeHeaderHook{ResponseWriter: w, after: func() { f.db.sessionRevoked = true }}, r)
+					return
+				}
+				runtime.ServeHTTP(w, r)
+			}))
+			defer server.Close()
+			req, err := http.NewRequest("GET", server.URL+Path+f.initial.Manifest.Identity.ID, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			req.Header = f.request.Header.Clone()
+			res, err := server.Client().Do(req)
+			if err != nil {
+				t.Fatal(err)
+			}
+			body, err := io.ReadAll(res.Body)
+			res.Body.Close()
+			if err != nil && mode != "revoked_after_headers" {
+				t.Fatal(err)
+			}
+			if requests.Load() < 4 || x.logins.Load() != 1 || x.decrypts.Load() != 1 {
+				t.Fatal("atomic runtime did not reach real TLS provider chain", res.StatusCode, string(body), requests.Load(), x.logins.Load(), x.decrypts.Load())
+			}
+			if mode == "revoked_after_headers" {
+				if res.StatusCode != 206 || len(body) != 0 || err == nil || !bytes.Contains(f.db.resultBody, []byte(`"outcome":"interrupted"`)) {
+					t.Fatal("headers already sent: plaintext/JSON emitted or truncation hidden", res.StatusCode, string(body), err)
+				}
+			} else if mode == "revoked_after_decrypt" {
+				if res.StatusCode != 503 && res.StatusCode != 403 {
+					t.Fatal("revoked status", res.StatusCode)
+				}
+				if bytes.Contains(body, x.f.plain[:21]) {
+					t.Fatal("revoked runtime released plaintext")
+				}
+			} else if res.StatusCode != 206 || !bytes.Equal(body, x.f.plain[:21]) || res.Header.Get("X-System-Backup-Operation-Id") != f.db.m.op[0] {
+				t.Fatal("atomic runtime binary response", res.StatusCode, string(body))
+			}
+			if f.db.inserts != 1 || f.db.resultInserts != 1 || len(f.db.nonce) != 16 || f.db.record.Claim != "" || failures != 0 {
+				t.Fatal("runtime result/claim/nonce chain incomplete", failures, f.db.calls)
+			}
+		})
+	}
+}
+
+type runtimeHeaderHook struct {
+	http.ResponseWriter
+	after func()
+}
+
+func (w runtimeHeaderHook) Unwrap() http.ResponseWriter { return w.ResponseWriter }
+func (w runtimeHeaderHook) WriteHeader(status int)      { w.ResponseWriter.WriteHeader(status); w.after() }
+
+func TestDownloadRuntimeWithoutAdmissionNeverInvokesPrivateCallback(t *testing.T) {
+	c, x, requests := downloadRuntimeFixture(t)
+	r, err := NewDownloadRuntime(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer r.Close()
+	m := &memoryRegistry{r: x.f.record, now: time.Now().UTC()}
+	m.r.Claim = ""
+	m.r.ClaimUntil = time.Time{}
+	r.handler.Service.Registry = downloadMemoryRegistry{memoryRegistry: m, actor: x.f.actor}
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, x.f.request)
+	if w.Code != 503 || requests.Load() != 0 || x.decrypts.Load() != 0 || x.f.stepUp.calls != 0 || m.r.Claim != "" || len(m.audits) != 0 {
+		t.Fatal("private fallback reached callback/provider", w.Code, w.Body.String())
+	}
+}
+
 func TestDownloadRuntimeRejectsDriftAndMissingPolicy(t *testing.T) {
 	c, x, requests := downloadRuntimeFixture(t)
-	for _, mode := range []string{"policy", "Failure", "store", "version", "root", "installation", "issuer", "audience", "Transit"} {
+	for _, mode := range []string{"policy", "Failure", "store", "version", "root", "installation", "issuer", "audience", "Transit", "Admission_only", "Results_only"} {
 		t.Run(mode, func(t *testing.T) {
 			bad := c
 			switch mode {
@@ -166,6 +289,10 @@ func TestDownloadRuntimeRejectsDriftAndMissingPolicy(t *testing.T) {
 				bad.S3.Audience = "other"
 			case "Transit":
 				bad.Transit = nil
+			case "Admission_only":
+				bad.Admission = &DownloadAdmissionService{}
+			case "Results_only":
+				bad.Results = &SQLDownloadResults{}
 			}
 			r, err := NewDownloadRuntime(bad)
 			if r != nil {

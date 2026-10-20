@@ -1,0 +1,13 @@
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - vite:css (44%)
+  - rolldown:vite-resolve (16%)
+  - vite:asset (16%)
+  - vite:css-post (13%)
+  - vite:build-html (6%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+

@@ -15,7 +15,7 @@ export const capacityConfigPath = '/run/system-backup/capacity-config/source.jso
 export const capacityBinary = '/usr/local/bin/clawreef-system-backup-registration';
 export function capacityTables() {
   const registry = JSON.parse(readFileSync(resolve(root, 'contracts/system-backup/v12/schema-registry.json')));
-  return registry.objects.filter(o => o.object_type === 'table' && /^(system_backup_|system_restore_|audit_logs$)/.test(o.name)).map(o => o.name).sort();
+  return registry.objects.filter(o => o.object_type === 'table' && /^(system_backup_|system_restore_|system_backups$|audit_logs$)/.test(o.name)).map(o => o.name).sort();
 }
 export function capacityTemplate() {
   return { namespace: 'clawmanager-zhanghui08-system', namespace_uid: '', context: '', image: '', migration_catalog_sha256: computeMigrationCatalog().hash,

@@ -1,0 +1,79 @@
+{
+  "kind": "d_download_admission_schema_static_review",
+  "files": [
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "bytes": 26225,
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "bytes": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+      "bytes": 3157,
+      "sha256": "c24af0413ff6b8dd98c3b7eb59b8c6dade70c385c5f49e48302bb07b98b1ed84"
+    },
+    {
+      "path": "docs/system-backup-d-download-admission-schema-proposal-20261019.sql",
+      "bytes": 9684,
+      "sha256": "e4d031f9ce28e22bc85744ff6a85d2de23a640347a004c507673955ad0c96793"
+    }
+  ],
+  "checks": [
+    {
+      "name": "operation_enum_preserves_old_values_and_ordinals",
+      "pass": true
+    },
+    {
+      "name": "target_enum_preserves_old_values_and_ordinals",
+      "pass": true
+    },
+    {
+      "name": "original_target_check_preserved_with_one_evidence_branch",
+      "pass": true
+    },
+    {
+      "name": "legacy_evidence_ownership_has_no_default_or_backfill",
+      "pass": true
+    },
+    {
+      "name": "operation_target_fk_binds_installation_numeric_and_public_ids",
+      "pass": true
+    },
+    {
+      "name": "nonce_operation_fk_binds_installation",
+      "pass": true
+    },
+    {
+      "name": "receipt_fk_binds_exact_operation_and_evidence",
+      "pass": true
+    },
+    {
+      "name": "receipt_keeps_actual_intent_audit_fk",
+      "pass": true
+    },
+    {
+      "name": "operation_admission_is_synchronous_success_only",
+      "pass": true
+    },
+    {
+      "name": "private_public_bytes_have_independent_bounds_and_digests",
+      "pass": true
+    },
+    {
+      "name": "retention_and_deadline_order_are_explicit",
+      "pass": true
+    },
+    {
+      "name": "only_four_candidate_ddl_statements_no_official_migration_written",
+      "pass": true
+    }
+  ],
+  "actual_mysql": false,
+  "schema_installed": false,
+  "formal_approval": false,
+  "limitations": "Text preservation and shape checks only; not SQL execution, CHECK/FK/grant enforcement, retention/GC or physical-capacity proof."
+}

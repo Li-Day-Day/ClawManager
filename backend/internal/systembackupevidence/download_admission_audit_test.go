@@ -23,6 +23,8 @@ type downloadAuditDB struct {
 	id, affected                        int64
 	fail                                string
 	mutate                              func(*downloadAuditDB)
+	extraQuery                          func(string, []driver.NamedValue) (driver.Rows, error)
+	extraExec                           func(string, []driver.NamedValue) (driver.Result, error)
 	queries, inserts, begins, rollbacks int
 	commits                             int
 }
@@ -56,6 +58,9 @@ func (d *downloadAuditDB) QueryContext(_ context.Context, q string, args []drive
 		}
 		return &authorityRows{values: []driver.Value{d.now, offset}}, nil
 	}
+	if d.extraQuery != nil && q != downloadIntentReadSQL {
+		return d.extraQuery(q, args)
+	}
 	if !strings.Contains(q, "FROM audit_logs WHERE id=? FOR UPDATE") || len(args) != 1 || args[0].Value != d.id {
 		d.t.Fatal("audit lookup must use exact INSERT ID and row lock", q)
 	}
@@ -71,6 +76,9 @@ func (d *downloadAuditDB) QueryContext(_ context.Context, q string, args []drive
 	return &authorityRows{values: []driver.Value{d.user, d.action, d.kind, d.resource, d.body, d.created}}, nil
 }
 func (d *downloadAuditDB) ExecContext(_ context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
+	if d.extraExec != nil && q != downloadIntentInsertSQL {
+		return d.extraExec(q, args)
+	}
 	if q != "INSERT INTO audit_logs (user_id,action,resource_type,resource_id,details,created_at) VALUES (?,'system_backup.evidence_download.intent','system_backup',NULL,?,?)" || len(args) != 3 {
 		d.t.Fatal("unexpected write", q)
 	}

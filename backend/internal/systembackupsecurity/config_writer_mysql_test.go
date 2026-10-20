@@ -293,15 +293,16 @@ func (f *configWriterMySQLFixture) checkCommitted(t *testing.T, result ConfigMut
 	}
 }
 
-func TestDConfigWriterMySQL(t *testing.T) {
+func configWriterMySQLDatabase(t *testing.T) (context.Context, *sql.DB, *mysql.Config, DatabaseIdentity) {
+	t.Helper()
 	ctx, cancel := context.WithTimeout(context.Background(), 240*time.Second)
-	defer cancel()
+	t.Cleanup(cancel)
 	run, uid := os.Getenv("D_INVARIANT_RUN"), os.Getenv("D_INVARIANT_NAMESPACE_UID")
 	cfg, err := sessionProbeConfig(run, uid, os.Getenv("D_INVARIANT_MYSQL_HOST"), os.Getenv("MYSQL_ROOT_PASSWORD"))
 	mysqlMust(t, err)
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	mysqlMust(t, err)
-	defer db.Close()
+	t.Cleanup(func() { db.Close() })
 	db.SetMaxOpenConns(12)
 	var gotRun, gotUID, pinnedUUID, actualUUID string
 	mysqlMust(t, db.QueryRowContext(ctx, "SELECT run_namespace,namespace_uid,server_uuid FROM d_invariant_run_marker WHERE id=1").Scan(&gotRun, &gotUID, &pinnedUUID))
@@ -341,6 +342,11 @@ func TestDConfigWriterMySQL(t *testing.T) {
 	_, err = db.ExecContext(ctx, inputs.CandidateDDL)
 	mysqlMust(t, err)
 	identity := DatabaseIdentity{ServerUUID: actualUUID, Database: cfg.DBName}
+	return ctx, db, cfg, identity
+}
+
+func TestDConfigWriterMySQL(t *testing.T) {
+	ctx, db, cfg, identity := configWriterMySQLDatabase(t)
 	for _, name := range []string{"http_update_replay_rollback", "operation_failure_atomic_rollback", "result_audit_failure_nonce_rollback", "same_key_concurrent_once", "same_version_concurrent_cas", "lost_commit_observe_only", "revoked_session_denies_replay", "corrupt_receipt_denies_replay"} {
 		if !t.Run(name, func(t *testing.T) {
 			p := newConfigProofMySQLFixture(t, ctx, db, cfg, identity)

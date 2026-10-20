@@ -66,7 +66,9 @@ func NewDownloadTransit(a *SQLDownloadAuthority, configs []DownloadTransitConfig
 func transitSegment(s string) bool {
 	return len(s) > 0 && len(s) <= 128 && strings.Trim(s, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_") == ""
 }
-func (d *DownloadTransit) Wrap(context.Context, KeyRef, []byte) ([]byte, error) { return nil, ErrKey }
+func (d *DownloadTransit) Wrap(ctx context.Context, key KeyRef, plain []byte) ([]byte, error) {
+	return (DownloadKeys{}).Wrap(ctx, key, plain)
+}
 func (d *DownloadTransit) Unwrap(ctx context.Context, key KeyRef, wrapped []byte) ([]byte, error) {
 	if d == nil {
 		return nil, ErrKey
@@ -86,7 +88,12 @@ type downloadTransitCredentials struct {
 }
 
 func (d *downloadTransitCredentials) Resolve(ctx context.Context, key KeyRef, op TransitOperation) (TransitCredential, error) {
-	deny := func() (TransitCredential, error) { return TransitCredential{}, ErrKey }
+	deny := func() (TransitCredential, error) {
+		if c := committedDownloadFrom(ctx); c != nil {
+			c.fail()
+		}
+		return TransitCredential{}, ErrKey
+	}
 	if d == nil || d.client == nil || op != TransitUnwrap || key != d.c.Transit.Key {
 		return deny()
 	}

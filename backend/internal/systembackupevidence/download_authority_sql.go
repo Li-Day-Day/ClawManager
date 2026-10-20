@@ -7,9 +7,15 @@ import (
 	"clawreef/internal/systembackupsecurity"
 )
 
-func (a *SQLDownloadAuthority) authorize(ctx context.Context) (downloadGrant, error) {
+func (a *SQLDownloadAuthority) authorize(ctx context.Context) (grant downloadGrant, resultErr error) {
 	deny := func() (downloadGrant, error) { return downloadGrant{}, ErrDenied }
-	if a == nil || ctx.Err() != nil || !time.Now().Before(a.c.ExpiresAt) {
+	committed := committedDownloadFrom(ctx)
+	defer func() {
+		if committed != nil && resultErr != nil {
+			committed.fail()
+		}
+	}()
+	if a == nil || ctx == nil || ctx.Err() != nil || !time.Now().Before(a.c.ExpiresAt) || a.journal != nil && a.journal.Check() != nil || committed != nil && !committed.live(ctx, a) {
 		return deny()
 	}
 	actor, ok := ctx.Value(a).(systembackupsecurity.RegistrationActor)
@@ -36,31 +42,39 @@ func (a *SQLDownloadAuthority) authorize(ctx context.Context) (downloadGrant, er
 		return deny()
 	}
 	defer tx.Rollback()
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
-	if err != nil {
-		return deny()
-	}
-	found, count := false, 0
-	for rows.Next() {
-		var id string
-		if rows.Scan(&id) != nil {
-			rows.Close()
+	var originalConfig *systembackupsecurity.SensitiveDownloadConfig
+	if committed != nil {
+		originalConfig, err = committed.checkConfig(ctx, tx)
+		if err != nil {
 			return deny()
 		}
-		count++
-		if count > 10000 {
-			rows.Close()
+	} else {
+		rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+		if err != nil {
 			return deny()
 		}
-		found = found || id == s.Installation
-	}
-	readErr, closeErr := rows.Err(), rows.Close()
-	if readErr != nil || closeErr != nil || !found {
-		return deny()
-	}
-	var version int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Installation).Scan(&version) != nil || version != c.ConfigVersion {
-		return deny()
+		found, count := false, 0
+		for rows.Next() {
+			var id string
+			if rows.Scan(&id) != nil {
+				rows.Close()
+				return deny()
+			}
+			count++
+			if count > 10000 {
+				rows.Close()
+				return deny()
+			}
+			found = found || id == s.Installation
+		}
+		readErr, closeErr := rows.Err(), rows.Close()
+		if readErr != nil || closeErr != nil || !found {
+			return deny()
+		}
+		var version int64
+		if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Installation).Scan(&version) != nil || version != c.ConfigVersion {
+			return deny()
+		}
 	}
 	var configHash, rbacVersion, rbacHash string
 	var store, read KeyRef
@@ -71,20 +85,40 @@ FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDA
 	}
 	// Disabling scheduled backups does not revoke retained-evidence downloads.
 	// Read permissions, session validity and current credential mappings still do.
-	sessionUntil, err := systembackupsecurity.CheckRegistrationSessionUntil(ctx, tx, s.Installation, actor)
+	var sessionUntil time.Time
+	if committed != nil {
+		sessionUntil, err = committed.checkSession(ctx, tx)
+	} else {
+		sessionUntil, err = systembackupsecurity.CheckRegistrationSessionUntil(ctx, tx, s.Installation, actor)
+	}
 	if err != nil {
 		return deny()
 	}
+	if committed != nil {
+		if committed.checkOperationReceipt(ctx, tx) != nil {
+			return deny()
+		}
+	}
 	i := Identity{Installation: s.Installation, ID: access.ID}
-	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", access.ID).Scan(&i.OwnerType, &i.OwnerID) != nil {
-		return deny()
+	if committed != nil {
+		i = committed.record.Manifest.Identity
+	} else {
+		if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", access.ID).Scan(&i.OwnerType, &i.OwnerID) != nil {
+			return deny()
+		}
 	}
 	if s.Policy.LockScope(ctx, tx, s.Installation, i) != nil {
+		return deny()
+	}
+	if committed != nil && (committed.checkNonce(ctx, tx) != nil || committed.checkIntent(ctx, tx) != nil || committed.checkOwner(ctx, tx) != nil) {
 		return deny()
 	}
 	r, err := s.load(ctx, tx, access.ID)
 	if err != nil || r.Manifest.Identity.OwnerType != i.OwnerType || r.Manifest.Identity.OwnerID != i.OwnerID || r.State != "ready" || !r.Ref.valid(true) ||
 		r.Claim != access.Claim || r.RowVersion != access.RowVersion || r.Ref.Identity != c.Store.Identity || r.Ref.Version != c.Store.Version {
+		return deny()
+	}
+	if committed != nil && !committed.sameCurrent(r) {
 		return deny()
 	}
 	key, err := keyFor(c.Root, r.Manifest.Identity)
@@ -96,12 +130,28 @@ FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDA
 		return deny()
 	}
 	until := earlier(earlier(earlier(c.ExpiresAt, actor.SessionExpiresAt), sessionUntil), r.ClaimUntil)
+	if committed != nil {
+		until = earlier(until, earlier(committed.deadlineAt, committed.rows.nonceExpiresAt))
+	}
 	if r.Manifest.Identity.Type == "job_log_chunk" {
 		until = earlier(until, r.ExpiresAt)
+	}
+	if committed != nil {
+		currentSessionUntil, err := committed.checkSession(ctx, tx)
+		if err != nil || committed.recheckOriginal(ctx, tx, s) != nil {
+			return deny()
+		}
+		until = earlier(until, currentSessionUntil)
+	}
+	if originalConfig != nil && originalConfig.Recheck(ctx, tx) != nil {
+		return deny()
 	}
 	var now time.Time
 	if tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now) != nil || !now.Before(until) || actor.SessionIssuedAt.IsZero() || actor.SessionIssuedAt.After(now) ||
 		time.Since(now) > 5*time.Second || time.Until(now) > 5*time.Second || !time.Now().Before(until) || ctx.Err() != nil {
+		return deny()
+	}
+	if committed != nil && (!downloadAdmissionContentTime(now) || now.Before(committed.admittedAt) || !committed.live(ctx, a)) {
 		return deny()
 	}
 	principal := hash(canonical(struct {
@@ -116,7 +166,13 @@ FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDA
 		ConfigVersion            int64
 		ConfigHash, RBACHash     string
 	}{access, r.Manifest, r.Ref, r.ClaimUntil, sessionUntil, c.ConfigVersion, c.ConfigSHA256, c.RBACSHA256}))
+	if committed != nil {
+		lease = hash(canonical(struct{ Base, Operation, Request string }{lease, committed.operationID, committed.request.RequestHash()}))
+	}
 	if tx.Commit() != nil || ctx.Err() != nil || !time.Now().Before(until) {
+		return deny()
+	}
+	if committed != nil && !committed.live(ctx, a) {
 		return deny()
 	}
 	return downloadGrant{record: r, actor: downloadActor(actor), until: until, principal: principal, lease: lease}, nil

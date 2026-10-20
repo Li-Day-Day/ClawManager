@@ -1,0 +1,215 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20261019094546
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 26236
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-nonce-time-mysql-remote-20261019-094543-e42bc741.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    & .\scripts\system-backup-d-config-writer-validation.ps1 `
+        -NonceTimeOnly -Remote -BuildParallelism 2 `
+        -SshTarget 'root@10.130.14.23' -SourceManifestPath $nonceSource
+    $nonceExit = 0
+} finally {
+    Write-Host "a_nonce_time_mysql_remote_exit=$nonceExit"
+    Write-Host "nonce_remote_log=$nonceLog"
+    Write-Host "nonce_remote_source=$nonceSource"
+    Stop-Transcript
+}
+LOCAL_OWNER config-writer-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-1f91be8afec0410687be14540b3ba737
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE config-writer-frozen=yes source_sha256=0d41a4761ac6bb8592ae9e88532bbfd44e1d3cc8859e16306249a56511c535e3 files=1355
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“ConfigProofOnly requires its dedicated validation profile”
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Missing exact KUBE_CONTEXT environment assignment: history”
+PASS reject-original-dispatch-defect-history
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Missing exact KUBE_CONTEXT environment assignment: restore”
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile”
+>> TerminatingError():“ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile”
+>> TerminatingError():“ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile”
+>> TerminatingError():“ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile”
+PASS nonce-acceptance-dispatch: exact new root/seed/phase, binary/input/UID pins, full-catalog, preflight, cleanup and exclusive profile; no build or remote
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“ConfigProofOnly requires its dedicated validation profile”
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Missing exact KUBE_CONTEXT environment assignment: history”
+PASS reject-original-dispatch-defect-history
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Missing exact KUBE_CONTEXT environment assignment: restore”
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE config-writer-candidate=yes synthetic-readiness=yes synthetic-capacity=yes production-approval=no backfill=no real_mysql=not_run
+VALIDATION_SCOPE nonce-time-increment-only=yes synthetic-issuer-authority-capacity=yes human-mfa=no real_mysql=not_run
+=== RUN   TestASensitiveDownloadNonceAcceptanceTime
+=== RUN   TestASensitiveDownloadNonceAcceptanceTime/-1m0s
+=== RUN   TestASensitiveDownloadNonceAcceptanceTime/3s
+--- PASS: TestASensitiveDownloadNonceAcceptanceTime (0.01s)
+    --- PASS: TestASensitiveDownloadNonceAcceptanceTime/-1m0s (0.01s)
+    --- PASS: TestASensitiveDownloadNonceAcceptanceTime/3s (0.00s)
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/past_auth
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/clock_regression
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert
+=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert
+--- PASS: TestAProviderNonceUsesSQLAcceptanceTime (0.12s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/past_auth (0.01s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew (0.01s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew (0.01s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/clock_regression (0.00s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert (0.04s)
+    --- PASS: TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert (0.03s)
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/past_auth
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/clock_regression
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert
+=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert
+--- PASS: TestAConfigNonceUsesSQLAcceptanceTime (0.76s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/past_auth (0.25s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew (0.08s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew (0.13s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/clock_regression (0.20s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert (0.06s)
+    --- PASS: TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert (0.03s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	3.566s
+=== RUN   TestDConfigWriterMySQLSeed
+=== RUN   TestDConfigWriterMySQLSeed/kind
+=== RUN   TestDConfigWriterMySQLSeed/ddl-bytes
+=== RUN   TestDConfigWriterMySQLSeed/ddl-pin
+=== RUN   TestDConfigWriterMySQLSeed/catalog
+=== RUN   TestDConfigWriterMySQLSeed/unknown
+=== RUN   TestDConfigWriterMySQLSeed/digest
+=== RUN   TestDConfigWriterMySQLSeed/duplicate-field
+--- PASS: TestDConfigWriterMySQLSeed (0.11s)
+    --- PASS: TestDConfigWriterMySQLSeed/kind (0.01s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-bytes (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-pin (0.01s)
+    --- PASS: TestDConfigWriterMySQLSeed/catalog (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/unknown (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/digest (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/duplicate-field (0.00s)
+=== RUN   TestANonceAcceptanceMySQLSeed
+--- PASS: TestANonceAcceptanceMySQLSeed (0.01s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	4.707s
+=== RUN   TestDConfigWriterMySQLSeed
+=== RUN   TestDConfigWriterMySQLSeed/kind
+=== RUN   TestDConfigWriterMySQLSeed/ddl-bytes
+=== RUN   TestDConfigWriterMySQLSeed/ddl-pin
+=== RUN   TestDConfigWriterMySQLSeed/catalog
+=== RUN   TestDConfigWriterMySQLSeed/unknown
+=== RUN   TestDConfigWriterMySQLSeed/digest
+=== RUN   TestDConfigWriterMySQLSeed/duplicate-field
+--- PASS: TestDConfigWriterMySQLSeed (0.06s)
+    --- PASS: TestDConfigWriterMySQLSeed/kind (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-bytes (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/ddl-pin (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/catalog (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/unknown (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/digest (0.00s)
+    --- PASS: TestDConfigWriterMySQLSeed/duplicate-field (0.00s)
+=== RUN   TestANonceAcceptanceMySQLSeed
+--- PASS: TestANonceAcceptanceMySQLSeed (0.01s)
+PASS
+LOCAL_PASS config-standalone-seed=yes checkout-fixtures=absent writer-candidate=True real_mysql=not_run
+LOCAL_PASS a-nonce-acceptance-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=3d49c552b0f4f42846a74164ea1e268c914e95cb9129e9b9fb56971faa52d540 ddl_sha256=61473134fcb0c405394b86c40cc5f7d83cb04e23ab38d0df3a1d86748cb2e0ba
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=8332f9fa0fee1cd1a555031f2a1ce97b2905d2d1bdd4d2fe439f67e4c5136cfb
+
+Permission denied, please try again.
+Permission denied, please try again.
+close - IO is still pending on closed socket. read:1, write:0, io:00000192307ADE90
+close - IO is still pending on closed socket. read:1, write:0, io:000001DAE9B4B6F0
+bundle.tar: OK
+RUN namespace=sbk-mig-261019020511-4e94 uid=177e17bb-3eec-43b2-a425-fc3b772359a4 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237","migration_count":95,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=8332f9fa0fee1cd1a555031f2a1ce97b2905d2d1bdd4d2fe439f67e4c5136cfb catalog_sha256=2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237
+PASS fresh-migration-replay=001..080 applied=95 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestANonceAcceptanceMySQL
+=== RUN   TestANonceAcceptanceMySQL/provider
+=== RUN   TestANonceAcceptanceMySQL/provider/past_auth
+    nonce_acceptance_time_a_mysql_test.go:139: CLEANED nonce-time owned provider database
+=== RUN   TestANonceAcceptanceMySQL/provider/future_within_skew
+    nonce_acceptance_time_a_mysql_test.go:139: CLEANED nonce-time owned provider database
+=== RUN   TestANonceAcceptanceMySQL/provider/future_outside_skew
+    nonce_acceptance_time_a_mysql_test.go:139: CLEANED nonce-time owned provider database
+=== RUN   TestANonceAcceptanceMySQL/provider/expiry_during_insert
+    nonce_acceptance_time_a_mysql_test.go:139: CLEANED nonce-time owned provider database
+=== RUN   TestANonceAcceptanceMySQL/config
+=== RUN   TestANonceAcceptanceMySQL/config/past_auth
+    nonce_acceptance_time_a_mysql_test.go:239: LOCAL_WRITER_RBAC_TEMP path=/tmp/TestANonceAcceptanceMySQLconfigpast_auth4153468675/001
+    config_writer_mysql_test.go:155: CLEANED config-writer owned nonce/operation/evidence/state/config rows
+    config_proof_mysql_test.go:120: CLEANED config-proof owned installation/user/credentials/sessions/revocations/audit
+=== RUN   TestANonceAcceptanceMySQL/config/future_within_skew
+    nonce_acceptance_time_a_mysql_test.go:239: LOCAL_WRITER_RBAC_TEMP path=/tmp/TestANonceAcceptanceMySQLconfigfuture_within_skew4282390517/001
+    config_writer_mysql_test.go:155: CLEANED config-writer owned nonce/operation/evidence/state/config rows
+    config_proof_mysql_test.go:120: CLEANED config-proof owned installation/user/credentials/sessions/revocations/audit
+=== RUN   TestANonceAcceptanceMySQL/config/future_outside_skew
+    nonce_acceptance_time_a_mysql_test.go:239: LOCAL_WRITER_RBAC_TEMP path=/tmp/TestANonceAcceptanceMySQLconfigfuture_outside_skew4213698128/001
+    config_writer_mysql_test.go:155: CLEANED config-writer owned nonce/operation/evidence/state/config rows
+    config_proof_mysql_test.go:120: CLEANED config-proof owned installation/user/credentials/sessions/revocations/audit
+=== RUN   TestANonceAcceptanceMySQL/config/expiry_during_insert
+    nonce_acceptance_time_a_mysql_test.go:239: LOCAL_WRITER_RBAC_TEMP path=/tmp/TestANonceAcceptanceMySQLconfigexpiry_during_insert3038119986/001
+    config_writer_mysql_test.go:155: CLEANED config-writer owned nonce/operation/evidence/state/config rows
+    config_proof_mysql_test.go:120: CLEANED config-proof owned installation/user/credentials/sessions/revocations/audit
+=== NAME  TestANonceAcceptanceMySQL
+    nonce_acceptance_time_a_mysql_test.go:331: PASS real nonce SQL acceptance time: eight new cases; synthetic issuer/authority/capacity; no human MFA or production approval
+--- PASS: TestANonceAcceptanceMySQL (23.12s)
+    --- PASS: TestANonceAcceptanceMySQL/provider (12.07s)
+        --- PASS: TestANonceAcceptanceMySQL/provider/past_auth (0.33s)
+        --- PASS: TestANonceAcceptanceMySQL/provider/future_within_skew (0.46s)
+        --- PASS: TestANonceAcceptanceMySQL/provider/future_outside_skew (0.68s)
+        --- PASS: TestANonceAcceptanceMySQL/provider/expiry_during_insert (10.59s)
+    --- PASS: TestANonceAcceptanceMySQL/config (10.78s)
+        --- PASS: TestANonceAcceptanceMySQL/config/past_auth (0.41s)
+        --- PASS: TestANonceAcceptanceMySQL/config/future_within_skew (0.16s)
+        --- PASS: TestANonceAcceptanceMySQL/config/future_outside_skew (0.12s)
+        --- PASS: TestANonceAcceptanceMySQL/config/expiry_during_insert (10.06s)
+PASS
+PASS a-nonce-acceptance-mysql binary_sha256=3d49c552b0f4f42846a74164ea1e268c914e95cb9129e9b9fb56971faa52d540 inputs_sha256=61473134fcb0c405394b86c40cc5f7d83cb04e23ab38d0df3a1d86748cb2e0ba new_cases=8 synthetic_issuer_authority_capacity=yes human_mfa=no production_approval=no
+CLEANED namespace=sbk-mig-261019020511-4e94 uid=177e17bb-3eec-43b2-a425-fc3b772359a4
+close - IO is still pending on closed socket. read:1, write:0, io:00000274FE7B3F70
+close - IO is still pending on closed socket. read:1, write:0, io:0000025EC69BACE0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=True
+LOCAL_CLEANUP config-writer-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-1f91be8afec0410687be14540b3ba737 removed=True
+a_nonce_time_mysql_remote_exit=0
+nonce_remote_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-nonce-time-mysql-remote-20261019-094543-e42bc741.txt
+nonce_remote_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-nonce-time-mysql-remote-source-20261019-094543-e42bc741.json
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261019100654
+**********************

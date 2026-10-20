@@ -184,7 +184,7 @@ func oneOf(s string, values ...string) bool {
 }
 
 func boundary(err error) error {
-	for _, allowed := range []error{ErrInvalid, ErrIntegrity, ErrRedaction, ErrUnavailable, ErrKey, ErrDenied, ErrAuth, ErrState, ErrNotFound, ErrRange, ErrCapacity, ErrAudit, ErrConflict} {
+	for _, allowed := range []error{ErrInvalid, ErrIntegrity, ErrRedaction, ErrUnavailable, ErrKey, ErrDenied, ErrAuth, ErrState, ErrNotFound, ErrRange, ErrCapacity, ErrAudit, ErrConflict, ErrDownloadAdmissionNotReady} {
 		if errors.Is(err, allowed) {
 			return allowed
 		}

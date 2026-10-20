@@ -156,6 +156,8 @@ func registrationHTTPError(err error) (int, string) {
 	var p *ProviderProofError
 	var a *VerificationError
 	switch {
+	case err == ErrSensitiveDownloadRequest:
+		return 400, "validation_failed"
 	case errors.Is(err, ErrRegistrationPermission):
 		return 403, "permission_denied"
 	case errors.Is(err, ErrRegistrationConflict):

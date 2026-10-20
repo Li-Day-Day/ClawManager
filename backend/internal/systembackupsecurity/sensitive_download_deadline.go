@@ -2,6 +2,12 @@ package systembackupsecurity
 
 import "time"
 
+// ProofAcceptedAt is the original server verification time supplied by the
+// transaction owner in VerifyConfig.Now. A future nonce writer uses this for
+// authenticated_at; signed auth_time is only an input to the original age
+// window. It is not a current-authorization, nonce-consumption or commit fact.
+func (v SensitiveDownloadProofVerification) ProofAcceptedAt() time.Time { return v.verifiedAt }
+
 // AdmissionDeadlineAt returns the frozen proof's earliest original time limit:
 // signed expiration or the verified auth-time/max-age/skew window. It performs
 // no SQL, refresh, nonce consumption or current-authorization check. Callers

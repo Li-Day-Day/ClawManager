@@ -1,0 +1,273 @@
+{
+  "kind": "a_download_mfa_mysql_preparation_review",
+  "status": "prepared_frozen_local_inputs_actual_sql_pending",
+  "recorded_at": "2026-10-19T03:55:22.619Z",
+  "log": "docs/evidence/a-download-mfa-mysql-local-20261019-r2.txt",
+  "log_sha256": "2b72586be95721e7292052d740dd3aabc9aa895f650eab1101492812510a06f5",
+  "source": "docs/evidence/a-download-mfa-mysql-source-20261019-r2.json",
+  "source_manifest_sha256": "176f1e52a0dd654d210a16c852e3cd8c3035c55cffef6a888444ea9a90154b24",
+  "source_files": 1374,
+  "source_sha256": "40c5a657682fb5f68221922768938ce2e637f8be3fb9214355c6a8b0ee2f59ff",
+  "checks_passed": 58,
+  "checks": [
+    "final original transcript reports exit zero",
+    "no failed or skipped test assertions",
+    "original tool crashes retained with matching bounded retries",
+    "both complete affected packages and tagged evidence seed passed",
+    "new preview main/children all passed",
+    "seed ran both package and detached binary: eight checks each",
+    "detached seed executed outside checkout",
+    "Linux probe, inputs and pinned migration runner built",
+    "frozen postcheck and no remote/no installs",
+    "telemetry disabled",
+    "stable bounded source capture and no dependency install",
+    "unique frozen source paths",
+    "source digest independently recomputed",
+    "required frozen pin exists: backend/internal/systembackupevidence/sql.go",
+    "current required pin: backend/internal/systembackupevidence/sql.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/sensitive_download_preview.go",
+    "current required pin: backend/internal/systembackupevidence/sensitive_download_preview.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/sensitive_download_preview_test.go",
+    "current required pin: backend/internal/systembackupevidence/sensitive_download_preview_test.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/sensitive_download_mfa_mysql_test.go",
+    "current required pin: backend/internal/systembackupevidence/sensitive_download_mfa_mysql_test.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+    "current required pin: backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+    "required frozen pin exists: backend/internal/systembackupevidence/sensitive_download_totp.go",
+    "current required pin: backend/internal/systembackupevidence/sensitive_download_totp.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/download_admission_environment.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/download_admission_environment_test.go",
+    "current required pin: backend/internal/systembackupevidence/download_admission_environment_test.go",
+    "required frozen pin exists: backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+    "required frozen pin exists: backend/internal/systembackupsecurity/sensitive_download_totp.go",
+    "current required pin: backend/internal/systembackupsecurity/sensitive_download_totp.go",
+    "required frozen pin exists: backend/internal/systembackupsecurity/totp_sql.go",
+    "current required pin: backend/internal/systembackupsecurity/totp_sql.go",
+    "required frozen pin exists: scripts/system-backup-a-download-mfa-inputs.mjs",
+    "current required pin: scripts/system-backup-a-download-mfa-inputs.mjs",
+    "required frozen pin exists: scripts/system-backup-a-download-mfa-phase.sh",
+    "current required pin: scripts/system-backup-a-download-mfa-phase.sh",
+    "required frozen pin exists: scripts/system-backup-a-download-mfa-dispatch.test.ps1",
+    "current required pin: scripts/system-backup-a-download-mfa-dispatch.test.ps1",
+    "required frozen pin exists: scripts/system-backup-a-evidence-validation.ps1",
+    "current required pin: scripts/system-backup-a-evidence-validation.ps1",
+    "required frozen pin exists: scripts/system-backup-d-config-writer-validation.ps1",
+    "current required pin: scripts/system-backup-d-config-writer-validation.ps1",
+    "required frozen pin exists: scripts/system-backup-a-evidence-go-step.ps1",
+    "current required pin: scripts/system-backup-a-evidence-go-step.ps1",
+    "required frozen pin exists: docs/system-backup-d-download-admission-schema-proposal-20261019.sql",
+    "current required pin: docs/system-backup-d-download-admission-schema-proposal-20261019.sql",
+    "required frozen pin exists: docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+    "current required pin: docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+    "current D model retains detached fixture factory hooks without claiming it tested",
+    "PS7 new/nonce and four old profile transport QA exit zero",
+    "WinPS native new/nonce QA exit zero with stdout captured",
+    "candidate capsules exact pinned bytes",
+    "exact source owner logged and independently absent",
+    "nested build/cache cleanup reported and enclosing exact source absent",
+    "initial detached seed failure retains exit one and missing-checkout diagnosis",
+    "initial frozen manifest logical digest independently recomputed",
+    "initial exact source owner independently absent with build cleanup reported"
+  ],
+  "transport_log": "docs/evidence/a-download-mfa-mysql-transport-20261019.txt",
+  "transport_log_sha256": "072b1fb387e37e51832337d092e232cb7e739cce26cd72ee9d5bba30546a854f",
+  "packages": [
+    "ok  \tclawreef/internal/systembackupsecurity\t47.490s",
+    "ok  \tclawreef/internal/systembackupevidence\t65.275s",
+    "ok  \tclawreef/internal/systembackupevidence\t4.401s"
+  ],
+  "passing_events": 3862,
+  "ordinary_package_passes": 3846,
+  "new_preview_checks": 18,
+  "seed_checks": 16,
+  "probe_sha256": "f0f5a5bd0eff8fa056894769bee40f5b3c898eada3e6882a94672a35156a6fb5",
+  "inputs_sha256": "01526eea6ba68a2484ad896c23bd619b4e6b6871dda158c4487ca80417de79f9",
+  "migration_runner_sha256": "d2d4b3d45fcf2feb4321d8b52064613e4026b5a54781716cffb598707ac55551",
+  "required_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "size": 16621,
+      "sha256": "a33a53aae4e062d8ebac6dd984755a80f6a8414e55a409acde50b770fcf2af13"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_preview.go",
+      "size": 3129,
+      "sha256": "999e35af8961e297a7960d2e7ed6ae7ea59dcf76ee0945e363b3c95407a0d99a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_preview_test.go",
+      "size": 6084,
+      "sha256": "08fa8b5fe7f840024772e6c123486940c006da1f1f52b7330b6500f2a0a64145"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_mfa_mysql_test.go",
+      "size": 32443,
+      "sha256": "f1f3b9e8d91ba6a9e8ff277aa6151ca120e912a44ad537b1a2894d3a9b4cb61c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+      "size": 43165,
+      "sha256": "01526eea6ba68a2484ad896c23bd619b4e6b6871dda158c4487ca80417de79f9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_totp.go",
+      "size": 6773,
+      "sha256": "e809d2b63787d35c0184d7c64a13599c19272aa94af80079df6068ad9d865d47"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment.go",
+      "size": 9661,
+      "sha256": "3c659f0e8b7e9f8e12246c7fa59117ebef22a303770bbc094e0dc1a723a78ed6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment_test.go",
+      "size": 11839,
+      "sha256": "077b23516dbfa9c841a239505ca9b51aea5bbd440951b7e2e5d407a5d3163b6e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "size": 30160,
+      "sha256": "edeb6058478738c97230a929a9ea0cb03a3fd461e112970f58a0bf179c763bff"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_totp.go",
+      "size": 6309,
+      "sha256": "378a5ac6fb4150bb441666d8d057b7ba09d283977315df6da825e80839f48408"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_sql.go",
+      "size": 13976,
+      "sha256": "c8cac3d4f853c056703d5b6d6ee9b7252451ab4520127fc27bd976b7af768a25"
+    },
+    {
+      "path": "scripts/system-backup-a-download-mfa-inputs.mjs",
+      "size": 2073,
+      "sha256": "e3ccb3c8097d20e5d7fb0512b4f9c722cf7df809617bc524647b434e7d619bd4"
+    },
+    {
+      "path": "scripts/system-backup-a-download-mfa-phase.sh",
+      "size": 2780,
+      "sha256": "4f4b5330cef4852c142c10e135e27b4fcea9651bdc8189a6bd15d9dc863750f1"
+    },
+    {
+      "path": "scripts/system-backup-a-download-mfa-dispatch.test.ps1",
+      "size": 4525,
+      "sha256": "4a64352567ce1f6e1fb90be9dff97dc9a58575b632012c6afd189ab0608ec03d"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 46933,
+      "sha256": "f7a1106c3c5d42f075c7aad2a446ff27e5b06ec7547b47e6ef4f43fbab118836"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "size": 5028,
+      "sha256": "254cdd3343d99ff510aa954b36dc3d63a84a5969856c03a16a63d903a4eae5ed"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    },
+    {
+      "path": "docs/system-backup-d-download-admission-schema-proposal-20261019.sql",
+      "size": 9684,
+      "sha256": "e4d031f9ce28e22bc85744ff6a85d2de23a640347a004c507673955ad0c96793"
+    },
+    {
+      "path": "docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+      "size": 881,
+      "sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1"
+    }
+  ],
+  "current_required_drifts_excluded": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment.go",
+      "frozen_sha256": "3c659f0e8b7e9f8e12246c7fa59117ebef22a303770bbc094e0dc1a723a78ed6",
+      "current_sha256": "e97c7cc4302e43ca90713be3c28e54b686e580568eeb68b31a155785de617d21",
+      "reason": "D added public/internal preparation and known-commit/streaming SQL model paths after capture; new bytes excluded from this frozen MFA preparation acceptance"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "frozen_sha256": "edeb6058478738c97230a929a9ea0cb03a3fd461e112970f58a0bf179c763bff",
+      "current_sha256": "928b1aaed02664f8621236c5bc72e28b606c939894a85ed77f2d77fff0ba0177",
+      "reason": "D added public/internal preparation and known-commit/streaming SQL model paths after capture; new bytes excluded from this frozen MFA preparation acceptance"
+    }
+  ],
+  "current_input_drifts_excluded": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment.go",
+      "frozen_sha256": "3c659f0e8b7e9f8e12246c7fa59117ebef22a303770bbc094e0dc1a723a78ed6",
+      "current_sha256": "e97c7cc4302e43ca90713be3c28e54b686e580568eeb68b31a155785de617d21"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "frozen_sha256": "edeb6058478738c97230a929a9ea0cb03a3fd461e112970f58a0bf179c763bff",
+      "current_sha256": "928b1aaed02664f8621236c5bc72e28b606c939894a85ed77f2d77fff0ba0177"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction.go",
+      "frozen_sha256": "04bf507bc4810bf4d13ec4a5d027dbc59800b3bdbe2631e698cc5e065f5b5adc",
+      "current_sha256": "71aac40a47db9172d5200a1bb627800cae332118c735415c39759263855a6218"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_committed_test.go",
+      "frozen_sha256": "d01b8939206b536761784b4530314297ba99b637bd5b0d681f6dfb162dac44c8",
+      "current_sha256": "ab6ae6a75a7fbedb416074ed0b1092cc8eff9fd9e79650994f6e6fd4d3b02d6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_committed.go",
+      "frozen_sha256": "39b125899f26bdc306a34fcf8a6a2d39de512946bb53315e45a36761db18303f",
+      "current_sha256": "95172b4d61e2eff693770639823aa79ce677ca7398dfb6f050988491827e99dd"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_runtime_test.go",
+      "frozen_sha256": "d9c0c378b02a936782da0117b2404b197ecba02dd22b84cc5ee049d46f2a7223",
+      "current_sha256": "545aadfed6cc42bbe94c5a724f9fadc685f2c441c0c5ab1daf4f9613515b6fd1"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_runtime.go",
+      "frozen_sha256": "619711dcd46daee197e7ece5b32c8718890cd07ed88e0f7b7cecc1c3971b651b",
+      "current_sha256": "30930c79f5c24411abc2e14f42f3d4dd5aec73fa68c46e3afc55cb8769b6b84f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "frozen_sha256": "dd7a4e23e79b97f1701c978dc816686d5b3d3221752b69fb256d0bebb3e064a3",
+      "current_sha256": "2928bdcbfdb4d7436a491c35b549194c6f38fceb76ed965202504017cd51a492"
+    }
+  ],
+  "entire_current_tree_accepted": false,
+  "newly_added_current_files_accepted": false,
+  "exact_owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3fbac57d0eec4d4293d44d94ae1d6738",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-0f1488ea32594fe59be104c19311d4b4"
+  ],
+  "nested_build_cache_cleanup_reported": true,
+  "nested_build_exact_name_independently_recorded": false,
+  "original_tool_failures_retained": [
+    "internal/sync: C:\\Program Files\\Go\\pkg\\tool\\windows_amd64\\compile.exe: exit status 0xc0000043"
+  ],
+  "tool_retry_markers": [
+    "WARNING: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME test-vet command (1/3 failed). Vet remains enabled; isolated cache is retained only until this run ends."
+  ],
+  "initial_failed_round": {
+    "log": "docs/evidence/a-download-mfa-mysql-local-20261019-r1.txt",
+    "log_sha256": "8325fe2ab728c1e37094872cf3b43f533a42ae4c09f3e5a1bf5bc8864637f0f2",
+    "source": "docs/evidence/a-download-mfa-mysql-source-20261019-r1.json",
+    "source_manifest_sha256": "e90128253962adbf2bb18d9b61a40e658ca8ecc0bd017cba19f4872757a6bae3",
+    "source_sha256": "86d66a173cce5c8935ef15e846266d677dc597f71a8f9e74dd5db73f8db2f336",
+    "actual_exit": 1,
+    "reason": "detached seed exposed a checkout-relative canonical fixture read; now embedded, with unchanged production validation",
+    "postcheck_claimed": false
+  },
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_new_MySQL_cases_run": 0,
+  "prepared_new_MySQL_cases": 9,
+  "real_owner_or_human_MFA_approved": false,
+  "formal_schema_approved": false,
+  "production_route_enabled": false,
+  "native_transport_log": "docs/evidence/a-download-mfa-mysql-transport-native-20261019.txt",
+  "native_transport_log_sha256": "76a26ec0a1dc2fedaa2fd6f912d95a40df7821703dc42ff4d0f1ab20dcb90086",
+  "original_transport_native_stdout_not_captured": true
+}

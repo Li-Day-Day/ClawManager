@@ -19,12 +19,14 @@ $downloadNames=@('PATH','GOFLAGS','GOPROXY','GOSUMDB','GOTOOLCHAIN','GOCACHE','G
 $downloadPrevious=@{}
 foreach($downloadName in $downloadNames){$downloadPrevious[$downloadName]=[Environment]::GetEnvironmentVariable($downloadName,'Process')}
 . (Join-Path $PSScriptRoot 'system-backup-d-index-source-snapshot.ps1')
+. (Join-Path $PSScriptRoot 'system-backup-a-config-proof-source.ps1')
 . (Join-Path $PSScriptRoot 'system-backup-a-evidence-go-step.ps1')
 try {
     [IO.Directory]::CreateDirectory($downloadOwner)|Out-Null
     [IO.File]::WriteAllText((Join-Path $downloadOwner 'owner.txt'),[IO.Path]::GetFileName($downloadOwner))
     Write-Output ('OWNED sensitive-download-source='+$downloadOwner+' scratch='+$downloadScratch)
-    $downloadSnapshot=New-DIndexSourceSnapshot -Root $downloadRoot -Destination $downloadFrozen
+    # Only retry source drift before the build; never retry tests or postcheck.
+    $downloadSnapshot=New-AConfigProofSourceSnapshot -Root $downloadRoot -Owner $downloadOwner -MaxAttempts 3
     $downloadSnapshot.contract_decision_sha256=$downloadDecisionSHA
     $downloadStream=[IO.File]::Open($downloadManifest,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
     try{$downloadBytes=[Text.Encoding]::UTF8.GetBytes(($downloadSnapshot|ConvertTo-Json -Depth 6));$downloadStream.Write($downloadBytes,0,$downloadBytes.Length)}finally{$downloadStream.Dispose()}

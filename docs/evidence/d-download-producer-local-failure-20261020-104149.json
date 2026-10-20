@@ -1,0 +1,28 @@
+{
+  "kind": "d_producer_operator_local_gate_failure_review",
+  "status": "failed_local_test_remote_not_started",
+  "recorded_at": "2026-10-20T03:15:45.803Z",
+  "log": "docs/evidence/d-download-producer-remote-20261020-104149.txt",
+  "log_sha256": "d72e8d90ac0a0ba2fdcf0ebd238a40715eb57e12b1dee3be0c2839c42ee77aec",
+  "source": "docs/evidence/d-download-producer-remote-20261020-104149-source.json",
+  "source_manifest_sha256": "41f91394dc85e66f7d14f7c5bfea18668be5e552ba08c9a56f35703212629c58",
+  "source_files": 1429,
+  "source_sha256": "23d31811cc484e61ea3ccbb61f7f9305f17cbae8f9645ad25aec59f65fa09544",
+  "source_exactly_matches_D_r64": true,
+  "failed_tests": [
+    "TestADownloadNativeBufferedOutputKeepsOriginalDeadline",
+    "TestADownloadNativeBufferedOutputKeepsOriginalDeadline/http2/before_deadline"
+  ],
+  "failed_leaf_count": 1,
+  "remote_started": false,
+  "actual_producer_cases": 0,
+  "exit": 1,
+  "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2870ebd3b500426e93310d0c7b4af3ac",
+  "local_owner_absent": true,
+  "local_build_cache_cleaned": true,
+  "final_frozen_source_postcheck_pass_reported": false,
+  "dependencies_installed": false,
+  "reason": "Old three-second native HTTP/2 success-control fixture expired under host load; result was interrupted and the stream aborted. Current fixture repair requires its own local validation; this failed run is not replaced or accepted as remote SQL evidence.",
+  "four_task_twelve_case_acceptance_unchanged": true,
+  "production_approved": false
+}

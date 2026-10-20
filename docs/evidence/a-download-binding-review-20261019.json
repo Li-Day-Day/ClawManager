@@ -1,0 +1,190 @@
+{
+  "kind": "a_independent_download_binding_and_original_deadline_review",
+  "recorded_at": "2026-10-19T00:31:24.107Z",
+  "status": "accepted_local_frozen_component_scope_only",
+  "raw_log": "docs/evidence/a-download-binding-local-20261019-081645-26d3edaa.txt",
+  "raw_log_sha256": "95d2ef96ba1b4d436a9bd271e13e743fafe6fc273ed041e953765ee036ad0cf4",
+  "source_manifest": "docs/evidence/a-download-binding-source-20261019-081645-26d3edaa.json",
+  "source_manifest_sha256": "b9a27b61e6c662eeda8270dfaae3d7c2d05ff02079cd389f4e2f68a1a4e3e02d",
+  "source_files": 1334,
+  "source_sha256": "d2b98720f2c1c7c22578cb28ea9ef6c20c23e6fa4e96f55c72e9edcef0a89270",
+  "initial_failed_capture": "docs/evidence/a-download-binding-local-20261019-081536-548907d3.txt",
+  "initial_failed_capture_sha256": "956a0098f4e9c6ad6acf3fba0480297cb0378865ffcde5639e0e685630f9ccba",
+  "source_helper_log": "docs/evidence/a-download-binding-source-helper-20261019.txt",
+  "source_helper_log_sha256": "d16e8a64559f64eca9b34a563315bac1cf35bf7036266a62e25ad787a438f5f5",
+  "checks_passed": 39,
+  "checks": [
+    "source stable-copy and no dependency installation",
+    "source-only capture count bounded",
+    "source manifest digest independently recomputed",
+    "source paths unique",
+    "D original contract pin unchanged",
+    "native full-package invocation recorded",
+    "native Go exit zero",
+    "outer wrapper exit zero",
+    "frozen source and decision postcheck passed",
+    "isolated telemetry disabled",
+    "no failing tests or packages",
+    "each passed test reported once",
+    "both complete packages passed",
+    "TestASensitiveDownloadOriginalDeadline all expected cases passed",
+    "TestADownloadBindingAbortIsPermanent all expected cases passed",
+    "TestADownloadBindingSamplesClockAfterAudit all expected cases passed",
+    "TestADownloadBindingLogRetention all expected cases passed",
+    "A independent checks not skipped",
+    "D original binding roots passed",
+    "initial source drift kept as failure before Go",
+    "shared source-only helper eight cases passed",
+    "all five exact owned paths reported cleaned",
+    "owned path absent: .tmp-a-evidence-5e8596f6e1ab4dcc9dd88055a34e61c1",
+    "owned path absent: .tmp-d-index-cache-6ea06cdbdcf84c5aa9bc6b26920d0c81",
+    "owned path absent: .tmp-a-evidence-0c0a9bdda5b94aafae93bc45e79c6d36",
+    "owned path absent: .tmp-d-index-cache-e36124b484a5427c8e8f59bef2ffb708",
+    "owned path absent: .tmp-d-index-cache-b8aae460e5c2402cbc18021ac185e67a",
+    "reviewed input pin matches: backend/internal/systembackupevidence/download_admission_binding.go",
+    "reviewed input pin matches: backend/internal/systembackupevidence/download_admission_binding_test.go",
+    "reviewed input pin matches: backend/internal/systembackupevidence/download_admission_binding_a_test.go",
+    "reviewed input pin matches: backend/internal/systembackupevidence/download_admission_content.go",
+    "reviewed input pin matches: backend/internal/systembackupevidence/download_admission_audit.go",
+    "reviewed input pin matches: backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+    "reviewed input pin matches: backend/internal/systembackupsecurity/sensitive_download_deadline_a_test.go",
+    "reviewed input pin matches: backend/internal/systembackupsecurity/strongauth.go",
+    "reviewed input pin matches: scripts/system-backup-a-sensitive-download-validation.ps1",
+    "reviewed input pin matches: scripts/system-backup-a-config-proof-source.ps1",
+    "reviewed input pin matches: scripts/system-backup-d-index-source-snapshot.ps1",
+    "reviewed input pin matches: scripts/system-backup-a-evidence-go-step.ps1"
+  ],
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 242,
+      "subtests": 1637,
+      "skipped": []
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 208,
+      "subtests": 1363,
+      "skipped": []
+    }
+  ],
+  "passed_including_subtests": 3450,
+  "A_independent_main": 4,
+  "A_independent_including_subtests": 31,
+  "frozen_reviewed_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_binding.go",
+      "size": 9932,
+      "sha256": "71a826daa29ba80781e113bc77faf15270f1f514dcb992c4eeee3ec6320d3f11"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_binding_test.go",
+      "size": 13154,
+      "sha256": "70216ec29c4dc1cfa9b018f67b3c53471efc6a62157244f213686e893f1db2cc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_binding_a_test.go",
+      "size": 9028,
+      "sha256": "d2843598eab5e0a60a483c794e7a808452d5dc78c8ec23599848607a13a9fe3f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_content.go",
+      "size": 8689,
+      "sha256": "96eab900e773e5495ce3b3709fbc86079137033e8fd8d6c89ad369a1d0c6a253"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_audit.go",
+      "size": 7928,
+      "sha256": "cb3115e82d7dd8d9ea5f45b840df1290ea644a74225a3362e0fdb67fef902fbd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request.go",
+      "size": 10055,
+      "sha256": "7cc680386583ce33c4eb0b5f0da564e685fb9899ae776f041556f9aa29c8039b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+      "size": 930,
+      "sha256": "f9e24f0b59085336a956de2b5d4fd76dbf068449660797463935768672fba01a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_deadline_a_test.go",
+      "size": 2630,
+      "sha256": "a49fe1c78f2776451a14b8880cd722dca2006cf60032b20301e31ee2193ab8da"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "size": 20858,
+      "sha256": "23c079dcdc24405731e1d04a7b996011f7e0e0ad77ef20ddf12c6c842a47f37e"
+    },
+    {
+      "path": "scripts/system-backup-a-sensitive-download-validation.ps1",
+      "size": 5809,
+      "sha256": "3a149c2d4642de0340e8a88578c0458ef25340ab87e65df72b8c1b31332ccef2"
+    },
+    {
+      "path": "scripts/system-backup-a-config-proof-source.ps1",
+      "size": 3176,
+      "sha256": "982c2942b5e7288f55bfeb59ed7d8bee58ac9a6cbbff9a0e449d9f7edf0b4e0e"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5541,
+      "sha256": "3eedf2cf37ae53ea20091bb213d8ee0d8ba7bbdd12ff159fee15e623d9699d21"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    }
+  ],
+  "current_focus_drifts_excluded": [
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request.go",
+      "frozen_sha256": "7cc680386583ce33c4eb0b5f0da564e685fb9899ae776f041556f9aa29c8039b",
+      "current_sha256": "2470b6d2cb67998f253287ccd92389c1559ea9041b1b039595f0f344b486f1ee"
+    }
+  ],
+  "owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-5e8596f6e1ab4dcc9dd88055a34e61c1",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6ea06cdbdcf84c5aa9bc6b26920d0c81",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-0c0a9bdda5b94aafae93bc45e79c6d36",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e36124b484a5427c8e8f59bef2ffb708",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-b8aae460e5c2402cbc18021ac185e67a"
+  ],
+  "existing_frozen_inputs_changed_in_parallel": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_audit_test.go",
+      "frozen_sha256": "4145395be1767d6ba6e5b64f949a7414ec5865385ca1d8b48513f8262c863e40",
+      "current_sha256": "86d36cdb90c04794b138255eef2bce789381c6551a4a3ae6c0eba368c60aac5d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_nonce_scope.go",
+      "frozen_sha256": "357f3a02ed2317f43a3158dbf5c172484ac9235a40287c30b8bd34b81a120f3d",
+      "current_sha256": "5f98eeb8de07444bb1f0ab4e26e20098f1bc4a5d150c093810b4fb2056f12c42"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request.go",
+      "frozen_sha256": "7cc680386583ce33c4eb0b5f0da564e685fb9899ae776f041556f9aa29c8039b",
+      "current_sha256": "2470b6d2cb67998f253287ccd92389c1559ea9041b1b039595f0f344b486f1ee"
+    }
+  ],
+  "later_added_files_covered_by_this_gate": false,
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_MySQL": false,
+  "remote_executed": false,
+  "MFA_personally_verified": false,
+  "D_original_r60_wrapper_failure_reclassified": false,
+  "full_prelocked_authority": false,
+  "operation_receipt_nonce_atomic_admission": false,
+  "production_route_enabled": false,
+  "formal_schema_approval": false,
+  "remaining": [
+    "D complete L0-L10 authority and current physical capacity",
+    "same-transaction claim CAS, operation/private receipt/public snapshot/nonce persistence and final guard",
+    "real MFA/issuer/holder/revocation/materials and authenticated historical canonical source",
+    "reviewed appended schema, same-installation ownership/FK, retention/grants and A/B/C reviews",
+    "real MySQL atomic rollback, cross-version concurrency, unknown commit and deployment/E2E"
+  ]
+}

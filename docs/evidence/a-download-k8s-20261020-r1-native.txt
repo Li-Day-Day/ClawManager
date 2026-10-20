@@ -1,0 +1,35 @@
+**********************
+PowerShell transcript start
+Start time: 20261020120720
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\docs\evidence\a-download-k8s-validation-20261020.ps1 -Run '20261020-r1'
+Process ID: 36992
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER download-k8s=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-78fe707b7a7f45f1a1d9018ce017d138
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+LOCAL_SOURCE sha256=8bab0c41906a653a7e243e5dbdfdd71e5f9048ef9b26bd51543997acbf9dc5dc files=1437
+GO_BINDING registration-command-current=yes source_sha256=bbacafe4c886ad01a6862101780b5a3018ce07af4cd742152fe0e633236e10b7
+PASS download-k8s-node-tests=11 actual-cli=yes no-cluster-contact=yes
+PASS base-k8s-node-tests=4
+LOCAL_PASS download-k8s-frozen-postcheck=yes dependencies-installed=no cluster=not-contacted
+CLEANED download-k8s-source-and-cli-products=True
+**********************
+PowerShell transcript end
+End time: 20261020120833
+**********************

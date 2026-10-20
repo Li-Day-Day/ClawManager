@@ -36,6 +36,7 @@ type configProofDB struct {
 	authorizations, executions       int
 	failAt, sessionEnrollments       int
 	denyFinal, activeTx, allowEnroll bool
+	afterCommit                      func()
 }
 type configProofConnector struct{ s *configProofDB }
 
@@ -117,7 +118,11 @@ type configProofTx struct {
 func (t *configProofTx) Commit() error {
 	t.s.activeTx = false
 	t.s.row, t.s.audit = t.s.working, t.s.workingAudit
-	return t.Tx.Commit()
+	err := t.Tx.Commit()
+	if t.s.afterCommit != nil {
+		t.s.afterCommit()
+	}
+	return err
 }
 func (t *configProofTx) Rollback() error {
 	t.s.activeTx = false

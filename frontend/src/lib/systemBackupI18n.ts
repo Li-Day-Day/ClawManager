@@ -31,6 +31,7 @@ const messages = {
   status_orphan_gc: ['清理孤立资源', 'Collect orphan resources', '孤立リソースの削除', '고립 리소스 정리', 'Verwaiste Ressourcen bereinigen'],
   status_control_metadata_gc: ['清理控制元数据', 'Collect control metadata', '制御メタデータの削除', '제어 메타데이터 정리', 'Steuerungsmetadaten bereinigen'],
   status_evidence_gc: ['清理证据', 'Collect evidence', '証跡の削除', '증거 정리', 'Nachweise bereinigen'],
+  status_evidence_download_admission: ['证据下载准入', 'Evidence download admission', '証跡ダウンロードの許可', '증거 다운로드 승인', 'Nachweisdownload zulassen'],
   recordsOverviewUnavailable: ['总览尚未就绪。以下仅展示各读取接口已返回的记录，暂不提供健康、恢复就绪和全局计数。', 'The overview is not ready. Only records returned by the read endpoints are shown; health, recovery readiness and global counts are unavailable.', '概要はまだ利用できません。読み取り API が返した記録のみを表示し、健全性、復旧準備、全体件数は表示しません。', '개요가 아직 준비되지 않았습니다. 읽기 API가 반환한 기록만 표시하며 상태, 복구 준비 및 전체 수는 제공되지 않습니다.', 'Die Übersicht ist noch nicht bereit. Angezeigt werden nur gelesene Datensätze; Zustand, Wiederherstellungsbereitschaft und Gesamtzahlen sind nicht verfügbar.'],
   readResourceUnavailable: ['此读取接口尚未就绪。', 'This read endpoint is not ready.', 'この読み取り API はまだ利用できません。', '이 읽기 API는 아직 준비되지 않았습니다.', 'Dieser Lese-Endpunkt ist noch nicht bereit.'],
   overviewCounts: ['任务与待处理计数', 'Task and backlog counts', 'タスクと未処理件数', '작업 및 미처리 수', 'Aufgaben- und Rückstandszahlen'],

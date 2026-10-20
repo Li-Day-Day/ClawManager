@@ -1,6 +1,8 @@
 package systembackupsecurity
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"regexp"
@@ -30,9 +32,9 @@ type SensitiveDownloadRequestFacts struct {
 // SensitiveDownloadRequest is one immutable input for issuance and verification.
 // The key is separately bound in ProofPayload; the server claim is not signed.
 type SensitiveDownloadRequest struct {
-	installation, subject, session, manifest, key, canonical, digest string
-	start, end                                                       int64
-	present                                                          bool
+	installation, evidence, subject, session, manifest, key, canonical, digest string
+	start, end                                                                 int64
+	present                                                                    bool
 }
 
 func NewSensitiveDownloadRequest(f SensitiveDownloadRequestFacts) (SensitiveDownloadRequest, error) {
@@ -64,14 +66,21 @@ func NewSensitiveDownloadRequest(f SensitiveDownloadRequestFacts) (SensitiveDown
 	var out strings.Builder
 	canonicalMutationJSON(&out, input)
 	canonical := out.String()
-	return SensitiveDownloadRequest{installation: f.Installation, subject: f.Actor.Subject, session: f.Actor.Session, manifest: f.ManifestSHA256,
+	return SensitiveDownloadRequest{installation: f.Installation, evidence: f.EvidenceID, subject: f.Actor.Subject, session: f.Actor.Session, manifest: f.ManifestSHA256,
 		key: f.IdempotencyKey, canonical: canonical, digest: registrationHash(canonical), start: f.RangeStart, end: f.RangeEnd, present: f.RangePresent}, nil
 }
 
-func (r SensitiveDownloadRequest) CanonicalJSON() []byte       { return []byte(r.canonical) }
-func (r SensitiveDownloadRequest) RequestHash() string         { return r.digest }
-func (r SensitiveDownloadRequest) ManifestSHA256() string      { return r.manifest }
-func (r SensitiveDownloadRequest) IdempotencyKey() string      { return r.key }
+func (r SensitiveDownloadRequest) CanonicalJSON() []byte  { return []byte(r.canonical) }
+func (r SensitiveDownloadRequest) RequestHash() string    { return r.digest }
+func (r SensitiveDownloadRequest) ManifestSHA256() string { return r.manifest }
+func (r SensitiveDownloadRequest) IdempotencyKey() string { return r.key }
+func (r SensitiveDownloadRequest) InstallationID() string { return r.installation }
+func (r SensitiveDownloadRequest) EvidenceID() string     { return r.evidence }
+
+// MatchesActor compares immutable request identity, not current authorization.
+func (r SensitiveDownloadRequest) MatchesActor(a RegistrationActor) bool {
+	return r.canonical != "" && a.UserID > 0 && a.Subject == "user:"+strconv.FormatInt(a.UserID, 10) && r.subject == a.Subject && r.session == a.Session
+}
 func (r SensitiveDownloadRequest) Range() (int64, int64, bool) { return r.start, r.end, r.present }
 
 // ProofBinding is shared by the future issuance service and the verifier. The
@@ -89,13 +98,15 @@ func (r SensitiveDownloadRequest) ProofBinding(issuer string) (RequestBinding, e
 // results. It is NOT a prelocked context, receipt, current authorization, nonce
 // reservation or permission to read a provider. D must still implement those.
 type SensitiveDownloadProofVerification struct {
-	request      SensitiveDownloadRequest
-	candidates   []NonceHMACCandidate
-	active       NonceHMACCandidate
-	verifiedAt   time.Time
-	expiresAt    time.Time
-	timePayload  ProofPayload
-	maxAge, skew time.Duration
+	request             SensitiveDownloadRequest
+	candidates          []NonceHMACCandidate
+	active              NonceHMACCandidate
+	verifiedAt          time.Time
+	expiresAt           time.Time
+	timePayload         ProofPayload
+	maxAge, skew        time.Duration
+	issuer, fingerprint string
+	authenticatedAt     time.Time
 }
 
 func (v SensitiveDownloadProofVerification) Request() SensitiveDownloadRequest { return v.request }
@@ -104,6 +115,34 @@ func (v SensitiveDownloadProofVerification) NonceCandidates() []NonceHMACCandida
 }
 func (v SensitiveDownloadProofVerification) ActiveNonce() NonceHMACCandidate { return v.active }
 func (v SensitiveDownloadProofVerification) ProofExpiresAt() time.Time       { return v.expiresAt }
+
+// SignedAuthTime is the issuer's signed auth_time, which may be ahead within
+// allowed skew. Nonce authenticated_at must use ProofAcceptedAt, not this value.
+func (v SensitiveDownloadProofVerification) SignedAuthTime() time.Time { return v.authenticatedAt }
+func (v SensitiveDownloadProofVerification) IssuerSHA256() string {
+	if v.fingerprint == "" {
+		return ""
+	}
+	return registrationHash(v.issuer)
+}
+
+// SameAdmissionVerification compares the original sealed verification, including
+// nonce candidates and original time policy. Re-verifying a different proof for
+// the same request or refreshing the observation time cannot replace it.
+func (v SensitiveDownloadProofVerification) SameAdmissionVerification(other SensitiveDownloadProofVerification) bool {
+	if v.request.canonical == "" || v.request != other.request || v.fingerprint == "" || v.fingerprint != other.fingerprint || v.issuer != other.issuer || !v.authenticatedAt.Equal(other.authenticatedAt) ||
+		v.active != other.active || !v.verifiedAt.Equal(other.verifiedAt) || !v.expiresAt.Equal(other.expiresAt) ||
+		v.timePayload.AuthTime != other.timePayload.AuthTime || v.timePayload.ExpiresAt != other.timePayload.ExpiresAt ||
+		v.maxAge != other.maxAge || v.skew != other.skew || len(v.candidates) == 0 || len(v.candidates) != len(other.candidates) {
+		return false
+	}
+	for i, candidate := range v.candidates {
+		if candidate != other.candidates[i] {
+			return false
+		}
+	}
+	return true
+}
 func (SensitiveDownloadProofVerification) MarshalJSON() ([]byte, error) {
 	return nil, ErrSensitiveDownloadRequest
 }
@@ -186,14 +225,29 @@ func (r SensitiveDownloadRequest) VerifyProof(proof Proof, issuer string, cfg Ve
 	if err != nil {
 		return SensitiveDownloadProofVerification{}, err
 	}
+	// Bind the exact validated signed payload and signature without retaining
+	// raw proof/nonce bytes. The outer transaction can compare original proof
+	// identity and obtain signed issuer/auth-time facts from this seal. The
+	// ledger's authenticated_at remains the server-side ProofAcceptedAt sample.
+	fingerprinter := sha256.New()
+	fingerprinter.Write(result.CanonicalPayload)
+	fingerprinter.Write([]byte{0})
+	signatureJSON, signatureErr := json.Marshal(proof.Signature)
+	if signatureErr != nil {
+		wipeSecret(result.CanonicalPayload)
+		return SensitiveDownloadProofVerification{}, ErrRegistrationUnavailable
+	}
+	fingerprinter.Write(signatureJSON)
+	fingerprint := hex.EncodeToString(fingerprinter.Sum(nil))
 	for i := range result.CanonicalPayload {
 		result.CanonicalPayload[i] = 0
 	}
-	_, expires, err := parseTimes(proof.Payload)
+	authenticated, expires, err := parseTimes(proof.Payload)
 	if err != nil {
 		return SensitiveDownloadProofVerification{}, ErrSensitiveDownloadRequest
 	}
 	return SensitiveDownloadProofVerification{request: r, candidates: result.NonceHMACCandidates,
 		active: NonceHMACCandidate{KeyVersion: result.NonceHMACKeyVersion, HMAC: result.NonceHMAC}, verifiedAt: cfg.Now.UTC(), expiresAt: expires,
+		issuer: proof.Payload.Issuer, authenticatedAt: authenticated, fingerprint: fingerprint,
 		timePayload: ProofPayload{AuthTime: proof.Payload.AuthTime, ExpiresAt: proof.Payload.ExpiresAt}, maxAge: cfg.MaxAge, skew: cfg.ClockSkew}, nil
 }

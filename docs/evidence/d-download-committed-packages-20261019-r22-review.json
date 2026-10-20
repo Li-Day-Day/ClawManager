@@ -1,0 +1,75 @@
+{
+  "kind": "d_download_committed_binding_frozen_review",
+  "source_files": 1374,
+  "source_sha256": "40c5a657682fb5f68221922768938ce2e637f8be3fb9214355c6a8b0ee2f59ff",
+  "capture_attempts": 1,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 253,
+      "all_pass": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 242,
+      "all_pass": 1861
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main_pass": 75,
+      "all_pass": 519
+    }
+  ],
+  "go_main_pass": 570,
+  "go_all_pass": 4365,
+  "new_roots": [
+    "TestCommittedDownloadProviderGrantsAndRealEnvelopeOpenRange",
+    "TestCommittedDownloadReadsOriginalGroupWithoutRepeatingAdmission",
+    "TestCommittedDownloadBindingIsSingleAttemptAcrossCopies",
+    "TestCommittedDownloadRejectsChangedSQLAndLatchesFailure",
+    "TestCommittedDownloadProviderRangeAndCallerMismatchFailClosed",
+    "TestCommittedDownloadFinalReadFollowsOwnerAuthorizationCallback",
+    "TestCommittedDownloadCanceledOrExpiredBindingStopsBeforeSQL",
+    "TestCommittedDownloadCipherFramesAreLimitedToSignedPlaintextRange"
+  ],
+  "new_all_pass": 72,
+  "current_source_drift": [],
+  "current_sources_match": true,
+  "hashes": {
+    "go_log": "f19f537c184988ca69955e51a6c3b358f05835091fb03ff6ee62d028f8440417",
+    "native": "1f6ab47058363157e455efb1a0aa03aeab84309aa91fe8dbfef57ecd05b81859",
+    "manifest": "0ebd0ec0ea7763cac110aaeffa8ec2f6217ac4a5292589c0d5c755f04a2bcd65"
+  },
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-committed-20261019-r20",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-25fac821f2cc4ffcba533cec3a000bec",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1bb4e111a9f2496abf697bf6553820dd",
+      "exists": false
+    }
+  ],
+  "earlier_focused_run": {
+    "path": "docs/evidence/d-download-committed-focused-20261019-r20.jsonl",
+    "sha256": "223a0d6190f10b033bdf6ce3e1dea15caab48d4d6b148904e776a722671fc03d",
+    "scope": "working tree smoke only, before subsequent final guards/provider-positive additions"
+  },
+  "earlier_full_run": {
+    "path": "docs/evidence/d-download-committed-packages-20261019-r21.jsonl",
+    "sha256": "b653ea025209d735597f45d7015fae2268558f9999783c3d9752d2a3ca365055",
+    "scope": "its own frozen sources, before provider-positive/history additions and duplicate-read removal"
+  },
+  "installed_dependencies": false,
+  "actual_mysql": false,
+  "current_server_rerun": false,
+  "production_enabled": false,
+  "http_download_runtime_wired": false,
+  "result_audit_wired": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Real JWT/EdDSA admission and SQL download/provider guards on scripted SQL and synthetic owner/capacity. No actual InnoDB, deployed provider/token exchange, HTTP dispatch/result audit, formal schema/grants, owner/physical capacity, historical deployment or full original-goal acceptance."
+}

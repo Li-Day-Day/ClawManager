@@ -1,0 +1,325 @@
+{
+  "kind": "a_independent_download_atomic_orchestration_review",
+  "recorded_at": "2026-10-19T02:21:19.251Z",
+  "status": "accepted_frozen_local_orchestration_model_only",
+  "log": "docs/evidence/d-download-admission-chain-packages-20261019-r13.jsonl",
+  "log_sha256": "2350f5352918f5f9ec76589fb41dc8fc298cfe2b9706ab1c628480db416bccac",
+  "source": "docs/evidence/d-download-admission-chain-packages-20261019-r13-source.json",
+  "source_manifest_sha256": "ad21e68134cc82592d7488c64d78572757d064468d18fcb4d28af42279417a22",
+  "final_executor": "D frozen native gate including A authored checks; A independently audits original evidence",
+  "final_native_wrapper": {
+    "path": "docs/evidence/d-download-admission-chain-packages-20261019-r13-native.txt",
+    "sha256": "fc1e19fd106d47447bf479d6094820dbc9f1acc7a87c0b552644f6217e7bb31d"
+  },
+  "executor_contract_postcheck_claimed": false,
+  "original_failed_test_round": {
+    "log": "docs/evidence/a-download-transaction-local-20261019-094054-b2f7c938.txt",
+    "log_sha256": "62e62de5e657a7fde40434ca91bda746490a92e559e5596621794d026dae7acf",
+    "source": "docs/evidence/a-download-transaction-source-20261019-094054-b2f7c938.json",
+    "source_manifest_sha256": "8757a19818e641b8092324016e6c9a130e1ce7f96404e21ad2a67bd72481fa58",
+    "actual_exit": 1,
+    "reason": "A test treated semantically equivalent SQL JSON whitespace as tampering; corrected to actual claim digest substitution and added a successful equivalent-format control",
+    "failed_round_postcheck_claimed": false
+  },
+  "original_failed_ACR_fixture_round": {
+    "log": "docs/evidence/a-download-transaction-final-20261019-095248-a84dc6bf.txt",
+    "log_sha256": "28a013784fbe9d77dc2fcc715d23233f1dd50cc26e3c6ea18b68b66912fc0b13",
+    "source": "docs/evidence/a-download-transaction-final-source-20261019-095248-a84dc6bf.json",
+    "source_manifest_sha256": "8c9165609cc3f9061c978c572123be2750580fb91d8f8ece32a1e0948a80584c",
+    "actual_exit": 1,
+    "reason": "D pinned fixture serialized omitted ACR as null; strict production registry requires a non-null array; fixture corrected to an empty array. The same failed round also reported producer_committed_but_execution_expired at system_publication_test.go:404; its root passed in the final complete gate. Both original failures are retained.",
+    "failed_round_postcheck_claimed": false
+  },
+  "source_files": 1356,
+  "source_sha256": "65c1c7e44c69a8837bc0c29061004e5fe13e8436e8fb9a15eca6772e3728a510",
+  "checks_passed": 76,
+  "checks": [
+    "stable source snapshot without dependency installation",
+    "source capture bounded before build",
+    "frozen input paths unique",
+    "source logical digest independently recomputed",
+    "original D contract decision remains unchanged at independent review",
+    "native executor reported exact three packages with default vet and exit zero",
+    "native outer wrapper exit zero",
+    "native frozen source postcheck passed",
+    "actual native runner code matches its frozen pin",
+    "runner disables downloads and inherited Go flags without disabling vet",
+    "runner isolates and disables telemetry",
+    "no test or package failed",
+    "no tests or packages skipped",
+    "passed test names unique within each package",
+    "every complete package passed once with no extra package terminal",
+    "first round remains failed with actual Go and wrapper exit one",
+    "first round failure is only the invalid whitespace attack and its parent/package",
+    "first round stable source digest recomputed",
+    "first round security package was already green",
+    "second frozen round remains failed with exit one",
+    "second round failures explicitly include the pinned environment fixture and publication execution expiry",
+    "second round publication failure retains its actual expiry diagnostic",
+    "publication boundary root passed in the final complete gate",
+    "second round source digest independently recomputed",
+    "TestAAdmissionFinalCallbackCannotReplaceOriginalRows: all 15 main/child results passed",
+    "TestAAdmissionRejectsTransportBeforeOpeningTransaction: all 6 main/child results passed",
+    "TestAAdmissionProofAndHistoryFailuresPrecedeKeyOrNonceEffects: all 7 main/child results passed",
+    "TestAAdmissionFinalAuditJSONFormattingIsEquivalent: all 1 main/child results passed",
+    "A corrected 29 checks were already green before the ACR fixture correction",
+    "D original transaction control passed: TestDownloadAdmissionTransactionCommitsAllOriginalRowsOnce",
+    "D original transaction control passed: TestDownloadAdmissionTransactionClaimOwnershipAndVersion",
+    "D original transaction control passed: TestDownloadAdmissionTransactionEveryFailureRollsBackWholeGroup",
+    "D original transaction control passed: TestDownloadAdmissionTransactionKeyAndNonceReplayOrdering",
+    "D original transaction control passed: TestDownloadAdmissionTransactionUnknownOrLateCommitNeverReturnsCapability",
+    "D original transaction control passed: TestDownloadAdmissionTransactionOriginalTransportSnapshotAndFutureAuth",
+    "D original transaction control passed: TestDownloadAdmissionPinnedEnvironmentCombinesRealModules",
+    "D original transaction control passed: TestDownloadAdmissionPinnedEnvironmentRejectsChangedSourcesAtomically",
+    "D original transaction control passed: TestDownloadAdmissionPinnedEnvironmentRequiresDeploymentInputs",
+    "native run reported and cleaned its exact frozen owner",
+    "external cache has the guarded run-owned workspace layout",
+    "all failed and successful rounds have distinct cleanup paths",
+    "owned path independently absent: .tmp-a-evidence-c764427985d34550983e7c2dc74e5f52",
+    "owned path independently absent: .tmp-d-index-cache-531ac8d16dcd4965a7a46f8f92327fe5",
+    "owned path independently absent: .tmp-a-evidence-87f488f36f6048649c967e11d1b54554",
+    "owned path independently absent: .tmp-d-index-cache-3f8f05f0606a46a8ab3b88a7feedb04b",
+    "owned path independently absent: .tmp-d-index-cache-955878144cb243cab544b8a6b612047f",
+    "owned path independently absent: .tmp-d-admission-20261019-chain",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_transaction_a_test.go",
+    "A owned source remains the reviewed bytes: backend/internal/systembackupevidence/download_admission_transaction_a_test.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_transaction.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_transaction_test.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_claim.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_nonce.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_records.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_keys.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_binding.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_audit.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_content.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_environment.go",
+    "required frozen review input exists: backend/internal/systembackupevidence/download_admission_environment_test.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/sensitive_download_config.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/sensitive_download_nonce_scope.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/sensitive_download_request.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/config_mutation_session.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/config_mutation_strongauth.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/config_mutation_capacity.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/evidence_rbac.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/registration_files.go",
+    "required frozen review input exists: backend/internal/systembackupsecurity/providerproof_registry.go",
+    "required frozen review input exists: scripts/system-backup-a-sensitive-download-validation.ps1",
+    "A owned source remains the reviewed bytes: scripts/system-backup-a-sensitive-download-validation.ps1",
+    "required frozen review input exists: scripts/system-backup-d-download-admission-native-validation.ps1",
+    "A owned source remains the reviewed bytes: scripts/system-backup-d-download-admission-native-validation.ps1",
+    "ACR fix did not relax production registry decoding"
+  ],
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 248,
+      "subtests": 1665
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 229,
+      "subtests": 1520
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "main": 6,
+      "subtests": 6
+    }
+  ],
+  "passed_including_subtests": 3674,
+  "A_independent_main": 4,
+  "A_independent_including_subtests": 29,
+  "frozen_focus_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_a_test.go",
+      "size": 6380,
+      "sha256": "11bf266d0a0a339f227128731e79149c3396548ad2090ed4930801f8aedc3e37"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction.go",
+      "size": 13313,
+      "sha256": "bb469cd987ec845f5efc3ea0da2fed26a2fb0770e03fe4ba79ce0c6a745b29bd"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "size": 28432,
+      "sha256": "6e79840432efdafba2dc3541d5a830542f74582305c8e34ba15b3d07fd5d562d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_test.go",
+      "size": 11464,
+      "sha256": "237055421d0801534b90b822f152623ed815d1f34dc318a3d6b6e638033a69fe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_claim.go",
+      "size": 6693,
+      "sha256": "accde6275f90f45dc718bd1f9785fd0af4f5b5c6f19718ccb52552c29d0867ed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_nonce.go",
+      "size": 7351,
+      "sha256": "2b104923b002c908bf643d4b454554423c0822687b7696008394dd824e3cca5a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_records.go",
+      "size": 10799,
+      "sha256": "b8c7bb20dec001b6630035789a55a7dabd60ce83d04198d75046c4927c3d8277"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_keys.go",
+      "size": 5230,
+      "sha256": "e1238e78f7a5a740f90085b574fe24afc2442cb1d32351a0e19ed4401492facb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_binding.go",
+      "size": 9932,
+      "sha256": "71a826daa29ba80781e113bc77faf15270f1f514dcb992c4eeee3ec6320d3f11"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_audit.go",
+      "size": 7928,
+      "sha256": "cb3115e82d7dd8d9ea5f45b840df1290ea644a74225a3362e0fdb67fef902fbd"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_content.go",
+      "size": 8689,
+      "sha256": "96eab900e773e5495ce3b3709fbc86079137033e8fd8d6c89ad369a1d0c6a253"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment.go",
+      "size": 9661,
+      "sha256": "3c659f0e8b7e9f8e12246c7fa59117ebef22a303770bbc094e0dc1a723a78ed6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment_test.go",
+      "size": 11682,
+      "sha256": "3d900fa084eb42c8f57877ce865f5623b79cfabb8934636926dd78c8dd8a9aa7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_config.go",
+      "size": 5009,
+      "sha256": "5742cd67ece863f30b66dc57466f2fe5c1fc106f73015b24132abb6413b9aedb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_nonce_scope.go",
+      "size": 11428,
+      "sha256": "6833fc55d1b8b0c2b6bfa28b75baad2ac366941ecbaca7ba19fd46e820104753"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request.go",
+      "size": 12837,
+      "sha256": "bc43f401307d59d474baa9df0c76d8a7ae8072c6af42a31b94a8d5d5a0dbc960"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+      "size": 1336,
+      "sha256": "43789c3f35c03673409a4ac650937d522145e09df8db5a436844ab17c995a37c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session.go",
+      "size": 2761,
+      "sha256": "8ef1e2903fd7da0e52093eda5a379a5916e0356d5396769d124fd2b635c8e31d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_strongauth.go",
+      "size": 5966,
+      "sha256": "f8aff72825226af8edd6aa3a6e498f1e8740ecf9258ed4e00bdfe84781425d7e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_capacity.go",
+      "size": 6311,
+      "sha256": "c3d93719cc69cdd0881a54dd8e5916e5ff9cea7cb57fbd6c3fb1cd01fd00a32a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/evidence_rbac.go",
+      "size": 1793,
+      "sha256": "ee5a637ca52b11e0ed715845427f544301c801bbf12747f4addff6240529a121"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_files.go",
+      "size": 2842,
+      "sha256": "6597f252283569df33a5e1738a43088f2342881e8c469c0d7fadb15b4efb23f5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_registry.go",
+      "size": 12788,
+      "sha256": "63cbb271116ad7a193a69074b19a1bbd2f6eaddb2f2138562216378ea96ed6f8"
+    },
+    {
+      "path": "scripts/system-backup-a-sensitive-download-validation.ps1",
+      "size": 5809,
+      "sha256": "3a149c2d4642de0340e8a88578c0458ef25340ab87e65df72b8c1b31332ccef2"
+    },
+    {
+      "path": "scripts/system-backup-d-download-admission-native-validation.ps1",
+      "size": 5049,
+      "sha256": "cc59d115418c451cb107a6181b0fb612c1ba8322272e74a3996f564e7c1e97f3"
+    }
+  ],
+  "current_focus_drifts_excluded": [],
+  "original_input_drifts_excluded": [],
+  "changed_or_added_inputs_between_rounds": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment.go",
+      "original_sha256": "d973dc66493e3807c51bf889d87ede4b8ccd9dc5004671a6fbb4dd5a66ab1f87",
+      "final_sha256": "3c659f0e8b7e9f8e12246c7fa59117ebef22a303770bbc094e0dc1a723a78ed6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment_test.go",
+      "original_sha256": null,
+      "final_sha256": "3d900fa084eb42c8f57877ce865f5623b79cfabb8934636926dd78c8dd8a9aa7"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction.go",
+      "original_sha256": "6d7818876ed8495e4980d7c4fe4b0ebb98118ec5b2cdee47b21e8cb66f346fb6",
+      "final_sha256": "bb469cd987ec845f5efc3ea0da2fed26a2fb0770e03fe4ba79ce0c6a745b29bd"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_a_test.go",
+      "original_sha256": "c52ed7e88a4f98de827b5b88bb6fc604ab9202c5a50367b2dd0426cc968aa2c9",
+      "final_sha256": "11bf266d0a0a339f227128731e79149c3396548ad2090ed4930801f8aedc3e37"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "original_sha256": "58dff4e68561ed78b2679db4375175bd4f48775ecf908ee2ad775d976dccc91f",
+      "final_sha256": "6e79840432efdafba2dc3541d5a830542f74582305c8e34ba15b3d07fd5d562d"
+    },
+    {
+      "path": "scripts/system-backup-d-download-admission-native-validation.ps1",
+      "original_sha256": "95ebe640a414fedf0557dfd6b7fde39e8654b55a18c4b31feac225d526178372",
+      "final_sha256": "cc59d115418c451cb107a6181b0fb612c1ba8322272e74a3996f564e7c1e97f3"
+    }
+  ],
+  "newly_added_current_files_covered": false,
+  "current_entire_worktree_accepted": false,
+  "exact_owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-c764427985d34550983e7c2dc74e5f52",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-531ac8d16dcd4965a7a46f8f92327fe5",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-87f488f36f6048649c967e11d1b54554",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3f8f05f0606a46a8ab3b88a7feedb04b",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-955878144cb243cab544b8a6b612047f",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-20261019-chain"
+  ],
+  "actual_JWT_Ed25519_and_orchestration": true,
+  "SQL_transport_is_scripted_model": true,
+  "same_transaction_orchestration_verified_in_model": true,
+  "actual_session_RBAC_material_capacity_modules_combined_under_model_SQL": true,
+  "default_vet": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_MySQL_atomic_admission_verified": false,
+  "human_MFA_verified": false,
+  "formal_schema_approved": false,
+  "production_download_route_enabled": false,
+  "earlier_D_failed_rounds_reclassified": false,
+  "remaining": [
+    "reviewed actual owner/hold/reference adapter and runtime authority inputs; pinned session/RBAC/material modules are implemented but their SQL transport and inputs remain synthetic in this gate",
+    "download-bound proof issuance from authorized real immutable Manifest and actual MFA",
+    "real physical capacity and owner/hold/reference adapters",
+    "reviewed DDL, historical ownership upgrade, retention and least-privilege database grants",
+    "real MySQL rollback, cross-version concurrent replay and unknown-commit verification",
+    "known-commit provider/plaintext path with fresh authorization and deployment/E2E"
+  ]
+}

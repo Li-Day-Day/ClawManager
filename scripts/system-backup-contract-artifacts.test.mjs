@@ -406,7 +406,7 @@ test('Admin operation policy covers OpenAPI exactly and preserves D orchestratio
     'retrySystemBackupPrune',
   ]);
   const strongConditional = adminOperationPolicy.operations.filter((policy) => policy.recent_strong_auth === 'conditional').map((policy) => policy.operation_id).sort();
-  assert.deepEqual(strongConditional, ['rollbackSystemBackupConfig', 'updateSystemBackupConfig', 'updateSystemBackupManualHold']);
+  assert.deepEqual(strongConditional, ['getSystemBackupEvidence', 'rollbackSystemBackupConfig', 'updateSystemBackupConfig', 'updateSystemBackupManualHold']);
 
   const blockedByKillSwitch = adminOperationPolicy.operations.filter((policy) => policy.kill_switch === 'requires_effective_enabled').map((policy) => policy.operation_id).sort();
   assert.deepEqual(blockedByKillSwitch, [
@@ -684,7 +684,6 @@ test('D-owned Admin resources replace only D placeholders and bind the existing 
     'getSystemBackupCatalogImport',
     'getSystemBackupCatalogRecord',
     'getSystemBackupCatalogScan',
-    'getSystemBackupEvidence',
     'getSystemBackupPreflightRestoreDiff',
   ]);
   assert.deepEqual(openapi.components.responses.Manifest.content['application/json'].schema, { $ref: 'manifest-system-backup-v1.schema.json' });
@@ -1661,15 +1660,26 @@ test('D-owned config and operation authorities materialize the closed machine co
     assert.ok(match, `${column} enum must be present`);
     return [...match[1].matchAll(/'([^']+)'/g)].map((item) => item[1]);
   };
-  assert.deepEqual(enumValues('operation_type'), statusDefs.OperationType.enum);
-  assert.deepEqual(enumValues('target_type'), statusDefs.OperationTargetType.enum);
+  // Published 066 remains immutable. The draft download extension must exactly
+  // append to its enums in the explicit, unnumbered migration proposal.
+  assert.equal(statusDefs.OperationType.enum.at(-1), 'evidence_download_admission');
+  assert.equal(statusDefs.OperationTargetType.enum.at(-1), 'evidence');
+  assert.deepEqual(enumValues('operation_type'), statusDefs.OperationType.enum.slice(0, -1));
+  assert.deepEqual(enumValues('target_type'), statusDefs.OperationTargetType.enum.slice(0, -1));
+  const proposal = readFileSync(join(root, taskSchema.$defs.Operation['x-storage-migration-proposal']), 'utf8');
+  for (const [column, schemaName] of [['operation_type', 'OperationType'], ['target_type', 'OperationTargetType']]) {
+    const declared = proposal.match(new RegExp(`MODIFY COLUMN ${column} ENUM\\(([^)]*)\\)`));
+    assert.ok(declared, `download proposal must declare ${column}`);
+    assert.deepEqual([...declared[1].matchAll(/'([^']+)'/g)].map(match => match[1]), statusDefs[schemaName].enum);
+  }
+  assert.equal(taskSchema['x-contract-status'], 'draft');
   assert.deepEqual(enumValues('status'), statusDefs.OperationStatus.enum);
   assert.deepEqual(enumValues('failure_category'), statusDefs.FailureCategory.enum);
   assert.equal(taskSchema.$defs.Operation.properties.public_id.$ref, 'admin-api-common.schema.json#/$defs/OperationPublicId');
   assert.equal(taskSchema.$defs.Operation.properties.origin_installation_id.$ref, 'admin-api-common.schema.json#/$defs/InstallationId');
   assert.equal(taskSchema.$defs.Operation.properties.idempotency_key.$ref, 'admin-api-common.schema.json#/$defs/IdempotencyKey');
   assert.equal(taskSchema.$defs.Operation.properties.failure_message.maxLength, 2048);
-  assert.equal(taskSchema.$defs.Operation.allOf.length, statusDefs.OperationTargetType.enum.length);
+  assert.equal(taskSchema.$defs.Operation.allOf.filter(branch => branch.if?.properties?.target_type?.const).length, statusDefs.OperationTargetType.enum.length);
   assert.match(examples.examples.operation.public_id, /^sop_[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/);
   assert.match(examples.examples.operation.target_public_id, /^sbk_[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/);
 

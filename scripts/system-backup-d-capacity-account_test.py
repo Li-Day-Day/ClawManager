@@ -3,7 +3,7 @@ from pathlib import Path
 s=importlib.util.spec_from_file_location('account',Path(__file__).with_name('system-backup-d-capacity-account.py'));m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 class AccountTests(unittest.TestCase):
  def setUp(self):
-  self.tables=['audit_logs','system_backup_configs'];self.queries=[];self.secret=None;self.missing=False;self.fail_secret=False
+  self.tables=['audit_logs','system_backup_configs','system_backups'];self.queries=[];self.secret=None;self.missing=False;self.fail_secret=False
   self.plan=dict(context='test',namespace='source',namespace_uid='ns-uid',mysql_pod='mysql',mysql_pod_uid='pod-uid',mysql_node='master',mysql_container='mysql',database='db',server_uuid='uuid')
  def fake(self,args,**kw):
   query=kw.get('input');out=''
@@ -26,6 +26,8 @@ class AccountTests(unittest.TestCase):
   return types.SimpleNamespace(returncode=0,stdout=out)
  def test_missing_tables_prevents_any_mutation(self):
   self.missing=True;r=m.execute(self.plan,self.tables,self.fake);self.assertEqual(r['blocked_phase'],'required-tables');self.assertFalse(r['account_create_attempted']);self.assertIsNone(self.secret)
+ def test_legacy_list_cannot_hide_backup_table(self):
+  r=m.execute(self.plan,self.tables[:2],self.fake);self.assertFalse(r['account_create_attempted']);self.assertIsNone(self.secret)
  def test_exact_grants_secret_no_credentials_in_receipt(self):
   r=m.execute(self.plan,self.tables,self.fake);self.assertEqual(r['status'],'ACCOUNT_SECRET_PREPARED');self.assertTrue(self.secret['immutable']);self.assertEqual(set(self.secret['data']),{'dsn'})
   self.assertNotIn(self.secret['data']['dsn'],json.dumps(r));self.assertEqual(len([q for q in self.queries if q.startswith('GRANT')]),len(self.tables))
