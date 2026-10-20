@@ -1,0 +1,63 @@
+**********************
+PowerShell transcript start
+Start time: 20261020144930
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$localRun=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8)
+$localLog=Join-Path (Get-Location).Path ('docs/evidence/a-download-owners-local-repair-'+$localRun+'.txt')
+$localSource=Join-Path (Get-Location).Path ('docs/evidence/a-download-owners-local-repair-source-'+$localRun+'.json')
+$localExit=1
+Write-Output ('REPAIR_LOG='+$localLog)
+Write-Output ('REPAIR_SOURCE='+$localSource)
+Start-Transcript -LiteralPath $localLog -NoClobber | Out-Null
+try {
+    & .\scripts\system-backup-d-config-writer-validation.ps1 -DownloadOwnersOnly -BuildParallelism 1 -SourceManifestPath $localSource
+    $localExit=0
+} finally {
+    Write-Host ('a_download_owners_local_repair_exit='+$localExit)
+    Stop-Transcript | Out-Null
+}
+exit $localExit
+Process ID: 18120
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER config-writer-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-d5e9da4af82140c9bc63c51f6ffde666
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE config-writer-frozen=yes source_sha256=b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252 files=1445
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS>TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+PS>TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+PASS download-owners-dispatch: exclusive actual task-owner root, three detached seeds, full catalog, UID/payload pins and exact cleanup; accepted suites not rerun
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE config-writer-candidate=yes synthetic-readiness=yes synthetic-capacity=yes production-approval=no backfill=no real_mysql=not_run
+VALIDATION_SCOPE download-sql-task-owners-only=yes actual-sql-probe-preparation=yes owner-adapter=SQLTaskDownloadOwners production-tasks=no human-mfa=no production-approval=no real_mysql=not_run
+

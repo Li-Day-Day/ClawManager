@@ -253,16 +253,25 @@ func TestTaskAuthorityRejectsIdentityAndState(t *testing.T) {
 		{"installation", 1, 0, "installation_other"}, {"config_version", 2, 0, int64(4)}, {"disabled", 2, 1, false},
 		{"config_hash", 3, 0, strings.Repeat("e", 64)}, {"config_disabled", 3, 2, false}, {"store_ref", 3, 4, "other"}, {"write_identity", 3, 5, strings.Repeat("e", 64)},
 		{"snapshot_bytes", 4, 3, []byte(`[]`)}, {"task_config", 4, 0, int64(4)}, {"terminal", 4, 4, "succeeded"}, {"canceling", 4, 4, "canceling"},
-		{"controller_takeover", 4, 5, "other"}, {"lease_expired", 4, 6, time.Now().Add(-time.Minute)}, {"deadline", 4, 7, time.Now().Add(-time.Minute)},
+		{"controller_takeover", 4, 5, "other"}, {"lease_expired", 4, 6, -time.Minute}, {"deadline", 4, 7, -time.Minute},
 		{"stale_attempt", 5, 0, int64(3)}, {"failed_attempt", 5, 1, "failed"}, {"job_replaced", 6, 0, "other"}, {"job_generation", 6, 1, int64(2)},
-		{"relay_revoked", 6, 5, time.Now().Add(-time.Second)}, {"relay_replaced", 6, 2, "other"}, {"relay_version", 6, 3, "other"},
-		{"relay_future", 6, 4, time.Now().Add(time.Minute)}, {"clock_drift", 7, 0, time.Now().Add(10 * time.Second)},
+		{"relay_revoked", 6, 5, -time.Second}, {"relay_replaced", 6, 2, "other"}, {"relay_version", 6, 3, "other"},
+		{"relay_future", 6, 4, time.Minute}, {"clock_drift", 7, 0, 10 * time.Second}, {"clock_drift_backward", 7, 0, -10 * time.Second},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			f := newTaskFixture(t, false)
-			f.db.plan[test.query].values[test.column] = test.value
+			value := test.value
+			if offset, ok := value.(time.Duration); ok {
+				// Resolve time mutations after this fixture is ready. Earlier
+				// subtests must not consume the intended clock-drift offset.
+				value = time.Now().UTC().Truncate(time.Microsecond).Add(offset)
+			}
+			f.db.plan[test.query].values[test.column] = value
 			if _, err := f.a.AuthorizeContent(f.ctx, f.identity); err != ErrDenied || f.db.commits != 0 {
 				t.Fatal("state admitted", err)
+			}
+			if strings.HasPrefix(test.name, "clock_drift") && f.db.index != len(f.db.plan) {
+				t.Fatal("clock drift did not reach the final SQL clock check")
 			}
 		})
 	}
