@@ -31,6 +31,7 @@ type SQLGCAuthority struct {
 	c         GCAuthorityConfig
 	roots     *x509.CertPool
 	principal string
+	journal   *gcFailureJournal
 }
 
 var _ S3WebIdentityAuthority = (*SQLGCAuthority)(nil)
@@ -38,7 +39,7 @@ var gcOperationID = regexp.MustCompile(`^sop_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}
 
 func NewSQLGCAuthority(c GCAuthorityConfig) (*SQLGCAuthority, error) {
 	u, err := url.Parse(c.Issuer)
-	if c.Registry.DB == nil || c.Registry.Policy == nil || !installationPattern.MatchString(c.Registry.Installation) || c.Registry.ServerUUID == "" || c.Registry.Database == "" ||
+	if c.Registry.DB == nil || nilSystemAdapter(c.Registry.Policy) || !installationPattern.MatchString(c.Registry.Installation) || c.Registry.ServerUUID == "" || c.Registry.Database == "" ||
 		c.ConfigVersion < 1 || !digestPattern.MatchString(c.ConfigSHA256) || !safeKey(c.Root) || !c.Store.valid() || !c.Delete.valid() ||
 		!gcOperationID.MatchString(c.OperationID) || !s3Token([]byte(c.OperationClaim), 1, 128) || c.OperationRowVersion < 1 ||
 		!digestPattern.MatchString(c.CertificateSHA256) || !digestPattern.MatchString(c.ClientCASHA256) || len(c.ClientCAPEM) == 0 || len(c.ClientCAPEM) > 65536 || hash(c.ClientCAPEM) != c.ClientCASHA256 ||
@@ -61,6 +62,9 @@ func (a *SQLGCAuthority) AuthenticateRequest(r *http.Request) (context.Context, 
 	if a == nil {
 		return nil, ErrAuth
 	}
+	if a.journal != nil && a.journal.check() != nil {
+		return nil, ErrUnavailable
+	}
 	return authenticatePinnedPeer(r, a, a.roots, a.c.CertificateSHA256, a.c.ExpiresAt)
 }
 
@@ -81,7 +85,7 @@ func (a *SQLGCAuthority) AuthorizeS3(ctx context.Context, scope S3Scope) (S3WebI
 	if err != nil {
 		return S3WebIdentityGrant{}, ErrDenied
 	}
-	if ctx.Err() != nil || !time.Now().Before(grant.until) {
+	if ctx.Err() != nil || !time.Now().Before(grant.until) || a.journal != nil && a.journal.check() != nil {
 		wipe(token)
 		return S3WebIdentityGrant{}, ErrDenied
 	}
@@ -90,7 +94,7 @@ func (a *SQLGCAuthority) AuthorizeS3(ctx context.Context, scope S3Scope) (S3WebI
 
 func (a *SQLGCAuthority) authorize(ctx context.Context, scope S3Scope) (gcGrant, error) {
 	deny := func() (gcGrant, error) { return gcGrant{}, ErrDenied }
-	if a == nil {
+	if a == nil || a.journal != nil && a.journal.check() != nil {
 		return deny()
 	}
 	until, err := pinnedPeerExpiry(ctx, a, a.roots, a.c.CertificateSHA256, a.c.ExpiresAt)
@@ -155,7 +159,7 @@ func (a *SQLGCAuthority) authorize(ctx context.Context, scope S3Scope) (gcGrant,
 		ClaimUntil, OperationUntil, Deadline time.Time
 		OperationRow                         int64
 	}{access, r.Manifest, r.Ref, r.ClaimUntil, opUntil, deadline, rowVersion}))
-	if tx.Commit() != nil || ctx.Err() != nil || !time.Now().Before(until) {
+	if a.journal != nil && a.journal.check() != nil || tx.Commit() != nil || ctx.Err() != nil || !time.Now().Before(until) {
 		return deny()
 	}
 	return gcGrant{record: r, until: until, lease: lease}, nil
@@ -170,7 +174,7 @@ type GCAbsenceVerifier struct {
 }
 
 func (v GCAbsenceVerifier) VerifyAbsent(ctx context.Context, request S3AbsenceRequest) (S3AbsenceProof, error) {
-	if v.Authority == nil || v.Verifier == nil {
+	if v.Authority == nil || nilSystemAdapter(v.Verifier) {
 		return S3AbsenceProof{}, ErrDenied
 	}
 	scope := S3Scope{Ref: request.Ref, Operation: S3Stat}

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"encoding/hex"
 	"errors"
 	"net/http"
 	"net/url"
@@ -36,7 +35,7 @@ func loadLiveBackupRead(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessi
 		return nil, errors.New("invalid live read switch")
 	}
 	live := &liveBackupRead{db: db}
-	key, err := hex.DecodeString(getenv("SYSTEM_BACKUP_READ_CURSOR_KEY_HEX"))
+	key, err := loadBackupReadCursorKey(getenv)
 	if db == nil || err != nil || len(key) < 32 {
 		return live, errors.New("live read cursor key or SQL session unavailable")
 	}
@@ -71,7 +70,11 @@ func registerBackupReadLive(admin *gin.RouterGroup, live *liveBackupRead) {
 	} {
 		kind := route.kind
 		admin.GET(route.path, func(c *gin.Context) { live.listTasks(c, kind) })
-		admin.GET(route.path+"/:id", unavailable)
+		if kind == systembackupread.VerificationTask {
+			admin.GET(route.path+"/:id", live.getVerificationDetail)
+		} else {
+			admin.GET(route.path+"/:id", unavailable)
+		}
 		admin.GET(route.path+"/:id/events", func(c *gin.Context) { live.listTaskEvents(c, kind) })
 		admin.GET(route.path+"/:id/logs", unavailable)
 	}
@@ -273,6 +276,27 @@ func (l *liveBackupRead) getOperation(c *gin.Context) {
 		return
 	}
 	c.Header("X-System-Backup-Data-Source", "live")
+	c.JSON(http.StatusOK, result)
+}
+
+func (l *liveBackupRead) getVerificationDetail(c *gin.Context) {
+	if c.Request.URL.RawQuery != "" {
+		liveReadError(c, systembackupread.ErrInvalid)
+		return
+	}
+	service, ctx, ok := l.service(c)
+	if !ok {
+		return
+	}
+	result, err := service.ReadVerificationDetailDTO(ctx, c.Param("id"))
+	if err != nil {
+		liveReadError(c, err)
+		return
+	}
+	c.Header("X-System-Backup-Data-Source", "live")
+	c.Writer.Header().Add("Access-Control-Expose-Headers", "X-System-Backup-Data-Source, X-System-Backup-Origin-Installation-ID, X-System-Backup-Task-Row-Version")
+	c.Header(systembackupread.TaskEventInstallationHeader, result.Task.OriginInstallationID)
+	c.Header(systembackupread.TaskEventRowVersionHeader, strconv.FormatInt(result.Task.RowVersion, 10))
 	c.JSON(http.StatusOK, result)
 }
 

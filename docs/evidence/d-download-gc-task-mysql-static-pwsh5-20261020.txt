@@ -1,0 +1,149 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261020163356
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File docs/evidence/d-download-gc-task-mysql-static-20261020.ps1 -OutputPath docs/evidence/d-download-gc-task-mysql-static-pwsh5-20261020.txt
+Process ID: 27848
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+STATIC_RUNTIME powershell=5.1.26100.6899
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS>TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+STATIC_PASS script=system-backup-a-evidence-dispatch.test.ps1 sha256=b310f15313bb7baea0bac17a11d8f5d786c293e73ec8c7e944a9a374f6d90477
+PS>TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+PASS download-mfa-dispatch: exact new root/seed/package/phase, binary/input/UID pins, full catalog, preflight, cleanup and exclusive profile; no build or remote
+STATIC_PASS script=system-backup-a-download-mfa-dispatch.test.ps1 sha256=ba6f53e7d3ab2eda3f34b32cd4529c12812af21f0275df31aea3a51f6a1c5f2f
+PS>TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+PASS download-admission-dispatch: exact new root/seed/package/phase, binary/input/UID pins, full catalog, preflight, cleanup and exclusive profile; no build or remote
+STATIC_PASS script=system-backup-a-download-admission-dispatch.test.ps1 sha256=e5082a62f840121b36b96e251c7eb37605a34caa7811839e6bd265f47bd00df2
+PS>TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadOwnersOnly requires its exclusive config writer plumbing profile"
+PASS download-owners-dispatch: exclusive actual task-owner root, three detached seeds, full catalog, UID/payload pins and exact cleanup; accepted suites not rerun
+STATIC_PASS script=system-backup-a-download-owners-dispatch.test.ps1 sha256=e8d3e6cff439932ea2a972f3e169120ea06c2616542e10a39e342e6e802a4914
+PS>TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadTaskChainOnly requires its exclusive config writer plumbing profile"
+PASS download-task-chain-dispatch: exact twelve-case root, four seeds, package/binary/phase, catalog/UID/payload pins, cleanup and exclusive profile; no build or remote
+STATIC_PASS script=system-backup-d-download-task-chain-dispatch.test.ps1 sha256=c2aa97e827f783e9db817567f4c5ca4f4d15ba6e9fe4c60b073a3ccd29fd652f
+PS>TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadProducerOnly requires its exclusive config writer plumbing profile"
+PASS download-task-chain-dispatch: exact eighteen-case root, three seeds, package/binary/phase, catalog/UID/payload pins, cleanup and exclusive profile; no build or remote
+STATIC_PASS script=system-backup-d-download-producer-dispatch.test.ps1 sha256=006e20665c4b33f6504a4474194120fd3e38feac9440b2f5482c28f00506da7f
+PS>TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCRoleOnly requires its exclusive config writer plumbing profile"
+PS>TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCRoleOnly requires an exclusive validation profile"
+PASS download-gc-role-dispatch: exclusive ten restricted-account cases, two detached seeds, full catalog, privileged observer, UID/hash pins and exact cleanup; full GC and role approval excluded
+STATIC_PASS script=system-backup-a-download-gc-role-dispatch.test.ps1 sha256=09aa395f9265f03b9e4c2270eb5fa5ff6531e9b6238c9717bc9657205c3ae4ff
+PS>TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadGCTaskOnly requires its exclusive config writer plumbing profile"
+PS>TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+>> TerminatingError(): "DownloadGCTaskOnly requires an exclusive validation profile"
+PASS download-gc-task-dispatch: eighteen component cases, two seeds, exact package/binary/phase, full catalog/UID/hash pins and cleanup; full GC and role approval excluded; no build or remote
+STATIC_PASS script=system-backup-d-download-gc-task-dispatch.test.ps1 sha256=0894a0f812f83fd5e598bad19d45d1820037d30e7661e0f4f99e7e04e8139065
+
+STATIC_EXIT=0 profiles=8 build=no remote=no dependencies-installed=no
+**********************
+Windows PowerShell transcript end
+End time: 20261020163434
+**********************

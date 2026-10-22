@@ -1,0 +1,52 @@
+[
+  {
+    "stage": "dependencies",
+    "exit": 0,
+    "arguments": [
+      "list",
+      "-mod=readonly",
+      "-tags=systembackup_mysql",
+      "-deps",
+      "-test",
+      "-f",
+      "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+      "./cmd/server"
+    ]
+  },
+  {
+    "stage": "isolated",
+    "exit": 0,
+    "arguments": [
+      "test",
+      "-mod=readonly",
+      "-p=1",
+      "-count=1",
+      "-timeout=900s",
+      "-tags=systembackup_mysql",
+      "-run",
+      "^(TestBackupReadCursorKeyUsesExactlyOneTrustedSource|TestBackupReadFixtureDefaultClosed|TestBackupReadFixtureOverviewAndDetailErrors|TestBackupReadFixturePaginationAndCursorBinding|TestBackupSessionsRequireExplicitConfiguration|TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization|TestLiveBackupReadRequiresPinnedAuthorityAndSessions)$",
+      "-json",
+      "./cmd/server"
+    ]
+  },
+  {
+    "stage": "windows-build",
+    "exit": 0,
+    "arguments": [
+      "test",
+      "-mod=readonly",
+      "-p=1",
+      "-c",
+      "-trimpath",
+      "-buildvcs=false",
+      "-tags=systembackup_mysql",
+      "-o",
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-9539e97620324c7da54e9fa61af4364d\\binary\\server-http.test.exe",
+      "./cmd/server"
+    ]
+  },
+  {
+    "stage": "test-list",
+    "exit": 2
+  }
+]

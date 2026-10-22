@@ -1,0 +1,37 @@
+**********************
+PowerShell transcript start
+Start time: 20261020171428
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& ./docs/evidence/a-gc-nil-adapters-validation-20261020.ps1 -Run 20261020-r1 -WarmCache 'C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-d-index-cache-7f29bde589e94c83bc6c1140cfed443e/source/.tmp-a-evidence-eca1aa7f97d746aa88233b7c10d0b46a/cache'
+Process ID: 43408
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER nil-adapters=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-19acced438484b389bcb55400537f7c0 process_id=43408
+WARM_CACHE read_only_source=.tmp-d-index-cache-7f29bde589e94c83bc6c1140cfed443e/source/.tmp-a-evidence-eca1aa7f97d746aa88233b7c10d0b46a/cache copied_files=2024 count=1 source_or_test_results_reused=no
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+FROZEN files=1451 sha256=b77311e720d6e77f7258276b797574a2dba6e724e2d906b6e6dcaa4c703ece0e
+STAGE_START name=old-guards attempt=1 default_vet=yes count=1
+STAGE_END name=old-guards attempt=1 exit=1
+STAGE_ACCEPTED name=old-guards counterfactual=True pass=3 fail=8
+STAGE_START name=fixed-full attempt=1 default_vet=yes count=1
+STAGE_END name=fixed-full attempt=1 exit=0
+STAGE_ACCEPTED name=fixed-full counterfactual=False pass=4822 fail=0
+FROZEN_POSTCHECK pass=yes dependencies-installed=no actual-mysql=no
+CLEANED owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-19acced438484b389bcb55400537f7c0 removed=True
+a_gc_nil_adapters_exit=0
+**********************
+PowerShell transcript end
+End time: 20261020172846
+**********************

@@ -3,7 +3,7 @@ package systembackupevidence
 import (
 	"bytes"
 	"context"
-	"database/sql"
+	"database/sql/driver"
 	"errors"
 	"io"
 	"net/http"
@@ -31,11 +31,6 @@ func (w aDownloadDeadlineResponse) SetWriteDeadline(at time.Time) error {
 	return http.NewResponseController(w.ResponseWriter).SetWriteDeadline(at)
 }
 
-type aDownloadResultDelayOwners struct {
-	DownloadAdmissionOwners
-	before func(context.Context) error
-}
-
 type aDownloadDeadlineStore struct {
 	Store
 	localDeadline, sqlDeadline *time.Time
@@ -53,13 +48,6 @@ func (s aDownloadDeadlineStore) Stat(ctx context.Context, ref Ref) (ObjectInfo, 
 	return s.Store.Stat(ctx, ref)
 }
 
-func (o aDownloadResultDelayOwners) LockOwnerReferences(ctx context.Context, tx *sql.Tx, r Record) error {
-	if err := o.before(ctx); err != nil {
-		return err
-	}
-	return o.DownloadAdmissionOwners.LockOwnerReferences(ctx, tx, r)
-}
-
 func TestADownloadNativeBufferedOutputKeepsOriginalDeadline(t *testing.T) {
 	for _, protocol := range []string{"http1", "http2"} {
 		for _, mode := range []string{"before_deadline", "result_crosses_deadline"} {
@@ -71,25 +59,40 @@ func TestADownloadNativeBufferedOutputKeepsOriginalDeadline(t *testing.T) {
 				x.h.service.Store = aDownloadDeadlineStore{x.h.service.Store, &sealedLocalDeadline, &sealedSQLDeadline}
 				clears := 0
 				waited := false
-				owners := x.h.results.c.Owners
-				x.h.results.c.Owners = aDownloadResultDelayOwners{owners, func(ctx context.Context) error {
-					if mode != "result_crosses_deadline" {
-						return nil
+				var observedResultContext context.Context
+				lateChecks := 0
+				query := x.f.db.ownerQuery
+				x.f.db.ownerQuery = func(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, bool, error) {
+					// QueryContext records the current query before this interceptor.
+					// The last group audit read and its identity check precede the
+					// final clock; earlier config clocks do not meet this boundary.
+					if q == downloadIntentClockSQL && x.f.db.resultInserts == 1 && x.f.db.record.Claim == "" && len(x.f.db.queries) >= 3 && x.f.db.queries[len(x.f.db.queries)-2] == "SELECT @@server_uuid,DATABASE()" && x.f.db.queries[len(x.f.db.queries)-3] == downloadRetentionAuditSQL {
+						// All result audit/release writes are staged. Delay the final
+						// clock read, then execute its original model handler unchanged.
+						// Waiting at the first owner lock consumed the independent
+						// result budget before its remaining verification work.
+						observedResultContext = ctx
+						lateChecks++
+						if mode == "result_crosses_deadline" {
+							if deadline.IsZero() {
+								t.Error("result did not follow the native write deadline")
+								return nil, true, ErrAudit
+							}
+							timer := time.NewTimer(time.Until(deadline.Add(75 * time.Millisecond)))
+							defer timer.Stop()
+							select {
+							case <-timer.C:
+								waited = true
+							case <-ctx.Done():
+								return nil, true, ctx.Err()
+							}
+						}
 					}
-					if deadline.IsZero() {
-						t.Error("result did not follow the native write deadline")
-						return ErrAudit
+					if query != nil {
+						return query(ctx, q, args)
 					}
-					timer := time.NewTimer(time.Until(deadline.Add(75 * time.Millisecond)))
-					defer timer.Stop()
-					select {
-					case <-timer.C:
-						waited = true
-						return nil
-					case <-ctx.Done():
-						return ctx.Err()
-					}
-				}}
+					return nil, false, nil
+				}
 				done := make(chan struct{})
 				server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					defer close(done)
@@ -105,9 +108,9 @@ func TestADownloadNativeBufferedOutputKeepsOriginalDeadline(t *testing.T) {
 						return
 					}
 					if mode == "result_crosses_deadline" {
-						// Leave one second inside the result transaction's separate
-						// five-second budget, while allowing the native TLS/provider
-						// checks to reach the buffered write on a loaded host.
+						// Allow the original native admission/provider/write path its
+						// four-second budget. Delay only at the final result clock, after
+						// audit/release work; never refresh the limit after Admit.
 						x.f.env.reservationUntil = x.f.db.now.Add(4 * time.Second)
 					}
 					originalReservation = x.f.env.reservationUntil
@@ -134,6 +137,14 @@ func TestADownloadNativeBufferedOutputKeepsOriginalDeadline(t *testing.T) {
 				case <-done:
 				case <-time.After(9 * time.Second):
 					t.Fatal("result transaction did not finish")
+				}
+				var resultContextErr error
+				if observedResultContext != nil {
+					resultContextErr = observedResultContext.Err()
+				}
+				t.Logf("NATIVE_RESULT_BUDGET protocol=%s mode=%s result_context=%v result_rows=%d failures=%d waited=%t late_checks=%d", protocol, mode, resultContextErr, x.f.db.resultInserts, x.failures, waited, lateChecks)
+				if lateChecks != 1 {
+					t.Fatal("expected exactly one final result clock after audit/release", lateChecks)
 				}
 				// Admission translates the final SQL sample into a monotonic local
 				// deadline once. Compare each clock with its own sealed original.

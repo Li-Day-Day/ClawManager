@@ -5,17 +5,20 @@ param(
     [switch]$IncludeServer,
     [switch]$IncludeRead,
     [switch]$IncludeProducer,
+    [switch]$IncludeGCMetadata,
     [switch]$IncludeDownloadProbe,
     [switch]$TaggedOwnerSeedsOnly,
     [switch]$IncludeTaskOwnerProbe,
     [switch]$IncludeProducerOwnerProbe,
+    [switch]$IncludeGCTaskProbe,
+    [ValidateRange(1,4)][int]$BuildParallelism = 2,
     [ValidateRange(300,1800)][int]$TestTimeoutSeconds = 900,
     [ValidateLength(0,512)][string]$TestRunPattern = ''
 )
 $ErrorActionPreference='Stop'
-if($IncludeTaskOwnerProbe -and $IncludeProducerOwnerProbe){throw 'Choose the task or producer owner probe separately'}
-if($IncludeTaskOwnerProbe -or $IncludeProducerOwnerProbe){$IncludeDownloadProbe=$true}
-$nativeAllowedOwnerSeedPattern=if($IncludeProducerOwnerProbe){'^Test(DProducerDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}elseif($IncludeTaskOwnerProbe){'^Test(ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed|ASQLTaskDownloadOwnersMySQLSeed|DTaskOwnerDownloadChainMySQLSeed)$'}else{'^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}
+if(($IncludeTaskOwnerProbe -and $IncludeProducerOwnerProbe) -or ($IncludeGCTaskProbe -and ($IncludeTaskOwnerProbe -or $IncludeProducerOwnerProbe))){throw 'Choose one task, producer owner or GC task probe'}
+if($IncludeTaskOwnerProbe -or $IncludeProducerOwnerProbe -or $IncludeGCTaskProbe){$IncludeDownloadProbe=$true}
+$nativeAllowedOwnerSeedPattern=if($IncludeGCTaskProbe){'^Test(DDownloadGCTaskMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}elseif($IncludeProducerOwnerProbe){'^Test(DProducerDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}elseif($IncludeTaskOwnerProbe){'^Test(ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed|ASQLTaskDownloadOwnersMySQLSeed|DTaskOwnerDownloadChainMySQLSeed)$'}else{'^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}
 if($TaggedOwnerSeedsOnly -and (-not $IncludeDownloadProbe -or $TestRunPattern -cne $nativeAllowedOwnerSeedPattern)){throw 'TaggedOwnerSeedsOnly requires its exact local-only seed pattern and probe builds'}
 $nativeRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $nativeID=[guid]::NewGuid().ToString('N')
@@ -52,6 +55,9 @@ try{
     # Offline, fixed existing toolchain; never install modules or use the
     # user's inherited GOFLAGS to turn vet off. Temp/cache stays run-owned.
     $env:GOPROXY='off';$env:GOSUMDB='off';$env:GOTOOLCHAIN='local';$env:GOENV='off';$env:GOFLAGS=''
+    if($PSBoundParameters.ContainsKey('BuildParallelism')){$env:GOMAXPROCS=[string]$BuildParallelism}
+    $nativeParallelismArgument='-p='+$BuildParallelism
+    Write-Host ('NATIVE_PARALLELISM build='+$BuildParallelism+' gomaxprocs='+$env:GOMAXPROCS)
     $env:GOCACHE=$nativeCache;$env:GOTMPDIR=$nativeOwner
     $env:TEST_TELEMETRY_DIR=Join-Path $nativeOwner 'telemetry'
     [IO.Directory]::CreateDirectory($env:TEST_TELEMETRY_DIR)|Out-Null
@@ -59,16 +65,17 @@ try{
     $nativePackages=@('./internal/systembackupsecurity','./internal/systembackupevidence')
     if($IncludeRead){$nativePackages+=@('./internal/systembackupread')}
     if($IncludeProducer){$nativePackages+=@('./internal/systembackupproducer')}
+    if($IncludeGCMetadata){$nativePackages+=@('./internal/systembackupgcmetadata')}
     if($IncludeServer){$nativePackages+=@('./cmd/server')}
     if($TestRunPattern){$nativePackages=@('./internal/systembackupevidence')}
-    $nativeArguments=@('test','-mod=readonly','-p=2','-count=1',('-timeout='+$TestTimeoutSeconds+'s'),'-json')+$nativePackages
+    $nativeArguments=@('test','-mod=readonly',$nativeParallelismArgument,'-count=1',('-timeout='+$TestTimeoutSeconds+'s'),'-json')+$nativePackages
     Write-Host ('NATIVE_TIME_BUDGET package_timeout_seconds='+$TestTimeoutSeconds+' request_deadlines_unchanged=yes')
     if($TestRunPattern){$nativeArguments+=@('-run',$TestRunPattern)}
     if($TaggedOwnerSeedsOnly){$nativeArguments+=@('-tags','systembackup_mysql')}
     $nativeProcess=Start-Process -FilePath (Get-Command go).Source -ArgumentList $nativeArguments -WorkingDirectory (Join-Path $nativeOwner 'source/backend') -RedirectStandardOutput $nativeLog -RedirectStandardError $nativeErr -WindowStyle Hidden -PassThru -Wait
     $nativeScope='full_packages';if($TestRunPattern){$nativeScope='focused_packages'}
     Write-Host ('NATIVE_EXIT '+$nativeScope+'='+$nativeProcess.ExitCode+' packages='+($nativePackages -join ',')+' default_vet=yes')
-    if(-not $TestRunPattern -and -not $IncludeServer -and -not $IncludeRead -and -not $IncludeProducer){Write-Host ('NATIVE_EXIT full_two_packages='+$nativeProcess.ExitCode)}
+    if(-not $TestRunPattern -and -not $IncludeServer -and -not $IncludeRead -and -not $IncludeProducer -and -not $IncludeGCMetadata){Write-Host ('NATIVE_EXIT full_two_packages='+$nativeProcess.ExitCode)}
     # Preserve ordinary-package provenance even if a later detached/probe
     # stage fails. The final postcheck below still covers all probe stages.
     Test-DIndexSourceSnapshot -Root (Join-Path $nativeOwner 'source') -Manifest $nativeSnapshot
@@ -79,17 +86,18 @@ try{
         $nativeSeedPattern=if($TaggedOwnerSeedsOnly){'^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}else{'^Test(ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}
         if($IncludeTaskOwnerProbe){$nativeSeedPattern='^Test(ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed|ASQLTaskDownloadOwnersMySQLSeed|DTaskOwnerDownloadChainMySQLSeed)$'}
         if($IncludeProducerOwnerProbe){$nativeSeedPattern='^Test(DProducerDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}
+        if($IncludeGCTaskProbe){$nativeSeedPattern='^Test(DDownloadGCTaskMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$'}
         $nativeProbePackage='./internal/systembackupevidence'
         $nativePreviousPlatform=@{}
         foreach($nativeName in @('GOOS','GOARCH','CGO_ENABLED')){$nativePreviousPlatform[$nativeName]=[Environment]::GetEnvironmentVariable($nativeName,'Process')}
         try{
             $env:GOOS='windows';$env:GOARCH='amd64';$env:CGO_ENABLED='0'
             $nativeProbeStages=@(
-                @{name='tagged-seed';file=(Get-Command go).Source;arguments=@('test','-mod=readonly','-p=2','-count=1','-timeout=900s','-json','-tags','systembackup_mysql','-run',$nativeSeedPattern,$nativeProbePackage);directory=(Join-Path $nativeOwner 'source/backend')},
-                @{name='windows-probe';file=(Get-Command go).Source;arguments=@('test','-mod=readonly','-p=2','-c','-tags','systembackup_mysql','-o',(Join-Path $nativeOwner 'download-admission.test.exe'),$nativeProbePackage);directory=(Join-Path $nativeOwner 'source/backend')},
+                @{name='tagged-seed';file=(Get-Command go).Source;arguments=@('test','-mod=readonly',$nativeParallelismArgument,'-count=1','-timeout=900s','-json','-tags','systembackup_mysql','-run',$nativeSeedPattern,$nativeProbePackage);directory=(Join-Path $nativeOwner 'source/backend')},
+                @{name='windows-probe';file=(Get-Command go).Source;arguments=@('test','-mod=readonly',$nativeParallelismArgument,'-c','-tags','systembackup_mysql','-o',(Join-Path $nativeOwner 'download-admission.test.exe'),$nativeProbePackage);directory=(Join-Path $nativeOwner 'source/backend')},
                 @{name='detached-seed';file=(Join-Path $nativeOwner 'download-admission.test.exe');arguments=@('-test.run',$nativeSeedPattern,'-test.v','-test.count=1','-test.timeout=60s');directory=$nativeOwner},
-                @{name='linux-probe';file=(Get-Command go).Source;arguments=@('test','-mod=readonly','-p=2','-c','-tags','systembackup_mysql','-o',(Join-Path $nativeOwner 'download-admission.test'),$nativeProbePackage);directory=(Join-Path $nativeOwner 'source/backend')},
-                @{name='linux-migration';file=(Get-Command go).Source;arguments=@('build','-mod=readonly','-p=2','-o',(Join-Path $nativeOwner 'system-backup-migrate'),'./cmd/system-backup-migrate');directory=(Join-Path $nativeOwner 'source/backend')}
+                @{name='linux-probe';file=(Get-Command go).Source;arguments=@('test','-mod=readonly',$nativeParallelismArgument,'-c','-tags','systembackup_mysql','-o',(Join-Path $nativeOwner 'download-admission.test'),$nativeProbePackage);directory=(Join-Path $nativeOwner 'source/backend')},
+                @{name='linux-migration';file=(Get-Command go).Source;arguments=@('build','-mod=readonly',$nativeParallelismArgument,'-o',(Join-Path $nativeOwner 'system-backup-migrate'),'./cmd/system-backup-migrate');directory=(Join-Path $nativeOwner 'source/backend')}
             )
             foreach($nativeStage in $nativeProbeStages){
                 if($nativeStage.name -eq 'linux-probe'){$env:GOOS='linux'}

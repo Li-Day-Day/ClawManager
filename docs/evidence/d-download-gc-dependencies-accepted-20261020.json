@@ -1,0 +1,191 @@
+{
+  "kind": "d_gc_task_dependency_and_producer_clock_local_review",
+  "recorded_at": "2026-10-20T08:18:00.565Z",
+  "operator_failure": {
+    "log": "docs/evidence/d-download-producer-remote-20261020-152115.txt",
+    "sha256": "2b705b0267c8289617acec606989745201239bebdc46e13a375e72a1e2c4c2f5",
+    "source_sha256": "b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252",
+    "failed_tests": [
+      "TestProducerDownloadActualAdmissionProviderAndRevokedResult"
+    ],
+    "exit": 1,
+    "remote_started": false,
+    "actual_producer_cases": 0,
+    "source_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-acbad433f28a4ad1a492fdec965cf127",
+    "source_and_cache_cleaned": true,
+    "root_cause": "Success fixture kept a frozen simulated SQL clock; Stat crossed the unchanged five-second production clock-skew check. Sample only actual SQL time queries after commit, retaining original proof, request, claim, capacity and retention deadlines."
+  },
+  "changed_since_operator": [
+    "backend/internal/systembackupevidence/download_producer_owner_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc_dependencies_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc_task_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc_task.go",
+    "scripts/system-backup-d-download-admission-native-validation.ps1"
+  ],
+  "initial_failed": {
+    "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r1",
+    "source_sha256": "0d4e1c3d3c8cde4b3821cd6a5999b0acb9b1eb31b5c904dcb5215621fdb2e03d",
+    "source_files": 1446,
+    "manifest_sha256": "87c269d0d0bed2782ffee52073484a21bb3731428cfdea0127268c836c4d13b4",
+    "events_sha256": "b3eaa846ac78da47c3aac1a3f739da58cc57bfe25929d5055f143e00cda96ff1",
+    "native_sha256": "e393251743568ff7a0b6c03923653b27281db6e4c8ec04136fa6090790ca46f6",
+    "exit": 1,
+    "main": 29,
+    "all": 381,
+    "failed": [
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/drill/tombstone",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/drill/result_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/drill/operation_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/preflight/tombstone",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/preflight/result_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/preflight/operation_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/artifact_verify/tombstone",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/artifact_verify/result_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/artifact_verify/operation_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/prune/operation_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/prune/tombstone",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/prune/result_deleted",
+      "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback"
+    ],
+    "packages": [],
+    "default_vet": true,
+    "source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-961f39b7d5164cb783820a584579b0a7",
+    "owner_absent": true
+  },
+  "initial_failure_reason": "Rollback tests checked a write in the read-query recorder. Assertions now use exact writes; original exit 1 preserved. Absence-only sibling prototype superseded to avoid mutually blocking expired metadata groups.",
+  "focused": {
+    "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r2",
+    "source_sha256": "276fb86fd4af6fcc634a32a2a4e7e93906bf0fa04a044050564d6a799b27104d",
+    "source_files": 1446,
+    "manifest_sha256": "b4407e45fc64c809887fdf3832291499c7cde9d8e306c02bce33cd666f196940",
+    "events_sha256": "4bc85bf39683f04e2247f385afb466f40ee4b9d56c3cd949b7acba3a7c774287",
+    "native_sha256": "1559be316734799a6a2cd3c7240eb6f3af335118b212eec3309827ac15dd7bc9",
+    "exit": 0,
+    "main": 33,
+    "all": 498,
+    "failed": [],
+    "packages": [
+      "clawreef/internal/systembackupevidence"
+    ],
+    "default_vet": true,
+    "source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-493eacac1f1a4b80a691db5ffae2233d",
+    "owner_absent": true
+  },
+  "prior_full_before_clock_fix": {
+    "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r3",
+    "source_sha256": "ffa37d4f7e2987f90defa21171adec8303943a7ff819bcf2502b752230aa343e",
+    "source_files": 1446,
+    "manifest_sha256": "8a21cf32009e79fa00280c87e14fc90f822a9e5853dfb4c216bba8fa982eeaaa",
+    "events_sha256": "0852314a6aeddb683c4044d2d98321b44b036d72fac634c3915e1f415a754826",
+    "native_sha256": "6ce968d5eecd679d0a58e916613b9cc9bdeeaeb39c5afa52f6c1bc920e071aab",
+    "exit": 0,
+    "main": 737,
+    "all": 6112,
+    "failed": [],
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupsecurity"
+    ],
+    "default_vet": true,
+    "source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3a8d9e42df5747abafb07bdfb8923544",
+    "owner_absent": true
+  },
+  "clock_control": {
+    "prefix": "docs/evidence/d-download-producer-clock-20261020-r1",
+    "source_sha256": "7e76a835180a1a94de83fe9130e7c1a71225983ac09df5b04fc27bdeba8bced8",
+    "source_files": 1446,
+    "manifest_sha256": "03f39bde2e36fa06ffb90425ba7b7f83f39154f3fd3bd739a0ee1043e0af47b0",
+    "events_sha256": "bf0b43e2a1e0539abb93e261732608ab762460226eed97ebb8a7b15b77cb9cfc",
+    "native_sha256": "1fdf1a21387cde7263c07c73eb9c98d1d32432df5370026a8c064208e9531178",
+    "exit": 0,
+    "main": 1,
+    "all": 3,
+    "failed": [],
+    "packages": [
+      "clawreef/internal/systembackupevidence"
+    ],
+    "default_vet": true,
+    "source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-d1a794d7e5fa4abea5f9c6d6026461af",
+    "owner_absent": true
+  },
+  "final_serial": {
+    "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r4",
+    "source_sha256": "04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df",
+    "source_files": 1446,
+    "manifest_sha256": "9f7e972b22dc334208ff162d54fae4245d1e4e7ddaff098c0ba4f6f97bc9da19",
+    "events_sha256": "40f3a4fb56475fb8de671fa383f813d19c2d7e7fa8cf8b5431d86ea0512d5533",
+    "native_sha256": "30ca60e6d87404697edbef3d7556523272d4c3c46ab4f9352f280dc02d3e06a5",
+    "exit": 0,
+    "main": 737,
+    "all": 6114,
+    "failed": [],
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupsecurity"
+    ],
+    "default_vet": true,
+    "source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e81e735dacb9440a921d6d05c1d1576e",
+    "owner_absent": true
+  },
+  "gc_task_checks": {
+    "main": 14,
+    "all": 303
+  },
+  "probes": [
+    {
+      "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r3",
+      "seeds": 22,
+      "detached": 22,
+      "binaries": [
+        {
+          "name": "download-admission.test.exe",
+          "sha256": "78f0e245c773753e851f545bf09aeb9287d92dc58a57345dbfb2601c63a01704"
+        },
+        {
+          "name": "download-admission.test",
+          "sha256": "58725590a28907b40ffcc32f2cee48d4dbbd602da7eded2895559de6292e1ad0"
+        },
+        {
+          "name": "system-backup-migrate",
+          "sha256": "74f6193488d226dc07c8d2883b5d4c2d2e2fa05df8de929a7bff9020770f159c"
+        }
+      ]
+    },
+    {
+      "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r4",
+      "seeds": 22,
+      "detached": 22,
+      "binaries": [
+        {
+          "name": "download-admission.test.exe",
+          "sha256": "036b3c7d654444ed7c53f03968b7a07a2cfc777114d400f1a6fabecde75da673"
+        },
+        {
+          "name": "download-admission.test",
+          "sha256": "05f52722efaf5c3bfe0c5532a403c4942ce5080df06e87636cd44a1a76a110dc"
+        },
+        {
+          "name": "system-backup-migrate",
+          "sha256": "b88b31660dd9a42a20ed72f7d87bb2d325fa347cbee36256a90709423986a48b"
+        }
+      ]
+    }
+  ],
+  "current_input_list": "docs/evidence/d-download-gc-dependencies-current-files-20261020.txt",
+  "current_pinned_sources_match": true,
+  "cleanup": "docs/evidence/d-download-gc-dependencies-cleanup-20261020.json",
+  "dependencies_installed": false,
+  "remote_run": false,
+  "actual_producer_cases": 0,
+  "production_approved": false,
+  "scope": "Local models, default vet, frozen sources and offline probe preparation. Original MySQL eighteen cases, full GC policy, catalog/import dependencies, actual locks/permissions/DDL freeze and original six scopes remain pending."
+}

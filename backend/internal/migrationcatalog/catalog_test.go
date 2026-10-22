@@ -62,8 +62,8 @@ func TestRepositoryCatalogMatchesSystemBackupContract(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Compute repository catalog: %v", err)
 	}
-	const expectedHash = "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
-	if catalog.Hash != expectedHash || len(catalog.Filenames) != 95 {
+	const expectedHash = "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"
+	if catalog.Hash != expectedHash || len(catalog.Filenames) != 96 {
 		t.Fatalf("repository catalog files=%d hash=%s", len(catalog.Filenames), catalog.Hash)
 	}
 }

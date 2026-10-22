@@ -4,12 +4,16 @@ import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
 const dir=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(dir,'../..');
-const base=path.join(dir,'a-gc-audit-resource-20261020-r2');
+const run=process.argv[2];
+assert(typeof run==='string'&&/^[a-zA-Z0-9-]+$/.test(run),'Pass the exact validation run identifier');
+const base=path.join(dir,'a-gc-audit-resource-'+run);
 const text=f=>fs.readFileSync(f,'utf8').replace(/^\uFEFF/,'').replaceAll('\r\n','\n');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const checks=[];function check(name,value){assert(value,name);checks.push(name);}
 const native=text(base+'-native.txt'),consoleText=text(base+'-console.txt');
-const log=native+'\n'+consoleText;
+// Native transcript is canonical. Console output repeats host lines, so it
+// cannot be concatenated when checking that a stage ran exactly once.
+const log=native;
 const manifest=JSON.parse(text(base+'-source.json'));
 check('stable offline unapproved snapshot',manifest.stable_copy_verified===true&&manifest.dependencies_installed===false&&manifest.production_approved===false);
 check('logical source SHA recomputed',sha(manifest.files.map(p=>`${p.path}\0${p.sha256}\0${p.size}`).join('\n')+'\n')===manifest.source_sha256);
@@ -25,6 +29,7 @@ const expected={
   'unpublished-fk':[test,test+'/unexpected_fk'].sort(),
 };
 const stageRecords=[];
+let fullPassedNames=[];
 for(const stage of stageNames){
   const match=log.match(new RegExp(`STAGE_ACCEPTED name=${stage} attempt=([1-3]) expected_counterfactual=(True|False)`));
   check(stage+' accepted exactly once',!!match&&[...log.matchAll(new RegExp(`STAGE_ACCEPTED name=${stage} `,'g'))].length===1);
@@ -34,6 +39,7 @@ for(const stage of stageNames){
   const ran=events.filter(e=>e.Test&&e.Action==='run').map(e=>e.Test).sort();
   const passed=events.filter(e=>e.Test&&e.Action==='pass').map(e=>e.Test).sort();
   const failed=events.filter(e=>e.Test&&e.Action==='fail').map(e=>e.Test).sort();
+  if(stage==='evidence-full')fullPassedNames=[...passed];
   check(stage+' unique RUN and complete terminal results',new Set(ran).size===ran.length&&JSON.stringify(ran)===JSON.stringify([...passed,...failed].sort()));
   if(expected[stage]){
     check(stage+' exact independent assertion failures',JSON.stringify(failed)===JSON.stringify(expected[stage])&&ran.length===4&&match[2]==='True');
@@ -70,14 +76,37 @@ const firstLog=text(first+'-native.txt')+'\n'+text(first+'-console.txt');
 const firstOwner=firstLog.match(/LOCAL_OWNER audit-resource=(.+) process_id=/)?.[1];
 check('first pre-test preparation failure retained and cleaned',firstLog.includes('a_gc_audit_resource_local_exit=1')&&firstLog.includes('CLEANED audit-resource-source-cache-overlay=True')&&!!firstOwner&&path.dirname(firstOwner)===root&&!fs.existsSync(firstOwner));
 check('first run never began a Go stage',!fs.readdirSync(dir).some(n=>n.startsWith(path.basename(first)+'-targeted-attempt')));
+const oldFailure=JSON.parse(text(path.join(dir,'a-gc-audit-resource-failed-20261020-r2.json')));
+check('original failed positive regression retained',oldFailure.status==='failed'&&oldFailure.exit===1&&oldFailure.counterfactual_stages_run===false&&oldFailure.owned_source_cache_overlay_removed===true);
+const previousFailures=[{run:'20261020-r2',status:oldFailure.status,exit:oldFailure.exit}];
+const r3FailurePath=path.join(dir,'a-gc-audit-resource-failed-20261020-r3.json');
+let changedSinceR3=[];
+if(run!=='20261020-r3'&&fs.existsSync(r3FailurePath)){
+  const r3Failure=JSON.parse(text(r3FailurePath));
+  check('r3 full-package fixture failure retained',r3Failure.status==='failed'&&r3Failure.exit===1&&r3Failure.counterfactual_stages_passed===true&&r3Failure.evidence_full_passed===false&&r3Failure.source_postcheck_passed===false&&r3Failure.owned_source_cache_overlay_removed===true&&!fs.existsSync(r3Failure.owner));
+  check('every old D regression failure passed in new full package',r3Failure.stages.at(-1).failed.length>0&&r3Failure.stages.at(-1).failed.every(name=>fullPassedNames.includes(name)));
+  const previousManifest=JSON.parse(text(path.join(dir,'a-gc-audit-resource-20261020-r3-source.json')));
+  check('r3 failed source independently bound',previousManifest.source_sha256===r3Failure.source_sha256&&sha(previousManifest.files.map(p=>`${p.path}\0${p.sha256}\0${p.size}`).join('\n')+'\n')===previousManifest.source_sha256);
+  const previousPins=new Map(previousManifest.files.map(p=>[p.path,p]));
+  changedSinceR3=manifest.files.filter(p=>{const old=previousPins.get(p.path);return !old||old.sha256!==p.sha256||old.size!==p.size;}).map(p=>p.path);
+  previousFailures.push({run:'20261020-r3',status:r3Failure.status,exit:r3Failure.exit,source_sha256:r3Failure.source_sha256});
+}
+check('all independent normal assertions passed in full package',[test,test+'/published_int',test+'/wrong_type',test+'/unexpected_fk'].every(name=>fullPassedNames.includes(name)));
+let warmCache=null;
+check('adopted warm cache has a cleanup receipt',!log.includes('WARM_CACHE source=')||fs.existsSync(base+'-warm-cache.json'));
+if(fs.existsSync(base+'-warm-cache.json')){
+  warmCache=JSON.parse(text(base+'-warm-cache.json'));
+  check('copied build cache actually adopted',log.includes('WARM_CACHE source='+path.join(warmCache.copy_owner,'cache')+' ')&&warmCache.files>0&&warmCache.source_or_test_results_reused===false&&warmCache.count_one===true);
+  check('owned copied-cache holder removed',warmCache.exit===0&&warmCache.copy_owner_removed===true&&path.dirname(warmCache.copy_owner)===root&&/^\.tmp-a-gc-cache-[a-f0-9]{32}$/.test(path.basename(warmCache.copy_owner))&&!fs.existsSync(warmCache.copy_owner));
+}
 const report={kind:'a_independent_gc_legacy_audit_resource_regression',recorded_at:new Date().toISOString(),checks_passed:checks.length,checks,
   source_sha256:manifest.source_sha256,source_files:manifest.files.length,source_manifest_sha256:sha(fs.readFileSync(base+'-source.json')),native_log_sha256:sha(fs.readFileSync(base+'-native.txt')),console_log_sha256:sha(fs.readFileSync(base+'-console.txt')),
-  stages:stageRecords,counterfactuals:counterfacts,current_pinned_drift:currentDrift,current_added_inputs_not_accepted:currentAdded,current_removed_inputs:currentRemoved,current_whole_worktree_verified:currentDrift.length===0&&currentAdded.length===0&&currentRemoved.length===0,
+  stages:stageRecords,counterfactuals:counterfacts,current_pinned_drift:currentDrift,current_added_inputs_not_accepted:currentAdded,current_removed_inputs:currentRemoved,current_build_inputs_match_frozen_source:currentDrift.length===0&&currentAdded.length===0&&currentRemoved.length===0,current_whole_worktree_verified:false,
   schema_fact:'Published 001 audit_logs.resource_id is INT. Backup audit writers leave it NULL and bind public sop_ identities in JSON. An INT column does not establish a private Operation-PK binding.',
   resolution:'Retain the parallel direct-reference implementation which validates the legacy INT column but removes the invalid public sop_ comparison. The independent A fixture overrides schema facts instead of deriving them from the production expectation map. Unpublished FK additions still deny even after outer metadata re-pin.',
-  first_run:{exit:1,reason:'pre-test exact counterfactual binding guard stopped after concurrent implementation changes; no Go test/build stage began',owner:firstOwner,cleaned:true},
+  first_run:{exit:1,reason:'pre-test exact counterfactual binding guard stopped after concurrent implementation changes; no Go test/build stage began',owner:firstOwner,cleaned:true},previous_failed_runs:previousFailures,changed_inputs_since_failed_r3:changedSinceR3,warm_cache:warmCache,
   cleanup:{owner,source_cache_overlays_removed:true},default_vet:true,dependencies_installed:false,actual_mysql:false,full_gc_policy:false,production_approval:false,
   scope:'Model SQL/collector regression and independent controlled counterfactual assertions over one frozen source. Not actual MySQL typing/coercion/locks, minimal roles, DDL freeze, current authorization, physical capacity, complete policy, or production GC acceptance.',
 };
-fs.writeFileSync(path.join(dir,'a-gc-audit-resource-accepted-20261020-r2.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+fs.writeFileSync(path.join(dir,'a-gc-audit-resource-accepted-'+run+'.json'),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
 console.log(JSON.stringify({source_files:report.source_files,stages:stageRecords,current_drift:currentDrift,products_removed:true,actual_mysql:false}));

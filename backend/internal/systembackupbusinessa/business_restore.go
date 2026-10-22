@@ -189,6 +189,13 @@ func NormalizeBusinessForRestore(ctx context.Context, scope *CaptureScope,
 	if err := ctx.Err(); err != nil {
 		return empty, err
 	}
+	costHash, err := normalizedCostAggregateHash(rows.Gateway.Costs)
+	if err != nil {
+		return empty, ErrRestoreNormalizationMismatch
+	}
+	if costHash != binding.Dump.Snapshot.CostAggregateSHA256 {
+		return empty, ErrRestoreNormalizationMismatch
+	}
 	if err := proofs.Batch.RecheckBusinessRestoreSources(ctx,
 		cloneBusinessRestoreBinding(binding), cloneBusinessRestoreInput(snapshot)); err != nil {
 		return empty, fmt.Errorf("A business restore final proof: %w", err)
@@ -294,7 +301,7 @@ func businessInstanceRefs[T any](items []T, refs func(T) (int, *int)) map[int]*i
 }
 
 func cloneBusinessRestoreBinding(binding BusinessRestoreBinding) BusinessRestoreBinding {
-	binding.Dump.Snapshot.Tables = append([]TableCount(nil), binding.Dump.Snapshot.Tables...)
+	binding.Dump.Snapshot = cloneSourceSnapshot(binding.Dump.Snapshot)
 	return binding
 }
 

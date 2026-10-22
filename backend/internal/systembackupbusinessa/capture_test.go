@@ -175,6 +175,8 @@ func TestCaptureTableAllowlistFailsClosed(t *testing.T) {
 }
 
 type countState struct {
+	costRows func() driver.Rows
+
 	failure   string
 	queries   []string
 	counts    map[string]int64
@@ -223,6 +225,15 @@ func (c *countConn) QueryContext(_ context.Context, query string, args []driver.
 			return &countRows{columns: []string{"ENGINE"}, values: [][]driver.Value{{"MyISAM"}}}, nil
 		}
 		return &countRows{columns: []string{"ENGINE"}, values: [][]driver.Value{{"InnoDB"}}}, nil
+	}
+	if query == costAggregateQuery {
+		if c.state.failure == "cost-query" {
+			return nil, errors.New("injected cost query failure")
+		}
+		if c.state.costRows != nil {
+			return c.state.costRows(), nil
+		}
+		return fixtureCostSQLRows(tFixtureCount(c.state)), nil
 	}
 	for table := range tables {
 		if query == "SELECT COUNT(*) FROM `"+table+"`" {
@@ -294,7 +305,7 @@ func TestSQLCountCollector(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(snapshot.Tables) != 15 || state.commits != 1 || state.rollbacks != 0 || len(state.queries) != 30 ||
+	if len(snapshot.Tables) != 15 || state.commits != 1 || state.rollbacks != 0 || len(state.queries) != 31 ||
 		state.begin.Isolation != driver.IsolationLevel(sql.LevelRepeatableRead) || !state.begin.ReadOnly {
 		t.Fatalf("incomplete read-only snapshot: %+v %+v", snapshot, state)
 	}

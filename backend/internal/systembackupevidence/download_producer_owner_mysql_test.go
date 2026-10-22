@@ -44,12 +44,12 @@ func decodeDProducerDownloadInputs(raw []byte) (dProducerDownloadInputs, error) 
 	var input dProducerDownloadInputs
 	// The exact complete input hash also rejects duplicate/extra JSON keys,
 	// reformatting, trailing documents and independently changed record vectors.
-	if len(raw) > 131072 || hash(raw) != "a881d2290a05b3239f9df583bfc61542907083becd0ff11ad53eb7645a841bc0" {
+	if len(raw) > 131072 || hash(raw) != "2f7533093e5b1b38980f0c86bd65c632be8b6b515d4dbcf46d984e2032f060a8" {
 		return input, ErrInvalid
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
-	if decoder.Decode(&input) != nil || input.Kind != "d_download_producer_probe_inputs.v2" || input.AdmissionSHA != "c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f" || hash([]byte(input.AdmissionRaw)) != input.AdmissionSHA || input.DDLSHA != "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c" || hash([]byte(input.DDL)) != input.DDLSHA || len(input.Records) != 4 || len(input.Capability) == 0 {
+	if decoder.Decode(&input) != nil || input.Kind != "d_download_producer_probe_inputs.v2" || input.AdmissionSHA != "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0" || hash([]byte(input.AdmissionRaw)) != input.AdmissionSHA || input.DDLSHA != "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c" || hash([]byte(input.DDL)) != input.DDLSHA || len(input.Records) != 4 || len(input.Capability) == 0 {
 		return dProducerDownloadInputs{}, ErrInvalid
 	}
 	var err error

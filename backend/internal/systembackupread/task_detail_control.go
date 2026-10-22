@@ -264,7 +264,7 @@ func readTaskDetailControl(ctx context.Context, q detailReadSQL, execution TaskE
 			v.StateBefore.Valid != (v.Source.Type == "backup") || v.StateAfter.Valid != (v.Source.Type == "backup") ||
 			!validDetailObservedArtifact(v.StateBefore, v.UsableBefore, v.UnusableReasonBefore) ||
 			!validDetailObservedArtifact(v.StateAfter, v.UsableAfter, v.UnusableReasonAfter) ||
-			!statusSet("pending", "unchanged", "restored_usable", "marked_unusable", "marked_corrupt", "catalog_tombstoned", "verification_inconclusive")[v.DecisionReason] {
+			!statusSet("pending", "unchanged", "restored_usable", "marked_unusable", "marked_corrupt", "catalog_tombstoned", "verification_inconclusive")[v.DecisionReason] || !validDetailVerificationTransition(*v) {
 			return zero, ErrUnavailable
 		}
 	}
@@ -370,5 +370,20 @@ func validDetailObservedArtifact(state sql.NullString, usable bool, reason strin
 	// Imported artifacts have no local backup artifact_state, even when usable.
 	// The source/type binding is checked by the caller; availability is a saved
 	// result, not a current provider assertion.
-	return usable == (reason == "none") && (!state.Valid || statusSet("staging", "committed", "deleting", "delete_failed", "deleted", "corrupt")[state.String])
+	return usable == (reason == "none") && (!state.Valid ||
+		statusSet("staging", "committed", "deleting", "delete_failed", "deleted", "corrupt")[state.String] && (!usable || state.String == "committed"))
+}
+
+// A saved observation may describe a failed or still-running verification, but
+// a restoration label must describe an actual false-to-true full verification.
+// This validates historical field consistency, not current provider health or
+// proof that the writer verified the same immutable version.
+func validDetailVerificationTransition(v VerificationDetailControl) bool {
+	if v.Scope != "full" && !v.UsableBefore && v.UsableAfter {
+		return false
+	}
+	if v.DecisionReason == "restored_usable" {
+		return v.Scope == "full" && !v.UsableBefore && v.UsableAfter
+	}
+	return true
 }

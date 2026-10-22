@@ -105,6 +105,11 @@ if [ -z "${DNS_RESOLVER}" ]; then
 fi
 sed -i "s/__DNS_RESOLVER__/${DNS_RESOLVER}/g" /etc/nginx/nginx.conf
 
+# Reject invalid or incomplete download upstream settings before starting any
+# process. The default locations return unavailable without forwarding secrets.
+sh /app/system-backup-download-proxy.sh > /etc/nginx/system-backup-download.locations.conf
+nginx -t
+
 /usr/local/bin/clawreef-server &
 backend_pid=$!
 

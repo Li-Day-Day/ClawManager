@@ -1,0 +1,56 @@
+{
+  "kind": "a_live_chain_environment_observation.v1",
+  "status": "OBSERVED_BLOCKED",
+  "source": {
+    "path": "docs/evidence/a-live-chain-inventory-20261021-164009-e5ca2d0f.txt",
+    "sha256": "b2bb4dc5c7e55f6465f8f2650eab62530cd0954fdf9cf890d6740140b90baa55",
+    "operator_reported_ssh_exit": 0,
+    "inventory_script_sha256": "9e6ee07598c1253c159874933745058907a0d0661e9c80007f052995737a5ec0",
+    "current_inventory_script_hash_matches": true,
+    "reported_payload_sha256": "6547e014d9f3c1fe622af2696f0b2ab3fdc904e57e26b0b22493328bc527b252",
+    "historical_payload_independently_reconstructed": false,
+    "provenance": "operator-generated local receipt; no fresh remote connection by reviewer"
+  },
+  "database": {
+    "server_uuid": "f1f5f76a-95f5-11f1-b08e-366835b4a029",
+    "name": "clawmanager",
+    "version": "8.4.8",
+    "sql_observed_at": "2026-10-21T08:40:21.089663Z",
+    "observer_is_runtime_identity": false,
+    "missing_projected_tables": [
+      "system_backup_download_admission_receipts",
+      "system_backup_download_result_receipts"
+    ],
+    "installation_state": "not_collected_due_to_old_inventory_table_name_error",
+    "active_config": "not_collected",
+    "runtime_grants": "not_verified"
+  },
+  "provider_lab": {
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "ca_not_after": "2026-10-01T01:19:11Z",
+    "ca_expired_at_observation": true,
+    "ca_certificate_sha256": "2d9abb351431c931fbb540c3408ee991d6a4039eb0e7d2d46ddf5da2550d8fa1",
+    "original_handoff_ca_pem_bytes_sha256": "798900e820c19cb689b60e80813d98fa3b6f0ddc5e3068fb10e3e40a9593cf5f",
+    "certificate_fingerprint_and_pem_byte_hash_are_different_encodings": true,
+    "leaf_validity_and_current_sessions": "not_verified"
+  },
+  "system_namespace": {
+    "name": "clawmanager-zhanghui08-system",
+    "uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "app_image_tag": "10.130.14.23:5000/clawmanager:backup-test-zh-fix18",
+    "download_deployment_flag_and_dsn_not_observed": true,
+    "download_journal_claim_not_observed": true,
+    "capacity_report_claim_observed": true,
+    "deployed_binary_capabilities": "not_verified"
+  },
+  "local_bootstrap_source": {
+    "path": "backend/cmd/system-backup-bootstrap/main.go",
+    "sha256": "e3b62cbcac953567bf1d8698b7db169057d6d9ead62945b015bd4a6050f50d32",
+    "linked_owner_adapters": "empty",
+    "scope": "source observation only; installed image requirements remain to be queried"
+  },
+  "next_command": ".\\scripts\\system-backup-a-live-chain-current-state.ps1",
+  "cluster_or_database_mutated": false,
+  "live_http_audit_verified": false
+}

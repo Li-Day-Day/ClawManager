@@ -13,7 +13,10 @@ import (
 	sec "clawreef/internal/systembackupsecurity"
 )
 
-var ErrDownloadRetentionGCCommitUnknown = errors.New("download_retention_gc_commit_unknown")
+var (
+	ErrDownloadRetentionGCCommitUnknown   = errors.New("download_retention_gc_commit_unknown")
+	ErrDownloadRetentionGCRollbackUnknown = errors.New("download_retention_gc_rollback_unknown")
+)
 
 // These are server-observed identifiers, not an authorization or deletion
 // capability. No receipt, nonce HMAC, claim, proof or provider locator escapes.
@@ -21,11 +24,13 @@ type DownloadRetentionGCScope struct {
 	Database                                       sec.DatabaseIdentity
 	Installation, WorkerOperation, PrincipalSHA256 string
 	Operation, RequestHash                         string
+	ManifestSHA256                                 string
 	Evidence                                       Identity
 	OperationID, EvidenceID, ActorID               int64
 	EvidenceRowVersion                             int64
 	IntentAuditID, ResultAuditID                   int64
 	AdmittedAt, RetainUntil, MinimumRetainUntil    time.Time
+	EvidenceCreatedAt                              time.Time
 }
 
 func (DownloadRetentionGCScope) MarshalJSON() ([]byte, error) { return nil, ErrInvalid }
@@ -127,10 +132,14 @@ FROM system_backup_operations WHERE origin_installation_id=? AND public_id=? FOR
 type downloadGCWorker struct{ lease, deadline time.Time }
 
 func (s *SQLDownloadRetentionGC) worker(ctx context.Context, tx *sql.Tx) (downloadGCWorker, error) {
+	return s.readWorker(ctx, tx, downloadGCWorkerSQL)
+}
+
+func (s *SQLDownloadRetentionGC) readWorker(ctx context.Context, tx *sql.Tx, query string) (downloadGCWorker, error) {
 	var kind, target, id, actorType, actor, status, claim, schema string
 	var version int64
 	var w downloadGCWorker
-	if tx.QueryRowContext(ctx, downloadGCWorkerSQL, s.c.Registry.Installation, s.c.OperationID).Scan(&kind, &target, &id, &actorType, &actor, &status, &claim, &w.lease, &version, &w.deadline, &schema) != nil ||
+	if tx.QueryRowContext(ctx, query, s.c.Registry.Installation, s.c.OperationID).Scan(&kind, &target, &id, &actorType, &actor, &status, &claim, &w.lease, &version, &w.deadline, &schema) != nil ||
 		schema != "system-backup-operation.v1" || kind != "control_metadata_gc" || target != "system" || id != s.c.Registry.Installation || actorType != "system" || actor != "system:controller" || status != "running" || claim != s.c.OperationClaim || version != s.c.OperationRowVersion || !downloadAdmissionContentTime(w.lease) || !downloadAdmissionContentTime(w.deadline) {
 		return w, ErrDenied
 	}
@@ -157,7 +166,7 @@ func (s *SQLDownloadRetentionGC) clock(ctx context.Context, tx *sql.Tx, floor, u
 // ID. It neither scans nor retries. No receipt is returned after unknown commit.
 // The target evidence must already be durably deleted by separate evidence GC;
 // this transaction keeps that minimum envelope and never deletes provider data.
-func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) error {
+func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) (collectErr error) {
 	if s == nil || ctx == nil || ctx.Err() != nil || !downloadAdmissionOperationID.MatchString(operation) || operation == s.c.OperationID {
 		return ErrDenied
 	}
@@ -166,11 +175,16 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 		return ErrDenied
 	}
 	r := s.c.Registry
-	tx, now, err := r.begin(ctx)
+	owned, now, err := beginDownloadGCConnection(ctx, r)
 	if err != nil {
 		return ErrAudit
 	}
-	defer tx.Rollback()
+	defer func() {
+		if closeErr := owned.close(); closeErr != nil {
+			collectErr = closeErr
+		}
+	}()
+	tx := owned.tx
 	database := sec.DatabaseIdentity{ServerUUID: r.ServerUUID, Database: r.Database}
 	nonceScope, err := sec.LockSensitiveDownloadNonceScope(ctx, tx, database, r.Installation)
 	if err != nil {
@@ -222,7 +236,7 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if err = lockDownloadGCTombstone(ctx, tx, g); err != nil {
 		return err
 	}
-	identity, err := downloadGCEvidenceHint(ctx, tx, g)
+	identity, evidenceCreated, err := downloadGCEvidenceHint(ctx, tx, g)
 	if err != nil {
 		return err
 	}
@@ -233,7 +247,7 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if minimum.Before(g.retain) {
 		minimum = g.retain
 	}
-	scope := DownloadRetentionGCScope{Database: database, Installation: r.Installation, WorkerOperation: s.c.OperationID, PrincipalSHA256: s.principal, Operation: operation, RequestHash: g.operation.RequestHash, Evidence: identity, OperationID: g.operationID, ActorID: actor, EvidenceID: g.evidenceID, EvidenceRowVersion: g.receipt.EvidenceRowVersion, IntentAuditID: g.receipt.IntentAuditID, ResultAuditID: g.result.resultID, AdmittedAt: g.operation.AdmittedAt, RetainUntil: g.retain, MinimumRetainUntil: minimum}
+	scope := DownloadRetentionGCScope{Database: database, Installation: r.Installation, WorkerOperation: s.c.OperationID, PrincipalSHA256: s.principal, Operation: operation, RequestHash: g.operation.RequestHash, ManifestSHA256: g.receipt.ManifestSHA256, Evidence: identity, EvidenceCreatedAt: evidenceCreated, OperationID: g.operationID, ActorID: actor, EvidenceID: g.evidenceID, EvidenceRowVersion: g.receipt.EvidenceRowVersion, IntentAuditID: g.receipt.IntentAuditID, ResultAuditID: g.result.resultID, AdmittedAt: g.operation.AdmittedAt, RetainUntil: g.retain, MinimumRetainUntil: minimum}
 	if early.Recheck(ctx, tx, scope, now) != nil {
 		return ErrDenied
 	}
@@ -290,24 +304,22 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if _, err = s.clock(ctx, tx, now, until); err != nil {
 		return err
 	}
-	if tx.Commit() != nil {
-		return ErrDownloadRetentionGCCommitUnknown
-	}
-	return nil
+	return owned.commit()
 }
 
-const downloadGCEvidenceHintSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type
+const downloadGCEvidenceHintSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type,created_at
 FROM system_backup_evidence WHERE id=? AND public_id=?`
 
-func downloadGCEvidenceHint(ctx context.Context, tx *sql.Tx, g *DownloadRetentionGroup) (Identity, error) {
+func downloadGCEvidenceHint(ctx context.Context, tx *sql.Tx, g *DownloadRetentionGroup) (Identity, time.Time, error) {
 	i := Identity{ID: g.receipt.EvidenceID}
-	if tx.QueryRowContext(ctx, downloadGCEvidenceHintSQL, g.evidenceID, i.ID).Scan(&i.Installation, &i.OwnerType, &i.OwnerID, &i.Type, &i.Classification, &i.ContentHash, &i.ContentSize, &i.Media) != nil || i.Installation != g.operation.Installation || !i.validExternal() || !oneOf(i.Classification, "confidential", "sensitive") {
-		return i, ErrDenied
+	var created time.Time
+	if tx.QueryRowContext(ctx, downloadGCEvidenceHintSQL, g.evidenceID, i.ID).Scan(&i.Installation, &i.OwnerType, &i.OwnerID, &i.Type, &i.Classification, &i.ContentHash, &i.ContentSize, &i.Media, &created) != nil || i.Installation != g.operation.Installation || !i.validExternal() || !oneOf(i.Classification, "confidential", "sensitive") || !downloadAdmissionContentTime(created) || created.After(g.operation.AdmittedAt) {
+		return i, created, ErrDenied
 	}
-	return i, nil
+	return i, created, nil
 }
 
-const downloadGCDeletedEvidenceSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type,row_version,expires_at,protected_until
+const downloadGCDeletedEvidenceSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type,row_version,expires_at,protected_until,created_at
 FROM system_backup_evidence WHERE id=? AND public_id=? AND schema_version='system-backup-evidence.v1' AND storage_state='deleted' AND evidence_failure_code='none'
 AND claim_owner IS NULL AND claim_expires_at IS NULL AND storage_provider_role IS NULL AND storage_identity_hash IS NULL AND storage_ref_version IS NULL
 AND storage_relative_key IS NULL AND storage_relative_key_hash IS NULL AND storage_immutable_version IS NULL AND inline_payload IS NULL
@@ -318,13 +330,14 @@ type downloadGCDeletedEvidence struct {
 	identity  Identity
 	version   int64
 	expires   time.Time
+	created   time.Time
 	protected sql.NullTime
 }
 
 func lockDownloadGCDeletedEvidence(ctx context.Context, tx *sql.Tx, s DownloadRetentionGCScope, now time.Time) (downloadGCDeletedEvidence, error) {
 	f := downloadGCDeletedEvidence{identity: Identity{ID: s.Evidence.ID}}
 	i := &f.identity
-	if tx.QueryRowContext(ctx, downloadGCDeletedEvidenceSQL, s.EvidenceID, i.ID).Scan(&i.Installation, &i.OwnerType, &i.OwnerID, &i.Type, &i.Classification, &i.ContentHash, &i.ContentSize, &i.Media, &f.version, &f.expires, &f.protected) != nil || *i != s.Evidence || f.version <= s.EvidenceRowVersion || f.version > 9007199254740991 || !downloadAdmissionContentTime(f.expires) || now.Before(f.expires) || f.protected.Valid && (!downloadAdmissionContentTime(f.protected.Time) || now.Before(f.protected.Time)) {
+	if tx.QueryRowContext(ctx, downloadGCDeletedEvidenceSQL, s.EvidenceID, i.ID).Scan(&i.Installation, &i.OwnerType, &i.OwnerID, &i.Type, &i.Classification, &i.ContentHash, &i.ContentSize, &i.Media, &f.version, &f.expires, &f.protected, &f.created) != nil || *i != s.Evidence || f.version <= s.EvidenceRowVersion || f.version > 9007199254740991 || !downloadAdmissionContentTime(f.created) || !f.created.Equal(s.EvidenceCreatedAt) || !downloadAdmissionContentTime(f.expires) || now.Before(f.expires) || f.protected.Valid && (!downloadAdmissionContentTime(f.protected.Time) || now.Before(f.protected.Time)) {
 		return f, ErrDenied
 	}
 	var chunk int64
@@ -335,7 +348,7 @@ func lockDownloadGCDeletedEvidence(ctx context.Context, tx *sql.Tx, s DownloadRe
 }
 func (f downloadGCDeletedEvidence) recheck(ctx context.Context, tx *sql.Tx, s DownloadRetentionGCScope, now time.Time) error {
 	current, err := lockDownloadGCDeletedEvidence(ctx, tx, s, now)
-	if err != nil || current.identity != f.identity || current.version != f.version || !current.expires.Equal(f.expires) || current.protected.Valid != f.protected.Valid || f.protected.Valid && !current.protected.Time.Equal(f.protected.Time) {
+	if err != nil || current.identity != f.identity || current.version != f.version || !current.created.Equal(f.created) || !current.expires.Equal(f.expires) || current.protected.Valid != f.protected.Valid || f.protected.Valid && !current.protected.Time.Equal(f.protected.Time) {
 		return ErrDenied
 	}
 	return nil

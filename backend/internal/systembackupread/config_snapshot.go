@@ -92,7 +92,7 @@ WHERE s.origin_installation_id=? AND c.version=? FOR SHARE`
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return ConfigSnapshot{}, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return ConfigSnapshot{}, ErrUnavailable
 	}
 	if missing {

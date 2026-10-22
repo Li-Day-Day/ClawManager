@@ -1,0 +1,73 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../../',import.meta.url)), e='docs/evidence/';
+const at=p=>path.join(root,p), bytes=p=>fs.readFileSync(at(p));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const hash=p=>sha(bytes(p));
+const json=p=>JSON.parse(bytes(p).toString('utf8').replace(/^\uFEFF/,''));
+const pinDigest=m=>sha(Buffer.from(m.files.map(p=>p.path+'\0'+p.sha256+'\0'+p.size).join('\n')+'\n'));
+const directory='backend/internal/systembackupevidence/';
+const names=['download_retention_gc.go','download_retention_gc_test.go','download_retention_gc_connection.go','download_retention_gc_connection_test.go','system_publish_runtime_test.go'];
+const owned=names.map(n=>directory+n);
+const modified=[owned[0],owned[1],owned[4]],added=owned.slice(2,4);
+const basePath=e+'d-gc-connection-base-20261021.json',base=json(basePath),baseByPath=new Map(base.files.map(p=>[p.path,p]));
+assert.equal(pinDigest(base),base.source_sha256);assert.equal(base.files.length,1463);
+const expectedRoots=['TestDownloadGCConnectionLifecycle','TestDownloadGCConnectionInitializationFailures','TestDownloadRetentionGCConnectionDisposalAndOriginalOutcome'];
+const summaries=[],manifests=[];
+for(const stage of ['target','full','published']){
+  const prefix=e+'d-gc-connection-20261021-r2-'+stage,manifest=json(prefix+'-source.json'),native=json(prefix+'-native.json');
+  assert.equal(pinDigest(manifest),manifest.source_sha256);assert.equal(manifest.base_source_sha256,base.source_sha256);assert.equal(manifest.files.length,1465);
+  assert.equal(native.source_sha256,manifest.source_sha256);assert.equal(native.exit,0);assert.equal(native.source_postcheck,true);assert.equal(native.default_vet,true);assert.equal(native.dependencies_installed,false);assert.equal(native.remote,false);assert.equal(native.stage,stage);
+  const current=new Map(manifest.files.map(p=>[p.path,p]));
+  assert.deepEqual(manifest.files.filter(p=>!baseByPath.has(p.path)).map(p=>p.path).sort(),[...added].sort());
+  assert.deepEqual(base.files.filter(p=>current.get(p.path)?.sha256!==p.sha256).map(p=>p.path).sort(),[...modified].sort());
+  for(const p of manifest.files){if(!owned.includes(p.path))assert.deepEqual(baseByPath.get(p.path),p,'unowned input changed '+p.path);}
+  for(const p of [...owned,'backend/go.mod','backend/go.sum'])assert.equal(hash(p),current.get(p).sha256,'published package input drift '+p);
+  assert.equal(bytes(prefix+'-stderr.txt').length,0);
+  const log=bytes(prefix+'.jsonl').toString('utf8');assert.ok(log.endsWith('\n'));
+  const ev=log.trim().split(/\r?\n/).map(s=>JSON.parse(s));
+  assert.ok(!ev.some(x=>['fail','skip','build-fail'].includes(x.Action)));
+  const tests=ev.filter(x=>x.Action==='pass'&&x.Test).map(x=>({package:x.Package,test:x.Test}));
+  const newTests=tests.filter(x=>expectedRoots.some(n=>x.test===n||x.test.startsWith(n+'/')));
+  assert.equal(newTests.length,34);assert.deepEqual(newTests.filter(x=>!x.test.includes('/')).map(x=>x.test).sort(),[...expectedRoots].sort());
+  const publisher=tests.filter(x=>x.test.startsWith('TestSystemPublisherStagingAndRevocation')||x.test==='TestSystemPublisherAbsenceExpiredBeforeStagingConvergesUnknown');
+  assert.equal(publisher.length,16);assert.equal(publisher.filter(x=>!x.test.includes('/')).length,2);
+  for(const x of tests)assert.equal(ev.filter(y=>y.Action==='run'&&y.Package===x.package&&y.Test===x.test).length,1,'not an uncached single run '+x.test);
+  const packages=ev.filter(x=>x.Action==='pass'&&!x.Test).map(x=>({package:x.Package,main:tests.filter(y=>y.package===x.Package&&!y.test.includes('/')).length,checks:tests.filter(y=>y.package===x.Package).length,elapsed_seconds:x.Elapsed}));
+  if(stage==='full'){
+    assert.equal(native.pattern,'');assert.deepEqual(packages.map(x=>x.package).sort(),['systembackupsecurity','systembackupevidence','systembackupread','systembackupproducer','systembackupgcmetadata'].map(x=>'clawreef/internal/'+x).sort());
+  }else{assert.deepEqual(packages.map(x=>x.package),['clawreef/internal/systembackupevidence']);}
+  summaries.push({stage,source_sha256:manifest.source_sha256,source_pin_scope:stage==='published'?'frozen candidate plus published five files/go.mod/go.sum; concurrent root context recorded separately':'complete frozen enumerated build inputs',files:manifest.files.length,main:tests.filter(x=>!x.test.includes('/')).length,checks:tests.length,new_main:expectedRoots.length,new_checks:newTests.length,publisher_main:2,publisher_checks:publisher.length,packages,default_vet:true,exit:0,source_postcheck:true,source_manifest:prefix+'-source.json',source_manifest_sha256:hash(prefix+'-source.json'),events_sha256:hash(prefix+'.jsonl'),native_sha256:hash(prefix+'-native.json')});
+  manifests.push(manifest);
+}
+assert.equal(new Set(summaries.map(x=>x.source_sha256)).size,1);
+const collectorPath=owned[0],collector=bytes(collectorPath).toString('utf8');
+const previous=collector.replace('owned, now, err := beginDownloadGCConnection(ctx, r)','tx, now, err := r.begin(ctx)').replace('defer owned.close()\n\ttx := owned.tx','defer tx.Rollback()');
+assert.equal(sha(Buffer.from(previous)),baseByPath.get(collectorPath).sha256,'unexpected collector edits outside ownership block');
+assert.equal((collector.match(/tx\.Commit\(\)/g)||[]).length,1);
+const connection=bytes(owned[2]).toString('utf8');assert.ok(connection.includes('c.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})'));
+assert.ok(connection.indexOf('_ = tx.Rollback()')<connection.indexOf('_ = conn.Raw('));
+assert.ok(connection.includes('return driver.ErrBadConn'));
+assert.ok(!connection.includes('LOCK INSTANCE FOR BACKUP'));assert.ok(!connection.includes('UNLOCK INSTANCE'));
+const contextPath=e+'d-gc-connection-published-context-20261021.json',context=json(contextPath);
+assert.equal(pinDigest(context),context.source_sha256);
+const frozen=new Map(manifests[0].files.map(p=>[p.path,p]));
+const contextChanges={added:context.files.filter(p=>!frozen.has(p.path)).map(p=>p.path),modified:context.files.filter(p=>frozen.has(p.path)&&frozen.get(p.path).sha256!==p.sha256).map(p=>p.path),removed:manifests[0].files.filter(p=>!context.files.some(q=>q.path===p.path)).map(p=>p.path)};
+const contextMatches=context.source_sha256===manifests[0].source_sha256;
+assert.equal(context.full_source_matches_tested,contextMatches);
+const cleanupPath=e+'d-gc-connection-cleanup-20261021.json',cleanup=json(cleanupPath);
+assert.equal(cleanup.owner,'.tmp-d-index-cache-83cd6bed3e644a098defa87b015f3b43');assert.equal(cleanup.removed,true);assert.equal(cleanup.source_postcheck,true);assert.equal(cleanup.process_terminal,true);assert.equal(fs.existsSync(at(cleanup.owner)),false);
+const failedPrefix=e+'d-gc-connection-20261021-r1-full',failedManifest=json(failedPrefix+'-source.json'),failedNative=json(failedPrefix+'-native.json');
+const failedEvents=bytes(failedPrefix+'.jsonl').toString('utf8').trim().split(/\r?\n/).map(s=>JSON.parse(s));
+assert.equal(failedNative.exit,1);assert.equal(failedNative.source_postcheck,true);assert.equal(pinDigest(failedManifest),failedManifest.source_sha256);
+assert.deepEqual(failedEvents.filter(x=>x.Action==='fail'&&x.Test).map(x=>x.Test).sort(),['TestSystemPublisherStagingAndRevocation','TestSystemPublisherStagingAndRevocation/absence_expired_during_staging']);
+const finalMap=new Map(manifests[0].files.map(p=>[p.path,p]));
+assert.deepEqual(failedManifest.files.filter(p=>p.sha256!==finalMap.get(p.path)?.sha256).map(p=>p.path),[owned[4]]);
+const failed_full={prefix:failedPrefix,source_sha256:failedManifest.source_sha256,source_manifest_sha256:hash(failedPrefix+'-source.json'),events_sha256:hash(failedPrefix+'.jsonl'),native_sha256:hash(failedPrefix+'-native.json'),exit:1,source_postcheck:true,failed_leaf:'TestSystemPublisherStagingAndRevocation/absence_expired_during_staging',historical_failure_phase:'old log had no staging counters; exact point is not asserted',repair:'test-only proof lifetime and wait on its original expiry, explicit staging-entry checks, separate pre-staging expired-proof control',production_inputs_unchanged_from_failed_full:true};
+const receipt={kind:'d_gc_collector_owned_connection_local_preparation',status:'local_connection_boundary_only',base_source_sha256:base.source_sha256,base_manifest_sha256:hash(basePath),runs:summaries,failed_full,source_changes:{modified,added,collector_diff:'only the transaction/connection ownership acquisition and deferred cleanup block',registry_begin_unchanged:true,grant_checks_unchanged:true,publisher_runtime_unchanged:true},published:owned.map(p=>({path:p,sha256:hash(p)})),published_context:{path:contextPath,sha256:hash(contextPath),source_sha256:context.source_sha256,files:context.files.length,full_source_matches_tested:contextMatches,changes_after_frozen_source:contextChanges},prior_session_experiment:{path:e+'d-gc-freeze-session-accepted-20261021.json',sha256:hash(e+'d-gc-freeze-session-accepted-20261021.json'),current_code_finding_superseded:'collector now owns Conn.BeginTx and discards session after transaction completion; old receipt remains bound to its old source'},cleanup:{path:cleanupPath,sha256:hash(cleanupPath),owner_absent:true},boundaries:{dependencies_installed:false,remote:false,actual_sql_cases:0,backup_lock_acquired:false,backup_admin_approved:false,ddl_freeze:false,explicit_unlock_protocol_complete:false,server_lock_release_proved:false,policy_complete:false,production_approved:false,original_six_scopes_complete:false,remaining:['actual MySQL and driver failure/timeout/disconnect behavior','bounded truthful cleanup outcomes for future session freeze','BACKUP_ADMIN and admission/global-lock order review','full sources, expected metadata digests and dependency policy','twelve actual freeze groups and real collector transaction','physical capacity, deployment and original six scopes']}};
+const out=e+'d-gc-connection-preparation-20261021.json';
+if(process.argv.includes('--write')){assert.equal(fs.existsSync(at(out)),false);fs.writeFileSync(at(out),JSON.stringify(receipt,null,2)+'\n');}else{assert.ok(process.argv.includes('--check'));assert.deepEqual(json(out),receipt);}
+console.log('PASS GC owned connection: target/full five packages/published GC checks, exact source, original commit/rollback outcomes, guarded cleanup; no freeze or production acceptance');

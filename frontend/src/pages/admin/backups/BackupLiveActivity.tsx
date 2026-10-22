@@ -5,6 +5,8 @@ import type { BackupActivityChannel, BackupActivityPage } from './backupLiveActi
 import type { BackupDetailSelection } from './backupLiveDetail';
 import { systemBackupReadService } from '../../../services/systemBackupReadService';
 import { useBackupText } from './useBackupText';
+import BackupEvidenceDownload from './BackupEvidenceDownload.tsx';
+import { evidenceDownloadEnabled } from './backupEvidenceDownload.ts';
 
 type ActivityPage = BackupActivityPage<'events'> | BackupActivityPage<'logs'>;
 
@@ -18,6 +20,7 @@ export default function BackupLiveActivity({ selection, channel, viewEvents }: {
   const [state, setState] = useState<ActivityState>({ kind: 'loading' });
   const [revision, setRevision] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [downloadEvidence, setDownloadEvidence] = useState<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const { kind, public_id, origin_installation_id, row_version } = selection;
   const readPage = (selected: BackupDetailSelection, signal: AbortSignal, current?: ActivityPage): Promise<ActivityPage> => {
@@ -38,6 +41,7 @@ export default function BackupLiveActivity({ selection, channel, viewEvents }: {
 
   const refresh = () => {
     request.current?.abort();
+    setDownloadEvidence(null);
     setState({ kind: 'loading' });
     setBusy(false);
     setRevision((value) => value + 1);
@@ -63,12 +67,16 @@ export default function BackupLiveActivity({ selection, channel, viewEvents }: {
       <button type="button" className={`${buttonClass} mt-3`} onClick={viewEvents}>{b('viewEvents')}</button>
     </div>}
     {state.kind === 'ready' && <>
+      {downloadEvidence !== null && <div className="space-y-2"><button type="button" className={buttonClass} onClick={() => setDownloadEvidence(null)}>{b('detailClose')}</button>
+        <BackupEvidenceDownload installation={origin_installation_id} evidenceId={downloadEvidence} /></div>}
       {state.page.items.length === 0 && state.page.next_cursor === null && <p className="text-sm text-slate-500">{channel === 'events' ? b('noEvents') : b('noLogs')}</p>}
       <ol className={channel === 'logs' ? 'overflow-auto rounded-lg bg-slate-950 p-4 font-mono text-xs leading-7 text-slate-200' : 'space-y-4'}
         aria-label={channel === 'logs' ? b('redactedLogs') : b('events')}>
         {state.page.items.map((item, index) => item.schema_version === 'system-backup-event.v1'
           ? <li key={index} className="border-l-2 border-slate-200 pl-4"><div className="text-xs text-slate-500">{date(item.created_at)} · {label(item.level)}</div>
             <p className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-800">{item.message}</p>
+            {item.details?.evidence_public_id && evidenceDownloadEnabled(import.meta.env.VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD) && <button type="button" className={`${buttonClass} mt-2`}
+              onClick={() => setDownloadEvidence(item.details?.evidence_public_id ?? null)}>{b('evidenceDownloadTitle')}</button>}
             {item.details?.truncated && <p className="mt-1 text-xs text-slate-500">{b('activityTruncated')}</p>}</li>
           : <li key={index} className="whitespace-pre-wrap break-all">{date(item.timestamp)} [{b('detailAttempt')} {number(item.attempt_number)} · {label(item.phase)} · {item.stream}] {item.message}</li>)}
       </ol>

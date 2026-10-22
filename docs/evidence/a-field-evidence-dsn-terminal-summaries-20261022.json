@@ -1,0 +1,48 @@
+{
+  "kind": "a_field_evidence_completed_tool_result_summaries",
+  "provenance": "Transcribed summaries of completed exec_command/write_stdin tool results in this chat; these are not saved raw terminal logs or a new test execution.",
+  "tests": [
+    {
+      "suite": "python",
+      "command": "py -3 -B scripts/system-backup-a-field-evidence_test.py",
+      "tool_result_chunks": ["54a435"],
+      "exit": 0,
+      "tests": 13,
+      "reported_terminal_summary": "Ran 13 tests in 0.579s; OK"
+    },
+    {
+      "suite": "node",
+      "command": "node --test scripts/system-backup-a-field-evidence.test.mjs",
+      "session_id": 44081,
+      "tool_result_chunks": ["f88166"],
+      "exit": 0,
+      "tests": 41,
+      "pass": 41,
+      "fail": 0,
+      "skip": 0,
+      "duration_ms": 46478.7239
+    },
+    {
+      "suite": "powershell51",
+      "command": "powershell -NoProfile -File scripts/system-backup-a-field-evidence.test.ps1",
+      "session_id": 34586,
+      "tool_result_chunks": ["3f60e6"],
+      "exit": 0,
+      "owned_directory": ".tmp-a-field-wrapper-7dc5af4b8ad44f4882774e587fa6fe9e",
+      "reported_terminal_summary": "PASS field-wrapper: plan-only, embedded pins/CR, no overwrite, remote failure, malformed output withheld, invalid plan before SSH; fake transport only"
+    },
+    {
+      "suite": "powershell7",
+      "command": "pwsh -NoProfile -File scripts/system-backup-a-field-evidence.test.ps1",
+      "session_id": 86720,
+      "tool_result_chunks": ["9a9082", "53b9f9"],
+      "exit": 0,
+      "owned_directory": ".tmp-a-field-wrapper-0c7e9e42dbd042bea871c1250e58a1ba",
+      "reported_terminal_summary": "PASS field-wrapper: plan-only, embedded pins/CR, no overwrite, remote failure, malformed output withheld, invalid plan before SSH; fake transport only"
+    }
+  ],
+  "fixture_scope": "Synthetic SQL/Kubernetes/SSH observations only; native DSN plus original MySQL socket observer included.",
+  "previous_failures_preserved_at": "docs/evidence/a-field-evidence-local-20261021-native.json",
+  "actual_remote_sql_executed": false,
+  "production_approved": false
+}

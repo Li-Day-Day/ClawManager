@@ -296,6 +296,81 @@ export function strictBlockers(registry, manifest) {
   };
 }
 
+
+// Owner check registries use a finite ID list layered over the common Check
+// envelope. Validate the declared cardinality before check/write: JSON Schema
+// annotations alone do not constrain the number of owner checks in a report.
+// This checks that finite-ID dialect, not arbitrary JSON Schema equivalence.
+export function validateVerifierCheckRegistries(schema) {
+  const owners = schema?.['x-owner-check-registries'];
+  if (!owners || typeof owners !== 'object' || Array.isArray(owners)) {
+    throw new Error('verifier owner check registries are missing');
+  }
+  const results = [];
+  for (const [owner, registry] of Object.entries(owners)) {
+    if (!registry || typeof registry !== 'object' || Array.isArray(registry)) {
+      throw new Error('invalid verifier owner registry: ' + owner);
+    }
+    for (const [name, entry] of Object.entries(registry)) {
+      if (name === 'status' || name === 'categories') continue;
+      const label = 'verifier registry ' + owner + '.' + name;
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)
+        || !Number.isSafeInteger(entry.required_check_count) || entry.required_check_count < 1
+        || typeof entry.check_schema !== 'string' || !/^#\/\$defs\/[A-Za-z][A-Za-z0-9]*$/.test(entry.check_schema)) {
+        throw new Error(label + ' requires a positive check count and local check schema');
+      }
+      const definition = schema.$defs?.[entry.check_schema.slice('#/$defs/'.length)];
+      // A sibling applicator can exclude every enumerated ID. Only the
+      // supported wrapper and inert text annotations belong to this dialect.
+      const annotations = new Set(['title', 'description', '$comment']);
+      const base = definition?.allOf?.[0];
+      if (!definition || typeof definition !== 'object' || Array.isArray(definition)
+        || Object.entries(definition).some(([key, value]) => key !== 'allOf'
+          && (!annotations.has(key) || typeof value !== 'string'))
+        || !Array.isArray(definition.allOf) || definition.allOf.length !== 2
+        || !base || typeof base !== 'object' || Array.isArray(base)
+        || Object.keys(base).length !== 1 || base.$ref !== '#/$defs/Check') {
+        throw new Error(label + ' requires a finite owner ID schema over Check');
+      }
+      const constraint = definition.allOf[1];
+      if (constraint?.oneOf && Object.keys(constraint).some(key => key !== 'oneOf')) {
+        throw new Error(label + ' requires an unmixed finite ID union');
+      }
+      const branches = constraint?.oneOf ?? [constraint];
+      if (!Array.isArray(branches) || branches.length === 0) {
+        throw new Error(label + ' requires nonempty finite ID branches');
+      }
+      const ids = [];
+      for (const branch of branches) {
+        if (!branch || typeof branch !== 'object' || Array.isArray(branch)
+          || Object.keys(branch).some(key => key !== 'properties')
+          || !branch.properties || typeof branch.properties !== 'object' || Array.isArray(branch.properties)
+          || Object.keys(branch.properties).some(key => !['id', 'expected', 'actual'].includes(key))) {
+          throw new Error(label + ' requires an unmixed finite ID branch');
+        }
+        const id = branch?.properties?.id;
+        // Refuse open or mixed constraints: counting a finite enum beside an
+        // anyOf/$ref/pattern could overstate the actually permitted check set.
+        if (!id || Object.keys(id).length !== 1 || !('const' in id || 'enum' in id)) {
+          throw new Error(label + ' requires closed const/enum check IDs');
+        }
+        const values = 'const' in id ? [id.const] : id.enum;
+        if (!Array.isArray(values) || values.length === 0
+          || values.some(value => typeof value !== 'string' || !/^[a-z0-9][a-z0-9_.-]{0,127}$/.test(value))) {
+          throw new Error(label + ' has invalid finite check IDs');
+        }
+        ids.push(...values);
+      }
+      if (new Set(ids).size !== ids.length) throw new Error(label + ' has duplicate check IDs');
+      if (entry.required_check_count !== ids.length) {
+        throw new Error(label + ' required_check_count=' + entry.required_check_count + ' differs from ' + ids.length + ' declared check IDs');
+      }
+      results.push({ owner, registry: name, check_schema: entry.check_schema, required_check_count: ids.length });
+    }
+  }
+  return results;
+}
+
 function main() {
   const args = new Set();
   let schemaHashEvidencePath = null;
@@ -312,6 +387,7 @@ function main() {
       throw new Error(`unknown argument ${arg}`);
     }
   }
+  const verifierRegistries = validateVerifierCheckRegistries(parseJSON(join(contractDir, 'verifier-contract.schema.json')));
   const registry = buildRegistry({ schemaHashEvidencePath });
   const output = `${JSON.stringify(registry, null, 2)}\n`;
   if (args.has('--write')) writeFileSync(registryPath, output);
@@ -326,6 +402,7 @@ function main() {
     migration_catalog: registry.migration_catalog,
     summary: registry.summary,
     blockers,
+    verifier_check_registries: verifierRegistries,
   }, null, 2)}\n`);
   if (args.has('--strict') && (blockers.plan_control_without_inventory.length
     || blockers.missing_artifacts.length

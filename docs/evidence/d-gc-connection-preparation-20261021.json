@@ -1,0 +1,212 @@
+{
+  "kind": "d_gc_collector_owned_connection_local_preparation",
+  "status": "local_connection_boundary_only",
+  "base_source_sha256": "6a9d07eb33c79bcc3798e2dd0e843135cc91691e552a8d0b3f6bcd068711576b",
+  "base_manifest_sha256": "1b926e17ca51aa8c45c458bfb88e3cca0f8b469bbe1a9df0b8e176235ca5d0a9",
+  "runs": [
+    {
+      "stage": "target",
+      "source_sha256": "6f0defb38abda8dc553ff307e68131e2e17010c56a646dbf587bb4a34caab839",
+      "source_pin_scope": "complete frozen enumerated build inputs",
+      "files": 1465,
+      "main": 5,
+      "checks": 50,
+      "new_main": 3,
+      "new_checks": 34,
+      "publisher_main": 2,
+      "publisher_checks": 16,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "main": 5,
+          "checks": 50,
+          "elapsed_seconds": 7.131
+        }
+      ],
+      "default_vet": true,
+      "exit": 0,
+      "source_postcheck": true,
+      "source_manifest": "docs/evidence/d-gc-connection-20261021-r2-target-source.json",
+      "source_manifest_sha256": "995a09a89a0a6c5b97cabcbfd8b649a6445f1fd5c35c2006241904f86f0cc314",
+      "events_sha256": "0fce9e5f7be5c09f4cdc110781469af2c6a1a62edf7b49586002cd0609178fe4",
+      "native_sha256": "bc140b48b90e979e82cafeaa90502058da634f68264e68a86e01fe395db11e39"
+    },
+    {
+      "stage": "full",
+      "source_sha256": "6f0defb38abda8dc553ff307e68131e2e17010c56a646dbf587bb4a34caab839",
+      "source_pin_scope": "complete frozen enumerated build inputs",
+      "files": 1465,
+      "main": 775,
+      "checks": 6581,
+      "new_main": 3,
+      "new_checks": 34,
+      "publisher_main": 2,
+      "publisher_checks": 16,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupsecurity",
+          "main": 255,
+          "checks": 2011,
+          "elapsed_seconds": 63.726
+        },
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "main": 358,
+          "checks": 2991,
+          "elapsed_seconds": 230.615
+        },
+        {
+          "package": "clawreef/internal/systembackupread",
+          "main": 75,
+          "checks": 519,
+          "elapsed_seconds": 2.412
+        },
+        {
+          "package": "clawreef/internal/systembackupproducer",
+          "main": 75,
+          "checks": 784,
+          "elapsed_seconds": 37.562
+        },
+        {
+          "package": "clawreef/internal/systembackupgcmetadata",
+          "main": 12,
+          "checks": 276,
+          "elapsed_seconds": 2.5060000000000002
+        }
+      ],
+      "default_vet": true,
+      "exit": 0,
+      "source_postcheck": true,
+      "source_manifest": "docs/evidence/d-gc-connection-20261021-r2-full-source.json",
+      "source_manifest_sha256": "995a09a89a0a6c5b97cabcbfd8b649a6445f1fd5c35c2006241904f86f0cc314",
+      "events_sha256": "ec76191dc847ce8daa2e5b6cf6ce0adc5628cabe7b72339efddfad8243daa79d",
+      "native_sha256": "73c5df6bd7cc629f09c42b8a57223be818ca41cad934faefe99d6783028d6a98"
+    },
+    {
+      "stage": "published",
+      "source_sha256": "6f0defb38abda8dc553ff307e68131e2e17010c56a646dbf587bb4a34caab839",
+      "source_pin_scope": "frozen candidate plus published five files/go.mod/go.sum; concurrent root context recorded separately",
+      "files": 1465,
+      "main": 51,
+      "checks": 661,
+      "new_main": 3,
+      "new_checks": 34,
+      "publisher_main": 2,
+      "publisher_checks": 16,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "main": 51,
+          "checks": 661,
+          "elapsed_seconds": 143.319
+        }
+      ],
+      "default_vet": true,
+      "exit": 0,
+      "source_postcheck": true,
+      "source_manifest": "docs/evidence/d-gc-connection-20261021-r2-published-source.json",
+      "source_manifest_sha256": "995a09a89a0a6c5b97cabcbfd8b649a6445f1fd5c35c2006241904f86f0cc314",
+      "events_sha256": "787b2c6fe55762800ee8552c567aadcbbb98a7b315ee90fb55bdda911f758293",
+      "native_sha256": "76e3f220c3082f17dc0217d343632cc4f93002b0610a02abd94a51673bcd792d"
+    }
+  ],
+  "failed_full": {
+    "prefix": "docs/evidence/d-gc-connection-20261021-r1-full",
+    "source_sha256": "d7d16a5598b2ca4ceb95f60f133ebe0f919f454f1a7c5e505d8146491e21030b",
+    "source_manifest_sha256": "aed6dde6d770ff9a0c2009ac76c1b4d5c78221106f8a94036f94e223f80ce991",
+    "events_sha256": "8cc62b7a479b1044c2fa8c878d714ba68e9443376cde9428ae955c1fb43977bd",
+    "native_sha256": "bd18617b91486cbef184aac9edd643e7ba2fdff93984e57131f1301250d352f0",
+    "exit": 1,
+    "source_postcheck": true,
+    "failed_leaf": "TestSystemPublisherStagingAndRevocation/absence_expired_during_staging",
+    "historical_failure_phase": "old log had no staging counters; exact point is not asserted",
+    "repair": "test-only proof lifetime and wait on its original expiry, explicit staging-entry checks, separate pre-staging expired-proof control",
+    "production_inputs_unchanged_from_failed_full": true
+  },
+  "source_changes": {
+    "modified": [
+      "backend/internal/systembackupevidence/download_retention_gc.go",
+      "backend/internal/systembackupevidence/download_retention_gc_test.go",
+      "backend/internal/systembackupevidence/system_publish_runtime_test.go"
+    ],
+    "added": [
+      "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+      "backend/internal/systembackupevidence/download_retention_gc_connection_test.go"
+    ],
+    "collector_diff": "only the transaction/connection ownership acquisition and deferred cleanup block",
+    "registry_begin_unchanged": true,
+    "grant_checks_unchanged": true,
+    "publisher_runtime_unchanged": true
+  },
+  "published": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "b65f88bb293e7a045d10adf85e1268b06382b7b1c948bf88dfa4a35e44c7ea7b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_test.go",
+      "sha256": "7061106002cbae4d23a842a2ad76a85dff6a2688669c34369f8924e93fbaae69"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+      "sha256": "f8983de50b513d422fd3d9f8f7ded13b540f17b9fdcd863b2b46c75b9bc0860c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection_test.go",
+      "sha256": "d4d2f727edc2de04d568ae7eb0f21a530ac15d9581b5b2fafca7904450d919ad"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_publish_runtime_test.go",
+      "sha256": "f9351a3c10b4a138d25f0c5b9c0ec88bf1eb853640b51eabd72f403815816f53"
+    }
+  ],
+  "published_context": {
+    "path": "docs/evidence/d-gc-connection-published-context-20261021.json",
+    "sha256": "614bff311434d5fdc92d835e3a391855bd2d712f9c50f21810eb515bb9bd98b2",
+    "source_sha256": "8949ab525f06869565e79b0047a828d1e4a471358d6f00af126d591f3f402462",
+    "files": 1466,
+    "full_source_matches_tested": false,
+    "changes_after_frozen_source": {
+      "added": [
+        "backend/internal/systembackupevidence/system_recovery_audit_journal_context_test.go"
+      ],
+      "modified": [
+        "backend/internal/systembackupevidence/download_failure_journal_test.go",
+        "backend/internal/systembackupevidence/download_failure_journal.go",
+        "backend/internal/systembackupevidence/system_recovery_audit_journal.go"
+      ],
+      "removed": []
+    }
+  },
+  "prior_session_experiment": {
+    "path": "docs/evidence/d-gc-freeze-session-accepted-20261021.json",
+    "sha256": "d6953c860ccad24d72410f087a5ace2ddbfc29b1c9121e3ad786e5d73da10ce3",
+    "current_code_finding_superseded": "collector now owns Conn.BeginTx and discards session after transaction completion; old receipt remains bound to its old source"
+  },
+  "cleanup": {
+    "path": "docs/evidence/d-gc-connection-cleanup-20261021.json",
+    "sha256": "06c7f708c9f3b908e494b8692eaf2a3f43108155dd5152ccef3c5c82e871e859",
+    "owner_absent": true
+  },
+  "boundaries": {
+    "dependencies_installed": false,
+    "remote": false,
+    "actual_sql_cases": 0,
+    "backup_lock_acquired": false,
+    "backup_admin_approved": false,
+    "ddl_freeze": false,
+    "explicit_unlock_protocol_complete": false,
+    "server_lock_release_proved": false,
+    "policy_complete": false,
+    "production_approved": false,
+    "original_six_scopes_complete": false,
+    "remaining": [
+      "actual MySQL and driver failure/timeout/disconnect behavior",
+      "bounded truthful cleanup outcomes for future session freeze",
+      "BACKUP_ADMIN and admission/global-lock order review",
+      "full sources, expected metadata digests and dependency policy",
+      "twelve actual freeze groups and real collector transaction",
+      "physical capacity, deployment and original six scopes"
+    ]
+  }
+}

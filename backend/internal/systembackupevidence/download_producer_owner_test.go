@@ -422,6 +422,17 @@ func TestProducerDownloadRejectsCorruptOrMissingHistory(t *testing.T) {
 }
 
 func TestProducerDownloadActualAdmissionProviderAndRevokedResult(t *testing.T) {
+	for _, slow := range []bool{false, true} {
+		name := "normal"
+		if slow {
+			name = "sql_clock_advances_after_six_seconds"
+		}
+		t.Run(name, func(t *testing.T) { testProducerDownloadActualAdmissionProviderAndRevokedResult(t, slow) })
+	}
+}
+
+func testProducerDownloadActualAdmissionProviderAndRevokedResult(t *testing.T, slow bool) {
+	t.Helper()
 	f, a, s, m := producerDownloadFixture(t)
 	// Admit must exercise this adapter, not the old environment's no-op owner.
 	var err error
@@ -429,15 +440,44 @@ func TestProducerDownloadActualAdmissionProviderAndRevokedResult(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Complete provider-file setup before admission, then verify the SAME
+	// signed proof at a fresh SQL acceptance sample. No material limit changes.
+	writeCommittedProviderToken(t, a)
+	proofExpiry, materialLimit, capacityLimit := f.db.proof.ProofExpiresAt(), f.env.validUntil, f.env.reservationUntil
+	if err = sampleAAdmissionProofTime(f, time.Now().UTC().Truncate(time.Microsecond)); err != nil {
+		t.Fatal("producer original proof at fresh acceptance time", err)
+	}
 	c, err := f.service.Admit(f.request)
 	if err != nil {
 		t.Fatal("producer admission", err)
+	}
+	deadline, localDeadline, claimUntil, retainUntil := c.deadlineAt, c.localDeadline, c.record.ClaimUntil, c.rows.retainUntil
+	// Only this success-control fixture ticks its simulated database clock on
+	// actual UTC queries AFTER the known commit. Original proof/receipt/claim,
+	// material/capacity limits and the returned local deadline remain frozen.
+	baseQuery := f.db.ownerQuery
+	clockQueries := 0
+	f.db.ownerQuery = func(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, bool, error) {
+		if strings.HasPrefix(q, "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6)") || strings.HasPrefix(q, "SELECT UTC_TIMESTAMP(6)") || strings.HasPrefix(q, "SELECT user_id,subject,credential_hash,expires_at,revoked,UTC_TIMESTAMP(6)") {
+			at := time.Now().UTC().Truncate(time.Microsecond)
+			if at.Before(f.db.now) {
+				t.Fatal("simulated SQL clock moved backwards")
+			}
+			f.db.now = at
+			clockQueries++
+		}
+		return baseQuery(ctx, q, args)
 	}
 	ctx := bindCommittedFixture(t, a, c)
 	if err = a.CheckCommittedDownload(ctx, c); err != nil {
 		t.Fatal("producer committed authority", err)
 	}
-	writeCommittedProviderToken(t, a)
+	if slow {
+		time.Sleep(6 * time.Second)
+		if time.Since(f.db.now) <= 5*time.Second {
+			t.Fatal("six-second control did not outlive the old frozen SQL sample")
+		}
+	}
 	store := &committedScopedReadStore{testStore: &testStore{data: m.object, present: true, info: ObjectInfo{Version: c.record.Ref.ImmutableVersion, SHA256: hash(m.object), Size: int64(len(m.object))}}, authority: a}
 	if info, err := store.Stat(ctx, c.record.Ref); err != nil || !matchObject(c.Record(), info) {
 		t.Fatal("producer exact-object stat", err)
@@ -458,6 +498,9 @@ func TestProducerDownloadActualAdmissionProviderAndRevokedResult(t *testing.T) {
 	}
 	if f.db.resultInserts != 1 || f.db.record.Claim != "" {
 		t.Fatal("producer result/claim not committed")
+	}
+	if clockQueries < 2 || !c.deadlineAt.Equal(deadline) || !c.localDeadline.Equal(localDeadline) || !c.record.ClaimUntil.Equal(claimUntil) || !c.rows.retainUntil.Equal(retainUntil) || !f.db.proof.ProofExpiresAt().Equal(proofExpiry) || !f.env.validUntil.Equal(materialLimit) || !f.env.reservationUntil.Equal(capacityLimit) {
+		t.Fatal("clock sampling refreshed original authorization or retention limits")
 	}
 }
 

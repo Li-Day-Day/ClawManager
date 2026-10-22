@@ -1,0 +1,354 @@
+{
+  "kind": "a_download_gc_freeze_actual_independent_review",
+  "status": "accepted_34_synthetic_backup_lock_prerequisites_only",
+  "provenance": "operator-executed raw transcript and frozen source manifest; independently reviewed locally without reconnecting to the remote server",
+  "log": {
+    "path": "docs/evidence/d-download-gc-freeze-remote-20261022-084739-1604f031.txt",
+    "sha256": "76071f8c77782f8eecbba2745061fc639ff0c563295dafc2bc6b57a2a8b70309",
+    "bytes": 1720772
+  },
+  "log_encoding": "UTF-16LE with BOM; fatal decoding; ANSI removed only for parsing; original bytes preserved",
+  "source_manifest": {
+    "path": "docs/evidence/d-download-gc-freeze-remote-20261022-084739-1604f031-source.json",
+    "sha256": "257cece1802b1275041e96a49fd463977577d37d3b0cb82d2b8fadc4de729135",
+    "bytes": 298551
+  },
+  "source_sha256": "b2557fd28e16cbb419be616164d33123cfc473dfdc0c317d098311c0f85f8b8d",
+  "source_files": 1519,
+  "preparation": {
+    "path": "docs/evidence/d-gc-freeze-probe-preparation-20261021.json",
+    "sha256": "6361d6f257b45e7d189ec6fcf8ee10a4a4aa2be2946b45e6284ea6bbba3f3210",
+    "bytes": 327071
+  },
+  "six_prepared_and_current_files_match": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_freeze_mysql_test.go",
+      "sha256": "a8aa5e0062144f85018a5e1321077d281536ab206c2a0db0fda618eb25e24126"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "e043992c6d318b09e5ea413253752df50db897c0913459ee83fcb52b9941a57c"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "sha256": "8c469c6fedf4a0a30e0491a47b22cde1ebdbb8ce9319950647cdc7be1f4737f3"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-freeze-dispatch.test.ps1",
+      "sha256": "592caa47b2433989adcff8aedcaeaba9234eaeb1e247a9906f0341734e78fa64"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-freeze-phase.sh",
+      "sha256": "059465a1ebf955ff92a8cb5435c4879df5aa9eb1ac3556b2e2987a022c011edc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_output_deadline_a_test.go",
+      "sha256": "9113286f35c975bd5cda61ea42bb6a169fba0867b9d49741412c969e005a9e0a"
+    }
+  ],
+  "catalog_helper": {
+    "path": "scripts/system-backup-contract-check.mjs",
+    "sha256": "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9",
+    "bytes": 15317
+  },
+  "observed_local_gates": {
+    "core_packages": [
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "elapsed": "128.150s",
+        "checks": 2011,
+        "inventory_sha256": "f800a3e30d2890354ffb529ff80fb7be9545703d48907e4884e2d33a22e4c476",
+        "root_count": 255,
+        "root_names_match_preparation": true
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "elapsed": "490.714s",
+        "checks": 3008,
+        "inventory_sha256": "479fb957b4efc1969eaabd459c5db6ffeaea7021f30b1ac1c9b6310449d30820",
+        "root_count": 365,
+        "root_names_match_preparation": true
+      }
+    ],
+    "core_roots": 620,
+    "core_checks": 5019,
+    "tagged_seed_checks": 12,
+    "standalone_seed_checks": 12,
+    "seed_inventories_identical": true,
+    "default_vet_and_frozen_postcheck_reported": true
+  },
+  "original_capture_retry": {
+    "attempts": 2,
+    "failures": [
+      "Source file set changed while snapshot was copied: scripts/system-backup-a-field-inventory.test.ps1"
+    ],
+    "partial_copy_discarded_before_build_or_remote": true,
+    "ordinary_test_failures_observed": 0
+  },
+  "actual": {
+    "root": "TestDDownloadGCFreezeMySQL",
+    "mysql_version": "8.4.8",
+    "passed": 34,
+    "case_names": [
+      "table_create",
+      "table_alter",
+      "table_drop",
+      "table_rename",
+      "incoming_foreign_key",
+      "procedure_create",
+      "procedure_alter",
+      "procedure_drop",
+      "function_create",
+      "function_alter",
+      "function_drop",
+      "trigger_create",
+      "trigger_drop",
+      "event_create",
+      "event_alter",
+      "event_drop",
+      "view_create",
+      "view_alter",
+      "view_algorithm",
+      "view_drop",
+      "account_create",
+      "account_alter",
+      "account_drop",
+      "account_grant",
+      "account_revoke",
+      "privilege_deny",
+      "transaction_commit",
+      "transaction_rollback",
+      "unlock_no_commit",
+      "legal_dml",
+      "multiple_holders",
+      "killed_holder",
+      "pool_reuse",
+      "temporary_shadow_and_fresh_session"
+    ],
+    "ddl_wait_witnesses": [
+      {
+        "case": "table_create",
+        "holder_connection": 18,
+        "waiter_connection": 17,
+        "holder_thread": 364,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_alter",
+        "holder_connection": 20,
+        "waiter_connection": 17,
+        "holder_thread": 366,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_drop",
+        "holder_connection": 21,
+        "waiter_connection": 17,
+        "holder_thread": 370,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_rename",
+        "holder_connection": 22,
+        "waiter_connection": 17,
+        "holder_thread": 371,
+        "waiter_thread": 363
+      },
+      {
+        "case": "incoming_foreign_key",
+        "holder_connection": 23,
+        "waiter_connection": 17,
+        "holder_thread": 372,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_create",
+        "holder_connection": 24,
+        "waiter_connection": 17,
+        "holder_thread": 373,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_alter",
+        "holder_connection": 25,
+        "waiter_connection": 17,
+        "holder_thread": 374,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_drop",
+        "holder_connection": 26,
+        "waiter_connection": 17,
+        "holder_thread": 375,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_create",
+        "holder_connection": 27,
+        "waiter_connection": 17,
+        "holder_thread": 376,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_alter",
+        "holder_connection": 28,
+        "waiter_connection": 17,
+        "holder_thread": 377,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_drop",
+        "holder_connection": 29,
+        "waiter_connection": 17,
+        "holder_thread": 378,
+        "waiter_thread": 363
+      },
+      {
+        "case": "trigger_create",
+        "holder_connection": 30,
+        "waiter_connection": 17,
+        "holder_thread": 379,
+        "waiter_thread": 363
+      },
+      {
+        "case": "trigger_drop",
+        "holder_connection": 31,
+        "waiter_connection": 17,
+        "holder_thread": 380,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_create",
+        "holder_connection": 32,
+        "waiter_connection": 17,
+        "holder_thread": 381,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_alter",
+        "holder_connection": 33,
+        "waiter_connection": 17,
+        "holder_thread": 382,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_drop",
+        "holder_connection": 34,
+        "waiter_connection": 17,
+        "holder_thread": 383,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_create",
+        "holder_connection": 35,
+        "waiter_connection": 17,
+        "holder_thread": 384,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_alter",
+        "holder_connection": 36,
+        "waiter_connection": 17,
+        "holder_thread": 385,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_algorithm",
+        "holder_connection": 37,
+        "waiter_connection": 17,
+        "holder_thread": 386,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_drop",
+        "holder_connection": 38,
+        "waiter_connection": 17,
+        "holder_thread": 387,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_create",
+        "holder_connection": 39,
+        "waiter_connection": 17,
+        "holder_thread": 388,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_alter",
+        "holder_connection": 40,
+        "waiter_connection": 17,
+        "holder_thread": 389,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_drop",
+        "holder_connection": 41,
+        "waiter_connection": 17,
+        "holder_thread": 390,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_grant",
+        "holder_connection": 42,
+        "waiter_connection": 17,
+        "holder_thread": 391,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_revoke",
+        "holder_connection": 43,
+        "waiter_connection": 17,
+        "holder_thread": 392,
+        "waiter_thread": 363
+      }
+    ],
+    "witnesses_bound_to_case_bodies": true,
+    "connection_thread_mapping_consistent": true,
+    "elapsed_seconds_observed": 0.6,
+    "binary_sha256": "6fe2bdf93660958dbea2506844ea2859bfbda5575928995a0873befc06d35852",
+    "inputs_sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0",
+    "migration_binary_sha256": "384cf45e1fc0b5a3137d3460a2a952ca954c50903d75c41b462f1b52650fa429"
+  },
+  "migrations": {
+    "fresh_replay": "001..081",
+    "files": 96,
+    "catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+    "all_original_sql_bytes_match_frozen_manifest": true,
+    "historical_upgrade_equivalence_proved": false
+  },
+  "cleanup": {
+    "namespace": "sbk-mig-261022013337-65ef",
+    "namespace_uid": "081b70f6-ce4a-42e8-a672-49847e31324e",
+    "namespace_cleanup_reported": true,
+    "remote_scratch_cleanup_reported": true,
+    "local_cache_cleanup_reported": true,
+    "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-08a0e70a4b674d02818199ad97cbbf39",
+    "local_owner_independently_absent": true,
+    "remote_cleanup_independently_checked": false
+  },
+  "original_socket_close_messages_preserved": 4,
+  "d_receipt": {
+    "path": "docs/evidence/d-download-gc-freeze-actual-accepted-20261022.json",
+    "sha256": "a2c00f823dd86085c03fab2d8ab9160e6211d4a9874a2c2a11ecf4945139ed46",
+    "bytes": 8559
+  },
+  "remaining_protocol_requirements": {
+    "path": "docs/evidence/d-gc-backup-lock-protocol-requirements-20261021.json",
+    "sha256": "66b298543dc323e7684269b633e4150bd23dc1d5ac36fbe5900d53435cc7113d",
+    "bytes": 8848
+  },
+  "reviewer_executed_remote_or_sql": false,
+  "tests_or_builds_rerun_by_A": false,
+  "dependencies_installed_by_A": false,
+  "test_or_build_artifacts_created_by_A": false,
+  "production_role_approved": false,
+  "production_freeze_adapter_wired": false,
+  "full_gc_accepted": false,
+  "human_mfa_verified": false,
+  "provider_read_verified": false,
+  "production_approved": false,
+  "current_whole_tree_accepted": false,
+  "new_owner_source_baseline_registered": false,
+  "complete_twelve_group_protocol_accepted": false,
+  "reviewer_sha256": "bcc38140d426fe0e1ac1d3b9c2878423d3204149b359b91d8887bfbcffafe4cc"
+}

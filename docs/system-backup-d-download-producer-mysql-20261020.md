@@ -1,5 +1,33 @@
 # D producer 历史 owner 下载专项
 
+【2026-10-21 后续 GC task 本地失败已修正】producer 十八项实际 SQL 的下方接收保持有效，不重跑。用户 10:03 轮 GC task 尚未到远端，唯一两个失败叶子来自 D 新增 C1 负例夹具的编码误用，见[失败独立复核](evidence/d-download-gc-task-local-failure-20261021-100302.json)。修正只涉及该轮源码中的一个测试文件；新 1,457 来源四完整包 754/6,242、默认 vet/无失败跳过、producer seed/脱离各 22、跨平台 probe/runner、最终 postcheck/退出 0 已由[本地回执](evidence/d-download-gc-producer-preparation-20261021.json)接收，六个自有目录及构建产物清理，无依赖安装或远端执行。下一步仍按 GC task 专项以新时间戳执行十八项实际 SQL，不把新本地 GC 组件准备扩大为生产验收。
+
+【2026-10-21 当前结论：十八项实际 MySQL 已接收】[独立回执](evidence/d-download-producer-actual-accepted-20261021.json)与[可复核入口](evidence/d-download-producer-actual-review-20261021.mjs)核对用户 09:18 轮完整原始日志：MySQL 8.4.8、具体 `SQLDownloadOwners`、18 个叶子/一个 root 全通过，90.81 秒；run/history 行锁与 receipt/hold 空区间四组均有准确 holder/writer 连接记录。十八个不同 `amfa_` 子库逐案报告清理，95 文件正式 migration、binary `a3ef9e36...e337f`、v2 胶囊和 migration runner 双端 pin 一致。namespace `sbk-mig-261021015533-01f1` / UID `73689a41-d102-4274-b8a8-067a36ab3fe5`、远端 scratch、本地 build cache 均报告清理，本地 `.tmp-d-index-cache-547c3def54324c6e9fc8a913bd586f12` 另确认不存在；frozen postcheck、默认 vet、未安装依赖与最终 `download_producer_exit=0` 齐全。四条 SSH socket 警告原样保留，后续成功和清理证据完整，不需要据此重跑。
+
+该轮冻结 1,455 输入 SHA `d9500684fb57a6cf658830a236f9f7e9ef8268e36aea3e156e50cb0c452f2542` 与已接收 batch r3 逐项相同；本地两个完整包 596 主/4,864 含子项、三 seed/22、脱离/22 亦核对全目录。当前三个既有文件变化与两个新 GC producer 文件单列，不由历史冻结背书。此接收仅覆盖独立 producer owner 专项，provider transport/issuer/容量仍为隔离输入，不证明生产启用、人员 MFA 或完整 GC。下一步为 [GC task 独立十八项](system-backup-d-download-gc-task-eligibility-20261020.md)，本专项和已接收四任务十二项不重跑。下方原失败、准备、重试命令与“尚待”说明均保留为历史，不覆盖此结论。
+
+【2026-10-21 GC 批次兼容及当前普通门禁】[新批次本地回执](evidence/d-download-gc-batch-preparation-20261020.json)通过同一 1,455 输入的四完整包 **746/6,167**、默认 vet、producer seed/脱离各 22、跨平台 probe/runner、两次 postcheck/整体退出 0；四个自有目录和构建产物清理，接收时输入集合与字节匹配。新增页只组合原完整 GC 事务，worker 原锁定读取的查询不变；没有修改 producer 胶囊或正式 migration、安装依赖、连接服务器或接收 producer 实际十八项。r2 原中断和 unknown 退出另行保留，r3 完整同源通过独立接收。下面 producer 远测命令保持先检查实际调度容量，再以新时间戳运行；原四任务十二项不重跑，完整 GC/真实部署及原六项继续未完成。
+
+【2026-10-20 16:25 轮已进入远端，阻塞在 Pod 数量上限】[失败复核回执](evidence/d-download-producer-scheduling-failure-20261020-162523.json)核对原 1,446 输入 SHA `04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df` 与 r4 逐项相同：本地两完整包 **587 主/4,811 含子项**、三 seed/22、脱离/22 与 probe/runner 编译通过。四个 `µs` 测试名在操作者控制台呈现为 `碌s`，仅按四个准确一一对应名称核对，原始字节不改写。远端 namespace `sbk-mig-261020085946-3817` / UID `bd6cf195-a269-4ff4-bef0-d7f02de7fad0` 已创建；MySQL Pending，PodScheduled=False/Unschedulable，调度事件为一个节点 Too many pods、另一个不匹配 affinity/selector。目标迁移及 producer 十八项均未开始，原 exit 1 与没有最终 frozen postcheck 的事实保留。原 UID namespace、远端 scratch、本地 cache 报告清理，原本地 source 目录另确认不存在；D 未重新连接服务器核实远端状态。
+
+新增[只读容量诊断本地准备](evidence/d-node-pod-capacity-preparation-20261020.json)：Bash 八组及原启动五组共 13 项、PowerShell 5/7 各两组派发、两版本无远端参数的容量入口与原启动打包入口均通过，三个自有目录确认清理；没有安装依赖、运行 Go、连接服务器或写集群。操作者可从仓库根目录运行：
+
+```powershell
+& pwsh -NoProfile -File .\scripts\system-backup-mysql-startup-diagnostic.ps1 -NodeCapacityOnly -Remote
+```
+
+该档只读 node1 的 allocatable pods 与绑定 Pod 的 phase，按 Running/Pending/终态/未知计数；查询失败不会被记成零占用，不输出 Pod 名称或私密内容，也不生成 namespace/Pod、执行 SQL 或自动清理。输出明确 `scheduler_fit=not_verified`，不能据计数认定可调度。用户随后提供的列表中 node1 上限 110、Running 110，另有 57 条显示终态/错误的记录；其中 `clawmanager-zhanghui08-system` 的四个都是 Running，无可直接认定闲置对象。没有清理后的新快照，不能假定容量已恢复。先由操作者核实并停用不用的工作负载，再按本页新时间戳命令重试 producer；四任务十二项不重跑。以下各“当前来源”是对应历史回执接收时的范围，不把本次新增脚本算作已完成新整轮 Go 门禁。
+
+【2026-10-20 新 GC 档位兼容复核】当前增加独立 `-DownloadGCTaskOnly`，与本 producer 档位互斥。两种 PowerShell 的原 producer 二进制/phase/三 seed/远端 argv 绑定及其他七组派发均已[复核](evidence/d-download-gc-task-mysql-preparation-accepted-20261020.json)；现有 producer Go、胶囊、正式 catalog 和普通测试输入字节未变。新 GC 的十八项只验证任务资格组件，尚无实际 SQL 回执；本页 producer 十八项仍保持先执行/接收，四任务十二项不重跑。下面 1,446 输入四包回执是原来源；当前 1,449 输入的新增 tagged 专项/档位另有自己的准备证据，不扩成新整轮四包执行。
+
+【2026-10-20 15:21 用户再次失败已修正，单并发整轮复验通过】[独立复核回执](evidence/d-download-gc-dependencies-accepted-20261020.json)保留原日志 `evidence/d-download-producer-remote-20261020-152115.txt`：1,445 输入 SHA `b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252`，唯一失败为 `TestProducerDownloadActualAdmissionProviderAndRevokedResult`，对象 Stat 在 5.46 秒返回 permission_denied。599.731 秒是完整 evidence 包耗时，不能据此判断测试超时。远端十八项尚未开始，原 exit 1、本地 source/cache 清理记录保留。
+
+修正只让该成功夹具在已知提交之后，按实际 SQL 时间查询推进模拟 SQL 时钟；准入前完成 provider 文件准备并重新核对同一个已签名 proof。新增明确等待六秒的成功对照，保留原 proof、请求、claim、材料/容量与保留期限，并检查它们没有刷新；生产五秒时钟偏差限制不变。定向一根/三项及新来源 `GOMAXPROCS=1/-p=1` 的单次完整四包 **737 主/6,114 含子项**全通过，无失败/跳过、默认 vet。producer 三 seed/22、脱离源码/22、Windows/Linux probe、Linux migration runner、普通/最终源码 postcheck 和整体 exit 0 齐全。新冻结 1,446 输入 SHA `04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df` 接收时集合/字节一致；相对用户旧轮只有 producer 测试、三份 GC 依赖来源与本地原生脚本的可选并发参数变化，正式 migration/catalog 和 producer 胶囊未变。[五快照和一个自有缓存](evidence/d-download-gc-dependencies-cleanup-20261020.json)及全部构建产物已清理，无依赖安装或远端执行。可按本页命令使用新时间戳重新运行；十八项实际 SQL 仍待该轮操作者回执，四任务十二项不重跑。
+
+【2026-10-20 13:35 用户本地失败修正与完整复验】[独立回执](evidence/d-download-producer-local-failure-20261020-133524.json)核对原 1,445 输入 SHA `4c7d1c7664dc8c84498883f315b470310b7c979b8451c0560e1b54a7773309d6`、17 个失败叶子、原 exit 1、远端未开始与原目录清理。GC 的旧 SQL 模型把正则字面量中的两个问号当成参数；其修正、公开列类型对照和新鲜 GC 夹具已在 r87 中接收。本次另外修正任务授权表驱动测试提前采样时间的问题：在每个夹具准备好后生成时间，新增反向偏差并断言两种偏差都到达最终 SQL 时钟检查，不改变生产五秒限制。
+
+新冻结 1,445 输入 SHA `b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252` 的定向 **26/350**、单次完整 security/evidence 两包 **579/4,623** 全通过，无失败/跳过、默认 vet；producer 三 seed/22、脱离源码/22、Windows/Linux probe 和 Linux migration runner、普通/最终 postcheck 与整体 exit 0 齐全。相对 r87 只有任务测试和已有并发 A 验证脚本变化；后者仅增加两包 `-timeout=900s` 及三行说明，反向恢复后字节摘要匹配旧版，本次原生门禁使用相同包预算，不延长请求/SQL/provider 期限。当前输入集合与字节匹配，[三个自有目录](evidence/d-download-producer-local-repair-cleanup-20261020.json)及全部构建产物已清理，没有安装依赖或执行远端。下方用户命令可以重新运行；十八项实际 SQL 仍须自己的操作者回执，旧失败不改写。
+
 【r87 本地准备收尾，按用户要求暂停】[独立复核](evidence/d-download-gc-direct-20261020-r87-review.json)接收 1,445 输入 SHA `9b06627f12efd485430da3c44fa4b41724d071ed22b8aa1ac70f46f43dfdd878` 的当前 GC/独立 A 25/312，以及生产输入相同、未变测试和当前受影响测试组成的分轮四包集合 729/5,925；不称为单次完整四包或当前 evidence 整包通过，原失败保留。producer 三 seed/22、脱离源码/22、Windows/Linux probe/runner、默认 vet、普通/最终 postcheck/退出 0 均通过，v2 胶囊与正式 95 文件 catalog 未变，十个自有目录及全部二进制已清理，无依赖安装或实际 SQL/SSH。十八项实际回执仍待用户按下方命令执行后回传；本轮结束后暂停，原六项保持未完成。
 
 【r78 当前本地准备】[独立复核](evidence/d-download-gc-task-20261020-r78-review.json)接收新增任务 GC 资格组件后的完整本地来源：1,442 输入 SHA `0ce20792189a9d2b75b8c70b20f51f78b2fda136b7288b3367c3e5d078826078`，四完整包 722/5,855、同源 producer 三 seed/脱离各 22、Windows/Linux probe/runner、最终 postcheck/退出 0，六自有目录清理，未安装依赖。r77 后续 Linux vet 异常保留为整体失败，r78 只补准确同源构建，不重复四包。v2 胶囊和正式 95 文件 catalog 不变；本轮未执行实际 SQL，producer 十八项仍待下方用户命令的同轮实际回执。

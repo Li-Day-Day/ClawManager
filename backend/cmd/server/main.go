@@ -113,7 +113,17 @@ func main() {
 	if enterpriseAuthManager.Status(context.Background()).Enabled {
 		log.Printf("Enterprise LDAP authentication enabled")
 	}
-	sessionDB, _ := database.Driver().(*stdsql.DB)
+	// Backup authentication checks SQL UTC timestamps. Use a separate pool so
+	// every physical connection is UTC without changing business DB sessions.
+	backupDatabase := database
+	if os.Getenv("SYSTEM_BACKUP_READ_SESSIONS_ENABLED") == "true" {
+		backupDatabase, err = db.OpenSystemBackupRead(cfg.Database)
+		if err != nil {
+			log.Fatal("system-backup UTC database pool unavailable")
+		}
+		defer backupDatabase.Close()
+	}
+	sessionDB, _ := backupDatabase.Driver().(*stdsql.DB)
 	backupSessions, err := backupSessionRecorder(sessionDB, cfg.Database.Database, cfg.JWT.Secret, os.Getenv)
 	if err != nil {
 		log.Fatal("system-backup read session configuration unavailable")

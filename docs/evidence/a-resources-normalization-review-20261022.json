@@ -1,0 +1,222 @@
+{
+  "kind": "a_resources_normalization_cross_review.v1",
+  "reviewed_date": "2026-10-22",
+  "reviewer_role": "A",
+  "status": "six_table_review_completed_changes_required",
+  "policy_version": "a.resources.restore-security.v1",
+  "request": {
+    "path": "docs/evidence/d-resources-review-request-20261022.json",
+    "size": 8807,
+    "sha256": "de28bc5bd7369d3df9f6382f42701f510b5c0b22c50fc030b7769887b137daf3"
+  },
+  "proposal": {
+    "path": "docs/system-backup-d-resources-review-pack-20261022.md",
+    "size": 13718,
+    "sha256": "1eee6c5cf9481c12a7d284cb55b20c1de70f1d24f8ff189c00277805d74f7d35"
+  },
+  "proposal_source_digest": "8f6e932251521fe0774b100f34495b79a695515bb27006448a771a9be784f335",
+  "source_files": [
+    {
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "size": 6518,
+      "sha256": "292e0f7b5c02d24e5cc2b49c2b9ff9c8db0ceb5671b72d08c6c03ddf2778455d"
+    },
+    {
+      "path": "backend/internal/db/migrations/003_add_system_image_settings.sql",
+      "size": 556,
+      "sha256": "8d95e0d89e2fe775ebbfa3a16eb31ba7ba7705bb01b7e86259561b5d421fa9dd"
+    },
+    {
+      "path": "backend/internal/db/migrations/044_add_egress_private_exceptions.sql",
+      "size": 625,
+      "sha256": "e8c24e9b81d61c4faf93d146a9e35c4c67b7439400a2195e471a0a5a0d92b7d7"
+    },
+    {
+      "path": "backend/internal/db/migrations/057_add_northbound_admin_settings.sql",
+      "size": 3208,
+      "sha256": "5a7ce8c21b80d102addfda84d4aacd19ddf9883d6c6417694e4580119a76668e"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_add_security_scan_tables.sql",
+      "size": 2878,
+      "sha256": "d42b4478cb2f0c2b603b24da85062c30c566e075ee954224d104738e3110068a"
+    },
+    {
+      "path": "backend/internal/db/migrations/064_reconcile_system_image_settings_schema.sql",
+      "size": 4156,
+      "sha256": "5b4dcb9d59a5ccda9863edeeeb60f751966c21706e0b389e29fb78c86b71bc86"
+    },
+    {
+      "path": "backend/internal/egresspolicy/private_exception.go",
+      "size": 4400,
+      "sha256": "b7601fd1c56825bc98ec8f4a6058dbb66950f19d90c86e1204f99e7079804a27"
+    },
+    {
+      "path": "backend/internal/models/audit_log.go",
+      "size": 764,
+      "sha256": "d440fc4acdfce94154c0978f39da3bec5db90480868a7da6378ebfa511c75184"
+    },
+    {
+      "path": "backend/internal/models/egress_private_exception.go",
+      "size": 1024,
+      "sha256": "f7569cd2827c4cd7101a924d0e2e4198473689577ebb96b54ac8559ed21dbd13"
+    },
+    {
+      "path": "backend/internal/models/northbound_admin.go",
+      "size": 4592,
+      "sha256": "5d33cf2b2fc207ab065d99aae4d684f0e52d4441aee0ce84fcda835017e8922a"
+    },
+    {
+      "path": "backend/internal/models/security_scan.go",
+      "size": 3611,
+      "sha256": "6f9f10ca0e9fe49372f0318c8a660cfaa0313076c3b0aea70e1f9dcea7c7c751"
+    },
+    {
+      "path": "backend/internal/models/system_image_setting.go",
+      "size": 919,
+      "sha256": "42c4f4dfe3f2e5b545a1b86bc335580b97fcf94f7eb86fcd417b832c0d01043a"
+    },
+    {
+      "path": "backend/internal/northbound/runtime_settings.go",
+      "size": 3219,
+      "sha256": "256fb455458f6486558effc2b7acbb5333d2326e8f5a197fc6e6b946e8afefd7"
+    },
+    {
+      "path": "backend/internal/repository/egress_private_exception_repository.go",
+      "size": 3456,
+      "sha256": "971d2055509ad8704fbedb1db7755bbad965b09c2cc8e4aae503f97a8d690980"
+    },
+    {
+      "path": "backend/internal/repository/security_scan_repository.go",
+      "size": 6097,
+      "sha256": "5f0a704514834ed27ae630358a615c09a8cf7107579799c4372caaf6895b10a0"
+    },
+    {
+      "path": "backend/internal/repository/system_image_setting_repository.go",
+      "size": 3833,
+      "sha256": "3248cbf12d768b0f84e6f970172588510f5d257ecbfa1758e287fff2fa26deff"
+    },
+    {
+      "path": "backend/internal/services/security_scan_service.go",
+      "size": 34687,
+      "sha256": "58abf2949f016fab3b964233cd1514a20059ab28afcfb9ea53d0d864578664ad"
+    },
+    {
+      "path": "backend/internal/services/system_image_setting_service.go",
+      "size": 18448,
+      "sha256": "7a25ea88da2a850a9b3134859f825a68bdd586fc37b6bcee77358e38ebf26e66"
+    },
+    {
+      "path": "backend/internal/systembackupresources/capture_scope.go",
+      "size": 7231,
+      "sha256": "173ff582cc19bd8fe9b9a91a45183c4f16a5b5492422c6127f268f3cba36c867"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion.go",
+      "size": 6469,
+      "sha256": "d62b93883cbb81a91355932975f71f6cb1e8e8a611c944363587864aa8b039eb"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier.go",
+      "size": 5710,
+      "sha256": "4f6ff022eacceb784ce0076528e8e1f3e620d6b7c94834453f8322481085cbcf"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry-decisions.json",
+      "size": 45955,
+      "sha256": "1928dd48a4efe6842e2d7565f66381c65d7a922f6eba29b156254da936fff6ee"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "size": 98179,
+      "sha256": "8b72c233d83844e8d36e64b75d0bb690b27aa902ef99c28f38b61f5dedeae9f8"
+    },
+    {
+      "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+      "size": 18782,
+      "sha256": "32957c05eb59c70abcac99ddfc5f6eabf3be330c0489dc55494959522b69513c"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "supplemental_files": [
+    {
+      "path": "backend/internal/repository/northbound_repository.go",
+      "size": 21378,
+      "sha256": "66ef54dcda772082ccba6ebcb874517c6b8eada84ab3ecf6416e91c67cb30d9a"
+    },
+    {
+      "path": "backend/internal/services/northbound_admin_service.go",
+      "size": 27688,
+      "sha256": "6805edd36a37f05ba0331c494880022b992f5ea62ffa244f5891dfbb5bfdbb3b"
+    },
+    {
+      "path": "backend/internal/northbound/auth_service.go",
+      "size": 13473,
+      "sha256": "56fafcfe0d0bc8f6ce69ae96ff0f017cd932b91f2818155be504242d2cfcce70"
+    },
+    {
+      "path": "backend/internal/systembackupresources/sql_counts.go",
+      "size": 3737,
+      "sha256": "0701dd9ab92b089f84ce7aa15f70440c9717d22b3bf379544a4bb187e677d81e"
+    }
+  ],
+  "decision": {
+    "path": "docs/system-backup-a-resources-normalization-review-20261022.md",
+    "size": 9868,
+    "sha256": "7d4d2f5c362a4ae77f0f34556b238186b79ce376889b6372182eff64488f2bc7"
+  },
+  "tables": [
+    {
+      "name": "audit_logs",
+      "normalizer_id": "resources.audit_logs.normalize.v1",
+      "verifier_id": "resources.audit_logs.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false
+    },
+    {
+      "name": "egress_private_exceptions",
+      "normalizer_id": "resources.egress_private_exceptions.normalize.v1",
+      "verifier_id": "resources.egress_private_exceptions.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false
+    },
+    {
+      "name": "northbound_admin_settings",
+      "normalizer_id": "resources.northbound_admin_settings.normalize.v1",
+      "verifier_id": "resources.northbound_admin_settings.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false
+    },
+    {
+      "name": "northbound_settings_audit",
+      "normalizer_id": "resources.northbound_settings_audit.normalize.v1",
+      "verifier_id": "resources.northbound_settings_audit.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false
+    },
+    {
+      "name": "security_scan_configs",
+      "normalizer_id": "resources.security_scan_configs.normalize.v1",
+      "verifier_id": "resources.security_scan_configs.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false
+    },
+    {
+      "name": "security_scan_jobs",
+      "normalizer_id": "resources.security_scan_jobs.normalize.v1",
+      "verifier_id": "resources.security_scan_jobs.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false
+    }
+  ],
+  "registry_approval_written": false,
+  "source_or_target_proof_accepted": false,
+  "actual_mysql_executed": false,
+  "production_activation_approved": false,
+  "dependencies_installed": false,
+  "temporary_build_artifacts_created": false
+}

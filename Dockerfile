@@ -17,7 +17,13 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ ./
-RUN npm run build
+ARG VITE_SYSTEM_BACKUP_LIVE_READ=0
+ARG VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD=0
+RUN case "${VITE_SYSTEM_BACKUP_LIVE_READ}:${VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD}" in \
+      0:0|0:1|1:0|1:1) ;; \
+      *) echo "Invalid system backup frontend build switches" >&2; exit 1 ;; \
+    esac \
+    && npm run build
 
 FROM --platform=$BUILDPLATFORM golang:1.26.1-alpine AS backend-builder
 
@@ -47,6 +53,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpat
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-secret-broker ./cmd/secret-broker \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-controller ./cmd/system-backup-controller \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-registration ./cmd/system-backup-registration \
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-audit-collect ./cmd/system-backup-audit-collect \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-migrate ./cmd/system-backup-migrate \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawreef-system-backup-bootstrap ./cmd/system-backup-bootstrap
 
@@ -63,6 +70,7 @@ COPY --from=backend-builder /out/clawreef-northbound-gateway /usr/local/bin/claw
 COPY --from=backend-builder /out/clawreef-secret-broker /usr/local/bin/clawreef-secret-broker
 COPY --from=backend-builder /out/clawreef-system-backup-controller /usr/local/bin/clawreef-system-backup-controller
 COPY --from=backend-builder /out/clawreef-system-backup-registration /usr/local/bin/clawreef-system-backup-registration
+COPY --from=backend-builder /out/clawreef-system-backup-audit-collect /usr/local/bin/clawreef-system-backup-audit-collect
 COPY --from=backend-builder /out/clawreef-system-backup-migrate /usr/local/bin/clawreef-system-backup-migrate
 COPY --from=backend-builder /out/clawreef-system-backup-bootstrap /usr/local/bin/clawreef-system-backup-bootstrap
 COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
@@ -70,6 +78,7 @@ COPY --from=hermes-desktop-builder /app/frontend/public/hermes-desktop-web /usr/
 COPY deployments/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY deployments/nginx/njs/desktop_auth.js /etc/nginx/njs/desktop_auth.js
 COPY deployments/container/start.sh /app/start.sh
+COPY deployments/container/system-backup-download-proxy.sh /app/system-backup-download-proxy.sh
 
 RUN chmod +x /app/start.sh \
     && mkdir -p /etc/nginx/tls /var/log/clawreef

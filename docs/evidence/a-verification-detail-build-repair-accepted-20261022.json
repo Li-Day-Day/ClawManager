@@ -1,0 +1,122 @@
+{
+  "kind": "a_verification_detail_build_repair_independent_review.v1",
+  "status": "original_frozen_admin_read_build_repaired_actual_sixteen_pending",
+  "failed_operator_log": {
+    "path": "docs/evidence/d-verification-detail-remote-20261022-150230-2e5ffbcd.txt",
+    "size": 6262,
+    "sha256": "80fc52876376f783ac890edc5574fedb9a274803750e54c888b632a440ff8082"
+  },
+  "log": {
+    "path": "docs/evidence/a-verification-detail-build-repair-20261022-153158-ef1ac83e.txt",
+    "size": 1622,
+    "sha256": "324ccb0ce891e65b2aa4e8b35479ea7ccbb72fb0dba7e9a4353eea500b5e3d9e"
+  },
+  "source": {
+    "path": "docs/evidence/a-verification-detail-build-repair-20261022-153158-ef1ac83e-source.json",
+    "size": 308369,
+    "sha256": "d2198107801cec75ecd403cdc133d0fb2d8deaf40343dc289afc3a2d81a48e6f"
+  },
+  "result": {
+    "path": "docs/evidence/a-verification-detail-build-repair-20261022-153158-ef1ac83e-source.json.result.json",
+    "size": 647,
+    "sha256": "1059f514b347e7eeb06ed181cab9996a22aa8859465e90db7e991d3d778625be"
+  },
+  "source_sha256": "fade61b02315b5c9df421034c8aef42274ddeee9dabe6b52bcb508ab70e1bcf4",
+  "source_files": 1569,
+  "local_summaries": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 3.966
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "seconds": 8.832
+    },
+    {
+      "package": "command-line-arguments",
+      "seconds": 4.065
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 4.521
+    }
+  ],
+  "current_relevant_files": [
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "size": 10158,
+      "sha256": "b005d2564a223ba9c3e8b4da2ec40b4e0bd4c2e0e315cce586b10da96a58d261"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_test.go",
+      "size": 6184,
+      "sha256": "b9b7ecae1ae9e3ed2555f6e4ffd7312420cfdb85b0eba027a39188ca40c33292"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_cursor_key.go",
+      "size": 1198,
+      "sha256": "297bd0844c9a578618eb96cafc4f45705034a2beb0eac5a3c2dd423c89b4486d"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_cursor_key_test.go",
+      "size": 1871,
+      "sha256": "5f02fe688c37d0748d295a6b20469afc59b86c9c01336448c3838b95b591ce4e"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_mysql_test.go",
+      "size": 18005,
+      "sha256": "3737fde04ced81bc3dbbfc928886a9739dc0be4f39ede870fa6f052778bca453"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_verification_history_mysql_test.go",
+      "size": 14098,
+      "sha256": "10a5110c1a12f75b74fcbd63764d96f5e582a0d3dcf8d8a9e3f27a907a8e7288"
+    }
+  ],
+  "history_probe_cases": [
+    "current_attempt_history",
+    "catalog_import_null_state",
+    "parallel_jobs",
+    "single_job",
+    "heartbeat_only",
+    "summary_drift",
+    "report_hash_drift",
+    "report_wrong_owner",
+    "report_before_current_attempt",
+    "check_hash_drift",
+    "check_missing_attempt",
+    "health_cannot_restore",
+    "noncommitted_cannot_be_usable",
+    "full_restore_false_to_true",
+    "shared_report_reference",
+    "expired_evidence_is_historical"
+  ],
+  "linux_binaries": {
+    "admin": "6b5202571f1b7532f48f095cec0b46f9e9cf62c9553344340a91a9b2132f1b91",
+    "http": "0c8787096942f87b860e61df147740fb867fc7b205d88a3856531823772c0094",
+    "migration": "0f8c90f7cb0a89b61869383646dd8f14b1b46b6bf9da9cdfed79605a964d27e9",
+    "ddl": "1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2"
+  },
+  "later_plumbing_change": {
+    "kind": "owner_only_framework_budget_and_comments",
+    "original_harness_exactly_reconstructed": true,
+    "admin_read_budget_or_gate_weakened": false
+  },
+  "cleanup": {
+    "outer_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6e63ce26ceaa4e97adb87e590a9e6927",
+    "outer_independently_absent": true,
+    "source_files_removed": 1570,
+    "inner_owner_observed_during_run": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6e63ce26ceaa4e97adb87e590a9e6927\\source\\.tmp-a-evidence-3bdd0eb3097e4117a219c247f0026cd3",
+    "inner_independently_absent": true,
+    "inner_owner_string_in_raw_receipt": false,
+    "inner_cleanup_reported": true
+  },
+  "scope": {
+    "actual_MySQL": false,
+    "actual_sixteen_accepted": false,
+    "remote_contacted": false,
+    "current_whole_tree_tested": false,
+    "dependencies_installed": false,
+    "production_approved": false
+  }
+}

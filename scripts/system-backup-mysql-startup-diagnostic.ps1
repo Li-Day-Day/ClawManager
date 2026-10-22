@@ -1,6 +1,12 @@
 [CmdletBinding()]
-param([switch]$Remote)
+param([switch]$Remote,[switch]$NodeCapacityOnly)
 $ErrorActionPreference='Stop'
+function Get-NodePodCapacityCommand {
+    param([Parameter(Mandatory=$true)][string]$EncodedScript)
+    if($EncodedScript -notmatch '^[A-Za-z0-9+/]+={0,2}$'){throw 'Invalid encoded capacity script'}
+    try{$null=[Convert]::FromBase64String($EncodedScript)}catch{throw 'Invalid encoded capacity script'}
+    return "bash -c `"set -euo pipefail; printf '%s' '$EncodedScript' | base64 -d | bash -s -- 'kubernetes-admin@kubernetes' 'node1'`""
+}
 $diagnosticRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $diagnosticID=[guid]::NewGuid().ToString('N')
 $diagnosticScratch=Join-Path $diagnosticRoot ('.tmp-a-mysql-startup-'+$diagnosticID)
@@ -10,6 +16,7 @@ $diagnosticSSH=Join-Path $env:WINDIR 'System32/OpenSSH/ssh.exe'
 $diagnosticSCP=Join-Path $env:WINDIR 'System32/OpenSSH/scp.exe'
 $diagnosticSSHOptions=@('-o','StrictHostKeyChecking=yes','-o','BatchMode=no','-o','PreferredAuthentications=keyboard-interactive,password','-o','PubkeyAuthentication=no','-o','ConnectTimeout=15','-o','ServerAliveInterval=15','-o','ServerAliveCountMax=3')
 $diagnosticRemoteAttempted=$false
+$diagnosticLocalOwned=$false
 $diagnosticUTF8=New-Object Text.UTF8Encoding($false)
 $diagnosticStatus=1
 $diagnosticCleanupFailed=$false
@@ -17,8 +24,10 @@ try {
     if(Test-Path -LiteralPath $diagnosticScratch){throw 'Diagnostic scratch already exists'}
     $diagnosticPayload=Join-Path $diagnosticScratch 'payload'
     [IO.Directory]::CreateDirectory($diagnosticPayload)|Out-Null
-    $diagnosticFiles=@('scripts/system-backup-fresh-migration-smoke.sh','scripts/system-backup-smoke-contract.sh','backend/internal/systembackupcontroller/bootstrap.go')
-    $diagnosticFiles+=@(Get-ChildItem -LiteralPath (Join-Path $diagnosticRoot 'backend/internal/db/migrations') -Filter '*.sql' -File | Sort-Object Name | ForEach-Object{'backend/internal/db/migrations/'+$_.Name})
+    $diagnosticLocalOwned=$true
+    Write-Output "LOCAL_OWNER mysql-startup-source=$diagnosticScratch"
+    $diagnosticFiles=if($NodeCapacityOnly){@('scripts/system-backup-d-node-pod-capacity.sh')}else{@('scripts/system-backup-fresh-migration-smoke.sh','scripts/system-backup-smoke-contract.sh','backend/internal/systembackupcontroller/bootstrap.go')}
+    if(-not $NodeCapacityOnly){$diagnosticFiles+=@(Get-ChildItem -LiteralPath (Join-Path $diagnosticRoot 'backend/internal/db/migrations') -Filter '*.sql' -File | Sort-Object Name | ForEach-Object{'backend/internal/db/migrations/'+$_.Name})}
     $diagnosticPins=@(foreach($diagnosticFile in $diagnosticFiles){
         $diagnosticDestination=Join-Path $diagnosticPayload $diagnosticFile
         [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($diagnosticDestination))|Out-Null
@@ -29,9 +38,25 @@ try {
     [IO.File]::WriteAllText((Join-Path $diagnosticPayload 'sources.sha256'),($diagnosticPins -join "`n")+"`n",$diagnosticUTF8)
     $diagnosticBash=Join-Path $env:ProgramFiles 'Git/bin/bash.exe'
     if(-not (Test-Path -LiteralPath $diagnosticBash)){throw 'Existing Git Bash required; no dependencies will be installed'}
-    foreach($diagnosticScript in @('system-backup-fresh-migration-smoke.sh','system-backup-smoke-contract.sh')){
+    $diagnosticSyntaxScripts=if($NodeCapacityOnly){@('system-backup-d-node-pod-capacity.sh')}else{@('system-backup-fresh-migration-smoke.sh','system-backup-smoke-contract.sh')}
+    foreach($diagnosticScript in $diagnosticSyntaxScripts){
         & $diagnosticBash -n ((Join-Path $diagnosticPayload ('scripts/'+$diagnosticScript)).Replace('\','/'))
         if($LASTEXITCODE -ne 0){throw 'Diagnostic shell parse failed'}
+    }
+    if($NodeCapacityOnly){
+        $diagnosticCapacityScript=Join-Path $diagnosticPayload 'scripts/system-backup-d-node-pod-capacity.sh'
+        $diagnosticCapacityBytes=[IO.File]::ReadAllBytes($diagnosticCapacityScript)
+        $diagnosticCapacitySHA=(Get-FileHash -LiteralPath $diagnosticCapacityScript -Algorithm SHA256).Hash.ToLowerInvariant()
+        Write-Output "NODE_POD_CAPACITY_PREPARED files=1 source_sha256=$diagnosticCapacitySHA build=not_run sql_cases=not_run cluster_writes=no scheduler_fit=not_verified"
+        if($Remote){
+            # Stream the pinned public read-only script. No remote directory,
+            # archive, namespace or Pod is created, so no remote deletion runs.
+            $diagnosticCapacityCommand=Get-NodePodCapacityCommand -EncodedScript ([Convert]::ToBase64String($diagnosticCapacityBytes))
+            & $diagnosticSSH @diagnosticSSHOptions $diagnosticHost $diagnosticCapacityCommand
+            if($LASTEXITCODE -ne 0){throw 'Node Pod capacity observation failed; no startup or SQL test was run'}
+        }
+        $diagnosticStatus=0
+        return
     }
     & tar.exe -cf (Join-Path $diagnosticScratch 'bundle.tar') -C $diagnosticScratch payload
     if($LASTEXITCODE -ne 0){throw 'Diagnostic archive failed'}
@@ -58,7 +83,11 @@ try {
         }
     }
     if(([IO.Path]::GetDirectoryName($diagnosticScratch) -cne $diagnosticRoot) -or ([IO.Path]::GetFileName($diagnosticScratch) -cne ('.tmp-a-mysql-startup-'+$diagnosticID))){throw 'Unsafe diagnostic cleanup path'}
-    if(Test-Path -LiteralPath $diagnosticScratch){Remove-Item -LiteralPath $diagnosticScratch -Recurse -Force}
+    if($diagnosticLocalOwned -and (Test-Path -LiteralPath $diagnosticScratch)){
+        $diagnosticResolved=(Resolve-Path -LiteralPath $diagnosticScratch).Path
+        if([IO.Path]::GetDirectoryName($diagnosticResolved) -cne $diagnosticRoot -or [IO.Path]::GetFileName($diagnosticResolved) -cne ('.tmp-a-mysql-startup-'+$diagnosticID) -or ((Get-Item -Force -LiteralPath $diagnosticResolved).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe redirected diagnostic cleanup path'}
+        Remove-Item -LiteralPath $diagnosticResolved -Recurse -Force
+    }
     Write-Output "CLEANED mysql-startup-local=$(-not (Test-Path -LiteralPath $diagnosticScratch))"
     Write-Output "mysql_startup_diagnostic_exit=$diagnosticStatus sql_cases=not_run"
     if($diagnosticCleanupFailed){throw 'Remote diagnostic cleanup pending; retain the exact directory identity above'}

@@ -8,8 +8,8 @@ const sha = b => createHash('sha256').update(b).digest('hex');
 export function buildDownloadAuditInputs(root = fileURLToPath(new URL('../', import.meta.url))) {
   const catalog = computeMigrationCatalog(resolve(root, 'backend/internal/db/migrations'));
   const bootstrap = readFileSync(resolve(root, 'backend/internal/systembackupcontroller/bootstrap.go'), 'utf8');
-  if (catalog.file_count !== 95 || bootstrap.match(/ContractMigrationCatalogHash\s*=\s*"([a-f0-9]{64})"/)?.[1] !== catalog.hash ||
-      Number(bootstrap.match(/ContractMigrationCatalogFileCount\s*=\s*(\d+)/)?.[1]) !== catalog.file_count) throw new Error('Audit probe requires current reviewed 95-file catalog');
+  if (catalog.file_count !== 96 || bootstrap.match(/ContractMigrationCatalogHash\s*=\s*"([a-f0-9]{64})"/)?.[1] !== catalog.hash ||
+      Number(bootstrap.match(/ContractMigrationCatalogFileCount\s*=\s*(\d+)/)?.[1]) !== catalog.file_count) throw new Error('Audit probe requires current reviewed 96-file catalog');
   return { kind: 'd_download_audit_probe_inputs.v1', catalog_sha256: catalog.hash,
     migration_files: readdirSync(resolve(root, 'backend/internal/db/migrations')).filter(p => p.endsWith('.sql')).sort() };
 }
@@ -35,7 +35,7 @@ export function prepareDownloadAuditBundle(root, bundle) {
     return { path, sha256: sha(bytes), bytes: bytes.length };
   });
   const report = { kind: 'd_download_audit_bundle', profile: 'd-download-audit', image_pull_policy: 'Never', pins,
-    catalog_migrations: 95, schema_ddl_installed: false, production_approval: false };
+    catalog_migrations: 96, schema_ddl_installed: false, production_approval: false };
   writeFileSync(resolve(bundle, 'bundle-pins.json'), JSON.stringify(report), { flag: 'wx' });
   return report;
 }

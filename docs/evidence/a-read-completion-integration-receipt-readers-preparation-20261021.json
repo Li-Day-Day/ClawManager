@@ -1,0 +1,169 @@
+{
+    "kind":  "a_read_completion_merged_receipt_readers_preparation",
+    "recorded_at":  "2026-10-21T05:35:01.5987512Z",
+    "owner_parser_checks":  57,
+    "role_parser_checks":  43,
+    "parsers":  [
+                    {
+                        "path":  "docs/evidence/a-download-owners-actual-review-parser-checks-20261021-r8.json",
+                        "parser_checks":  57,
+                        "sha256":  "96a94b0a360fb72574e37034c1ae0dd843813bdd352949259df2b0402fd67e23"
+                    },
+                    {
+                        "path":  "docs/evidence/a-download-gc-role-actual-review-parser-checks-20261021-r5.json",
+                        "parser_checks":  43,
+                        "sha256":  "dfc4d7c5646e6d76e249805c266385f515e245814fec4937c602c55243a5a96e"
+                    }
+                ],
+    "inputs":  [
+                   {
+                       "path":  "docs/evidence/a-download-owners-actual-review-20261020.mjs",
+                       "sha256":  "f3c1178c2a52274c6243e4991f4b6b5159d0ae1f81510bec29bb03eee41c8777"
+                   },
+                   {
+                       "path":  "docs/evidence/a-download-owners-actual-review-20261020.test.mjs",
+                       "sha256":  "ce8f65e384fb06b939f7a345e30643f1a07f21db8de9bfb8f3860332b5e4275c"
+                   },
+                   {
+                       "path":  "docs/evidence/a-download-gc-role-actual-review-20261021.mjs",
+                       "sha256":  "d7a2bc92ab0a4c7de60c75179e3d0aed3c390fcf2415cfcfb1ab3e889d3f8722"
+                   },
+                   {
+                       "path":  "docs/evidence/a-download-gc-role-actual-review-20261021.test.mjs",
+                       "sha256":  "f9b6337b248055bbb887f51907bc4c2115c74fc08055c2789d15885ba51b4eb0"
+                   },
+                   {
+                       "path":  "scripts/system-backup-contract-check.mjs",
+                       "sha256":  "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9"
+                   }
+               ],
+    "baseline_proof":  "docs/evidence/a-read-completion-integration-accepted-20261021-r1.json",
+    "baseline_proof_sha256":  "be7ab9f2ec06163f5f475542ea6023ba399d21d4bfc8a727145cffbe6a078b7d",
+    "owner_baseline_complete_checks":  5019,
+    "retained_baseline_complete_checks":  [
+                                              4822,
+                                              4864,
+                                              4939,
+                                              4967,
+                                              4977,
+                                              5012
+                                          ],
+    "actual_cli_rejections":  [
+                                  {
+                                      "profile":  "owners",
+                                      "log":  "docs/evidence/a-download-owners-mysql-remote-20261020-133409-ebbf810b.txt",
+                                      "log_sha256":  "e8760ff9c7138ee3d20887659230e8ec1d8727f6118dea393538f2210acf5f35",
+                                      "source":  "docs/evidence/a-download-owners-mysql-remote-source-20261020-133409-ebbf810b.json",
+                                      "source_manifest_sha256":  "95d008987b496384403ffeb3452f28f7d54ca4314f92d9c29be330833e58b19b",
+                                      "exit":  1,
+                                      "code":  "no_test_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "owners",
+                                      "log":  "docs/evidence/a-download-owners-mysql-remote-20261020-152911-f87d0e35.txt",
+                                      "log_sha256":  "9a5819463bf98b6413c048eb68c134b8a63cf9bd7f424373455cf60f5fe37558",
+                                      "source":  "docs/evidence/a-download-owners-local-repair-source-20261020-144930-6819f05e.json",
+                                      "source_manifest_sha256":  "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+                                      "exit":  1,
+                                      "code":  "one_frozen_source",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "owners",
+                                      "log":  "docs/evidence/a-download-owners-local-repair-20261020-144930-6819f05e.txt",
+                                      "log_sha256":  "d641c9e05571298096aee29b3be10bee12ba16dbc3ed92a1d324633b297e3669",
+                                      "source":  "docs/evidence/a-download-owners-local-repair-source-20261020-144930-6819f05e.json",
+                                      "source_manifest_sha256":  "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+                                      "exit":  1,
+                                      "code":  "one_actual_remote_run",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "owners",
+                                      "log":  "docs/evidence/a-download-owners-mysql-remote-20261021-083734-aca6615d.txt",
+                                      "log_sha256":  "e4111f83165e492a532394f4f5f3386c7de35ba29c5e3f73edb33c12685fed11",
+                                      "source":  "docs/evidence/a-download-owners-mysql-remote-source-20261021-083734-aca6615d.json",
+                                      "source_manifest_sha256":  "766c0244f742681aae16ff4e051cca5faf3127492411dedd4c7c44ea3986d146",
+                                      "exit":  1,
+                                      "code":  "no_test_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "owners",
+                                      "log":  "docs/evidence/a-download-owners-mysql-remote-20261021-100630-92ddbad0.txt",
+                                      "log_sha256":  "e60ea7fc55e28b215e5c972feed2bc089a7fa5b1c32ecd49265393bc593f6a5c",
+                                      "source":  "docs/evidence/a-download-owners-mysql-remote-source-20261021-100630-92ddbad0.json",
+                                      "source_manifest_sha256":  "d5b9a1c8952f26f0fc0d52468168dc17b833dc5efa7508acf4815e06f85e0e15",
+                                      "exit":  1,
+                                      "code":  "no_test_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "gc-role",
+                                      "log":  "docs/evidence/a-download-gc-role-20261020-r1-native.txt",
+                                      "log_sha256":  "1c0e198ab6d4f3e9ebaef8ad892d72cc2d6a60caa81c2136e1131003412f3612",
+                                      "source":  "docs/evidence/a-download-gc-role-20261020-r1-source.json",
+                                      "source_manifest_sha256":  "f9a771c16d515c49b145ea8196af7f63b318b4f5dcf70aec21554d367ffa63df",
+                                      "exit":  1,
+                                      "code":  "no_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "gc-role",
+                                      "log":  "docs/evidence/a-download-gc-role-20261020-r2-native.txt",
+                                      "log_sha256":  "b7c0cdbd9951c14f539f4f5f8ca93783929c17447754d52a7ca950449ab297e4",
+                                      "source":  "docs/evidence/a-download-gc-role-20261020-r2-source.json",
+                                      "source_manifest_sha256":  "773b9b0375f536a55bffc7f1e7e8dcdedd9267528278dd2ada7d69d378df3255",
+                                      "exit":  1,
+                                      "code":  "no_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "gc-role",
+                                      "log":  "docs/evidence/a-download-owners-mysql-remote-20261021-100630-92ddbad0.txt",
+                                      "log_sha256":  "e60ea7fc55e28b215e5c972feed2bc089a7fa5b1c32ecd49265393bc593f6a5c",
+                                      "source":  "docs/evidence/a-download-owners-mysql-remote-source-20261021-100630-92ddbad0.json",
+                                      "source_manifest_sha256":  "d5b9a1c8952f26f0fc0d52468168dc17b833dc5efa7508acf4815e06f85e0e15",
+                                      "exit":  1,
+                                      "code":  "no_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "gc-role",
+                                      "log":  "docs/evidence/a-download-owners-mysql-remote-20261021-083734-aca6615d.txt",
+                                      "log_sha256":  "e4111f83165e492a532394f4f5f3386c7de35ba29c5e3f73edb33c12685fed11",
+                                      "source":  "docs/evidence/a-download-owners-mysql-remote-source-20261021-083734-aca6615d.json",
+                                      "source_manifest_sha256":  "766c0244f742681aae16ff4e051cca5faf3127492411dedd4c7c44ea3986d146",
+                                      "exit":  1,
+                                      "code":  "no_failure_skip_panic_or_pending_cleanup",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "gc-role",
+                                      "log":  "docs/evidence/a-download-owners-local-repair-20261020-144930-6819f05e.txt",
+                                      "log_sha256":  "d641c9e05571298096aee29b3be10bee12ba16dbc3ed92a1d324633b297e3669",
+                                      "source":  "docs/evidence/a-download-owners-local-repair-source-20261020-144930-6819f05e.json",
+                                      "source_manifest_sha256":  "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+                                      "exit":  1,
+                                      "code":  "one_actual_remote_run",
+                                      "receipt_written":  false
+                                  },
+                                  {
+                                      "profile":  "gc-role",
+                                      "log":  "docs/evidence/d-download-producer-remote-20261021-091802.txt",
+                                      "log_sha256":  "9efa731e941518b2e9598bdb4469af7a0ca41459f07b30673ad40fef6204bf33",
+                                      "source":  "docs/evidence/d-download-producer-remote-20261021-091802-source.json",
+                                      "source_manifest_sha256":  "70ba3043184f012cc0278762d4e03a509ab41e05c1bad674766b608a6cede1ef",
+                                      "exit":  1,
+                                      "code":  "exact_two_packaged_seeds_nine_checks",
+                                      "receipt_written":  false
+                                  }
+                              ],
+    "actual_acceptance_receipts_created":  0,
+    "actual_sql_cases_executed":  0,
+    "successful_transcripts":  "synthetic_in_memory_only",
+    "dependencies_installed":  false,
+    "test_build_artifacts_created":  false,
+    "runner_sha256":  "1214e9dc3b6ecbb91a0f8cb95e4183b04755b2278a52b5d493773e7ad8d41013"
+}

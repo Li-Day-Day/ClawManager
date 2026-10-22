@@ -1,0 +1,83 @@
+{
+  "kind": "d_six_scope_audit_interpretation_correction_and_fixture_comparison",
+  "recorded_utc": "2026-10-21T05:45:38.508Z",
+  "corrects": {
+    "report": "docs/evidence/d-six-scope-current-audit-20261021.json",
+    "sha256": "cbea793f28c6e35ec3f7c4ea20d27a2d2a8c784bcf6e0ff21ee7229ce74bbc8a",
+    "field": "newly_identified_against_old_r36_audit.object",
+    "incorrect_object": "table:northbound_operations",
+    "correct_object": {
+      "object_type": "table",
+      "name": "instance_browser_workers",
+      "owner": "B",
+      "category": "instances",
+      "data_classification": null,
+      "backup_strategy": null,
+      "restore_strategy": null,
+      "excluded_reason": null,
+      "normalizer_id": null,
+      "verifier_id": null,
+      "depends_on": [],
+      "decision_status": "pending_owner_review",
+      "required_cross_reviewers": [],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": null,
+      "sources": {
+        "migration": [
+          "backend/internal/db/migrations/064_add_instance_browser_workers.sql"
+        ],
+        "repository_create": [],
+        "repository_alter": [],
+        "deployment_bootstrap": [],
+        "exception": null
+      }
+    },
+    "old_baseline": "docs/evidence/system-backup-d-goal-readiness-audit-20261015-r36.json",
+    "old_baseline_sha256": "ba00e647bbe5ed9734aaf3058e3ceef165b75279a68dd509656340f09d03af63",
+    "computed_pending_policy_additions": [
+      "table:instance_browser_workers"
+    ],
+    "computed_pending_policy_removals": [],
+    "native_gate_results_unchanged": true,
+    "old_report_preserved": true
+  },
+  "fixture": {
+    "accepted_receipt": "docs/evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json",
+    "receipt_sha256": "52fdb3f997674d428bb72268fdc7e1ac3346bef3117dbc299a5320cf2eb3decd",
+    "git_commit": "199c5fd5583b2145d2d6584ea13e6584648b2f79",
+    "baseline": "docs/evidence/d-a-policy-fixture-git-baseline-20261021.json",
+    "baseline_sha256": "6a7cbe2c3d267cd1877301d37fe2549c312a85c5e71b4a9dfe7a6b125a929ec3",
+    "matches_accepted_source_bytes": true,
+    "current": "backend/internal/systembackupbusinessa/testdata/schema-registry.json",
+    "current_sha256": "0da4a3397b8d2005a61bcdbe923e5d40c59b024e4b43fe12f018dd4e251198ad",
+    "top_level_changes": [
+      "migration_catalog",
+      "summary"
+    ],
+    "old_catalog": {
+      "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+      "file_count": 94,
+      "hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
+    },
+    "new_catalog": {
+      "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+      "file_count": 95,
+      "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+    },
+    "added_objects": [
+      "table:instance_browser_workers"
+    ],
+    "removed_objects": [],
+    "modified_common_objects": [],
+    "all_fifteen_A_policies_unchanged": true
+  },
+  "boundaries": {
+    "whole_registry_bytes_changed": true,
+    "current_global_freeze_not_proven": true,
+    "current_runtime_behavior_not_revalidated_by_this_comparison": true,
+    "old_mysql_receipt_not_expanded": true,
+    "approval_recorded": false,
+    "registry_changed": false,
+    "remote_executed": false
+  }
+}

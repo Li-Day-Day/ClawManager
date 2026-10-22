@@ -58,7 +58,7 @@ func decodeDownloadAuditProbeInputs(raw []byte) (downloadAuditProbeInputs, error
 		return zero, ErrInvalid
 	}
 	var extra any
-	if len(seen) != 3 || d.Decode(&extra) != io.EOF || json.Unmarshal(raw, &zero) != nil || zero.Kind != "d_download_audit_probe_inputs.v1" || !digestPattern.MatchString(zero.Catalog) || len(zero.Migrations) != 95 {
+	if len(seen) != 3 || d.Decode(&extra) != io.EOF || json.Unmarshal(raw, &zero) != nil || zero.Kind != "d_download_audit_probe_inputs.v1" || !digestPattern.MatchString(zero.Catalog) || len(zero.Migrations) != 96 {
 		return downloadAuditProbeInputs{}, ErrInvalid
 	}
 	for i, name := range zero.Migrations {

@@ -45,7 +45,7 @@ func VerifyBackupSnapshot(ctx context.Context, registryJSON []byte, source, dump
 	if err != nil {
 		return nil, err
 	}
-	if proof == nil {
+	if missingProofVerifier(proof) {
 		return nil, errors.New("resources capture proof verifier is required")
 	}
 	for _, entry := range []CaptureSnapshotEvidence{source, dump} {
@@ -56,8 +56,18 @@ func VerifyBackupSnapshot(ctx context.Context, registryJSON []byte, source, dump
 			return nil, err
 		}
 	}
-	if err := proof.VerifyCapture(ctx, source, dump); err != nil {
+	// Freeze only the structurally valid, bounded comparison view before
+	// consulting external proof code. Give that code separate copies below.
+	source.Snapshot = cloneResourcesSnapshot(source.Snapshot)
+	dump.Snapshot = cloneResourcesSnapshot(dump.Snapshot)
+	proofSource, proofDump := source, dump
+	proofSource.Snapshot = cloneResourcesSnapshot(source.Snapshot)
+	proofDump.Snapshot = cloneResourcesSnapshot(dump.Snapshot)
+	if err := proof.VerifyCapture(ctx, proofSource, proofDump); err != nil {
 		return nil, fmt.Errorf("resources capture proof: %w", err)
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 	checks := make([]ResourcesCheck, 0, len(tables)+3)
 	checks = append(checks, resourcesCheck("resources.checkpoint", "hash", source.CheckpointHash, dump.CheckpointHash, dump.EvidenceRef))
@@ -116,4 +126,15 @@ func equalRedactedValue(a, b any) bool {
 		return left == nil || *left == *right
 	}
 	return a == b
+}
+
+// Separate caller data, the immutable comparison view and each proof argument.
+// This does not make concurrent mutation of caller-owned input race-safe.
+func cloneResourcesSnapshot(snapshot SourceSnapshot) SourceSnapshot {
+	snapshot.Tables = append([]TableCount(nil), snapshot.Tables...)
+	if snapshot.AuditMaxID != nil {
+		value := *snapshot.AuditMaxID
+		snapshot.AuditMaxID = &value
+	}
+	return snapshot
 }

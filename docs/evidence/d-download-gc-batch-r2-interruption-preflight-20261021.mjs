@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {workspace,decode,sha256} from './a-download-owners-actual-review-20261020.mjs';
+const prefix='docs/evidence/d-download-gc-batch-20261020-r2';
+const raw=p=>fs.readFileSync(path.join(workspace,p));
+const sourceBytes=raw(prefix+'-source.json'),source=JSON.parse(decode(sourceBytes)),nativeBytes=raw(prefix+'-native.txt'),native=decode(nativeBytes),eventBytes=raw(prefix+'.jsonl');
+assert.equal(source.source_sha256,'d9500684fb57a6cf658830a236f9f7e9ef8268e36aea3e156e50cb0c452f2542');
+assert.equal(sha256(source.files.map(f=>`${f.path}\0${f.sha256}\0${f.size}`).join('\n')+'\n'),source.source_sha256);
+assert.equal(source.files.length,1455);assert.equal(source.stable_copy_verified,true);assert.equal(source.dependencies_installed,false);
+const es=decode(eventBytes).trim().split('\n').map(JSON.parse);assert.ok(!es.some(e=>['fail','skip','build-fail'].includes(e.Action)));
+const passed=es.filter(e=>e.Test&&e.Action==='pass').map(e=>e.Test),ran=es.filter(e=>e.Test&&e.Action==='run').map(e=>e.Test);
+assert.equal(new Set(passed).size,42);assert.equal(passed.length,42);assert.equal(passed.filter(n=>!n.includes('/')).length,6);assert.deepEqual(passed.slice().sort(),ran.slice().sort());
+assert.equal(es.filter(e=>!e.Test&&e.Action==='pass'&&e.Package==='clawreef/internal/systembackupevidence').length,1);
+for(const marker of ['NATIVE_EXIT focused_packages=0 packages=./internal/systembackupevidence default_vet=yes','FROZEN_UNIT_POSTCHECK pass=yes','NATIVE_PROBE stage=tagged-seed exit=0 actual_mysql=no','NATIVE_PROBE stage=windows-probe exit=0 actual_mysql=no'])assert.ok(native.includes(marker));
+assert.doesNotMatch(native,/NATIVE_PROBE stage=detached-seed exit=|FROZEN_POSTCHECK pass=yes|CLEANED snapshot=True|d_admission_native_exit=/);
+assert.equal(raw(prefix+'-detached-seed.txt').length,0);assert.equal(raw(prefix+'-detached-seed-stderr.txt').length,0);
+const owners=[...native.matchAll(/^FROZEN files=1455 sha256=[a-f0-9]{64} owner=(.+)$/gm)];assert.equal(owners.length,1);const owner=owners[0][1].trim();
+assert.equal(path.basename(owner),'.tmp-d-index-cache-da377e2376d64843911cfa2a247b47a7');assert.equal(path.dirname(path.resolve(owner)).toLowerCase(),workspace.toLowerCase());
+for(const f of source.files){const b=fs.readFileSync(path.join(owner,'source',f.path));assert.equal(b.length,f.size,f.path);assert.equal(sha256(b),f.sha256,f.path);}
+const currentDrift=source.files.filter(f=>{try{const b=raw(f.path);return b.length!==f.size||sha256(b)!==f.sha256;}catch{return true;}}).map(f=>f.path);
+const seedBytes=raw(prefix+'-tagged-seed.txt'),se=decode(seedBytes).trim().split('\n').map(JSON.parse);assert.ok(!se.some(e=>['fail','skip','build-fail'].includes(e.Action)));assert.equal(se.filter(e=>e.Test&&e.Action==='pass').length,22);
+const binary=path.join(owner,'download-admission.test.exe'),binaryBytes=fs.readFileSync(binary);
+const record={kind:'d_gc_batch_r2_interruption_preflight',recorded_at:new Date().toISOString(),prefix,owner,source_files:1455,source_sha256:source.source_sha256,source_manifest_sha256:sha256(sourceBytes),native_sha256:sha256(nativeBytes),events_sha256:sha256(eventBytes),tagged_seed_sha256:sha256(seedBytes),main:6,all:42,default_vet:true,unit_postcheck:true,tagged_seed_checks:22,windows_compile_reported_exit:0,original_final_exit:null,original_final_postcheck:false,original_cleanup_reported:false,detached_seed_checks:0,owned_source_all_pins_match:true,current_pinned_drift:currentDrift,current_new_inputs_not_checked:true,binary_observed_before_cleanup:{sha256:sha256(binaryBytes),size:binaryBytes.length,original_pre_interruption_hash_not_available:true},dependencies_installed:false,remote_run:false,actual_sql_cases:0};
+fs.writeFileSync(path.join(workspace,'docs/evidence/d-download-gc-batch-r2-interruption-preflight-20261021.json'),JSON.stringify(record,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({status:'interrupted_partial_evidence_verified',main:6,all:42,owned_source_pins:1455,original_final_exit:null,current_pinned_drift:currentDrift.length}));

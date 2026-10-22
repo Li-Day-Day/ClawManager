@@ -111,6 +111,7 @@ func TestCaptureTableAllowlistFailsClosed(t *testing.T) {
 		}},
 		{"unreviewed other domain", func(d map[string]any) {
 			resourceObject(t, d, "audit_events")["required_cross_reviewers"] = []any{"D"}
+			resourceObject(t, d, "audit_events")["approved_cross_reviewers"] = []any{}
 		}},
 		{"self review other domain", func(d map[string]any) {
 			resourceObject(t, d, "audit_events")["required_cross_reviewers"] = []any{"A"}

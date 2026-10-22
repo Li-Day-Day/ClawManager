@@ -71,7 +71,7 @@ func restoreFixture(t *testing.T) (*CaptureScope, SourceSnapshot) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	snapshot := SourceSnapshot{Tables: make([]TableCount, 0, 15)}
+	snapshot := SourceSnapshot{CostAggregateSHA256: fixtureCostAggregateHash(t, 2), Tables: make([]TableCount, 0, 15)}
 	for _, table := range scope.Tables() {
 		snapshot.Tables = append(snapshot.Tables, TableCount{Table: table, Rows: 2})
 	}
@@ -82,8 +82,8 @@ func TestSQLRestoreVerifierCountsAndInertStateInOneReadOnlyTransaction(t *testin
 	scope, expected := restoreFixture(t)
 	state, proof := &countState{}, &restoreProofFixture{mutateExpected: true}
 	checks, err := (SQLRestoreVerifier{DB: countDB(t, state), Proof: proof}).VerifyRestoreTarget(context.Background(), scope, expected, "sev_restored")
-	if err != nil || len(checks.Users) != 11 || len(checks.AIGateway) != 13 || proof.starts != 1 || proof.rechecks != 1 ||
-		state.commits != 1 || state.rollbacks != 0 || len(state.queries) != 39 ||
+	if err != nil || len(checks.Users) != 11 || len(checks.AIGateway) != 14 || proof.starts != 1 || proof.rechecks != 1 ||
+		state.commits != 1 || state.rollbacks != 0 || len(state.queries) != 40 ||
 		state.begin.Isolation != driver.IsolationLevel(sql.LevelRepeatableRead) || !state.begin.ReadOnly {
 		t.Fatalf("incomplete restore verification: %+v, %+v, %+v, %v", checks, state, proof, err)
 	}
@@ -117,7 +117,7 @@ func TestSQLRestoreVerifierMismatchAndFailureBoundaries(t *testing.T) {
 			state, proof := &countState{failure: tc.failure, counts: tc.counts, safety: tc.safety}, &restoreProofFixture{}
 			checks, err := (SQLRestoreVerifier{DB: countDB(t, state), Proof: proof}).VerifyRestoreTarget(context.Background(), scope, expected, "sev_restored")
 			if tc.wantMismatch {
-				if !errors.Is(err, ErrRestoreNormalizationMismatch) || len(checks.Users) != 11 || len(checks.AIGateway) != 13 || state.commits != 1 {
+				if !errors.Is(err, ErrRestoreNormalizationMismatch) || len(checks.Users) != 11 || len(checks.AIGateway) != 14 || state.commits != 1 {
 					t.Fatalf("restore mismatch not reported: %+v, %v", checks, err)
 				}
 				if category, known := KnownVerificationFailureCategory(err); !known || category != "normalization_failed" {

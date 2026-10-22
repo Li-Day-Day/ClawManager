@@ -1,0 +1,27 @@
+{
+  "kind": "d_cost_snapshot_concurrent_local_run",
+  "mode": "published",
+  "stages": [
+    {
+      "stage": "full-business",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupbusinessa"
+      ]
+    }
+  ],
+  "exit": 0,
+  "source_postcheck": true,
+  "source_sha256": "5d43fb6dc511d21ff25287b25ef12d4f43bcc37ed534902d7a573e52e0316523",
+  "default_vet": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_mysql": false,
+  "finished_utc": "2026-10-22T01:56:19.8579590Z"
+}

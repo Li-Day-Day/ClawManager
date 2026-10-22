@@ -15,6 +15,7 @@ import (
 // deliberately outside this source-row exclusion check.
 var controlExclusionTables = map[string]struct{}{
 	"system_artifact_lease_states": {}, "system_artifact_leases": {},
+	"system_backup_admin_revocations": {}, "system_backup_admin_sessions": {},
 	"system_backup_alert_states": {}, "system_backup_artifact_verifications": {},
 	"system_backup_attempts": {}, "system_backup_check_results": {},
 	"system_backup_compact_tombstones": {}, "system_backup_configs": {},
@@ -22,11 +23,12 @@ var controlExclusionTables = map[string]struct{}{
 	"system_backup_evidence": {}, "system_backup_evidence_chunks": {},
 	"system_backup_external_actions": {}, "system_backup_installation_state": {},
 	"system_backup_job_observations": {}, "system_backup_log_chunks": {},
-	"system_backup_operations": {}, "system_backup_preflights": {},
+	"system_backup_metadata_reservations": {},
+	"system_backup_operations":            {}, "system_backup_preflights": {},
 	"system_backup_promotions": {}, "system_backup_provider_capabilities": {},
 	"system_backup_prune_items": {}, "system_backup_prune_runs": {},
 	"system_backup_source_writer_check_states": {}, "system_backup_staging_resources": {},
-	"system_backup_strong_auth_nonces": {}, "system_backups": {},
+	"system_backup_strong_auth_nonces": {}, "system_backup_totp_credentials": {}, "system_backups": {},
 	"system_maintenance_locks": {}, "system_maintenance_mutation_leases": {},
 	"system_maintenance_participants": {}, "system_restore_drill_resources": {},
 	"system_restore_drills": {},
@@ -101,7 +103,7 @@ func (v SQLControlExclusionVerifier) VerifyRestoreTarget(ctx context.Context, re
 	if err != nil {
 		return nil, err
 	}
-	if !evidenceIDPattern.MatchString(evidenceRef) || v.DB == nil || v.Proof == nil {
+	if !evidenceIDPattern.MatchString(evidenceRef) || v.DB == nil || missingProofVerifier(v.Proof) {
 		return nil, errors.New("control exclusion requires evidence, target proof and database")
 	}
 	tx, err := v.DB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
@@ -136,6 +138,9 @@ func (v SQLControlExclusionVerifier) VerifyRestoreTarget(ctx context.Context, re
 	}
 	if err := tx.Commit(); err != nil {
 		return nil, fmt.Errorf("commit control exclusion snapshot: %w", err)
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 	return checks, nil
 }

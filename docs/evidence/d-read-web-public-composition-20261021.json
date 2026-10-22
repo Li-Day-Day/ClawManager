@@ -1,0 +1,50 @@
+{
+  "kind": "d_read_web_public_composition.v1",
+  "status": "LOCAL_PUBLIC_COMPOSITION_TESTS_PASSED_RUNTIME_PENDING",
+  "generated_at": "2026-10-21T10:10:15.856Z",
+  "sources": [
+    {
+      "path": "scripts/system-backup-d-read-deployment.mjs",
+      "sha256": "5b487e1bfb4146a420b03c73160e418f0845228a7177ed33f79c68b55c9e2c0b"
+    },
+    {
+      "path": "scripts/system-backup-d-read-deployment.test.mjs",
+      "sha256": "1b1597a8b2658f1621bb34914ba5c1549c28686e9a02d88ac49f52c23ef3cd32"
+    },
+    {
+      "path": "scripts/system-backup-d-web-proxy-deployment.mjs",
+      "sha256": "12a8f2c4bc43c521ec64c5c51a325e127b27728f8c3cc1da13703a1e366962a5"
+    },
+    {
+      "path": "scripts/system-backup-d-web-proxy-deployment.test.mjs",
+      "sha256": "99bb9e44cb1af3375a276391672dd3263b28ee7ecb0449eae7ef515f5b82c596"
+    },
+    {
+      "path": "deployments/k8s/system-backup-read-k8s.template.json",
+      "sha256": "be1ff708ea72a8b7cb40bbfc5bdf192cc3fe70b25b5173efe36237da8b0a314d"
+    },
+    {
+      "path": "deployments/k8s/system-backup-web-proxy.template.json",
+      "sha256": "1c4ddf306a1c4047847016f17d5b424d1bf039348302a7fb80a177813dde30b5"
+    }
+  ],
+  "checks": {
+    "read_deployment": 22,
+    "download_proxy_deployment": 15,
+    "total_passed": 37,
+    "failed": 0,
+    "skipped": 0,
+    "native_exit": 0
+  },
+  "limitations": {
+    "go_main_validation_pending": true,
+    "image_built": false,
+    "cluster_contacted": false,
+    "configuration_activated": false,
+    "real_read_http_verified": false,
+    "real_download_verified": false,
+    "actual_upstream_tls_verified": false,
+    "dependencies_installed": false
+  },
+  "test_artifacts_created": false
+}

@@ -36,8 +36,19 @@ func run() error {
 	capacityReport := flag.String("collect-capacity", "", "write capacity reports from the MySQL data-volume sidecar")
 	capacityConfig := flag.String("capacity-config", "", "SHA-pinned capacity source configuration")
 	checkCapacity := flag.Bool("check-capacity-source", false, "read-only check of capacity source identity, grants and data mount")
+	inspectSQL := flag.Bool("inspect-sql-evidence", false, "read-only SQL identity/grants/metadata from a public stdin request and an existing mounted DSN")
 	address := flag.String("listen", "127.0.0.1:9443", "HTTPS listen address")
 	flag.Parse()
+	if *inspectSQL {
+		var supplied []string
+		flag.Visit(func(f *flag.Flag) { supplied = append(supplied, f.Name) })
+		if !fieldInspectionFlags(supplied, flag.NArg()) {
+			return errFieldSQLInspection
+		}
+		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer cancel()
+		return runFieldSQLInspection(ctx, os.Stdin, os.Stdout, os.Getenv)
+	}
 	capacityMode := *capacityReport != "" || *checkCapacity
 	if err := validateDownloadMode(downloadMode{runtime: *runtimePath, deployment: *downloadPath, liveURL: *liveReadyURL, serverName: *probeServerName, digest: os.Getenv("SYSTEM_BACKUP_DOWNLOAD_RUNTIME_SHA256"), dsn: os.Getenv("SYSTEM_BACKUP_DOWNLOAD_DSN_FILE"), capacity: capacityMode, bootstrap: *bootstrapConfig != "", check: *check}); err != nil {
 		return err

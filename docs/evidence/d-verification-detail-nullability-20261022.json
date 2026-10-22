@@ -1,0 +1,35 @@
+{
+  "kind": "d_verification_detail_nullability.v1",
+  "status": "local_regressions_and_types_passed_live_runtime_pending",
+  "created_at": "2026-10-22T00:58:28.5236680Z",
+  "change": "Verification nullable before/after readability renders localized unknown; false remains unreadable",
+  "test_command": "node --test --test-isolation=none frontend/scripts/system-backups-live-detail.test.mjs frontend/scripts/system-backups-evidence-download.test.mjs",
+  "tests": 55,
+  "passed": 55,
+  "failed": 0,
+  "skipped": 0,
+  "typescript_app_no_emit_passed": true,
+  "browser_render_verified": false,
+  "live_runtime_verified": false,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "cleanup_verified": true,
+  "files": [
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveDetail.tsx",
+      "sha256": "4705cc08d62c61363bbfd7e460f80d8a313576ca1caf2f487032dfc273f685c5"
+    },
+    {
+      "path": "frontend/src/lib/systemBackupI18n.ts",
+      "sha256": "fb1a5ce24368655bf2aae730bf0ea82ec349482c37db60dc5bebd59ac1d50e8b"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-detail.test.mjs",
+      "sha256": "b09ba6bf384788bccf0cb6fe7ab9d996acd51ba7ea0fe375820d02d249a03156"
+    },
+    {
+      "path": "frontend/scripts/system-backups-evidence-download.test.mjs",
+      "sha256": "624e68de2387bb26ffea8170ee820320823ae1529e3b210a8a1bb3652d89659c"
+    }
+  ]
+}

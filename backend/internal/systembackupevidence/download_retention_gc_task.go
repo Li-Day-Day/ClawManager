@@ -12,7 +12,8 @@ import (
 
 // This is one necessary part of DownloadRetentionGCPolicy.Lock, not a complete
 // policy or a production grant. It covers the four 067 task owners, their local
-// backup artifact, inventory, leases, retained promotions and incoming retries.
+// backup artifact, inventory, leases, retained promotions, incoming retries,
+// other source-consuming tasks and retained prune items.
 // The caller must also provide Early authority/schema/DDL freeze and ALL other
 // operation/audit/nonce/evidence/logical reference checks. In particular this
 // component cannot replace the system producer's original write binding.
@@ -33,7 +34,7 @@ func NewSQLDownloadGCTaskEligibility(c DownloadGCTaskEligibilityConfig) (*SQLDow
 }
 
 const downloadGCTaskDatabaseSQL = `SELECT @@server_uuid,DATABASE()`
-const downloadGCTaskTablesSQL = `SELECT TABLE_NAME,TABLE_TYPE,COALESCE(ENGINE,'') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('system_backups','system_restore_drills','system_backup_preflights','system_backup_artifact_verifications','system_artifact_lease_states','system_artifact_leases','system_backup_staging_resources','system_restore_drill_resources','system_backup_promotions') ORDER BY BINARY TABLE_NAME`
+const downloadGCTaskTablesSQL = `SELECT TABLE_NAME,TABLE_TYPE,COALESCE(ENGINE,'') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('system_backups','system_restore_drills','system_backup_preflights','system_backup_artifact_verifications','system_artifact_lease_states','system_artifact_leases','system_backup_staging_resources','system_restore_drill_resources','system_backup_promotions','system_backup_prune_items') ORDER BY BINARY TABLE_NAME`
 const downloadGCTaskLeaseStateSQL = `SELECT id,origin_installation_id,lease_mode,generation,row_version FROM system_artifact_lease_states WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
 const downloadGCTaskSourceLeaseSQL = `SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_artifact_leases WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
 const downloadGCTaskHolderLeaseSQL = `SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_artifact_leases WHERE holder_type=? AND holder_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
@@ -41,6 +42,14 @@ const downloadGCTaskStagingSQL = `SELECT id,origin_installation_id,lifecycle,cla
 const downloadGCTaskRestoreSQL = `SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,'',last_failure_code FROM system_restore_drill_resources WHERE drill_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
 const downloadGCTaskBackupPromotionSQL = `SELECT id FROM system_backup_promotions WHERE backup_public_id=? LIMIT 1 FOR UPDATE`
 const downloadGCTaskDrillPromotionSQL = `SELECT id FROM system_backup_promotions WHERE drill_public_id=? LIMIT 1 FOR UPDATE`
+const downloadGCTaskPruneDependencySQL = `SELECT id FROM system_backup_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE`
+
+func downloadGCTaskDependentSQL(kind string) string {
+	if !oneOf(kind, "drill", "preflight", "artifact_verify") {
+		return ""
+	}
+	return "SELECT " + downloadGCTaskProjection(kind) + " FROM " + taskTable(kind) + " WHERE source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE"
+}
 
 // Only closed, published table names reach SQL. A nonlocking source hint selects
 // the backup key before L4; the locked child must independently match it. Lock
@@ -54,7 +63,11 @@ func downloadGCTaskSQL(kind string, hint bool) string {
 	if hint {
 		return "SELECT source_artifact_type,source_public_id FROM " + table + " WHERE public_id=?"
 	}
-	q := "SELECT id,origin_installation_id,public_id,task_type,schema_version,status,row_version,deadline_at,created_at,finished_at,controller_owner,controller_lease_expires_at,next_reconcile_at,"
+	return "SELECT " + downloadGCTaskProjection(kind) + " FROM " + table + " WHERE public_id=? FOR UPDATE"
+}
+
+func downloadGCTaskProjection(kind string) string {
+	q := "id,origin_installation_id,public_id,task_type,schema_version,status,row_version,deadline_at,created_at,finished_at,controller_owner,controller_lease_expires_at,next_reconcile_at,"
 	if kind == "backup" {
 		q += "'backup',public_id,artifact_state,artifact_committed_at,artifact_usable,artifact_unusable_reason,manual_hold,promotion_hold,commit_started_at,prune_guard_version,'',''"
 	} else {
@@ -65,7 +78,7 @@ func downloadGCTaskSQL(kind string, hint bool) string {
 			q += "'',''"
 		}
 	}
-	return q + " FROM " + table + " WHERE public_id=? FOR UPDATE"
+	return q
 }
 
 func downloadGCTaskRetrySQL(kind string) string {
@@ -86,12 +99,17 @@ type gcTaskFacts struct {
 }
 
 func readGCTask(ctx context.Context, tx *sql.Tx, kind, id, installation string, admitted, now time.Time) (gcTaskFacts, error) {
+	return scanGCTask(tx.QueryRowContext(ctx, downloadGCTaskSQL(kind, false), id), kind, id, installation, admitted, now)
+}
+
+func scanGCTask(row taskDownloadScanner, kind, id, installation string, admitted, now time.Time) (gcTaskFacts, error) {
 	var f gcTaskFacts
-	err := tx.QueryRowContext(ctx, downloadGCTaskSQL(kind, false), id).Scan(
+	err := row.Scan(
 		&f.id, &f.installation, &f.publicID, &f.kind, &f.schema, &f.status, &f.version, &f.deadline, &f.created, &f.finished,
 		&f.controller, &f.controllerLease, &f.nextReconcile, &f.sourceKind, &f.sourceID, &f.artifactState, &f.committed,
 		&f.usable, &f.unusable, &f.manualHold, &f.promotionHold, &f.committing, &f.pruneVersion, &f.cleanup, &f.cleanupFailure)
-	if err != nil || f.id < 1 || f.version < 1 || f.version > 9007199254740991 || f.publicID != id || f.installation != installation || f.kind != kind ||
+	pattern := ownerPatterns[kind]
+	if err != nil || f.id < 1 || f.version < 1 || f.version > 9007199254740991 || pattern == nil || !pattern.MatchString(f.publicID) || id != "" && f.publicID != id || f.installation != installation || f.kind != kind ||
 		f.schema != "system-backup-task.v1" || !oneOf(f.status, "succeeded", "failed", "canceled") ||
 		!downloadAdmissionContentTime(f.created) || !downloadAdmissionContentTime(f.deadline) || !f.created.Before(f.deadline) || f.deadline.After(now) || f.created.After(admitted) ||
 		!f.finished.Valid || !downloadAdmissionContentTime(f.finished.Time) || f.finished.Time.Before(f.created) || f.finished.Time.After(now) || f.nextReconcile.Valid ||
@@ -103,6 +121,30 @@ func readGCTask(ctx context.Context, tx *sql.Tx, kind, id, installation string, 
 
 func gcTaskExpiredClaim(owner sql.NullString, expiry sql.NullTime, now time.Time) bool {
 	return !owner.Valid && !expiry.Valid || owner.Valid && expiry.Valid && s3Token([]byte(owner.String), 1, 128) && downloadAdmissionContentTime(expiry.Time) && !expiry.Time.After(now)
+}
+
+func readGCTaskDependents(ctx context.Context, tx *sql.Tx, kind, backup, installation string, backupCreated, now time.Time) ([]gcTaskFacts, error) {
+	rows, err := tx.QueryContext(ctx, downloadGCTaskDependentSQL(kind), backup)
+	if err != nil {
+		return nil, ErrDenied
+	}
+	defer rows.Close()
+	out := []gcTaskFacts{}
+	seen := map[string]bool{}
+	for rows.Next() {
+		f, err := scanGCTask(rows, kind, "", installation, now, now)
+		if err != nil || len(out) >= maxTaskDownloadReferences || len(out) > 0 && f.id <= out[len(out)-1].id || seen[f.publicID] ||
+			f.sourceKind != "backup" || f.sourceID != backup || f.created.Before(backupCreated) ||
+			kind == "drill" && (!oneOf(f.cleanup, "not_started", "succeeded") || f.cleanupFailure != "none") {
+			return nil, ErrDenied
+		}
+		seen[f.publicID] = true
+		out = append(out, f)
+	}
+	if rows.Err() != nil || rows.Close() != nil {
+		return nil, ErrDenied
+	}
+	return out, nil
 }
 
 type gcTaskResource struct {
@@ -209,6 +251,9 @@ func readGCTaskLeases(ctx context.Context, tx *sql.Tx, q string, args []any, bac
 
 type gcTaskSnapshot struct {
 	owner, backup              gcTaskFacts
+	dependents                 []gcTaskFacts
+	dependentResources         map[string][]gcTaskResource
+	dependentHolderLeases      map[string][]gcTaskLease
 	staging, restore           []gcTaskResource
 	leaseState                 []gcTaskLeaseState
 	sourceLeases, holderLeases []gcTaskLease
@@ -232,7 +277,7 @@ func gcTaskTables(ctx context.Context, tx *sql.Tx) error {
 	for _, t := range taskDownloadTables() {
 		expected[t.table] = true
 	}
-	for _, table := range []string{"system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions"} {
+	for _, table := range []string{"system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions", "system_backup_prune_items"} {
 		expected[table] = true
 	}
 	for rows.Next() {
@@ -248,7 +293,7 @@ func gcTaskTables(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-func (s *SQLDownloadGCTaskEligibility) read(ctx context.Context, tx *sql.Tx, scope DownloadRetentionGCScope, backup string, now time.Time) (gcTaskSnapshot, error) {
+func (s *SQLDownloadGCTaskEligibility) read(ctx context.Context, tx *sql.Tx, scope DownloadRetentionGCScope, backup string, original *gcTaskSnapshot, now time.Time) (gcTaskSnapshot, error) {
 	var out gcTaskSnapshot
 	var server, database string
 	if tx.QueryRowContext(ctx, downloadGCTaskDatabaseSQL).Scan(&server, &database) != nil || server != s.c.Database.ServerUUID || database != s.c.Database.Database || gcTaskTables(ctx, tx) != nil {
@@ -273,6 +318,70 @@ func (s *SQLDownloadGCTaskEligibility) read(ctx context.Context, tx *sql.Tx, sco
 			scope.Evidence.OwnerType == "drill" && (!oneOf(out.owner.cleanup, "not_started", "succeeded") || out.owner.cleanupFailure != "none") {
 			return out, ErrDenied
 		}
+	}
+	if original != nil && out.owner.id != original.owner.id {
+		return out, ErrDenied
+	}
+	out.dependents = []gcTaskFacts{}
+	out.dependentResources = map[string][]gcTaskResource{}
+	out.dependentHolderLeases = map[string][]gcTaskLease{}
+	for _, kind := range []string{"artifact_verify", "preflight", "drill"} {
+		facts, err := readGCTaskDependents(ctx, tx, kind, backup, s.c.Installation, b.created, now)
+		if err != nil {
+			return out, ErrDenied
+		}
+		ownerSeen := false
+		for _, f := range facts {
+			if f.kind == out.owner.kind && f.id == out.owner.id {
+				if f != out.owner {
+					return out, ErrDenied
+				}
+				ownerSeen = true
+			}
+		}
+		if kind == out.owner.kind && !ownerSeen {
+			return out, ErrDenied
+		}
+		if len(out.dependents)+len(facts) > maxTaskDownloadReferences {
+			return out, ErrDenied
+		}
+		out.dependents = append(out.dependents, facts...)
+	}
+	// A changed membership/fact must fail before selecting any new resource
+	// range during a later-phase recheck. Expired terminal siblings may remain;
+	// requiring their absence would create mutually blocked metadata groups.
+	if original != nil && !reflect.DeepEqual(out.dependents, original.dependents) {
+		return out, ErrDenied
+	}
+	resourceCount := 0
+	for _, f := range out.dependents {
+		if f.kind == out.owner.kind && f.id == out.owner.id {
+			continue
+		}
+		if gcTaskEmptyRange(ctx, tx, downloadGCTaskRetrySQL(f.kind), f.publicID) != nil {
+			return out, ErrDenied
+		}
+		if f.kind != "drill" {
+			continue
+		}
+		if gcTaskEmptyRange(ctx, tx, downloadGCTaskDrillPromotionSQL, f.publicID) != nil {
+			return out, ErrDenied
+		}
+		resources, err := readGCTaskResources(ctx, tx, downloadGCTaskRestoreSQL, f.publicID, s.c.Installation, now)
+		if err != nil || f.cleanup == "not_started" && len(resources) != 0 {
+			return out, ErrDenied
+		}
+		resourceCount += len(resources)
+		if resourceCount > maxTaskDownloadReferences {
+			return out, ErrDenied
+		}
+		out.dependentResources[f.publicID] = resources
+	}
+	// Even terminal/deleted prune items remain references until their own
+	// reviewed lifecycle removes them. Scope/status/source-type predicates may
+	// not hide a contradictory incoming link to this backup public ID.
+	if gcTaskEmptyRange(ctx, tx, downloadGCTaskPruneDependencySQL, backup) != nil {
+		return out, ErrDenied
 	}
 	// No installation/status filter may hide a contradictory incoming link.
 	// Retained promotions/retries still protect their source until their own
@@ -302,6 +411,28 @@ func (s *SQLDownloadGCTaskEligibility) read(ctx context.Context, tx *sql.Tx, sco
 	}
 	if scope.Evidence.OwnerType != "backup" {
 		out.holderLeases, err = readGCTaskLeases(ctx, tx, downloadGCTaskHolderLeaseSQL, []any{scope.Evidence.OwnerType, scope.Evidence.OwnerID}, backup, s.c.Installation, out.leaseState, now)
+		if err != nil {
+			return out, err
+		}
+	}
+	sourceLeases := map[int64]gcTaskLease{}
+	for _, lease := range out.sourceLeases {
+		sourceLeases[lease.id] = lease
+	}
+	for _, f := range out.dependents {
+		if f.kind == out.owner.kind && f.id == out.owner.id {
+			continue
+		}
+		leases, err := readGCTaskLeases(ctx, tx, downloadGCTaskHolderLeaseSQL, []any{f.kind, f.publicID}, backup, s.c.Installation, out.leaseState, now)
+		if err != nil {
+			return out, ErrDenied
+		}
+		for _, lease := range leases {
+			if original, found := sourceLeases[lease.id]; !found || !reflect.DeepEqual(original, lease) {
+				return out, ErrDenied
+			}
+		}
+		out.dependentHolderLeases[f.publicID] = leases
 	}
 	return out, err
 }
@@ -342,7 +473,7 @@ func (s *SQLDownloadGCTaskEligibility) Lock(ctx context.Context, tx *sql.Tx, sco
 			return nil, ErrDenied
 		}
 	}
-	original, err := s.read(ctx, tx, scope, backup, now)
+	original, err := s.read(ctx, tx, scope, backup, nil, now)
 	if err != nil {
 		return nil, ErrDenied
 	}
@@ -361,7 +492,7 @@ func (g *DownloadGCTaskEligibilityGuard) Recheck(ctx context.Context, tx *sql.Tx
 	}
 	// SAME keys and predicates, all current locking reads, no hint refresh and
 	// no new prefix lock after later phases. Eligible-but-changed also denies.
-	current, err := g.source.read(ctx, tx, scope, g.backup, now)
+	current, err := g.source.read(ctx, tx, scope, g.backup, &g.original, now)
 	if err != nil || !reflect.DeepEqual(current, g.original) {
 		return fail()
 	}

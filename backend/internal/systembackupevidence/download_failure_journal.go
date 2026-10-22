@@ -91,13 +91,16 @@ func (j *DownloadFailureJournal) Check() error {
 	}
 	s := j.journal
 	defer s.mu.Unlock()
-	if s.file == nil || s.poisoned {
+	if s.file == nil || s.poisoned.Load() {
 		return ErrUnavailable
 	}
 	info, err := s.file.Stat()
 	pathInfo, pathErr := os.Lstat(s.path)
 	if err != nil || pathErr != nil || !info.Mode().IsRegular() || !pathInfo.Mode().IsRegular() || !os.SameFile(info, pathInfo) || info.Size() != s.size || s.size > s.maxBytes-2049 || runtime.GOOS != "windows" && !downloadFailurePrivateMode(info.Mode()) {
-		s.poisoned = true
+		s.poisoned.Store(true)
+		return ErrUnavailable
+	}
+	if s.poisoned.Load() {
 		return ErrUnavailable
 	}
 	return nil
@@ -114,9 +117,7 @@ func downloadFailureCode(code string) bool {
 
 func (j *DownloadFailureJournal) poison() {
 	if j != nil && j.journal != nil {
-		j.journal.mu.Lock()
-		j.journal.poisoned = true
-		j.journal.mu.Unlock()
+		j.journal.poisoned.Store(true)
 	}
 }
 

@@ -1,5 +1,8 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][ValidatePattern('^[a-zA-Z0-9-]+$')][string]$Run)
+param(
+    [Parameter(Mandatory=$true)][ValidatePattern('^[a-zA-Z0-9-]+$')][string]$Run,
+    [string]$WarmCache=''
+)
 $ErrorActionPreference='Stop'
 $PSNativeCommandUseErrorActionPreference=$false
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -14,6 +17,7 @@ function Invoke-AuditResourceStage {
     for($attempt=1;$attempt -le 3;$attempt++){
         $stdout=$prefix+'-'+$Stage+'-attempt'+$attempt+'.jsonl';$stderr=$prefix+'-'+$Stage+'-attempt'+$attempt+'-stderr.txt'
         if((Test-Path -LiteralPath $stdout)-or(Test-Path -LiteralPath $stderr)){throw 'Stage output exists'}
+        Write-Host ('STAGE_START name='+$Stage+' attempt='+$attempt+' default_vet=yes')
         & 'C:/Program Files/Go/bin/go.exe' @Arguments 1>$stdout 2>$stderr
         $stageExit=$LASTEXITCODE
         $events=@(Get-Content -LiteralPath $stdout|ForEach-Object{$_|ConvertFrom-Json})
@@ -26,6 +30,11 @@ function Invoke-AuditResourceStage {
             if($stageExit -ne 1 -or $buildFailed.Count -ne 0 -or ($failed -join "`n") -cne (@($ExpectedFail|Sort-Object)-join "`n")){throw ('Counterfactual did not fail exact independent assertions: '+$Stage)}
         } elseif($stageExit -ne 0 -or $failed.Count -ne 0 -or $buildFailed.Count -ne 0){throw ('Audit-resource stage failed: '+$Stage)}
         if(@($events|Where-Object{$_.Action -eq 'skip'}).Count){throw 'Unexpected skipped test'}
+        if($Stage -ne 'evidence-full'){
+            $ran=@($events|Where-Object{$_.Test -and $_.Action -eq 'run'}|ForEach-Object{$_.Test}|Sort-Object)
+            $expectedRuns=@('TestAGCDirectAuditResourcePublishedInteger','TestAGCDirectAuditResourcePublishedInteger/published_int','TestAGCDirectAuditResourcePublishedInteger/wrong_type','TestAGCDirectAuditResourcePublishedInteger/unexpected_fk')|Sort-Object
+            if(($ran -join "`n") -cne ($expectedRuns -join "`n")){throw ('Incomplete independent regression run: '+$Stage)}
+        }
         Write-Host ('STAGE_ACCEPTED name='+$Stage+' attempt='+$attempt+' expected_counterfactual='+[bool]$ExpectedFail.Count)
         return
     }
@@ -38,9 +47,24 @@ try {
     [IO.File]::WriteAllText((Join-Path $owner 'owner.txt'),[IO.Path]::GetFileName($owner))
     Write-Host ('LOCAL_OWNER audit-resource='+$owner+' process_id='+$PID)
     $env:GOPROXY='off';$env:GOSUMDB='off';$env:GOTOOLCHAIN='local';$env:GOTELEMETRY='off';$env:GOFLAGS='-mod=readonly -p=1';$env:GO111MODULE='on';$env:GOWORK='off';$env:GOMAXPROCS='1';$env:CGO_ENABLED='0';$env:GOOS='windows';$env:GOARCH='amd64';$env:GOCACHE=Join-Path $owner 'cache';$env:GOTMPDIR=Join-Path $owner 'tmp';$env:TEST_TELEMETRY_DIR=Join-Path $owner 'telemetry'
+    if($WarmCache){
+        # Only adopt an A-owned COPY of build-cache files. Never move or clear
+        # another run's cache; tests still use -count=1, normal vet and overlays.
+        $warmResolved=(Resolve-Path -LiteralPath $WarmCache).Path
+        $warmOwner=[IO.Path]::GetDirectoryName($warmResolved)
+        $cacheTarget=[IO.Path]::GetFullPath($env:GOCACHE)
+        if([IO.Path]::GetDirectoryName($warmOwner) -ne $root -or [IO.Path]::GetFileName($warmOwner) -notmatch '^\.tmp-a-gc-cache-[a-f0-9]{32}$' -or [IO.Path]::GetFileName($warmResolved) -ne 'cache' -or
+            [IO.File]::ReadAllText((Join-Path $warmOwner 'owner.txt')) -ne [IO.Path]::GetFileName($warmOwner) -or
+            ((Get-Item -Force -LiteralPath $warmOwner).Attributes -band [IO.FileAttributes]::ReparsePoint) -or ((Get-Item -Force -LiteralPath $warmResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) -or
+            [IO.Path]::GetDirectoryName($owner) -ne $root -or [IO.Path]::GetDirectoryName($cacheTarget) -ne $owner -or [IO.Path]::GetFileName($cacheTarget) -ne 'cache' -or
+            ((Get-Item -Force -LiteralPath $cacheTarget).Attributes -band [IO.FileAttributes]::ReparsePoint) -or @(Get-ChildItem -Force -LiteralPath $cacheTarget).Count){throw 'Refusing unowned/redirected cache adoption'}
+        Write-Host ('WARM_CACHE source='+$warmResolved+' target='+$cacheTarget+' tests-count=1 default-vet=yes dependencies-installed=no')
+        Remove-Item -LiteralPath $cacheTarget -Force
+        Move-Item -LiteralPath $warmResolved -Destination $cacheTarget
+    }
     [IO.File]::WriteAllText((Join-Path $env:TEST_TELEMETRY_DIR 'mode'),'off')
-    & 'C:/Program Files/Go/bin/gofmt.exe' -w (Join-Path $root 'backend/internal/systembackupevidence/download_retention_gc_references_a_test.go')
-    if($LASTEXITCODE -ne 0){throw 'A regression formatting failed'}
+    $formatting=@(& 'C:/Program Files/Go/bin/gofmt.exe' -l (Join-Path $root 'backend/internal/systembackupevidence/download_retention_gc_references_a_test.go'))
+    if($LASTEXITCODE -ne 0 -or $formatting.Count){throw 'A regression requires formatting; validation does not modify workspace inputs'}
     . (Join-Path $root 'scripts/system-backup-d-index-source-snapshot.ps1')
     . (Join-Path $root 'scripts/system-backup-a-config-proof-source.ps1')
     $manifest=New-AConfigProofSourceSnapshot -Root $root -Owner $owner
@@ -80,6 +104,7 @@ try {
         Invoke-AuditResourceStage -Stage 'evidence-full' -Arguments @('test','-json','-count=1','-timeout=900s','./internal/systembackupevidence')
     } finally {Pop-Location}
     Test-DIndexSourceSnapshot -Root $source -Manifest $manifest
+    Get-DIndexSourceFiles -Root $root|Set-Content -LiteralPath ($prefix+'-current-files.txt') -Encoding utf8
     Write-Host 'LOCAL_PASS audit-resource-postcheck=yes default-vet=yes dependencies-installed=no remote=not-run actual_mysql=not-run'
     $exitCode=0
 } finally {

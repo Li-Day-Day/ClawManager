@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -72,10 +73,23 @@ func (m *gcTaskEligibilityModel) query(q string, a []driver.NamedValue) (driver.
 		width, rows = 5, m.ranges[gcTaskRangeKey(q, args...)]
 	case downloadGCTaskSourceLeaseSQL, downloadGCTaskHolderLeaseSQL:
 		width, rows = 15, m.ranges[gcTaskRangeKey(q, args...)]
-	case downloadGCTaskBackupPromotionSQL, downloadGCTaskDrillPromotionSQL:
+	case downloadGCTaskBackupPromotionSQL, downloadGCTaskDrillPromotionSQL, downloadGCTaskPruneDependencySQL:
 		width, rows = 1, m.ranges[gcTaskRangeKey(q, args...)]
 	default:
 		for _, kind := range []string{"backup", "drill", "preflight", "artifact_verify"} {
+			if kind != "backup" && q == downloadGCTaskDependentSQL(kind) {
+				width = 25
+				if len(args) != 1 {
+					return nil, true, errors.New("dependent arguments")
+				}
+				rows = cloneGCEarlyRows(m.ranges[gcTaskRangeKey(q, args...)])
+				for _, row := range m.tasks {
+					if row[3] == kind && row[14] == args[0] {
+						rows = append(rows, append([]driver.Value(nil), row...))
+					}
+				}
+				sort.Slice(rows, func(i, j int) bool { a, _ := rows[i][0].(int64); b, _ := rows[j][0].(int64); return a < b })
+			}
 			if q == downloadGCTaskRetrySQL(kind) {
 				width, rows = 1, m.ranges[gcTaskRangeKey(q, args...)]
 			}
@@ -164,7 +178,7 @@ func newGCTaskEligibilityModel(t *testing.T, database sec.DatabaseIdentity, inst
 		t.Fatal(err)
 	}
 	m := &gcTaskEligibilityModel{database: database, installation: installation, kind: kind, ownerID: owner, backup: backup, tasks: map[string][]driver.Value{}, ranges: map[string][][]driver.Value{}, service: s}
-	for _, table := range []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions"} {
+	for _, table := range []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions", "system_backup_prune_items"} {
 		m.catalog = append(m.catalog, []driver.Value{table, "BASE TABLE", "InnoDB"})
 	}
 	row := func(kind, id string, created time.Time) []driver.Value {

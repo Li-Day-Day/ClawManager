@@ -2,28 +2,36 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { BackupTaskKind, BackupTaskResource } from './backupApiRead';
 import { readBackupLiveDetail } from './backupLiveDetail';
-import type { BackupDetailSelection } from './backupLiveDetail';
+import type { BackupDetailReader, BackupDetailSelection } from './backupLiveDetail';
 import { systemBackupReadService } from '../../../services/systemBackupReadService';
 import { useBackupText } from './useBackupText';
 import { formatBytes } from './backupReadModel';
 import BackupLiveActivity from './BackupLiveActivity.tsx';
+import BackupEvidenceDownload from './BackupEvidenceDownload.tsx';
 
 type DetailState = { kind: 'loading' } | { kind: 'error' }
   | { kind: 'ready'; detail: BackupTaskResource[BackupTaskKind] };
 
-export default function BackupLiveDetail({ selection, close }: { selection: BackupDetailSelection; close: () => void }) {
+export default function BackupLiveDetail({ selection, close, reader = systemBackupReadService, localReport }: {
+  selection: BackupDetailSelection; close: () => void; reader?: BackupDetailReader;
+  localReport?: (evidence: { public_id: string; sha256: string }) => ReactNode;
+}) {
   const { b, label, date, number, list, locale } = useBackupText();
   const [state, setState] = useState<DetailState>({ kind: 'loading' });
   const [revision, setRevision] = useState(0);
   const [section, setSection] = useState<'summary' | 'events' | 'logs'>('summary');
   const { kind, public_id, origin_installation_id, row_version } = selection;
+  const downloadEvidence = state.kind === 'ready'
+    ? state.detail.verifier_summary.report_evidence ?? (state.detail.schema_version === 'system-backup-artifact-verification-detail.v1'
+      ? state.detail.health_report_evidence : null)
+    : null;
   useEffect(() => {
     const controller = new AbortController();
-    readBackupLiveDetail(systemBackupReadService, { kind, public_id, origin_installation_id, row_version }, controller.signal)
+    readBackupLiveDetail(reader, { kind, public_id, origin_installation_id, row_version }, controller.signal)
       .then((detail) => { if (!controller.signal.aborted) setState({ kind: 'ready', detail }); })
       .catch(() => { if (!controller.signal.aborted) setState({ kind: 'error' }); });
     return () => controller.abort();
-  }, [kind, public_id, origin_installation_id, row_version, revision]);
+  }, [kind, public_id, origin_installation_id, row_version, revision, reader]);
 
   const buttonClass = 'rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700';
   const fields: [string, ReactNode][] = [];
@@ -78,8 +86,8 @@ export default function BackupLiveDetail({ selection, close }: { selection: Back
           [b('detailSourceArtifact'), detail.source.source_public_id],
           [b('verificationScope'), label(detail.verification_scope)],
           [b('verificationDecision'), label(detail.decision_reason)],
-          [b('readabilityBefore'), detail.usable_before ? b('readable') : b('unreadable')],
-          [b('readabilityAfter'), detail.usable_after ? b('readable') : b('unreadable')],
+          [b('readabilityBefore'), detail.usable_before === null ? b('status_unknown') : detail.usable_before ? b('readable') : b('unreadable')],
+          [b('readabilityAfter'), detail.usable_after === null ? b('status_unknown') : detail.usable_after ? b('readable') : b('unreadable')],
           [b('artifactState'), detail.artifact_state_after === null ? '—' : label(detail.artifact_state_after)],
           [b('unreadableReason'), label(detail.unusable_reason_after)],
         );
@@ -94,7 +102,7 @@ export default function BackupLiveDetail({ selection, close }: { selection: Back
         <button type="button" className={buttonClass} onClick={close}>{b('detailClose')}</button>
       </div>
     </div>
-    <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={b('detailViews')}>{(['summary', 'events', 'logs'] as const).map((view) =>
+    <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={b('detailViews')}>{(localReport ? ['summary'] as const : ['summary', 'events', 'logs'] as const).map((view) =>
       <button type="button" key={view} className={buttonClass} aria-pressed={section === view}
         disabled={view === 'logs' && state.kind !== 'ready'} onClick={() => setSection(view)}>{b(view)}</button>)}</div>
     {(section === 'summary' || section === 'logs' && state.kind !== 'ready') && <>
@@ -102,6 +110,8 @@ export default function BackupLiveDetail({ selection, close }: { selection: Back
       {state.kind === 'error' && <p className="mt-4 text-sm text-red-700" role="alert">{b('readError')}</p>}
       {state.kind === 'ready' && <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-3">{fields.map(([name, value]) =>
         <div key={name} className="min-w-0"><dt className="text-slate-500">{name}</dt><dd className="mt-1 break-words text-slate-900">{value}</dd></div>)}</dl>}
+      {downloadEvidence !== null && <div className="mt-5">{localReport ? localReport(downloadEvidence) : <BackupEvidenceDownload
+        installation={origin_installation_id} evidenceId={downloadEvidence.public_id} />}</div>}
     </>}
     {(section === 'events' || section === 'logs' && state.kind === 'ready') &&
       <BackupLiveActivity key={`${revision}:${section}`} selection={selection} channel={section} viewEvents={() => setSection('events')} />}

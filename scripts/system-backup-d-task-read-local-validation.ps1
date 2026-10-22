@@ -49,7 +49,7 @@ cat /tmp/tagged.jsonl
 if [ "$result" -ne 0 ]; then exit "$result"; fi
 printf 'LOCAL_STAGE live-read-http-focused default-vet=yes actual-mysql=no\n'
 set +e
-go test -mod=readonly -p=2 -count=1 -timeout=180s -json ./cmd/server/system_backup_read_live.go ./cmd/server/system_backup_read_live_test.go > /tmp/http.jsonl 2>&1
+go test -mod=readonly -p=2 -count=1 -timeout=180s -json ./cmd/server/system_backup_read_live.go ./cmd/server/system_backup_read_cursor_key.go ./cmd/server/system_backup_read_live_test.go ./cmd/server/system_backup_read_cursor_key_test.go > /tmp/http.jsonl 2>&1
 result=$?
 set -e
 cat /tmp/http.jsonl

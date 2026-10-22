@@ -241,11 +241,57 @@ func TestABusinessRestoreRowsMySQL(t *testing.T) {
 	}
 	readProof := &businessSQLReadProof{database: databaseName, uuid: uuid, account: readerName, nonce: nonce,
 		registry: scope.registrySHA, schema: scope.schemaSHA, evidence: binding.Dump.EvidenceRef,
-		counts: SourceSnapshot{Tables: append([]TableCount(nil), binding.Dump.Snapshot.Tables...)}, allowed: allowed}
-	verifier := SQLRestoreVerifier{DB: reader, Proof: readProof}
+		counts: cloneSourceSnapshot(binding.Dump.Snapshot), allowed: allowed}
+	verifier := businessReportSQLVerifier{SQLRestoreVerifier: SQLRestoreVerifier{DB: reader, Proof: readProof}, t: t}
 	checks, err := verifier.VerifyRestoreTarget(ctx, scope, binding.Dump.Snapshot, binding.Dump.EvidenceRef)
-	if err != nil || len(checks.Users) != 11 || len(checks.AIGateway) != 13 || readProof.calls != 2 {
-		t.Fatal("real SELECT-only twenty-four-check verification failed")
+	if err != nil || len(checks.Users) != 11 || len(checks.AIGateway) != 14 || readProof.calls != 2 {
+		t.Fatal("real SELECT-only twenty-five-check verification failed")
+	}
+
+	// Same row counts and inert-state checks must not hide cost drift. Each
+	// injection is restored before continuing in this run-owned database.
+	originalCost := rows.Gateway.Costs[0]
+	if !t.Run("cost_snapshot_concurrent_commit", func(t *testing.T) {
+		businessCostSnapshotConcurrentCommit(t, ctx, readerCfg, reader, database, scope, binding.Dump.Snapshot, originalCost, uuid, nonce)
+	}) {
+		t.Fatal("concurrent cost snapshot probe failed")
+	}
+	for _, mutation := range []struct{ name, set string }{
+		{"money", "estimated_cost=estimated_cost+0.00000001"},
+		{"tokens", "total_tokens=total_tokens+1"},
+		{"currency_case", "currency='usd'"},
+		{"actual_NULL", "actual_cost=NULL"},
+	} {
+		t.Run("cost_aggregate_"+mutation.name, func(t *testing.T) {
+			if _, err := database.ExecContext(ctx, "UPDATE cost_records SET "+mutation.set+" WHERE id=?", originalCost.ID); err != nil {
+				t.Fatal("inject cost drift", err)
+			}
+			got, err := verifier.VerifyRestoreTarget(ctx, scope, binding.Dump.Snapshot, binding.Dump.EvidenceRef)
+			if !errors.Is(err, ErrRestoreNormalizationMismatch) || len(got.AIGateway) != 14 {
+				t.Error("real same-count aggregate drift accepted", err)
+			} else {
+				for _, check := range allCategoryChecks(got) {
+					if check.ID == "ai_gateway.restore_cost_aggregates" {
+						if check.Status != "failed" {
+							t.Error("aggregate mismatch missing")
+						}
+					} else if check.Status != "passed" {
+						t.Error("same-count drift changed unrelated check", check.ID)
+					}
+				}
+			}
+			if _, err := database.ExecContext(ctx, "UPDATE cost_records SET estimated_cost=?,total_tokens=?,currency=?,actual_cost=? WHERE id=?", originalCost.EstimatedCost, originalCost.TotalTokens, originalCost.Currency, originalCost.ActualCost, originalCost.ID); err != nil {
+				t.Fatal("restore cost fixture", err)
+			}
+		})
+	}
+	if t.Failed() {
+		t.Fatal("cost aggregate SQL drift checks failed")
+	}
+	if !t.Run("report_record_deleted", func(t *testing.T) {
+		businessReportRecordDeletion(t, ctx, database, verifier, scope, binding.Dump.Snapshot, binding.Dump.EvidenceRef, cases)
+	}) {
+		t.Fatal("record-deletion report probe failed")
 	}
 	if _, err := database.ExecContext(ctx, "UPDATE enterprise_auth_settings SET ldap_bind_password_ciphertext=NULL WHERE id=101"); err != nil {
 		t.Fatal("inject NULL/inheritance mismatch")
@@ -275,6 +321,11 @@ func TestABusinessRestoreRowsMySQL(t *testing.T) {
 	input.Models[0].Description = nil
 	input.Models[0].ProviderModelsJSON = nil
 	input.Gateway.CostSources[0].ActualCost = nil
+	binding.Dump.Snapshot.CostAggregateSHA256, err = costSourceAggregateHash(input.Gateway.CostSources)
+	if err != nil {
+		t.Fatal(err)
+	}
+	proof.wantBinding = cloneBusinessRestoreBinding(binding)
 	input.Gateway.InvocationSources[0].RequestPayloadPresent = false
 	input.Gateway.InvocationSources[0].ResponsePayloadPresent = false
 	input.Gateway.InvocationSources[0].ErrorMessagePresent = false
@@ -290,6 +341,11 @@ func TestABusinessRestoreRowsMySQL(t *testing.T) {
 		t.Fatal("write nullable full batch")
 	}
 	businessSQLRoundtrip(t, ctx, database, cases, metadata)
+	readProof.counts = cloneSourceSnapshot(binding.Dump.Snapshot)
+	checks, err = verifier.VerifyRestoreTarget(ctx, scope, binding.Dump.Snapshot, binding.Dump.EvidenceRef)
+	if err != nil || len(checks.AIGateway) != 14 {
+		t.Fatal("nullable cost aggregate verification failed", err)
+	}
 	t.Log("PASS A business SQL NULL preservation and exact decimal roundtrip")
 	clearBusinessSQLFixture(t, ctx, database, cases)
 	// A bounded volume test, not the cross-owner large-smoke.v1 release gate.
@@ -322,7 +378,7 @@ func TestABusinessRestoreRowsMySQL(t *testing.T) {
 		t.Fatal("write bounded-volume batch")
 	}
 	businessSQLRoundtrip(t, ctx, database, cases, metadata)
-	readProof.counts = SourceSnapshot{Tables: append([]TableCount(nil), binding.Dump.Snapshot.Tables...)}
+	readProof.counts = cloneSourceSnapshot(binding.Dump.Snapshot)
 	if _, err := verifier.VerifyRestoreTarget(ctx, scope, binding.Dump.Snapshot, binding.Dump.EvidenceRef); err != nil {
 		t.Fatal("bounded-volume SELECT-only verification failed")
 	}

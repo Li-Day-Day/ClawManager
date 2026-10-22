@@ -133,10 +133,17 @@ func TestPinnedMigrationTargetAndCaptureExclusion(t *testing.T) {
 				target.CatalogSHA256 = strings.Repeat("a", 64)
 			case "unknown-ledger":
 				state.applied = append(state.applied, "999_unknown.sql")
-			case "active-capture", "apply-runtime":
+			case "active-capture":
 				state.applied = state.applied[:len(state.applied)-1]
-				if name == "active-capture" {
-					state.activeGate = 1
+				state.activeGate = 1
+			case "apply-runtime":
+				// This case exercises the four-table registration runtime, not
+				// whichever unrelated migration was appended most recently.
+				state.applied = nil
+				for _, filename := range catalog.Filenames {
+					if filename != "080_add_system_backup_registration_runtime.sql" {
+						state.applied = append(state.applied, filename)
+					}
 				}
 			}
 			database := sql.OpenDB(migrationPinConnector{state})

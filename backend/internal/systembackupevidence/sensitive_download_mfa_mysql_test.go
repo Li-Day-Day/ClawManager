@@ -83,7 +83,7 @@ func decodeADownloadMFAInputs(raw []byte) (aDownloadMFAInputs, error) {
 		return out, ErrInvalid
 	}
 	var extra any
-	if len(seen) != 9 || d.Decode(&extra) != io.EOF || json.Unmarshal(raw, &out) != nil || out.Kind != "a_download_mfa_probe_inputs.v1" || out.Catalog != "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237" || len(out.Files) != 95 || out.CanonicalSHA != "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1" || hash([]byte(out.CanonicalDDL)) != out.CanonicalSHA || out.OwnershipSHA != "dc0687839ce07646688b7a53d3c7ddda20ea5b269999d499a0730e2d2e0f50a9" || hash([]byte(out.OwnershipDDL)) != out.OwnershipSHA || !strings.HasPrefix(out.ConfigSchema, "CREATE TABLE IF NOT EXISTS system_backup_configs (") {
+	if len(seen) != 9 || d.Decode(&extra) != io.EOF || json.Unmarshal(raw, &out) != nil || out.Kind != "a_download_mfa_probe_inputs.v1" || out.Catalog != "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe" || len(out.Files) != 96 || out.CanonicalSHA != "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1" || hash([]byte(out.CanonicalDDL)) != out.CanonicalSHA || out.OwnershipSHA != "dc0687839ce07646688b7a53d3c7ddda20ea5b269999d499a0730e2d2e0f50a9" || hash([]byte(out.OwnershipDDL)) != out.OwnershipSHA || !strings.HasPrefix(out.ConfigSchema, "CREATE TABLE IF NOT EXISTS system_backup_configs (") {
 		return aDownloadMFAInputs{}, ErrInvalid
 	}
 	for i, name := range out.Files {
@@ -134,7 +134,7 @@ func TestASensitiveDownloadMFAMySQLSeed(t *testing.T) {
 			case "trailing":
 				raw = append(raw, []byte(`{}`)...)
 			case "catalog":
-				raw = bytes.Replace(raw, []byte("2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"), []byte(strings.Repeat("0", 64)), 1)
+				raw = bytes.Replace(raw, []byte("0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"), []byte(strings.Repeat("0", 64)), 1)
 			case "ddl":
 				raw = bytes.Replace(raw, []byte("ALTER TABLE system_backup_configs"), []byte("ALTER TABLE wrong_config_table"), 1)
 			case "budget":

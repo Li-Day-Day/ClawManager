@@ -1,0 +1,33 @@
+{
+  "kind": "d_gc_owner_lifecycle_local_validation",
+  "mode": "published",
+  "exit": 0,
+  "source_postcheck": true,
+  "source_sha256": "5e4044ad6ffc8a818d7ce8b96d29fe0de5fd802a8ba657786153ce798d76cf17",
+  "stages": [
+    {
+      "stage": "dispatch",
+      "exit": 0
+    },
+    {
+      "stage": "full",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=2700s",
+        "-json",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupevidence"
+      ]
+    }
+  ],
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false,
+  "freeze_adapter_wired": false,
+  "production_approved": false
+}

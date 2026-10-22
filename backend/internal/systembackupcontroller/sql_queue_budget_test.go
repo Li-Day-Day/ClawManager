@@ -126,7 +126,7 @@ func TestSQLQueueBudgetReaderEmitsOnlyClosedLowCardinalitySamples(t *testing.T) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !state.beganRead || !state.committed || state.rolledBack || len(state.queries) != 6 || len(samples) != 25 {
+	if !state.beganRead || !state.committed || state.rolledBack || len(state.queries) != 6 || len(samples) != 26 {
 		t.Fatalf("read-only snapshot began=%t committed=%t rollback=%t queries=%d samples=%d", state.beganRead, state.committed, state.rolledBack, len(state.queries), len(samples))
 	}
 	for index, limit := range []string{"LIMIT 10001", "LIMIT 9999", "LIMIT 9998", "LIMIT 9997", "LIMIT 9996"} {
@@ -141,6 +141,9 @@ func TestSQLQueueBudgetReaderEmitsOnlyClosedLowCardinalitySamples(t *testing.T) 
 			t.Fatalf("duplicate metric labels: %s", key)
 		}
 		values[key] = sample.Value
+	}
+	if value, present := values["clawmanager_system_backup_operation_queue_deadline_utilization_ratio/////evidence_download_admission"]; !present || value != 0 {
+		t.Fatal("missing zero sample for contract download admission operation")
 	}
 	if values["clawmanager_system_backup_task_queue_deadline_utilization_ratio/backup/acceptance///"] != 2 ||
 		values["clawmanager_system_backup_task_queue_deadline_utilization_ratio/drill/functional_test///"] != 0.5 ||

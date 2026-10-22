@@ -50,6 +50,7 @@ test('entry points, scenarios, execution states and page message calls have tran
   const liveConfig = readFileSync(new URL('../src/pages/admin/backups/BackupLiveConfigHistory.tsx', import.meta.url), 'utf8');
   const overview = readFileSync(new URL('../src/pages/admin/backups/BackupOverviewReadout.tsx', import.meta.url), 'utf8');
   const operations = readFileSync(new URL('../src/pages/admin/backups/BackupLiveOperations.tsx', import.meta.url), 'utf8');
+  const download = readFileSync(new URL('../src/pages/admin/backups/BackupEvidenceDownload.tsx', import.meta.url), 'utf8');
   const keys = [
     ...backupEntryPoints.flatMap((entry) => [entry.label, entry.description]),
     ...previewScenarios.map((scenario) => `scenario_${scenario}`),
@@ -61,6 +62,7 @@ test('entry points, scenarios, execution states and page message calls have tran
     ...[...liveConfig.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
     ...[...overview.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
     ...[...operations.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
+    ...[...download.matchAll(/\bb\('([^']+)'/g)].map((match) => match[1]),
     ...operationTypes.map((kind) => `status_${kind}`),
   ];
   for (const locale of Object.keys(systemBackupTranslations)) {

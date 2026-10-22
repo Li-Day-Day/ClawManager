@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 process.chdir(fileURLToPath(new URL('../',import.meta.url)));
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const admission=fs.readFileSync('backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json','utf8');
-if(sha(admission)!=='c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f')throw Error('Original admission capsule changed; review the new scope separately');
+if(sha(admission)!=='d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0')throw Error('Original admission capsule changed; review the new scope separately');
 const ddl=fs.readFileSync('contracts/system-backup/v12/producer-authority-candidate.sql','utf8').replaceAll('\r\n','\n');
 const vectors=JSON.parse(fs.readFileSync('contracts/system-backup/v12/producer-authority-vectors.json','utf8'));
 const records={};

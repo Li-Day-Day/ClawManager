@@ -1,0 +1,106 @@
+{
+  "kind": "d_gc_freeze_session_connection_ownership_review",
+  "status": "go_lifecycle_experiment_and_protocol_requirements_only",
+  "go_version": "go1.26.1",
+  "mysql_driver": "v1.9.0",
+  "model": {
+    "path": "docs/evidence/d-gc-freeze-session-model-20261021.go",
+    "sha256": "985aa774062eccb2d357e5c61c5bdf46b564868ed71d741481d2ef6667124972",
+    "sql_transport": "in-process fake driver",
+    "main": 6,
+    "checks": 6,
+    "tests": [
+      "TestCanceledTxCanRetainSessionUntilDiscard",
+      "TestConnCloseAloneReturnsLockedSession",
+      "TestDedicatedConnSpansCommitAndUnlock",
+      "TestRollbackDoesNotReleaseSessionLock",
+      "TestTxOnlyCommitReturnsLockedSessionToPool",
+      "TestUnknownCommitDiscardsWithoutClaimingRollback"
+    ],
+    "observations": {
+      "TestTxOnlyCommitReturnsLockedSessionToPool": "tx_only_pool_reused_locked_session=yes post_commit_tx_unlock=ErrTxDone",
+      "TestDedicatedConnSpansCommitAndUnlock": "owned_conn_reserved_through_commit=yes unlock_before_pool_return=yes",
+      "TestRollbackDoesNotReleaseSessionLock": "rollback_retains_explicit_session_lock=yes",
+      "TestConnCloseAloneReturnsLockedSession": "conn_close_is_pool_return=yes raw_ErrBadConn_discards_session=yes",
+      "TestUnknownCommitDiscardsWithoutClaimingRollback": "unknown_commit_may_have_committed=yes no_rollback_claim=yes physical_discard=yes",
+      "TestCanceledTxCanRetainSessionUntilDiscard": "canceled_tx_rollback_does_not_unlock_session=yes physical_discard=yes"
+    },
+    "elapsed_seconds": 0.735,
+    "default_vet": true,
+    "exit": 0,
+    "source_postcheck": true
+  },
+  "inputs": {
+    "source_manifest": "docs/evidence/d-gc-freeze-session-20261021-r1-source.json",
+    "source_manifest_sha256": "eb65d1c231135953dee06989594d15e150b9ec02c04ab9be60b5eb69ae03576b",
+    "events_sha256": "23c1abfef218cbb5de2b565f132ccca75c29dc492a5b1d19f78d2cb476a63d4f",
+    "native_sha256": "940adea9486ec51091bb904cb8ee6fb956ab51fc2bf3b7069220af3fb28f55b9",
+    "audited_files": [
+      {
+        "path": "backend/go.mod",
+        "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/sql.go",
+        "sha256": "a33a53aae4e062d8ebac6dd984755a80f6a8414e55a409acde50b770fcf2af13"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+        "sha256": "db6aaefef633919dc76358fc6fb2cf826d6a4290a1eb8138d3199e92f4b68c7e"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+        "sha256": "daaf8a8278b786d002080581de0f2323e9de8e11fcb926ef8481e545a6b0f299"
+      },
+      {
+        "path": "backend/internal/systembackupgcmetadata/catalog.go",
+        "sha256": "cfb30e1a2956a2b9929676cf9bb8aecd4361b15beda94d91ada8661800061556"
+      },
+      {
+        "path": "backend/internal/systembackupgcmetadata/views.go",
+        "sha256": "65ff9ff446ea561d2402dbf4ac7b1be206be7b34e248c61e093eddccd1f0b0c7"
+      },
+      {
+        "path": "C:/Program Files/Go/VERSION",
+        "sha256": "72dcf2e61317b06c068d877c96e4fa6e259c7df8dcb956b6729da55d7f969877"
+      },
+      {
+        "path": "C:/Program Files/Go/src/database/sql/sql.go",
+        "sha256": "683b3e35d41b37f4c80500467fb5a56fab7cc5de922b2c3818aae6bfea971fba"
+      },
+      {
+        "path": "C:/Users/zhanghui08/go/pkg/mod/github.com/go-sql-driver/mysql@v1.9.0/connection.go",
+        "sha256": "3e71ec42bd799f219db5edebcb129ddbba0748592a10b8387ae33a8d0b99b64c"
+      }
+    ]
+  },
+  "protocol": {
+    "path": "docs/evidence/d-gc-backup-lock-protocol-requirements-20261021.json",
+    "sha256": "66b298543dc323e7684269b633e4150bd23dc1d5ac36fbe5900d53435cc7113d",
+    "mysql_tag": "mysql-8.4.8",
+    "release_commit": "0896fcd61dec11a0904166911a0126f59daaa1bf",
+    "actual_groups_required": 12,
+    "actual_groups_executed": 0
+  },
+  "cleanup": {
+    "path": "docs/evidence/d-gc-freeze-session-cleanup-20261021.json",
+    "sha256": "95359206a4f9ad9f0be5e4291a0b260722191d34a41630a21f7ae96f442c88e3",
+    "owner_absent": true
+  },
+  "decision": {
+    "reject_tx_only_freeze_hook": true,
+    "reject_pool_return_as_unlock": true,
+    "require_collector_connection_ownership": true,
+    "require_new_privilege_review": true
+  },
+  "boundaries": {
+    "runtime_changed": false,
+    "dependencies_installed": false,
+    "mysql_executed": false,
+    "ddl_blocking_proved": false,
+    "freeze_implemented": false,
+    "production_approved": false,
+    "complete_policy": false,
+    "original_six_scopes_complete": false
+  }
+}

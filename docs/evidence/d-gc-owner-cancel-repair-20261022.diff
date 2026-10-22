@@ -1,0 +1,117 @@
+diff --git "a/C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1f4f82a9253c4c4ca611e20f3f827e1d\\previous-probe.go" b/backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go
+index 8a1aa9a8..0d6c7942 100644
+--- "a/C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1f4f82a9253c4c4ca611e20f3f827e1d\\previous-probe.go"
++++ b/backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go
+@@ -22,6 +22,10 @@ type dGCLifecycleDialTrace struct {
+ 	connections []*dGCLifecycleFaultConn
+ }
+ 
++const dGCLifecycleCancelSleepSeconds = 30
++
++var dGCLifecycleCancelSQL = "SELECT SLEEP(" + strconv.Itoa(dGCLifecycleCancelSleepSeconds) + ")"
++
+ func dGCLifecyclePool(t *testing.T, f *dGCFreezeFixture) (*sql.DB, *dGCLifecycleDialTrace) {
+ 	t.Helper()
+ 	trace := &dGCLifecycleDialTrace{}
+@@ -71,12 +75,15 @@ func (trace *dGCLifecycleDialTrace) first(t *testing.T) *dGCLifecycleFaultConn {
+ 	}
+ 	return trace.connections[0]
+ }
+-func dGCLifecycleReleased(f *dGCFreezeFixture, id int64) bool {
++func dGCLifecycleReleased(f *dGCFreezeFixture, id int64, budget time.Duration) bool {
+ 	thread := f.threads[id]
+ 	if thread <= 0 {
+ 		return false
+ 	}
+-	ctx, cancel := context.WithTimeout(f.ctx, 5*time.Second)
++	// The observer is independent of the canceled transaction. Closing the client
++	// socket need not interrupt server-side SLEEP; the canceled case must allow
++	// that test-owned statement to finish before expecting disconnect cleanup.
++	ctx, cancel := context.WithTimeout(f.ctx, budget)
+ 	defer cancel()
+ 	tick := time.NewTicker(20 * time.Millisecond)
+ 	defer tick.Stop()
+@@ -111,11 +118,8 @@ func dGCLifecycleCancelQuery(t *testing.T, f *dGCFreezeFixture, ctx context.Cont
+ 	t.Helper()
+ 	done := make(chan error, 1)
+ 	go func(tx *sql.Tx) {
+-		rows, err := tx.QueryContext(ctx, "SELECT SLEEP(30)")
+-		if rows != nil {
+-			rows.Close()
+-		}
+-		done <- err
++		var slept int
++		done <- tx.QueryRowContext(ctx, dGCLifecycleCancelSQL).Scan(&slept)
+ 	}(owned.tx)
+ 	observer, stop := context.WithTimeout(f.ctx, 5*time.Second)
+ 	defer stop()
+@@ -124,7 +128,7 @@ func dGCLifecycleCancelQuery(t *testing.T, f *dGCFreezeFixture, ctx context.Cont
+ 	started := false
+ 	for !started {
+ 		var n int
+-		err := f.admin.QueryRowContext(observer, "SELECT COUNT(*) FROM performance_schema.threads WHERE THREAD_ID=? AND PROCESSLIST_ID=? AND PROCESSLIST_COMMAND='Query' AND PROCESSLIST_INFO='SELECT SLEEP(30)'", f.threads[id], id).Scan(&n)
++		err := f.admin.QueryRowContext(observer, "SELECT COUNT(*) FROM performance_schema.threads WHERE THREAD_ID=? AND PROCESSLIST_ID=? AND PROCESSLIST_COMMAND='Query' AND PROCESSLIST_INFO=?", f.threads[id], id, dGCLifecycleCancelSQL).Scan(&n)
+ 		if err != nil {
+ 			cancel()
+ 			t.Fatal("lifecycle cancellation query witness unavailable")
+@@ -143,8 +147,8 @@ func dGCLifecycleCancelQuery(t *testing.T, f *dGCFreezeFixture, ctx context.Cont
+ 	cancel()
+ 	select {
+ 	case err := <-done:
+-		if err == nil {
+-			t.Fatal("canceled holder query unexpectedly succeeded")
++		if !errors.Is(err, context.Canceled) {
++			t.Fatal("holder query did not report the original context cancellation", err)
+ 		}
+ 	case <-time.After(10 * time.Second):
+ 		t.Fatal("lifecycle canceled query did not stop")
+@@ -160,6 +164,13 @@ func TestDDownloadGCOwnerLifecycleMySQL(t *testing.T) {
+ 	}
+ 	for n, name := range dGCOwnerLifecycleCases {
+ 		t.Run(name, func(t *testing.T) {
++			releaseBudget := 5 * time.Second
++			if name == "canceled_holder" {
++				// Retain the long in-flight query and exact thread witness. Client
++				// cancellation is checked separately within ten seconds; server cleanup
++				// gets the full SLEEP duration plus ten seconds, without KILL/UNLOCK.
++				releaseBudget = time.Duration(dGCLifecycleCancelSleepSeconds)*time.Second + 10*time.Second
++			}
+ 			ctx, cancel := context.WithTimeout(f.ctx, 30*time.Second)
+ 			defer cancel()
+ 			db, trace := dGCLifecyclePool(t, f)
+@@ -169,7 +180,7 @@ func TestDDownloadGCOwnerLifecycleMySQL(t *testing.T) {
+ 			var id int64
+ 			t.Cleanup(func() {
+ 				_ = owned.close()
+-				if id > 0 && f.threads[id] > 0 && !dGCLifecycleReleased(f, id) {
++				if id > 0 && f.threads[id] > 0 && !dGCLifecycleReleased(f, id, releaseBudget) {
+ 					t.Errorf("CLEANUP_PENDING owner lifecycle connection=%d thread=%d", id, f.threads[id])
+ 				}
+ 			})
+@@ -294,10 +305,12 @@ func TestDDownloadGCOwnerLifecycleMySQL(t *testing.T) {
+ 			if again := owned.close(); again != closeErr {
+ 				t.Fatal("repeated cleanup erased an unknown result")
+ 			}
+-			if !dGCLifecycleReleased(f, id) {
++			releaseStarted := time.Now()
++			if !dGCLifecycleReleased(f, id, releaseBudget) {
+ 				t.Errorf("CLEANUP_PENDING owner lifecycle connection=%d thread=%d", id, f.threads[id])
+ 				t.Fatal("exact holder ticket removal was not observed")
+ 			}
++			releaseElapsed := time.Since(releaseStarted)
+ 			if got := dGCLifecycleRead(t, f, rowID); got != expectedValue {
+ 				t.Fatal("fresh observer saw the wrong canary outcome")
+ 			}
+@@ -316,8 +329,10 @@ func TestDDownloadGCOwnerLifecycleMySQL(t *testing.T) {
+ 			if freshID <= 0 || freshID == id || freshServer != f.server || freshDB != f.db || freshUID != f.uid {
+ 				t.Fatal("cleanup reused the original physical session")
+ 			}
+-			t.Logf("OWNER_LIFECYCLE case=%s connection=%d thread=%d commit=%s rollback=%s unlock=%s wire_ok_dropped=%t canary=%d original_ticket_absent=yes fresh_connection=%d", name, id, f.threads[id], commitOutcome, rollbackOutcome, unlockOutcome, wantDropped, expectedValue, freshID)
++			t.Logf("OWNER_LIFECYCLE case=%s connection=%d thread=%d commit=%s rollback=%s unlock=%s wire_ok_dropped=%t canary=%d original_ticket_absent=yes fresh_connection=%d release_wait=%s release_budget=%s", name, id, f.threads[id], commitOutcome, rollbackOutcome, unlockOutcome, wantDropped, expectedValue, freshID, releaseElapsed, releaseBudget)
+ 		})
+ 	}
+-	t.Log("PASS owner-lifecycle cases=8 wire_reply_loss=commit/rollback/unlock production_connection_owner=yes scope=synthetic full_gc=not_run freeze_adapter=not_wired role_approval=no production_approval=no")
++	if !t.Failed() {
++		t.Log("PASS owner-lifecycle cases=8 wire_reply_loss=commit/rollback/unlock production_connection_owner=yes scope=synthetic full_gc=not_run freeze_adapter=not_wired role_approval=no production_approval=no")
++	}
+ }

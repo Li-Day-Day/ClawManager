@@ -1,0 +1,103 @@
+{
+  "kind": "d_control_exclusion_35_native",
+  "exit": 0,
+  "source_postcheck": true,
+  "published": true,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3ef89a46567f4881b0f0cd0622dc817b",
+    "removed": true,
+    "files_removed": 2827,
+    "test_build_artifacts_removed": true,
+    "cleaned_utc": "2026-10-22T04:37:29.1230798Z"
+  },
+  "error": null,
+  "stages": [
+    {
+      "stage": "baseline",
+      "exit": 1,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupresources"
+      ]
+    },
+    {
+      "stage": "dependencies",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-deps",
+        "-test",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./internal/systembackupresources"
+      ]
+    },
+    {
+      "stage": "counterfactual",
+      "exit": 1,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-run",
+        "^TestControlExclusionCompletionContext$",
+        "-json",
+        "./internal/systembackupresources"
+      ]
+    },
+    {
+      "stage": "isolated",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupresources"
+      ]
+    },
+    {
+      "stage": "node-isolated",
+      "exit": 0
+    },
+    {
+      "stage": "dto-isolated",
+      "exit": 0
+    },
+    {
+      "stage": "published",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupresources"
+      ]
+    },
+    {
+      "stage": "node-published",
+      "exit": 0
+    },
+    {
+      "stage": "dto-published",
+      "exit": 0
+    }
+  ],
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false
+}

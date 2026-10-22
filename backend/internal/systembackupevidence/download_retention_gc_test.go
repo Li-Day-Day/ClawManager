@@ -22,6 +22,7 @@ type retentionGCModel struct {
 	*admissionTxDB
 	early                         *gcEarlyModel
 	taskEligibility               *gcTaskEligibilityModel
+	producerEligibility           *gcProducerModel
 	direct                        *gcDirectModel
 	stone, savedStone             []driver.Value
 	worker                        []driver.Value
@@ -33,9 +34,20 @@ type retentionGCModel struct {
 	afterWrite                    func(string)
 	mutateRead                    func(string, []driver.Value) []driver.Value
 	resurrectPublic, resurrectKey bool
+	connectionEvents              []string
 }
 
-func (d *retentionGCModel) Connect(context.Context) (driver.Conn, error) { return d, nil }
+func (d *retentionGCModel) Connect(context.Context) (driver.Conn, error) {
+	d.connectionEvents = append(d.connectionEvents, "connect")
+	return d, nil
+}
+func (d *retentionGCModel) Close() error {
+	if d.active {
+		d.t.Error("GC connection closed before transaction completed")
+	}
+	d.connectionEvents = append(d.connectionEvents, "close")
+	return nil
+}
 func (d *retentionGCModel) BeginTx(ctx context.Context, o driver.TxOptions) (driver.Tx, error) {
 	_, err := d.admissionTxDB.BeginTx(ctx, o)
 	d.savedStone = append([]driver.Value(nil), d.stone...)
@@ -45,6 +57,11 @@ func (d *retentionGCModel) BeginTx(ctx context.Context, o driver.TxOptions) (dri
 	}
 	if d.taskEligibility != nil {
 		d.taskEligibility.begin()
+	}
+	if d.producerEligibility != nil {
+		if _, e := d.producerEligibility.BeginTx(ctx, o); e != nil {
+			return nil, e
+		}
 	}
 	if d.direct != nil {
 		d.direct.begin()
@@ -58,6 +75,9 @@ func (d *retentionGCModel) Rollback() error {
 	}
 	if d.taskEligibility != nil {
 		d.taskEligibility.rollback()
+	}
+	if d.producerEligibility != nil {
+		_ = d.producerEligibility.Rollback()
 	}
 	if d.direct != nil {
 		d.direct.rollback()
@@ -101,6 +121,15 @@ func (d *retentionGCModel) QueryContext(ctx context.Context, q string, a []drive
 			return rows, err
 		}
 	}
+	if d.producerEligibility != nil {
+		producerQuery := q == downloadGCTaskDatabaseSQL || q == downloadGCProducerTablesSQL
+		for _, definition := range producerDownloadDefinitions() {
+			producerQuery = producerQuery || q == producerDownloadSQL(definition, true) || q == producerDownloadSQL(definition, false)
+		}
+		if producerQuery {
+			return d.producerEligibility.QueryContext(ctx, q, a)
+		}
+	}
 	switch q {
 	case downloadGCAbsentOperationPublicSQL, downloadGCAbsentOperationKeySQL:
 		if a[0].Value != d.saved.op[1] || q == downloadGCAbsentOperationPublicSQL && a[1].Value != d.saved.op[0] || q == downloadGCAbsentOperationKeySQL && (a[1].Value != d.saved.op[4] || a[2].Value != d.saved.op[5]) {
@@ -135,7 +164,7 @@ func (d *retentionGCModel) QueryContext(ctx context.Context, q string, a []drive
 		return d.row(q, d.stone...)
 	case downloadGCEvidenceHintSQL:
 		i := d.record.Manifest.Identity
-		return d.row(q, i.Installation, i.OwnerType, i.OwnerID, i.Type, i.Classification, i.ContentHash, i.ContentSize, i.Media)
+		return d.row(q, i.Installation, i.OwnerType, i.OwnerID, i.Type, i.Classification, i.ContentHash, i.ContentSize, i.Media, d.record.CreatedAt)
 	case downloadGCDeletedEvidenceSQL:
 		r := d.record
 		i := r.Manifest.Identity
@@ -143,9 +172,9 @@ func (d *retentionGCModel) QueryContext(ctx context.Context, q string, a []drive
 			return nil, errors.New("GC evidence before prefix")
 		}
 		if r.State != "deleted" || r.Ref != (Ref{}) || r.Claim != "" || !r.ClaimUntil.IsZero() || len(r.Manifest.Chunks) != 0 {
-			return &admissionTxRows{width: 11}, nil
+			return &admissionTxRows{width: 12}, nil
 		}
-		return d.row(q, i.Installation, i.OwnerType, i.OwnerID, i.Type, i.Classification, i.ContentHash, i.ContentSize, i.Media, r.RowVersion, r.ExpiresAt, nullTime(r.ProtectedUntil))
+		return d.row(q, i.Installation, i.OwnerType, i.OwnerID, i.Type, i.Classification, i.ContentHash, i.ContentSize, i.Media, r.RowVersion, r.ExpiresAt, nullTime(r.ProtectedUntil), r.CreatedAt)
 	case downloadGCEmptyChunksSQL:
 		if d.chunk {
 			return admissionTxRow(int64(0)), nil
@@ -256,6 +285,7 @@ type retentionGCPolicy struct {
 	denyLock, denyGuard, nilGuard bool
 	onCheck                       func(int)
 	taskGuard                     *DownloadGCTaskEligibilityGuard
+	producerGuard                 *DownloadGCProducerEligibilityGuard
 }
 
 func (p *retentionGCPolicy) Lock(ctx context.Context, tx *sql.Tx, s DownloadRetentionGCScope, at time.Time) (DownloadRetentionGCGuard, error) {
@@ -274,6 +304,18 @@ func (p *retentionGCPolicy) Lock(ctx context.Context, tx *sql.Tx, s DownloadRete
 		p.taskGuard = guard
 		p.d.taskEligibility.rechecking = true
 	}
+	if p.d.producerEligibility != nil {
+		source, err := NewSQLDownloadGCProducerEligibility(DownloadGCProducerEligibilityConfig{Database: s.Database, Installation: s.Installation, Root: "evidence"})
+		if err != nil {
+			return nil, err
+		}
+		guard, err := source.Lock(ctx, tx, s, at)
+		if err != nil {
+			return nil, err
+		}
+		p.producerGuard = guard
+		p.d.producerEligibility.rechecking = true
+	}
 	p.d.ownerLocked = true
 	return p, nil
 }
@@ -287,6 +329,9 @@ func (p *retentionGCPolicy) Recheck(ctx context.Context, tx *sql.Tx, s DownloadR
 	}
 	if p.taskGuard != nil {
 		return p.taskGuard.Recheck(ctx, tx, s, at)
+	}
+	if p.producerGuard != nil {
+		return p.producerGuard.Recheck(ctx, tx, s, at)
 	}
 	return nil
 }
@@ -304,6 +349,7 @@ type retentionGCFixture struct {
 func rewindDownloadGCGroup(t *testing.T, d *admissionTxDB, overdue time.Duration) {
 	t.Helper()
 	delta := d.m.receipt[15].(time.Time).Sub(d.now) + overdue
+	d.record.CreatedAt = d.record.CreatedAt.Add(-delta)
 	for _, values := range [][]driver.Value{d.m.op, d.m.receipt, d.nonce, d.resultRetention} {
 		for n, v := range values {
 			if at, ok := v.(time.Time); ok {
@@ -362,8 +408,13 @@ func rewindDownloadGCGroup(t *testing.T, d *admissionTxDB, overdue time.Duration
 func newRetentionGCFixture(t *testing.T) *retentionGCFixture {
 	t.Helper()
 	f, operation := retentionGroupFixture(t, true)
+	return newRetentionGCFixtureFromGroup(t, f, operation, time.Hour)
+}
+
+func newRetentionGCFixtureFromGroup(t *testing.T, f *admissionTxFixture, operation string, overdue time.Duration) *retentionGCFixture {
+	t.Helper()
 	p := newAdmissionPinnedFixtureFromBase(t, f)
-	rewindDownloadGCGroup(t, f.db, time.Hour)
+	rewindDownloadGCGroup(t, f.db, overdue)
 	r := f.db.record
 	r.State = "deleted"
 	r.Ref = Ref{}

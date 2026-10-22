@@ -5,6 +5,7 @@ import { backupReadNotReady } from './backupLiveRecords';
 import { readBackupOperation, readBackupOperations } from './backupLiveOperations';
 import type { BackupOperationPage, BackupOperationSelection } from './backupLiveOperations';
 import { useBackupText } from './useBackupText';
+import BackupEvidenceDownload from './BackupEvidenceDownload.tsx';
 
 type PageState = { kind: 'loading' | 'error' | 'unavailable' } | { kind: 'ready'; page: BackupOperationPage };
 type DetailState = null | { kind: 'loading' | 'error' | 'unavailable' } | { kind: 'ready'; value: SystemBackupOperation };
@@ -87,6 +88,8 @@ export default function BackupLiveOperations({ installation }: { installation: s
           [b('operationUpdatedAt'), date(detail.value.updated_at)], [b('operationFailure'), label(detail.value.failure_category)],
           [b('configVersion'), detail.value.result_config_version === null ? '—' : `v${number(detail.value.result_config_version)}`],
         ].map(([name, value]) => <div key={name}><dt className="text-slate-500">{name}</dt><dd className="mt-1 break-words text-slate-900">{value}</dd></div>)}</dl>
+        {detail.value.target_type === 'evidence' && <div className="mt-4"><BackupEvidenceDownload
+          installation={detail.value.origin_installation_id} evidenceId={detail.value.target_public_id} /></div>}
       </article>}
     </div>}
   </section>;

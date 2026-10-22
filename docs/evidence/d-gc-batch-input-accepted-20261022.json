@@ -1,0 +1,43 @@
+{
+  "kind": "d_gc_batch_input_isolation_acceptance",
+  "stages": {
+    "baseline": {
+      "exit": 1,
+      "roots": 0,
+      "passed": 2,
+      "failed": [
+        "TestGCRuntimeFailureCallbackCannotReplaceLaterSignal",
+        "TestGCRuntimeFreezesBatchInputs",
+        "TestGCRuntimeFreezesBatchInputs/callback/invalid_ids",
+        "TestGCRuntimeFreezesBatchInputs/callback/valid_ids",
+        "TestGCRuntimeFreezesBatchInputs/journal/invalid_ids",
+        "TestGCRuntimeFreezesBatchInputs/journal/valid_ids"
+      ],
+      "source_sha256": "4f19e789bc8991a025c35605c7022a6a121cd610d19336198f8c69eedcacf1c2",
+      "input_count": 1576,
+      "stdout_sha256": "917ac7a42557f67d9e97369efe9dd5cf2451a1d5f88491bc9f674ff30b125e9c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate": {
+      "exit": 0,
+      "roots": 12,
+      "passed": 70,
+      "failed": [],
+      "source_sha256": "8b8789b9ab9aeca34559f23c6ed2e05837b45e3c6e815351e3e3df056aee1a25",
+      "input_count": 1576,
+      "stdout_sha256": "504f9ce7cbd17ec8d39b612c8e60d59f02f4694365d8d40fe937dfb6e7d41895",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "changed": [
+    "backend/internal/systembackupevidence/gc_runtime.go"
+  ],
+  "current_candidate_matches": true,
+  "tested_scope": "frozen GC runtime, journal and nil-adapter regressions; not full package or entire current workspace",
+  "cleaned": true,
+  "files_removed": 3679,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false,
+  "production_approved": false
+}

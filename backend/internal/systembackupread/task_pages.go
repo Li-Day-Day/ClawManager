@@ -169,7 +169,7 @@ func (r *Reader) ListTasks(ctx context.Context, request PageRequest) (TaskPage, 
 		if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 			return TaskPage{}, scopeReadFailure(err)
 		}
-		if err := tx.Commit(); err != nil {
+		if err := tx.Commit(); err != nil || ctx.Err() != nil {
 			return TaskPage{}, ErrUnavailable
 		}
 		return page, nil
@@ -221,7 +221,7 @@ func (r *Reader) ListTasks(ctx context.Context, request PageRequest) (TaskPage, 
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return TaskPage{}, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return TaskPage{}, ErrUnavailable
 	}
 	return page, nil

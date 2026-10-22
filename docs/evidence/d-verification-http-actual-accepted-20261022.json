@@ -1,0 +1,137 @@
+{
+  "kind": "d_verification_http_actual_acceptance.v1",
+  "status": "actual_mysql_16_of_16_history_http_accepted_synthetic_only",
+  "log": {
+    "path": "docs/evidence/d-verification-detail-remote-20261022-162855-be1f39f2.txt",
+    "size": 21648,
+    "sha256": "536058269a426273f5453aa0df955d718fec4a7199cdc85f8d7d9c3de7935e94"
+  },
+  "source_manifest": {
+    "path": "docs/evidence/d-verification-detail-remote-20261022-162855-be1f39f2-source.json",
+    "size": 309743,
+    "sha256": "50bbe2066abf090a9f1236e9d39404f130a5ab538417496e3f87da1b8f430664"
+  },
+  "wrapper_result": {
+    "path": "docs/evidence/d-verification-detail-remote-20261022-162855-be1f39f2-source.json.result.json",
+    "size": 646,
+    "sha256": "56c18cd877bf5d8c809310d343f8d03e0c645890427795d128117059338ac8d7"
+  },
+  "source_sha256": "e83adbae3f4ce1a2f9bec43ab6e73ad9577be67ebb9c8aa1f174d9185b914b61",
+  "source_files": 1576,
+  "manifest_entries_match_current_bytes": true,
+  "current_file_set_checked": false,
+  "critical_inputs": [
+    {
+      "path": "scripts/system-backup-d-verification-detail-validation.ps1",
+      "size": 6855,
+      "sha256": "1bf261ccfbb115db4789837ce2e04395587e1bd318d1367292198fc55ca6ad30"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 58321,
+      "sha256": "bdedbf2ba3061d73b6b6d08c0032831ff5cacfd4c4d30bcb6b2466ea20c4a3d4"
+    },
+    {
+      "path": "scripts/system-backup-a-admin-read-phase.sh",
+      "size": 8934,
+      "sha256": "850f37a9ada38b2c58bf17db228bc4f59acce087347fbf7bf2ac7a1ea1a47dab"
+    },
+    {
+      "path": "scripts/system-backup-a-admin-read-probe.sql",
+      "size": 2383,
+      "sha256": "1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_mysql_test.go",
+      "size": 18005,
+      "sha256": "3737fde04ced81bc3dbbfc928886a9739dc0be4f39ede870fa6f052778bca453"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_verification_history_mysql_test.go",
+      "size": 14098,
+      "sha256": "10a5110c1a12f75b74fcbd63764d96f5e582a0d3dcf8d8a9e3f27a907a8e7288"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "size": 10158,
+      "sha256": "b005d2564a223ba9c3e8b4da2ec40b4e0bd4c2e0e315cce586b10da96a58d261"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_cursor_key.go",
+      "size": 1198,
+      "sha256": "297bd0844c9a578618eb96cafc4f45705034a2beb0eac5a3c2dd423c89b4486d"
+    },
+    {
+      "path": "backend/internal/systembackupread/verification_detail.go",
+      "size": 9599,
+      "sha256": "1b4cd2832a8d9dad1cab4941b883eb3e7c8fc7fa7a325038a084c94f9787207e"
+    }
+  ],
+  "actual": {
+    "mysql": "8.4.8",
+    "migrations": 96,
+    "replay": "001..081",
+    "catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+    "http_binary_sha256": "424cb5254fac38991d80bd6f25988e179ed3c29e0cba9261b9a14cd2e1788a0e",
+    "sql_binary_sha256": "d8879ff77c0f0e7d72d47362b1cec9b8ed1915c2357f95226dfe32b3a86e3061",
+    "ddl_sha256": "1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2",
+    "migration_binary_sha256": "5c1b76d5d4178558830b2644d9500b66993f9994af0b5ac34aa8ea37921d30f9",
+    "roots": [
+      "TestAAdminReadAuthorityMySQL",
+      "TestDAdminReadFullSchemaMySQL",
+      "TestDAdminReadLiveHTTPMySQL"
+    ],
+    "parent_seconds": {
+      "TestAAdminReadAuthorityMySQL": 0.27,
+      "TestDAdminReadFullSchemaMySQL": 0.72,
+      "TestDAdminReadLiveHTTPMySQL": 0.43
+    },
+    "history_cases": [
+      "verification_history_current_attempt_history",
+      "verification_history_catalog_import_null_state",
+      "verification_history_parallel_jobs",
+      "verification_history_single_job",
+      "verification_history_heartbeat_only",
+      "verification_history_summary_drift",
+      "verification_history_report_hash_drift",
+      "verification_history_report_wrong_owner",
+      "verification_history_report_before_current_attempt",
+      "verification_history_check_hash_drift",
+      "verification_history_check_missing_attempt",
+      "verification_history_health_cannot_restore",
+      "verification_history_noncommitted_cannot_be_usable",
+      "verification_history_full_restore_false_to_true",
+      "verification_history_shared_report_reference",
+      "verification_history_expired_evidence_is_historical"
+    ],
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "exit": 0
+  },
+  "cleanup": {
+    "namespace": "sbk-mig-261022092505-02a0",
+    "uid": "b6d3c337-b7ac-4530-bb80-82315d98e55f",
+    "namespace_and_remote_scratch_reported": true,
+    "local_build_cache_reported": true,
+    "exact_outer_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8c10a93553ba41bfbd0e41e2d206332f",
+    "outer_owner_independently_absent": true,
+    "outer_files_removed_reported": 1577,
+    "remote_cleanup_independently_checked": false
+  },
+  "boundaries": {
+    "real_mysql_synthetic_rows": true,
+    "actual_provider": false,
+    "production_approval": false,
+    "human_mfa_verified": false,
+    "historical_equivalence_verified": false,
+    "config_activated": false,
+    "current_freshness_proven": false,
+    "full_restore": false,
+    "full_gc": false,
+    "six_original_scopes_complete": false,
+    "current_whole_tree_tested": false,
+    "reviewer_remote_run": false,
+    "wrapper_actual_acceptance_flag_preserved_false": true
+  }
+}

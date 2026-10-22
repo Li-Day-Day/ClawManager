@@ -11,8 +11,9 @@ import (
 
 // RestoreTargetReadProofVerifier is B's independently credentialed boundary.
 // It must authenticate the isolated target identity, completed normalization,
-// expected table counts and evidence, and prove this transaction can only use
-// a SELECT-only credential. Recheck runs before the read transaction commits.
+// expected table counts, cost aggregate digest and evidence. It must prove
+// this transaction can only use a SELECT-only credential. Recheck runs before
+// the read transaction commits.
 type RestoreTargetReadProofVerifier interface {
 	VerifyReadOnlyTarget(context.Context, *sql.Tx, string, string, SourceSnapshot, string) error
 	RecheckReadOnlyTarget(context.Context, *sql.Tx, string, string, string) error
@@ -43,8 +44,8 @@ var restoreSafetyRules = []restoreSafetyRule{
 }
 
 // VerifyRestoreTarget compares all 15 A table counts with B-authenticated
-// expected counts and checks restored execution/credential state in one
-// read-only RepeatableRead target transaction. SQL/proof failure returns no
+// expected counts and cost aggregates, and checks restored execution/credential
+// state in one read-only RepeatableRead target transaction. SQL/proof failure returns no
 // checks; a completed comparison returns failed checks with an integrity error.
 func (v SQLRestoreVerifier) VerifyRestoreTarget(ctx context.Context, scope *CaptureScope,
 	expected SourceSnapshot, evidenceRef string) (CategoryChecks, error) {
@@ -62,17 +63,18 @@ func (v SQLRestoreVerifier) VerifyRestoreTarget(ctx context.Context, scope *Capt
 	if err := validateSnapshot(expected, scope.tables); err != nil {
 		return CategoryChecks{}, err
 	}
-	want := SourceSnapshot{Tables: append([]TableCount(nil), expected.Tables...)}
+	want := cloneSourceSnapshot(expected)
 	tx, err := v.DB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
 	if err != nil {
 		return CategoryChecks{}, fmt.Errorf("begin A restore read-only snapshot: %w", err)
 	}
 	defer tx.Rollback()
-	proofSnapshot := SourceSnapshot{Tables: append([]TableCount(nil), want.Tables...)}
+	proofSnapshot := cloneSourceSnapshot(want)
 	if err := v.Proof.VerifyReadOnlyTarget(ctx, tx, scope.registrySHA, scope.schemaSHA, proofSnapshot, evidenceRef); err != nil {
 		return CategoryChecks{}, fmt.Errorf("A restore target proof: %w", err)
 	}
-	checks := CategoryChecks{Users: make([]Check, 0, 11), AIGateway: make([]Check, 0, 13)}
+	checks := CategoryChecks{Users: make([]Check, 0, 11), AIGateway: make([]Check, 0, 14)}
+	actualCostRows := int64(-1)
 	for i, table := range scope.tables {
 		var engine string
 		if err := tx.QueryRowContext(ctx, `SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=? AND TABLE_TYPE='BASE TABLE'`, table).Scan(&engine); err != nil {
@@ -88,6 +90,9 @@ func (v SQLRestoreVerifier) VerifyRestoreTarget(ctx context.Context, scope *Capt
 		if rows < 0 {
 			return CategoryChecks{}, fmt.Errorf("negative A restored count for %s", table)
 		}
+		if table == "cost_records" {
+			actualCostRows = rows
+		}
 		category := tables[table].category
 		appendRestoreCheck(&checks, category, restoreCheck(category+".restore_count."+table,
 			"rows", want.Tables[i].Rows, rows, evidenceRef))
@@ -102,11 +107,19 @@ func (v SQLRestoreVerifier) VerifyRestoreTarget(ctx context.Context, scope *Capt
 		}
 		appendRestoreCheck(&checks, rule.category, restoreCheck(rule.id, "violations", int64(0), violations, evidenceRef))
 	}
+	actualCostHash, err := readCostAggregateHash(ctx, tx, actualCostRows)
+	if err != nil {
+		return CategoryChecks{}, err
+	}
+	appendRestoreCheck(&checks, "ai_gateway", restoreCheck("ai_gateway.restore_cost_aggregates", "hash", want.CostAggregateSHA256, actualCostHash, evidenceRef))
 	if err := v.Proof.RecheckReadOnlyTarget(ctx, tx, scope.registrySHA, scope.schemaSHA, evidenceRef); err != nil {
 		return CategoryChecks{}, fmt.Errorf("A restore target final proof: %w", err)
 	}
 	if err := tx.Commit(); err != nil {
 		return CategoryChecks{}, fmt.Errorf("commit A restore read-only snapshot: %w", err)
+	}
+	if err := ctx.Err(); err != nil {
+		return CategoryChecks{}, err
 	}
 	for _, check := range append(checks.Users, checks.AIGateway...) {
 		if check.Status != "passed" {
@@ -124,7 +137,7 @@ func appendRestoreCheck(checks *CategoryChecks, category string, check Check) {
 	}
 }
 
-func restoreCheck(id, key string, expected, actual int64, evidenceRef string) Check {
+func restoreCheck(id, key string, expected, actual any, evidenceRef string) Check {
 	check := compare(id, key, expected, actual, evidenceRef)
 	if check.Status == "failed" {
 		check.FailureCategory = "normalization_failed"

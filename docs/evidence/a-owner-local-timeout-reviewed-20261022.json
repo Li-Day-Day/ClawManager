@@ -1,0 +1,31 @@
+{
+  "kind": "a_owner_local_gate_timeout_review.v1",
+  "status": "failed_framework_budget_no_actual_SQL_no_new_baseline",
+  "log": "docs/evidence/a-download-owners-current-gate-20261022-153348-e32695c1.txt",
+  "log_sha256": "2e61cf09a9a21a3cf6963627576a9a85ade93f78919d0a6ce950af60d8537983",
+  "source": "docs/evidence/a-download-owners-current-gate-20261022-153348-e32695c1-source.json",
+  "source_manifest_sha256": "fcbccb946f91b9e987308ead938b617b618b07f9252c0fb724490c5303d65870",
+  "source_sha256": "fade61b02315b5c9df421034c8aef42274ddeee9dabe6b52bcb508ab70e1bcf4",
+  "source_files": 1569,
+  "failure": {
+    "kind": "package_timeout",
+    "budget_seconds": 900,
+    "package": "clawreef/internal/systembackupevidence",
+    "elapsed_seconds": 903.481,
+    "assertion_failures": 0,
+    "active_root": "TestDownloadRetentionGroupStrictAuditsAndOriginalResult",
+    "active_leaf": "intent_oversize",
+    "active_stack": "testing TempDir cleanup -> os.RemoveAll -> syscall.RemoveDirectory"
+  },
+  "cleanup": {
+    "outer_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3e59bef6bd994a7d8dca4de31e58f220",
+    "outer_owner_independently_absent": true,
+    "inner_cache_cleanup_reported": true,
+    "inner_owner_identifier_recorded": false
+  },
+  "ordinary_baseline_accepted": false,
+  "actual_SQL_started": false,
+  "remote_started": false,
+  "production_approved": false,
+  "dependencies_installed": false
+}

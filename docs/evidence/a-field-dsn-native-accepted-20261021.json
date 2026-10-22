@@ -1,0 +1,205 @@
+{
+  "kind": "a_native_mounted_dsn_readonly_inspector_preparation",
+  "status": "compiled_and_unit_tested_native_inspector_no_actual_sql",
+  "source": "docs/evidence/a-field-dsn-native-20261021-r2-source.json",
+  "source_manifest_sha256": "b2f64d49de024593762ade4d0a7a20e3b856785fd5dd84e7a3c93d52d71f0eb0",
+  "source_sha256": "8a6644518f21fbe65e161c4369dfdbe827950a75b07d024c07868dc60220d31c",
+  "source_files": 1514,
+  "native": "docs/evidence/a-field-dsn-native-20261021-r2-native.json",
+  "native_sha256": "78c1882e3ae02a4a5bb813cc58fa8c8f2ef8557d998ee7483073b368e7e42e69",
+  "stages": [
+    {
+      "stage": "tests",
+      "attempt": 1,
+      "goos": "windows",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-p=1",
+        "-json",
+        "./cmd/system-backup-registration"
+      ],
+      "stdout": "docs/evidence/a-field-dsn-native-20261021-r2-tests-attempt1.jsonl",
+      "stderr": "docs/evidence/a-field-dsn-native-20261021-r2-tests-attempt1-stderr.txt",
+      "stdout_sha256": "c9bce9b5a1b18f1a36fc7f1bd62c6f3a2dad2fd1ed2f260cf2c73fa567bb9ea3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "owner-dependencies",
+      "attempt": 1,
+      "goos": "windows",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-deps",
+        "-test",
+        "-tags",
+        "systembackup_mysql",
+        "-f",
+        "{{.ImportPath}}",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupevidence"
+      ],
+      "stdout": "docs/evidence/a-field-dsn-native-20261021-r2-owner-dependencies-attempt1.txt",
+      "stderr": "docs/evidence/a-field-dsn-native-20261021-r2-owner-dependencies-attempt1-stderr.txt",
+      "stdout_sha256": "8126d3bfcbbd2813998d4f331a099548cc92ea91c64b9ddbae936e6aac78afd0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "build-windows",
+      "attempt": 1,
+      "goos": "windows",
+      "exit": 0,
+      "arguments": [
+        "build",
+        "-mod=readonly",
+        "-p=1",
+        "-trimpath",
+        "-buildvcs=false",
+        "-ldflags=\"-s -w -buildid=\"",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-315a2314c78b4f31bc90e3e5264318f9\\bin\\registration-windows.exe",
+        "./cmd/system-backup-registration"
+      ],
+      "stdout": "docs/evidence/a-field-dsn-native-20261021-r2-build-windows-attempt1.txt",
+      "stderr": "docs/evidence/a-field-dsn-native-20261021-r2-build-windows-attempt1-stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "build-linux",
+      "attempt": 1,
+      "goos": "linux",
+      "exit": 0,
+      "arguments": [
+        "build",
+        "-mod=readonly",
+        "-p=1",
+        "-trimpath",
+        "-buildvcs=false",
+        "-ldflags=\"-s -w -buildid=\"",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-315a2314c78b4f31bc90e3e5264318f9\\bin\\registration-linux",
+        "./cmd/system-backup-registration"
+      ],
+      "stdout": "docs/evidence/a-field-dsn-native-20261021-r2-build-linux-attempt1.txt",
+      "stderr": "docs/evidence/a-field-dsn-native-20261021-r2-build-linux-attempt1-stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "program_files": [
+    {
+      "path": "backend/cmd/system-backup-registration/download_database.go",
+      "size": 1793,
+      "sha256": "50578998d0f73933ac31fe07185552a34daefb8114369e3f5a980a22a87db1a3"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_database_test.go",
+      "size": 3484,
+      "sha256": "1df9f7c51339b1a36552d5d930512a856b702d1f52ba34a7ede50fa1bdcd5c89"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_deployment.go",
+      "size": 11056,
+      "sha256": "5065b2969f2ccecd061fcc8d50f0ecf30a30f9df78e090ba8636fc68e677386a"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_deployment_test.go",
+      "size": 12842,
+      "sha256": "d559826710f9f39ef3dc8ddba60c4cd2555eedf89d5f2bef54a8615493631f75"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_grants.go",
+      "size": 6741,
+      "sha256": "ec3f808c3a0be862457385309ec695b7c3952da54f7c20f9975273d607c59487"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_http.go",
+      "size": 1980,
+      "sha256": "b12d2363a759fe9e1931b4595aa8031978a7e08381e23b1a6da56dc6db64cbd5"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_readiness.go",
+      "size": 3485,
+      "sha256": "ab9de3e8b1b4a16d6e736ce5f3a9c0ee9fc31b3a23f564e2af58ea2661485c0d"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/download_readiness_test.go",
+      "size": 6158,
+      "sha256": "7e62303d290cfbade0fe96d229e233c0870cee245efc2c14277c5fabbf5408c7"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/field_inspection.go",
+      "size": 13235,
+      "sha256": "c13d8f182c5a0de43b5a1194e57870af52ecd908924305bc78f3a4115df0f3b6"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/field_inspection_test.go",
+      "size": 12380,
+      "sha256": "ed2798495c71a3505d0b626eb92d21ca37c1eda6815553f6b2f6a69d3fa911d2"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/http_lifecycle.go",
+      "size": 1260,
+      "sha256": "93b5b6a15fd295d7c4c818dced0500905fdb00d25a7caebc7ec369247efe1660"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/http_lifecycle_test.go",
+      "size": 5458,
+      "sha256": "86f00a438b76e4449628ff5498af3327f455fde1b0a350489f7d2c66c6a0185d"
+    },
+    {
+      "path": "backend/cmd/system-backup-registration/main.go",
+      "size": 8138,
+      "sha256": "17ba6d1ada28a3405255d3b9ff7de07e6a12b77b3648948a74ab2b91ce816a7d"
+    }
+  ],
+  "complete_cmd_roots": 20,
+  "complete_cmd_checks": 84,
+  "old_cmd_checks_retained": 49,
+  "new_cmd_checks": 35,
+  "new_roots": [
+    "TestFieldInspectionRequestAndModeBoundary",
+    "TestFieldInspectionReadsOriginalDSNWithoutExport",
+    "TestFieldInspectionOneReadOnlyConnectionRollbackAndCompleteMetadata",
+    "TestFieldInspectionFailureReturnsNoPartialPublicResult",
+    "TestFieldInspectionIdentityOnlyForOriginalCapacitySQLTime",
+    "TestFieldInspectionInvalidInputNeverEmitsOrLoadsCredentials"
+  ],
+  "binaries": [
+    {
+      "goos": "windows",
+      "goarch": "amd64",
+      "sha256": "168fecfedb43193cb5d484429d82c2dc377e8aa18b4c36ae0f305aead082aba5",
+      "bytes": 9858048
+    },
+    {
+      "goos": "linux",
+      "goarch": "amd64",
+      "sha256": "ec5c39bff91ba3d64c3d83ee22b5b2327da0782e9f680ecf41d58f34682e7be3",
+      "bytes": 9617534
+    }
+  ],
+  "original_main_reconstructed_after_removing_only_new_flag_and_dispatch": true,
+  "previous_capture_failure": {
+    "path": "docs/evidence/a-field-dsn-native-20261021-r1-native.json",
+    "sha256": "d352cd72d2ce8e8964718e12b4ffea1e7aacba886d00ee77e3075d1c48993419",
+    "exit": 1,
+    "reason": "source snapshot owner.txt marker missing; failed before Go; corrected for r2",
+    "retained": true
+  },
+  "owned_directories_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-315a2314c78b4f31bc90e3e5264318f9",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-aa6685e988754f239600785d97a92952"
+  ],
+  "dependencies_installed": false,
+  "actual_mysql_executed": false,
+  "image_built_or_deployed": false,
+  "production_approved": false,
+  "entire_worktree_accepted": false,
+  "reviewer_sha256": "cebd6bd8571dbb6086a62758c5bc9c6ecc6eaee0df5074015168eeeeaabf2be5"
+}

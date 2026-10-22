@@ -1,0 +1,78 @@
+{
+  "kind": "d_shared_gate_failure_independent_review",
+  "recorded_at": "2026-10-21T02:51:38.019Z",
+  "status": "local_d_fixture_defects_fixed_in_reviewed_source",
+  "log": "docs/evidence/a-download-owners-mysql-remote-20261021-100630-92ddbad0.txt",
+  "log_sha256": "e60ea7fc55e28b215e5c972feed2bc089a7fa5b1c32ecd49265393bc593f6a5c",
+  "source_manifest": "docs/evidence/a-download-owners-mysql-remote-source-20261021-100630-92ddbad0.json",
+  "source_manifest_sha256": "d5b9a1c8952f26f0fc0d52468168dc17b833dc5efa7508acf4815e06f85e0e15",
+  "source_sha256": "35c60b8d6eab12abee02d6949d6f9110c2952ef2c469895af533300ae4849390",
+  "source_files": 1457,
+  "stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 255,
+      "all": 2011,
+      "passed": 2011,
+      "failed": 0,
+      "elapsed": "113.510s",
+      "status": "ok"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 349,
+      "all": 2928,
+      "passed": 2921,
+      "failed": 7,
+      "elapsed": "478.470s",
+      "status": "FAIL"
+    }
+  ],
+  "failed_tests": [
+    "TestDownloadRetentionGCProducerReceiptFacts",
+    "TestDownloadRetentionGCProducerReceiptFacts/null_version",
+    "TestDownloadRetentionGCProducerReceiptFacts/no_version",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/complete",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/late_eligible_run",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/late_expired_reference"
+  ],
+  "failed_leaves": 5,
+  "defect_owner": "D",
+  "causes": [
+    "C1 typed frame was parsed as JSON in two invalid-version fixtures",
+    "paired historical aging used a fractional delta incompatible with audit_logs DATETIME(0)"
+  ],
+  "remote_started": false,
+  "actual_sql_cases": 0,
+  "outer_exit": 1,
+  "fixed": {
+    "receipt": "docs/evidence/d-download-gc-producer-preparation-20261021.json",
+    "receipt_sha256": "06f0075397ce340e6f032274c7404b339489f7c6ec930d80839b2b19c7d33375",
+    "source_sha256": "727348b948844c09a40390957f760d7f310a3f8d970b3d84e85740adae71042d",
+    "changed_files": [
+      "backend/internal/systembackupevidence/download_retention_gc_producer_test.go"
+    ],
+    "production_and_gate_inputs_unchanged": true,
+    "full_main": 754,
+    "full_all": 6242,
+    "default_vet": true,
+    "exit": 0,
+    "all_failed_tests_now_pass": true
+  },
+  "cleanup": {
+    "local_source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-aad7419a27d0438582fef071ac5abed9",
+    "independently_absent": true,
+    "local_build_cache_reported": true
+  },
+  "boundaries": {
+    "a_eleven_actual_cases_not_accepted_by_this_review": true,
+    "prior_a_actual_failure_preserved": true,
+    "d_producer_eighteen_actual_acceptance_unchanged": true,
+    "d_gc_task_eighteen_still_pending": true,
+    "dependencies_installed": false,
+    "remote_executed_by_reviewer": false,
+    "other_threads_messaged": false,
+    "production_approved": false
+  }
+}

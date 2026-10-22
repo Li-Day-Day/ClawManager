@@ -1,0 +1,11 @@
+source_sha256=181a8ebe8bac44913e37ad08f246893cf00ff06a52a4a1c6b39b9a9bfe601c97
+A_AUDIT_RUN namespace=aaudit-20261022141823-e13e4bde uid=ce5b62e3-5e4a-44da-85e3-d4b1fceb2d61 image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 binary_sha256=a6da8f1cfa18cc28a348e52d073d773d201401817128d4a9bb19ed2701888486
+=== RUN   TestAuditCollectorMySQL
+    mysql_test.go:81: isolated SQL fixture step failed
+--- FAIL: TestAuditCollectorMySQL (0.01s)
+FAIL
+command terminated with exit code 1
+A_AUDIT_CLEANUP namespace=aaudit-20261022141823-e13e4bde uid=ce5b62e3-5e4a-44da-85e3-d4b1fceb2d61 absent=yes
+A_AUDIT_UPLOAD_CLEANUP absent=yes
+A_AUDIT_REMOTE_EXIT=1
+close - IO is still pending on closed socket. read:1, write:0, io:000002015BD329C0

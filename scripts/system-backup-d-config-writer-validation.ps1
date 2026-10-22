@@ -9,6 +9,8 @@ param(
     [switch]$DownloadTaskChainOnly,
     [switch]$DownloadProducerOnly,
     [switch]$DownloadGCRoleOnly,
+    [switch]$DownloadGCTaskOnly,
+    [switch]$DownloadGCFreezeOnly,
     [switch]$MaintenanceReceiptsOnly,
     [switch]$BackfillServiceOnly,
     [switch]$BackfillRowGuards,
@@ -17,6 +19,8 @@ param(
     [ValidatePattern('^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+$')][string]$SshTarget='root@10.130.14.23'
 )
 $ErrorActionPreference='Stop'
+if($DownloadGCFreezeOnly -and ($DownloadGCTaskOnly -or $DownloadGCRoleOnly -or $DownloadProducerOnly -or $DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadGCFreezeOnly requires an exclusive validation profile'}
+if($DownloadGCTaskOnly -and ($DownloadGCRoleOnly -or $DownloadProducerOnly -or $DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadGCTaskOnly requires an exclusive validation profile'}
 if($DownloadGCRoleOnly -and ($DownloadProducerOnly -or $DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadGCRoleOnly requires an exclusive validation profile'}
 if($DownloadProducerOnly -and ($DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadProducerOnly requires an exclusive validation profile'}
 if($DownloadTaskChainOnly -and ($DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadTaskChainOnly requires an exclusive validation profile'}
@@ -58,7 +62,11 @@ try {
     Push-Location $writerFrozen
     try {
         & (Join-Path $writerFrozen 'scripts/system-backup-a-evidence-dispatch.test.ps1')
-        if($DownloadGCRoleOnly){
+        if($DownloadGCFreezeOnly){
+            & (Join-Path $writerFrozen 'scripts/system-backup-d-download-gc-freeze-dispatch.test.ps1')
+        } elseif($DownloadGCTaskOnly){
+            & (Join-Path $writerFrozen 'scripts/system-backup-d-download-gc-task-dispatch.test.ps1')
+        } elseif($DownloadGCRoleOnly){
             & (Join-Path $writerFrozen 'scripts/system-backup-a-download-gc-role-dispatch.test.ps1')
         } elseif($DownloadProducerOnly){
             & (Join-Path $writerFrozen 'scripts/system-backup-d-download-producer-dispatch.test.ps1')
@@ -78,7 +86,7 @@ try {
             & (Join-Path $writerFrozen 'scripts/system-backup-d-config-writer-dispatch.test.ps1') -MaintenanceReceiptsOnly
             & (Join-Path $writerFrozen 'scripts/system-backup-d-config-writer-dispatch.test.ps1') -BackfillServiceOnly
         }
-        & (Join-Path $writerFrozen 'scripts/system-backup-a-evidence-validation.ps1') -ConfigWriterOnly -ConfigWriterSecurityOnly:$SecurityOnly -ConfigNonceTimeOnly:$NonceTimeOnly -ConfigDownloadMFAOnly:$DownloadMFAOnly -ConfigDownloadAdmissionOnly:$DownloadAdmissionOnly -ConfigDownloadOwnersOnly:$DownloadOwnersOnly -ConfigDownloadTaskChainOnly:$DownloadTaskChainOnly -ConfigDownloadProducerOnly:$DownloadProducerOnly -ConfigDownloadGCRoleOnly:$DownloadGCRoleOnly -ConfigMaintenanceReceiptOnly:$MaintenanceReceiptsOnly -ConfigBackfillServiceOnly:$BackfillServiceOnly -BackfillRowGuards:$BackfillRowGuards -BuildParallelism $BuildParallelism -Remote:$Remote -SshTarget $SshTarget
+        & (Join-Path $writerFrozen 'scripts/system-backup-a-evidence-validation.ps1') -ConfigWriterOnly -ConfigWriterSecurityOnly:$SecurityOnly -ConfigNonceTimeOnly:$NonceTimeOnly -ConfigDownloadMFAOnly:$DownloadMFAOnly -ConfigDownloadAdmissionOnly:$DownloadAdmissionOnly -ConfigDownloadOwnersOnly:$DownloadOwnersOnly -ConfigDownloadTaskChainOnly:$DownloadTaskChainOnly -ConfigDownloadProducerOnly:$DownloadProducerOnly -ConfigDownloadGCRoleOnly:$DownloadGCRoleOnly -ConfigDownloadGCTaskOnly:$DownloadGCTaskOnly -ConfigDownloadGCFreezeOnly:$DownloadGCFreezeOnly -ConfigMaintenanceReceiptOnly:$MaintenanceReceiptsOnly -ConfigBackfillServiceOnly:$BackfillServiceOnly -BackfillRowGuards:$BackfillRowGuards -BuildParallelism $BuildParallelism -Remote:$Remote -SshTarget $SshTarget
         Test-DIndexSourceSnapshot -Root $writerFrozen -Manifest $writerSnapshot
         Write-Output ('LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested='+[bool]$Remote)
     } finally {Pop-Location}

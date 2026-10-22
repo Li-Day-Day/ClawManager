@@ -76,7 +76,7 @@ func captureFixture(t *testing.T) (CaptureEvidence, CaptureEvidence) {
 		t.Fatal(err)
 	}
 	allowlist := scope.Tables()
-	snapshot := SourceSnapshot{Tables: make([]TableCount, 0, len(allowlist))}
+	snapshot := SourceSnapshot{CostAggregateSHA256: fixtureCostAggregateHash(t, 2), Tables: make([]TableCount, 0, len(allowlist))}
 	for _, table := range allowlist {
 		snapshot.Tables = append(snapshot.Tables, TableCount{Table: table, Rows: 2})
 	}
@@ -107,7 +107,7 @@ func TestVerifyBackupSnapshotRequiresProofAndCompleteCounts(t *testing.T) {
 	}
 	proof := &proofFixture{}
 	checks, err := VerifyBackupSnapshot(context.Background(), scope, source, dump, proof)
-	if err != nil || len(checks.Users) != 8 || len(checks.AIGateway) != 11 || proof.calls != 1 {
+	if err != nil || len(checks.Users) != 8 || len(checks.AIGateway) != 12 || proof.calls != 1 {
 		t.Fatalf("valid snapshot rejected: %v, %v", checks, err)
 	}
 	assertContractCheckIDs(t, checks)
@@ -212,7 +212,7 @@ func TestVerifyBusinessMetadataRequiresCompleteAuthenticatedCapture(t *testing.T
 		{Category: "ai_gateway", Objects: 9, Rows: 18},
 	}) || !reflect.DeepEqual(metadata.EvidenceIDs, []string{"sev_source", "sev_dump"}) ||
 		metadata.RegistrySHA256 != scope.RegistrySHA256() || metadata.SchemaSHA256 != scope.SchemaSHA256() ||
-		metadata.CheckpointHash != source.CheckpointHash || len(metadata.Checks.Users) != 8 || len(metadata.Checks.AIGateway) != 11 {
+		metadata.CheckpointHash != source.CheckpointHash || len(metadata.Checks.Users) != 8 || len(metadata.Checks.AIGateway) != 12 {
 		t.Fatalf("incomplete or cross-category metadata: %+v", metadata)
 	}
 	raw, err := json.Marshal(metadata)

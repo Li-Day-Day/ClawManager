@@ -1,0 +1,50 @@
+LOCAL_PASS isolated-go-telemetry=off
+CA_FROZEN source_sha256=21c83f365ec6db66b4b7f242a3a7a02e62100f44915101c84043ee31da2e76df files=376 owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-c685cab7c8a9414b96466f1fe3b4d358
+=== RUN   TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit
+--- PASS: TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit (1.21s)
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/expired_leaf
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_hostname
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_CA
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/junk_CA
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/private_key_block
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/changed_descriptor
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_scope
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_installation
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/canceled
+--- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs (3.60s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/expired_leaf (1.56s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_hostname (0.38s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_CA (0.35s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/junk_CA (0.13s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/private_key_block (0.40s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/changed_descriptor (0.30s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_scope (0.32s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_installation (0.09s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/canceled (0.09s)
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/removed_CA
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_CA
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_descriptor
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/database
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/server
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/canceled_during_SQL
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expiry_during_SQL
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expired_mapping
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/old_SQL_clock
+--- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead (1.43s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/removed_CA (0.66s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_CA (0.14s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_descriptor (0.16s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/database (0.09s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/server (0.08s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/canceled_during_SQL (0.13s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expiry_during_SQL (0.06s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expired_mapping (0.04s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/old_SQL_clock (0.07s)
+=== RUN   TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting
+--- PASS: TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting (0.08s)
+PASS
+ok  	clawreef/internal/systembackupcatrust	9.902s
+CA_CLEANUP verified=True owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-c685cab7c8a9414b96466f1fe3b4d358
+CA_RECEIPT C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ca-trust-candidate-20261022-161401-c7097458.json

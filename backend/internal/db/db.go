@@ -55,6 +55,17 @@ func ConnectSystemBackupController(cfg config.DatabaseConfig) (db.Session, error
 	return session, nil
 }
 
+// OpenSystemBackupRead opens an independently owned UTC pool for backup login
+// sessions and reads. It neither runs migrations nor replaces the application's
+// global Session. Close the returned session after its HTTP/auth users drain.
+func OpenSystemBackupRead(cfg config.DatabaseConfig) (db.Session, error) {
+	return connectWithOptions(cfg, systemBackupReadOptions())
+}
+
+func systemBackupReadOptions() map[string]string {
+	return map[string]string{"loc": "UTC", "time_zone": "'+00:00'"}
+}
+
 func systemBackupControllerOptions() map[string]string {
 	return map[string]string{
 		"loc":       "UTC",

@@ -2711,7 +2711,7 @@ test('verifier shell owns aggregation and keeps A business checks as draft', () 
   assert.equal(a.status, 'draft');
   for (const [category, key, definition, count] of [
     ['users', 'users_backup_validate', 'AUsersBackupCheck', 8],
-    ['ai_gateway', 'ai_gateway_backup_validate', 'AAIGatewayBackupCheck', 11],
+    ['ai_gateway', 'ai_gateway_backup_validate', 'AAIGatewayBackupCheck', 12],
   ]) {
     assert.equal(a[key].check_schema, `#/$defs/${definition}`);
     assert.equal(a[key].required_check_count, count);
@@ -2727,10 +2727,16 @@ test('verifier shell owns aggregation and keeps A business checks as draft', () 
     assert.ok(ids.every((id) => id.startsWith(`${category}.`)));
     assert.equal(choices[0].properties.expected.$ref, '#/$defs/ABusinessDigestValue');
     assert.equal(choices[1].properties.actual.$ref, '#/$defs/ABusinessCountValue');
+    if (category === 'ai_gateway') {
+      assert.deepEqual(choices.at(-1).properties.id.enum, ['ai_gateway.cost_aggregates']);
+      assert.equal(choices.at(-1).properties.expected.$ref, '#/$defs/ABusinessDigestValue');
+      assert.equal(choices.at(-1).properties.actual.$ref, '#/$defs/ABusinessDigestValue');
+      assert.match(a[key].required_proof, /cost aggregates/);
+    }
   }
   for (const [category, key, definition, count] of [
     ['users', 'users_restore_validate', 'AUsersRestoreCheck', 11],
-    ['ai_gateway', 'ai_gateway_restore_validate', 'AAIGatewayRestoreCheck', 13],
+    ['ai_gateway', 'ai_gateway_restore_validate', 'AAIGatewayRestoreCheck', 14],
   ]) {
     assert.equal(a[key].check_schema, `#/$defs/${definition}`);
     assert.equal(a[key].required_check_count, count);
@@ -2746,6 +2752,12 @@ test('verifier shell owns aggregation and keeps A business checks as draft', () 
     assert.ok(ids.every((id) => id.startsWith(`${category}.restore_`)));
     assert.equal(choices[0].properties.expected.$ref, '#/$defs/ABusinessCountValue');
     assert.equal(choices[1].properties.actual.$ref, '#/$defs/ABusinessViolationValue');
+    if (category === 'ai_gateway') {
+      assert.deepEqual(choices.at(-1).properties.id.enum, ['ai_gateway.restore_cost_aggregates']);
+      assert.equal(choices.at(-1).properties.expected.$ref, '#/$defs/ABusinessDigestValue');
+      assert.equal(choices.at(-1).properties.actual.$ref, '#/$defs/ABusinessDigestValue');
+      assert.match(a[key].required_proof, /cost aggregates/);
+    }
   }
   assert.equal(verifierSchema['x-owner-check-registries'].D.status, 'draft');
   assert.equal(verifierSchema.$defs.Check.additionalProperties, false);

@@ -180,6 +180,9 @@ func TestASQLTaskDownloadOwnersMySQL(t *testing.T) {
 	mustSQL(t, err)
 	for _, name := range []string{"backup", "drill", "preflight", "artifact_verify", "wrong_installation", "revoked_actor", "changed_original_deadline", "unknown_reference_column", "missing_reference_column", "original_owner_lock", "empty_reference_range"} {
 		t.Run(name, func(t *testing.T) {
+			// Each isolated case owns its setup error. A failed DDL in an earlier
+			// case must not prevent later lock probes from reaching their SQL.
+			var err error
 			kind := name
 			if kind != "drill" && kind != "preflight" && kind != "artifact_verify" {
 				kind = "backup"
@@ -187,13 +190,53 @@ func TestASQLTaskDownloadOwnersMySQL(t *testing.T) {
 			x := newATaskOwnerMySQLFixture(t, input, kind)
 			switch name {
 			case "wrong_installation":
+				// Keep the evidence-installation FK enabled. First create the
+				// unrelated installation and its required config snapshot;
+				// the concrete owner still belongs to the original installation.
+				values := aDownloadMFAConfigCells(x.admissionPinnedFixture)
+				values["origin_installation_id"] = "installation_other"
+				rows, e := x.db.QueryContext(x.ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' ORDER BY ORDINAL_POSITION")
+				mustSQL(t, e)
+				var columns []string
+				var args []any
+				for rows.Next() {
+					var column string
+					mustSQL(t, rows.Scan(&column))
+					if value, ok := values[column]; ok {
+						columns = append(columns, column)
+						args = append(args, value)
+					}
+				}
+				mustSQL(t, rows.Err())
+				mustSQL(t, rows.Close())
+				_, err = x.db.ExecContext(x.ctx, "INSERT INTO system_backup_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+				mustSQL(t, err)
+				_, err = x.db.ExecContext(x.ctx, "INSERT INTO system_backup_installation_state(origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key) VALUES('installation_other',1,UTC_TIMESTAMP(6),'k8s-cluster')")
+				mustSQL(t, err)
 				_, err = x.db.ExecContext(x.ctx, "UPDATE system_backup_evidence SET origin_installation_id='installation_other' WHERE public_id=?", x.initial.Manifest.Identity.ID)
 			case "revoked_actor":
 				_, err = x.db.ExecContext(x.ctx, "UPDATE users SET is_active=FALSE WHERE id=42")
 			case "unknown_reference_column":
 				_, err = x.db.ExecContext(x.ctx, "CREATE TABLE system_owner_probe_extra(id BIGINT PRIMARY KEY,evidence_public_id CHAR(40)) ENGINE=InnoDB")
 			case "missing_reference_column":
-				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health RENAME COLUMN evidence_id TO hidden_reference")
+				// MySQL refuses to rename a column while a CHECK uses it. Only
+				// this disposable negative-schema fixture drops that exact CHECK;
+				// production migrations and all FK enforcement remain unchanged.
+				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health DROP CHECK chk_sb_dependency_evidence")
+				mustSQL(t, err)
+				// Explicit INPLACE permits renaming the FK column on MySQL 8.4;
+				// the default algorithm may reject it with error 1846.
+				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health RENAME COLUMN evidence_id TO hidden_reference, ALGORITHM=INPLACE")
+				mustSQL(t, err)
+				var original, hidden, foreignKey int
+				mustSQL(t, x.db.QueryRowContext(x.ctx, `SELECT
+					(SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_dependency_health' AND COLUMN_NAME='evidence_id'),
+					(SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_dependency_health' AND COLUMN_NAME='hidden_reference'),
+					(SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_dependency_health' AND CONSTRAINT_NAME='fk_sb_dependency_evidence' AND COLUMN_NAME='hidden_reference' AND REFERENCED_TABLE_NAME='system_backup_evidence' AND REFERENCED_COLUMN_NAME='id')`).Scan(&original, &hidden, &foreignKey))
+				if original != 0 || hidden != 1 || foreignKey != 1 {
+					t.Fatal("missing reference fixture did not preserve its renamed FK")
+				}
+				t.Log("OBSERVED missing reference fixture renamed column with FK retained")
 			}
 			mustSQL(t, err)
 			tx, r, err := x.preview(t)
@@ -230,5 +273,7 @@ func TestASQLTaskDownloadOwnersMySQL(t *testing.T) {
 			}
 		})
 	}
-	t.Log("PASS actual SQL task owner cases=11 owner_adapter=SQLTaskDownloadOwners production_tasks=no provider_read=no production_approval=no")
+	if !t.Failed() {
+		t.Log("PASS actual SQL task owner cases=11 owner_adapter=SQLTaskDownloadOwners production_tasks=no provider_read=no production_approval=no")
+	}
 }

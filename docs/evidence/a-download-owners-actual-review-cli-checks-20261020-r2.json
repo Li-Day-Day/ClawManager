@@ -1,0 +1,47 @@
+{
+  "kind": "a_owner_actual_receipt_reviewer_preparation",
+  "version": 2,
+  "recorded_at": "2026-10-20T09:30:52.0721067Z",
+  "reviewer_sha256": "73572c74b57c20c5b34091755abd06b73d80f4d5de86ae70d6378c86c80021ea",
+  "parser_tests_sha256": "4f5eee23198f13294dcbbce850c286f4fa9ebe1843bb90ed9e25b90f83a05b12",
+  "parser_result": "docs/evidence/a-download-owners-actual-review-parser-checks-20261020-r2.json",
+  "parser_result_sha256": "3df18696773db77cb8cc4a6fc04ed133cb9ec4b70d581367232119261d680627",
+  "parser_checks": 37,
+  "baseline_proof": "docs/evidence/a-gc-nil-adapters-20261020-r1-accepted.json",
+  "baseline_source_sha256": "b77311e720d6e77f7258276b797574a2dba6e724e2d906b6e6dcaa4c703ece0e",
+  "baseline_complete_checks": 4822,
+  "actual_cli_rejections": [
+    {
+      "log": "a-download-owners-mysql-remote-20261020-133409-ebbf810b.txt",
+      "log_sha256": "e8760ff9c7138ee3d20887659230e8ec1d8727f6118dea393538f2210acf5f35",
+      "source": "a-download-owners-mysql-remote-source-20261020-133409-ebbf810b.json",
+      "source_sha256": "95d008987b496384403ffeb3452f28f7d54ca4314f92d9c29be330833e58b19b",
+      "exit": 1,
+      "rejection_code": "no_test_failure_skip_panic_or_pending_cleanup",
+      "receipt_written": false
+    },
+    {
+      "log": "a-download-owners-mysql-remote-20261020-152911-f87d0e35.txt",
+      "log_sha256": "9a5819463bf98b6413c048eb68c134b8a63cf9bd7f424373455cf60f5fe37558",
+      "source": "a-download-owners-local-repair-source-20261020-144930-6819f05e.json",
+      "source_sha256": "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+      "exit": 1,
+      "rejection_code": "one_frozen_source",
+      "receipt_written": false
+    },
+    {
+      "log": "a-download-owners-local-repair-20261020-144930-6819f05e.txt",
+      "log_sha256": "d641c9e05571298096aee29b3be10bee12ba16dbc3ed92a1d324633b297e3669",
+      "source": "a-download-owners-local-repair-source-20261020-144930-6819f05e.json",
+      "source_sha256": "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+      "exit": 1,
+      "rejection_code": "one_actual_remote_run",
+      "receipt_written": false
+    }
+  ],
+  "actual_sql_cases_accepted": 0,
+  "actual_acceptance_receipts_created": 0,
+  "dependencies_installed": false,
+  "test_build_artifacts_created": false,
+  "remote_executed": false
+}

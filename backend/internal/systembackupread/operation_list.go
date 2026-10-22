@@ -108,7 +108,7 @@ func (r *Reader) listOperations(ctx context.Context, request operationPageReques
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return operationPage{}, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return operationPage{}, ErrUnavailable
 	}
 	return page, nil

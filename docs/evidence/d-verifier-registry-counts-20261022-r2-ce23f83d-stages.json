@@ -1,0 +1,80 @@
+[
+  {
+    "stage": "baseline-cli",
+    "exit": 0,
+    "arguments": [
+      "scripts/system-backup-contract-check.mjs",
+      "--check"
+    ]
+  },
+  {
+    "stage": "baseline-tests",
+    "exit": 0,
+    "arguments": [
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-verifier-registry-counts-20261022-r2-ce23f83d-node-runner.mjs",
+      "scripts/system-backup-contract-artifacts.test.mjs",
+      "scripts/system-backup-d-control-exclusion.test.mjs",
+      "scripts/system-backup-contract-check.test.mjs"
+    ]
+  },
+  {
+    "stage": "isolated-tests",
+    "exit": 0,
+    "arguments": [
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-verifier-registry-counts-20261022-r2-ce23f83d-node-runner.mjs",
+      "scripts/system-backup-contract-artifacts.test.mjs",
+      "scripts/system-backup-d-control-exclusion.test.mjs",
+      "scripts/system-backup-contract-check.test.mjs",
+      "scripts/system-backup-verifier-registry.test.mjs"
+    ]
+  },
+  {
+    "stage": "isolated-cli",
+    "exit": 0,
+    "arguments": [
+      "scripts/system-backup-contract-check.mjs",
+      "--check"
+    ]
+  },
+  {
+    "stage": "isolated-strict",
+    "exit": 1,
+    "arguments": [
+      "scripts/system-backup-contract-check.mjs",
+      "--check",
+      "--strict"
+    ]
+  },
+  {
+    "stage": "isolated-dto",
+    "exit": 0,
+    "arguments": [
+      "scripts/system-backup-d-dto-check.mjs"
+    ]
+  },
+  {
+    "stage": "counter-cli",
+    "exit": 1,
+    "arguments": [
+      "scripts/system-backup-contract-check.mjs",
+      "--check"
+    ]
+  },
+  {
+    "stage": "counter-write",
+    "exit": 1,
+    "arguments": [
+      "scripts/system-backup-contract-check.mjs",
+      "--write"
+    ]
+  },
+  {
+    "stage": "counter-tests",
+    "exit": 1,
+    "arguments": [
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-verifier-registry-counts-20261022-r2-ce23f83d-node-runner.mjs",
+      "scripts/system-backup-d-control-exclusion.test.mjs",
+      "scripts/system-backup-verifier-registry.test.mjs"
+    ]
+  }
+]

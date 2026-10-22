@@ -1,0 +1,233 @@
+{
+  "kind": "d_download_gc_task_mysql_preparation_review",
+  "recorded_at": "2026-10-20T09:02:19.104Z",
+  "source": {
+    "manifest": "docs/evidence/d-download-gc-task-mysql-20261020-r2-source.json",
+    "sha256": "9652b0911539277a3a113ec5cf18eee3bb710f654fb53f5eb79a485b65fb22bf",
+    "files": 1449,
+    "manifest_sha256": "a36836326d68e73d5db8655c7f382de4ce751d78f3dad36c61488c3a06cd1f8f"
+  },
+  "native": {
+    "transcript": "docs/evidence/d-download-gc-task-mysql-20261020-r2-native.txt",
+    "sha256": "4f2ab07b46dc35ed16a97b6af7c06062c7e3eccefec30c1b446c769efc944d81",
+    "exit": 0,
+    "default_vet": true,
+    "parallelism": 1,
+    "initial_seed_checks": 13,
+    "tagged_seed_checks": 13,
+    "detached_seed_checks": 13,
+    "source_postchecks": true,
+    "binaries": [
+      {
+        "name": "download-admission.test.exe",
+        "sha256": "08ba91797d5087638c206884a7931cea4d50279d3f69c374767f730cdcbb7462"
+      },
+      {
+        "name": "download-admission.test",
+        "sha256": "e3cba50d6bacff17fb56dc830483c890bcd432d626233b9dc2febbaa647f474f"
+      },
+      {
+        "name": "system-backup-migrate",
+        "sha256": "60c82a68112d0579060bc12301665103c54a51dc1e19116e55b06a844452a68b"
+      }
+    ]
+  },
+  "changed_since_ordinary_proof": [
+    "backend/internal/systembackupevidence/download_gc_task_mysql_test.go",
+    "scripts/system-backup-a-evidence-validation.ps1",
+    "scripts/system-backup-d-config-writer-validation.ps1",
+    "scripts/system-backup-d-download-admission-native-validation.ps1",
+    "scripts/system-backup-d-download-gc-task-dispatch.test.ps1",
+    "scripts/system-backup-d-download-gc-task-phase.sh"
+  ],
+  "ordinary_proof": {
+    "prefix": "docs/evidence/d-download-gc-dependencies-20261020-r4",
+    "source_sha256": "04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df",
+    "jsonl_sha256": "40f3a4fb56475fb8de671fa383f813d19c2d7e7fa8cf8b5431d86ea0512d5533",
+    "main": 737,
+    "all": 6114,
+    "ordinary_go_dependency_and_embed_inputs_unchanged": true,
+    "repeated": false,
+    "current_single_full_run_claimed": false
+  },
+  "static_checks": [
+    {
+      "log": "docs/evidence/d-download-gc-task-mysql-static-pwsh5-20261020.txt",
+      "sha256": "eb2b9eefc2d31b0f4cd3b5d3323514009c39f1271777bc468e14944297ab3f57",
+      "runtime_major": 5,
+      "dispatch_checks": 8
+    },
+    {
+      "log": "docs/evidence/d-download-gc-task-mysql-static-pwsh7-20261020.txt",
+      "sha256": "363d6bf4f294fa8e04f66ac9e5c7972537bc3f4edfb2aa71c3505563684f5942",
+      "runtime_major": 7,
+      "dispatch_checks": 8
+    }
+  ],
+  "offline_phase": {
+    "log": "docs/evidence/d-download-gc-task-phase-offline-20261020-r2.txt",
+    "sha256": "191f9c7b381165292d9e70790d9f0da2188cd3b8bb3728e0d481167e3fd573cc",
+    "driver_sha256": "53d27fe55504599be8f0c9e449fcc36c201b2cca938ae5f8c62b43ac0fcf9086",
+    "branches": 2,
+    "network": false,
+    "actual_mysql": false,
+    "initial_bash_launch": "Sandbox Win32 error 5 prevented signal-pipe creation; read-only syntax and stubbed phase checks subsequently passed outside the sandbox.",
+    "negative_cases": 4
+  },
+  "case_names": [
+    "backup",
+    "drill",
+    "preflight",
+    "artifact_verify",
+    "active_drill",
+    "active_preflight",
+    "active_artifact_verify",
+    "prune_reference",
+    "owner_deadline_not_expired",
+    "backup_row_lock",
+    "dependent_row_lock",
+    "empty_drill_range",
+    "empty_preflight_range",
+    "empty_artifact_verify_range",
+    "empty_prune_range",
+    "late_owner_fact",
+    "late_dependent_fact",
+    "late_prune_reference"
+  ],
+  "actual_mysql_cases": 0,
+  "remote_run": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "full_gc_run": false,
+  "role_approved": false,
+  "cleanup": "docs/evidence/d-download-gc-task-mysql-cleanup-20261020.json",
+  "current_input_list": "docs/evidence/d-download-gc-task-mysql-current-files-20261020.txt",
+  "current_pinned_sources_match": true,
+  "scope": "Offline preparation of eighteen actual-MySQL task-eligibility component cases. Scope IDs are synthetic. Actual MySQL execution/plans/locking, complete collector, restricted role, global lock order, physical capacity and original six scopes remain unproved.",
+  "initial_prototype": {
+    "prefix": "docs/evidence/d-download-gc-task-mysql-20261020-r1",
+    "source_sha256": "cbf8d98ce3bf3343cee93e50b45665f3ac1748bd9ca4bb2f49909aef87bc0b3c",
+    "manifest_sha256": "3ffd51438caaaf5bc7c9b86c3c3fd63b17859ff1cae3f1c015aeb47066e41779",
+    "native_sha256": "354433d53a3dbae4953769353eaeea310b43a01f39f19e65046f4f2d8ab87d81",
+    "exit": 0,
+    "source_postchecks": true,
+    "owner_absent": true,
+    "superseded_by": "Final source adds independent prune predicate/component lock-footprint equivalence, avoiding backup-FK wait false positives. No initial-prototype result is expanded to the final source."
+  },
+  "artifacts": [
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-detached-seed-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-detached-seed.txt",
+      "sha256": "46a76c2e3abf5a4bc16a2c38ebc0f860c195ba22d9c44341488db1296abbeef2"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-linux-migration-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-linux-migration.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-linux-probe-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-linux-probe.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-native.txt",
+      "sha256": "354433d53a3dbae4953769353eaeea310b43a01f39f19e65046f4f2d8ab87d81"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-source.json",
+      "sha256": "3ffd51438caaaf5bc7c9b86c3c3fd63b17859ff1cae3f1c015aeb47066e41779"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-tagged-seed-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-tagged-seed.txt",
+      "sha256": "0da06a53c27206b7027ffe8a3bc066726f3ef772bd1752c47ca91fabc1aed868"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-windows-probe-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1-windows-probe.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r1.jsonl",
+      "sha256": "f5324076e45d1de2d2f0793293279d537f30423892ab15c8265d97d2db27e3d0"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-detached-seed-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-detached-seed.txt",
+      "sha256": "896067384f84e0e14eaa1d568e874a4dd930f90b0041fbbbfa9ff50a6f98e88d"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-linux-migration-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-linux-migration.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-linux-probe-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-linux-probe.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-native.txt",
+      "sha256": "4f2ab07b46dc35ed16a97b6af7c06062c7e3eccefec30c1b446c769efc944d81"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-source.json",
+      "sha256": "a36836326d68e73d5db8655c7f382de4ce751d78f3dad36c61488c3a06cd1f8f"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-tagged-seed-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-tagged-seed.txt",
+      "sha256": "44b576031f21333f4dd80752e861f74e513586a77678f1a8cf4643174caf41d2"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-windows-probe-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2-windows-probe.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-download-gc-task-mysql-20261020-r2.jsonl",
+      "sha256": "6a995915d558fb3676934933547361134445d45daa0f23afdd06ae95b6563c08"
+    }
+  ],
+  "cleanup_sha256": "7d72e4c46b0d36982e34013dc09673e56b979ee2cc71202121f6a2d6b843da3f",
+  "current_input_list_sha256": "64dc2c77fdcc1c73a1c14354e4a4ddcb5b635316201f89be55c8acdee68a4f83"
+}

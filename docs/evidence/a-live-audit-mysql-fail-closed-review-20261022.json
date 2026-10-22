@@ -1,0 +1,189 @@
+{
+  "kind": "a_live_audit_mysql_fail_closed_review.v1",
+  "status": "ready_for_operator_remote_validation",
+  "verified_at": "2026-10-22T02:58:25.5923597Z",
+  "previous_preparation": "docs/evidence/a-live-audit-mysql-preparation-20261022.json",
+  "previous_preparation_sha256": "cfcc5e1fdfdc4ecfb9aae1fa18ab9e8e878b95e6d3aa01d22fe6250acbdaa28d",
+  "compiled_go_inputs_match_current": true,
+  "go_rebuilt": false,
+  "changes": [
+    "Namespace absence requires successful API status AND empty result; failed absence query cannot emit absent=yes.",
+    "Overall passing status is assigned only after final source verification. Every exception records failed and source_stable=false."
+  ],
+  "offline_shell_tests": {
+    "passed": 7,
+    "cases": [
+      "normal_cleanup",
+      "namespace_uid_drift",
+      "changed_upload",
+      "absence_api_failure",
+      "delete_api_failure",
+      "sql_failure_cleanup",
+      "lost_creation_response_uid_recovery"
+    ],
+    "failed": 0,
+    "duration_ms": 209788.6477
+  },
+  "actual_wrapper_with_command_fixtures": {
+    "passed": 4,
+    "go_ssh_scp_node": "in_process_test_fixtures",
+    "failed": 0,
+    "cases": [
+      "success",
+      "remote_failure",
+      "review_failure",
+      "final_source_drift"
+    ],
+    "simulation_receipts_removed": true
+  },
+  "powershell_syntax_passed": true,
+  "local_cleanup_verified": true,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "real_mysql_verified": false,
+  "real_http_verified": false,
+  "production_approved": false,
+  "files": [
+    {
+      "path": "backend/cmd/system-backup-audit-collect/audit.sql",
+      "size": 2097,
+      "sha256": "c15ffa67a921d76c798319226a318bc9657f2832cdb4e340e8966dc960746f01"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/export.go",
+      "size": 5321,
+      "sha256": "c3724f1969547f2d6455c541084232ca1eb9a7c9523fc9585d8687b9ae690797"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main_test.go",
+      "size": 9716,
+      "sha256": "2fbd265364824489fa10ca0e5b9dda10b6cb0d0025946be2c2a06ddd21f6c842"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main.go",
+      "size": 11224,
+      "sha256": "6cd473f3151204bd22e1b479bcb568622158ff8745abf34d6e5f84ef06c32869"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/mysql_test.go",
+      "size": 10722,
+      "sha256": "f05d4893fa8b98b7736c50cdc810e8ac4af7d8fef0db7e9e4cef34ef98b95897"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/testdata/audit.json",
+      "size": 4140,
+      "sha256": "09410f2dccef8ebf22502c505c433ee286c154e623a529369d2faf3444a24f41"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/testdata/mysql.sql",
+      "size": 1348,
+      "sha256": "73b41d8765ad706c419a162e9e0023fe9240a2c14739e4a7ec2524f8d8445b6c"
+    },
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "docs/system-backup-a-live-audit-collector-20261022.md",
+      "size": 7641,
+      "sha256": "f20dc53dac97e5f5accd0a2ca8268ed9834b295d9c7efdaa0e086158d0d1a488"
+    },
+    {
+      "path": "docs/system-backup-a-live-audit-mysql-20261022.md",
+      "size": 4704,
+      "sha256": "30c451530f34b1593046c8c6065db1249b211b2347ee734757b4b84b46e88385"
+    },
+    {
+      "path": "scripts/system-backup-a-capacity-material-review.mjs",
+      "size": 6418,
+      "sha256": "de6170fde30bc16059326618776611d34e06e1af24e914030d0f54ef3f7b4b82"
+    },
+    {
+      "path": "scripts/system-backup-a-download-deployment.mjs",
+      "size": 16730,
+      "sha256": "3458e6b6e00b2472c1935da59674c556be8ca492e432d017450995669d0f5b47"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-review.mjs",
+      "size": 3239,
+      "sha256": "c38e642e039c8296409eae8e65afe12cd59ac093acace5987955a1dda74d7250"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-review.test.mjs",
+      "size": 4767,
+      "sha256": "2826ac54d834d707a36458e8d62ccdaab3eada1c75fd6fce68d13dfd543e71de"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-shell.test.mjs",
+      "size": 5746,
+      "sha256": "76ecbd8412dcb0124d8e70bf1bdae0670c38f67d65d97738e1c24bf50cf785bb"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-wrapper.test.ps1",
+      "size": 5251,
+      "sha256": "4799269f240b1790c5f4424198ca75015d7fa49d9eab2b79027afa3c3dd82aff"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.ps1",
+      "size": 10485,
+      "sha256": "9163322783ee5616aa43b9dbc0281c983f001c4dd9a65a624abf5acb6bd083ed"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.sh",
+      "size": 5761,
+      "sha256": "6d784d99070d3c605bff3586937491783fa8ad3a6f9fcec22a98bc8a0e376be5"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit.mjs",
+      "size": 5632,
+      "sha256": "16a6b039b7c8f2ad31e9e4a9c27fc8c29ff3cbd3bf5d3621f4c7b8c71292724a"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.mjs",
+      "size": 21672,
+      "sha256": "1116950f55c8323a53d4ae2d4ff479e39ad40f0ec703d0537f03026f048f2a07"
+    },
+    {
+      "path": "scripts/system-backup-contract-check.mjs",
+      "size": 15317,
+      "sha256": "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-deployment.mjs",
+      "size": 8192,
+      "sha256": "277a4b7c19493d382ff4238e6ff65727931df5f02825f48135b53fe88f9b2ee3"
+    },
+    {
+      "path": "scripts/system-backup-d-deployment.mjs",
+      "size": 16314,
+      "sha256": "89221bf1cc69bc38d405fdfa2480406d92a6e77bd45cd13afcf21b01e47896b1"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5615,
+      "sha256": "34ea566ef0bd646aa93c2e530a0d1c6a8a059db760f425696c0f8129c0de3081"
+    },
+    {
+      "path": "scripts/system-backup-schema-hash-evidence.mjs",
+      "size": 15748,
+      "sha256": "a2b91281186148dfde8b69c4e1ea9ad6b1af960d37b8dfebdcc62c61940c935c"
+    },
+    {
+      "path": "scripts/system-backup-schema-hash.mjs",
+      "size": 19762,
+      "sha256": "dc92d1d324b9d17184de004363f0a0d1e7b6f95a9ab3c7572b5ebef320570758"
+    }
+  ],
+  "source_sha256": "016c6403ac906b3bc2d802237fcb366ba6d8e72426068f435b8e0b6361735dfa"
+}

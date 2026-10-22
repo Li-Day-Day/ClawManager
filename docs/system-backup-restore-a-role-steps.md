@@ -1,15 +1,79 @@
 # A 角色开发步骤：users 与 AI Gateway 系统备份/恢复
 
-## 当前执行顺序（2026-10-20）
+【2026-10-22 本轮收尾后按用户要求暂停】以本条和[收尾记录](evidence/a-round-pause-reviewed-20261022.json)为最新状态，以下“进行中”条目保留历史。CA 候选本包测试及 Linux 构建通过，准确临时 owner 已清理；未装配生产，非实现 owner 评审和 27 项真实资源准入仍待完成。owner 新门禁真实断言失败：空请求体 EOF 场景预期 206、实际 403，未进入远程 SQL，准确 outer owner 已清理；夹具时钟新鲜度仅为待证假设，尚未修复或接收新 baseline。现场材料“未准备”；实际 owner 十一项、历史十六项、完整 GC 四十二项及整链仍待验。本轮不再启动新测试或远测，恢复后按[原完整范围](system-backup-a-all-remaining-work-20261022.md)继续。
+
+【2026-10-22 历史详情构建修复已接收，实际十六项仍待验】[独立回执](evidence/a-verification-detail-build-repair-accepted-20261022.json)确认原 1,569 份冻结输入、普通/游标测试与 seed、Linux 管理/HTTP 历史探针和迁移工具构建、退出 0、冻结复核及两层清理。后续 owner-only 总预算修改已精确反向还原原 harness 字节，未扩大到当前整树或实际 SQL；旧 15:02 失败仍保留。CA 候选 loopback TLS 包测试已通过，Linux 构建/最终清理仍在进行；owner 2700 秒框架预算新轮仍运行，现场材料仍未准备。新远测日志未取得完整结束/退出/清理前保持待验，不启动重复远测。
+
+【2026-10-22 typed 引用层已限定接收，CA/owner 验证继续】[引用层回执](evidence/a-bootstrap-reference-typed-accepted-20261022.json)核对三完整包、29 项现有向量、Linux 构建、374 份选定输入和产物清理；仍未准入真实资源或减少 27 项缺口。[CA 适配候选](system-backup-a-ca-trust-adapter-20261022.md)已实现固定目标 TLS Prepare/本地事务 Recheck，loopback TLS 验证仍进行，未接生产。owner 首轮 900 秒总预算超时已保留失败并确认 outer owner 缺席，未进入 SSH/SQL；仅延长该专项框架预算至 2700 秒，PowerShell 7/5.1 派发回归通过，新完整轮进行。D typed-nil 修复的十旧失败、27 根/139 条通过事件和十八份输入已独立签收，六表政策仍需修改、真实 B proof 未交付。完整状态见[执行记录](system-backup-a-all-remaining-work-20261022.md)。
+
+【2026-10-22 全部剩余项已启动，整体仍在进行】[执行记录](system-backup-a-all-remaining-work-20261022.md)保留六表评审、27 项资源准入、owner 十一项、D 历史十六项/GC 四十二项与真实部署整链的原范围。A 已交付六表逐项“需修改”意见及历史源码胶囊；并行 D 的两份新代码不继承旧结论。新增 SecretRef typed 解码与十五种单用途映射提案正在完整安全包验证，未减少准入缺项。历史详情构建遗漏已修复，普通/游标测试与 seed 通过，跨平台构建仍进行；owner 新完整门禁仍进行。GC 取消修复本地 5,091 条通过事件及准确清理已独立核对，修复后实际 42 项仍未接收。用户确认现场受控材料“未准备”，不生成假 apply 包或生产批准。
+
+【2026-10-22 审计采集器隔离 MySQL 17 项已接收】[完整记录](system-backup-a-live-audit-mysql-20261022.md)直接核对操作者 14:43 原轮：17 项及父测试、五个原始 SQL 样本的 Node 正负复核、31 项来源/程序绑定、准确 namespace UID/两端清理与 SSH/远端退出 0 均通过，无需重跑该专项。两轮旧失败保留，原受验源码证据胶囊支持历史复核；真实 HTTP、正式迁移、TLS/MFA/provider、受审运行装配和 27 项 bootstrap 资源继续未验。
+
+【2026-10-22 A/D verifier 安全交叉评审完成】[新限定接收](evidence/a-d-verifier-security-published-review-20261022.json)核对 D proof 输入隔离的两轮完整 resources 包各 25 根/115 项及原代码 16 个变异反例；当前运行/测试文件字节匹配，224 项范围中 223 项匹配，唯一 schema 差异是 D 必需计数由 31 修为 35，未把旧完整包晋升为当前整树验收。另发现有限 ID 门禁接受外层/公共引用附加约束及未处理属性的缺口：七个新拒绝断言在旧代码全部失败，修复在独立副本和写回后各通过 120 项完整合同回归、六个 check/write 拒绝和 registry 不变检查。普通 CLI 通过，strict 继续因原 policy/交叉签收/缺合同/live schema-hash 阻断；没有正式批准或 Go/远端重测。共享 checker 在操作者审计回执接收后才写回，346 项新限定输入复核匹配，独占测试副本均已清理；沙箱启动失败和 Git CRLF 导致的准确字节检查失败均保留。
+
+【2026-10-22 成本并发快照实际五项已由 A 独立复核】[限定接收](system-backup-a-cost-snapshot-concurrent-review-20261022.md)直接核对原轮 MySQL 8.4.8 日志：并发提交及四项汇总差异、父测试、96 份正式迁移、准确 namespace UID 清理和最终退出 0 均匹配，不再列为“尚未执行”，无需为关闭该待办重跑。原轮未提供完整源码清单/前后摘要或准确本地 scratch ID，保留来源与清理限制；当前报告相关源码增量不获原五项背书。原本地 88 根/396 项准备结果保留历史范围，A 新审阅器 12 项离线检查通过；没有 Go 重测、远测或依赖安装，不新增 owner 来源基线或批准真实 B dump/生产账号/freeze。
+
+【2026-10-22 GC freeze 前置实测 34 项已由 A 独立接收】[新复核](system-backup-a-download-gc-freeze-mysql-review-20261022.md)核对 1,519 项冻结来源、原日志 UTF-16LE 字节摘要、六份准备文件、96 正式 SQL、25 份 case 绑定的精确锁凭据和 9 项权限/事务/会话控制。操作者本轮完整两包 620 根/5,019 项及两位置各 12 seed、default vet/postcheck/退出 0 和准确本地 owner 缺席齐全；保留一次构建前快照变化/丢弃重捕获及四条 socket 消息。该前置专项无需重跑；生产 freeze adapter 仍未接线，十二组协议/完整 GC 和正式角色继续，不新增 owner 来源基线或替代现场材料验收。
+
+【2026-10-22 独立推进：GC 元数据观察关闭边界已由 A 复核】[限定接收](system-backup-a-gc-observer-close-review-20261022.md)确认仅补连接 Close 后的 context 检查，旧代码取消/到期两个有效反例失败，候选与发布各 13 根/281 项，原 276 项和更早 243 项逐名保留；七份输入/default vet/postcheck/退出 0 和准确自有目录缺席齐全。首次物理 driver Close 错误的夹具预期无效，原失败保留。A 未重跑成功测试或安装依赖，不批准 Close 可中断、远端锁释放、生产角色/freeze 或完整 GC；未新增 owner 来源基线。生产材料线继续等待原交付，本次本地交叉复核完成。
+
+【2026-10-22 采集前部署模板已修正】[限定准备](system-backup-a-field-deployment-preparation-20261022.md)将 registration/download 两份空模板的目录摘要同步为当前 96 文件，原 15 项组合器检查全过、自有 CLI 文件清理完成、无依赖安装。当前源码仍缺 27 个 bootstrap 真实资源准入槽位，先复用已有交接补原材料/具体实现和受审装配，再完整采集；旧容量候选不直接复用，空模板仍阻止不完整部署。本轮未生成 apply 包、创建资源或新增 owner 来源基线，角色十项/GC 十八项不重跑。
+
+【2026-10-22 08:56 现场公共盘点已接收】[限定复核](system-backup-a-field-inventory-review-20261022.md)核对新回执原字节、脚本/payload SHA、namespace UID 和退出 0，9 Pod/5 PVC 引用可用。主应用仍为 fix18 imageID；未观测到显式 DSN 变量引用，容量 report claim 无 Pod 挂载，RWOP/journal 挂载未观测到。envFrom、实际 SQL/材料/能力/卷权限不在本轮范围；原授权与 collector/独立 journal 等运行前提仍缺，不能拼造可执行计划。下一步先准备受审装配和原材料，再按统一入口完整采集；不再要求操作者判断部署是否更新，不重复本轮盘点或已接收角色十项/GC 十八项。
+
+【2026-10-22 权限/材料/容量/运行卷统一入口本地准备完成】[交接说明与完整命令](system-backup-a-field-evidence-handoff-20261021.md)新增原挂载 DSN 的只读检查模式，完整命令包 84 项（旧 49 保留）、Windows/Linux 构建、Node 41/Python 13 和两种 PowerShell 假 transport 通过，产物已清理、无依赖安装。操作者尚不确定部署是否更新，先执行 `scripts/system-backup-a-field-inventory.ps1` 获取公共引用；其 Python 8 项及两种 PowerShell 检查通过。空计划仍有 10 类缺项，未执行 SSH/实际 SQL/部署，不算现场验收。五份 owner tagged 依赖变化单列，不能把本轮窄范围回执或旧 5,019 清单当成当前 owner 完整 gate，也未新增 owner 来源基线。角色十项和 D GC 十八项不重跑。
+
+【2026-10-21 角色十项已关闭】[新实际回执](system-backup-a-download-gc-role-mysql-accepted-20261021.md)通过 91 项核对，关闭 metadata_drift 原 1146；保留一次本地 vet 崩溃和原门禁同命令重试。第十二份组合来源保留完整 owner 两包 5,019 项，接收器 67/64 项及十五真实 CLI 拒绝通过。无需重跑角色十项；当前推进生产权限/材料/容量/运行卷统一采集，owner 十一项仍独立待新回执。
+
+【2026-10-21 D GC task 实际专项已关闭】[A 独立复核](system-backup-a-download-gc-task-mysql-review-20261021.md)以 143 项核对接收十八项实际 MySQL、96 文件 fresh migration、六处真实锁、八份计划摘要和十八子库/原 UID/两端清理/退出 0；接收器 37 项反例检查通过。原三个 prune 失败及首次本地汇编器崩溃保留，后者按固定门禁同命令重试后完整通过。本轮仅关闭资格组件，后续 owner 十一项、角色十项、生产身份/材料/容量、完整 GC 和历史升级等价性继续。
+
+【最新第十一份受审范围】资源读取两处完成检查和新增测试另行合入后，[实际 tagged 依赖核对](evidence/a-owner-dependency-baseline-accepted-20261021.json)证明其不在 owner/角色测试依赖内，5,019 项完整清单保持；资源包四个旧失败不改判。[接收器 67/48 项与十五真实 CLI 拒绝](evidence/a-owner-dependency-receipt-readers-preparation-20261021.json)通过，当前普通来源快速预检通过，所有自有冻结/缓存已清理。当前仍按下表先取得 owner 十一项、角色十项的新 96 文件实际回执；资源包剩余失败、D task 十八项及完整恢复 E2E 分别继续。
+
+【当前第十份来源与 96 文件目录】D 已追加 081 修正 prune CHECK，旧 070 不动。[A 独立普通回执](evidence/a-prune-identity-baseline-accepted-20261021.json)保留原 controller 两失败并核对完整 143/191 重测，六包 919/6,332 覆盖、owner 两包原 5,019 全保留、探针/清理齐全。接收器 [65/46 项解析器及十五真实 CLI 拒绝](evidence/a-prune-identity-receipt-readers-preparation-20261021.json)通过，按固定受审来源精确区分历史 95 与当前 96 文件目录。两个 A tagged 夹具修订已完成其原冻结本地准备；当前完整重测入口仍会对新 96 源码重新执行全部 gate，再验证实际十一项/十项。实际 SQL、D task 十八项、历史升级等价性和生产批准均未由本地记录替代。
+
+【2026-10-21 本轮闭合】任务检查 evidence owner/摘要绑定已由[五包 6,868 项回执](system-backup-a-task-check-evidence-binding-20261021.md)接收，旧 6,759、D 新 73/A 新 36 项逐名保留。D 三份业务读取修订及其完整两包 2,346 项另行核对后，owner/角色现保留九份固定来源基线，完整 owner 清单仍为 5,019 项；接收器 59/43 项解析器与十五真实 CLI 拒绝通过。操作者 owner 十过一败的 1846 rename、角色九过一败的 1146 不存在表两处 tagged 夹具均已修复，seed/跨平台/默认 vet/最终来源复核/退出 0 和自有源码/缓存/二进制清理完成，无依赖安装。先按[完整重测脚本](evidence/a-download-owner-role-retest-20261021.ps1)取两轮新实际回执；D task 三个 prune 失败涉及[正式 identity CHECK 冲突](system-backup-a-gc-task-prune-schema-conflict-20261021.md)，单列修订，不以本地准备替代现场结论。
+
+【2026-10-21 读取完成边界及当前合并基线通过】[独立复核](system-backup-a-read-completion-integration-20261021.md)确认旧代码 39 种 Commit 内取消后的晚返回，修订只补八处结果交付前的上下文检查，SQL/隔离/授权及提交次数保持；健康/提交错误各 40 叶子及新 161 项通过。A 新冻结五包 783 根/6,759 项，原 6,598 全保留，22 项 seed 两种位置、跨平台编译、默认 vet/postcheck/退出 0 和自有产物清理完成，未安装依赖/执行 SQL。owner/角色新增第七份两包 5,019 项基线。清理时原输入无漂移，但并行新增两份 task_check_control 源码/测试不在本轮来源内，继续单独复核；完整详情来源、实际 SQL/材料和生产 GC 仍待验收。
+
+【2026-10-21 HTTP 故障记录预算已独立复核】[新限定记录](system-backup-a-download-failure-budget-review-20261021.md)接收五包 782 根/6,598 项，原合并轮 6,591 项逐名保留。请求取消与结果事务超时后的故障记录获得独立五秒预算，队列超时返回并锁存失败；原六处反例失败保留，准确自有产物独立缺席。A 复核未安装依赖或重跑构建。仅 HTTP 两份源码/测试和原冻结范围接收，后续七份读取源码/新增测试仍待审；owner/角色第六份 5,012 项稳定基线保持，实际 SQL 与完整生产 GC 继续。
+
+【2026-10-21 GC 连接与日志合并验证完成】[新限定验收](system-backup-a-gc-connection-integration-20261021.md)重新冻结 A/D 合并输入，五完整包 779 根/6,591 项通过，准确保留 A 原 6,280 与 D 原 6,581 项；22 项 seed 两种位置、跨平台编译、默认 vet/postcheck/退出 0 及自有产物清理齐全，未安装依赖。owner/角色工具保留第六份两包 5,012 项基线，56/43 项解析器及十一真实 CLI 拒绝通过。连接结论到旧会话不再被池复用，服务端锁释放/清理时间上界/完整 freeze 仍未证明。冻结后的 HTTP 与七份读取源码及新增测试另行待审，当前整树和实际 SQL 均未批准。
+
+【2026-10-21 日志取消/失败锁存边界已修复】[新限定记录](system-backup-a-journal-cancellation-20261021.md)补共享日志的可取消写队列和原子失败锁存：恢复原阻塞语义的错误注入准确触发六个失败叶子，修复定向 23/162、最终冻结四包 763/6,280、seed/脱离各 22、跨平台编译、默认 vet/postcheck/退出 0 及三个自有目录清理通过。新增四根/10 项，原 6,270 全保留，无依赖安装或实际 SQL。owner/角色工具保留第五份冻结两包 4,977 项，55/43 解析器和十一 CLI 拒绝通过；冻结后另三份普通代码/测试与并行元数据包未接收，不能据本轮批准当前整树或生产 GC。
+
+【2026-10-21 独立推进：evidence GC 持久故障日志完成本地接线】[新实现与限定验收](system-backup-a-gc-failure-journal-20261021.md)加入 `NewJournaledGCRuntime`：专用已预置日志绑定原 worker/数据库/evidence，逐候选、provider 授权和 SQL 结果提交边界检查日志健康，日志不可用时拒绝继续；外部删除后的结果回滚保留原引用供 reconciliation。最终完整四包 759 根/6,270 项通过，新五根/28 项、旧 6,242 全保留；默认 vet、跨平台构建、postcheck/退出 0 和三个自有目录清理齐全，未安装依赖。owner/角色接收工具同步至当前两包 4,967 项，54/43 解析器及十一真实 CLI 拒绝通过。实际日志卷/SQL/provider、完整 GC policy 和现场启用继续待验收；owner 远测无需成为本地实现的串行阻塞。
+
+【2026-10-21 最新门禁已修复并独立接收】[新完整基线](evidence/a-download-gc-producer-independent-accepted-20261021.json)以 1,525 项核对接收四包 754 主/6,242 项，旧 6,167 项全保留；owner 两包 604 主/4,939 项，本次五失败叶子/两根已通过。全部探针/迁移构建、默认 vet、来源 postcheck/exit 0 和六自有目录清理完成。[接收工具 r4](evidence/a-download-owners-actual-review-cli-checks-20261021-r4.json)通过 53 项解析器/五真实 CLI 拒绝。现在优先用新日志和清单重测完整 owner 十一项，原失败保留；当前限定本地基线，不代表实际 SQL 或完整生产 GC 已通过。
+
+【2026-10-21 当前接续】A 已完成[GC 批次原始证据独立复核及 owner 接收工具更新](system-backup-a-download-owner-repair-20261021.md)：1,528 项核对、原四包 746/6,167、旧两包 4,822 全保留，新两包 4,864；工具 46 项解析器检查及四真实 CLI 拒绝通过。今天 owner 十一项实际 SQL 七过四败/最终 exit 1，失败与清理已独立登记。夹具 FK/CHECK 与跨子例 err 修订已由[32 项准备回执](evidence/a-download-owners-fixture-repair-accepted-20261021.json)接收：1,457 输入、三位置 seed 各 13、跨平台 probe/runner、默认 vet/postcheck/退出 0、全部自有产物清理。当前优先取得修订后的实际十一项回执；D 后续普通 GC 变化需新完整回执，旧 MFA 九项/准入结果二十四项不重跑。
+
+## 当前执行顺序（2026-10-21）
+
+【受限角色十项接收工具就绪】[新工具及用法](system-backup-a-download-gc-role-mysql-handoff-20261020.md#新完整日志的独立接收)通过 43 项解析器检查和六份真实日志的 CLI 拒绝，零实际回执新增；复用当前两包 4,939 项完整基线，逐用例核对元数据/撤权/角色/FK、准确账号/库清理及原 UID/两端退出门禁。没有运行实际 SQL，仍先取得 owner 十一项新回执，再执行角色十项。
+
+【producer SQL 新回执】[A 独立复核](system-backup-a-download-producer-mysql-review-20261021.md)完成 194 项核对，接收 D 09:18 轮的 producer 十八项实际 MySQL：同源 1,455 输入、完整两包 4,864 项、seed/脱离各 22、准确四处真实锁、十八子库与原 UID/两端清理、postcheck/default vet/最终退出 0。该隔离专项关闭；A owner 十一项、GC task/角色专项、生产材料与完整 GC 继续。
+
+【10:06 owner 新轮已失败结束】[完成轮独立核对](evidence/a-download-owners-local-failure-reviewed-20261021.json)确认 `100630-92ddbad0` 于 10:31:51 以 exit 1 结束：security 通过，evidence 包 478.470 秒后与 D r2 同样五叶子/两根失败，未进入 SSH/SQL；缓存清理已报告，准确源码 owner 独立缺席。D 修订需新完整门禁和最终构建/清理复核后才能重新冻结重测，保留本次原失败。
 
 | 优先级 | 工作与当前状态 | 完成证据 |
 | --- | --- | --- |
-| 1 | 操作者执行 SQL task owner 新十一项；实际回执尚未收到。已接收 MFA 九项、准入/结果二十四项无需重复。 | [十一项入口](system-backup-a-download-sql-owner-mysql-handoff-20261019.md)对应的新轮冻结来源、准确叶子/root、原 UID 与子库/两端产物清理和退出 0。 |
-| 2 | 接入实际 owner/ref/hold、生产材料与物理容量。基础备份表遗漏修复保持原范围；r73 的新完整 security 2,011 项和 postcheck 已独立核对，补足先前沿用单包记录的限制。原容量 Node 9 项、Python 4 项和 Linux 编译回执继续保留。 | [容量实现与本地回执](system-backup-a-capacity-measurement-20261020.md)；另需重新生成现场配置、核对最小权限身份、真实数据卷及共享报告卷、原始材料有效期和持久故障记录。模型或编译不替代这些运行事实。 |
-| 3 | 补齐 producer history 与其余 owner 的原始持久来源、完整 GC policy 和正式共享批准。[GC 独立复核](system-backup-a-download-gc-review-20261020.md)接收早期组件的原本地范围；另已准备[受限 SQL 账号十项独立远测](system-backup-a-download-gc-role-mysql-handoff-20261020.md)，普通两包 4,552 项、seed 9+9、默认 vet/Windows 与 Linux 编译/postcheck/清理通过，实际 SQL 尚未运行。 | 十项由操作者在隔离 MySQL 中执行，覆盖特权观察者元数据对比、users.id 锁读、七次越权拒绝、四类撤权的原/新连接、角色变化及跨 schema FK。仍缺完整 owner/artifact/ref/hold/lease、trigger/program 与 DDL freeze、物理容量和墓碑后续回收；本地准备不批准生产角色或完整 GC。 |
-| 4 | 完成真实人员 MFA/provider 和恢复矩阵 E2E。独立下载 SQL 连接池、TLS 在线 readiness、离线挂载/OIDC 组合已完成新限定验证：主入口 49 项、Node 15 项、默认 vet、Linux 编译和准确产物清理。旧 4,402 项回执保持原来源范围，历史失败保留。 | [最新 Kubernetes 接线与回执](system-backup-a-download-k8s-composition-20261020.md)：仍需实际两个 SQL 角色批准、PVC/CA/OIDC/原始材料现场核对及 E2E；生成清单默认零副本、Job 暂停。 |
+| 1 | 重测并接收修订后的 owner 十一项。最新十过一败/exit 1，缺列夹具 1846 已修订并完成本地准备。 | [完整入口与新回执](system-backup-a-download-sql-owner-mysql-handoff-20261019.md)。保留完整 gate、实际十一叶子/root、真实锁、十一库/原 UID/两端清理与退出 0；操作者用现有交互会话执行。 |
+| 2 | 角色十项及 GC freeze 34 项前置实验已接收；继续补新 GC 任务/producer 组件和生产运行身份的实际权限、元数据及完整锁协议。 | [十项实际回执](system-backup-a-download-gc-role-mysql-accepted-20261021.md)、[freeze 34 项 A 独立接收](system-backup-a-download-gc-freeze-mysql-review-20261022.md)；[原十二条查询](evidence/a-download-gc-query-plan-20261021.json)与[producer 七条查询](evidence/a-download-gc-producer-query-plan-20261021.json)。原十项 maintenance=absent，34 项 freeze_adapter=not_wired，均不批准生产新组件权限或完整 freeze。 |
+| 3（已关闭组件专项） | 081 修正后的实际 96 文件 fresh migration 与 D GC task 十八项已接收；原失败保留。 | [143 项独立复核及 37 项接收器检查](system-backup-a-download-gc-task-mysql-review-20261021.md)。六处真实锁、八份计划摘要、十八库/原 UID/两端清理和退出 0 齐全；历史升级等价性、073 staging、完整 GC 和生产角色继续单列。 |
+| 4 | 先读取新的公共部署引用，再收齐实际 registration/download/collector 身份、owner/ref/hold/producer history、原始授权/provider 材料、物理容量和 report/journal 运行卷。 | [统一盘点与完整采集命令](system-backup-a-field-evidence-handoff-20261021.md)、[本地限定准备记录](evidence/a-field-evidence-dsn-preparation-20261022.json)和[现场材料清单](system-backup-a-download-next-evidence-20261020.md)。原 DSN/观察者 socket，不安装客户端；配置含 system_backups、原始有效期/五秒窗口，核对实际挂载/卷/Unix 权限。完整物理测试与正式批准另待实际证据。 |
+| 5 | 完成完整 GC policy、原始持久来源、正式共享 schema/角色/索引审批和真实批次/墓碑后续回收。 | [批次与 producer 限定复核](system-backup-a-download-owner-repair-20261021.md)已接收冻结本地范围；实际 collector 计划/锁、完整 policy 和正式批准继续。 |
+| 6 | 完成真实人员 MFA/provider、生产接线的现场启用与恢复矩阵 E2E。 | [Kubernetes 接线](system-backup-a-download-k8s-composition-20261020.md)的实际角色、PVC/CA/OIDC/原始材料及 E2E 继续；生成清单保持零副本、Job 暂停。 |
 
 下文按时间保留原始工作记录；历史“待执行/验证中”状态以本表及对应最新回执为准。
+
+【2026-10-20 A 已修复三个 GC nil 接口依赖缺口】[修订说明](system-backup-a-gc-nil-adapters-20261020.md)与[独立回执](evidence/a-gc-nil-adapters-20261020-r1-accepted.json)固定 1,451 来源，新增三根/11 项；旧判断准确触发五个指针/函数叶子及三个根失败，修复版单次完整 security/evidence 两包 590 主/4,822 项、默认 vet、零失败/跳过、postcheck/退出 0 及准确自有产物清理通过。十二个现有证书/claim/处理中撤权边界也逐名通过。生产只改三个依赖判断，未安装依赖或执行远端/实际 SQL；D 后续 startup diagnostic 脚本变化不在接收范围。owner 接收工具同步固定本轮完整清单，[r2 准备记录](evidence/a-download-owners-actual-review-cli-checks-20261020-r2.json)保留 37 项解析器反例和三个真实 CLI 拒绝，实际十一项仍待新轮。
+
+【2026-10-20 A owner 十一项回执独立接收工具已准备】[完整用法](system-backup-a-download-sql-owner-mysql-handoff-20261019.md#新日志的独立接收工具)与[准备记录](evidence/a-download-owners-actual-review-cli-checks-20261020.json)登记 37 项内存解析/反例验证，以及真实 13:34 失败、15:29 无来源和 15:25 本地成功三份日志在 CLI 的准确拒绝。接收工具核对两完整包的固定完整测试清单、两个位置的 13 项 seed、本轮源码/probe/input/runner/catalog、十一叶子/root、正确用例中的实际锁标记、每例准确子库及 UID/两端清理、postcheck/default vet/退出 0。只读检查或独占写新回执均不触发 Go、SSH/SQL 或安装；没有实际 SQL 接收文件、构建产物或缓存。普通输入变化须新受审基线，不能缩小预期清单。十一项实际回执仍待新轮，生产任务/材料/provider/完整 GC 与批准继续。
+
+【2026-10-20 A 对 GC sibling/prune 依赖新交付独立复核完成】[限定评审](system-backup-a-download-gc-dependencies-review-20261020.md)及[293 项独立检查回执](evidence/a-download-gc-dependencies-independent-accepted-20261020.json)接收 D r4 的同源四包 737 主/6,114 项、任务组件 14/303，以及 A 已独立执行的同源 evidence 332/2,800 的准确测试名称对照。原始计数明确为八个新根/182 项加旧根四项，净增 186；D 文档已作相应勘误。十二个晚到引用 rollback 叶子核对实际写入及原行/审计/容量/墓碑精确恢复，六个 D 自有目录独立确认不存在。另交付[八类准确查询/参数](evidence/a-download-gc-query-plan-20261020.json)与[实际 SQL、账号、材料、容量和运行卷接收清单](system-backup-a-download-next-evidence-20261020.md)。未重跑 Go/构建、安装依赖或执行 SQL/远端；三个后续脚本及三个新增输入明确排除，实际计划/锁范围、完整 policy、正式 schema/角色及生产验收继续。
+
+【2026-10-20 A GC 审计整数列错误注入独立验证完成】[限定说明](system-backup-a-gc-audit-resource-review-20261020.md)与[r4 回执](evidence/a-gc-audit-resource-accepted-20261020-r4.json)核对 1,446 冻结输入、正常四项、三组准确错误注入及完整 evidence 包 332 主/2,800 含子项、默认 vet、postcheck/退出 0 和全部自有源码/缓存/overlay/中转目录清理。错误类型、公开 SOP 比较与未发布 FK 都准确触发指定断言；普通测试无失败/跳过。r2 原正向失败、r3 旧 D 测试错误查询写入历史导致的十三项失败均保留；r4 重新执行全部五阶段，原十三项通过。验证工具只读工作树、不属于远测冻结输入，未安装依赖或执行远测。该独立类型回归完成，实际 owner 十一项、受限角色十项、真实材料/容量、完整 GC policy 和生产批准仍待交付。
 
 【2026-10-20 A 对原 r78 GC 任务资格组件独立复核完成】[限定评审](system-backup-a-download-gc-task-review-20261020.md)与[独立回执](evidence/a-download-gc-task-independent-accepted-20261020-r78.json)核对新增六根/117 项、原四包 722 根/5,855 项、r78 同源 seed/编译补证和六自有目录缺席。r77 后续工具失败/整体 exit 1 保留；没有重跑测试、构建或安装依赖。任务资格源码/测试仍匹配，正在新增的 reference 组件及三份 collector/model 改动明确不在接收范围，不能据旧回执称当前工作树或完整 GC 已通过。A/D 两清单逐路径/大小/字节相同，逻辑 SHA 因清单顺序不同而不同，两份摘要分别重算成立。完整引用整合、实际索引/锁等待/跨写入者顺序、角色和物理容量仍待新证据；用户远测继续按原十一项、十项顺序，不增加重复套件。
 

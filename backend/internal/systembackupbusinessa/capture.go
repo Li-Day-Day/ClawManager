@@ -226,10 +226,12 @@ type TableCount struct {
 	Rows  int64  `json:"rows"`
 }
 
-// SourceSnapshot is a single source transaction's redacted statistics. It is
-// not evidence that any dump captured those rows or used the same checkpoint.
+// SourceSnapshot is a single source transaction's redacted counts and cost
+// aggregate digest. The digest is required even for empty cost_records. This
+// is not proof that a dump captured those rows or used the same checkpoint.
 type SourceSnapshot struct {
-	Tables []TableCount `json:"tables"`
+	Tables              []TableCount `json:"tables"`
+	CostAggregateSHA256 string       `json:"cost_aggregate_sha256"`
 }
 
 type SQLCountCollector struct{ DB *sql.DB }
@@ -274,8 +276,15 @@ func (c SQLCountCollector) CollectSnapshot(ctx context.Context, scope *CaptureSc
 		total += rows
 		snapshot.Tables = append(snapshot.Tables, TableCount{Table: table, Rows: rows})
 	}
+	snapshot.CostAggregateSHA256, err = readCostAggregateHash(ctx, tx, snapshotCostRows(snapshot))
+	if err != nil {
+		return SourceSnapshot{}, err
+	}
 	if err := tx.Commit(); err != nil {
 		return SourceSnapshot{}, fmt.Errorf("commit A business snapshot: %w", err)
+	}
+	if err := ctx.Err(); err != nil {
+		return SourceSnapshot{}, err
 	}
 	return snapshot, nil
 }

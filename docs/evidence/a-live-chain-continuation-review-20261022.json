@@ -1,0 +1,88 @@
+{
+  "kind": "a_live_chain_continuation_review.v1",
+  "reviewed_at": "2026-10-22T01:24:06.6125111Z",
+  "status": "real_owner_implementations_and_reviewed_runtime_inputs_required",
+  "sources": [
+    {
+      "path": "docs/evidence/a-field-public-inventory-20261022-085642-cb639159.json",
+      "sha256": "07a599af6c63e4bd02105dae0f7592997580f811928127a83367a9253fba9e8d"
+    },
+    {
+      "path": "docs/evidence/a-field-public-inventory-reviewed-20261022.json",
+      "sha256": "55dccda7d781917fa54e80bc9b317cba4a803551a81670dd1dbf998410d6aaf1"
+    },
+    {
+      "path": "scripts/system-backup-d-activation-inputs.mjs",
+      "sha256": "ab93f658b9bec3a47f70f4bb6d523d93801236adc1b22f43423acb023ad89a10"
+    },
+    {
+      "path": "deployments\\k8s\\system-backup-provider-lab\\registration-bootstrap-d-admin-7d01a0782656f2af361b56e5\\bootstrap-admission.json",
+      "sha256": "72445d92d1790ea171c61c01e3651270b1a7b1c0bb95f3bfe647bebd79a9672f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "sha256": "6309733321361c08ba45afb98811d4eee3b539c6b8c6f07c5cd82a65ee29f27d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+      "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+    }
+  ],
+  "owner_handoff": {
+    "available": false,
+    "provenance": "direct user reply in this chat: 没有",
+    "scope": "B/C bootstrap adapters or actual resource handoff materials",
+    "do_not_infer": "does not prove underlying infrastructure services do not exist"
+  },
+  "current_public_inventory": {
+    "raw_receipt_sha256": "07a599af6c63e4bd02105dae0f7592997580f811928127a83367a9253fba9e8d",
+    "operator_provenance": "existing operator-executed public transport receipt; local consumer verified saved hash and selected public fields; no new remote connection",
+    "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "pod_count": 9,
+    "container_count": 9,
+    "claim_count": 5,
+    "app_pod_uid": "aabba383-5db9-48a7-a3b7-2b92624c2f3a",
+    "app_image_id": "10.130.14.23:5000/clawmanager@sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d",
+    "explicit_supported_dsn_references": 0,
+    "journal_mounts": [],
+    "actual_sql_executed": false,
+    "complete_field_acceptance": false
+  },
+  "old_public_candidate": {
+    "expected_whole_schema_sha256": "0f6224f3c5f499102ad9148f40bf4e2a3997cd144fe82e898c6740f85c7532bc",
+    "current_whole_schema_sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865",
+    "schema_pin_matches": false,
+    "observed_public_audit_exit": 1,
+    "failure_stage": "whole admin-control-resources schema SHA mismatch at system-backup-d-activation-inputs.mjs:30",
+    "semantic_ConfigValues_change_inferred": false,
+    "declared_registry_kinds": [
+      "provider_proof_issuers",
+      "strong_auth_issuers",
+      "rbac_bindings"
+    ],
+    "declared_reference_purposes": [
+      null
+    ],
+    "full_config_file_present": false,
+    "runtime_file_present": false,
+    "old_pin_modified": false
+  },
+  "limitations": [
+    "public Pod/PVC metadata does not refresh SQL identity/config/evidence or provider TLS/token validity",
+    "envFrom and process environment not inventoried; explicit DSN reference absence does not prove all configuration absent",
+    "no B/C conversation history was obtained; broad thread reads were terminated after they failed to return; no messages sent",
+    "whole schema mismatch requires review; do not replace old digest to claim approval"
+  ],
+  "bootstrap_source_missing_checks": 27,
+  "new_adapters_linked": 0,
+  "remote_contacted": false,
+  "tests_or_builds_run": false,
+  "dependencies_installed": false,
+  "credentials_read": false,
+  "configuration_mutated": false,
+  "live_http_audit_verified": false
+}

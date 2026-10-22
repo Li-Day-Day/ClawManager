@@ -18,6 +18,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/server ./
     && CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/northbound-gateway ./cmd/northbound-gateway \
     && CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/secret-broker ./cmd/secret-broker \
     && CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/system-backup-registration ./cmd/system-backup-registration \
+    && CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/system-backup-audit-collect ./cmd/system-backup-audit-collect \
     && CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/system-backup-migrate ./cmd/system-backup-migrate \
     && CGO_ENABLED=0 GOOS=linux go build -trimpath -buildvcs=false -o bin/system-backup-bootstrap ./cmd/system-backup-bootstrap
 
@@ -33,6 +34,7 @@ COPY --from=builder /app/bin/server .
 COPY --from=builder /app/bin/northbound-gateway .
 COPY --from=builder /app/bin/secret-broker .
 COPY --from=builder /app/bin/system-backup-registration .
+COPY --from=builder /app/bin/system-backup-audit-collect .
 COPY --from=builder /app/bin/system-backup-migrate .
 COPY --from=builder /app/bin/system-backup-bootstrap .
 

@@ -1,0 +1,98 @@
+{
+  "kind": "a_owner_actual_mysql_failed_attempt_review",
+  "recorded_at": "2026-10-21T01:27:30.539Z",
+  "status": "failed_not_accepted",
+  "log": "docs/evidence/a-download-owners-mysql-remote-20261021-083734-aca6615d.txt",
+  "log_sha256": "e4111f83165e492a532394f4f5f3386c7de35ba29c5e3f73edb33c12685fed11",
+  "source": "docs/evidence/a-download-owners-mysql-remote-source-20261021-083734-aca6615d.json",
+  "source_manifest_sha256": "766c0244f742681aae16ff4e051cca5faf3127492411dedd4c7c44ea3986d146",
+  "source_sha256": "d921cc1a3a9028717adf5b5b5ffaa6a8a8afb1ad30f4c41b1287b057a41fae7d",
+  "source_files": 1455,
+  "local_complete_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 255,
+      "all": 2011
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 341,
+      "all": 2853
+    }
+  ],
+  "packaged_seed_checks": 13,
+  "exact_encoding_aliases": [
+    {
+      "original": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/-1碌s",
+      "canonical": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/-1µs"
+    },
+    {
+      "original": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/1碌s",
+      "canonical": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/1µs"
+    },
+    {
+      "original": "TestRecoverySchedulingRecheckedUnderClaimLock/-1碌s",
+      "canonical": "TestRecoverySchedulingRecheckedUnderClaimLock/-1µs"
+    },
+    {
+      "original": "TestRecoverySchedulingRecheckedUnderClaimLock/1碌s",
+      "canonical": "TestRecoverySchedulingRecheckedUnderClaimLock/1µs"
+    }
+  ],
+  "namespace": "sbk-mig-261021012119-261b",
+  "namespace_uid": "ff6b28bc-3c98-4508-a520-a75a3b4896e2",
+  "mysql_version": "8.4.8",
+  "actual_sql_started": true,
+  "passed_cases": [
+    "backup",
+    "drill",
+    "preflight",
+    "artifact_verify",
+    "revoked_actor",
+    "changed_original_deadline",
+    "unknown_reference_column"
+  ],
+  "failed_cases": [
+    "wrong_installation",
+    "missing_reference_column",
+    "original_owner_lock",
+    "empty_reference_range"
+  ],
+  "observed_error_codes": {
+    "wrong_installation": 1452,
+    "missing_reference_column": 3959,
+    "original_owner_lock": 3959,
+    "empty_reference_range": 3959
+  },
+  "final_exit": 1,
+  "final_source_postcheck": false,
+  "namespace_and_remote_cleanup": "reported_in_original_log_not_independently_reconnected",
+  "cleaned_databases": [
+    "amfa_a541a26d8d88af94a5f305a06d085cd0",
+    "amfa_e5aced5b71a0304c5b44a50c7da3978a",
+    "amfa_2365023e48b8ca9c6df849fef8a1b96d",
+    "amfa_5c7c6b81f5fceef454fd16296531b8f0",
+    "amfa_573f717387d70d8404c5ad620fca1b7f",
+    "amfa_8e96461c2ac23bf4367625ec06f0c61b",
+    "amfa_b1e72055a2e6199295f338f54ee54174",
+    "amfa_b017cc14a0eb8429bd909ebedef5d715",
+    "amfa_7ad7815937bc150b979a1880266562cd",
+    "amfa_b99997a259e6eedffbc5683efb7b7d17",
+    "amfa_7b72cee9747140eaae161d8fe5f9571f"
+  ],
+  "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8089ada627bb4d558058998c5007e29c",
+  "local_owner_independently_absent": true,
+  "misleading_original_root_message": "Original root logged PASS text despite four failed leaves; actual root event is FAIL and is never accepted",
+  "frozen_probe_sha256": "e65f7209f6e0b6dade5269c742b7b87e8fb5f7d0352e66bf15d7574b33c4dbff",
+  "diagnosis": {
+    "wrong_installation": "FK rejected evidence binding before Preview because foreign installation did not exist",
+    "missing_reference_column": "MySQL 3959 rejected rename while chk_sb_dependency_evidence referred to evidence_id",
+    "later_lock_cases": "Shared outer err retained 3959 across subtests; lock assertions were not reached"
+  },
+  "mysql_error_reference": "https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html",
+  "actual_cases_accepted": 0,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "test_build_artifacts_created": false,
+  "reviewer_sha256": "7c6c929b6ba8756187a90adaa7d908c425769e15f5126e2f87bff46a235ee021"
+}

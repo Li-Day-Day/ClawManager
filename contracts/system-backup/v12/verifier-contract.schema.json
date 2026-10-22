@@ -69,7 +69,8 @@
         { "$ref": "#/$defs/Check" },
         { "oneOf": [
           { "properties": { "id": { "enum": ["ai_gateway.checkpoint", "ai_gateway.capture_context"] }, "expected": { "$ref": "#/$defs/ABusinessDigestValue" }, "actual": { "$ref": "#/$defs/ABusinessDigestValue" } } },
-          { "properties": { "id": { "enum": ["ai_gateway.table_count.audit_events", "ai_gateway.table_count.chat_messages", "ai_gateway.table_count.chat_sessions", "ai_gateway.table_count.cost_records", "ai_gateway.table_count.instance_gateway_token_aliases", "ai_gateway.table_count.llm_models", "ai_gateway.table_count.model_invocations", "ai_gateway.table_count.risk_hits", "ai_gateway.table_count.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } }
+          { "properties": { "id": { "enum": ["ai_gateway.table_count.audit_events", "ai_gateway.table_count.chat_messages", "ai_gateway.table_count.chat_sessions", "ai_gateway.table_count.cost_records", "ai_gateway.table_count.instance_gateway_token_aliases", "ai_gateway.table_count.llm_models", "ai_gateway.table_count.model_invocations", "ai_gateway.table_count.risk_hits", "ai_gateway.table_count.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } },
+          { "properties": { "id": { "enum": ["ai_gateway.cost_aggregates"] }, "expected": { "$ref": "#/$defs/ABusinessDigestValue" }, "actual": { "$ref": "#/$defs/ABusinessDigestValue" } } }
         ] }
       ]
     },
@@ -91,7 +92,8 @@
         { "$ref": "#/$defs/Check" },
         { "oneOf": [
           { "properties": { "id": { "enum": ["ai_gateway.restore_count.audit_events", "ai_gateway.restore_count.chat_messages", "ai_gateway.restore_count.chat_sessions", "ai_gateway.restore_count.cost_records", "ai_gateway.restore_count.instance_gateway_token_aliases", "ai_gateway.restore_count.llm_models", "ai_gateway.restore_count.model_invocations", "ai_gateway.restore_count.risk_hits", "ai_gateway.restore_count.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessCountValue" }, "actual": { "$ref": "#/$defs/ABusinessCountValue" } } },
-          { "properties": { "id": { "enum": ["ai_gateway.restore_inert.chat_sessions", "ai_gateway.restore_inert.instance_gateway_token_aliases", "ai_gateway.restore_inert.llm_models", "ai_gateway.restore_inert.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessViolationValue" }, "actual": { "$ref": "#/$defs/ABusinessViolationValue" } } }
+          { "properties": { "id": { "enum": ["ai_gateway.restore_inert.chat_sessions", "ai_gateway.restore_inert.instance_gateway_token_aliases", "ai_gateway.restore_inert.llm_models", "ai_gateway.restore_inert.risk_rules"] }, "expected": { "$ref": "#/$defs/ABusinessViolationValue" }, "actual": { "$ref": "#/$defs/ABusinessViolationValue" } } },
+          { "properties": { "id": { "enum": ["ai_gateway.restore_cost_aggregates"] }, "expected": { "$ref": "#/$defs/ABusinessDigestValue" }, "actual": { "$ref": "#/$defs/ABusinessDigestValue" } } }
         ] }
       ]
     },
@@ -101,6 +103,7 @@
         { "properties": {
           "id": { "enum": [
             "control_plane.empty.system_artifact_lease_states", "control_plane.empty.system_artifact_leases",
+            "control_plane.empty.system_backup_admin_revocations", "control_plane.empty.system_backup_admin_sessions",
             "control_plane.empty.system_backup_alert_states", "control_plane.empty.system_backup_artifact_verifications",
             "control_plane.empty.system_backup_attempts", "control_plane.empty.system_backup_check_results",
             "control_plane.empty.system_backup_compact_tombstones", "control_plane.empty.system_backup_configs",
@@ -108,11 +111,13 @@
             "control_plane.empty.system_backup_evidence", "control_plane.empty.system_backup_evidence_chunks",
             "control_plane.empty.system_backup_external_actions", "control_plane.empty.system_backup_installation_state",
             "control_plane.empty.system_backup_job_observations", "control_plane.empty.system_backup_log_chunks",
+            "control_plane.empty.system_backup_metadata_reservations",
             "control_plane.empty.system_backup_operations", "control_plane.empty.system_backup_preflights",
             "control_plane.empty.system_backup_promotions", "control_plane.empty.system_backup_provider_capabilities",
             "control_plane.empty.system_backup_prune_items", "control_plane.empty.system_backup_prune_runs",
             "control_plane.empty.system_backup_source_writer_check_states", "control_plane.empty.system_backup_staging_resources",
-            "control_plane.empty.system_backup_strong_auth_nonces", "control_plane.empty.system_backups",
+            "control_plane.empty.system_backup_strong_auth_nonces", "control_plane.empty.system_backup_totp_credentials",
+            "control_plane.empty.system_backups",
             "control_plane.empty.system_maintenance_locks", "control_plane.empty.system_maintenance_mutation_leases",
             "control_plane.empty.system_maintenance_participants", "control_plane.empty.system_restore_drill_resources",
             "control_plane.empty.system_restore_drills"
@@ -186,13 +191,13 @@
     "A": {
       "status": "draft", "categories": ["users", "ai_gateway"],
       "users_backup_validate": { "check_schema": "#/$defs/AUsersBackupCheck", "required_check_count": 8, "required_proof": "B-owned capture certificate and dump content proof binding both views to the pinned registry, observed schema and one checkpoint", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
-      "ai_gateway_backup_validate": { "check_schema": "#/$defs/AAIGatewayBackupCheck", "required_check_count": 11, "required_proof": "B-owned capture certificate and dump content proof binding both views to the pinned registry, observed schema and one checkpoint", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
+      "ai_gateway_backup_validate": { "check_schema": "#/$defs/AAIGatewayBackupCheck", "required_check_count": 12, "required_proof": "B-owned capture certificate and dump content proof binding both views, including exact cost aggregates, to the pinned registry, observed schema and one checkpoint", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
       "users_restore_validate": { "check_schema": "#/$defs/AUsersRestoreCheck", "required_check_count": 11, "required_proof": "B-owned isolated target identity, completed normalization, authenticated expected counts and separate SELECT-only verifier credential with final recheck", "failure_mapping": { "count_or_inert_state_mismatch": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } },
-      "ai_gateway_restore_validate": { "check_schema": "#/$defs/AAIGatewayRestoreCheck", "required_check_count": 13, "required_proof": "B-owned isolated target identity, completed normalization, authenticated expected counts and separate SELECT-only verifier credential with final recheck", "failure_mapping": { "count_or_inert_state_mismatch": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } }
+      "ai_gateway_restore_validate": { "check_schema": "#/$defs/AAIGatewayRestoreCheck", "required_check_count": 14, "required_proof": "B-owned isolated target identity, completed normalization, authenticated expected counts and cost aggregates, and separate SELECT-only verifier credential with final recheck", "failure_mapping": { "count_or_inert_state_mismatch": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } }
     },
     "B": { "status": "pending_owner_submission", "categories": ["instances"] },
     "C": { "status": "pending_owner_submission", "categories": ["teams", "skill_hub", "artifact", "catalog"] },
-    "D": { "status": "draft", "categories": ["resources", "control_plane", "isolation", "cleanup", "prune", "promotion"], "resources_backup_validate": { "check_schema": "#/$defs/ResourcesBackupCheck", "required_check_count": 12, "required_proof": "B-owned capture certificate and dump content proof binding source and dump metadata to one checkpoint and capture context", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } }, "control_plane_restore_validate": { "check_schema": "#/$defs/ControlExclusionCheck", "required_check_count": 31, "required_proof": "B-owned isolated target identity, completed normalization boundary and separate SELECT-only verifier credential", "failure_mapping": { "nonempty_control_table": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } } }
+    "D": { "status": "draft", "categories": ["resources", "control_plane", "isolation", "cleanup", "prune", "promotion"], "resources_backup_validate": { "check_schema": "#/$defs/ResourcesBackupCheck", "required_check_count": 12, "required_proof": "B-owned capture certificate and dump content proof binding source and dump metadata to one checkpoint and capture context", "failure_mapping": { "mismatch": { "check_classification": "integrity", "failure_category": "validation_failed", "retryable": false }, "missing_or_unverified_proof": { "failure_category": "evidence_incomplete", "retryable": false } } }, "control_plane_restore_validate": { "check_schema": "#/$defs/ControlExclusionCheck", "required_check_count": 35, "required_proof": "B-owned isolated target identity, completed normalization boundary and separate SELECT-only verifier credential", "failure_mapping": { "nonempty_control_table": { "check_classification": "integrity", "failure_category": "normalization_failed", "retryable": false }, "missing_or_unverified_target_proof": { "failure_category": "evidence_incomplete", "retryable": false } } } }
   },
   "x-freeze-blockers": [
     "Each owner must supply unique check IDs, warning mappings and closed expected/actual schemas for its categories.",

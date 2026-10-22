@@ -96,6 +96,30 @@ test('complete mocked read-only probe passes D scope without mutation or credent
   assert.ok(s.calls.filter(c => c.input).every(c => c.input.startsWith('SELECT ') || c.input.startsWith('-- Read-only MySQL')));
   assert.ok(!JSON.stringify(r).includes('MYSQL_PASSWORD'));
 });
+
+test('runtime capacity rejects submillisecond stale and future reports at the original SQL boundary', () => {
+  for (const [now, observed] of [
+    ['2026-09-29T01:00:05.000001Z', '2026-09-29T01:00:00.000000Z'],
+    ['2026-09-29T01:00:00.000001Z', '2026-09-29T01:00:00.000002Z'],
+  ]) {
+    const s = fakeEnvironment(); s.identity.now = now; s.capacity.observed_at = observed;
+    const result = probe(s);
+    assert.equal(result.status, 'BLOCKED');
+    assert.ok(result.blockers.includes('capacity_report_fresh_matching_identity'));
+  }
+});
+
+test('runtime capacity preserves valid int64 wire bytes above JS safe integer', () => {
+  const s = fakeEnvironment(), original = s.run;
+  s.run = (...args) => {
+    const result = original(...args);
+    if (result.stdout?.includes('"available_bytes":99999999999')) {
+      result.stdout = result.stdout.replace('"available_bytes":99999999999', '"available_bytes":9223372036854775807');
+    }
+    return result;
+  };
+  assert.equal(probe(s).status, 'PASS_D_SCOPE');
+});
 test('namespace, Pod and database identity mismatches stop dependent probing', () => {
   for (const field of ['namespace', 'pod', 'database']) {
     const s = fakeEnvironment();

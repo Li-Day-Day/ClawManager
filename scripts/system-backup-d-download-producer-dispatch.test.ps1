@@ -24,7 +24,7 @@ if($producerPayloadNodes.Count -ne 1){throw 'Producer profile lost its independe
 $evidenceRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 . ([scriptblock]::Create($producerPayloadNodes[0].Extent.Text))
 $producerPayload=$evidenceDDL|ConvertFrom-Json
-if($producerPayload.kind -ne 'd_download_producer_probe_inputs.v2' -or $producerPayload.admission_sha256 -ne 'c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f' -or $producerPayload.producer_ddl_sha256 -ne '26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c' -or -not $producerPayload.capability_evidence){throw 'Producer capsule lost original admission, C1 scope or detached content pins'}
+if($producerPayload.kind -ne 'd_download_producer_probe_inputs.v2' -or $producerPayload.admission_sha256 -ne 'd9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0' -or $producerPayload.producer_ddl_sha256 -ne '26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c' -or -not $producerPayload.capability_evidence){throw 'Producer capsule lost original admission, C1 scope or detached content pins'}
 $chainCommands=@($chainAST.FindAll({param($n)$n -is [Management.Automation.Language.ExpandableStringExpressionAst] -and $n.Extent.Text.Contains('tar -xf bundle.tar;') -and $n.Extent.Text.Contains('KUBE_CONTEXT=')},$true))
 if($chainCommands.Count -ne 1){throw 'Ambiguous producer owner remote command'}
 $chainCommand=. ([scriptblock]::Create($chainCommands[0].Extent.Text))

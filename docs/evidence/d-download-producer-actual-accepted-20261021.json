@@ -1,0 +1,216 @@
+{
+  "kind": "d_download_producer_owners_actual_mysql_review",
+  "recorded_at": "2026-10-21T02:01:22.831Z",
+  "status": "accepted_exact_eighteen_producer_owner_cases_only",
+  "log": "docs/evidence/d-download-producer-remote-20261021-091802.txt",
+  "log_sha256": "9efa731e941518b2e9598bdb4469af7a0ca41459f07b30673ad40fef6204bf33",
+  "source_manifest": "docs/evidence/d-download-producer-remote-20261021-091802-source.json",
+  "source_manifest_sha256": "70ba3043184f012cc0278762d4e03a509ab41e05c1bad674766b608a6cede1ef",
+  "source_sha256": "d9500684fb57a6cf658830a236f9f7e9ef8268e36aea3e156e50cb0c452f2542",
+  "source_files": 1455,
+  "baseline": "docs/evidence/d-download-gc-batch-20261020-r3",
+  "baseline_events_sha256": "fd7bc902bae8ee7028adeae48cc05e7873397b44bb979e996d31fcd1cf0617fb",
+  "local_stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 255,
+      "all": 2011,
+      "elapsed": "59.013s"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 341,
+      "all": 2853,
+      "elapsed": "444.176s"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 3,
+      "all": 22,
+      "elapsed": "5.924s"
+    }
+  ],
+  "detached_seed_checks": 22,
+  "actual": {
+    "mysql": "8.4.8",
+    "namespace": "sbk-mig-261021015533-01f1",
+    "namespace_uid": "73689a41-d102-4274-b8a8-067a36ab3fe5",
+    "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+    "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+    "binary_sha256": "a3ef9e3677cc5b385585b38c64d0e3063f9a747dcfbae9a40d1fad23123e337f",
+    "inputs_sha256": "a881d2290a05b3239f9df583bfc61542907083becd0ff11ad53eb7645a841bc0",
+    "migration_binary_sha256": "0b419fd36243b4c23a03c18f4497223c5df44aa961db4fae54795d8f75f5d162",
+    "catalog_sha256": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237",
+    "migrations": 95,
+    "root": "TestDProducerDownloadOwnersMySQL",
+    "cases": [
+      "http_result",
+      "expired_owner_write_read",
+      "superseded_run",
+      "wrong_root",
+      "run_projection",
+      "history_manifest",
+      "receipt_manifest",
+      "receipt_version",
+      "foreign_reference",
+      "partial_schema",
+      "missing_history",
+      "original_run_lock",
+      "original_history_lock",
+      "empty_receipt_range",
+      "empty_hold_range",
+      "revoked_result",
+      "result_link_rollback",
+      "late_history_rollback"
+    ],
+    "main": 1,
+    "leaves": 18,
+    "elapsed_seconds": 90.81,
+    "databases": [
+      {
+        "case": "http_result",
+        "database": "amfa_db23e060c364a5699ea0ae6baf25692a"
+      },
+      {
+        "case": "expired_owner_write_read",
+        "database": "amfa_315aff6db9302d05a3f92f5a1731963e"
+      },
+      {
+        "case": "superseded_run",
+        "database": "amfa_a2f0fb42a2278cd80de00bb91807b458"
+      },
+      {
+        "case": "wrong_root",
+        "database": "amfa_f26c717142d962a54561788e4b2efa8f"
+      },
+      {
+        "case": "run_projection",
+        "database": "amfa_1382d6ea7209e7d43cba9d48ce36b2e4"
+      },
+      {
+        "case": "history_manifest",
+        "database": "amfa_41d56aba86c5ff7edd68284bee326666"
+      },
+      {
+        "case": "receipt_manifest",
+        "database": "amfa_f65319d32456035031cf27b3c32a5dac"
+      },
+      {
+        "case": "receipt_version",
+        "database": "amfa_3b5bb1c904c5a30d0fc225dea481c70f"
+      },
+      {
+        "case": "foreign_reference",
+        "database": "amfa_72ce21b9918ece0a98075804db320403"
+      },
+      {
+        "case": "partial_schema",
+        "database": "amfa_354d6060bb5b302f7cead2a3fb8b60cf"
+      },
+      {
+        "case": "missing_history",
+        "database": "amfa_c03bd0d0c220bf6348a614d3c16371d2"
+      },
+      {
+        "case": "original_run_lock",
+        "database": "amfa_5d5ead574a8e5ef8e6ceb922698cd16d"
+      },
+      {
+        "case": "original_history_lock",
+        "database": "amfa_ebebebceac47cacf879ad9def9357c33"
+      },
+      {
+        "case": "empty_receipt_range",
+        "database": "amfa_76ce68dc154ab2ec9df9b34c9e425a78"
+      },
+      {
+        "case": "empty_hold_range",
+        "database": "amfa_6c424b82da7e8c24467cbfe58b68c62e"
+      },
+      {
+        "case": "revoked_result",
+        "database": "amfa_cb4e1dcaa05da21e794ce5c1952e5b98"
+      },
+      {
+        "case": "result_link_rollback",
+        "database": "amfa_107a3dde3bce0c35cfbcb61faaff1ee3"
+      },
+      {
+        "case": "late_history_rollback",
+        "database": "amfa_d9db25cc1e8201d66d1420f4c38c61f7"
+      }
+    ],
+    "observed_locks": [
+      {
+        "case": "original_run_lock",
+        "table": "system_backup_producer_runs",
+        "holder": 62,
+        "writer": 64,
+        "writer_rolled_back": true
+      },
+      {
+        "case": "original_history_lock",
+        "table": "system_backup_producer_evidence_bindings",
+        "holder": 67,
+        "writer": 69,
+        "writer_rolled_back": true
+      },
+      {
+        "case": "empty_receipt_range",
+        "table": "system_backup_producer_result_receipts",
+        "holder": 72,
+        "writer": 74,
+        "writer_rolled_back": true
+      },
+      {
+        "case": "empty_hold_range",
+        "table": "system_backup_producer_evidence_refs",
+        "holder": 77,
+        "writer": 79,
+        "writer_rolled_back": true
+      }
+    ]
+  },
+  "cleanup": {
+    "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-547c3def54324c6e9fc8a913bd586f12",
+    "local_owner_independently_absent": true,
+    "namespace_exact_uid_reported": true,
+    "remote_scratch_reported": true,
+    "local_build_cache_reported": true
+  },
+  "final_postcheck": true,
+  "default_vet": true,
+  "outer_exit": 0,
+  "dependencies_installed": false,
+  "current": {
+    "matches_frozen": false,
+    "changed": [
+      "backend/internal/systembackupevidence/download_retention_gc_test.go",
+      "backend/internal/systembackupevidence/download_retention_gc.go",
+      "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go"
+    ],
+    "added": [
+      "backend/internal/systembackupevidence/download_retention_gc_producer_test.go",
+      "backend/internal/systembackupevidence/download_retention_gc_producer.go"
+    ],
+    "removed": [],
+    "list": "docs/evidence/d-download-producer-actual-current-files-20261021.txt",
+    "list_sha256": "7ca5510891278348ddf8cec5fa1d056d7183cb902e2e1427f37b7a7ed5ab0bf6",
+    "scope": "current GC producer component and A tagged fixture repairs are not covered by this historical frozen run"
+  },
+  "socket_warnings": {
+    "count": 4,
+    "assessment": "SSH client warnings retained; subsequent payload PASS, cleanup, frozen postcheck and final exit zero are independently present"
+  },
+  "boundaries": {
+    "owner_adapter": "SQLDownloadOwners",
+    "provider_transport": "synthetic",
+    "production_tasks": false,
+    "human_mfa": false,
+    "production_approval": false,
+    "gc_accepted": false,
+    "six_scope_complete": false,
+    "prior_twelve_task_cases_rerun": false,
+    "remote_executed_by_reviewer": false
+  }
+}

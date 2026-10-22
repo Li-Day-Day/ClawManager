@@ -250,11 +250,12 @@ func (a PinnedRegistrationAuthority) Load(ctx context.Context, tx *sql.Tx, actor
 	if err != nil || pr.Scope.InstallationID != a.InstallationID {
 		return fail()
 	}
-	var sr StrongAuthIssuerRegistry
-	if err = a.registry("strong_auth_issuers", c.StrongAuthRegistryVersion, c.StrongAuthRegistrySHA256, &sr); err != nil {
+	strongRaw, err := a.RegistryBytes("strong_auth_issuers", c.StrongAuthRegistryVersion, c.StrongAuthRegistrySHA256)
+	if err != nil {
 		return fail()
 	}
-	if sr.SchemaVersion != "system-backup-strong-auth-issuers.draft.v1" || sr.Version != c.StrongAuthRegistryVersion || sr.Audience == "" || len(sr.Keys) == 0 || len(sr.Keys) > 128 {
+	sr, err := DecodeStrongAuthIssuerRegistry(strongRaw, c.StrongAuthRegistryVersion, c.StrongAuthRegistrySHA256, now)
+	if err != nil {
 		return fail()
 	}
 	sc.ExpectedAudience = sr.Audience

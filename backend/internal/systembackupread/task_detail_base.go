@@ -77,7 +77,7 @@ func readTaskInTransaction[T any](ctx context.Context, r *Reader, kind TaskKind,
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return zero, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return zero, ErrUnavailable
 	}
 	if missing {

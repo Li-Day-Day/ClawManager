@@ -1,0 +1,74 @@
+{
+  "kind": "d_task_execution_bounds_native",
+  "exit": 0,
+  "source_postcheck": true,
+  "published": true,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-81d0abd8be754f88ae4a1fb73e1c9674",
+    "removed": true,
+    "files_removed": 2914,
+    "test_build_artifacts_removed": true,
+    "cleaned_utc": "2026-10-22T04:01:44.7706030Z"
+  },
+  "error": null,
+  "stages": [
+    {
+      "stage": "dependencies",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-deps",
+        "-test",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./internal/systembackupread"
+      ]
+    },
+    {
+      "stage": "counterfactual",
+      "exit": 1,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-run",
+        "^TestTaskExecution(RowBounds|RowLimitSQL)$",
+        "-json",
+        "./internal/systembackupread"
+      ]
+    },
+    {
+      "stage": "isolated",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupread"
+      ]
+    },
+    {
+      "stage": "published",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupread"
+      ]
+    }
+  ],
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false
+}

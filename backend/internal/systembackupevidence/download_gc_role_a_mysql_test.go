@@ -32,6 +32,10 @@ var aGCRoleCases = []string{
 	"cross_schema_cascade_rejected", "metadata_drift",
 }
 
+// This table is created by the formal capsule in every isolated role database.
+// The role fixture does not create the MFA owner's separate synthetic table.
+const aGCRoleMetadataDriftSQL = "ALTER TABLE system_backup_configs ADD COLUMN gc_role_probe INT NULL"
+
 func aGCRoleHint(c DownloadGCEarlyReferenceConfig) DownloadGCEarlyScope {
 	return DownloadGCEarlyScope{Database: c.Database, Installation: c.Installation, WorkerOperation: "sop_11111111-2222-4333-8444-555555555555", Operation: "sop_66666666-7777-4888-8999-aaaaaaaaaaaa", PrincipalSHA256: strings.Repeat("b", 64), OperationID: 1, ActorID: 42, IntentAuditID: 1, ResultAuditID: 2}
 }
@@ -59,6 +63,9 @@ func aGCRoleGrants(database, user string) []string {
 func TestADownloadGCRoleMySQLSeed(t *testing.T) {
 	if _, err := decodeADownloadMFAInputs(aDownloadMFASeed); err != nil {
 		t.Fatal("GC role capsule invalid")
+	}
+	if !strings.Contains(aGCRoleMetadataDriftSQL, "ALTER TABLE system_backup_configs ADD COLUMN") {
+		t.Fatal("GC role drift must alter an existing formal fixture table")
 	}
 	seen := map[string]bool{}
 	for _, name := range aGCRoleCases {
@@ -294,16 +301,21 @@ func TestADownloadGCRoleMySQL(t *testing.T) {
 			case "cross_schema_restrict_rejected", "cross_schema_cascade_rejected":
 				x.foreignReference(t, conn, name == "cross_schema_cascade_rejected")
 			case "metadata_drift":
-				aGCRoleExec(t, x.ctx, x.root, "owned-metadata-drift", "ALTER TABLE synthetic_download_mfa_owner ADD COLUMN gc_role_probe INT NULL")
+				aGCRoleExec(t, x.ctx, x.root, "owned-metadata-drift", aGCRoleMetadataDriftSQL)
+				changed := aGCRoleMetadata(t, x.ctx, x.root)
+				if changed.Columns == x.c.Metadata.Columns {
+					t.Fatal("owned DDL did not change the privileged column pin")
+				}
 				tx = x.begin(t, conn)
 				if g, e := source.Lock(x.ctx, tx, x.hint); e == nil || g != nil {
 					t.Fatal("changed metadata accepted under original privileged pins")
 				}
 				aGCRoleSQL(t, "drift-rollback", tx.Rollback())
-				x.c.Metadata = aGCRoleMetadata(t, x.ctx, x.root)
+				x.c.Metadata = changed
 				tx = x.begin(t, conn)
 				_, e := x.source(t).Lock(x.ctx, tx, x.hint)
 				aGCRoleSQL(t, "isolated-repin-positive", e)
+				t.Log("OBSERVED privileged column metadata drift; original pin rejected; isolated repin accepted")
 			default:
 				t.Fatal("unknown GC role case")
 			}

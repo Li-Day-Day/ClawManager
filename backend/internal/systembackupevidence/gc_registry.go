@@ -17,6 +17,9 @@ func (g gcRegistry) WithLocked(ctx context.Context, id string, fn func(Locked) e
 	if a == nil || fn == nil || !idPattern.MatchString(id) {
 		return ErrInvalid
 	}
+	if a.journal != nil && a.journal.check() != nil {
+		return ErrUnavailable
+	}
 	until, err := pinnedPeerExpiry(ctx, a, a.roots, a.c.CertificateSHA256, a.c.ExpiresAt)
 	if err != nil {
 		return ErrDenied
@@ -64,7 +67,7 @@ func (g gcRegistry) WithLocked(ctx context.Context, id string, fn func(Locked) e
 	}
 	var now time.Time
 	live := func() bool {
-		return tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now) == nil && now.Before(until) && time.Since(now) <= 5*time.Second && time.Until(now) <= 5*time.Second && ctx.Err() == nil
+		return (a.journal == nil || a.journal.check() == nil) && tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now) == nil && now.Before(until) && time.Since(now) <= 5*time.Second && time.Until(now) <= 5*time.Second && ctx.Err() == nil
 	}
 	if !live() {
 		return ErrDenied

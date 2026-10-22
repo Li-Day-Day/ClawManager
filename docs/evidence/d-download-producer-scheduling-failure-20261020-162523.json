@@ -1,0 +1,83 @@
+{
+  "kind": "d_producer_remote_scheduling_failure_review",
+  "recorded_at": "2026-10-20T09:25:05.605Z",
+  "log": "docs/evidence/d-download-producer-remote-20261020-162523.txt",
+  "log_sha256": "45eb6c861cf0d2167d81ed788e9a1b5f54f725782401a0e59b3a9fcb3378056e",
+  "source_manifest": "docs/evidence/d-download-producer-remote-20261020-162523-source.json",
+  "source_manifest_sha256": "9f7e972b22dc334208ff162d54fae4245d1e4e7ddaff098c0ba4f6f97bc9da19",
+  "source_sha256": "04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df",
+  "source_files": 1446,
+  "exact_historical_baseline_files": true,
+  "baseline_events_sha256": "40f3a4fb56475fb8de671fa383f813d19c2d7e7fa8cf8b5431d86ea0512d5533",
+  "seed_events_sha256": "5845adae5504d035ad05966e132a0dec429ab6b9efba4c2cabdc53e436a4d268",
+  "local_stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 255,
+      "all": 2011,
+      "elapsed": "91.396s"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 332,
+      "all": 2800,
+      "elapsed": "447.152s"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 3,
+      "all": 22,
+      "elapsed": "10.125s"
+    }
+  ],
+  "console_name_transcoding": {
+    "consistent_with": "UTF-8 bytes decoded as GBK in operator console",
+    "exact_aliases": [
+      {
+        "canonical": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/-1µs",
+        "observed": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/-1碌s"
+      },
+      {
+        "canonical": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/1µs",
+        "observed": "TestGCSchedulingDueTimeEnforcedUnderClaimLock/1碌s"
+      },
+      {
+        "canonical": "TestRecoverySchedulingRecheckedUnderClaimLock/-1µs",
+        "observed": "TestRecoverySchedulingRecheckedUnderClaimLock/-1碌s"
+      },
+      {
+        "canonical": "TestRecoverySchedulingRecheckedUnderClaimLock/1µs",
+        "observed": "TestRecoverySchedulingRecheckedUnderClaimLock/1碌s"
+      }
+    ],
+    "raw_log_modified": false
+  },
+  "detached_seed_checks": 22,
+  "probe_sha256": "b440b2e4a350d5b95a469957d93d39fed30d4c6176a6ada7390f35f2df52c340",
+  "inputs_sha256": "a881d2290a05b3239f9df583bfc61542907083becd0ff11ad53eb7645a841bc0",
+  "migration_runner_sha256": "dacbeaef0960972fab63188979ea827c25e6745960672ca69bf2e10a71cd6d41",
+  "remote_started": true,
+  "namespace": "sbk-mig-261020085946-3817",
+  "namespace_uid": "bd6cf195-a269-4ff4-bef0-d7f02de7fad0",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "failed_stage": "mysql_pod_scheduling_before_target_migrations_and_probe",
+  "node": "node1",
+  "failed_scheduling_event": "0/2 nodes are available: 1 Too many pods, 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/2 nodes are available: 1 No preemption victims found for incoming pod, 1 Preemption is not helpful for scheduling.",
+  "actual_producer_cases": 0,
+  "target_migrations_started": false,
+  "exit": 1,
+  "final_frozen_postcheck": false,
+  "namespace_cleanup": "reported_exact_original_uid",
+  "remote_scratch_cleanup": "reported",
+  "local_build_cleanup": "reported",
+  "local_source_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-74db41e774364da2887c3117e3861bda",
+  "local_source_owner_independently_absent": true,
+  "live_cluster_rechecked": false,
+  "current_source_match_not_asserted": true,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "reviewer_sha256": "eac2614c1369700632953fafe9398d3ea1683e6537c87170fcec225c806ff7f6",
+  "scope": "Historical failure classification only. Local ordinary tests and packaged/detached seeds passed. Remote began, MySQL remained unscheduled, target migrations/probe did not run. Cleanup reports do not prove current remote capacity or production readiness."
+}

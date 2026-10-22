@@ -1,0 +1,82 @@
+{
+  "status": "failed",
+  "run": "20261020-r3",
+  "source_sha256": "019ccdc41fa9767b8edc3ac18fca96e32962b9bb0fdf96d345f5fe0f4143be6c",
+  "source_files": 1446,
+  "exit": 1,
+  "counterfactual_stages_passed": true,
+  "evidence_full_passed": false,
+  "source_postcheck_passed": false,
+  "stages": [
+    {
+      "stage": "targeted",
+      "checks": 4,
+      "passed": 4,
+      "failed": [],
+      "expected_counterfactual": false,
+      "sha256": "2e2b3f3f9865ce848f00b7ac24c716212e20edde71c66aac8ba5b7e2bd01ec02"
+    },
+    {
+      "stage": "wrong-type",
+      "checks": 4,
+      "passed": 1,
+      "failed": [
+        "TestAGCDirectAuditResourcePublishedInteger",
+        "TestAGCDirectAuditResourcePublishedInteger/published_int",
+        "TestAGCDirectAuditResourcePublishedInteger/wrong_type"
+      ],
+      "expected_counterfactual": true,
+      "sha256": "cd4cf2cd4eca3a084ce7f92463166f17444a71803609073fa696037d123bed41"
+    },
+    {
+      "stage": "public-string",
+      "checks": 4,
+      "passed": 2,
+      "failed": [
+        "TestAGCDirectAuditResourcePublishedInteger",
+        "TestAGCDirectAuditResourcePublishedInteger/published_int"
+      ],
+      "expected_counterfactual": true,
+      "sha256": "37099ac5ae653bb3651c3a0d4f90b2394a254b69170c277cf089e25c78111fc8"
+    },
+    {
+      "stage": "unpublished-fk",
+      "checks": 4,
+      "passed": 2,
+      "failed": [
+        "TestAGCDirectAuditResourcePublishedInteger",
+        "TestAGCDirectAuditResourcePublishedInteger/unexpected_fk"
+      ],
+      "expected_counterfactual": true,
+      "sha256": "b9a7557f5cbcc9483283bc006ca227d9bb852630a4431ed9a9d6e1d93a1dc96a"
+    },
+    {
+      "stage": "evidence-full",
+      "checks": 2798,
+      "passed": 2785,
+      "failed": [
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/artifact_verify/operation_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/artifact_verify/result_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/artifact_verify/tombstone",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/drill/operation_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/drill/result_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/drill/tombstone",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/preflight/operation_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/preflight/result_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/preflight/tombstone",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/prune/operation_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/prune/result_deleted",
+        "TestDownloadRetentionGCTaskCollectorLateArtifactDependenciesRollback/prune/tombstone"
+      ],
+      "expected_counterfactual": false,
+      "sha256": "712624b8d39f39eebea3417efc330325c06d69ed4c7fe1c16116693dab2266ae"
+    }
+  ],
+  "reason": "Frozen D late-dependency test searched ExecContext SQL in read-query history. Current D test uses the write history and stronger rollback snapshots; the old frozen failure remains failed.",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1a0292b2a7b5462cb9cf484e2939da0c",
+  "owned_source_cache_overlay_removed": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "production_approved": false
+}

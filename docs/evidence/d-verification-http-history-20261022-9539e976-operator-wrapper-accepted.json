@@ -1,0 +1,108 @@
+{
+  "kind": "d_verification_detail_operator_wrapper_local_review",
+  "status": "snapshot_and_rejection_guards_verified",
+  "wrapper": {
+    "path": "scripts/system-backup-d-verification-detail-validation.ps1",
+    "size": 6722,
+    "sha256": "c56079efd3c32fa6dc90b644bf30b0d8bc8f00619ebd336bab86d03320b08376"
+  },
+  "source_sha256": "584929f7c0a2c9a613e280d90634e1f80913dd7671f061d7f01c378a4abe4220",
+  "source_files": 1563,
+  "freeze_only": true,
+  "child_validation_executed": false,
+  "actual_mysql": false,
+  "remote_executed": false,
+  "dependencies_installed": false,
+  "guards": [
+    {
+      "guard": "remote-freeze",
+      "exit": 1,
+      "owner_created": false
+    },
+    {
+      "guard": "outside-evidence",
+      "exit": 1,
+      "owner_created": false
+    },
+    {
+      "guard": "existing-manifest",
+      "exit": 1,
+      "owner_created": false
+    }
+  ],
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e5bdba58f2734157a8cb33020ba25800",
+    "removed": true,
+    "files_removed": 1564,
+    "test_build_artifacts_removed": true
+  },
+  "owner_independently_absent": true,
+  "evidence": [
+    {
+      "path": "scripts/system-backup-d-verification-detail-validation.ps1",
+      "size": 6722,
+      "sha256": "c56079efd3c32fa6dc90b644bf30b0d8bc8f00619ebd336bab86d03320b08376"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-wrapper-candidate.ps1",
+      "size": 6722,
+      "sha256": "c56079efd3c32fa6dc90b644bf30b0d8bc8f00619ebd336bab86d03320b08376"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-freeze-source.json",
+      "size": 307134,
+      "sha256": "e8cdc4459f8d74e0178320d43ad49336cce6ea28fbb6542c2edcc042bf043a23"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-freeze-source.json.result.json",
+      "size": 624,
+      "sha256": "26ff767e8443b5dfad06313189cf063a6ac84d95559a50fbb75dff4172cf1ec9"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-freeze.stdout",
+      "size": 563,
+      "sha256": "fbe7e1871da022dda265b4dd4bb6819c1761dee3b798b3b7b59d2864f389cebf"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-freeze.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-results.json",
+      "size": 270,
+      "sha256": "14ec222367829e49c852beab22291ad47ada989c956822ffcea59e03f3f49ae3"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-remote-freeze.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-remote-freeze.stderr",
+      "size": 348,
+      "sha256": "580e5a0902fa0dba123c7c51e8a32cf941648329b80087238ac38cc16f6fdf2c"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-outside-evidence.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-outside-evidence.stderr",
+      "size": 380,
+      "sha256": "279b3934f9ee0de7b8450d1985afcfe1ba28596b4b600ac385171814a6f93299"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-existing-manifest.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-guard-existing-manifest.stderr",
+      "size": 356,
+      "sha256": "14c71b6f898fa674e22f6a5c0752249b2e1e277eb70c3693378f70e9083afec2"
+    }
+  ],
+  "scope": "Syntax, source freeze/pre-post equality, new output paths, three early rejection guards and cleanup only; A build/SSH dispatch not executed"
+}

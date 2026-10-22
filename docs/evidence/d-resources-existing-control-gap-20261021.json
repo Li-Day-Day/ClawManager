@@ -1,0 +1,31 @@
+{
+  "kind": "d_resources_existing_control_contract_gap",
+  "contract_required_checks": 31,
+  "missing_from_existing_allowlist": [
+    {
+      "name": "system_backup_admin_revocations",
+      "owner": "D",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only"
+    },
+    {
+      "name": "system_backup_admin_sessions",
+      "owner": "D",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only"
+    },
+    {
+      "name": "system_backup_metadata_reservations",
+      "owner": "D",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only"
+    },
+    {
+      "name": "system_backup_totp_credentials",
+      "owner": "D",
+      "backup_strategy": "metadata_only",
+      "restore_strategy": "reference_only"
+    }
+  ],
+  "scope": "record only; no contract or exclusion allowlist changes"
+}

@@ -23,12 +23,13 @@ type GCRuntime struct {
 	sts       *S3STSCredentials
 	store     *S3Store
 	service   Service
+	journal   *gcFailureJournal
 	closed    atomic.Bool
 }
 
 func NewGCRuntime(c GCRuntimeConfig) (*GCRuntime, error) {
 	s, a := c.S3.Store, c.Authority
-	if c.Absence == nil || c.Failure == nil || s.Installation != a.Registry.Installation || s.Identity != a.Store.Identity || s.Version != a.Store.Version || s.Root != a.Root || c.S3.Issuer != a.Issuer || c.S3.Audience != a.Audience {
+	if nilSystemAdapter(c.Absence) || c.Failure == nil || s.Installation != a.Registry.Installation || s.Identity != a.Store.Identity || s.Version != a.Store.Version || s.Root != a.Root || c.S3.Issuer != a.Issuer || c.S3.Audience != a.Audience {
 		return nil, ErrInvalid
 	}
 	authority, err := NewSQLGCAuthority(a)
@@ -51,7 +52,7 @@ func NewGCRuntime(c GCRuntimeConfig) (*GCRuntime, error) {
 }
 
 func (r *GCRuntime) AuthenticateRequest(req *http.Request) (context.Context, error) {
-	if r == nil || r.closed.Load() {
+	if r == nil || r.closed.Load() || r.journal != nil && r.journal.check() != nil {
 		return nil, ErrUnavailable
 	}
 	return r.authority.AuthenticateRequest(req)
@@ -62,14 +63,20 @@ func (r *GCRuntime) AuthenticateRequest(req *http.Request) (context.Context, err
 // host owns scheduling and operation claim lifecycle; no background goroutine
 // or new system operation is manufactured by this runtime.
 func (r *GCRuntime) GC(ctx context.Context, ids []string) []error {
-	if r == nil || r.closed.Load() {
+	if r == nil || r.closed.Load() || ctx == nil {
 		return []error{ErrUnavailable}
 	}
 	if len(ids) > 100 {
 		return []error{ErrCapacity}
 	}
+	// Keep selected hints and failure associations stable across callbacks.
+	// Callers must still avoid concurrent mutation while this copy is made.
+	ids = append([]string(nil), ids...)
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
+	if r.journal != nil {
+		return r.journaledGC(ctx, ids)
+	}
 	results := r.service.GC(ctx, ids)
 	// Persist bounded reconciliation signals even when work was cancelled.
 	// One shared budget bounds all callbacks for this batch.
@@ -88,6 +95,9 @@ func (r *GCRuntime) Close() {
 	if r != nil && !r.closed.Swap(true) {
 		r.store.Close()
 		r.sts.Close()
+		if r.journal != nil {
+			r.journal.storage.Close()
+		}
 	}
 }
 

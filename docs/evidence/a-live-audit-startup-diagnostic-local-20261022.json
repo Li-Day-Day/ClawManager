@@ -1,0 +1,108 @@
+{
+  "kind": "a_live_audit_startup_diagnostic_local_review.v1",
+  "status": "local_validated_actual_mysql_pending",
+  "recorded_at": "2026-10-22T06:19:25.9302694Z",
+  "source_pins": [
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.ps1",
+      "size": 12875,
+      "sha256": "1035682b3680c27be476a51f6bc82d89bc2fecb4b7733b31f2442b310778f647"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.sh",
+      "size": 8970,
+      "sha256": "7f25e6b4159cfaa8ee0fdd7b2c029107ed96f89cc16855f36c0c17719aa4a3c4"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-review.mjs",
+      "size": 4739,
+      "sha256": "af55898405d256811d6ae665bfaae95dc994997da8b6593b53c3e5602e1ba83d"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-review.test.mjs",
+      "size": 3090,
+      "sha256": "b036328af514a8df41629af4f11963ba63ee2965d8ea8162a33a11da1688f6a3"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-shell.test.mjs",
+      "size": 8998,
+      "sha256": "99b084144b9327dc5823adb1031f07478b36d229fe91ad7203cfdea97e2b3ac8"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-wrapper.test.ps1",
+      "size": 8827,
+      "sha256": "53ce09960d13404688895f27b55d01a5cfefc964e36b24ba02b00d2e449fb8f9"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-bundle.test.mjs",
+      "size": 6961,
+      "sha256": "2958b7de48b333c36e0aaf0aa72f78ecd314aed1458ae36fd07ad482f424166b"
+    }
+  ],
+  "original_failed_receipt": "docs/evidence/a-live-audit-mysql-aaudit-20261022133449-57611b7c.json",
+  "original_failed_receipt_sha256": "0a972265d7fbbf1200879a30f3dac294a3d0a52608c9b807fd314461c7af0d0b",
+  "original_failed_transcript": "docs/evidence/a-live-audit-mysql-aaudit-20261022133449-57611b7c.txt",
+  "original_failed_transcript_sha256": "03b8a8d4088e42f5e86f286206da402707ebf21718a3cfe2896212b259c22f15",
+  "validation": {
+    "bash_syntax_exit": 0,
+    "node_review_bundle": {
+      "pass": 11,
+      "fail": 0,
+      "exit": 0
+    },
+    "shell_final_groups": [
+      {
+        "pass": 3,
+        "exit": 0,
+        "fail": 0
+      },
+      {
+        "pass": 4,
+        "exit": 0,
+        "fail": 0
+      },
+      {
+        "pass": 4,
+        "exit": 0,
+        "fail": 0
+      },
+      {
+        "pass": 2,
+        "exit": 0,
+        "fail": 0
+      }
+    ],
+    "powershell_7": {
+      "mock_wrapper_scenarios": 7,
+      "exit": 0,
+      "source_catalog_parity": true,
+      "missing_remote_rejected": true
+    },
+    "powershell_51": {
+      "mock_wrapper_scenarios": 7,
+      "exit": 0,
+      "source_catalog_parity": true,
+      "missing_remote_rejected": true
+    }
+  },
+  "earlier_attempts": [
+    "Sandbox Bash syntax failed with CreateFileMapping Win32 error 5; sandbox Node shell run interrupted, not accepted.",
+    "First complete mock-function suite: 18 passed, 6 failed. Function mock incorrectly used exit in place of an external-process return. Fixture corrected to return; all 13 shell cases rerun in four disjoint groups and passed.",
+    "Earlier slow external-command mock suite interrupted; no passing claim."
+  ],
+  "cleanup": {
+    "test_fixture_directories_absent": true,
+    "simulation_receipts_removed": true,
+    "interrupted_owned_directories_removed": [
+      ".tmp-a-live-audit-mysql-Qh39wa",
+      ".tmp-a-live-audit-mysql-K3HYxD"
+    ],
+    "interrupted_local_mock_upload_removed": "aaudit-20261022000000-c8f2cbd7",
+    "unrelated_preexisting_temp_not_modified": "aaudit-20261022000000-b5bf5d11"
+  },
+  "dependencies_installed": false,
+  "go_build_run_by_this_change": false,
+  "remote_run_by_this_change": false,
+  "sql_cases_verified": false,
+  "production_approved": false
+}

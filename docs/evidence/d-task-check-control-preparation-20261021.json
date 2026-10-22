@@ -1,0 +1,119 @@
+{
+  "kind": "d_task_check_control_read_preparation",
+  "status": "local_check_metadata_contribution_only",
+  "base_source_sha256": "cf604777890a94f5630f719f9f26246a5d03fdec1f163dd5a1a44e9f752620af",
+  "base_manifest_sha256": "ec525286520d4881b5d0a7ca314cb73a93ec14558b0406118368e7a7ff4bcb8c",
+  "added": [
+    "backend/internal/systembackupread/task_check_control.go",
+    "backend/internal/systembackupread/task_check_control_test.go"
+  ],
+  "runs": [
+    {
+      "attempt": "r1",
+      "stage": "target",
+      "source_sha256": "bef1fd039e18f3bd1272146004d7cfd27df95017f96c2adf06af2bf84029a47e",
+      "files": 1470,
+      "main": 7,
+      "checks": 69,
+      "new_main": 7,
+      "new_checks": 69,
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupread",
+          "elapsed_seconds": 1.813
+        }
+      ],
+      "source_manifest": "docs/evidence/d-task-check-control-20261021-r1-target-source.json",
+      "source_manifest_sha256": "a0ea1993caf70b6789986b7dbcd4da335c401f235230aca7e023de5d1bbcc178",
+      "events_sha256": "044da3c609aed563568ca456366b531eca24da9b5f16f97c5b5f31f8f69a3118",
+      "native_sha256": "e9f662fce8310931ef9f301d2507010bb1f7285c42e7e26ee6087dd716b1d058"
+    },
+    {
+      "attempt": "r2",
+      "stage": "target",
+      "source_sha256": "cfeb3c3474f787fdee34875f42494aba5fd3aa0db2146b4fdf79524f1181db03",
+      "files": 1470,
+      "main": 8,
+      "checks": 73,
+      "new_main": 8,
+      "new_checks": 73,
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupread",
+          "elapsed_seconds": 1.819
+        }
+      ],
+      "source_manifest": "docs/evidence/d-task-check-control-20261021-r2-target-source.json",
+      "source_manifest_sha256": "c672ddb0cb684a3e18cc4b54d69a22087ec577fd2a0bc526c422c8eb0cedb611",
+      "events_sha256": "7fe97d6109b8281f90915aa6d5522b2a476a9b64ac90c8a9e1a947edb7433fed",
+      "native_sha256": "35270e0f29c015f005dc4602d0814d02a090f167735b70b2f84c8db53e51c319"
+    },
+    {
+      "attempt": "r2",
+      "stage": "full",
+      "source_sha256": "cfeb3c3474f787fdee34875f42494aba5fd3aa0db2146b4fdf79524f1181db03",
+      "files": 1470,
+      "main": 339,
+      "checks": 2764,
+      "new_main": 8,
+      "new_checks": 73,
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupread",
+          "elapsed_seconds": 3.29
+        },
+        {
+          "package": "clawreef/internal/systembackupsecurity",
+          "elapsed_seconds": 37.194
+        }
+      ],
+      "source_manifest": "docs/evidence/d-task-check-control-20261021-r2-full-source.json",
+      "source_manifest_sha256": "c672ddb0cb684a3e18cc4b54d69a22087ec577fd2a0bc526c422c8eb0cedb611",
+      "events_sha256": "8508bf58984b30895a9f46d096bb1b0922e70d5353d79f963797b5c16ef5fe40",
+      "native_sha256": "e9427d396db8a71f49d32cfb3f85fd90abe9c0ae0851ead4234588dc1ce7fedc"
+    }
+  ],
+  "published": {
+    "source_context_sha256": "cfeb3c3474f787fdee34875f42494aba5fd3aa0db2146b4fdf79524f1181db03",
+    "source_context_manifest_sha256": "49ab37cdffcb62e2a8c6f9892c84cf060c93f32522342461b32ff95d636cfbbb",
+    "matches_frozen_full": true,
+    "concurrent_changes": [],
+    "concurrent_additions": [],
+    "own_two_files_and_module_match": true
+  },
+  "reviewed_migration": {
+    "path": "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+    "sha256": "9ed7b536fe44cfd3c0b2bb88efeece13ded67cfeeb78b8ee044d344d63f20c00",
+    "index_order_compatible": true,
+    "actual_explain_or_server_work_proven": false
+  },
+  "cleanup": {
+    "receipt": "docs/evidence/d-task-check-control-cleanup-20261021.json",
+    "sha256": "7bb6b6ceadf493d4350617518e3e9a534ee414b6e4715a147e437f01a27b2f0b",
+    "removed": true
+  },
+  "dependencies_installed": false,
+  "remote": false,
+  "boundaries": {
+    "maximum_check_rows": 10000,
+    "overflow_probe_rows": 1,
+    "all_original_attempts_preserved": true,
+    "expected_actual_payloads_selected": false,
+    "public_summary_or_current_report_selection": false,
+    "evidence_owner_hash_verified": false,
+    "evidence_current_availability_proven": false,
+    "complete_detail_or_http_enabled": false,
+    "actual_mysql_or_deployment_proven": false,
+    "production_approval": false,
+    "original_six_scopes_complete": false
+  }
+}

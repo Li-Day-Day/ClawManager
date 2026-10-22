@@ -100,6 +100,8 @@ func KnownVerificationFailureCategory(err error) (string, bool) {
 // VerifyBusinessMetadata returns no metadata on proof failure or mismatch.
 // It deliberately has no completed/eligible status or staging byte count.
 func VerifyBusinessMetadata(ctx context.Context, scope *CaptureScope, source, dump CaptureEvidence, proof CaptureProofVerifier) (VerifiedBusinessMetadata, error) {
+	source.Snapshot = cloneSourceSnapshot(source.Snapshot)
+	dump.Snapshot = cloneSourceSnapshot(dump.Snapshot)
 	checks, err := VerifyBackupSnapshot(ctx, scope, source, dump, proof)
 	if err != nil {
 		return VerifiedBusinessMetadata{}, err
@@ -138,6 +140,8 @@ func VerifyBackupSnapshot(ctx context.Context, scope *CaptureScope, source, dump
 	if nilProof(proof) {
 		return CategoryChecks{}, ErrCaptureEvidenceIncomplete
 	}
+	source.Snapshot = cloneSourceSnapshot(source.Snapshot)
+	dump.Snapshot = cloneSourceSnapshot(dump.Snapshot)
 	for _, evidence := range []CaptureEvidence{source, dump} {
 		if evidence.EvidenceRef == "" {
 			return CategoryChecks{}, ErrCaptureEvidenceIncomplete
@@ -151,10 +155,16 @@ func VerifyBackupSnapshot(ctx context.Context, scope *CaptureScope, source, dump
 			return CategoryChecks{}, err
 		}
 	}
-	if err := proof.VerifyCapture(ctx, source, dump); err != nil {
+	proofSource, proofDump := source, dump
+	proofSource.Snapshot = cloneSourceSnapshot(source.Snapshot)
+	proofDump.Snapshot = cloneSourceSnapshot(dump.Snapshot)
+	if err := proof.VerifyCapture(ctx, proofSource, proofDump); err != nil {
 		return CategoryChecks{}, fmt.Errorf("A business capture proof: %w", err)
 	}
-	checks := CategoryChecks{Users: make([]Check, 0, 8), AIGateway: make([]Check, 0, 11)}
+	if err := ctx.Err(); err != nil {
+		return CategoryChecks{}, err
+	}
+	checks := CategoryChecks{Users: make([]Check, 0, 8), AIGateway: make([]Check, 0, 12)}
 	for _, category := range []string{"users", "ai_gateway"} {
 		categoryChecks := []Check{
 			compare(category+".checkpoint", "hash", source.CheckpointHash, dump.CheckpointHash, dump.EvidenceRef),
@@ -175,6 +185,7 @@ func VerifyBackupSnapshot(ctx context.Context, scope *CaptureScope, source, dump
 			checks.AIGateway = append(checks.AIGateway, check)
 		}
 	}
+	checks.AIGateway = append(checks.AIGateway, compare("ai_gateway.cost_aggregates", "hash", source.Snapshot.CostAggregateSHA256, dump.Snapshot.CostAggregateSHA256, dump.EvidenceRef))
 	for _, check := range append(checks.Users, checks.AIGateway...) {
 		if check.Status != "passed" {
 			return checks, ErrSnapshotMismatch
@@ -199,6 +210,9 @@ func nilProof(proof CaptureProofVerifier) bool {
 func validateSnapshot(snapshot SourceSnapshot, allowlist []string) error {
 	if len(snapshot.Tables) != len(allowlist) {
 		return fmt.Errorf("%w: incomplete table set", ErrInvalidSnapshot)
+	}
+	if !hashPattern.MatchString(snapshot.CostAggregateSHA256) {
+		return fmt.Errorf("%w: missing cost aggregate", ErrInvalidSnapshot)
 	}
 	var total int64
 	for i, table := range allowlist {

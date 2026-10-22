@@ -57,7 +57,7 @@ try {
         if($eventNativeExit -ne 0){throw ('Native tagged compile failed exit='+$eventNativeExit)}
         }
         Write-Output 'LOCAL_STAGE native-live-read-http-focused default-vet=yes'
-        $eventNativeExit=Invoke-AEvidenceNative -FilePath $eventNativeGo -Arguments @('test','-json','-p=2','-count=1','-timeout=180s','./cmd/server/system_backup_read_live.go','./cmd/server/system_backup_read_live_test.go')
+        $eventNativeExit=Invoke-AEvidenceNative -FilePath $eventNativeGo -Arguments @('test','-json','-p=2','-count=1','-timeout=180s','./cmd/server/system_backup_read_live.go','./cmd/server/system_backup_read_cursor_key.go','./cmd/server/system_backup_read_live_test.go','./cmd/server/system_backup_read_cursor_key_test.go')
         if($eventNativeExit -ne 0){throw ('Native HTTP tests failed exit='+$eventNativeExit)}
         Test-DIndexSourceSnapshot -Root $eventNativeFrozen -Manifest $eventNativeSnapshot
         Write-Output ('LOCAL_PASS event-api-native-http=yes http-only='+[bool]$HTTPOnly+' frozen-postcheck=yes actual-mysql=no dependency-installation=no production-enabled=no')

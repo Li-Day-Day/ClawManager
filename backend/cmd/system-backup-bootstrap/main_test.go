@@ -21,8 +21,13 @@ func TestRequirementsReportDoesNotPretendOwnersAreDelivered(t *testing.T) {
 		Mutated   bool     `json:"configuration_mutated"`
 		Admission string   `json:"provider_admission"`
 	}
-	if json.Unmarshal(out.Bytes(), &report) != nil || report.Status != "blocked" || len(report.Missing) != 30 || report.Database || report.Mutated || report.Admission != "not_run" {
+	if json.Unmarshal(out.Bytes(), &report) != nil || report.Status != "blocked" || len(report.Missing) != 27 || report.Database || report.Mutated || report.Admission != "not_run" {
 		t.Fatal(out.String())
+	}
+	for _, missing := range report.Missing {
+		if missing == "registry:rbac_bindings" || missing == "registry:provider_proof_issuers" || missing == "registry:strong_auth_issuers" {
+			t.Fatal("concrete security registry validator not linked")
+		}
 	}
 }
 

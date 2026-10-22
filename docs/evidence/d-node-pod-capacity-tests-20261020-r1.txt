@@ -1,0 +1,151 @@
+✖ stdin entry counts phases including final unreported phase without printing pod bodies (5786.2767ms)
+✖ empty successful list is distinguished from failed API query (5097.1043ms)
+✖ 110 running plus 57 terminal records remains an observation, never a scheduling approval (3693.7437ms)
+✖ zero allocatable is valid and still not an admission decision (1950.212ms)
+✖ failed node query stops before pod query and prints no success observation (2551.2432ms)
+✖ missing, signed, fractional, padded and excessive allocatable values fail closed (1899.8684ms)
+✔ malformed API rows and unexpected phases are not ignored or echoed (9941.5968ms)
+✔ invalid context/node and missing arguments are rejected before all API calls (8552.6197ms)
+✔ ready MySQL continues without diagnostics (2457.3246ms)
+✔ failed wait diagnoses the original pod before cleanup and preserves exit (5690.1291ms)
+✔ changed namespace or pod identity prevents diagnostic reads (5481.3831ms)
+✔ diagnostic API failure still preserves failed wait and cleanup (2199.7169ms)
+✔ lightweight mode uses the production pod and exits before all SQL (1825.0712ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 7
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41416.5206
+
+✖ failing tests:
+
+test at scripts\system-backup-d-node-pod-capacity.test.mjs:43:1
+✖ stdin entry counts phases including final unreported phase without printing pod bodies (5786.2767ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at good (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:40:10)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:44:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-d-node-pod-capacity.test.mjs:47:1
+✖ empty successful list is distinguished from failed API query (5097.1043ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at good (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:40:10)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:48:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-d-node-pod-capacity.test.mjs:53:1
+✖ 110 running plus 57 terminal records remains an observation, never a scheduling approval (3693.7437ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at good (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:40:10)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:54:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-d-node-pod-capacity.test.mjs:58:1
+✖ zero allocatable is valid and still not an admission decision (1950.212ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at good (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:40:10)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:59:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-d-node-pod-capacity.test.mjs:61:1
+✖ failed node query stops before pod query and prints no success observation (2551.2432ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:65:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-d-node-pod-capacity.test.mjs:67:1
+✖ missing, signed, fractional, padded and excessive allocatable values fail closed (1899.8684ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-node-pod-capacity.test.mjs:72:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -117,7 +117,7 @@ func readOverviewInTransaction[T any](ctx context.Context, r *Reader,
 	if err = r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return zero, scopeReadFailure(err)
 	}
-	if err = tx.Commit(); err != nil {
+	if err = tx.Commit(); err != nil || ctx.Err() != nil {
 		return zero, ErrUnavailable
 	}
 	if missing {

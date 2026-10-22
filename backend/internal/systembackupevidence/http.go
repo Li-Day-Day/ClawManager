@@ -258,7 +258,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if e != nil {
 		s.finishDownload(claim, id, actor, record.RowVersion, sensitive, "rejected", record)
-		s.Failure(context.WithoutCancel(ctx), id, boundary(e).Error())
+		s.reportDownloadFailure(ctx, id, boundary(e).Error())
 		fail(boundary(e))
 		return
 	}
@@ -280,6 +280,15 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.finishDownload(claim, id, actor, record.RowVersion, sensitive, outcome, record)
 }
 
+// Failure persistence gets its own deadline even when the request or result
+// transaction has expired. Values retain the original correlation; this context
+// is never reused for SQL authorization or provider access.
+func (s Service) reportDownloadFailure(parent context.Context, id, code string) {
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(parent), 5*time.Second)
+	defer cancel()
+	s.Failure(ctx, id, code)
+}
+
 func (s Service) finishDownload(claim, id string, actor Actor, version int64, sensitive bool, outcome string, original Record) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -289,9 +298,7 @@ func (s Service) finishDownload(claim, id string, actor Actor, version int64, se
 		}); ok {
 			if handled, err := finisher.finishPublicDownload(ctx, original); handled {
 				if err != nil {
-					failureContext, stop := context.WithTimeout(context.Background(), 5*time.Second)
-					s.Failure(failureContext, id, "download_audit_or_release_failed")
-					stop()
+					s.reportDownloadFailure(ctx, id, "download_audit_or_release_failed")
 				}
 				return
 			}
@@ -313,6 +320,6 @@ func (s Service) finishDownload(claim, id string, actor Actor, version int64, se
 		return tx.Save(ctx, r)
 	})
 	if e != nil {
-		s.Failure(ctx, id, "download_audit_or_release_failed")
+		s.reportDownloadFailure(ctx, id, "download_audit_or_release_failed")
 	}
 }

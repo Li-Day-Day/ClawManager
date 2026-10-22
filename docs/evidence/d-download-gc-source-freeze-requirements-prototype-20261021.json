@@ -1,0 +1,847 @@
+{
+  "kind": "d_gc_source_closure_and_schema_freeze_requirements",
+  "recorded_at": "2026-10-21T02:53:27.674Z",
+  "status": "sources_and_complete_freeze_unproven_keep_production_disabled",
+  "migration_catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+  },
+  "migration_inputs": [
+    {
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "bytes": 6518,
+      "sha256": "292e0f7b5c02d24e5cc2b49c2b9ff9c8db0ceb5671b72d08c6c03ddf2778455d"
+    },
+    {
+      "path": "backend/internal/db/migrations/002_add_webtop_instance_type.sql",
+      "bytes": 138,
+      "sha256": "428b7a6f38ef3d24d19bf2f9c239289ccc6aae646c0911ca93051802064239b5"
+    },
+    {
+      "path": "backend/internal/db/migrations/003_add_system_image_settings.sql",
+      "bytes": 556,
+      "sha256": "8d95e0d89e2fe775ebbfa3a16eb31ba7ba7705bb01b7e86259561b5d421fa9dd"
+    },
+    {
+      "path": "backend/internal/db/migrations/004_fix_seeded_admin_password.sql",
+      "bytes": 311,
+      "sha256": "2780650ad526ba3136c9e3e280ec666f0be5405283108476176aa2cf92dfadac"
+    },
+    {
+      "path": "backend/internal/db/migrations/005_update_openclaw_default_image.sql",
+      "bytes": 265,
+      "sha256": "4205bdc8aa009707f9741ed96ff1f614c90f9bcbd15517243886ca795e5e8494"
+    },
+    {
+      "path": "backend/internal/db/migrations/006_add_openclaw_config_center.sql",
+      "bytes": 3639,
+      "sha256": "8c85c60a05eac1e6da3064dcf5261955f3aa8f5716f775ce58fedfd33ba4765c"
+    },
+    {
+      "path": "backend/internal/db/migrations/007_add_instance_agent_control_plane.sql",
+      "bytes": 5696,
+      "sha256": "d9251c794d65d13aa5b2edb746d5a94913e529c58c91bd6dfad5d9fcec8c9118"
+    },
+    {
+      "path": "backend/internal/db/migrations/008_add_skill_management.sql",
+      "bytes": 4286,
+      "sha256": "5ab9418ecde7b63a03f64f319c088733a0763874dd456f586cde7b42167a6c4c"
+    },
+    {
+      "path": "backend/internal/db/migrations/009_cpu_cores_decimal.sql",
+      "bytes": 232,
+      "sha256": "fb41dfddf7aff75e165a332f1c0339de0087f0ce0fe9c9e6b9780ee67fa3c313"
+    },
+    {
+      "path": "backend/internal/db/migrations/010_add_instance_environment_overrides.sql",
+      "bytes": 674,
+      "sha256": "4678024f72c6d320e2509d87af2ea064c7b559b0b9c9ed4920526f08f8a1f4bc"
+    },
+    {
+      "path": "backend/internal/db/migrations/011_add_hermes_instance_type.sql",
+      "bytes": 138,
+      "sha256": "428b7a6f38ef3d24d19bf2f9c239289ccc6aae646c0911ca93051802064239b5"
+    },
+    {
+      "path": "backend/internal/db/migrations/012_update_agents_runtime_default_images.sql",
+      "bytes": 513,
+      "sha256": "a9bf1452e66f1b84748345177a3f03029820ce8f245ca5156c6b11574b6d5daa"
+    },
+    {
+      "path": "backend/internal/db/migrations/013_normalize_agents_runtime_image_names.sql",
+      "bytes": 328,
+      "sha256": "67fad4189558eb4f9276dc6b1eed714a71be99d744b28b00f9d229ac5af3607f"
+    },
+    {
+      "path": "backend/internal/db/migrations/014_add_team_mvp.sql",
+      "bytes": 4052,
+      "sha256": "bc10b111779a79c279df4ce3c3cd31eb95a8ff91a5ec561341de14ed01e7c6be"
+    },
+    {
+      "path": "backend/internal/db/migrations/015_add_team_member_description.sql",
+      "bytes": 592,
+      "sha256": "59298f4511246a5236f405b79e97659a4aae76d955f1791d8ae4d5b3000e5cb3"
+    },
+    {
+      "path": "backend/internal/db/migrations/016_release_deleted_team_names.sql",
+      "bytes": 203,
+      "sha256": "2f050818a968712a7ab4cb054cb744df391f1e64e77c05959523bb20a27aa5cd"
+    },
+    {
+      "path": "backend/internal/db/migrations/017_add_team_member_runtime_state.sql",
+      "bytes": 3787,
+      "sha256": "4de02d687c26accd96b1b0d1184d755525c5327f840c6becedde68ddf5f31242"
+    },
+    {
+      "path": "backend/internal/db/migrations/018_add_team_member_runtime_type.sql",
+      "bytes": 633,
+      "sha256": "bc782c21fcbc00506f265dcee9ece1e3dd9042d241732804042436a86237f4c0"
+    },
+    {
+      "path": "backend/internal/db/migrations/019_add_instance_runtime_type.sql",
+      "bytes": 622,
+      "sha256": "387e4fd24ceb496d45be8d2700a287d206b61e7f2f4f45c6119859e5f63fc9bd"
+    },
+    {
+      "path": "backend/internal/db/migrations/020_add_system_image_runtime_type.sql",
+      "bytes": 683,
+      "sha256": "4d25b675f092051735254c8a21a7509ee90e50a0975164d55b08d0687ae153d6"
+    },
+    {
+      "path": "backend/internal/db/migrations/021_add_openclaw_shell_runtime_image.sql",
+      "bytes": 2414,
+      "sha256": "4c27bbfb0b9d44b3fec35ec4518a38874d0c4d8629c83e4f6617cbefbe9a84a8"
+    },
+    {
+      "path": "backend/internal/db/migrations/022_add_openclaw_config_bundle_skills.sql",
+      "bytes": 632,
+      "sha256": "55d7f70cc8cbbcd4f5738d769480ad2daf26cfc800f7da39bf72325b623bd9af"
+    },
+    {
+      "path": "backend/internal/db/migrations/023_add_runtime_pool_v2.sql",
+      "bytes": 5361,
+      "sha256": "baf0b2c4b5eb4ed5487b23b362a9cf464130a10ce70905418f84b538fb019e44"
+    },
+    {
+      "path": "backend/internal/db/migrations/023_add_skill_hub.sql",
+      "bytes": 2418,
+      "sha256": "a4401b658d6a7fa2805eba769b2c37685cd778fb0e8e3249783e43d7b42407db"
+    },
+    {
+      "path": "backend/internal/db/migrations/023_normalize_runtime_config_mounts.sql",
+      "bytes": 211,
+      "sha256": "7a1453d0e006626d624b114412ae31b77615e672086426d0b9a03f169a8844a1"
+    },
+    {
+      "path": "backend/internal/db/migrations/024_add_gateway_runtime_type.sql",
+      "bytes": 117,
+      "sha256": "32cdf5d0925a2cdbee82e9ff459d06bbb62e8c31ae8fa5b5f39bb73e1db134c1"
+    },
+    {
+      "path": "backend/internal/db/migrations/025_add_instance_mode.sql",
+      "bytes": 794,
+      "sha256": "bd55c03b4d9ba617fee4f304cb7b13b993ef31d48332b2b6b7de3c0451c9b415"
+    },
+    {
+      "path": "backend/internal/db/migrations/027_add_instance_external_access.sql",
+      "bytes": 1133,
+      "sha256": "74a43f2c24497cd9fa8b35c8addaa5524a4e6510155a02388ac2c0d465a310b0"
+    },
+    {
+      "path": "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql",
+      "bytes": 12604,
+      "sha256": "f2380337403b740b7144088350c7595ed9d215e22ec3fda5ef65922e54c8eaf3"
+    },
+    {
+      "path": "backend/internal/db/migrations/029_add_short_external_access_links.sql",
+      "bytes": 1336,
+      "sha256": "66967c43e7014811e83020cea6a73df3e0a009bcbe42e91d22837c43b23587e8"
+    },
+    {
+      "path": "backend/internal/db/migrations/030_add_external_access_password_value.sql",
+      "bytes": 435,
+      "sha256": "4fa170251443e4c03a07573b9fca0eba0da3461b1e91366cc8874553cbf687ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/031_add_hermes_lite_runtime_image.sql",
+      "bytes": 841,
+      "sha256": "fe3157bc4a44e092c48a74d687c81682c2e087222b701f4e1b28284600a464a5"
+    },
+    {
+      "path": "backend/internal/db/migrations/032_add_team_member_instance_mode.sql",
+      "bytes": 1139,
+      "sha256": "2726f52714d7fe396655ce80160e230d4a6007d32b9762bbb3cdb1faa15f06c8"
+    },
+    {
+      "path": "backend/internal/db/migrations/033_system_image_gateway_runtime_type.sql",
+      "bytes": 841,
+      "sha256": "a73cda1b48a67fd081ae0570b4387a8023449e4e2299864563a3df4268215136"
+    },
+    {
+      "path": "backend/internal/db/migrations/034_update_lite_default_images.sql",
+      "bytes": 1680,
+      "sha256": "63cb904c09f27aab38f3f493030db9c3467dafb0038551ed3a5fb633c84d2ffa"
+    },
+    {
+      "path": "backend/internal/db/migrations/035_harden_team_event_protocol.sql",
+      "bytes": 1580,
+      "sha256": "5d377a12ba71994b9f4b22b08b975609af3716328d0ed8db435f349b3e721087"
+    },
+    {
+      "path": "backend/internal/db/migrations/036_add_team_event_outbox.sql",
+      "bytes": 950,
+      "sha256": "8cdfbade686b29a6db2466b601f8c0f20d295aa4615fd130880a414813e58f83"
+    },
+    {
+      "path": "backend/internal/db/migrations/037_add_team_workflow_ledger.sql",
+      "bytes": 2570,
+      "sha256": "d9971f24b4973c1aa03da29ea7ca4dc131e0f5a42b765f9d5993e9be828b6962"
+    },
+    {
+      "path": "backend/internal/db/migrations/038_add_instance_gateway_token_aliases.sql",
+      "bytes": 777,
+      "sha256": "95b6c99694438b502c340a21bfe0201298c5dd588e7ed76991daf3bfe157b869"
+    },
+    {
+      "path": "backend/internal/db/migrations/039_add_skill_package_materialize.sql",
+      "bytes": 3088,
+      "sha256": "99440c13e1a407eb20110408b19a851eae91193f58d73dc9b872452952cf8f6a"
+    },
+    {
+      "path": "backend/internal/db/migrations/040_fix_injected_skill_provenance.sql",
+      "bytes": 260,
+      "sha256": "9f73d68ecbcd46415f73ca3a134f2ddfc83dc18a2f60c11bfdf9502dd31b8da0"
+    },
+    {
+      "path": "backend/internal/db/migrations/041_add_session_usage_indexes.sql",
+      "bytes": 1491,
+      "sha256": "414161ba14f881528bdf37a34305ea258d915e196f6d423706a19934c60a89ad"
+    },
+    {
+      "path": "backend/internal/db/migrations/042_add_skill_summary_status.sql",
+      "bytes": 234,
+      "sha256": "2a462bb94cdb5d46de7cb6ff540db66a6aea0f8e09f4acd717a85c86779d4084"
+    },
+    {
+      "path": "backend/internal/db/migrations/042_add_team_review_contract.sql",
+      "bytes": 312,
+      "sha256": "3f4f19889a5eab91b2ac1cd8e3f564498e865ca43c2178709bc44f11d8ff5bbe"
+    },
+    {
+      "path": "backend/internal/db/migrations/043_add_external_access_workspace_scope.sql",
+      "bytes": 561,
+      "sha256": "2339f9be408c11295731f168fe71a9834f7e88e53b518825df564eb5f60895a9"
+    },
+    {
+      "path": "backend/internal/db/migrations/043_drop_skill_summary_status.sql",
+      "bytes": 313,
+      "sha256": "a0875c5b87410b4c92d7e85cc68e82f83f864aa47a9ab94bff8b720094dfb991"
+    },
+    {
+      "path": "backend/internal/db/migrations/044_add_egress_private_exceptions.sql",
+      "bytes": 625,
+      "sha256": "e8c24e9b81d61c4faf93d146a9e35c4c67b7439400a2195e471a0a5a0d92b7d7"
+    },
+    {
+      "path": "backend/internal/db/migrations/044_add_workbuddy_instance_type.sql",
+      "bytes": 420,
+      "sha256": "7207714199de290f23e6898e4a8279e00105427a923ee79680a914acc56d90d6"
+    },
+    {
+      "path": "backend/internal/db/migrations/045_add_llm_model_reasoning_control.sql",
+      "bytes": 1702,
+      "sha256": "95635ba7d7b456549ec5471c9b570bdccb57e42d728bb6763eeaa55abc0cce43"
+    },
+    {
+      "path": "backend/internal/db/migrations/045_add_northbound_api.sql",
+      "bytes": 3891,
+      "sha256": "cbdb58f733fb23c2c9d60f991b73848651438427a049be4a05763a73f337618a"
+    },
+    {
+      "path": "backend/internal/db/migrations/045_add_opencode_instance_type.sql",
+      "bytes": 927,
+      "sha256": "a3fc39bcc9221e56eec910040be84222829b3780b1366e256ce770f35235c154"
+    },
+    {
+      "path": "backend/internal/db/migrations/046_add_custom_team_templates.sql",
+      "bytes": 746,
+      "sha256": "f276a6a24eb333ec70611d3fbe1d0a787dcc9a822ddeac770c5b725b1aa64fa6"
+    },
+    {
+      "path": "backend/internal/db/migrations/046_add_enterprise_auth_identity.sql",
+      "bytes": 1463,
+      "sha256": "468bb2625b46b49d2e995bd33438f4470d35bfa902bbfbd01a93dc4161e32a7f"
+    },
+    {
+      "path": "backend/internal/db/migrations/046_add_opencode_lite_runtime.sql",
+      "bytes": 582,
+      "sha256": "5960efb8ef886df38db9c28f217019080bb97e089e2a11f2ac9f899468a4324e"
+    },
+    {
+      "path": "backend/internal/db/migrations/047_add_deepseek_harness_runtime.sql",
+      "bytes": 1003,
+      "sha256": "f9c2ff9e3fbe359e351858887853a80c0e7d7d6861e2719e0a964875139f14eb"
+    },
+    {
+      "path": "backend/internal/db/migrations/047_add_instance_owner.sql",
+      "bytes": 1621,
+      "sha256": "64bd858211e8af77b7ea3c380c7e4de4720af4a2d8f702bdfaeef46bce26f49e"
+    },
+    {
+      "path": "backend/internal/db/migrations/048_add_workbuddy_instance_type.sql",
+      "bytes": 420,
+      "sha256": "7207714199de290f23e6898e4a8279e00105427a923ee79680a914acc56d90d6"
+    },
+    {
+      "path": "backend/internal/db/migrations/048_fix_instance_type_enum.sql",
+      "bytes": 453,
+      "sha256": "30fab567d8d9c64ca59df32215523a9329709f95b1d66c48cb8fbdd4d6764828"
+    },
+    {
+      "path": "backend/internal/db/migrations/049_add_ldap_login_alias.sql",
+      "bytes": 2879,
+      "sha256": "3738f85732d503bb675c7dc45717f0f1e2fc9f9d6a0be3c51be855dfbd843319"
+    },
+    {
+      "path": "backend/internal/db/migrations/049_add_opencode_instance_type.sql",
+      "bytes": 927,
+      "sha256": "a3fc39bcc9221e56eec910040be84222829b3780b1366e256ce770f35235c154"
+    },
+    {
+      "path": "backend/internal/db/migrations/050_add_enterprise_auth_settings.sql",
+      "bytes": 1575,
+      "sha256": "5d5a4f24ec46743fd09d8928326b04b99a16d79c330dc80b07bef202a31c26a1"
+    },
+    {
+      "path": "backend/internal/db/migrations/050_update_workbuddy_windows_runtime.sql",
+      "bytes": 287,
+      "sha256": "d4a295d88abed8721331a3e67edd3855457b3dacfacab435db4f5de5a01dd026"
+    },
+    {
+      "path": "backend/internal/db/migrations/051_add_codex_and_claude_code_instance_types.sql",
+      "bytes": 875,
+      "sha256": "8b21c234cc485d236ef6a282b4051626753f7ff06b1c5ff52bf8a45d13026254"
+    },
+    {
+      "path": "backend/internal/db/migrations/052_add_instance_pvc_name.sql",
+      "bytes": 555,
+      "sha256": "ed3cd066ddadbf66897df3b0c607e0db8fe08302873e2c5eaf16c20ec9cc8b11"
+    },
+    {
+      "path": "backend/internal/db/migrations/053_add_instance_runtime_variant.sql",
+      "bytes": 1076,
+      "sha256": "19bdf41e5e64e0acd134cf369e866b35a81ae2f1f0c397a5933cd7cd51484753"
+    },
+    {
+      "path": "backend/internal/db/migrations/054_add_system_image_runtime_variant.sql",
+      "bytes": 1552,
+      "sha256": "c5417ea16344e1e018fd72a20d18c94cbe779710d8d29cdf7e808c51ffeb34ca"
+    },
+    {
+      "path": "backend/internal/db/migrations/055_reconcile_instance_type_enum.sql",
+      "bytes": 368,
+      "sha256": "3774e26e547bb72a12f0a4c2f339fbc7268cd3f59eec177cd54b0eb23d7d136a"
+    },
+    {
+      "path": "backend/internal/db/migrations/056_add_llm_provider_models.sql",
+      "bytes": 379,
+      "sha256": "1ac4da5472c60076dc750fdd19bb2c5b65e6cbaeb00fd20ae0a3721117e7c9cd"
+    },
+    {
+      "path": "backend/internal/db/migrations/057_add_northbound_admin_settings.sql",
+      "bytes": 3208,
+      "sha256": "5a7ce8c21b80d102addfda84d4aacd19ddf9883d6c6417694e4580119a76668e"
+    },
+    {
+      "path": "backend/internal/db/migrations/058_add_openclaw_runtime_upgrade_safety.sql",
+      "bytes": 3506,
+      "sha256": "8c7553191b26751122ce9cd53e80c4e47b2161612701813213429a9994a9e037"
+    },
+    {
+      "path": "backend/internal/db/migrations/058_enable_deepseek_harness_pro.sql",
+      "bytes": 687,
+      "sha256": "582aa57f73aedc72dbb6a1460e5cb0f0fcfe059d7c80fed382c7ee85c65f0691"
+    },
+    {
+      "path": "backend/internal/db/migrations/059_pin_openclaw_2026_8_1_images.sql",
+      "bytes": 697,
+      "sha256": "c3ea00b110374d7094372af2e53e67b53dc8432df8bb99533d87483847f62679"
+    },
+    {
+      "path": "backend/internal/db/migrations/060_allow_terminal_runtime_upgrade_instance_deletion.sql",
+      "bytes": 329,
+      "sha256": "02336282eef73cb7f07bccf3c7b8fecf3fce761880e168997e00f34891e9238b"
+    },
+    {
+      "path": "backend/internal/db/migrations/061_persist_runtime_upgrade_source_identity.sql",
+      "bytes": 404,
+      "sha256": "33af7388c3a8637a2c2e868d9f4df0c477e0db274bfe6c961d0e7361be6b2961"
+    },
+    {
+      "path": "backend/internal/db/migrations/062_follow_openclaw_latest_images.sql",
+      "bytes": 566,
+      "sha256": "016afc6b7b70a8222c0a7b9208f804aa619e38279cf6fb8b959231e5c82bb602"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_add_security_scan_tables.sql",
+      "bytes": 2878,
+      "sha256": "d42b4478cb2f0c2b603b24da85062c30c566e075ee954224d104738e3110068a"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_unique_usernames.sql",
+      "bytes": 472,
+      "sha256": "38b3ca9bdb5d4bd813b0c5cb447e563577df3e74fb4372bacde75f693a79f020"
+    },
+    {
+      "path": "backend/internal/db/migrations/064_add_instance_browser_workers.sql",
+      "bytes": 1059,
+      "sha256": "28739f76876983bd42d6e5afaffd7e1510b72b067a8815626d27caa306126581"
+    },
+    {
+      "path": "backend/internal/db/migrations/064_reconcile_system_image_settings_schema.sql",
+      "bytes": 4156,
+      "sha256": "5b4dcb9d59a5ccda9863edeeeb60f751966c21706e0b389e29fb78c86b71bc86"
+    },
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "bytes": 26225,
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "bytes": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "bytes": 56783,
+      "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+    },
+    {
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "bytes": 21146,
+      "sha256": "c1297b8341fe7d3f4eeab55ba355526b920d633349053a047420d2cca26df8de"
+    },
+    {
+      "path": "backend/internal/db/migrations/069_add_system_backup_promotion_authority.sql",
+      "bytes": 7222,
+      "sha256": "d4636b628347afbb2454436b193e30889202974d892366951e89f1a88ed6e259"
+    },
+    {
+      "path": "backend/internal/db/migrations/070_add_system_backup_prune_authority.sql",
+      "bytes": 19926,
+      "sha256": "9e0862c9f52fb54a32b7a5b70d391aa44e490818369672510989a51b8667a63c"
+    },
+    {
+      "path": "backend/internal/db/migrations/071_add_system_backup_external_action_authority.sql",
+      "bytes": 9910,
+      "sha256": "4d18e2e3cf0da6ab1f5181b76b7b9957fd59d10ff22d58d75c4fe6267928e428"
+    },
+    {
+      "path": "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+      "bytes": 15741,
+      "sha256": "9ed7b536fe44cfd3c0b2bb88efeece13ded67cfeeb78b8ee044d344d63f20c00"
+    },
+    {
+      "path": "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+      "bytes": 6838,
+      "sha256": "0bf4a07de699ff237cf4674761bc12879f3806b454214fc4f1802870efc5f5b9"
+    },
+    {
+      "path": "backend/internal/db/migrations/074_add_system_maintenance_participants.sql",
+      "bytes": 4941,
+      "sha256": "95af0741827f4db834c9169d11f5116721f3fdcfb3154c14bc17bd0fab509a28"
+    },
+    {
+      "path": "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+      "bytes": 3157,
+      "sha256": "c24af0413ff6b8dd98c3b7eb59b8c6dade70c385c5f49e48302bb07b98b1ed84"
+    },
+    {
+      "path": "backend/internal/db/migrations/076_add_system_backup_job_observations.sql",
+      "bytes": 5257,
+      "sha256": "947ab3471b8445fa743b40702447c22df96b9f49c6c5e8b8bc069a13778517b3"
+    },
+    {
+      "path": "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql",
+      "bytes": 5931,
+      "sha256": "26105cd49490837b44138a5df91d978c33a5994ef1477996f52aeadb1844b59e"
+    },
+    {
+      "path": "backend/internal/db/migrations/078_reconcile_local_username_key.sql",
+      "bytes": 981,
+      "sha256": "4a1373ba89af6a3c2e2d29a45c7a00e4740aaa87b8b55a5bde45c1fe69d860aa"
+    },
+    {
+      "path": "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql",
+      "bytes": 2744,
+      "sha256": "6674b4b57ae8dcbeaa4d4a548f20b66a1bf53a1285ea58f01efe503e3b175de0"
+    },
+    {
+      "path": "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql",
+      "bytes": 2277,
+      "sha256": "5c5d29066a91efb0c215e59b230c0c4535b1411ecebb31fd62afe90757d08f7f"
+    }
+  ],
+  "source_inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "bytes": 29960,
+      "sha256": "db6aaefef633919dc76358fc6fb2cf826d6a4290a1eb8138d3199e92f4b68c7e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+      "bytes": 15973,
+      "sha256": "daaf8a8278b786d002080581de0f2323e9de8e11fcb926ef8481e545a6b0f299"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_references.go",
+      "bytes": 17443,
+      "sha256": "0557ade43cc68109444f8e90f3db7cf337e160f16b028405183889f3040eb4b9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_task.go",
+      "bytes": 24358,
+      "sha256": "c60088caca6cd1e9c6a7404aa545126be78786c2af2d5ef50f6f73fbae868f33"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_producer.go",
+      "bytes": 13286,
+      "sha256": "d6f7fee273dc34f198ed532d8bcdb45973499c454a464a95354bd7e2114a5647"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_batch.go",
+      "bytes": 7588,
+      "sha256": "db396a8760a444fcdb3f8742011dba57f9321c7394ab6d6c7c94d3823f7c3972"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_group.go",
+      "bytes": 18911,
+      "sha256": "17cd3aa8322592c16452ebabd63602d749d5ff13dd837b7dc8d03c432ff988b2"
+    },
+    {
+      "path": "docs/system-backup-restore-schema-inventory.json",
+      "bytes": 41692,
+      "sha256": "04c958f4b9f9ebd3cf345e3b2c173edacef51296fba5e393e0954fd451cacc3a"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "bytes": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "basis_local_receipt": {
+    "path": "docs/evidence/d-download-gc-producer-preparation-20261021.json",
+    "sha256": "06f0075397ce340e6f032274c7404b339489f7c6ec930d80839b2b19c7d33375",
+    "source_sha256": "727348b948844c09a40390957f760d7f310a3f8d970b3d84e85740adae71042d",
+    "scope": "Historical full local 754/6242 and component preparation only; no new tests or SQL executed by this review"
+  },
+  "source_gaps": [
+    {
+      "table": "system_backup_catalog_imports",
+      "in_inventory": false,
+      "formal_create_table_declaration": false,
+      "implemented_runtime_source_not_inferred": true,
+      "required": "Owner-reviewed canonical schema and original authority/lifecycle source before implementing the missing adapter"
+    },
+    {
+      "table": "system_backup_catalog_records",
+      "in_inventory": false,
+      "formal_create_table_declaration": false,
+      "implemented_runtime_source_not_inferred": true,
+      "required": "Owner-reviewed canonical schema and original authority/lifecycle source before implementing the missing adapter"
+    },
+    {
+      "table": "system_backup_catalog_scan_states",
+      "in_inventory": false,
+      "formal_create_table_declaration": false,
+      "implemented_runtime_source_not_inferred": true,
+      "required": "Owner-reviewed canonical schema and original authority/lifecycle source before implementing the missing adapter"
+    }
+  ],
+  "catalog_source_declarations": [
+    {
+      "table": "system_restore_drills",
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "line": 216,
+      "statement": "source_artifact_type ENUM('backup', 'catalog_import') NOT NULL,"
+    },
+    {
+      "table": "system_backup_preflights",
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "line": 333,
+      "statement": "source_artifact_type ENUM('backup', 'catalog_import') NOT NULL,"
+    },
+    {
+      "table": "system_backup_artifact_verifications",
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "line": 424,
+      "statement": "source_artifact_type ENUM('backup', 'catalog_import') NOT NULL,"
+    },
+    {
+      "table": "system_artifact_lease_states",
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "line": 103,
+      "statement": "source_artifact_type ENUM('backup', 'catalog_import') NOT NULL,"
+    },
+    {
+      "table": "system_artifact_leases",
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "line": 123,
+      "statement": "source_artifact_type ENUM('backup', 'catalog_import') NOT NULL,"
+    }
+  ],
+  "evidence_fk_declarations": [
+    {
+      "table": "system_backup_evidence_chunks",
+      "constraint": "fk_sb_evidence_chunk_evidence",
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "line": 145,
+      "statement": "CONSTRAINT fk_sb_evidence_chunk_evidence FOREIGN KEY (evidence_id) REFERENCES system_backup_evidence(id) ON DELETE CASCADE,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_log_chunks",
+      "constraint": "fk_sb_log_evidence",
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "line": 174,
+      "statement": "CONSTRAINT fk_sb_log_evidence FOREIGN KEY (redacted_evidence_id) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_dependency_health",
+      "constraint": "fk_sb_dependency_evidence",
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "line": 218,
+      "statement": "CONSTRAINT fk_sb_dependency_evidence FOREIGN KEY (evidence_id) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_provider_capabilities",
+      "constraint": "fk_sb_provider_evidence",
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "line": 257,
+      "statement": "CONSTRAINT fk_sb_provider_evidence FOREIGN KEY (evidence_id) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_operations",
+      "constraint": "fk_sb_operation_response_evidence",
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "line": 359,
+      "statement": "CONSTRAINT fk_sb_operation_response_evidence FOREIGN KEY (redacted_response_evidence_id) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_promotions",
+      "constraint": "fk_sb_promotion_evidence",
+      "path": "backend/internal/db/migrations/069_add_system_backup_promotion_authority.sql",
+      "line": 51,
+      "statement": "CONSTRAINT fk_sb_promotion_evidence FOREIGN KEY (drill_evidence_public_id) REFERENCES system_backup_evidence(public_id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_external_actions",
+      "constraint": "fk_sb_external_action_evidence",
+      "path": "backend/internal/db/migrations/071_add_system_backup_external_action_authority.sql",
+      "line": 45,
+      "statement": "CONSTRAINT fk_sb_external_action_evidence FOREIGN KEY (provider_proof_evidence_public_id, provider_proof_target_public_id, provider_proof_evidence_type) REFERENCES system_backup_evidence(public_id, owner_target_public_id, evidence_type) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_source_writer_check_states",
+      "constraint": "fk_sb_writer_check_evidence",
+      "path": "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+      "line": 31,
+      "statement": "CONSTRAINT fk_sb_writer_check_evidence FOREIGN KEY (evidence_public_id) REFERENCES system_backup_evidence(public_id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_check_results",
+      "constraint": "fk_sb_check_result_evidence",
+      "path": "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+      "line": 111,
+      "statement": "CONSTRAINT fk_sb_check_result_evidence FOREIGN KEY (evidence_public_id) REFERENCES system_backup_evidence(public_id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_backup_staging_resources",
+      "constraint": "fk_sb_staging_resolution_evidence",
+      "path": "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+      "line": 45,
+      "statement": "CONSTRAINT fk_sb_staging_resolution_evidence FOREIGN KEY (ownership_resolution_evidence_id) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    },
+    {
+      "table": "system_restore_drill_resources",
+      "constraint": "fk_sb_restore_resource_evidence",
+      "path": "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql",
+      "line": 41,
+      "statement": "CONSTRAINT fk_sb_restore_resource_evidence FOREIGN KEY (ownership_resolution_evidence_id) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT,",
+      "target": "retained_evidence_envelope",
+      "automatic_metadata_gc_blocker": false,
+      "disposition": "Trace the real lifecycle and any link to the original operation/audits/nonce; this declaration alone neither allows nor blocks deleting the download group."
+    }
+  ],
+  "evidence_fk_semantics": "These declarations target the retained evidence envelope, not automatically the deleted download operation/audits/nonce. Review the actual lifecycle and group linkage; do not blanket-block all retained rows or treat every reference as removable.",
+  "existing_metadata_domains": [
+    "tables",
+    "columns",
+    "foreign_keys",
+    "indexes"
+  ],
+  "missing_privileged_program_domains": [
+    "triggers",
+    "routines",
+    "events"
+  ],
+  "capture_spec": {
+    "sql_executed": false,
+    "ready_to_run_as_a_production_script": false,
+    "role_grants_approved": false,
+    "queries": [
+      {
+        "id": "observer_identity",
+        "parameters": [],
+        "sql": "SELECT @@server_uuid,DATABASE(),CURRENT_USER(),CURRENT_ROLE(),UTC_TIMESTAMP(6),@@version,@@version_comment"
+      },
+      {
+        "id": "observer_grants",
+        "parameters": [],
+        "sql": "SHOW GRANTS"
+      },
+      {
+        "id": "trigger_definitions",
+        "parameters": [],
+        "sql": "SELECT TRIGGER_SCHEMA,TRIGGER_NAME,EVENT_OBJECT_SCHEMA,EVENT_OBJECT_TABLE,ACTION_TIMING,EVENT_MANIPULATION,ACTION_ORDER,ACTION_ORIENTATION,IF(OCTET_LENGTH(ACTION_STATEMENT) BETWEEN 1 AND 16384,ACTION_STATEMENT,NULL),OCTET_LENGTH(ACTION_STATEMENT),SQL_MODE,DEFINER,CHARACTER_SET_CLIENT,COLLATION_CONNECTION,DATABASE_COLLATION FROM INFORMATION_SCHEMA.TRIGGERS ORDER BY BINARY TRIGGER_SCHEMA,BINARY TRIGGER_NAME LIMIT 10001"
+      },
+      {
+        "id": "routine_definitions",
+        "parameters": [],
+        "sql": "SELECT ROUTINE_SCHEMA,ROUTINE_NAME,ROUTINE_TYPE,DATA_TYPE,DTD_IDENTIFIER,ROUTINE_BODY,IF(OCTET_LENGTH(ROUTINE_DEFINITION) BETWEEN 1 AND 16384,ROUTINE_DEFINITION,NULL),OCTET_LENGTH(ROUTINE_DEFINITION),IS_DETERMINISTIC,SQL_DATA_ACCESS,SECURITY_TYPE,SQL_MODE,DEFINER,CHARACTER_SET_CLIENT,COLLATION_CONNECTION,DATABASE_COLLATION FROM INFORMATION_SCHEMA.ROUTINES ORDER BY BINARY ROUTINE_SCHEMA,BINARY ROUTINE_NAME,BINARY ROUTINE_TYPE LIMIT 10001"
+      },
+      {
+        "id": "event_definitions",
+        "parameters": [],
+        "sql": "SELECT EVENT_SCHEMA,EVENT_NAME,DEFINER,TIME_ZONE,EVENT_BODY,IF(OCTET_LENGTH(EVENT_DEFINITION) BETWEEN 1 AND 16384,EVENT_DEFINITION,NULL),OCTET_LENGTH(EVENT_DEFINITION),EVENT_TYPE,EXECUTE_AT,INTERVAL_VALUE,INTERVAL_FIELD,STARTS,ENDS,STATUS,ON_COMPLETION,SQL_MODE,CHARACTER_SET_CLIENT,COLLATION_CONNECTION,DATABASE_COLLATION FROM INFORMATION_SCHEMA.EVENTS ORDER BY BINARY EVENT_SCHEMA,BINARY EVENT_NAME LIMIT 10001"
+      },
+      {
+        "id": "exact_connection_mapping",
+        "parameters": [
+          "holder_connection_id",
+          "writer_connection_id"
+        ],
+        "sql": "SELECT THREAD_ID,PROCESSLIST_ID,TYPE,NAME FROM performance_schema.threads WHERE PROCESSLIST_ID IN (?,?) ORDER BY THREAD_ID"
+      },
+      {
+        "id": "exact_metadata_lock_observation",
+        "parameters": [
+          "holder_thread_id",
+          "writer_thread_id"
+        ],
+        "sql": "SELECT OBJECT_TYPE,OBJECT_SCHEMA,OBJECT_NAME,LOCK_TYPE,LOCK_DURATION,LOCK_STATUS,OWNER_THREAD_ID,OWNER_EVENT_ID FROM performance_schema.metadata_locks WHERE OWNER_THREAD_ID IN (?,?) ORDER BY OWNER_THREAD_ID,OBJECT_TYPE,OBJECT_SCHEMA,OBJECT_NAME,LOCK_TYPE,LOCK_STATUS"
+      }
+    ],
+    "maximum_rows_per_program_kind": 10000,
+    "lookahead_rows": 10001,
+    "maximum_program_body_bytes": 16384,
+    "rejection_rules": [
+      "Reject incomplete/permission-filtered visibility even when the query succeeds and returns zero rows.",
+      "Reject NULL, empty, oversize or incomplete program bodies and more than 10000 rows; never pin a truncated prefix.",
+      "Preserve SQL NULL separately from empty text and preserve identity, definer, SQL mode, charset/collation, execution/security and schedule semantics.",
+      "Do not narrow the program catalog by guessed system_ names or schema when asserting global absence.",
+      "Capture in an exact existing disposable namespace UID/server UUID and owned schemas; retain exact cleanup and native exit.",
+      "Keep program body capture local to its authorized observer; a digest is neither authorization nor a freeze lease."
+    ]
+  },
+  "required_actual_observations": [
+    {
+      "id": "catalog_authoritative_sources",
+      "requirement": "Review real table ownership, canonical DDL, installation/key/version, original owner/write deadline provenance, row/evidence binding, artifact state, holds, leases and all incoming uses. Supply positive expired terminal and contradictory/active/foreign-source controls. No made-up SQL columns or inherited child deadline."
+    },
+    {
+      "id": "complete_program_visibility",
+      "requirement": "In an owned disposable fixture, independently seed a trigger, procedure, function and event. A privileged observer must enumerate exact identities and complete non-NULL definitions. Prove that the worker or a restricted observer can omit rows/bodies; absence without independently verified visibility must remain not_ready."
+    },
+    {
+      "id": "program_change_after_capture",
+      "requirement": "Change a trigger/routine/event after the initial capture. Prove the approved freeze blocks the change through the collector commit, or prove the full policy rejects and rolls back all group/tombstone/capacity writes. Two matching samples alone do not close the final-check-to-commit race."
+    },
+    {
+      "id": "same_schema_table_ddl",
+      "requirement": "Attempt ALTER/DROP and creation of a new reference table during the complete proposed freeze. Map exact holder/writer CONNECTION_IDs to metadata_locks; distinguish actual pending locks from permissions, syntax failures or timeouts. DDL happens only in an exact UID/server/owned test database."
+    },
+    {
+      "id": "foreign_schema_fk_and_program",
+      "requirement": "Exercise an incoming cross-schema FK and a program with cross-schema effects using separate owned test schemas. No TABLE_SCHEMA-local filter may establish global absence. Observe real metadata locks; an ordinary RR read alone is not accepted as a complete freeze."
+    },
+    {
+      "id": "lock_tables_transaction_boundary",
+      "requirement": "Use an isolated disposable sentinel to demonstrate the documented implicit commit before LOCK TABLES and loss of prior explicit locks after START TRANSACTION. Never issue these inside the collector. The GC account grant named LOCK TABLES is a permission prerequisite, not evidence that a freeze was acquired."
+    },
+    {
+      "id": "observer_lifecycle_and_revocation",
+      "requirement": "Close/reconnect the observer and revoke relevant privileges on held and new sessions. The full policy must reject loss of the original observation/freeze identity and must not silently reacquire or renew its lifetime. Record release of the original exact connection."
+    },
+    {
+      "id": "single_gc_transaction",
+      "requirement": "In an actual complete Collect fixture, inject late changes after tombstone insertion and group deletion. Verify one known commit only on success and full original rows, capacity and absent tombstone on rejection. Metadata-only capture and component tests cannot substitute for this proof."
+    }
+  ],
+  "primary_references": [
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/information-schema-triggers-table.html",
+      "claim": "TRIGGERS visibility requires TRIGGER privilege for the associated table."
+    },
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/information-schema-routines-table.html",
+      "claim": "Routine visibility and definition visibility differ; CREATE ROUTINE, ALTER ROUTINE or EXECUTE alone can leave ROUTINE_DEFINITION NULL."
+    },
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/show-events.html",
+      "claim": "SHOW EVENTS requires EVENT for the database; empty event output under an unverified account is not global absence evidence."
+    },
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/implicit-commit.html",
+      "claim": "LOCK TABLES and START TRANSACTION are transaction-boundary statements; not a safe in-transaction freeze callback."
+    },
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/lock-tables.html",
+      "claim": "LOCK TABLES commits an active transaction before locking, and starting a transaction releases existing explicit table locks."
+    }
+  ],
+  "boundaries": {
+    "runtime_code_changed": false,
+    "formal_migrations_changed": false,
+    "dependencies_installed": false,
+    "test_or_build_executed": false,
+    "temporary_build_artifacts_created": false,
+    "remote_executed": false,
+    "actual_mysql_cases": 0,
+    "complete_dependency_graph": false,
+    "complete_ddl_freeze": false,
+    "production_approved": false,
+    "original_six_scopes_complete": false
+  }
+}

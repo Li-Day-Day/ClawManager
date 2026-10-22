@@ -1,0 +1,211 @@
+{
+  "kind": "a_gc_metadata_observer_close_independent_review",
+  "status": "accepted_scoped_post_close_context_boundary_only",
+  "source_receipt": {
+    "path": "docs/evidence/d-gc-observer-close-preparation-20261022.json",
+    "sha256": "f6b4e39c11791fdefcfd8679ed77012ed71b0cd25dde921162a7871b1a505230",
+    "bytes": 59710
+  },
+  "source_scope": "Exact standalone metadata package (five Go files) plus go.mod/go.sum; not a whole-worktree or owner/role baseline approval",
+  "source_sha256": "badc6447fde3a145d14ecab958078ed2dc589db8660845ba98102a546f4ce6ec",
+  "source_files": [
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "backend/internal/systembackupgcmetadata/catalog_test.go",
+      "size": 26280,
+      "sha256": "0c75c119ed0eb6687d51b942fc9bd7cb185674886656ceade593b19b44af6010"
+    },
+    {
+      "path": "backend/internal/systembackupgcmetadata/catalog.go",
+      "size": 18624,
+      "sha256": "20e12239be1deb8ca8b2dc8f575bb96c68fb7b9098b8c0ce84bb1ea934e39082"
+    },
+    {
+      "path": "backend/internal/systembackupgcmetadata/connection_close_test.go",
+      "size": 2867,
+      "sha256": "8265d59abb134d84bbb56e1d5015d3b7119b209cd05cf82bf7088ad6c8a4eddd"
+    },
+    {
+      "path": "backend/internal/systembackupgcmetadata/views_test.go",
+      "size": 5732,
+      "sha256": "f10271e1e44fcefb0c0a9b06febf545fa71ba486a2ef5da1203fbf63251a41f6"
+    },
+    {
+      "path": "backend/internal/systembackupgcmetadata/views.go",
+      "size": 2707,
+      "sha256": "65ff9ff446ea561d2402dbf4ac7b1be206be7b34e248c61e093eddccd1f0b0c7"
+    }
+  ],
+  "source_manifest": {
+    "path": "docs/evidence/d-gc-observer-close-20261022-v2-published-source.json",
+    "sha256": "12e766fbab6f72e7f24a52adbab079ff31b8033ff8bd15d2f7868f43c6cb1d4d",
+    "bytes": 1541
+  },
+  "production_changed": "backend/internal/systembackupgcmetadata/catalog.go",
+  "new_test": "backend/internal/systembackupgcmetadata/connection_close_test.go",
+  "production_before_sha256": "cfb30e1a2956a2b9929676cf9bb8aecd4361b15beda94d91ada8661800061556",
+  "production_after_sha256": "20e12239be1deb8ca8b2dc8f575bb96c68fb7b9098b8c0ce84bb1ea934e39082",
+  "only_context_check_and_comment_changed": true,
+  "sql_queries_privileges_digest_format_and_original_budget_unchanged": true,
+  "validation_script": {
+    "path": "docs/evidence/d-gc-observer-close-validation-v2-20261022.ps1",
+    "sha256": "e53389f55947be931620c0870d750d29ba2149c64921dcf9237e5b4d92749ad7",
+    "bytes": 3440
+  },
+  "stdlib_imports": [
+    "context",
+    "crypto/sha256",
+    "database/sql",
+    "database/sql/driver",
+    "encoding/binary",
+    "encoding/hex",
+    "encoding/json",
+    "errors",
+    "fmt",
+    "hash",
+    "io",
+    "reflect",
+    "regexp",
+    "sort",
+    "strconv",
+    "strings",
+    "testing",
+    "time",
+    "unicode/utf8"
+  ],
+  "candidate": {
+    "native": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-candidate-native.json",
+      "sha256": "9ade907f65b6db4f8c8e2a23c0f56f83c018f35342ffc0f9f4611e6b84f0fcee",
+      "bytes": 494
+    },
+    "events": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-candidate.jsonl",
+      "sha256": "379bd971c42ec681cda0a28ba73fdc2d530009147dc39a2a92043508f06c929a",
+      "bytes": 259712
+    },
+    "root_count": 13,
+    "checks": 281
+  },
+  "published": {
+    "native": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-published-native.json",
+      "sha256": "b671fa9e75a255ad1a03b3580fa5725ee803a033c8ec6c27fe7c54f76e93f5a9",
+      "bytes": 494
+    },
+    "events": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-published.jsonl",
+      "sha256": "a75e1ad2cb81415fae2c350b15b2c6bda46bddc4d6a767cbd758259b1911d835",
+      "bytes": 259613
+    },
+    "root_count": 13,
+    "checks": 281,
+    "all_declared_roots_executed": true
+  },
+  "previous_view_baseline": {
+    "source": {
+      "path": "docs/evidence/d-gc-view-create-20261021-r3-published-source.json",
+      "sha256": "9f2d821ed7ea7e25d0edffe251984a13e20a34e4d8000a26be3bd29cf02e72ae",
+      "bytes": 287552
+    },
+    "events": {
+      "path": "docs/evidence/d-gc-view-create-20261021-r3-published.jsonl",
+      "sha256": "8237621eaabffebdbff4f3243d7e0921248ed3ed09803452889df146349880d1",
+      "bytes": 255319
+    },
+    "roots": 12,
+    "checks": 276,
+    "retained": 276
+  },
+  "original_program_baseline": {
+    "events": {
+      "path": "docs/evidence/d-gc-program-observer-20261021-r1-published.jsonl",
+      "sha256": "df5fdf4bc33a7298c582562bca07e55a2ea621b32e49a04e0e99e5e60d5bee3d",
+      "bytes": 228071
+    },
+    "checks": 243,
+    "retained": 243
+  },
+  "new_checks": [
+    "TestProgramObservationAfterConnectionClose/live",
+    "TestProgramObservationAfterConnectionClose/canceled",
+    "TestProgramObservationAfterConnectionClose/deadline",
+    "TestProgramObservationAfterConnectionClose/close_error",
+    "TestProgramObservationAfterConnectionClose"
+  ],
+  "counterexample": {
+    "source": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-old-source.json",
+      "sha256": "bc05c0ce83a8c871220bf3fc530e18cd749a0865afa0015ba2bd3535fc0c3d68",
+      "bytes": 1535
+    },
+    "native": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-old-native.json",
+      "sha256": "ea6489cfdd7cb67b84b5c7c14b6c570007b35717c70de269bd194549450e7f64",
+      "bytes": 488
+    },
+    "events": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-v2-old.jsonl",
+      "sha256": "9ebd8e1d3d5e022e613f5aec36e24372b910d66bfd68b6aa9cd8f74f234d2001",
+      "bytes": 5429
+    },
+    "exit": 1,
+    "valid_failures": [
+      "canceled",
+      "deadline"
+    ],
+    "live_and_physical_close_error_controls_passed": true
+  },
+  "excluded_first_fixture": {
+    "events": {
+      "path": "docs/evidence/d-gc-observer-close-20261022-old.jsonl",
+      "sha256": "955b6828ef71dc99328a43c582e660eddd5adf7f610f5bdbd7a0e89cf12eb2a4",
+      "bytes": 5720
+    },
+    "reason": "incorrect expectation that sql.Conn.Close reports physical driver Close errors; original failed logs preserved",
+    "exit": 1,
+    "accepted": false
+  },
+  "sql_close_semantics": {
+    "record": {
+      "path": "docs/evidence/d-gc-observer-close-sql-semantics-20261022.json",
+      "sha256": "3814da8dcf15658a583a84a86334ac31c8a3d306a732cf7a0d18d565871c6d06",
+      "bytes": 335
+    },
+    "stdlib": {
+      "path": "C:/Program Files/Go/src/database/sql/sql.go",
+      "sha256": "683b3e35d41b37f4c80500467fb5a56fab7cc5de922b2c3818aae6bfea971fba"
+    },
+    "physical_driver_error_not_propagated_by_pool_return": true,
+    "remote_release_proved": false
+  },
+  "cleanup": {
+    "path": "docs/evidence/d-gc-observer-close-cleanup-20261022.json",
+    "sha256": "a014f89432a9ee819f8e915ce5d9c66eef558b0455fb7ac016a8384ef5ae991e",
+    "bytes": 389
+  },
+  "owned_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-d8299479984a4e9bbd38d90d5761c67d",
+  "owned_directory_independently_absent": true,
+  "review_actions": "Read code, reconstruct exact pre-change bytes, validate full named test inventories/counterexamples/source pins and inspect local standard library; no rerun of successful tests or builds.",
+  "dependencies_installed": false,
+  "tests_or_builds_rerun_by_A": false,
+  "actual_mysql_executed": false,
+  "driver_close_interruptible": false,
+  "remote_connection_or_lock_release_proved": false,
+  "production_role_approved": false,
+  "production_freeze_enabled": false,
+  "full_gc_accepted": false,
+  "entire_worktree_accepted": false,
+  "new_owner_source_baseline_registered": false,
+  "reviewer_sha256": "a0c76588aed9d96e37d74832316090cbbb4424fb7fb69daec0992128ba51520d",
+  "test_or_build_artifacts_created_by_A": false
+}

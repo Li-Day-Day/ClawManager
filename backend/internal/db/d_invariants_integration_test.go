@@ -83,6 +83,9 @@ func TestDDatabaseInvariants(t *testing.T) {
 			ids[id] = true
 		}
 	})
+	t.Run("backup_read_pool_is_UTC_without_changing_business_pool", func(t *testing.T) {
+		testDBackupReadConnectionPools(t, ctx, cfg)
+	})
 	t.Run("migration_lock_survives_DDL_and_connection_death_releases_it", func(t *testing.T) {
 		lock, err := (migrationcoord.SQLLocker{DB: db, Timeout: time.Second}).AcquireSQL(ctx)
 		dMust(t, err)

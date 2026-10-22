@@ -1,0 +1,156 @@
+PASS remote_dispatch
+PASS local_dispatch
+PASS child_failure
+PASS freeze_only
+{
+  "kind": "d_verification_wrapper_dispatch_test",
+  "cases": [
+    {
+      "name": "remote_dispatch",
+      "passed": true,
+      "failure": null,
+      "wrapper_error": null,
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "profile_completed_actual_results_require_review",
+        "source_sha256": "3f887f6399637a2e39c644ca8fe66e57e3c73e41405ccaff436f1d5f0179f172",
+        "child_exit": 0,
+        "source_postcheck": true,
+        "freeze_only": false,
+        "remote_requested": true,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\remote_dispatch\\.tmp-d-index-cache-be0dc8e23ded44a5b66728f0080f3f90",
+          "removed": true,
+          "files_removed": 11,
+          "test_build_artifacts_removed": true
+        },
+        "error": null
+      },
+      "child_observation": {
+        "synthetic_child": true,
+        "actual_mysql": false,
+        "remote_executed": false,
+        "admin_read_only": true,
+        "remote_requested": true,
+        "build_parallelism": 2,
+        "ssh_target": "fixture@127.0.0.1",
+        "script": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\remote_dispatch\\.tmp-d-index-cache-be0dc8e23ded44a5b66728f0080f3f90\\source\\scripts\\system-backup-a-evidence-validation.ps1",
+        "cwd": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\remote_dispatch\\.tmp-d-index-cache-be0dc8e23ded44a5b66728f0080f3f90\\source",
+        "pshome": "C:\\Users\\zhanghui08\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell",
+        "pid": 29388
+      }
+    },
+    {
+      "name": "local_dispatch",
+      "passed": true,
+      "failure": null,
+      "wrapper_error": null,
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "profile_completed_actual_results_require_review",
+        "source_sha256": "3f887f6399637a2e39c644ca8fe66e57e3c73e41405ccaff436f1d5f0179f172",
+        "child_exit": 0,
+        "source_postcheck": true,
+        "freeze_only": false,
+        "remote_requested": false,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\local_dispatch\\.tmp-d-index-cache-939ed9d58a964939ba1562f1f4c8a525",
+          "removed": true,
+          "files_removed": 11,
+          "test_build_artifacts_removed": true
+        },
+        "error": null
+      },
+      "child_observation": {
+        "synthetic_child": true,
+        "actual_mysql": false,
+        "remote_executed": false,
+        "admin_read_only": true,
+        "remote_requested": false,
+        "build_parallelism": 3,
+        "ssh_target": "fixture@127.0.0.1",
+        "script": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\local_dispatch\\.tmp-d-index-cache-939ed9d58a964939ba1562f1f4c8a525\\source\\scripts\\system-backup-a-evidence-validation.ps1",
+        "cwd": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\local_dispatch\\.tmp-d-index-cache-939ed9d58a964939ba1562f1f4c8a525\\source",
+        "pshome": "C:\\Users\\zhanghui08\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell",
+        "pid": 38976
+      }
+    },
+    {
+      "name": "child_failure",
+      "passed": true,
+      "failure": null,
+      "wrapper_error": "Admin read validation failed exit=37; preserve any CLEANUP_PENDING identity in the log",
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "failed",
+        "source_sha256": "3f887f6399637a2e39c644ca8fe66e57e3c73e41405ccaff436f1d5f0179f172",
+        "child_exit": 37,
+        "source_postcheck": false,
+        "freeze_only": false,
+        "remote_requested": true,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\child_failure\\.tmp-d-index-cache-4026471882e24a35aa0813d4f05d53fa",
+          "removed": true,
+          "files_removed": 11,
+          "test_build_artifacts_removed": true
+        },
+        "error": "Admin read validation failed exit=37; preserve any CLEANUP_PENDING identity in the log"
+      },
+      "child_observation": {
+        "synthetic_child": true,
+        "actual_mysql": false,
+        "remote_executed": false,
+        "admin_read_only": true,
+        "remote_requested": true,
+        "build_parallelism": 1,
+        "ssh_target": "fixture@127.0.0.1",
+        "script": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\child_failure\\.tmp-d-index-cache-4026471882e24a35aa0813d4f05d53fa\\source\\scripts\\system-backup-a-evidence-validation.ps1",
+        "cwd": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\child_failure\\.tmp-d-index-cache-4026471882e24a35aa0813d4f05d53fa\\source",
+        "pshome": "C:\\Users\\zhanghui08\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell",
+        "pid": 19492
+      }
+    },
+    {
+      "name": "freeze_only",
+      "passed": true,
+      "failure": null,
+      "wrapper_error": null,
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "snapshot_only_verified",
+        "source_sha256": "3f887f6399637a2e39c644ca8fe66e57e3c73e41405ccaff436f1d5f0179f172",
+        "child_exit": null,
+        "source_postcheck": true,
+        "freeze_only": true,
+        "remote_requested": false,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14\\freeze_only\\.tmp-d-index-cache-83061e2617f746b18150a4d9df30e558",
+          "removed": true,
+          "files_removed": 11,
+          "test_build_artifacts_removed": true
+        },
+        "error": null
+      },
+      "child_observation": null
+    }
+  ],
+  "failed": 0,
+  "fatal": null,
+  "discovery_matches": 4,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14",
+    "removed": true,
+    "files_removed": 54
+  },
+  "actual_mysql": false,
+  "remote_executed": false,
+  "dependencies_installed": false
+}

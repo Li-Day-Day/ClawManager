@@ -1,0 +1,162 @@
+{
+  "kind": "d_gc_owner_cancel_observation_repair",
+  "status": "local_gate_passed_cleaned_actual_mysql_pending",
+  "original": {
+    "log": {
+      "path": "docs/evidence/d-download-gc-owner-lifecycle-remote-20261022-144052-85261cfe.txt",
+      "size": 1744254,
+      "sha256": "e7912a08251b5c619739c058e26648e49601dcd3f12777875455f7eab7c9692a"
+    },
+    "source": {
+      "path": "docs/evidence/d-download-gc-owner-lifecycle-remote-20261022-144052-85261cfe-source.json",
+      "size": 307645,
+      "sha256": "87881543011c19e978df5489e9f2ed8c042ec8c65923575e1656b142413e6013"
+    },
+    "source_sha256": "013c180739fad335c2f4a261d3fddd6c4123974c9c653d663951d8b1a6794815",
+    "prerequisite_passed": 34,
+    "lifecycle_passed": [
+      "known_commit_unlock",
+      "known_commit_discard",
+      "known_rollback_discard",
+      "commit_reply_lost",
+      "rollback_reply_lost",
+      "unlock_reply_lost",
+      "killed_holder"
+    ],
+    "lifecycle_failed": [
+      "canceled_holder"
+    ],
+    "exit": 1,
+    "parent_pass_text_is_not_success": true,
+    "namespace": "sbk-mig-261022070931-3083",
+    "uid": "6ba6fa1c-b4ab-4311-adbf-c89ff147479b",
+    "pending_connection": 68,
+    "pending_thread": 417,
+    "namespace_and_scratch_cleanup_reported": true,
+    "independent_remote_cleanup_check": false,
+    "probe_sha256": "0369a3c102b040b74f41cc0d7f51e61c8d0d24fb96157c92910989a64b7838d3"
+  },
+  "repair": {
+    "changed_go_files": [
+      "backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go"
+    ],
+    "production_go_files_changed": false,
+    "client_cancel_budget_seconds": 10,
+    "cancel_release_observer_budget_seconds": 40,
+    "other_release_observer_budget_seconds": 5,
+    "server_sleep_seconds": 30,
+    "exact_ticket_observation_required": true,
+    "context_canceled_required": true,
+    "parent_pass_requires_no_failed_children": true,
+    "mysql_source": "https://github.com/mysql/mysql-server/blob/mysql-8.4.8/sql/item_func.cc#L4899-L4926",
+    "server_disconnect_poll_seconds": 5,
+    "diagnosis": "Observed 5.01s failure is consistent with racing the 5s server disconnect poll; no post-cancel server trace was captured in the original run."
+  },
+  "local": {
+    "log": {
+      "path": "docs/evidence/d-gc-owner-cancel-repair-20261022-local.txt",
+      "size": 858303,
+      "sha256": "2fd85a65f5f9dd1c34911becfca8c221f8f546fd59e0398ee85854e195f330c1"
+    },
+    "source": {
+      "path": "docs/evidence/d-gc-owner-cancel-repair-20261022-source.json",
+      "size": 308257,
+      "sha256": "bb003afd18c0cddf5e0c57d5784864c6838a2ed0e3158fa5cab68763735547da"
+    },
+    "source_sha256": "f9f754aaad94a1923f78eeaaf39ec1f4b2528c82cc63b3bb76b1ac0377e741e3",
+    "source_files": 1569,
+    "package_sections": [
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "seconds": "122.806",
+        "roots": 255,
+        "pass_events": 2011
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "seconds": "259.336",
+        "roots": 374,
+        "pass_events": 3080
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "seconds": "1.920",
+        "roots": 2,
+        "pass_events": 12
+      }
+    ],
+    "exit": 0,
+    "default_vet": true,
+    "standalone_seed": true,
+    "windows_and_linux_probe_compiled": true,
+    "linux_migration_compiled": true,
+    "frozen_postcheck": true,
+    "current_critical_pins": [
+      {
+        "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go",
+        "size": 13125,
+        "sha256": "56c14b89a7a670d1d4529961fbbf65799d9edaab1f20ae683b100f8034314ec9"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_wire_test.go",
+        "size": 7800,
+        "sha256": "e99af7538db4a50c18cc868f2a3d0978b33c9c7b5dd4f36b1109fa2fc6e75776"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_gc_freeze_mysql_test.go",
+        "size": 27300,
+        "sha256": "a8aa5e0062144f85018a5e1321077d281536ab206c2a0db0fda618eb25e24126"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+        "size": 3232,
+        "sha256": "964b5d9cd2d7bb71e3201003c2538edfe45b550b585d19428cf7991ece6a9cf5"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_connection_test.go",
+        "size": 12648,
+        "sha256": "cda35914e5f69305855e9e2cb5ff431ecd171c2a9ef92a08af7ac9ecaeeedd0f"
+      },
+      {
+        "path": "scripts/system-backup-d-download-gc-freeze-phase.sh",
+        "size": 3031,
+        "sha256": "cd2cdb73b3be0ed27f6d38ded1e8fb3c0c8ee4dd7103e20259f5f805bc9a43df"
+      },
+      {
+        "path": "scripts/system-backup-d-download-gc-freeze-dispatch.test.ps1",
+        "size": 8399,
+        "sha256": "19cf244fb63232038cd6e8b33e5d6c57d21204e5f6051f4b062bb9c6042a08b0"
+      },
+      {
+        "path": "backend/go.mod",
+        "size": 3961,
+        "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+      },
+      {
+        "path": "backend/go.sum",
+        "size": 24218,
+        "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+      }
+    ],
+    "current_whole_tree_tested": false
+  },
+  "cleanup": [
+    {
+      "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e15ebfece4d144b19b62bb1fad85caee",
+      "absent_verified": true,
+      "reported_removed": true
+    },
+    {
+      "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1f4f82a9253c4c4ca611e20f3f827e1d",
+      "absent_verified": true,
+      "reported_removed": true
+    }
+  ],
+  "dependencies_installed": false,
+  "remote_executed_by_repair": false,
+  "repaired_actual_mysql_executed": false,
+  "freeze_adapter_wired": false,
+  "full_gc_accepted": false,
+  "production_approved": false,
+  "reviewed_utc": "2026-10-22T07:47:08.5278448Z"
+}

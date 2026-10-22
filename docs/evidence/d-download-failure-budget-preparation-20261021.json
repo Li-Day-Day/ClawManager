@@ -1,0 +1,123 @@
+{
+  "kind": "d_download_failure_independent_budget_preparation",
+  "status": "local_download_failure_budget_only",
+  "base_source_sha256": "8949ab525f06869565e79b0047a828d1e4a471358d6f00af126d591f3f402462",
+  "base_manifest_sha256": "bd9f09a208fad089b32a69f12d202a14529a812d026132d07808f964bbc77f76",
+  "changes": [
+    "backend/internal/systembackupevidence/http.go",
+    "backend/internal/systembackupevidence/download_http_failure_budget_test.go"
+  ],
+  "runs": [
+    {
+      "stage": "counterfactual",
+      "source_sha256": "69563d6b0ab4f73e1db9b6fad6622770de313f0dca95f9b4ecb5de5846f3d997",
+      "files": 1467,
+      "main": 4,
+      "checks": 21,
+      "passed": 15,
+      "failed": [
+        "TestDownloadHTTPFailureIndependentBudget",
+        "TestDownloadHTTPFailureIndependentBudget/canceled_provider_request",
+        "TestDownloadHTTPFailureIndependentBudget/live_request",
+        "TestDownloadHTTPFailureJournalQueueDeadline",
+        "TestDownloadResultFailureIndependentBudget",
+        "TestDownloadResultFailureIndependentBudget/expired_result_transaction"
+      ],
+      "exit": 1,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [],
+      "source_manifest": "docs/evidence/d-download-failure-budget-20261021-counterfactual-source.json",
+      "source_manifest_sha256": "6abf6c42d641560f7c37fb6e64c1e621a235fec09dc0bac6559eea61182f7926",
+      "events_sha256": "eaf7dafd02e6ba5dc17188e66a2c7089fc09fcc19426432771d3cdcd1f67a8fc",
+      "native_sha256": "1bcc8ec6331c758fd36bda9034a274ff15346078022715753b99c13db4094574"
+    },
+    {
+      "stage": "target",
+      "source_sha256": "7596b93c31d519e2013941be75a89a7b92940bfdf283799d8c499cb73474fc47",
+      "files": 1467,
+      "main": 24,
+      "checks": 141,
+      "passed": 141,
+      "failed": [],
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "elapsed_seconds": 20.311
+        }
+      ],
+      "source_manifest": "docs/evidence/d-download-failure-budget-20261021-target-source.json",
+      "source_manifest_sha256": "28c66f5f5b6d3147b2c6ba2dfc92cfa5dcc1627f292ca84774f8380f947922dd",
+      "events_sha256": "bd815cd70300c81b24d5b9a6d835016d8d43d0a4b043678dc43b69590e31e3f4",
+      "native_sha256": "dab731317fc2758c0e7d45195284c1d03bfb8834c1cf8d9ddbb211663dffad2e"
+    },
+    {
+      "stage": "full",
+      "source_sha256": "7596b93c31d519e2013941be75a89a7b92940bfdf283799d8c499cb73474fc47",
+      "files": 1467,
+      "main": 782,
+      "checks": 6598,
+      "passed": 6598,
+      "failed": [],
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupsecurity",
+          "elapsed_seconds": 38.203
+        },
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "elapsed_seconds": 195.012
+        },
+        {
+          "package": "clawreef/internal/systembackupread",
+          "elapsed_seconds": 2.202
+        },
+        {
+          "package": "clawreef/internal/systembackupproducer",
+          "elapsed_seconds": 24.105
+        },
+        {
+          "package": "clawreef/internal/systembackupgcmetadata",
+          "elapsed_seconds": 2.433
+        }
+      ],
+      "source_manifest": "docs/evidence/d-download-failure-budget-20261021-full-source.json",
+      "source_manifest_sha256": "28c66f5f5b6d3147b2c6ba2dfc92cfa5dcc1627f292ca84774f8380f947922dd",
+      "events_sha256": "819b183d1de68684adcdb733f1a15a4fe14d95385d1829d849d7c7017362437b",
+      "native_sha256": "ffef57f2c2d8431eda14f3995aaf88cfaa3d3f5f9f958c7e3c89bfe74495487c"
+    }
+  ],
+  "published": {
+    "source_context_sha256": "84229967b483d1b95b5a1b21d7ed87ee879b8b15b902222ffbb8e5ba71577106",
+    "source_context_manifest_sha256": "76e70d44c85b5b4e197c976642a85022e33e4aae15d2636ecedc8150ae956efd",
+    "matches_frozen_full": false,
+    "concurrent_changes": [
+      "scripts/system-backup-d-download-admission-native-validation.ps1"
+    ],
+    "concurrent_additions": [],
+    "own_two_files_and_module_match": true
+  },
+  "cleanup": {
+    "receipt": "docs/evidence/d-download-failure-budget-cleanup-20261021.json",
+    "sha256": "65eb3158b619311a91742137515337c76328ee798253931963f1976c7ccca409",
+    "removed": true
+  },
+  "dependencies_installed": false,
+  "remote": false,
+  "boundaries": {
+    "independent_seconds_per_failure_callback": 5,
+    "request_values_preserved": true,
+    "provider_authorization_budget_unchanged": true,
+    "queued_journal_expiry_fail_closed": true,
+    "physical_write_sync_timeout_proven": false,
+    "actual_sql_or_deployment_proven": false,
+    "production_approval": false,
+    "original_six_scopes_complete": false
+  }
+}

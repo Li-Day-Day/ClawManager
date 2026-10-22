@@ -104,7 +104,7 @@ ORDER BY c.version DESC LIMIT ? FOR SHARE`
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return ConfigPage{}, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return ConfigPage{}, ErrUnavailable
 	}
 	for i := range page.Items {

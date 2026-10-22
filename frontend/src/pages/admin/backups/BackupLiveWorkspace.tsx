@@ -11,12 +11,14 @@ import type { BackupDetailSelection } from './backupLiveDetail';
 import BackupLiveConfigHistory from './BackupLiveConfigHistory';
 import BackupOverviewReadout from './BackupOverviewReadout';
 import BackupLiveOperations from './BackupLiveOperations.tsx';
+import BackupEvidenceDownload from './BackupEvidenceDownload.tsx';
+import BackupTaskTable from './BackupTaskTable.tsx';
 
 const liveSource = createBackupLiveSource(systemBackupReadService);
 type TaskGroup = 'backups' | 'drills' | 'preflights' | 'verifications';
 
 export default function BackupLiveWorkspace({ fallback }: { fallback: ReactNode }) {
-  const { b, label, number } = useBackupText();
+  const { b, number } = useBackupText();
   const [state, setState] = useState<BackupLiveState | { kind: 'loading' }>({ kind: 'loading' });
   const [revision, setRevision] = useState(0);
   const [paging, setPaging] = useState<{ kind: TaskGroup; error: boolean } | null>(null);
@@ -73,7 +75,7 @@ export default function BackupLiveWorkspace({ fallback }: { fallback: ReactNode 
     };
   }, [revision]);
 
-  if (state.kind === 'unavailable') return <div className="space-y-5">{fallback}<BackupLiveOperations installation={null} /></div>;
+  if (state.kind === 'unavailable') return <div className="space-y-5">{fallback}<BackupLiveOperations installation={null} /><BackupEvidenceDownload installation={null} /></div>;
   if (state.kind === 'loading') return <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500" role="status" aria-busy="true">{b('loading')}</div>;
   if (state.kind === 'error') return <div className="rounded-xl border border-red-200 bg-red-50 p-6" role="alert">
     <h2 className="font-medium text-red-800">{b('loadFailed')}</h2>
@@ -123,17 +125,13 @@ export default function BackupLiveWorkspace({ fallback }: { fallback: ReactNode 
       <div className="flex items-center justify-between gap-2"><h2 className="font-semibold text-slate-900">{group.title}</h2>{page !== null && <span className="text-sm text-slate-500">{b('itemCount', { count: number(page.items.length) })}</span>}</div>
       {page === null ? <p role="status" className="mt-4 text-sm text-slate-500">{b('readResourceUnavailable')}</p> : <>
       {page.items.length === 0 && page.next_cursor === null ? <p className="mt-4 text-sm text-slate-500">{b('noRecords')}</p>
-        : <div className="mt-4 overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b border-slate-200 text-slate-500"><th scope="col" className="py-2 pr-4 font-medium">ID</th><th scope="col" className="py-2 font-medium">{b('executionStatus')}</th></tr></thead>
-          <tbody>{page.items.map((item) => <tr key={item.public_id} className="border-b border-slate-100"><td className="py-2 pr-4 font-mono text-xs"><button
-            type="button" className="break-all text-left text-rose-700 underline decoration-rose-200 underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500"
-            aria-label={`${b('detailOpen')} ${item.public_id}`} aria-expanded={selected?.kind === group.key && selected.public_id === item.public_id}
-            aria-controls={selected?.kind === group.key && selected.public_id === item.public_id ? 'system-backup-live-detail' : undefined}
-            onClick={() => setSelected({ kind: group.key, public_id: item.public_id, origin_installation_id: item.origin_installation_id, row_version: item.row_version })}>{item.public_id}</button></td><td className="py-2">{label(item.status)}</td></tr>)}</tbody></table></div>}
+        : <BackupTaskTable items={page.items} kind={group.key} selected={selected} select={setSelected} />}
       {page.next_cursor !== null && <div className="mt-4"><button type="button" disabled={paging?.kind === group.key && !paging.error}
         className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 disabled:opacity-50" onClick={() => loadMore(group.key)}>{paging?.kind === group.key && !paging.error ? b('loadingMore') : b('loadMore')}</button>
         {paging?.kind === group.key && paging.error && <p className="mt-2 text-sm text-red-700" role="alert">{b('readError')}</p>}</div>}</>}
     </section>; })}
     <BackupLiveOperations key={installation ?? 'unknown-installation'} installation={installation} />
+    <BackupEvidenceDownload key={`download:${installation ?? ''}`} installation={installation} />
     <section className="grid gap-3 sm:grid-cols-3">{backupEntryPoints.filter((entry) => ['catalog', 'retention', 'baseline'].includes(entry.tab)).map((entry) =>
       <div key={entry.tab} className="rounded-xl border border-slate-200 bg-white p-4"><h2 className="text-sm font-semibold text-slate-800">{b(entry.label)}</h2><p className="mt-2 text-xs text-slate-500">{b('comingSoon')}</p></div>)}</section>
   </div>;

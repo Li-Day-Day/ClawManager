@@ -1,0 +1,25 @@
+{
+  "kind": "d_gc_scan_completion_concurrent_input_review",
+  "original_wrapper_input_unchanged": false,
+  "original_wrapper_preserved": true,
+  "pre_test_sha256": "4b6279ee0fed04f6ddeaa8ea1f98050f37832428244a03ebf1ed2eb427f925b9",
+  "post_test_sha256": "f9f754aaad94a1923f78eeaaf39ec1f4b2528c82cc63b3bb76b1ac0377e741e3",
+  "changed_during_run": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go",
+      "before_sha256": "0369a3c102b040b74f41cc0d7f51e61c8d0d24fb96157c92910989a64b7838d3",
+      "after_sha256": "56c14b89a7a670d1d4529961fbbf65799d9edaab1f20ae683b100f8034314ec9",
+      "excluded_by_build_tag": "systembackup_mysql"
+    }
+  ],
+  "selected_input_count": 1568,
+  "selected_before_sha256": "39686a6c0a1be00d3a5d5806c6378ad674d18b6f6456b2860ef61ec8e0c2d8b4",
+  "selected_after_sha256": "39686a6c0a1be00d3a5d5806c6378ad674d18b6f6456b2860ef61ec8e0c2d8b4",
+  "scripts_changed_before_run": [
+    "scripts/system-backup-a-verifier-dialect.test.mjs",
+    "scripts/system-backup-contract-check.mjs"
+  ],
+  "full_package_result_accepted": true,
+  "actual_mysql": false,
+  "tagged_probe_changes_accepted": false
+}

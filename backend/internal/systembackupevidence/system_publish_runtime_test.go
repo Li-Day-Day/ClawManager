@@ -84,12 +84,20 @@ func (f *systemPublishFixture) VerifyAbsent(_ context.Context, q S3AbsenceReques
 	}
 	lifetime := 10 * time.Second
 	if f.mode == "absence_expired_during_staging" {
-		lifetime = 150 * time.Millisecond
+		// Leave enough time for the real profile/authority checks to accept
+		// the proof and enter Source. Source waits for THIS original expiry.
+		lifetime = 2 * time.Second
+	} else if f.mode == "absence_expired_before_staging" {
+		lifetime = time.Millisecond
 	}
-	p := S3AbsenceProof{Request: q, ObservedAt: time.Now().UTC(), ExpiresAt: time.Now().Add(lifetime)}
+	observed := time.Now().UTC()
+	p := S3AbsenceProof{Request: q, ObservedAt: observed, ExpiresAt: observed.Add(lifetime)}
 	f.mu.Lock()
 	f.absenceUntil = p.ExpiresAt
 	f.mu.Unlock()
+	if f.mode == "absence_expired_before_staging" {
+		time.Sleep(time.Until(p.ExpiresAt) + time.Millisecond)
+	}
 	return p, nil
 }
 func newSystemPublishFixture(t *testing.T, mode string) *systemPublishFixture {
@@ -302,9 +310,21 @@ func TestSystemPublisherStagingAndRevocation(t *testing.T) {
 				f.finish.err = pd.ErrGuardRequired
 			}
 			closed := 0
+			opened := 0
+			var originalAbsenceUntil time.Time
 			src := func() (io.ReadCloser, error) {
+				opened++
 				if mode == "absence_expired_during_staging" {
-					time.Sleep(200 * time.Millisecond)
+					f.mu.Lock()
+					originalAbsenceUntil = f.absenceUntil
+					f.mu.Unlock()
+					if originalAbsenceUntil.IsZero() || !time.Now().Before(originalAbsenceUntil) || !originalAbsenceUntil.Add(time.Second).Before(f.p.sts.until) {
+						t.Fatal("absence fixture did not enter staging with a live independent absence budget")
+					}
+					time.Sleep(time.Until(originalAbsenceUntil) + 50*time.Millisecond)
+					if time.Now().Before(originalAbsenceUntil) || !time.Now().Before(f.p.sts.until) {
+						t.Fatal("fixture did not expire only the original absence proof")
+					}
 				}
 				raw := append([]byte(nil), f.body...)
 				switch mode {
@@ -334,7 +354,11 @@ func TestSystemPublisherStagingAndRevocation(t *testing.T) {
 			}
 			_, err := f.p.Publish(context.Background(), src)
 			if err == nil || strings.Contains(err.Error(), "private") {
-				t.Fatal("lost rejection or leaked private error")
+				heads, puts := f.counts()
+				t.Fatal("lost rejection or leaked private error", "rejected", err != nil, "opens", opened, "heads", heads, "puts", puts, "absence", f.absent, "finish", f.finish.calls)
+			}
+			if mode == "absence_expired_during_staging" && (opened != 1 || f.absent != 1 || originalAbsenceUntil.IsZero() || !f.p.absence.until.Equal(originalAbsenceUntil)) {
+				t.Fatal("expiry case skipped staging or renewed the absence proof")
 			}
 			_, puts := f.counts()
 			postPut := mode == "revoke_put" || mode == "revoke_proof" || mode == "proof_error" || mode == "finish_error"
@@ -348,6 +372,22 @@ func TestSystemPublisherStagingAndRevocation(t *testing.T) {
 				t.Fatal("staging not closed")
 			}
 		})
+	}
+}
+
+// Failure to obtain a still-live absence proof is a different path from a
+// previously accepted proof expiring during staging. It may converge to
+// write_unknown without opening ciphertext or attempting a PUT.
+func TestSystemPublisherAbsenceExpiredBeforeStagingConvergesUnknown(t *testing.T) {
+	f := newSystemPublishFixture(t, "absence_expired_before_staging")
+	opens := 0
+	result, err := f.p.Publish(context.Background(), func() (io.ReadCloser, error) {
+		opens++
+		return io.NopCloser(bytes.NewReader(f.body)), nil
+	})
+	heads, puts := f.counts()
+	if err != nil || result.State != "write_unknown" || result.ImmutableVersion != nil || opens != 0 || heads != 1 || puts != 0 || f.absent != 1 || f.proof.calls != 1 || f.finish.calls != 1 || f.proof.request.PutAttempted || f.p.absence.until != (time.Time{}) {
+		t.Fatal("expired unaccepted absence proof was confused with expired staging authority", "error", err != nil, "state", result.State, "opens", opens, "heads", heads, "puts", puts, "absence", f.absent)
 	}
 }
 

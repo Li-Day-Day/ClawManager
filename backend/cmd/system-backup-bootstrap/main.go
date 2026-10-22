@@ -14,14 +14,21 @@ import (
 	"syscall"
 	"time"
 
+	bootstrapsecurity "clawreef/internal/systembackupbootstrapsecurity"
 	security "clawreef/internal/systembackupsecurity"
 	"github.com/go-sql-driver/mysql"
 )
 
-// Link reviewed A/B/C implementations here when delivered. Empty means
-// unavailable, not approved. Never populate this from a deployment JSON file.
+// Link concrete owner implementations here. A supplies the local pinned RBAC
+// and issuer-registry validators; remaining resources stay unavailable. Never
+// populate these interfaces from deployment approval booleans.
 func linkedOwnerAdapters() security.BootstrapOwnerAdapters {
-	return security.BootstrapOwnerAdapters{}
+	issuers := bootstrapsecurity.NewIssuers("/run/system-backup/registries")
+	return security.BootstrapOwnerAdapters{Registries: map[string]security.BootstrapResourceValidator{
+		"rbac_bindings":          bootstrapsecurity.NewRBAC("/run/system-backup/registries"),
+		"provider_proof_issuers": issuers,
+		"strong_auth_issuers":    issuers,
+	}}
 }
 
 func main() {

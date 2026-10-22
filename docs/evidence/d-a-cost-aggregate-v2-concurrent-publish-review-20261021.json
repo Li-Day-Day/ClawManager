@@ -1,0 +1,60 @@
+{
+  "kind": "d_a_cost_concurrent_publish_review",
+  "status": "source_assessment_preserve_unowned_not_test_acceptance",
+  "frozen_source_sha256": "ff1f5c2c0a271dcecb24cd3b6205ecb56528b24e7c8ff36b7e56e6ff11321447",
+  "initial_publication_guard": "stopped_before_target_writes",
+  "files": [
+    {
+      "path": "scripts/system-backup-a-live-chain-inventory.sh",
+      "frozen_sha256": "5d1ad4066b807213f9012ed27f842f49a9258711fdf54179f8ca737eb3439a51",
+      "observed_sha256": "9e6ee07598c1253c159874933745058907a0d0661e9c80007f052995737a5ec0",
+      "previous_diff_review_sha256": "9e6ee07598c1253c159874933745058907a0d0661e9c80007f052995737a5ec0"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.mjs",
+      "frozen_sha256": "7139831857b84eed2c2b973f920a52ffbddda206132f32f6ff002729f02bc927",
+      "observed_sha256": "d0eec9a31a39aa32499dd2c72eed9cc7f99416cf2f5e75f0a03bb804f2320e0b",
+      "previous_diff_review_sha256": "d0eec9a31a39aa32499dd2c72eed9cc7f99416cf2f5e75f0a03bb804f2320e0b"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.ps1",
+      "frozen_sha256": "622967a0062f31479f1ed3ae1eb255aeb66902828055b417287b1311629a09ff",
+      "observed_sha256": "4f33e6d58fc24d119b26e9f681d5b2827c4f66f9796da8e0bba9d370f4f5cf9d",
+      "previous_diff_review_sha256": "4f33e6d58fc24d119b26e9f681d5b2827c4f66f9796da8e0bba9d370f4f5cf9d"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.test.mjs",
+      "frozen_sha256": "57daaf55ef479642018472d7ba30c4e23ea61da5625e48ee1949c77c7fe6b71a",
+      "observed_sha256": "ecdf83a10e7a31e7439f7ffe1d97b55ed8a404ebceca3b3f4cb2d0ef4b59e5cf",
+      "previous_diff_review_sha256": "8190778d44f422bbbd0b59b533bc88a7e3db4beb788313a328bafc3ee797fadb"
+    }
+  ],
+  "assessment": [
+    "inventory shell adds public lab CA validity metadata",
+    "live HTTP audit helper adds exact receipt fields, canonical size/hash and time ordering checks",
+    "PowerShell wrapper specifies UTF-8 stdin",
+    "live-chain tests expand shell/TLS/CLI cases"
+  ],
+  "tested_node_module_closure": [
+    "scripts/system-backup-a-object-fixture-model.mjs",
+    "scripts/system-backup-a-object-fixtures.test.mjs",
+    "scripts/system-backup-a-schema-validation.mjs",
+    "scripts/system-backup-contract-artifacts.test.mjs",
+    "scripts/system-backup-contract-check.mjs",
+    "scripts/system-backup-contract-check.test.mjs",
+    "scripts/system-backup-schema-hash-evidence.mjs",
+    "scripts/system-backup-schema-hash.mjs",
+    "scripts/system-backup-schema-inventory.mjs"
+  ],
+  "compiled_local_go_inputs_checked": 393,
+  "directory_enumeration_review": "Go capacity test enumerates only its t.TempDir; Node inventory enumerates SQL migrations, repository Go files and fixed deployment YAML, not live-chain scripts",
+  "tested_node_closure_references_live_tools": false,
+  "compiled_go_source_references_live_tools": false,
+  "live_tools_executed": false,
+  "live_tools_accepted": false,
+  "publish_only_cost_owned_files": true,
+  "dependencies_installed": false,
+  "remote": false,
+  "concurrent_files_may_continue_changing": true,
+  "permission_scope": "Four exact paths are outside the verified execution/input closure; their observed bytes are recorded, not accepted or copied. Keep guards for all compiled Go sources, module files, contract inputs and every other script."
+}

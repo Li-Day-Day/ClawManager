@@ -88,7 +88,7 @@ WHERE origin_installation_id=? AND public_id=? FOR SHARE`
 	if err := r.scope.RecheckRead(ctx, tx, installation); err != nil {
 		return OperationSnapshot{}, scopeReadFailure(err)
 	}
-	if err := tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil || ctx.Err() != nil {
 		return OperationSnapshot{}, ErrUnavailable
 	}
 	if missing {

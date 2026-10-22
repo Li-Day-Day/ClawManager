@@ -1,0 +1,45 @@
+{
+  "kind": "a_business_report_local_validation.v1",
+  "status": "local_reports_and_encrypted_file_delivery_passed_mysql_pending",
+  "started_at": "2026-10-22T03:47:50.6672609Z",
+  "completed_at": "2026-10-22T04:04:46.3456079Z",
+  "business_passed": true,
+  "tagged_seed_passed": true,
+  "delivery_passed": true,
+  "cleanup_verified": true,
+  "dependencies_installed": false,
+  "real_mysql_verified": false,
+  "live_auth_verified": false,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupbusinessa/report.go",
+      "sha256": "57ccb5b5caee47afa0f612d48a7acc2d3434ec2d0f85e50c8c05d17816c3da4c"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/report_test.go",
+      "sha256": "79fab4c9e1edd79060fa6d90de64aaa9374f58c96ea6051f10da892cbdb6879f"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/report_mysql_test.go",
+      "sha256": "c49bf39cc6768b27fb6a7afa67815c731be41bfbd23bf0a9d9a3c2fc97d57330"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+      "sha256": "77ea3c03be4c077b40fbd8e1b458aa78572a58772821db89e163b3da83653ff2"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/business_report_delivery_test.go",
+      "sha256": "4492213cddbb938b8413a7c18bb11e83008c4086e51ef560c99f9626473e35d1"
+    },
+    {
+      "path": "scripts/system-backup-a-report-validation.ps1",
+      "sha256": "d033fb9f8f63be6c29fb269a25f0c409c230fdf061e83d49a1a34cab47265dd7"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    }
+  ],
+  "inputs_unchanged": true,
+  "log_sha256": "c890e8a27773ad44c60a473dae4a33f7700bad61df7867071becb3ebbc889a27"
+}

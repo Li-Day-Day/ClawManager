@@ -125,6 +125,11 @@ func businessRestoreFixture(t *testing.T) (*CaptureScope, BusinessRestoreBinding
 	for _, name := range scope.tables {
 		binding.Dump.Snapshot.Tables = append(binding.Dump.Snapshot.Tables, TableCount{Table: name, Rows: int64(counts[name])})
 	}
+	costHash, err := costSourceAggregateHash(input.Gateway.CostSources)
+	binding.Dump.Snapshot.CostAggregateSHA256 = costHash
+	if err != nil {
+		t.Fatal(err)
+	}
 	proof := &businessRestoreProofFixture{
 		wantBinding: cloneBusinessRestoreBinding(binding), wantInput: cloneBusinessRestoreInput(input),
 	}
@@ -257,6 +262,7 @@ func TestBusinessRestoreFrozenInputAndFinalAuthority(t *testing.T) {
 func TestBusinessRestoreRequiresProofsEvenForEmptyTables(t *testing.T) {
 	scope, binding, _, proof := businessRestoreFixture(t)
 	input := BusinessRestoreInput{}
+	binding.Dump.Snapshot.CostAggregateSHA256 = fixtureCostAggregateHash(t, 0)
 	for i := range binding.Dump.Snapshot.Tables {
 		binding.Dump.Snapshot.Tables[i].Rows = 0
 	}

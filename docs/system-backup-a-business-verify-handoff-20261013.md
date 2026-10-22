@@ -1,6 +1,8 @@
 # A：users / AI Gateway 备份校验交接（draft）
 
-## 2026-10-14 最新远测：十五表 MySQL 专项已接收
+【2026-10-22 成本并发快照实际五项已独立复核】[A 新限定接收](system-backup-a-cost-snapshot-concurrent-review-20261022.md)确认原轮 MySQL 8.4.8 上 `cost_snapshot_concurrent_commit` 与四项汇总差异、父测试、96 正式迁移及退出 0；并发记录包含首个 COUNT 关闭、writer 已提交、原 RR 不变与新 RR 看到变化。专项不再待执行，无需重跑。原轮完整源码清单/前后摘要、准确本地 scratch ID 缺失，当前新增报告测试未被旧结果接收；账号/库/准确 UID namespace 等清理仅按原日志报告。原准备两轮 88 根/396 项与下方 10-14 十五表结果保留历史范围，均不替代真实 B dump 证明、生产恢复授权或完整规模验收。
+
+## 2026-10-14 历史远测：十五表 MySQL 专项已接收
 
 操作者交付的 [15:58 完整 transcript](evidence/a-business-restore-mysql-remote-20261014-155831.txt)已核对，run `sbk-mig-261014083514-40ca`，namespace UID `8027bfb2-4ec0-47ac-bf56-96eeffddd906`，MySQL `8.4.8`，最终 `A_BUSINESS_RESTORE_REMOTE_EXIT=0`。详见[限定接收记录](evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json)。
 

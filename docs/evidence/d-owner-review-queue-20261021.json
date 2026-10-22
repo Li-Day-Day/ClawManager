@@ -1,0 +1,1065 @@
+{
+  "kind": "d_substantive_cross_review_queue",
+  "status": "pending_D_substantive_review_no_approval_recorded",
+  "recorded_utc": "2026-10-21T05:39:27.471Z",
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "9e63ea1d46a530876df258689672c747e46fe0ae6723fb3f32b6bbdc2f645af0"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "sha256": "0df58467415015293f2cd4f5ca04db2182a2fb585b11c2e4a15128a3eb7114ba"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry-decisions.json",
+      "sha256": "1928dd48a4efe6842e2d7565f66381c65d7a922f6eba29b156254da936fff6ee"
+    }
+  ],
+  "schema_policy_reviews": [
+    {
+      "object": "table:audit_events",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "audit_events",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.audit_events.normalize.v1",
+        "verifier_id": "ai_gateway.audit_events.verify.v1",
+        "depends_on": [
+          "table:model_invocations",
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "AI Gateway audit history is retained as redacted historical evidence; actor, invocation and request references are remapped and no event resumes execution.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "590cf0a03ef126127ee53c2893ad90aeed7db0e8210f5de0dfff118ac275283a"
+    },
+    {
+      "object": "table:chat_messages",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "chat_messages",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.chat_messages.normalize.v1",
+        "verifier_id": "ai_gateway.chat_messages.verify.v1",
+        "depends_on": [
+          "table:chat_sessions",
+          "table:instances",
+          "table:model_invocations",
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Chat content is confidential historical data. Restore remaps session, actor, instance and invocation references and never restores a live conversation cursor.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "870264ed71c88f9f986f1129d4f3f697ce66e4e355c3ce32df828517bb8af7fe"
+    },
+    {
+      "object": "table:chat_sessions",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "chat_sessions",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.chat_sessions.normalize.v1",
+        "verifier_id": "ai_gateway.chat_sessions.verify.v1",
+        "depends_on": [
+          "table:instances",
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Chat sessions are restored as historical session metadata with target user and instance mapping; session activity is not resumed automatically.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "5a166d8b3a2b0b59f926bb88a8e9bb55d282a5d72cce19c3c2940d47f71d6f9e"
+    },
+    {
+      "object": "table:cost_records",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "cost_records",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.cost_records.normalize.v1",
+        "verifier_id": "ai_gateway.cost_records.verify.v1",
+        "depends_on": [
+          "table:llm_models",
+          "table:model_invocations",
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Cost records are immutable accounting history; target identifiers are remapped and monetary/token aggregates are verified without replaying provider calls.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "b7ea349b88cd805a7fd3a46eee2768bc19a23384988554eb4c6500d3d4b58a5c"
+    },
+    {
+      "object": "table:enterprise_auth_settings",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "enterprise_auth_settings",
+        "owner": "A",
+        "category": "users",
+        "data_classification": "secret",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "users.enterprise_auth_settings.normalize.v1",
+        "verifier_id": "users.enterprise_auth_settings.verify.v1",
+        "depends_on": [
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Enterprise authentication policy is retained with secret material represented only by typed refs; encrypted bind credentials never enter manifest, evidence or restored active state.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/050_add_enterprise_auth_settings.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "b68c43bcc78a20168c52624d45f73eb1f0d82d16dab9cd5cefa75dece4602eae"
+    },
+    {
+      "object": "table:instance_gateway_token_aliases",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "instance_gateway_token_aliases",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "secret",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.instance_gateway_token_aliases.normalize.v1",
+        "verifier_id": "ai_gateway.instance_gateway_token_aliases.verify.v1",
+        "depends_on": [
+          "table:instances"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Gateway token aliases contain only non-reversible token hashes and expiry history; restored rows cannot become active credentials without a new token issuance.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/038_add_instance_gateway_token_aliases.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "b8811750d4889fb13ce43fc9639a298c0d31665296fd80ab70128c979a21071d"
+    },
+    {
+      "object": "table:llm_models",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "llm_models",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "secret",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.llm_models.normalize.v1",
+        "verifier_id": "ai_gateway.llm_models.verify.v1",
+        "depends_on": [],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Model catalog metadata is restored with provider and secret references redacted; API key material is never copied into a manifest or evidence.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/045_add_llm_model_reasoning_control.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "73006cd942d6d20e475147b4f646b2b9c932a816967a260f1326203ae95112c6"
+    },
+    {
+      "object": "table:model_invocations",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "model_invocations",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.model_invocations.normalize.v1",
+        "verifier_id": "ai_gateway.model_invocations.verify.v1",
+        "depends_on": [
+          "table:instances",
+          "table:llm_models",
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Invocation history is immutable audit and usage data; request/response bodies are redacted under the AI policy and restored rows cannot trigger provider execution.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "f6c4358ee70c94ae410bdf3553de6e4ace86f874778fbdd877b85f422afe1420"
+    },
+    {
+      "object": "table:northbound_auth_challenges",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "northbound_auth_challenges",
+        "owner": "A",
+        "category": "users",
+        "data_classification": "secret",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "users.northbound_auth_challenges.normalize.v1",
+        "verifier_id": "users.northbound_auth_challenges.verify.v1",
+        "depends_on": [],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Authentication challenges are retained only as expired or consumed history; nonce hashes and challenge state never restore as usable login material.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/045_add_northbound_api.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "580743ed74652d13b06457533624fdc34d3a9a5c23f37482b04bfc34d2baf25b"
+    },
+    {
+      "object": "table:northbound_caller_policies",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "northbound_caller_policies",
+        "owner": "A",
+        "category": "users",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "users.northbound_caller_policies.normalize.v1",
+        "verifier_id": "users.northbound_caller_policies.verify.v1",
+        "depends_on": [
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Caller scopes are restored only after user mapping and closed permission validation; the target cannot inherit an unrecognized or expanded scope.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/057_add_northbound_admin_settings.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "da9d3b4fafb6aab00a63e9d4dbd22358d1e0fb435c4618f2179a78903447ba37"
+    },
+    {
+      "object": "table:northbound_sessions",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "northbound_sessions",
+        "owner": "A",
+        "category": "users",
+        "data_classification": "secret",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "users.northbound_sessions.normalize.v1",
+        "verifier_id": "users.northbound_sessions.verify.v1",
+        "depends_on": [
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Northbound sessions are restored as revoked historical records; refresh-token hashes and session state cannot be used to continue a source session.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/045_add_northbound_api.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "329bedfe01b8728cb62af7e122877bf852ff449bbf4e3e07549ac05685060739"
+    },
+    {
+      "object": "table:risk_hits",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "risk_hits",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.risk_hits.normalize.v1",
+        "verifier_id": "ai_gateway.risk_hits.verify.v1",
+        "depends_on": [
+          "table:model_invocations",
+          "table:risk_rules",
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Risk detections are retained as redacted historical findings with rule and invocation references remapped; they do not re-trigger enforcement on restore.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "fc3313bc133737d5846fc40d55af1d5b199cb1766a3cbb6dbf689927b20f0abf"
+    },
+    {
+      "object": "table:risk_rules",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "risk_rules",
+        "owner": "A",
+        "category": "ai_gateway",
+        "data_classification": "internal",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "ai_gateway.risk_rules.normalize.v1",
+        "verifier_id": "ai_gateway.risk_rules.verify.v1",
+        "depends_on": [],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Risk policy is restored through the closed rule schema and normalized action set; unsupported or unsafe actions are rejected before activation.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "1d8f1e483bff56ed1d2f8861a5a7a29d9920da44eeba8bd5ca6bdea34c078b6f"
+    },
+    {
+      "object": "table:user_quotas",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "user_quotas",
+        "owner": "A",
+        "category": "users",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "users.user_quotas.normalize.v1",
+        "verifier_id": "users.user_quotas.verify.v1",
+        "depends_on": [
+          "table:users"
+        ],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Quota policy is restored after user mapping and target capacity validation; it does not grant resources beyond the target installation limits.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/001_init_schema.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "846e9edbb4e002fd62e9c75e38fee3f4b93832a227c9907fa74457d273442929"
+    },
+    {
+      "object": "table:users",
+      "owner": "A",
+      "status": "pending_D_review",
+      "policy": {
+        "object_type": "table",
+        "name": "users",
+        "owner": "A",
+        "category": "users",
+        "data_classification": "confidential",
+        "backup_strategy": "mysql_dump",
+        "restore_strategy": "normalize",
+        "excluded_reason": null,
+        "normalizer_id": "users.users.normalize.v1",
+        "verifier_id": "users.users.verify.v1",
+        "depends_on": [],
+        "decision_status": "owner_recorded",
+        "required_cross_reviewers": [
+          "D"
+        ],
+        "approved_cross_reviewers": [],
+        "redacted_explanation": "Users are restored through immutable identity mapping and role allowlists; password hashes and external authentication material are redacted from evidence and never exposed in diagnostics.",
+        "sources": {
+          "migration": [
+            "backend/internal/db/migrations/001_init_schema.sql"
+          ],
+          "repository_create": [],
+          "repository_alter": [],
+          "deployment_bootstrap": [],
+          "exception": null
+        }
+      },
+      "policy_sha256": "0fead1131e0d778d249239cba120284cd065d09b3ade2acaa4b46dabbcf1ec72"
+    }
+  ],
+  "public_contract_reviews": [
+    {
+      "artifact_ids": [
+        "strong_auth_proof_nonce"
+      ],
+      "required_reviewers": [
+        "D"
+      ],
+      "approved_reviewers": [],
+      "artifacts": [
+        {
+          "id": "strong_auth_proof_nonce",
+          "path": "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json",
+          "status": "draft",
+          "sha256": "ff3aaf4780f207cec5b7a864fc8c36b958ad750bdb2b6c9c26d017fc02005805"
+        }
+      ]
+    },
+    {
+      "artifact_ids": [
+        "provider_proof_registration"
+      ],
+      "required_reviewers": [
+        "C",
+        "D"
+      ],
+      "approved_reviewers": [],
+      "artifacts": [
+        {
+          "id": "provider_proof_registration",
+          "path": "contracts/system-backup/v12/provider-proof-registration.schema.json",
+          "status": "draft",
+          "sha256": "618754245abc64cb2c9ca88a0099bfddae98bbe46caa5580f95d26b354542626"
+        }
+      ]
+    },
+    {
+      "artifact_ids": [
+        "secret_ref"
+      ],
+      "required_reviewers": [
+        "B",
+        "C",
+        "D"
+      ],
+      "approved_reviewers": [],
+      "artifacts": [
+        {
+          "id": "secret_ref",
+          "path": "contracts/system-backup/v12/secret-ref.schema.json",
+          "status": "draft",
+          "sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9"
+        }
+      ]
+    },
+    {
+      "artifact_ids": [
+        "capability_evidence"
+      ],
+      "required_reviewers": [
+        "B",
+        "C",
+        "D"
+      ],
+      "approved_reviewers": [],
+      "artifacts": [
+        {
+          "id": "capability_evidence",
+          "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+          "status": "draft",
+          "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+        }
+      ]
+    }
+  ],
+  "pending_schema_reviews_by_reviewer": {
+    "D": [
+      "table:audit_events",
+      "table:chat_messages",
+      "table:chat_sessions",
+      "table:cost_records",
+      "table:enterprise_auth_settings",
+      "table:instance_gateway_token_aliases",
+      "table:llm_models",
+      "table:model_invocations",
+      "table:northbound_auth_challenges",
+      "table:northbound_caller_policies",
+      "table:northbound_sessions",
+      "table:risk_hits",
+      "table:risk_rules",
+      "table:user_quotas",
+      "table:users"
+    ],
+    "A": [
+      "table:audit_logs",
+      "table:egress_private_exceptions",
+      "table:northbound_admin_settings",
+      "table:northbound_settings_audit",
+      "table:schema_migrations",
+      "table:security_scan_configs",
+      "table:security_scan_jobs",
+      "table:system_backup_admin_revocations",
+      "table:system_backup_admin_sessions",
+      "table:system_backup_alert_states",
+      "table:system_backup_artifact_verifications",
+      "table:system_backup_attempts",
+      "table:system_backup_check_results",
+      "table:system_backup_compact_tombstones",
+      "table:system_backup_configs",
+      "table:system_backup_dependency_health",
+      "table:system_backup_events",
+      "table:system_backup_evidence",
+      "table:system_backup_evidence_chunks",
+      "table:system_backup_external_actions",
+      "table:system_backup_installation_state",
+      "table:system_backup_job_observations",
+      "table:system_backup_log_chunks",
+      "table:system_backup_metadata_reservations",
+      "table:system_backup_operations",
+      "table:system_backup_preflights",
+      "table:system_backup_promotions",
+      "table:system_backup_provider_capabilities",
+      "table:system_backup_prune_runs",
+      "table:system_backup_source_writer_check_states",
+      "table:system_backup_staging_resources",
+      "table:system_backup_strong_auth_nonces",
+      "table:system_backup_totp_credentials",
+      "table:system_backups",
+      "table:system_maintenance_locks",
+      "table:system_maintenance_mutation_leases",
+      "table:system_maintenance_participants",
+      "table:system_restore_drill_resources",
+      "table:system_restore_drills"
+    ],
+    "B": [
+      "table:egress_private_exceptions",
+      "table:northbound_admin_settings",
+      "table:northbound_settings_audit",
+      "table:system_artifact_lease_states",
+      "table:system_artifact_leases",
+      "table:system_backup_alert_states",
+      "table:system_backup_artifact_verifications",
+      "table:system_backup_attempts",
+      "table:system_backup_check_results",
+      "table:system_backup_configs",
+      "table:system_backup_dependency_health",
+      "table:system_backup_events",
+      "table:system_backup_evidence",
+      "table:system_backup_installation_state",
+      "table:system_backup_job_observations",
+      "table:system_backup_log_chunks",
+      "table:system_backup_operations",
+      "table:system_backup_preflights",
+      "table:system_backup_promotions",
+      "table:system_backup_provider_capabilities",
+      "table:system_backup_source_writer_check_states",
+      "table:system_backup_staging_resources",
+      "table:system_backups",
+      "table:system_image_settings",
+      "table:system_maintenance_locks",
+      "table:system_maintenance_mutation_leases",
+      "table:system_maintenance_participants",
+      "table:system_restore_drill_resources",
+      "table:system_restore_drills"
+    ],
+    "C": [
+      "table:security_scan_configs",
+      "table:security_scan_job_items",
+      "table:security_scan_jobs",
+      "table:security_scan_reports",
+      "table:system_artifact_lease_states",
+      "table:system_artifact_leases",
+      "table:system_backup_alert_states",
+      "table:system_backup_artifact_verifications",
+      "table:system_backup_attempts",
+      "table:system_backup_check_results",
+      "table:system_backup_configs",
+      "table:system_backup_dependency_health",
+      "table:system_backup_events",
+      "table:system_backup_evidence",
+      "table:system_backup_evidence_chunks",
+      "table:system_backup_external_actions",
+      "table:system_backup_job_observations",
+      "table:system_backup_operations",
+      "table:system_backup_preflights",
+      "table:system_backup_promotions",
+      "table:system_backup_provider_capabilities",
+      "table:system_backup_prune_items",
+      "table:system_backup_prune_runs",
+      "table:system_backup_source_writer_check_states",
+      "table:system_backup_staging_resources",
+      "table:system_backups",
+      "table:system_maintenance_locks",
+      "table:system_maintenance_mutation_leases",
+      "table:system_maintenance_participants",
+      "table:system_restore_drill_resources",
+      "table:system_restore_drills"
+    ]
+  },
+  "existing_A_actual_evidence": {
+    "receipt": "docs/evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json",
+    "receipt_sha256": "52fdb3f997674d428bb72268fdc7e1ac3346bef3117dbc299a5320cf2eb3decd",
+    "source_files": [
+      {
+        "path": "backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore_test.go",
+        "accepted_sha256": "acee8dc6eb65db36b38384fbc9f1ca241071a44f29c5e82910724de6e0e9e630",
+        "current_sha256": "acee8dc6eb65db36b38384fbc9f1ca241071a44f29c5e82910724de6e0e9e630",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore.go",
+        "accepted_sha256": "793bd0fdc8b7c2a68b36172aa618f6138c2f67a0a1bbd3b24da2f6081d493a7a",
+        "current_sha256": "793bd0fdc8b7c2a68b36172aa618f6138c2f67a0a1bbd3b24da2f6081d493a7a",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/ai_gateway_history_restore_test.go",
+        "accepted_sha256": "adedc397d04d8ae3fb4472277676aebde4cae218d8f3e2d1928d7f0a32f9fca1",
+        "current_sha256": "adedc397d04d8ae3fb4472277676aebde4cae218d8f3e2d1928d7f0a32f9fca1",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/ai_gateway_history_restore.go",
+        "accepted_sha256": "238ee8324f5fb868c4cf7501ad2c4d549cfa223058baff4d54214d7c940f09ce",
+        "current_sha256": "238ee8324f5fb868c4cf7501ad2c4d549cfa223058baff4d54214d7c940f09ce",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/audit_event_restore_test.go",
+        "accepted_sha256": "596535fe3ec57b5cd7036c7c4a0badcd7f8163a082a201d6eaf37ab8aca3b009",
+        "current_sha256": "596535fe3ec57b5cd7036c7c4a0badcd7f8163a082a201d6eaf37ab8aca3b009",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/audit_event_restore.go",
+        "accepted_sha256": "a20c75583a819856bc506405d0e1372a19997e1cdc8e9d5d670094bb37d5e32f",
+        "current_sha256": "a20c75583a819856bc506405d0e1372a19997e1cdc8e9d5d670094bb37d5e32f",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore_test.go",
+        "accepted_sha256": "a5e4e4e627a48f0fbe21724a86536cbc48bb76e71017bdd18f4d77087f9d4610",
+        "current_sha256": "a5e4e4e627a48f0fbe21724a86536cbc48bb76e71017bdd18f4d77087f9d4610",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "accepted_sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a",
+        "current_sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/capture_test.go",
+        "accepted_sha256": "fe7e301a5a7fa5eef462ca83fa0a6e26e32a854720d91ec4699b7cbbe82ebc57",
+        "current_sha256": "fe7e301a5a7fa5eef462ca83fa0a6e26e32a854720d91ec4699b7cbbe82ebc57",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/capture.go",
+        "accepted_sha256": "ffb9e2e31c82a79cdd9bab722ec1892eddbb7ace51aae40f7f06eb529dada8c0",
+        "current_sha256": "ffb9e2e31c82a79cdd9bab722ec1892eddbb7ace51aae40f7f06eb529dada8c0",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/chat_message_restore_test.go",
+        "accepted_sha256": "46685abca6ecd2a9dccd3eb1cbd6da9850d80928480f40d6cdd0a33e82461633",
+        "current_sha256": "46685abca6ecd2a9dccd3eb1cbd6da9850d80928480f40d6cdd0a33e82461633",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/chat_message_restore.go",
+        "accepted_sha256": "1b3a406a8949fa4a364f48a02185629c61a9b3d3884b8dbbe92ec7425b3ca41b",
+        "current_sha256": "1b3a406a8949fa4a364f48a02185629c61a9b3d3884b8dbbe92ec7425b3ca41b",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/chat_session_restore_test.go",
+        "accepted_sha256": "4b6ca4ada17b7b96cf51614882ea91d75dcec541476f012c9e9685d6bb097612",
+        "current_sha256": "4b6ca4ada17b7b96cf51614882ea91d75dcec541476f012c9e9685d6bb097612",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/chat_session_restore.go",
+        "accepted_sha256": "fd74e4fc46c2b9c0c39f0336c2bf0334c08800a0ebd355e16fd7677884e64eb8",
+        "current_sha256": "fd74e4fc46c2b9c0c39f0336c2bf0334c08800a0ebd355e16fd7677884e64eb8",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/cost_record_restore_test.go",
+        "accepted_sha256": "dabf5d418ab8fbefc625ffa1d418054c490e95b6e7e105c1dfa21266e29252c5",
+        "current_sha256": "dabf5d418ab8fbefc625ffa1d418054c490e95b6e7e105c1dfa21266e29252c5",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/cost_record_restore.go",
+        "accepted_sha256": "a642b0a8355ed31df5c4ad1f15378ad1645091bec7c99e31ef78b988c5b41752",
+        "current_sha256": "a642b0a8355ed31df5c4ad1f15378ad1645091bec7c99e31ef78b988c5b41752",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/enterprise_auth_restore_test.go",
+        "accepted_sha256": "91d5f9f20ef30248cd0278727da56e81a79bcc383eae23792e66730fad64b5d1",
+        "current_sha256": "91d5f9f20ef30248cd0278727da56e81a79bcc383eae23792e66730fad64b5d1",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/enterprise_auth_restore.go",
+        "accepted_sha256": "a5fa8310b8c8fef1c915c437aa75a19d8a67d56dd93c77176fd08a2b257d11cd",
+        "current_sha256": "a5fa8310b8c8fef1c915c437aa75a19d8a67d56dd93c77176fd08a2b257d11cd",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/gateway_alias_restore_test.go",
+        "accepted_sha256": "93ae77c42c5c97ec95f257c7f28cd39bb8326cecf8d805c63cabdc45f0d3cb88",
+        "current_sha256": "93ae77c42c5c97ec95f257c7f28cd39bb8326cecf8d805c63cabdc45f0d3cb88",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/gateway_alias_restore.go",
+        "accepted_sha256": "d116270c6ff2e04fa035212411c54abf45abbcf762b34a2de5c84145cfef2097",
+        "current_sha256": "d116270c6ff2e04fa035212411c54abf45abbcf762b34a2de5c84145cfef2097",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/history_rows_mysql_test.go",
+        "accepted_sha256": "b38317772aa6e527d510b67649405a4d41d56f1bed47c818b36c51068b67c369",
+        "current_sha256": "b38317772aa6e527d510b67649405a4d41d56f1bed47c818b36c51068b67c369",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/llm_model_restore_test.go",
+        "accepted_sha256": "e7afaaf173e06386c3ffbe34d6757fab19410a32602c10eeddd4691db6c6ee59",
+        "current_sha256": "e7afaaf173e06386c3ffbe34d6757fab19410a32602c10eeddd4691db6c6ee59",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/llm_model_restore.go",
+        "accepted_sha256": "25965f7d24f434df1ad6fb6686fb0c1a44ea35c663357fbcc8e217547d6aa30d",
+        "current_sha256": "25965f7d24f434df1ad6fb6686fb0c1a44ea35c663357fbcc8e217547d6aa30d",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/model_invocation_restore_test.go",
+        "accepted_sha256": "d1093da2f1bfa88cb80c1f9d27d44d8ee1ef26bff1134f3537cfe463c598f0a5",
+        "current_sha256": "d1093da2f1bfa88cb80c1f9d27d44d8ee1ef26bff1134f3537cfe463c598f0a5",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/model_invocation_restore.go",
+        "accepted_sha256": "5193b0697daf9b704f95ee3f0edfe53c117c49404e576956b2c8d263a7edb24e",
+        "current_sha256": "5193b0697daf9b704f95ee3f0edfe53c117c49404e576956b2c8d263a7edb24e",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/northbound_caller_policy_restore_test.go",
+        "accepted_sha256": "29819b0e09d237d48244de1377713983a1d856e9047ccc724730ab6ad19356ec",
+        "current_sha256": "29819b0e09d237d48244de1377713983a1d856e9047ccc724730ab6ad19356ec",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/northbound_caller_policy_restore.go",
+        "accepted_sha256": "fcf865b41cadce5c4ede5518f16b3d82939565efbc95c5b0fce24b48c679c76e",
+        "current_sha256": "fcf865b41cadce5c4ede5518f16b3d82939565efbc95c5b0fce24b48c679c76e",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/northbound_challenge_restore_test.go",
+        "accepted_sha256": "448e492e538345b4c55293f499dd86fa9e45fd4ab9a4969846ea84ef993704e5",
+        "current_sha256": "448e492e538345b4c55293f499dd86fa9e45fd4ab9a4969846ea84ef993704e5",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/northbound_challenge_restore.go",
+        "accepted_sha256": "aebe0c93c1e00e2dfb4411a626b9de5d49065b12bb2aaec4198239c7315a6422",
+        "current_sha256": "aebe0c93c1e00e2dfb4411a626b9de5d49065b12bb2aaec4198239c7315a6422",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/northbound_session_restore_test.go",
+        "accepted_sha256": "a5920c8e7c4644ab8a9f6e0ba0e8320b98cc551b07297bd9e05339fed66c2aab",
+        "current_sha256": "a5920c8e7c4644ab8a9f6e0ba0e8320b98cc551b07297bd9e05339fed66c2aab",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/northbound_session_restore.go",
+        "accepted_sha256": "7550506732ad197dc43b7e596546da0b02c4d3b908d1614b96fef02063e155a3",
+        "current_sha256": "7550506732ad197dc43b7e596546da0b02c4d3b908d1614b96fef02063e155a3",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/quota_restore_test.go",
+        "accepted_sha256": "4d69b5bcc1dbf8f0e017a9fd325bd1bf9d475806efb3c2824a93c048b4a32cf7",
+        "current_sha256": "4d69b5bcc1dbf8f0e017a9fd325bd1bf9d475806efb3c2824a93c048b4a32cf7",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/quota_restore.go",
+        "accepted_sha256": "64276002b936c6afabebf68e34e084f0321dcdab496a188eeb2586d7dcc5a374",
+        "current_sha256": "64276002b936c6afabebf68e34e084f0321dcdab496a188eeb2586d7dcc5a374",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+        "accepted_sha256": "ed1d72558419cacb696001099596548e37b85d659e7d964fcbbb48ebb5683723",
+        "current_sha256": "ed1d72558419cacb696001099596548e37b85d659e7d964fcbbb48ebb5683723",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/restore_verify_test.go",
+        "accepted_sha256": "537424cc98bc7e48f2483c5aa1aceff522970bbb07b14217bdaee863b9755f18",
+        "current_sha256": "537424cc98bc7e48f2483c5aa1aceff522970bbb07b14217bdaee863b9755f18",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/restore_verify.go",
+        "accepted_sha256": "2e00d5d2dda4d93f3007fe1e8e12fa837bcd7435befca52200c173d3804ee0b8",
+        "current_sha256": "2e00d5d2dda4d93f3007fe1e8e12fa837bcd7435befca52200c173d3804ee0b8",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/risk_hit_restore_test.go",
+        "accepted_sha256": "e20c681900b9ddb7445177345a34c75c381e3192179c58580a2786566c48c1bf",
+        "current_sha256": "e20c681900b9ddb7445177345a34c75c381e3192179c58580a2786566c48c1bf",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/risk_hit_restore.go",
+        "accepted_sha256": "db8d7914d6893cf025a0dd2e790b0ebf32e504eb17aeef44598d6be2dd36134a",
+        "current_sha256": "db8d7914d6893cf025a0dd2e790b0ebf32e504eb17aeef44598d6be2dd36134a",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/risk_rule_restore_test.go",
+        "accepted_sha256": "d003d221dd875678266d15601b4fd5a56decb50c53e0448babbbd8067bde2c84",
+        "current_sha256": "d003d221dd875678266d15601b4fd5a56decb50c53e0448babbbd8067bde2c84",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/risk_rule_restore.go",
+        "accepted_sha256": "0bff346b2a82beaf1d865c94902545ca3302edb712d65282d0199159c53bcbb6",
+        "current_sha256": "0bff346b2a82beaf1d865c94902545ca3302edb712d65282d0199159c53bcbb6",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/testdata/schema-registry.json",
+        "accepted_sha256": "6a7cbe2c3d267cd1877301d37fe2549c312a85c5e71b4a9dfe7a6b125a929ec3",
+        "current_sha256": "0da4a3397b8d2005a61bcdbe923e5d40c59b024e4b43fe12f018dd4e251198ad",
+        "matches": false
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/users_restore_test.go",
+        "accepted_sha256": "a306ea66bfd1d21a88c2cb772f6151b55ce901d5c7eb48d2cb58886c248e9a81",
+        "current_sha256": "a306ea66bfd1d21a88c2cb772f6151b55ce901d5c7eb48d2cb58886c248e9a81",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/users_restore.go",
+        "accepted_sha256": "bbe2c0c31d4ffbca0d11149698bb665b99ffc45621b51d5751ffa0bcd426694b",
+        "current_sha256": "bbe2c0c31d4ffbca0d11149698bb665b99ffc45621b51d5751ffa0bcd426694b",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/verifier_test.go",
+        "accepted_sha256": "ea3f9c9c56d315c954c7c361ed92977ae0d2845490fb0dfbf0f7a99db69b8176",
+        "current_sha256": "ea3f9c9c56d315c954c7c361ed92977ae0d2845490fb0dfbf0f7a99db69b8176",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/verifier.go",
+        "accepted_sha256": "67dce0a4361e3fcfcabd4fcd342fa0342e9ca4dbb73b30b319500cd42dfdc480",
+        "current_sha256": "67dce0a4361e3fcfcabd4fcd342fa0342e9ca4dbb73b30b319500cd42dfdc480",
+        "matches": true
+      }
+    ],
+    "source_drift": [
+      "backend/internal/systembackupbusinessa/testdata/schema-registry.json"
+    ],
+    "all_listed_sources_match": false,
+    "accepted_scope": "accepted_bounded_isolated_mysql_scope",
+    "production_approved": false,
+    "source_target_proofs_and_writer": "synthetic test fixtures, not B production implementation",
+    "still_pending": [
+      "B authenticated dump/target/write authority and transaction writer",
+      "D production restore invocation",
+      "registry/live schema freeze",
+      "integrated large-smoke.v1 and release matrix"
+    ]
+  },
+  "review_requirements": [
+    "Verify classification and capture whitelist against actual models and protected archive boundaries",
+    "Map all fifteen normalizer/verifier IDs to reviewed implementations and column-level outcomes",
+    "Check credential and identity invalidation, exact Ref rebind, history inertness and counters without treating synthetic B proofs/writer as production",
+    "Check exclusions, dependencies and source/schema/catalog pins; record unresolved evidence explicitly",
+    "Review the four public contracts against current Go/TypeScript/canonical fixtures and accepted scope",
+    "Record only D conclusions supported by this review; other reviewer signatures and runtime approvals remain separate"
+  ],
+  "registry_changed": false,
+  "approval_recorded": false,
+  "tests_repeated": false,
+  "dependencies_installed": false,
+  "remote_executed": false
+}

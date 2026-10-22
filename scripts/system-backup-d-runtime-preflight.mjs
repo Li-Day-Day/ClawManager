@@ -10,6 +10,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { capacityBinary, capacityConfigPath, capacityReportPath, renderCapacityDeployment, root, sha256, jsonBytes } from './system-backup-d-capacity-deployment.mjs';
 import { compareDSchemaRecords } from './system-backup-schema-diff.mjs';
 import { computeMigrationCatalog } from './system-backup-contract-check.mjs';
+import { parseCapacityReport, reviewCapacityReport } from './system-backup-a-capacity-material-review.mjs';
 
 const catalog = () => ({ ...computeMigrationCatalog(), filenames: readdirSync(resolve(root, 'backend/internal/db/migrations')).filter(f => f.endsWith('.sql')).sort() });
 const registry = () => JSON.parse(readFileSync(resolve(root, 'contracts/system-backup/v12/schema-registry.json')));
@@ -103,16 +104,17 @@ export function runRuntimePreflight(plan, { reference, collectorPod, run = spawn
         && security.runAsNonRoot === true && !security.privileged && security.allowPrivilegeEscalation === false && security.readOnlyRootFilesystem === true
         && same(security.capabilities, { drop: ['ALL'] }) && same(security.seccompProfile, { type: 'RuntimeDefault' });
       if (check('collector_live_spec_matches', podMatches)) {
-        const sample = JSON.parse(exec(collectorPod, 'collector', [capacityBinary, '--capacity-config', capacityConfigPath, '--check-capacity-source']));
-        check('collector_identity_grants_data_readable', sample.server_uuid === plan.server_uuid && sample.database === plan.database && Number.isSafeInteger(sample.available_bytes) && sample.available_bytes >= 0);
+        parseCapacityReport(exec(collectorPod, 'collector', [capacityBinary, '--capacity-config', capacityConfigPath, '--check-capacity-source']), plan);
+        check('collector_identity_grants_data_readable', true);
         // test only: no touch, chmod, chown, or fabricated report. stat verifies
         // group access for the separately running HTTP/bootstrap UID 65532.
         const mode = exec(collectorPod, 'collector', ['sh', '-c', 'set -eu; test -r "$1/auto.cnf"; test -w "$2"; test ! -w "$1"; stat -c "%a:%g" "$2"; stat -c "%a:%g" "$3"', 'mount-check', plan.data_directory, '/run/system-backup/capacity', capacityReportPath]).trim().split(/\r?\n/);
         check('report_group_permissions', mode.length === 2 && mode[0] === `2770:${plan.report_gid}` && mode[1] === `640:${plan.report_gid}`);
         const reportRaw = exec(collectorPod, 'collector', ['cat', capacityReportPath]);
-        const sampleOnDisk = JSON.parse(reportRaw), after = JSON.parse(mysql(identitySQL));
-        const age = Date.parse(after.now) - Date.parse(sampleOnDisk.observed_at);
-        check('capacity_report_fresh_matching_identity', after.server_uuid === plan.server_uuid && after.database === plan.database && sampleOnDisk.server_uuid === plan.server_uuid && sampleOnDisk.database === plan.database && Number.isFinite(age) && age >= 0 && age <= 5000 && Number.isSafeInteger(sampleOnDisk.allocated_bytes) && sampleOnDisk.allocated_bytes >= 0 && Number.isSafeInteger(sampleOnDisk.available_bytes) && sampleOnDisk.available_bytes >= 0);
+        const after = JSON.parse(mysql(identitySQL));
+        let reportValid = false;
+        try { reviewCapacityReport(reportRaw, after, plan); reportValid = true; } catch { /* fail closed */ }
+        check('capacity_report_fresh_matching_identity', reportValid);
         check('collector_unchanged_during_probe', sameFingerprint(liveCollector, get('pod', collectorPod), 'collector'));
       }
     } else check('collector_runtime_probe_required', false);

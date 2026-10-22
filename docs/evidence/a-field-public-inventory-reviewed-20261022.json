@@ -1,0 +1,241 @@
+{
+  "kind": "a_field_public_inventory_review.v1",
+  "status": "PUBLIC_INVENTORY_REVIEWED_FIELD_PREREQUISITES_MISSING",
+  "source": {
+    "path": "docs/evidence/a-field-public-inventory-20261022-085642-cb639159.json",
+    "sha256": "07a599af6c63e4bd02105dae0f7592997580f811928127a83367a9253fba9e8d",
+    "bytes": 54326
+  },
+  "provenance": "operator-executed transport receipt; reviewer verified saved bytes/tool/payload/reference bindings without a new remote connection",
+  "inventory_script": {
+    "path": "scripts/system-backup-a-field-inventory.py",
+    "sha256": "d02c03c1b840bc6c0244aba17ecf93f4c39602b411e5a89232fb2d77c388c35e",
+    "bytes": 7776
+  },
+  "inventory_wrapper": {
+    "path": "scripts/system-backup-a-field-inventory.ps1",
+    "sha256": "32dca5216257529644e5bfbe51a3eccb9552ce127477c226fdb988eb4534ee4a",
+    "bytes": 3875
+  },
+  "tested_preparation": {
+    "path": "docs/evidence/a-field-evidence-dsn-preparation-20261022.json",
+    "sha256": "070db29e30fc5ebd703f7ee0f6f60b5c8d02e4ffdfd982a8d573116bba151b22",
+    "bytes": 32476
+  },
+  "context": "kubernetes-admin@kubernetes",
+  "namespace": "clawmanager-zhanghui08-system",
+  "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+  "namespace_identity_unchanged_within_receipt": true,
+  "pod_count": 9,
+  "container_count": 9,
+  "claim_count": 5,
+  "explicit_supported_dsn_reference_count": 0,
+  "reported_missing_candidate_roles": [
+    "registration",
+    "download",
+    "collector"
+  ],
+  "app": {
+    "pod": "clawmanager-app-788b97b78f-l8k5f",
+    "pod_uid": "aabba383-5db9-48a7-a3b7-2b92624c2f3a",
+    "declared_image": "10.130.14.23:5000/clawmanager:backup-test-zh-fix18",
+    "observed_image_id": "10.130.14.23:5000/clawmanager@sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d",
+    "same_image_id_as_historical_state": true,
+    "native_inspector_capability_verified": false
+  },
+  "claims": [
+    {
+      "name": "clawmanager-workspaces",
+      "uid": "12354b07-dd21-4d40-ac9b-da5c97699109",
+      "resource_version": "32955216",
+      "phase": "Bound",
+      "volume_name": "clawmanager-zhanghui08-workspaces-pv",
+      "storage_class": "manual",
+      "access_modes": [
+        "ReadWriteMany"
+      ],
+      "capacity": {
+        "storage": "50Gi"
+      },
+      "pv": {
+        "name": "clawmanager-zhanghui08-workspaces-pv",
+        "uid": "d57c7bc1-3d3c-45e8-a898-0d2e5e340810",
+        "resource_version": "33885135",
+        "claim_namespace": "clawmanager-zhanghui08-system",
+        "claim_name": "clawmanager-workspaces",
+        "claim_uid": "12354b07-dd21-4d40-ac9b-da5c97699109"
+      },
+      "observed_pod_mounts": [
+        {
+          "pod": "workspace-store-5f6db46744-9z6g8",
+          "pod_uid": "094b3f6f-5310-4a1c-9fc6-df254749cd39",
+          "container": "nfs-server",
+          "path": "/exports/workspaces",
+          "sub_path": "",
+          "declared_read_only": false
+        }
+      ],
+      "declared_capacity_is_not_statfs_or_reservation": true
+    },
+    {
+      "name": "minio-data",
+      "uid": "e7bc8d73-e8fb-4010-8751-d9a0c8bb2467",
+      "resource_version": "32955207",
+      "phase": "Bound",
+      "volume_name": "clawmanager-zhanghui08-minio-pv",
+      "storage_class": "manual",
+      "access_modes": [
+        "ReadWriteOnce"
+      ],
+      "capacity": {
+        "storage": "10Gi"
+      },
+      "pv": {
+        "name": "clawmanager-zhanghui08-minio-pv",
+        "uid": "b1d05395-a5f5-4421-ae52-d63f7ce03327",
+        "resource_version": "33885129",
+        "claim_namespace": "clawmanager-zhanghui08-system",
+        "claim_name": "minio-data",
+        "claim_uid": "e7bc8d73-e8fb-4010-8751-d9a0c8bb2467"
+      },
+      "observed_pod_mounts": [
+        {
+          "pod": "minio-788dfd959f-pgslj",
+          "pod_uid": "2b674b10-0360-4164-8055-022c46991d17",
+          "container": "minio",
+          "path": "/data",
+          "sub_path": "",
+          "declared_read_only": false
+        }
+      ],
+      "declared_capacity_is_not_statfs_or_reservation": true
+    },
+    {
+      "name": "mysql-data",
+      "uid": "e3c297bd-a00a-4a60-bce7-7368a69e8fd2",
+      "resource_version": "32955213",
+      "phase": "Bound",
+      "volume_name": "clawmanager-zhanghui08-mysql-pv",
+      "storage_class": "manual",
+      "access_modes": [
+        "ReadWriteOnce"
+      ],
+      "capacity": {
+        "storage": "5Gi"
+      },
+      "pv": {
+        "name": "clawmanager-zhanghui08-mysql-pv",
+        "uid": "2661bbff-e182-4189-9a09-3c23d5c71050",
+        "resource_version": "33885128",
+        "claim_namespace": "clawmanager-zhanghui08-system",
+        "claim_name": "mysql-data",
+        "claim_uid": "e3c297bd-a00a-4a60-bce7-7368a69e8fd2"
+      },
+      "observed_pod_mounts": [
+        {
+          "pod": "mysql-66496b8965-d6tsl",
+          "pod_uid": "dab1cbf6-ca49-4e16-bd2d-27e70da52004",
+          "container": "mysql",
+          "path": "/var/lib/mysql",
+          "sub_path": "",
+          "declared_read_only": false
+        }
+      ],
+      "declared_capacity_is_not_statfs_or_reservation": true
+    },
+    {
+      "name": "redis-data",
+      "uid": "34941b96-4f87-4c08-a1c4-843c3d18fa2e",
+      "resource_version": "33885187",
+      "phase": "Bound",
+      "volume_name": "clawmanager-zhanghui08-redis-pv",
+      "storage_class": "manual",
+      "access_modes": [
+        "ReadWriteOnce"
+      ],
+      "capacity": {
+        "storage": "1Gi"
+      },
+      "pv": {
+        "name": "clawmanager-zhanghui08-redis-pv",
+        "uid": "074f1c17-d597-4e62-a9a5-63561cd8d565",
+        "resource_version": "33885134",
+        "claim_namespace": "clawmanager-zhanghui08-system",
+        "claim_name": "redis-data",
+        "claim_uid": "34941b96-4f87-4c08-a1c4-843c3d18fa2e"
+      },
+      "observed_pod_mounts": [],
+      "declared_capacity_is_not_statfs_or_reservation": true
+    },
+    {
+      "name": "system-backup-capacity-report",
+      "uid": "d9452769-2406-4437-8dab-775f2de7bf13",
+      "resource_version": "93184146",
+      "phase": "Bound",
+      "volume_name": "pvc-d9452769-2406-4437-8dab-775f2de7bf13",
+      "storage_class": "longhorn-rwx",
+      "access_modes": [
+        "ReadWriteMany"
+      ],
+      "capacity": {
+        "storage": "16Mi"
+      },
+      "pv": {
+        "name": "pvc-d9452769-2406-4437-8dab-775f2de7bf13",
+        "uid": "85c6c189-a646-4031-8e59-de26f8a45ed6",
+        "resource_version": "93184164",
+        "claim_namespace": "clawmanager-zhanghui08-system",
+        "claim_name": "system-backup-capacity-report",
+        "claim_uid": "d9452769-2406-4437-8dab-775f2de7bf13"
+      },
+      "observed_pod_mounts": [],
+      "declared_capacity_is_not_statfs_or_reservation": true
+    }
+  ],
+  "read_write_once_pod_claim_count": 0,
+  "journal_mounts": [],
+  "gaps": [
+    {
+      "priority": 1,
+      "code": "reviewed_runtime_image_and_original_input_required",
+      "observed": "main image ID remains the prior fix18; no inspector capability was executed or approved",
+      "required": "reviewed target image/native inspector bytes and original runtime/bootstrap/material inputs; no fabrication of accounts, deadlines or installation"
+    },
+    {
+      "priority": 2,
+      "code": "runtime_connection_and_collector_mounts_unproven",
+      "observed": "zero explicit supported DSN env references in the nine observed Pod containers; capacity report PVC has zero observed Pod mounts",
+      "required": "actual registration/download/collector connections, independent non-root users, original DSNs and data-readonly/report mounts in reviewed runtime"
+    },
+    {
+      "priority": 3,
+      "code": "journal_volume_not_observed",
+      "observed": "no ReadWriteOncePod claim and no /run/system-backup/download-journal mount in this namespace receipt",
+      "required": "independent approved journal volume, actual owner/mode/budget and separately verified single-writer behavior"
+    },
+    {
+      "priority": 4,
+      "code": "actual_material_capacity_permission_evidence_missing",
+      "observed": "public inventory did not query SQL or read original materials/capacity reports or Unix mount permissions",
+      "required": "complete field plan plus original materials/validity, actual users/grants/metadata, five-second original capacity source/report/SQL time and real volume measurements"
+    }
+  ],
+  "references_path": "docs/evidence/a-field-observed-references-20261022.json",
+  "reference_bytes_sha256": "53a0456da57a1ccf3980d9bdccfb5389bee8f5c3ced1ccdc55196b6b8b068da3",
+  "collection_scope_limits": [
+    "current namespace Pod/PVC/PV metadata only; no deployments, jobs, other namespaces or historical Pods were inventoried",
+    "envFrom/actual process env were not collected; explicit env-name absence does not prove absence of all DSN configuration",
+    "same image ID is not a new binary byte/capability check or permission approval",
+    "PVC capacity is declared storage; no statfs, physical allocation/reservation, actual Unix modes, atomicity or fencing proof",
+    "snapshot was not atomic across Kubernetes resources; Pod runtime instances were not guarded by pre/post exec checks",
+    "SQL database identity/config rows and provider/material validity were not refreshed"
+  ],
+  "inventory_transport_blockers": [],
+  "full_field_plan_ready": false,
+  "actual_sql_executed": false,
+  "production_resources_created": false,
+  "production_approved": false,
+  "complete_field_acceptance": false,
+  "role10_or_gc18_retest_required": false,
+  "reviewer_sha256": "980bbf810cebe62bae51cd5c9e64fc3090b9b35c522314bfc7496708af580cb0"
+}

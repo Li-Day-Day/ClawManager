@@ -1,0 +1,74 @@
+**********************
+PowerShell transcript start
+Start time: 20261020161350
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$warmRunRoot=(Get-Location).Path
+$warmRunOwner=Join-Path $warmRunRoot '.tmp-a-gc-cache-42d58c53e41a4220b89a20b67d142422'
+$warmRunCache=Join-Path $warmRunOwner 'cache'
+$warmRunConsole=Join-Path $warmRunRoot 'docs/evidence/a-gc-audit-resource-20261020-r4-console.txt'
+$warmRunReceipt=Join-Path $warmRunRoot 'docs/evidence/a-gc-audit-resource-20261020-r4-warm-cache.json'
+if((Test-Path -LiteralPath $warmRunConsole)-or(Test-Path -LiteralPath $warmRunReceipt)){throw 'Refusing existing r4 evidence'}
+$warmRunExit=1
+$warmRunState=[ordered]@{origin='read-only copy of .tmp-d-admission-gc-dependencies-20261020-r1/cache';copy_owner=$warmRunOwner;files=@(Get-ChildItem -LiteralPath $warmRunCache -Recurse -File).Count;source_or_test_results_reused=$false;count_one=$true;exit=1;copy_owner_removed=$false}
+try {
+    & .\docs\evidence\a-gc-audit-resource-validation-20261020.ps1 -Run '20261020-r4' -WarmCache $warmRunCache *> $warmRunConsole
+    if(-not $?){throw 'Audit-resource r4 validation failed'}
+    $warmRunExit=0
+} finally {
+    if(Test-Path -LiteralPath $warmRunOwner){
+        $warmRunResolved=(Resolve-Path -LiteralPath $warmRunOwner).Path
+        if([IO.Path]::GetDirectoryName($warmRunResolved) -ne $warmRunRoot -or [IO.Path]::GetFileName($warmRunResolved) -notmatch '^\.tmp-a-gc-cache-[a-f0-9]{32}$' -or
+            ((Get-Item -Force -LiteralPath $warmRunResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) -or [IO.File]::ReadAllText((Join-Path $warmRunResolved 'owner.txt')) -ne [IO.Path]::GetFileName($warmRunResolved)){throw 'Refusing unowned cache-holder cleanup'}
+        Remove-Item -LiteralPath $warmRunResolved -Recurse -Force
+    }
+    $warmRunState.exit=$warmRunExit
+    $warmRunState.copy_owner_removed=-not(Test-Path -LiteralPath $warmRunOwner)
+    $warmRunState|ConvertTo-Json -Depth 4|Set-Content -LiteralPath $warmRunReceipt -Encoding utf8
+    Write-Output ('A_WARM_COPY_CLEANUP removed='+$warmRunState.copy_owner_removed+' validation_exit='+$warmRunExit)
+}
+exit $warmRunExit
+Process ID: 42120
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER audit-resource=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-5a276c9a66774dc698c5f2f17e8ba4a6 process_id=42120
+WARM_CACHE source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-gc-cache-42d58c53e41a4220b89a20b67d142422\cache target=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-5a276c9a66774dc698c5f2f17e8ba4a6\cache tests-count=1 default-vet=yes dependencies-installed=no
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE sha256=04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df files=1446
+STAGE_START name=targeted attempt=1 default_vet=yes
+STAGE name=targeted attempt=1 exit=0 default_vet=yes
+STAGE_ACCEPTED name=targeted attempt=1 expected_counterfactual=False
+COUNTERFACTUAL name=wrong-type overlay_sha256=2124c7a3ac6a727aeafa2fbad18c318c01efd13c6db826a23729ecd432e8897d source_sha256=c7544199da2aa49d1d88568e4563e665475500756643d016b9555fdb46425bbd
+STAGE_START name=wrong-type attempt=1 default_vet=yes
+STAGE name=wrong-type attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=wrong-type attempt=1 expected_counterfactual=True
+COUNTERFACTUAL name=public-string overlay_sha256=772e61e1d889f12e4343eb6984baff890bd8b8c073f78781f4603e0ad3321f09 source_sha256=58146740d31d03f85543dee93396ba48f8048b611ca6d656b255109a4d338f03
+STAGE_START name=public-string attempt=1 default_vet=yes
+STAGE name=public-string attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=public-string attempt=1 expected_counterfactual=True
+COUNTERFACTUAL name=unpublished-fk overlay_sha256=de4f10edc9f00adf5d448e2e5b259b1cddbafbd51455e847f6a67f8ac3cac643 source_sha256=aefa75c3964019f8abd4eb49b85087baec603dfff4d0ca78776b8c6980c3d93f
+STAGE_START name=unpublished-fk attempt=1 default_vet=yes
+STAGE name=unpublished-fk attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=unpublished-fk attempt=1 expected_counterfactual=True
+STAGE_START name=evidence-full attempt=1 default_vet=yes
+STAGE name=evidence-full attempt=1 exit=0 default_vet=yes
+STAGE_ACCEPTED name=evidence-full attempt=1 expected_counterfactual=False
+LOCAL_PASS audit-resource-postcheck=yes default-vet=yes dependencies-installed=no remote=not-run actual_mysql=not-run
+CLEANED audit-resource-source-cache-overlay=True
+a_gc_audit_resource_local_exit=0
+**********************
+PowerShell transcript end
+End time: 20261020162426
+**********************

@@ -1,0 +1,91 @@
+{
+  "kind": "d_gc_program_metadata_observer_local_preparation",
+  "status": "local_component_only",
+  "base_source_sha256": "2567e68a167154b8bba2a45a6cdd59e632b5ea3fe77113c6111c77f8eae207ec",
+  "base_manifest_sha256": "1e4dc25e5bff53098a2bfdd7f2c0f82471025bc635ad2bcc3a571bf10d7bbec2",
+  "intervening": {
+    "prior_source_sha256": "727348b948844c09a40390957f760d7f310a3f8d970b3d84e85740adae71042d",
+    "prior_manifest_sha256": "d80b0d3da94760e36dbc2ad71724c94865ae11e2144b2667a360c013391274c8",
+    "added": [
+      "backend/internal/systembackupevidence/gc_runtime_journal.go"
+    ],
+    "modified": [
+      "backend/internal/systembackupevidence/gc_authority.go",
+      "backend/internal/systembackupevidence/gc_registry.go",
+      "backend/internal/systembackupevidence/gc_runtime.go",
+      "backend/internal/systembackupevidence/system_recovery_audit_journal.go"
+    ],
+    "removed": [],
+    "covered_by_this_package_run": false
+  },
+  "runs": [
+    {
+      "mode": "isolated",
+      "source_sha256": "129f1378b6da482eeae0e21ffaa14a5e247d57b86a20a8c2f3158e78c891f79a",
+      "files": 1460,
+      "main": 9,
+      "checks": 243,
+      "elapsed": 3.758,
+      "source_manifest": "docs/evidence/d-gc-program-observer-20261021-r1-isolated-source.json",
+      "source_manifest_sha256": "9fee03580fea21c9caa9a00d2c3517e0142d9c976700e4c1424ab1f341fd8e7a",
+      "events_sha256": "9fdec75e26ae5c7d6a4712ef68026ec1e7a6e5efaf22097ab667085004e1e427",
+      "native_sha256": "ecaaece7a6d1845f3600765f4b03752c2fddf5fee38fe602a20531451b4f6e55",
+      "default_vet": true,
+      "exit": 0,
+      "source_postcheck": true
+    },
+    {
+      "mode": "published",
+      "source_sha256": "129f1378b6da482eeae0e21ffaa14a5e247d57b86a20a8c2f3158e78c891f79a",
+      "files": 1460,
+      "main": 9,
+      "checks": 243,
+      "elapsed": 5.089,
+      "source_manifest": "docs/evidence/d-gc-program-observer-20261021-r1-published-source.json",
+      "source_manifest_sha256": "9fee03580fea21c9caa9a00d2c3517e0142d9c976700e4c1424ab1f341fd8e7a",
+      "events_sha256": "df5fdf4bc33a7298c582562bca07e55a2ea621b32e49a04e0e99e5e60d5bee3d",
+      "native_sha256": "d94adfb941a4eef29baa3fa41cc15cea929900245b4687da7c897a8dc73a0b09",
+      "default_vet": true,
+      "exit": 0,
+      "source_postcheck": true
+    }
+  ],
+  "goldens": {
+    "empty_triggers": "067ecda4a0afbb92f9d58f651af4482f1162406a79ef3502dff6316cbf82c85e",
+    "fixture_grants": "80efcf1b5ee62e4b3ccc30bbe6f673abdbe2c37ea5eafda5ff82701933f957a6"
+  },
+  "published": [
+    {
+      "path": "backend/internal/systembackupgcmetadata/catalog.go",
+      "sha256": "c2946a223b00b9f7021c4111a61326cb9a1c16f2d716d1da4e05f5660de4eedd"
+    },
+    {
+      "path": "backend/internal/systembackupgcmetadata/catalog_test.go",
+      "sha256": "80297defd30f22b4ced683f9bd1f3ed7e8158df4b35608423828c0b9bc346cbd"
+    }
+  ],
+  "cleanup": {
+    "path": "docs/evidence/d-gc-program-observer-cleanup-20261021.json",
+    "sha256": "fcde824e84f55711fba30bf0b4f179690d0b8dee8ac3ab99be3292af2a77487e",
+    "owner_absent": true
+  },
+  "boundaries": {
+    "dependencies_installed": false,
+    "remote": false,
+    "actual_sql_cases": 0,
+    "privileges_approved": false,
+    "ddl_freeze": false,
+    "full_gc_policy": false,
+    "production_activation": false,
+    "whole_current_module_tested": false,
+    "existing_four_package_receipts": "historical frozen sources only",
+    "remaining": [
+      "real MySQL observer account and visibility positive/negative proof",
+      "full program dependency policy and reviewed expected digests",
+      "view ALGORITHM/SHOW CREATE, event ORIGINATOR and other metadata outside these explicit projections",
+      "DDL freeze spanning observation, collector mutation and commit",
+      "catalog/import/logical/bootstrap authoritative lifecycle",
+      "full collector, physical budget, roles and original six scopes"
+    ]
+  }
+}

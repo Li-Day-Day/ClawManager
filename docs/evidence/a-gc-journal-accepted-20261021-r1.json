@@ -1,0 +1,135 @@
+{
+  "kind": "a_gc_durable_failure_journal_local_acceptance",
+  "recorded_at": "2026-10-21T03:33:58.740Z",
+  "status": "accepted_frozen_local_runtime_and_models_only",
+  "source": "docs/evidence/a-gc-journal-20261021-r1-full-source.json",
+  "source_files": 1459,
+  "source_sha256": "a19467c877874a2bf4b850d69326c3fcefa39a3277109eb51727aae53610eb46",
+  "source_manifest_sha256": "546fab85f8c0f4be5e2021021a59130f4a00649cd2de221a8a503a36f0757f4e",
+  "events_sha256": "4303e3f383042778e38af1894d5365be1b45ebec0d62ba9346effeec298b1b5d",
+  "native_sha256": "06a2c30b9cbeb46e9601629f5141dfb13045f72de88ec93c8dfc44a9d1f9d80b",
+  "events": "docs/evidence/a-gc-journal-20261021-r1-full.jsonl",
+  "native": "docs/evidence/a-gc-journal-20261021-r1-full-native.txt",
+  "focused": {
+    "prefix": "docs/evidence/a-gc-journal-20261021-r1-focused",
+    "main": 19,
+    "all": 152,
+    "source_sha256": "9cd4c294b8b4994e5d915a2d875dbdbb8606f7f97c30e31b3ca28042241a5ede",
+    "source_manifest_sha256": "543032179ab5062396cdcb7831e9f6fc063f1f00d7883c14a811f0f5b84d28c2",
+    "events_sha256": "e1b62fe8e9e6fec0026533d950530b6dcc92e005f5ed772b5e2ef0baa55bdf90",
+    "native_sha256": "c4ce9554a50981c2365fc981ab7725c3d4fdd9c73b340c98175b102a15ba26f2",
+    "superseded_input": "gc_authority.go post-token check, covered by final full run"
+  },
+  "full": {
+    "main": 759,
+    "all": 6270
+  },
+  "owner_baseline": {
+    "main": 609,
+    "all": 4967
+  },
+  "previous_full_tests_retained": 6242,
+  "previous_owner_tests_retained": 4939,
+  "new_tests": {
+    "main": 5,
+    "all": 28,
+    "names": [
+      "TestJournaledGCDurableFailureAndSuccess",
+      "TestJournaledGCDurableFailureAndSuccess/chunks",
+      "TestJournaledGCDurableFailureAndSuccess/no_proof",
+      "TestJournaledGCDurableFailureAndSuccess/ok",
+      "TestJournaledGCLossDuringWorkKeepsReferencesAndStopsBatch",
+      "TestJournaledGCLossDuringWorkKeepsReferencesAndStopsBatch/absence_proof",
+      "TestJournaledGCLossDuringWorkKeepsReferencesAndStopsBatch/claim_audit",
+      "TestJournaledGCLossDuringWorkKeepsReferencesAndStopsBatch/grant_recheck",
+      "TestJournaledGCLossDuringWorkKeepsReferencesAndStopsBatch/result_audit",
+      "TestJournaledGCRefusesUnavailableStorageBeforeWork",
+      "TestJournaledGCRefusesUnavailableStorageBeforeWork/busy",
+      "TestJournaledGCRefusesUnavailableStorageBeforeWork/closed",
+      "TestJournaledGCRefusesUnavailableStorageBeforeWork/full",
+      "TestJournaledGCRefusesUnavailableStorageBeforeWork/replaced",
+      "TestJournaledGCRejectsPrivateDiagnosticsAndLatches",
+      "TestJournaledGCRejectsPrivateDiagnosticsAndLatches/code",
+      "TestJournaledGCRejectsPrivateDiagnosticsAndLatches/context",
+      "TestJournaledGCRejectsPrivateDiagnosticsAndLatches/evidence",
+      "TestJournaledGCRejectsPrivateDiagnosticsAndLatches/operation",
+      "TestJournaledGCRejectsPrivateDiagnosticsAndLatches/principal",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/callback",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/close",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/constructor",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/database",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/installation",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/missing",
+      "TestJournaledGCRejectsUnboundStorageAndClosesOwnership/server"
+    ]
+  },
+  "changed_backend_contract_inputs": [
+    "backend/internal/systembackupevidence/gc_authority.go",
+    "backend/internal/systembackupevidence/gc_registry.go",
+    "backend/internal/systembackupevidence/gc_runtime.go",
+    "backend/internal/systembackupevidence/gc_runtime_journal.go",
+    "backend/internal/systembackupevidence/gc_runtime_journal_test.go",
+    "backend/internal/systembackupevidence/system_recovery_audit_journal.go"
+  ],
+  "default_vet": true,
+  "native_exit": 0,
+  "final_postcheck": true,
+  "probe_stages": [
+    {
+      "stage": "tagged-seed",
+      "output_sha256": "6c8c038e7a35f9df7d8dbb702c6526fb81b40bda8fd8768cee82814447049867",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "windows-probe",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "detached-seed",
+      "output_sha256": "b6d73676f881d58bb257667129469aab7ab5dc30ccab27ff246df79459c1000f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "linux-probe",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "linux-migration",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "65d83b6e4a829eba904059c2a124a23485b0d09b5f4ae8e9b0c697b028806a65"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "1d434ad6472b5e1accfe086770ddc4f7b9cdffa328460bdd2c64c29c5a297d48"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "b9b18c5102343e35b5d850ff9f27c474b36036b942bfdda689521c55bdb5f37f"
+    }
+  ],
+  "cleanup": "docs/evidence/a-gc-journal-cleanup-20261021-r1.json",
+  "cleanup_sha256": "bdc020870c43386ee641f882f0018945ca760c4446641a08c7efb7bcbc7b8845",
+  "owned_directories_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c1bb376985ac4feb986d651bcbe152d5",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-05d21eb684644e618d91e4866165dfe2",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-a-gc-journal-20261021-r1"
+  ],
+  "current_frozen_bytes_match": true,
+  "current_whole_worktree_verified": false,
+  "actual_sql": false,
+  "actual_provider": false,
+  "durable_volume_verified": false,
+  "full_gc_policy_approved": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "reviewer_sha256": "406257e921d51bafa43aba280e10fe40feedce6f94b311e92a3700a5bc915f21"
+}

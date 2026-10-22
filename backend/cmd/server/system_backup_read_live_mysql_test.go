@@ -193,16 +193,21 @@ func TestDAdminReadLiveHTTPMySQL(t *testing.T) {
 		t.Fatal(err)
 	}
 	const verification = "sav_00000000-0000-4000-8000-000000000091"
-	if _, err := db.ExecContext(ctx, `INSERT INTO system_backup_artifact_verifications
+	const foreignVerification = "sav_00000000-0000-4000-8000-000000000092"
+	seedVerification := func(id, origin, source string) {
+		if _, err := db.ExecContext(ctx, `INSERT INTO system_backup_artifact_verifications
 		(public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,request_id,
 		 config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,deadline_at,
 		 verification_scope,source_artifact_type,source_public_id,artifact_state_before,artifact_state_after,
 		 unusable_reason_before,unusable_reason_after)
 		 VALUES(?,?,'admin',?,'POST /system-backup-artifact-verifications','d-http-read-verify-91',REPEAT('a',64),'d-http-read-verify-91',
 		 1,'{}',2,SHA2('{}',256),UTC_TIMESTAMP(6)+INTERVAL 1 HOUR,
-		 'health','backup',?,'staging','staging','not_committed','not_committed')`, verification, installation, strconv.FormatInt(userID, 10), ownBackup); err != nil {
-		t.Fatal(err)
+		 'health','backup',?,'staging','staging','not_committed','not_committed')`, id, origin, strconv.FormatInt(userID, 10), source); err != nil {
+			t.Fatal(err)
+		}
 	}
+	seedVerification(verification, installation, ownBackup)
+	seedVerification(foreignVerification, foreign, foreignBackup)
 	const operation = "sop_00000000-0000-4000-8000-000000000091"
 	if _, err := db.ExecContext(ctx, `INSERT INTO system_backup_operations
 		(public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,
@@ -262,6 +267,40 @@ func TestDAdminReadLiveHTTPMySQL(t *testing.T) {
 			t.Fatalf("live operation HTTP read invalid: %s status=%d body=%s", path, w.Code, w.Body.String())
 		}
 	}
+	if _, err := db.ExecContext(ctx, "UPDATE system_backup_artifact_verifications SET failure_message='PRIVATE_DETAIL_SENTINEL',row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, verification); err != nil {
+		t.Fatal(err)
+	}
+	verificationDetail := request("/api/v1/admin/system-backup-artifact-verifications/"+verification, token)
+	var verificationDTO struct {
+		SchemaVersion string `json:"schema_version"`
+		Task          struct {
+			PublicID       string  `json:"public_id"`
+			RowVersion     uint64  `json:"row_version"`
+			FailureMessage *string `json:"failure_message"`
+		} `json:"task"`
+		Source struct {
+			PublicID string `json:"source_public_id"`
+		} `json:"source"`
+		Verifier struct {
+			Status string `json:"aggregate_status"`
+		} `json:"verifier_summary"`
+	}
+	if verificationDetail.Code != http.StatusOK || verificationDetail.Header().Get("X-System-Backup-Data-Source") != "live" ||
+		verificationDetail.Header().Get("X-System-Backup-Origin-Installation-ID") != installation ||
+		json.Unmarshal(verificationDetail.Body.Bytes(), &verificationDTO) != nil ||
+		verificationDTO.SchemaVersion != "system-backup-artifact-verification-detail.v1" || verificationDTO.Task.PublicID != verification ||
+		verificationDTO.Source.PublicID != ownBackup || verificationDTO.Verifier.Status != "skipped" ||
+		verificationDTO.Task.FailureMessage != nil || strings.Contains(verificationDetail.Body.String(), "PRIVATE_DETAIL_SENTINEL") ||
+		verificationDetail.Header().Get("X-System-Backup-Task-Row-Version") != strconv.FormatUint(verificationDTO.Task.RowVersion, 10) {
+		t.Fatalf("verification detail HTTP projection invalid: status=%d body=%s", verificationDetail.Code, verificationDetail.Body.String())
+	}
+	testDVerificationDetailHTTPHistoryMySQL(t, db, ctx, request, token, installation, strconv.FormatInt(userID, 10), ownBackup)
+	if w := request("/api/v1/admin/system-backup-artifact-verifications/"+foreignVerification, token); w.Code != http.StatusNotFound || strings.Contains(w.Body.String(), foreignBackup) {
+		t.Fatalf("foreign verification detail escaped installation scope: status=%d", w.Code)
+	}
+	if w := request("/api/v1/admin/system-backup-artifact-verifications/"+verification+"?ignored=1", token); w.Code != http.StatusBadRequest {
+		t.Fatalf("verification detail accepted an unknown query: status=%d", w.Code)
+	}
 	if w := request("/api/v1/admin/system-backups", ""); w.Code != http.StatusUnauthorized {
 		t.Fatalf("missing access token status=%d", w.Code)
 	}
@@ -288,11 +327,12 @@ func TestDAdminReadLiveHTTPMySQL(t *testing.T) {
 		"/api/v1/admin/system-backup-operations", "/api/v1/admin/system-backup-operations/" + operation,
 		"/api/v1/admin/system-backup-config", "/api/v1/admin/system-backup-config/versions",
 		"/api/v1/admin/system-backup-config/versions/1",
+		"/api/v1/admin/system-backup-artifact-verifications/" + verification,
 	} {
 		w := request(path, token)
 		if w.Code != http.StatusForbidden || strings.Contains(w.Body.String(), ownBackup) || strings.Contains(w.Body.String(), operation) {
 			t.Fatalf("revoked HTTP read invalid: %s status=%d body=%s", path, w.Code, w.Body.String())
 		}
 	}
-	t.Log("PASS four task HTTP lists, stable continuation, operation read, 200/400/401/403/503, installation isolation, revocation, source marker")
+	t.Log("PASS four task HTTP lists, stable continuation, operation read, verification detail/redaction, 200/400/401/403/404/503, installation isolation, revocation, source marker")
 }

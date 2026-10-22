@@ -1,0 +1,110 @@
+{
+    "kind":  "a_field_dsn_native_validation",
+    "started_utc":  "2026-10-21T10:34:44.9814885Z",
+    "finished_utc":  "2026-10-21T11:16:13.2089674Z",
+    "exit":  0,
+    "source_sha256":  "8a6644518f21fbe65e161c4369dfdbe827950a75b07d024c07868dc60220d31c",
+    "source_files":  1514,
+    "source_postcheck":  true,
+    "stages":  [
+                   {
+                       "stage":  "tests",
+                       "attempt":  1,
+                       "goos":  "windows",
+                       "exit":  0,
+                       "arguments":  [
+                                         "test",
+                                         "-mod=readonly",
+                                         "-count=1",
+                                         "-p=1",
+                                         "-json",
+                                         "./cmd/system-backup-registration"
+                                     ],
+                       "stdout":  "a-field-dsn-native-20261021-r2-tests-attempt1.jsonl",
+                       "stderr":  "a-field-dsn-native-20261021-r2-tests-attempt1-stderr.txt"
+                   },
+                   {
+                       "stage":  "owner-dependencies",
+                       "attempt":  1,
+                       "goos":  "windows",
+                       "exit":  0,
+                       "arguments":  [
+                                         "list",
+                                         "-mod=readonly",
+                                         "-deps",
+                                         "-test",
+                                         "-tags",
+                                         "systembackup_mysql",
+                                         "-f",
+                                         "{{.ImportPath}}",
+                                         "./internal/systembackupsecurity",
+                                         "./internal/systembackupevidence"
+                                     ],
+                       "stdout":  "a-field-dsn-native-20261021-r2-owner-dependencies-attempt1.txt",
+                       "stderr":  "a-field-dsn-native-20261021-r2-owner-dependencies-attempt1-stderr.txt"
+                   },
+                   {
+                       "stage":  "build-windows",
+                       "attempt":  1,
+                       "goos":  "windows",
+                       "exit":  0,
+                       "arguments":  [
+                                         "build",
+                                         "-mod=readonly",
+                                         "-p=1",
+                                         "-trimpath",
+                                         "-buildvcs=false",
+                                         "-ldflags=\"-s -w -buildid=\"",
+                                         "-o",
+                                         "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-315a2314c78b4f31bc90e3e5264318f9\\bin\\registration-windows.exe",
+                                         "./cmd/system-backup-registration"
+                                     ],
+                       "stdout":  "a-field-dsn-native-20261021-r2-build-windows-attempt1.txt",
+                       "stderr":  "a-field-dsn-native-20261021-r2-build-windows-attempt1-stderr.txt"
+                   },
+                   {
+                       "stage":  "build-linux",
+                       "attempt":  1,
+                       "goos":  "linux",
+                       "exit":  0,
+                       "arguments":  [
+                                         "build",
+                                         "-mod=readonly",
+                                         "-p=1",
+                                         "-trimpath",
+                                         "-buildvcs=false",
+                                         "-ldflags=\"-s -w -buildid=\"",
+                                         "-o",
+                                         "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-315a2314c78b4f31bc90e3e5264318f9\\bin\\registration-linux",
+                                         "./cmd/system-backup-registration"
+                                     ],
+                       "stdout":  "a-field-dsn-native-20261021-r2-build-linux-attempt1.txt",
+                       "stderr":  "a-field-dsn-native-20261021-r2-build-linux-attempt1-stderr.txt"
+                   }
+               ],
+    "binaries":  [
+                     {
+                         "goos":  "windows",
+                         "goarch":  "amd64",
+                         "sha256":  "168fecfedb43193cb5d484429d82c2dc377e8aa18b4c36ae0f305aead082aba5",
+                         "bytes":  9858048
+                     },
+                     {
+                         "goos":  "linux",
+                         "goarch":  "amd64",
+                         "sha256":  "ec5c39bff91ba3d64c3d83ee22b5b2327da0782e9f680ecf41d58f34682e7be3",
+                         "bytes":  9617534
+                     }
+                 ],
+    "owner":  "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-315a2314c78b4f31bc90e3e5264318f9",
+    "removed":  true,
+    "immutable_cache_entries_copied":  0,
+    "immutable_cache_bytes_copied":  0,
+    "original_cache_modified":  false,
+    "test_results_reused":  false,
+    "default_vet":  true,
+    "dependencies_installed":  false,
+    "remote":  false,
+    "actual_mysql":  false,
+    "production_approved":  false
+}

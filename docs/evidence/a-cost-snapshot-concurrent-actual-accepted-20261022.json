@@ -1,0 +1,111 @@
+{
+  "kind": "a_cost_snapshot_concurrent_actual_independent_review.v1",
+  "status": "accepted_original_mysql_log_five_cost_cases_synthetic_only",
+  "evidence": [
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-remote-20261022-101417-6826f52e.txt",
+      "bytes": 29224,
+      "sha256": "45bffb02fa03d7a654700778e206020ecf47bc486dc45b03b2bd107040ae7daa"
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-preparation-20261022.json",
+      "bytes": 123814,
+      "sha256": "7a9b0c8d520cf863785988d37d88564edcdbca1960f81a3890c80152d0345842"
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-scope-20261022.json",
+      "bytes": 50718,
+      "sha256": "e108a6983737a320e61503e2c6b2a9125ceac0938ce0d1e1db546136a0dfb0e0"
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-actual-accepted-20261022.json",
+      "bytes": 8966,
+      "sha256": "0adc063cabd9b100fd81431455a54d4b1b7ab6e5ac54117cc738d033d37307e1"
+    }
+  ],
+  "actual": {
+    "namespace": "sbk-mig-261022023330-7a22",
+    "uid": "07aab8cd-5998-4b2f-90c8-1b894f4bf08e",
+    "mysql": "8.4.8",
+    "parent": "TestABusinessRestoreRowsMySQL",
+    "parent_seconds": 8.56,
+    "cases": [
+      "cost_snapshot_concurrent_commit",
+      "cost_aggregate_money",
+      "cost_aggregate_tokens",
+      "cost_aggregate_currency_case",
+      "cost_aggregate_actual_NULL"
+    ],
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0,
+    "concurrency": {
+      "first_count_closed": true,
+      "writer_commit_observed": true,
+      "original_rr_unchanged": true,
+      "fresh_rr_changed": true
+    },
+    "probe_sha256": "64679b73985747255ed3c73c6717e0028acf1511073aa8ffe0ca0fbcd5f0e0ed",
+    "migration_binary_sha256": "d70dcc018ab3b1f644a08e63b663ec3d39dffaa8fc662fb78ee6d824a12a1251",
+    "migration_catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+    "migrations": 96,
+    "cleanup_reported": {
+      "account": true,
+      "database": true,
+      "namespace": true,
+      "remote_scratch": true,
+      "local_cache": true
+    },
+    "socket_close_messages": 4,
+    "exit": 0
+  },
+  "current_test_source_observation": [
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+      "bytes": 35875,
+      "sha256": "77ea3c03be4c077b40fbd8e1b458aa78572a58772821db89e163b3da83653ff2",
+      "prepared_sha256": "2df687e1d5da6f87de3aa462df598baaf084bdc7db36ebdd2bbeb186e843a016",
+      "matches_prepared": false
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/cost_snapshot_hook_test.go",
+      "bytes": 5684,
+      "sha256": "d7aaa4bf31db7059959dbf74fac0943713e2ffeea1644543954ad86104a2f233",
+      "prepared_sha256": "d7aaa4bf31db7059959dbf74fac0943713e2ffeea1644543954ad86104a2f233",
+      "matches_prepared": true
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/cost_snapshot_concurrent_mysql_test.go",
+      "bytes": 5273,
+      "sha256": "5412bb40d7c95c8d09137e244f2401cd0b7156396dfebb869921fdccd2c5c767",
+      "prepared_sha256": "5412bb40d7c95c8d09137e244f2401cd0b7156396dfebb869921fdccd2c5c767",
+      "matches_prepared": true
+    }
+  ],
+  "provenance": {
+    "same_run_full_source_manifest_supplied": false,
+    "same_run_source_before_after_hashes_logged": false,
+    "whole_source_to_binary_attestation": false,
+    "original_preparation_binary_substituted": false,
+    "current_source_used_to_prove_historical_source": false,
+    "exact_local_scratch_identity_logged": false,
+    "local_scratch_independently_verified": false,
+    "remote_cleanup_independently_verified": false
+  },
+  "boundaries": {
+    "real_mysql_log": true,
+    "fixture": "synthetic_formally_migrated_fifteen_table_business_restore",
+    "production_dump_proof": false,
+    "real_B_capture_proof": false,
+    "production_restore_writer": false,
+    "production_role_approval": false,
+    "full_large_smoke": false,
+    "full_gc": false,
+    "human_mfa": false,
+    "production_approved": false,
+    "current_whole_tree_tested": false,
+    "reviewer_remote_run": false,
+    "reviewer_go_test_or_build_run": false,
+    "reviewer_dependencies_installed": false
+  }
+}

@@ -93,5 +93,8 @@ func (c SQLCountCollector) CollectSnapshot(ctx context.Context, registryJSON []b
 	if err := tx.Commit(); err != nil {
 		return SourceSnapshot{}, fmt.Errorf("commit resources count snapshot: %w", err)
 	}
+	if err := ctx.Err(); err != nil {
+		return SourceSnapshot{}, err
+	}
 	return snapshot, nil
 }

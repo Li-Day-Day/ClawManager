@@ -1,0 +1,60 @@
+{
+  "kind": "d_gc_task_mysql_prune_identity_failure",
+  "status": "actual_sql_failed_formal_migration_constraint_defect_identified",
+  "log": "docs/evidence/d-download-gc-task-remote-20261021-134319-dfd8756c.txt",
+  "log_sha256": "f50cc8f79f8177f19120060724e902478d46b104ff88f5d279a2359ff496a829",
+  "source_manifest": "docs/evidence/d-download-gc-task-remote-20261021-134319-dfd8756c-source.json",
+  "source_manifest_sha256": "f1a4b02c721931760aada8e200b37e83af7e115ecfb737a417c06ab42387346a",
+  "source_sha256": "c768f300d4b41f0bf7502841223e07f1423877a8c044273f69a0053eb7a86d63",
+  "source_files": 1471,
+  "remote_started": true,
+  "mysql": "8.4.8",
+  "migration_count": 95,
+  "actual": {
+    "root": "TestDDownloadGCTaskMySQL",
+    "elapsed_seconds": 78.28,
+    "cases": 18,
+    "passed": 15,
+    "failed": [
+      "prune_reference",
+      "empty_prune_range",
+      "late_prune_reference"
+    ],
+    "outer_exit": 1,
+    "accepted": false
+  },
+  "cause": {
+    "migration": "backend/internal/db/migrations/070_add_system_backup_prune_authority.sql",
+    "migration_sha256": "9e0862c9f52fb54a32b7a5b70d391aa44e490818369672510989a51b8667a63c",
+    "constraint": "chk_sb_prune_item_identity",
+    "column": "artifact_public_id",
+    "old_pattern": "^sbk_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "valid_fixture_id_rejected": true,
+    "missing_uuid_group": "fourth 4-hex segment",
+    "probe_sha256": "daf00a877868d64e1b1f02a2412cdb89af56c90c892ed40e82e662e3953ee362",
+    "production_query_defect_proven": false
+  },
+  "misleading_inner_pass": {
+    "present": true,
+    "does_not_override_parent_or_exit": true,
+    "candidate_suppresses_after_failed_child": true
+  },
+  "cleanup": {
+    "namespace": "sbk-mig-261021062218-07b5",
+    "uid": "d797be70-aa63-40a9-ad7e-8d0975972de7",
+    "namespace_cleanup_reported": true,
+    "remote_scratch_cleanup_reported": true,
+    "local_build_cache_cleanup_reported": true,
+    "exact_local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-29e287604aad485991527f3fe8da7c4b",
+    "local_owner_independently_absent": true
+  },
+  "boundaries": {
+    "old_migration_preserved": true,
+    "repair_strategy": "append 081; retain all other predicates and FKs; refresh exact 96-file catalog and capsules",
+    "repair_actual_mysql_not_yet_run": true,
+    "whole_gc_not_accepted": true,
+    "dependencies_installed": false,
+    "reviewer_remote_run": false,
+    "production_approval": false
+  }
+}

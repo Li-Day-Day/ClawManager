@@ -142,8 +142,8 @@ func LoadRegistrationApplication(db *sql.DB, path, digest string) (*Registration
 	if err != nil {
 		return nil, err
 	}
-	var sr StrongAuthIssuerRegistry
-	if decodePinnedRegistry(strongRaw, c.StrongRegistrySHA256, &sr) != nil || sr.SchemaVersion != "system-backup-strong-auth-issuers.draft.v1" || sr.Version != c.StrongRegistryVersion || sr.Audience == "" {
+	sr, err := DecodeStrongAuthIssuerRegistry(strongRaw, c.StrongRegistryVersion, c.StrongRegistrySHA256, time.Now().UTC())
+	if err != nil {
 		return nil, ErrRegistrationUnavailable
 	}
 	var sk StrongAuthRegistryKey

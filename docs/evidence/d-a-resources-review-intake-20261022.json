@@ -1,0 +1,108 @@
+{
+  "kind": "d_resources_a_review_intake.v1",
+  "date": "2026-10-22",
+  "status": "received_changes_required_not_approval",
+  "source_request": {
+    "path": "docs/evidence/d-resources-review-request-20261022.json",
+    "size": 8807,
+    "sha256": "de28bc5bd7369d3df9f6382f42701f510b5c0b22c50fc030b7769887b137daf3"
+  },
+  "a_receipt": {
+    "path": "docs/evidence/a-resources-normalization-review-20261022.json",
+    "size": 8232,
+    "sha256": "aac15c9e86ffd4b108bfb00ef8e3f9201d0fbf8bed94698c3c90cdee979787b7"
+  },
+  "a_decision": {
+    "path": "docs/system-backup-a-resources-normalization-review-20261022.md",
+    "size": 9868,
+    "sha256": "7d4d2f5c362a4ae77f0f34556b238186b79ce376889b6372182eff64488f2bc7"
+  },
+  "source_capsule": {
+    "path": "docs/evidence/a-resources-normalization-source-capsule-20261022.json",
+    "size": 866203,
+    "sha256": "236d6d506287ad8acc87fe683da5df4367b8d2615de0e6ad1f00cfe40d43cdec"
+  },
+  "document": {
+    "path": "docs/system-backup-d-a-resources-review-intake-20261022.md",
+    "size": 5350,
+    "sha256": "0e4ae06a75eed39f0e69a4e7353c0d06cb411e48675ab49305c3f7741d3572df"
+  },
+  "reviewed_source_digest": "8f6e932251521fe0774b100f34495b79a695515bb27006448a771a9be784f335",
+  "verified_historical_files": 31,
+  "tables": [
+    {
+      "name": "audit_logs",
+      "normalizer_id": "resources.audit_logs.normalize.v1",
+      "verifier_id": "resources.audit_logs.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false,
+      "received_by": "D",
+      "next_action": "revise_proposal_then_request_same_version_review"
+    },
+    {
+      "name": "egress_private_exceptions",
+      "normalizer_id": "resources.egress_private_exceptions.normalize.v1",
+      "verifier_id": "resources.egress_private_exceptions.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false,
+      "received_by": "D",
+      "next_action": "revise_proposal_then_request_same_version_review"
+    },
+    {
+      "name": "northbound_admin_settings",
+      "normalizer_id": "resources.northbound_admin_settings.normalize.v1",
+      "verifier_id": "resources.northbound_admin_settings.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false,
+      "received_by": "D",
+      "next_action": "revise_proposal_then_request_same_version_review"
+    },
+    {
+      "name": "northbound_settings_audit",
+      "normalizer_id": "resources.northbound_settings_audit.normalize.v1",
+      "verifier_id": "resources.northbound_settings_audit.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false,
+      "received_by": "D",
+      "next_action": "revise_proposal_then_request_same_version_review"
+    },
+    {
+      "name": "security_scan_configs",
+      "normalizer_id": "resources.security_scan_configs.normalize.v1",
+      "verifier_id": "resources.security_scan_configs.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false,
+      "received_by": "D",
+      "next_action": "revise_proposal_then_request_same_version_review"
+    },
+    {
+      "name": "security_scan_jobs",
+      "normalizer_id": "resources.security_scan_jobs.normalize.v1",
+      "verifier_id": "resources.security_scan_jobs.verify.v1",
+      "conclusion": "changes_required",
+      "runtime_approved": false,
+      "received_by": "D",
+      "next_action": "revise_proposal_then_request_same_version_review"
+    }
+  ],
+  "current_source_differences_at_intake": [
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion.go",
+      "reviewed_sha256": "d62b93883cbb81a91355932975f71f6cb1e8e8a611c944363587864aa8b039eb",
+      "current_sha256": "f98fb102dcfdf64321c077b8bf75b411b8b2a559e3c6a48f2716b3635b7cbf07"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier.go",
+      "reviewed_sha256": "4f6ff022eacceb784ce0076528e8e1f3e620d6b7c94834453f8322481085cbcf",
+      "current_sha256": "ccd414f865b66d47a4a4853dc3840c48228585904a0aa882a8b5388108827573"
+    }
+  ],
+  "request_modified": false,
+  "formal_registry_modified": false,
+  "approved_cross_reviewers_modified": false,
+  "source_or_target_proof_accepted": false,
+  "normalization_implementation_accepted": false,
+  "actual_mysql_executed": false,
+  "production_approval": false,
+  "messages_sent": false
+}

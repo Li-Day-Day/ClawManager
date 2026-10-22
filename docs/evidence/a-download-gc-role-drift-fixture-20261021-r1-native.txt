@@ -1,0 +1,40 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261021151948
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -File C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-gc-role-drift-native-20261021.ps1 -EvidencePrefix a-download-gc-role-drift-fixture-20261021-r1 -ExistingOwnedCache C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-admission-a-role-drift-20261021-r1\cache -IncludeDownloadProbe -TaggedOwnerSeedsOnly -TestRunPattern ^Test(ADownloadGCRoleMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$ -BuildParallelism 1
+Process ID: 36076
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+FROZEN files=1473 sha256=1c9b4cfc2b5c69406f287fbf96111de56597ba924b693ea9693cf02b4aa69dc3 owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-f47744f9178d44faa6c8eb545bc6f135
+NATIVE_PARALLELISM build=1 gomaxprocs=1
+NATIVE_TIME_BUDGET package_timeout_seconds=900 request_deadlines_unchanged=yes
+NATIVE_EXIT focused_packages=0 packages=./internal/systembackupevidence default_vet=yes
+FROZEN_UNIT_POSTCHECK pass=yes installed_dependencies=no actual_mysql=no
+NATIVE_PROBE stage=tagged-seed exit=0 actual_mysql=no
+NATIVE_PROBE stage=windows-probe exit=0 actual_mysql=no
+NATIVE_PROBE stage=detached-seed exit=0 actual_mysql=no
+NATIVE_PROBE stage=linux-probe exit=0 actual_mysql=no
+NATIVE_PROBE stage=linux-migration exit=0 actual_mysql=no
+NATIVE_PROBE_BINARY name=download-admission.test.exe sha256=f4e7a61e9f038b29f9b81ce4d1ef9c75b25e9182ecc8fac6ccbefc023d8e27df
+NATIVE_PROBE_BINARY name=download-admission.test sha256=4b9e788716ff52217750e0b0043022b08580fa5d83b98853c20f224f192fa08f
+NATIVE_PROBE_BINARY name=system-backup-migrate sha256=bc2c3f6ef98725187fc53425dbf97b73129f7029e1686ef4f79d6dffa128485d
+FROZEN_POSTCHECK pass=yes installed_dependencies=no actual_mysql=no
+CLEANED snapshot=True
+EXTERNAL_OWNED_CACHE caller_cleanup_required=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-admission-a-role-drift-20261021-r1\cache
+d_admission_native_exit=0
+**********************
+Windows PowerShell transcript end
+End time: 20261021153234
+**********************

@@ -187,7 +187,7 @@ func replaceFailureJournalPath(t *testing.T, j *DownloadFailureJournal) []byte {
 	j.journal.file = retained // fixture only: do not poison via journal.Close
 	oldInfo, oldErr := retained.Stat()
 	newInfo, newErr := os.Lstat(j.config.Path)
-	if oldErr != nil || newErr != nil || !os.SameFile(original, oldInfo) || os.SameFile(oldInfo, newInfo) || oldInfo.Size() != newInfo.Size() || oldInfo.Size() != j.journal.size || j.journal.poisoned {
+	if oldErr != nil || newErr != nil || !os.SameFile(original, oldInfo) || os.SameFile(oldInfo, newInfo) || oldInfo.Size() != newInfo.Size() || oldInfo.Size() != j.journal.size || j.journal.poisoned.Load() {
 		t.Fatal("replacement fixture did not preserve the old handle identity and equal-size new path")
 	}
 	return raw

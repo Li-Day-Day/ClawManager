@@ -1,0 +1,65 @@
+// A's read-only independent acceptance of D's check metadata contribution.
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {workspace, raw, json, decode, sha256, manifest, inventory, changed, exact} from './a-frozen-validation-utils-20261021.mjs';
+const dPath = 'docs/evidence/d-task-check-control-preparation-20261021.json', d = json(dPath);
+assert.equal(d.status, 'local_check_metadata_contribution_only');
+const own = ['task_check_control.go', 'task_check_control_test.go'].map(n => 'backend/internal/systembackupread/' + n);
+exact(d.added, own);
+const base = manifest('docs/evidence/d-task-check-control-base-20261021.json');
+assert.equal(sha256(raw('docs/evidence/d-task-check-control-base-20261021.json')), d.base_manifest_sha256);
+const contextPath = 'docs/evidence/d-task-check-control-published-context-20261021.json', published = manifest(contextPath);
+assert.equal(sha256(raw(contextPath)), d.published.source_context_manifest_sha256);
+const full = 'docs/evidence/d-task-check-control-20261021-r2-full';
+const source = json(full + '-source.json');
+assert.equal(sha256(source.files.map(f => `${f.path}\0${f.sha256}\0${f.size}`).join('\n') + '\n'), source.source_sha256);
+assert.equal(source.files.length, 1470); assert.equal(new Set(source.files.map(f => f.path)).size, 1470);
+assert.deepEqual(source.files, published.files);
+assert.equal(source.source_sha256, published.source_sha256);
+assert.ok(base.files.every(f => source.files.some(q => q.path === f.path && q.sha256 === f.sha256 && q.size === f.size)));
+exact(source.files.filter(f => !base.files.some(q => q.path === f.path)).map(f => f.path), own);
+const previousSource = manifest('docs/evidence/a-read-completion-integration-20261021-r1-source.json');
+exact(changed(source, previousSource).filter(p => /^(backend|contracts)\//.test(p)), own);
+assert.ok(previousSource.files.every(f => source.files.some(q => q.path === f.path)));
+for (const run of d.runs) {
+  const prefix = `docs/evidence/d-task-check-control-20261021-${run.attempt}-${run.stage}`;
+  for (const [file, pin] of [[prefix + '-source.json', run.source_manifest_sha256], [prefix + '.jsonl', run.events_sha256], [prefix + '-native.json', run.native_sha256]]) assert.equal(sha256(raw(file)), pin, file);
+  const n = json(prefix + '-native.json'); assert.equal(n.exit, 0); assert.equal(n.default_vet, true); assert.equal(n.source_postcheck, true); assert.equal(n.dependencies_installed, false); assert.equal(n.remote, false);
+  const s = json(prefix + '-source.json'); assert.equal(sha256(s.files.map(f => `${f.path}\0${f.sha256}\0${f.size}`).join('\n') + '\n'), s.source_sha256); assert.equal(n.source_sha256, s.source_sha256);
+  assert.equal(raw(prefix + '-stderr.txt').length, 0);
+}
+const readPackage = 'clawreef/internal/systembackupread', securityPackage = 'clawreef/internal/systembackupsecurity';
+const passed = inventory(full + '.jsonl', [readPackage, securityPackage]);
+assert.equal(passed.length, 2764); assert.equal(passed.filter(e => !e.Test.includes('/')).length, 339);
+const prior = inventory('docs/evidence/a-read-completion-integration-20261021-r1.jsonl', ['systembackupsecurity','systembackupevidence','systembackupread','systembackupproducer','systembackupgcmetadata'].map(n => 'clawreef/internal/' + n)).filter(e => [readPackage, securityPackage].includes(e.Package));
+const key = e => `${e.Package}\0${e.Test}`, names = new Set(passed.map(key)), old = new Set(prior.map(key));
+assert.equal(prior.length, 2691); assert.ok(prior.every(e => names.has(key(e))));
+const target = inventory('docs/evidence/d-task-check-control-20261021-r2-target.jsonl', [readPackage]);
+assert.equal(target.length, 73);
+exact(passed.filter(e => !old.has(key(e))).map(key), target.map(key));
+exact(target.filter(e => !e.Test.includes('/')).map(e => e.Test), ['KindsHistoryAndPrivacy','RejectsCorruptRecords','ModeAndCategory','EmptyAndBudget','AuthorityAndCompletion','FutureBuilderIsAtomic','UsesCheckTimeAndIDOrder','SQLContract'].map(n => 'TestTaskCheckControl' + n));
+for (const name of ['TestTaskCheckControlEmptyAndBudget/10000','TestTaskCheckControlEmptyAndBudget/10050','TestTaskCheckControlAuthorityAndCompletion/revoke','TestTaskCheckControlAuthorityAndCompletion/late_commit','TestTaskCheckControlUsesCheckTimeAndIDOrder/check_time','TestTaskCheckControlUsesCheckTimeAndIDOrder/equal_time_out_of_order']) assert.ok(target.some(e => e.Test === name), name);
+for (const file of own) {const pin = source.files.find(f => f.path === file), bytes = raw(file); assert.equal(bytes.length, pin.size); assert.equal(sha256(bytes), pin.sha256);}
+const production = decode(raw(own[0]));
+const columns = production.match(/const taskCheckControlColumns = "([^"]+)"/)[1].split(',');
+exact(columns, ['id','schema_version','origin_installation_id','target_type','target_public_id','attempt_no','category','mode','check_code','status','skip_reason','evidence_public_id','evidence_sha256','warning_code','check_classification','failure_category','checked_at','created_at']);
+assert.doesNotMatch(columns.join(','), /expected_|actual_|canonical_json/);
+assert.ok(production.includes('WHERE origin_installation_id=? AND target_type=? AND target_public_id=? ORDER BY checked_at,id LIMIT 10001'));
+assert.ok(production.includes('const maxTaskCheckControlRows = 10000'));
+assert.ok(production.includes('return readTaskDetailControlInTransaction(ctx, r, kind, publicID,'));
+assert.ok(production.includes('return append([]TaskCheckControl{}, s.checks...)'));
+assert.doesNotMatch(production, /\.BeginTx\(|\.Commit\(|\.Exec(?:Context)?\(/);
+const migration = d.reviewed_migration.path, ddl = decode(raw(migration));
+assert.equal(sha256(raw(migration)), source.files.find(f => f.path === migration).sha256);
+for (const column of columns) assert.match(ddl, new RegExp('^\\s*' + column + '\\s', 'm'));
+assert.ok(ddl.includes('KEY idx_sb_check_result_target (target_type, target_public_id, checked_at, id)'));
+assert.ok(ddl.includes('UNIQUE KEY uk_sb_check_result_identity (target_type, target_public_id, attempt_no_sentinel, mode, category, check_code)'));
+const cleanup = json(d.cleanup.receipt); assert.equal(sha256(raw(d.cleanup.receipt)), d.cleanup.sha256);
+assert.equal(cleanup.removed, true); assert.equal(cleanup.process_terminal, true); assert.equal(cleanup.source_postcheck, true); assert.equal(cleanup.source_sha256, source.source_sha256);
+assert.equal(path.dirname(cleanup.absolute_owner).toLowerCase(), workspace.toLowerCase()); assert.match(path.basename(cleanup.absolute_owner), /^\.tmp-d-index-cache-[a-f0-9]{32}$/); assert.equal(fs.existsSync(cleanup.absolute_owner), false);
+const record = {kind: 'a_independent_task_check_metadata_review', status: 'accepted_frozen_check_metadata_contribution_only', source: full + '-source.json', source_manifest_sha256: sha256(raw(full + '-source.json')), source_sha256: source.source_sha256, source_files: 1470, stable_published_context: contextPath, stable_published_context_sha256: sha256(raw(contextPath)), events_sha256: sha256(raw(full + '.jsonl')), native_sha256: sha256(raw(full + '-native.json')), full: {main: 339, all: 2764, packages: [readPackage, securityPackage]}, previous_scope_checks_retained: 2691, added: {main: 8, all: 73, paths: own}, check_metadata_maximum: 10000, overflow_lookahead: 1, original_attempts_preserved: true, expected_actual_payloads_selected: false, same_authorized_transaction: true, current_report_or_public_summary_approved: false, evidence_owner_hash_or_current_availability_verified: false, complete_detail_or_http_enabled: false, actual_mysql_or_query_plan_verified: false, d_receipt: dPath, d_receipt_sha256: sha256(raw(dPath)), cleanup: d.cleanup, cleanup_independently_absent: true, new_builds_or_go_tests_run_by_review: false, owner_baseline_changed: false, current_whole_worktree_verified: false, dependencies_installed: false, production_approved: false, reviewer_sha256: sha256(raw('docs/evidence/a-task-check-control-review-20261021.mjs'))};
+const output = 'docs/evidence/a-task-check-control-accepted-20261021.json';
+if (process.argv[2] === '--check') assert.deepEqual(json(output), record);
+else {assert.deepEqual(process.argv.slice(2), ['--write']); fs.writeFileSync(path.join(workspace, output), JSON.stringify(record, null, 2) + '\n', {flag: 'wx'});}
+console.log(JSON.stringify({status: record.status, full: record.full, added_checks: 73, retained_checks: 2691, actual_mysql: false, owner_baseline_changed: false}));

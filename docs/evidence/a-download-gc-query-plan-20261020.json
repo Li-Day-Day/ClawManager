@@ -1,0 +1,83 @@
+{
+  "kind": "a_gc_query_plan_capture_spec",
+  "source_sha256": "04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df",
+  "sql_executed": false,
+  "instructions": "Bind parameters from the same guarded disposable fixture. Capture EXPLAIN FORMAT=JSON of each exact SELECT, SHOW CREATE TABLE/SHOW INDEX, RR transaction identity, data_locks/data_lock_waits with real competing sessions, and post-release outcomes. No FORCE INDEX, narrowed predicates, EXPLAIN ANALYZE, production writes or DDL are authorized by this file.",
+  "actual_plan_verified": false,
+  "actual_lock_verified": false,
+  "queries": [
+    {
+      "id": "drill_source",
+      "table": "system_restore_drills",
+      "sql": "SELECT id,origin_installation_id,public_id,task_type,schema_version,status,row_version,deadline_at,created_at,finished_at,controller_owner,controller_lease_expires_at,next_reconcile_at,source_artifact_type,source_public_id,'',NULL,FALSE,'',FALSE,FALSE,NULL,0,cleanup_status,cleanup_failure_code FROM system_restore_drills WHERE source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "backup_public_id"
+      ],
+      "static_index_concern": "declared source index leads with source_artifact_type; predicate uses source_public_id alone"
+    },
+    {
+      "id": "preflight_source",
+      "table": "system_backup_preflights",
+      "sql": "SELECT id,origin_installation_id,public_id,task_type,schema_version,status,row_version,deadline_at,created_at,finished_at,controller_owner,controller_lease_expires_at,next_reconcile_at,source_artifact_type,source_public_id,'',NULL,FALSE,'',FALSE,FALSE,NULL,0,'','' FROM system_backup_preflights WHERE source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "backup_public_id"
+      ],
+      "static_index_concern": "declared source index leads with source_artifact_type; predicate uses source_public_id alone"
+    },
+    {
+      "id": "artifact_verify_source",
+      "table": "system_backup_artifact_verifications",
+      "sql": "SELECT id,origin_installation_id,public_id,task_type,schema_version,status,row_version,deadline_at,created_at,finished_at,controller_owner,controller_lease_expires_at,next_reconcile_at,source_artifact_type,source_public_id,'',NULL,FALSE,'',FALSE,FALSE,NULL,0,'','' FROM system_backup_artifact_verifications WHERE source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "backup_public_id"
+      ],
+      "static_index_concern": "declared source index leads with source_artifact_type; predicate uses source_public_id alone"
+    },
+    {
+      "id": "lease_state",
+      "table": "system_artifact_lease_states",
+      "sql": "SELECT id,origin_installation_id,lease_mode,generation,row_version FROM system_artifact_lease_states WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "backup_public_id"
+      ],
+      "static_index_concern": "declared unique keys lead with origin_installation_id"
+    },
+    {
+      "id": "holder_lease",
+      "table": "system_artifact_leases",
+      "sql": "SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_artifact_leases WHERE holder_type=? AND holder_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "holder_type",
+        "holder_public_id"
+      ],
+      "static_index_concern": "declared holder key leads with installation and source"
+    },
+    {
+      "id": "staging",
+      "table": "system_backup_staging_resources",
+      "sql": "SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,cleanup_result,last_failure_code FROM system_backup_staging_resources WHERE backup_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "backup_public_id"
+      ],
+      "static_index_concern": "declared backup key leads with origin_installation_id"
+    },
+    {
+      "id": "restore_inventory",
+      "table": "system_restore_drill_resources",
+      "sql": "SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,'',last_failure_code FROM system_restore_drill_resources WHERE drill_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "drill_public_id"
+      ],
+      "static_index_concern": "declared drill key leads with origin_installation_id"
+    },
+    {
+      "id": "prune",
+      "table": "system_backup_prune_items",
+      "sql": "SELECT id FROM system_backup_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE",
+      "parameters": [
+        "backup_public_id"
+      ],
+      "static_index_concern": "declared artifact key leads with origin_installation_id"
+    }
+  ]
+}
