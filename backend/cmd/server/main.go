@@ -425,7 +425,9 @@ func main() {
 		go browserWorkerService.Run(ctx, 30*time.Second)
 		log.Printf("Starting leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
 		syncService.Start()
-		materializeWorker.Start()
+		if err := materializeWorker.StartContext(ctx); err != nil {
+			log.Printf("skill package materialize worker start failed: %v", err)
+		}
 		teamService.StartBackground(ctx)
 		if reconciler, ok := instanceService.(interface {
 			RunPendingDeletionReconciler(context.Context, time.Duration)
@@ -449,7 +451,11 @@ func main() {
 	}
 	stopBackground := func() {
 		log.Printf("Stopping leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
-		materializeWorker.Stop()
+		materializeStopCtx, materializeStopCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		if err := materializeWorker.StopAndWait(materializeStopCtx); err != nil {
+			log.Printf("skill package materialize worker drain NOT confirmed: %v", err)
+		}
+		materializeStopCancel()
 		if northboundOperationWorker != nil {
 			northboundOperationWorker.Stop()
 		}

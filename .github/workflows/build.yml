@@ -36,6 +36,11 @@ jobs:
       - name: Check system backup draft contracts
         run: node ../scripts/system-backup-contract-check.mjs --check
 
+      - name: Check Skill Hub backup policy draft
+        run: |
+          node ../scripts/system-backup-skill-hub-policy.mjs --check
+          node --test ../scripts/system-backup-skill-hub-policy.test.mjs
+
       - name: Check D deployment init and Admin DTO wire parity
         run: |
           node ../scripts/system-backup-d-init-check.mjs

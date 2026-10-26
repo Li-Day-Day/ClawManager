@@ -962,6 +962,183 @@
       "required_cross_reviewers": ["D"],
       "approved_cross_reviewers": [],
       "redacted_explanation": "Users are restored through immutable identity mapping and role allowlists; password hashes and external authentication material are redacted from evidence and never exposed in diagnostics."
+    },
+    {
+      "object_type": "table",
+      "name": "instance_skills",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.instance_skills.normalize.v1",
+      "verifier_id": "skill_hub.instance_skills.verify.v1",
+      "depends_on": [
+        "table:instances",
+        "table:skill_versions",
+        "table:skills"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "B",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Use B's shared instance and workspace mapping; preserve removals and the original observed-content difference from the library package. Do not install or synchronize skills. Validate each version belongs to the same skill and each path stays under the isolated workspace root."
+    },
+    {
+      "object_type": "table",
+      "name": "skill_blobs",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skill_blobs.normalize.v1",
+      "verifier_id": "skill_hub.skill_blobs.verify.v1",
+      "depends_on": [
+        "table:skill_scan_results"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Map object locators to the isolated object target and retain source digest semantics. Compute independent streamed SHA-256 over captured bytes. A nonempty locator without content fails integrity; an empty locator requires reviewed B workspace recovery proof and is not silently accepted. No production fallback reads."
+    },
+    {
+      "object_type": "table",
+      "name": "skill_hub_tag_assignments",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skill_hub_tag_assignments.normalize.v1",
+      "verifier_id": "skill_hub.skill_hub_tag_assignments.verify.v1",
+      "depends_on": [
+        "table:skill_hub_tags",
+        "table:skills"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Preserve exact skill/tag membership using the shared mapping. Reject missing endpoints and duplicate associations; never broaden publication or tag permissions."
+    },
+    {
+      "object_type": "table",
+      "name": "skill_hub_tags",
+      "owner": "C",
+      "data_classification": "internal",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skill_hub_tags.normalize.v1",
+      "verifier_id": "skill_hub.skill_hub_tags.verify.v1",
+      "depends_on": [],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Preserve tag identity, key, order and admin_only restriction. Seeded tags must not be duplicated and administrator-only tags must not become publicly assignable."
+    },
+    {
+      "object_type": "table",
+      "name": "skill_package_materialize_jobs",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skill_package_materialize_jobs.normalize.v1",
+      "verifier_id": "skill_hub.skill_package_materialize_jobs.verify.v1",
+      "depends_on": [
+        "table:instances",
+        "table:skill_blobs",
+        "table:skills"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "B",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Preserve original rows in the encrypted backup. In the drill target, normalize pending/running to the existing cancelled state, preserve terminal history and timestamps, and map instance/skill/blob/workspace references. Never start backfill, claim or retry; unknown status fails normalization."
+    },
+    {
+      "object_type": "table",
+      "name": "skill_scan_results",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skill_scan_results.normalize.v1",
+      "verifier_id": "skill_hub.skill_scan_results.verify.v1",
+      "depends_on": [
+        "table:skill_blobs"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Preserve historical engine, risk, timestamps and blob references without treating them as fresh approval. Findings and summaries are encrypted payload only and redacted from evidence. Do not invoke the scanner or resume pending scan work."
+    },
+    {
+      "object_type": "table",
+      "name": "skill_versions",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skill_versions.normalize.v1",
+      "verifier_id": "skill_hub.skill_versions.verify.v1",
+      "depends_on": [
+        "table:skill_blobs",
+        "table:skills"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Preserve every version and its skill/blob mapping, including versions not currently selected. Manifest bytes remain encrypted payload and never enter unredacted evidence. Restoring metadata must not create packages, versions or scan work."
+    },
+    {
+      "object_type": "table",
+      "name": "skills",
+      "owner": "C",
+      "data_classification": "confidential",
+      "backup_strategy": "mysql_dump",
+      "restore_strategy": "normalize",
+      "excluded_reason": null,
+      "normalizer_id": "skill_hub.skills.normalize.v1",
+      "verifier_id": "skill_hub.skills.verify.v1",
+      "depends_on": [
+        "table:skill_scan_results",
+        "table:skill_versions",
+        "table:users"
+      ],
+      "decision_status": "owner_recorded",
+      "required_cross_reviewers": [
+        "A",
+        "B",
+        "D"
+      ],
+      "approved_cross_reviewers": [],
+      "redacted_explanation": "Preserve all skill versions, ownership, visibility and publication history through the shared identity map. Validate current-version ownership and scan-result references; never publish, install or scan during drill. Free text stays in encrypted payload only."
     }
   ]
 }

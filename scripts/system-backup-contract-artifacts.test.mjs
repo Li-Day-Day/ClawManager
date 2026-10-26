@@ -2538,7 +2538,7 @@ test('D-owned check authorities persist summaries without owner discovery or ver
   assert.doesNotMatch(migration, /\b(?:DROP TABLE|TRUNCATE|DELETE FROM)\b/i);
 });
 
-test('cross-owner request covers every pending owner decision and required D review without inventing approvals', () => {
+test('cross-owner request covers every pending owner decision and required D/C review without inventing approvals', () => {
   const inventory = parseJSON(join(root, 'docs/system-backup-restore-schema-inventory.json'));
   const decisions = parseJSON(join(contractDir, 'schema-registry-decisions.json'));
   for (const owner of ['A', 'B', 'C']) {
@@ -2549,10 +2549,17 @@ test('cross-owner request covers every pending owner decision and required D rev
     assert.deepEqual([...reviews.schema_policy_submissions[owner]].sort(), expected);
 
     const expectedDReviews = decisions.decisions
-      .filter((item) => item.required_cross_reviewers.includes(owner))
+      .filter((item) => item.owner === 'D' && item.required_cross_reviewers.includes(owner))
       .map((item) => `${item.object_type}:${item.name}`)
       .sort();
     assert.deepEqual([...reviews.d_owned_object_reviews[owner]].sort(), expectedDReviews);
+  }
+  for (const reviewer of ['A', 'B', 'D']) {
+    const expectedCReviews = decisions.decisions
+      .filter((item) => item.owner === 'C' && item.required_cross_reviewers.includes(reviewer))
+      .map((item) => `${item.object_type}:${item.name}`)
+      .sort();
+    assert.deepEqual([...reviews.c_owned_object_reviews[reviewer]].sort(), expectedCReviews);
   }
   assert.deepEqual(reviews.approval_evidence, []);
   assert.ok(reviews.public_contract_reviews.every((item) => item.approved_reviewers.length === 0));
