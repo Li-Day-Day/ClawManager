@@ -1,0 +1,62 @@
+{
+  "kind": "d_gc_full_lifecycle_requirements_and_design.v1",
+  "status": "local_implementation_required_not_actual_acceptance",
+  "original_requirements": "docs/evidence/d-download-gc-source-freeze-requirements-20261021.json",
+  "existing_scope": {
+    "old_42": "34 backup-lock prerequisites plus 8 historical owner lifecycle cases; existing actual receipts remain prerequisites only",
+    "full_33": "25 DDL cases plus eight profile/canary/capacity controls; fixed Full profile, synthetic protocol authority, not public group deletion",
+    "cold_7": "public Collect: commit, late_policy_denied, last_delete_reply_lost, commit_reply_lost, rollback_reply_lost, unlock_reply_lost, cancel_after_work",
+    "latest_A_receipt": "docs/evidence/a-gc-prepared-full-reviewed-20261026.json",
+    "actual_new_profile_or_group_cases": 0,
+    "reuse_rule": "Reuse fixture code, formal schema and raw historical evidence with its original scope; do not recount old42/full33/cold7 as these new public-owner cases."
+  },
+  "requirements": [
+    {"id":"privileges","reuse":"Full33 exact grant/observer controls and Full-only reservation INSERT","new":"Native TEMP denial under the unchanged Full role; no added grants; privileged controls remain exact UID-owned fixture operations","external":"Actual production account approval"},
+    {"id":"transaction_boundary","reuse":"cold7 whole-group commit/rollback and unknown outcomes","new":"kill/exit/cancel around the actual public owner, group/audit/nonce/tombstone/ledger oracle","external":null},
+    {"id":"table_and_foreign_fk","reuse":"Full33 table/FK DDL pending witness","new":"DDL on an unrelated owned canary while public Collect holds its original lock; exact original holder/waiter mapping through end","external":"Deployment-wide participants and lock order approval"},
+    {"id":"routine_ddl","reuse":"Full33 routine empty-to-new/create/alter/drop","new":"Retain its separate profile proof; do not claim lifecycle cases reran these statements","external":"Accurate actual SQL receipt"},
+    {"id":"trigger_event_view_ddl","reuse":"Full33 trigger/event/view controls","new":"Oversized view definition must be independently observed and reject before Begin; no digest-only absence claim","external":"Accurate actual SQL receipt"},
+    {"id":"account_and_dml_controls","reuse":"Full33 account DDL and legal canary DML","new":"All lifecycle operations retain original role and synthetic task domain; no permission widening","external":"Production authorization participants"},
+    {"id":"holder_lifecycle","reuse":"cold7 cancellation and commit/rollback/unlock uncertainty","new":"killed_after_delete, holder_exit_before_begin, cancel_before_begin, takeover_after_kill","external":null},
+    {"id":"pool_reuse","reuse":"old42 demonstrates a pooled physical session can persist state","new":"public owner ignores a contaminated shared Registry pool; explicit later calls use distinct fresh physical sessions","external":null},
+    {"id":"multiple_holders","reuse":"old42 proves shared-lock mechanics only","new":"two actual public owners retain distinct IDs; ending one must not release the other; unrelated holder remains held","external":null},
+    {"id":"temporary_and_session_state","reuse":"old42 temporary-shadow control only","new":"root temporary shadow in the same owned schema cannot affect the worker; wrong zone rejects before Begin; original lock wait is set to its bounded value","external":null},
+    {"id":"scale_and_wait","reuse":"production code has 128-page, 10000-row, 16384-field-byte and five-second observer bounds","new":"512 inert non-download operation rows, actual batch/actor EXPLAIN summaries, exact bounded batch page; oversized-definition rejection; no production-scale inference","external":"Real volume, optimizer/workload and global impact approval"},
+    {"id":"full_collector","reuse":"cold7 real public path and sealed cold group factory","new":"all new business cases use public Collect/CollectBatch and original same-transaction guards, never private canary in place of group work","external":"Canonical catalog/import schema and original authority before the missing real domain adapters"}
+  ],
+  "new_root": "TestDDownloadGCFullLifecycleMySQL",
+  "seed_root": "TestDDownloadGCFullLifecycleMySQLSeed",
+  "cases": [
+    "killed_after_delete",
+    "holder_exit_before_begin",
+    "cancel_before_begin",
+    "takeover_after_kill",
+    "two_public_holders",
+    "foreign_holder_retained",
+    "fresh_after_rollback",
+    "fresh_after_success",
+    "stale_registry_pool_ignored",
+    "temp_shadow_other_session",
+    "bad_timezone_rejected",
+    "lock_wait_restored_to_bound",
+    "public_ddl_pending",
+    "bounded_batch_plan",
+    "oversized_program_rejected"
+  ],
+  "invariants": [
+    "Do not overwrite historical receipts. The accepted cold tagged fixture has one explicit delta: pin only schema, excluding the parsed outer positive AUTO_INCREMENT allocator counter; unknown/comment/nested/duplicate formats reject. Add a separate lifecycle tagged file and independent phase/receiver, with exact delta review before new native compilation.",
+    "Pin namespace UID/server UUID/actual account/database/connection and mapped thread before kill, waiting, release or cleanup. Never kill an untracked connection.",
+    "Takeover waits for the original short fixture worker lease to expire naturally, changes claim/fence with a guarded CAS, and keeps the original operation deadline. New invocation report/context is distinct; historical group deadlines, bodies and proofs are never renewed.",
+    "Metadata-bound and queued-DDL cases may fail closed; record the exact outcome, never turn rejection into production readiness.",
+    "Keep 5-second capacity/observer bounds and original peer/operation deadlines; only native test harness budgets are longer.",
+    "Keep producer/catalog authority synthetic and explicit, real physical approval false, actual SQL count zero until a raw remote native result is independently accepted.",
+    "No Go or SSH while entry owns native execution. Write this design/independent harness first; add tagged source only after entry snapshot_verified and Go-start confirmation.",
+    "After entry terminal, run only tagged local seeds and Linux compilation for new test source; do not repeat complete ordinary packages without a new ordinary change or failure. Clean exact owned source/cache/tmp/binaries after the run."
+  ],
+  "source_write_window": {"historical_entry_owner":"7582937f2d644279917714206041d1df","historical_entry_session":98359,"historical_entry_terminal_failed_and_cleaned":true,"current_entry_owner_prefix":"ae7af","current_entry_session":18188,"current_entry_snapshot_verified_reported_by_A":true,"ordinary_source_changes_authorized":false,"Go_execution_requires_explicit_single_owner_handoff":true},
+  "production_approved":false,
+  "complete_real_domain_authority":false,
+  "twelve_groups_actually_accepted":false,
+  "dependencies_installed":false,
+  "actual_mysql_executed":false
+}

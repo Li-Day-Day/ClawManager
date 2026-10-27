@@ -1,0 +1,29 @@
+LOCAL_OWNER drill-detail-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-71541119ce3c4e208eb2120f908c4b1e
+LOCAL_SOURCE drill-detail-frozen=yes source_sha256=b267397adc7696879a17a32a39f2637ebaf046f00a92c285a3b92ed2ea9c6348 files=1629
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE admin-read-auth-local=yes full-task-query-local=no remote-full-schema-probe=yes real_mysql=not_run
+ok  	clawreef/internal/systembackupsecurity	1.695s
+ok  	clawreef/internal/systembackupread	6.776s
+ok  	command-line-arguments	1.641s
+VALIDATION_SCOPE drill-history-only=yes synthetic_cases=19 real_mysql=not_run production=no
+=== RUN   TestDDrillDetailHTTPSeed
+=== RUN   TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture
+=== RUN   TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture/drill_history_foreign_installation
+=== NAME  TestDDrillDetailHTTPSeed
+    system_backup_read_drill_history_mysql_test.go:79: PASS drill-history-http-seed synthetic_cases=19 actual_mysql=not_run actual_provider=no production_approval=no
+--- PASS: TestDDrillDetailHTTPSeed (0.00s)
+    --- PASS: TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture (0.00s)
+        --- PASS: TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture/drill_history_foreign_installation (0.00s)
+PASS
+ok  	command-line-arguments	3.170s
+=== RUN   TestAAdminReadMySQLSeed
+--- PASS: TestAAdminReadMySQLSeed (0.00s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	2.515s
+LOCAL_PASS admin-read-seed=yes real_mysql=not_run
+LOCAL_PASS a-admin-read-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=3ce5bf6f98ced191d44c64039cb5e7daab94406d97cca895e4df2c65dadec5b9 ddl_sha256=1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=b4e383d1c8e58353f2d069bc97886e684189fb1452413e434e4d782d4acb0130
+LOCAL_PASS d-admin-read-http-probe-compiled=yes http_binary_sha256=1606b3997598862e77cea8c7cf063943aa64198b5f5e77605bf8856e74dd3efe real_mysql=not_run
+CLEANED local-registration-build-cache=True
+LOCAL_PASS drill-detail-frozen-postcheck=yes freeze-only=False dependencies-installed=no remote-requested=False
+LOCAL_CLEANUP drill-detail-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-71541119ce3c4e208eb2120f908c4b1e removed=True

@@ -1,0 +1,108 @@
+{
+  "kind": "a_gate_budget_independent_source_review.v1",
+  "status": "source_reviewed_native_pending",
+  "source_ready": {
+    "path": "docs/evidence/d1-gate-budget-source-ready-20261027-r1.json",
+    "size": 6649,
+    "sha256": "ef51b4d5645f1e02c79a58413ead3459d445fb76e03f47ccd233f16389358509"
+  },
+  "candidate_source_sha256": "957f40f4cfd56bdad195828461621c2a032c160668267934817da8dbf4745890",
+  "changes": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+        "size": 11398,
+        "sha256": "579844eedb28b9546c8e6639be72cf91db43e6dd9d56b86eb098207ccfcb42eb"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-sql-candidate-20261027-r1.go.txt",
+        "size": 11398,
+        "sha256": "579844eedb28b9546c8e6639be72cf91db43e6dd9d56b86eb098207ccfcb42eb"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+        "size": 14620,
+        "sha256": "01b0277871eba1ee83db191d46a9f1008efe5c63012fa3fa6a2a7668a5a7b980"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-test-candidate-20261027-r1.go.txt",
+        "size": 14620,
+        "sha256": "01b0277871eba1ee83db191d46a9f1008efe5c63012fa3fa6a2a7668a5a7b980"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/metrics_http.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 6658,
+        "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-http-candidate-20261027-r1.go.txt",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      }
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "before": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22140,
+        "sha256": "1d1b63326ffd7490f5e702f0b3125f688a826454c42fec150814ceb14b23cfeb"
+      },
+      "after": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-main-candidate-20261027-r1.go.txt",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      }
+    }
+  ],
+  "reviewed_invariants": [
+    "installation matrix labels from original persisted installation",
+    "singleton original gate and matching active config in bounded read-only RR transaction",
+    "single SQL UTC clock with UTC-session validation",
+    "frozen acquisition and hold thresholds for active dimensions",
+    "expired lease never hides still acquiring/held/releasing gate",
+    "releasing retains original held_at",
+    "positive inactive thresholds prevent zero>=zero false firing",
+    "partial scan/read/close/commit/cancel failure never publishes metrics",
+    "buffered HTTP output and final leader/readiness checks",
+    "runtime controller command mount explicitly wired"
+  ],
+  "original_contract_sources": [
+    "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+    "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+    "backend/internal/systembackupcontroller/gate_initializer.go"
+  ],
+  "tests": [
+    "TestGateBudgetFrozenThresholdsAcrossConfigurationChanges",
+    "TestGateBudgetExpiredLeaseDoesNotHideOverdueGate",
+    "TestGateBudgetExactBoundariesAndOriginalMatrixLabels",
+    "TestGateBudgetRejectsUnknownOrContradictoryOriginalFacts",
+    "TestSQLGateBudgetReadsBoundedOriginalSourcesInOneUTCReadOnlySnapshot",
+    "TestSQLGateBudgetNeverPublishesMissingPartialFailedOrCanceledSnapshots",
+    "TestGateBudgetHTTPRejectsPartialMetricsAndSuppressesAfterLeaderLoss"
+  ],
+  "scripted_SQL_driver_is_not_actual_MySQL": true,
+  "Go_executed": false,
+  "SQL_executed": false,
+  "live_source_changed": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

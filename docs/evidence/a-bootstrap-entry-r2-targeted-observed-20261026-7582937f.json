@@ -1,0 +1,83 @@
+{
+  "kind": "a_bootstrap_entry_targeted_observation.v1",
+  "status": "named_A1_r2_roots_observed_inside_overall_failed_joint_target",
+  "native_receipt": "docs/evidence/d-bootstrap-entry-native-7582937f2d644279917714206041d1df.json",
+  "native_receipt_sha256": "8aaabc8072c9e541bf9e9b9a34f4ce40c4ce269a43b41049f933ed455ec4c01a",
+  "targeted_log": "docs/evidence/d-bootstrap-entry-native-7582937f2d644279917714206041d1df.targeted.jsonl",
+  "targeted_log_sha256": "dc40a385c609818c454fa8dc7dd71b309b5c2ff229d74907cfe12283b1828ab9",
+  "A1_readiness": "docs/evidence/a-bootstrap-entry-source-ready-20261026-r2.json",
+  "A1_readiness_sha256": "fb9ee1dbd66068fcd5214ecff17aa0f307d780d7eabace3b58853b22a2f593b4",
+  "A1_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 18777,
+      "sha256": "0dd61b6dafb78ebc9bc755ef3087bb52fd61b69cc71e040f848ded443c041cc8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates_test.go",
+      "size": 18361,
+      "sha256": "c7c43a905c41693b1eb8591d9e4646af2fca3db9ea2e16cba39d9cc0c0395fce"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "size": 17202,
+      "sha256": "f68bbb98aff199fdb1a54e1ed598d4d0f2dcfe52bc635b78e0cdd6b356a26773"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction_test.go",
+      "size": 13280,
+      "sha256": "c7d15ceadf19db0c0958efa425634e5a08deadc9b4543df4a4098faa5674b74e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt.go",
+      "size": 5752,
+      "sha256": "42cf8b3bf73bd93462308e2d14eb35d1ecf11f7fca0af4b0f64c1a6be1325436"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt_test.go",
+      "size": 7575,
+      "sha256": "35ac4fda494698f72f14bab97b74e09297820fc48257ab48c286dc951bcf918e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_inline_gate_test.go",
+      "size": 6114,
+      "sha256": "1c8374f0eff545913749b2c23117eb3556a62a6406314172152abdf1f15bfe5d"
+    }
+  ],
+  "A1_roots": [
+    "TestBootstrapCandidateAttemptPreparesBeforeDatabaseAndDoesNotRenew",
+    "TestBootstrapCandidateAttemptPreparationFailureNeverNeedsDatabase",
+    "TestBootstrapCandidateAttemptCancellationAndConcurrentCopies",
+    "TestBootstrapCandidateAttemptOpenerFailureClosesDatabaseAndSealsCopies",
+    "TestBootstrapInlineCannotInitializeAfterC1StorageExists",
+    "TestBootstrapInlineExactHistoryMayReadWithoutDomainButNeverWriteAgain",
+    "TestBootstrapInlineLateAuthorizationAndFixedChecksRollback",
+    "TestBootstrapInlineUsesFreshSQLTimeAfterInstallationWait",
+    "TestBootstrapInlinePreparedKeepsOriginalBoundedContext"
+  ],
+  "A1_pass_events": 21,
+  "joint_target_exit": 1,
+  "failed_joint_roots": [
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "test": "TestBootstrapInlineDomainFenceLegacyAndHistoricalBranches"
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "test": "TestBootstrapInlineDomainFenceRejectsPartialUnknownAndDrift"
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "test": "TestBootstrapInlineDomainFenceBindingAndRedaction"
+    }
+  ],
+  "initial_snapshot_verified": true,
+  "final_snapshot_postcheck_completed": false,
+  "owner_absent": true,
+  "full_package_gate_completed": false,
+  "Linux_gate_completed": false,
+  "actual_SQL": false,
+  "baseline_registration_permitted": false,
+  "production_approved": false,
+  "goal_complete": false
+}

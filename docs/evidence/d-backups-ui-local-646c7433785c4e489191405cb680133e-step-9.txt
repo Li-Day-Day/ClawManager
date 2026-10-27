@@ -1,0 +1,46 @@
+✔ live read polling backs off errors and bounds refresh intervals (6.0962ms)
+✔ live polling avoids overlapping reads, pauses hidden tabs and discards stopped results (5.0601ms)
+✔ preview read projections conform to the existing draft JSON schemas (58.6159ms)
+✔ default source never reports fixture data as an installed system (1.6966ms)
+✔ Admin read client binds pagination and resource IDs without fixture fallback (80.7818ms)
+✔ Admin read client rejects fixture responses and malformed list envelopes (2.6821ms)
+✔ Admin read client preserves cancellation and never returns a late response (0.9033ms)
+✔ Admin read client addresses versioned config and bounded task activity (3.2577ms)
+✔ Admin config history read checks closed resources and descending versions (44.2396ms)
+✔ Admin operation read requires an exact redacted operation (6.9583ms)
+✔ Admin operation list checks every item and pagination boundary (4.3501ms)
+✔ Admin activity read rejects unreviewed event and log fields (5.7696ms)
+✔ Admin overview read enforces closed state and measured counts (4.127ms)
+✔ Admin read client accepts matching task and activity projections (3.905ms)
+✔ task lists and task details keep their distinct v12 wire shapes (25.5649ms)
+✔ all four Admin detail reads reject raw owner and execution fields (10.2671ms)
+✔ Admin read client rejects mismatched resources and malformed cursor envelopes (5.7944ms)
+✔ Admin read client rejects wrong overview, config and activity identities (2.3344ms)
+✔ Admin read client rejects an abort during JSON decoding (0.6475ms)
+✔ task page collection follows opaque cursors and preserves one installation (1.2381ms)
+✔ on-demand task pages fetch one page at a time and reject unsafe continuations (1.7208ms)
+✔ task page collection refuses cursor loops, duplicates, mixed installations and incomplete budgets (1.3464ms)
+✔ task page collection stops after cancellation without returning partial rows (0.7655ms)
+✔ live read source assembles only authenticated read resources (1.352ms)
+✔ live read source rejects config drift during task page reads (0.9366ms)
+✔ live source loads later pages only when requested (5.8878ms)
+✔ live source rejects a later page after config changes (8.0926ms)
+✔ live reads require an explicit build-time opt-in (0.3292ms)
+✔ live read source keeps fixture and wholly unavailable resources unavailable (1.6471ms)
+✔ live read source rejects changing config and cross-installation task pages (3.835ms)
+✔ live read source propagates cancellation without a stale result (0.725ms)
+✔ preview failures and unsupported/loading states do not fall back to successful data (0.559ms)
+✔ execution success does not imply backup eligibility or recovery readiness (0.7589ms)
+✔ unknown finalization is neither a readable artifact nor a registered recovery point (0.7434ms)
+✔ empty and disabled states retain their distinct semantics (0.7311ms)
+✔ expired log preview retains durable events and refresh produces isolated fixtures (0.923ms)
+✔ backup filters combine ID/matrix search with exact execution status (2.9696ms)
+✔ unknown byte count is not displayed as a measured zero (50.5176ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 410.9332

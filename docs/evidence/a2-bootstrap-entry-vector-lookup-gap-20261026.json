@@ -1,0 +1,141 @@
+{
+  "kind": "a2_bootstrap_entry_vector_lookup_gap.v1",
+  "status": "failed_fixture_lookup_diagnosed_fresh_source_and_native_required",
+  "run": "7582937f2d644279917714206041d1df",
+  "original_source_review_withdrawn": true,
+  "withdrawn_review": {
+    "path": "docs/evidence/a2-bootstrap-entry-source-reviewed-20261026.json",
+    "size": 13221,
+    "sha256": "596f8f1c497a3c2864bb5930bda27d5187688fc6d6b818d51ef8e28d40aa7b45"
+  },
+  "reason": "The earlier source-only review checked case-name correspondence but omitted resolving fixture group/IDs against the actual vector catalogue. Receiver33 synthetic passes do not prove Go fixture loading.",
+  "native_failure": {
+    "receipt": {
+      "path": "docs/evidence/d-bootstrap-entry-native-7582937f2d644279917714206041d1df.json",
+      "size": 342833,
+      "sha256": "8aaabc8072c9e541bf9e9b9a34f4ce40c4ce269a43b41049f933ed455ec4c01a"
+    },
+    "targeted_log": {
+      "path": "docs/evidence/d-bootstrap-entry-native-7582937f2d644279917714206041d1df.targeted.jsonl",
+      "size": 168432,
+      "sha256": "dc40a385c609818c454fa8dc7dd71b309b5c2ff229d74907cfe12283b1828ab9"
+    },
+    "failed_roots": [
+      {
+        "Time": "2026-10-26T16:02:30.1736882+08:00",
+        "Action": "fail",
+        "Package": "clawreef/internal/systembackupproducer",
+        "Test": "TestBootstrapInlineDomainFenceLegacyAndHistoricalBranches",
+        "Elapsed": 0.32
+      },
+      {
+        "Time": "2026-10-26T16:02:30.6523725+08:00",
+        "Action": "fail",
+        "Package": "clawreef/internal/systembackupproducer",
+        "Test": "TestBootstrapInlineDomainFenceRejectsPartialUnknownAndDrift",
+        "Elapsed": 0.48
+      },
+      {
+        "Time": "2026-10-26T16:02:30.70512+08:00",
+        "Action": "fail",
+        "Package": "clawreef/internal/systembackupproducer",
+        "Test": "TestBootstrapInlineDomainFenceBindingAndRedaction",
+        "Elapsed": 0.05
+      }
+    ],
+    "targeted_test_passes": 133,
+    "full_gate_started": false,
+    "cleaned_recorded": true
+  },
+  "catalog": {
+    "input": {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "size": 141814,
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    "groups": [
+      "kind",
+      "contract_version",
+      "revision",
+      "status",
+      "synthetic",
+      "production_authorization",
+      "encoding",
+      "positive",
+      "commands",
+      "records",
+      "negative",
+      "runtime"
+    ],
+    "positive_ids": [
+      "unconfigured_artifact",
+      "unconfigured_catalog",
+      "unconfigured_evidence",
+      "unconfigured_kms",
+      "unconfigured_secret",
+      "unconfigured_signing",
+      "disabled_artifact",
+      "disabled_catalog",
+      "disabled_evidence",
+      "disabled_kms",
+      "disabled_secret",
+      "disabled_signing",
+      "enabled_artifact",
+      "enabled_catalog",
+      "enabled_evidence",
+      "enabled_kms",
+      "enabled_secret",
+      "enabled_signing"
+    ],
+    "results_group_exists": false,
+    "configured_artifact_exists": false,
+    "disabled_artifact_exists": true
+  },
+  "findings": [
+    {
+      "priority": 2,
+      "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+      "frozen_source_pin": {
+        "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+        "size": 9304,
+        "sha256": "b89d371554e2e3d11c335903bd46714a0fe75445950d1a0708adc665e93bee8d"
+      },
+      "observed_call": "resultFixture(t, \"configured_artifact\")",
+      "required_fix": "Use the existing positive disabled_artifact vector. Do not introduce an alias or weaken the production fence.",
+      "native_failure_observed": true
+    },
+    {
+      "priority": 2,
+      "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+      "frozen_source_pin": {
+        "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+        "size": 21773,
+        "sha256": "fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c"
+      },
+      "observed_call": "dIntegrationVector(t, \"results\", name), with configured name=\"configured_artifact\"",
+      "required_fix": "Use the original positive group and existing disabled_artifact configured admission. Reissue D1 source-ready pins before a fresh accurate gate.",
+      "native_failure_observed": false,
+      "failure_is_source_inference_for_unexecuted_seed": true
+    }
+  ],
+  "current_source_observation": {
+    "entry": {
+      "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+      "size": 21772,
+      "sha256": "ba5414ace5a76d653c4865ad63738aae72612cb7c738da4fbb647471a449a956"
+    },
+    "entry_still_uses_results_group": false,
+    "entry_still_uses_configured_artifact": false,
+    "producer": {
+      "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+      "size": 9304,
+      "sha256": "b89d371554e2e3d11c335903bd46714a0fe75445950d1a0708adc665e93bee8d"
+    },
+    "producer_still_uses_configured_artifact": true
+  },
+  "owner_files_modified_by_A2": false,
+  "Go_executed_by_A2": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false
+}

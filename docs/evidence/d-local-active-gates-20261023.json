@@ -1,0 +1,50 @@
+{
+  "kind": "d_local_active_gate_observation.v1",
+  "observed_at": "2026-10-23T17:12:01.5135578+08:00",
+  "is_acceptance": false,
+  "dependencies_installed": false,
+  "drill": {
+    "session": 43897,
+    "console": "docs/evidence/d-drill-http-local-final-console-20261023-r2.txt",
+    "source": "docs/evidence/d-drill-http-local-final-r2-20261023-144353.json",
+    "status": "terminal_exit_zero_reviewed_local_preparation_only_owner_absent",
+    "native_exit": 0
+  },
+  "resources": {
+    "session": 15431,
+    "console": "docs/evidence/d-resources-current-final-console-20261023.txt",
+    "status": "terminal_exit_zero_71_roots_843_events_three_seeds_linux_builds_owner_absent",
+    "source": "docs/evidence/d-resources-mysql-20261023-151943-85007e0b-source.json",
+    "expected_receipt": "docs/evidence/d-resources-mysql-20261023-151943-85007e0b.json",
+    "seed_names": [
+      "TestAResourcesWriteFKMySQLSeed",
+      "TestDResourcesReadbackMySQLSeed",
+      "TestDResourcesWriteMySQLSeed"
+    ],
+    "native_exit": 0
+  },
+  "fk_receiver_compatibility": {
+    "session": 39373,
+    "expected_tests": 27,
+    "log": "docs/evidence/d-a-fk-receiver-final-tests-20261023-r2.txt",
+    "native_exit": 0,
+    "status": "terminal_passed_current_27_case_receiver"
+  },
+  "coordination": "docs/evidence/a-d-local-freeze-20261023.json",
+  "dispatch_receipt": "docs/evidence/d-local-dispatch-830e5d518bcd4ef188ac12c22c3727cd.json",
+  "strict_results": "docs/evidence/d-local-final-strict-20261023-r2.json",
+  "pending": "Full current 15-stage D gate remains peer-owned and unaccepted: session88351/source53f39288. Diagnostic seven roots/28 test pass events completed without fail/skip; full evidence Go47940 observed live. Readback12/writer9 accepted; D resource/drill remaining operator suites FK10/drill19. A owner11 has additional current local baseline prerequisites. Nonce/CA exact r2 peer finding closed (d-a-nonce-ca-reviewed-20261023-r2.json).",
+  "gc_private_candidate": {
+    "status": "receipt_test_build_cleanup_checked_private_only",
+    "receipt": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd.json",
+    "roots": 4,
+    "pass_events": 33,
+    "linux_build_exit": 0,
+    "owner_absent": true,
+    "current_request": "docs/evidence/d-gc-freeze-protocol-review-request-20261023-r4.json",
+    "collector_wired": false,
+    "actual_mysql": false
+  },
+  "writer_actual_independent_review": "docs/evidence/d-resources-writer-independent-recheck-20261023.json",
+  "current_nonce_CA_review": "docs/evidence/d-a-nonce-ca-reviewed-20261023-r2.json"
+}

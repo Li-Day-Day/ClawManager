@@ -1,0 +1,52 @@
+{
+  "kind": "a2_reference_capability_supplement_source_ready.v2",
+  "status": "fixed_r2_verify_only_passed_prior_whole_window_terminal",
+  "supersedes_preparation": "docs/evidence/a2-reference-capability-supplement-source-ready-20261027-r1.json",
+  "files": [
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-20261027-r2.ps1",
+      "size": 19317,
+      "sha256": "376069ed7ca00d96a43a1c3f6237b3b6f84de5d313afd9726d1579d5a29cc5fa"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-review-20261027-r2.mjs",
+      "size": 11491,
+      "sha256": "0548c99c73456eccab36e721f9ad5d616f374a0451347e0dca144973a68f91a0"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-promote-20261027.mjs",
+      "size": 4589,
+      "sha256": "cdd5f9ef17552b3b93dfd14612c7468f075692243e5a9c43ce47d29bb7bb7f0c"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-9fc0e65987a549b7b28d6cc33510c0f2.json",
+      "size": 695264,
+      "sha256": "834a421e1c10287a6917b658fc7e168580c487ea9ce6fda66b1ef44f92b27116"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+      "size": 345028,
+      "sha256": "8394b5383e885585368c930898a91acca58b71afe596202295e305ea73fd160a"
+    }
+  ],
+  "r2_delta": [
+    "Every Go invocation additionally requires exact prior d846 terminal receipt and cleaned flag, with owner independently absent",
+    "Own cancelled pre-Go cache may be copied read-only; durable cache copy checkpoint permits separate old owner cleanup",
+    "Receiver changes only its own/driver artifact paths; test/source/seed/Linux acceptance unchanged"
+  ],
+  "verify_only": {
+    "receipt": "docs/evidence/a2-reference-capability-supplement-9fc0e65987a549b7b28d6cc33510c0f2.json",
+    "terminal_exit": 0,
+    "Go_started": false,
+    "snapshot_postcheck": true,
+    "input_postcheck": true,
+    "cleanup": true,
+    "owner_independently_absent": true
+  },
+  "prior_failed_and_cancelled_receipts_preserved": true,
+  "ordinary_windows_test_reuse": "Exact independently received old/fixed/full5 only",
+  "native_supplement_accepted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false
+}

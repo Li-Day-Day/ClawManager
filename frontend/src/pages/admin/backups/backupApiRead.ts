@@ -503,6 +503,10 @@ function validTaskListItem(kind: BackupTaskKind, value: unknown): boolean {
     && ['heartbeat_at', 'next_reconcile_at', 'started_at', 'finished_at'].every((field) =>
       value[field] === null || validDateTime(value[field]));
 }
+// Creation responses use the same existing closed task DTO as list reads.
+export function isBackupTaskListResource(kind: BackupTaskKind, value: unknown): value is SystemBackupTask {
+  return Object.hasOwn(taskIdentities, kind) && validTaskListItem(kind, value);
+}
 function taskStatuses(kind: BackupTaskKind): readonly string[] {
   return kind === 'backups' ? backupStatuses : kind === 'drills' ? drillStatuses : simpleTaskStatuses;
 }

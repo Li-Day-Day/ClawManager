@@ -1,0 +1,58 @@
+{
+  "kind": "a_owner_profile_supplement.v1",
+  "error": "Detached original seed failed",
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-69746f3c856a4016991af4bcb0a28ce5-source.json",
+  "expected_full_package_source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-source.json",
+  "expected_full_package_source_sha256": "ede12e280a902b194bb729727d8b3dac8c13d38a830eb3605a25a33d10ee2e7e",
+  "steps": [
+    {
+      "sha256": "6d106f824544d822d4900c0875d3c362029485870ed00aae95acef2eb96fa37e",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-count=1",
+        "-timeout=180s",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-69746f3c856a4016991af4bcb0a28ce5-step-0.txt"
+    },
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-69746f3c856a4016991af4bcb0a28ce5\\binary\\owner-seeds.exe",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-69746f3c856a4016991af4bcb0a28ce5-step-1.txt"
+    }
+  ],
+  "detached_log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-69746f3c856a4016991af4bcb0a28ce5-detached.txt",
+  "detached_exit": 2,
+  "binaries": [],
+  "frozen_postcheck": false,
+  "ordinary_source_identical_before_tests": true,
+  "copied_existing_cache_files": 2910,
+  "peer_cache_read_only": true,
+  "test_result_reused": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-69746f3c856a4016991af4bcb0a28ce5",
+  "owner_removed": true,
+  "runner_sha256": "8ea9f8bc9bcbb7cb132add0381731fdde27c71f5cc42db314807350aa9f97a80",
+  "full_package_gate_approved": false,
+  "actual_mysql": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

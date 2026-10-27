@@ -1,0 +1,69 @@
+{
+  "kind": "d_resources_mysql_preparation.v1",
+  "error": null,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=180s",
+        "-v",
+        "./internal/systembackupresources"
+      ],
+      "exit_code": 0,
+      "platform": "windows"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDResourcesReadbackMySQLSeed$",
+        "-count=1",
+        "-v",
+        "./internal/systembackupresources"
+      ],
+      "exit_code": 0,
+      "platform": "windows"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a756a2bb87e34e3eb8ca1a3cc3f7215e\\bundle\\d-resources-readback.test",
+        "./internal/systembackupresources"
+      ],
+      "exit_code": 0,
+      "platform": "linux"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a756a2bb87e34e3eb8ca1a3cc3f7215e\\bundle\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "platform": "linux"
+    }
+  ],
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-20261023-101821-a756a2bb-source.json",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a756a2bb87e34e3eb8ca1a3cc3f7215e",
+  "owner_removed": true,
+  "remote_requested": false,
+  "remote_scratch_removed": false,
+  "binary_sha256": "9b38df3079a309596a56b9be0ab0e54603ce4744021679bd09595ff6931b7578",
+  "migration_binary_sha256": "b3dcd728df67cd67ec8840d2985553d238c81865b7ef95fd97f9464870bfedcf",
+  "inputs_sha256": "b129488961375a7e523a2265d9d22c98dd0c0c664da2916403ee3e79a215f302",
+  "dependencies_installed": false,
+  "synthetic_proofs": true,
+  "production_approved": false
+}

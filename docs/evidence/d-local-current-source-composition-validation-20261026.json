@@ -1,0 +1,44 @@
+{
+  "kind": "d_current_composition_receiver_validation.v1",
+  "source": {
+    "path": "docs/evidence/d-local-current-source-composition-20261026.mjs",
+    "sha256": "28c14fe2aec190782730a8357641e7e383e80cc5cb72a4439158f9c35eb15615"
+  },
+  "tests": {
+    "path": "docs/evidence/d-local-current-source-composition-20261026.test.mjs",
+    "sha256": "3110b49a0b5f70f6b6e8721c6befb63e359d48eb0b0192e19406b54ca4e62e3d"
+  },
+  "failed_attempt": {
+    "log": {
+      "path": "docs/evidence/d-local-current-source-composition-tests-20261026.txt",
+      "sha256": "03f56fad88692788ffb47685454610259fee7782ec0e714077f62d78a4b8d779"
+    },
+    "exit_code": 1,
+    "classification": "Node default test isolation child spawn EPERM; no assertion executed; preserved"
+  },
+  "passed_attempt": {
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "docs/evidence/d-local-current-source-composition-20261026.test.mjs"
+    ],
+    "log": {
+      "path": "docs/evidence/d-local-current-source-composition-tests-20261026-r2.txt",
+      "sha256": "5a55c790fc5a878341a6e36d0f1b9c0ef12fef46281a1d5912dedfd4143d0514"
+    },
+    "exit_code": 0,
+    "tests": 9,
+    "failures": 0,
+    "skips": 0
+  },
+  "native_composition_write_exit": 0,
+  "native_composition_check_exit": 0,
+  "result": {
+    "path": "docs/evidence/d-local-current-source-composed-20261026.json",
+    "sha256": "e5853c2ef9e668955d22620ca5a7f7493c89672d7fbe5356aa802255e45b821b"
+  },
+  "dependencies_installed": false,
+  "Go_tests_or_builds_run": false,
+  "scratch_or_build_artifacts_created": false
+}

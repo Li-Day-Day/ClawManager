@@ -1,0 +1,119 @@
+{
+  "kind": "a_owner_pre_thin_native_scope_proof.v1",
+  "status": "accepted_exact_scope_for_local_supplement",
+  "profile": "api_d_task_server_cli",
+  "source_role": "target",
+  "native_source_stability_verified": true,
+  "cleanup_verified": true,
+  "actual_sql": false,
+  "production_authorized": false,
+  "native_receipts": [
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.json",
+      "size": 245407,
+      "sha256": "5081394d888583df309b8f8bc3adac4acecd7eceab450ba41400a22e69bf00b1"
+    }
+  ],
+  "native_logs": [
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.task-http.txt",
+      "size": 2669,
+      "sha256": "2d1407209bd04694bedc3e7e7a10f1a136c9794e6e03349301e1c9d6d3e9421c"
+    },
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.server-composition.txt",
+      "size": 625,
+      "sha256": "d03ec9510040c0a4dddb166d086b37d76e6fc4ea18bdbf89383be55d80f249a8"
+    },
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.bootstrap-requirements.txt",
+      "size": 506,
+      "sha256": "12028034c9be6f3592dc07358c0fc9449c39048642f917f6d60b597317ebd357"
+    }
+  ],
+  "native_driver": {
+    "path": "scripts/system-backup-d-api-validation.ps1",
+    "size": 9292,
+    "sha256": "9660b0ceeb1d5d2adeb2e8a3b2dc5415ce82fd5499d5a5f6e54f08d5321ebc22"
+  },
+  "graph_parser": {
+    "path": "docs/evidence/a2-reference-capability-go-scope-20261026.mjs",
+    "size": 5752,
+    "sha256": "8f2a7b31fb7339802afe3196078c50cd5438806ce676a9c1430bcf5b264b0024"
+  },
+  "review_validator": {
+    "path": "docs/evidence/a-d-api-native-scope-review-20261027.mjs",
+    "size": 11110,
+    "sha256": "3107c769feae985c0395594111ed81c28a9390955324637d2170499617748ed1"
+  },
+  "stages": [
+    {
+      "stage": "task-http",
+      "log": {
+        "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.task-http.txt",
+        "size": 2669,
+        "sha256": "2d1407209bd04694bedc3e7e7a10f1a136c9794e6e03349301e1c9d6d3e9421c"
+      },
+      "package": "clawreef/internal/systembackupapi",
+      "roots": [
+        "TestSQLTaskSubmissionOwnsCommitRollbackAndCapabilityLifetime",
+        "TestTaskHTTPCreateReplayWorkerAndDetailModel",
+        "TestTaskHTTPMappingsMatchFrozenPolicy",
+        "TestTaskHTTPRejectsBeforeDispatchAndNeverLeaksErrors",
+        "TestTaskSQLCapabilityRejectsTransactionControlAndLatchesFailure"
+      ],
+      "passed_events": 16
+    },
+    {
+      "stage": "server-composition",
+      "log": {
+        "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.server-composition.txt",
+        "size": 625,
+        "sha256": "d03ec9510040c0a4dddb166d086b37d76e6fc4ea18bdbf89383be55d80f249a8"
+      },
+      "package": "clawreef/cmd/server",
+      "roots": [
+        "TestBackupAPITLSUsesActualHandshakeAndRejectsPartialInputs",
+        "TestBackupTaskRouteCompositionFailsClosedWithoutApplication",
+        "TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization",
+        "TestLiveBackupReadRequiresPinnedAuthorityAndSessions"
+      ],
+      "passed_events": 4
+    },
+    {
+      "stage": "bootstrap-requirements",
+      "log": {
+        "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.bootstrap-requirements.txt",
+        "size": 506,
+        "sha256": "12028034c9be6f3592dc07358c0fc9449c39048642f917f6d60b597317ebd357"
+      },
+      "package": "clawreef/cmd/system-backup-bootstrap",
+      "roots": [
+        "TestBootstrapMaterialCompositionCannotBypassMissingAuthorityOrOwners",
+        "TestCommandRejectsMixedModesBypassFlagsAndUnpinnedFiles",
+        "TestRequirementsReportDoesNotPretendOwnersAreDelivered"
+      ],
+      "passed_events": 3
+    }
+  ],
+  "dependency_closure_review_path": "docs/evidence/a-d-api-dependency-closure-reviewed-20261027-r1.json",
+  "accepted_scope": [
+    "API complete five roots",
+    "server transport/composition four selected roots"
+  ],
+  "excluded_scope": [
+    "full server regression",
+    "CLI current changed dependency closure",
+    "Linux binary build",
+    "production TaskWriter/TaskDetails",
+    "real SQL/provider/executor",
+    "whole current baseline"
+  ],
+  "closeout": {
+    "path": "docs/evidence/d-api-readiness-closeout-20261026.json",
+    "size": 8225,
+    "sha256": "56ff2e8125c7ece1e91f0aeff687403eb16959af20922cb794c7d8368b7a3296"
+  },
+  "current_baseline_ready": false,
+  "pre_thin_ready": false
+}

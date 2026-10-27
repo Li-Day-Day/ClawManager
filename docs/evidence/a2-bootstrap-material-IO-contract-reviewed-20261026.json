@@ -1,0 +1,84 @@
+{
+  "kind": "a2_bootstrap_material_IO_contract_source_review.v1",
+  "status": "stage_constraint_citation_not_blanket_file_ban_or_adapter_acceptance",
+  "primary_citations": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "line": 120,
+      "json_location": "lock_layers[id=L10].objects",
+      "quote": "fresh DB UTC check, conditional CAS, repeat UTC check after final write, commit; no new business locks or external I/O"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "line": 347,
+      "json_location": "methods[name=FinalGuard].effect",
+      "quote": "After all callbacks/audits/writes: fresh DB UTC, all locked authority/CAS/claims/ref/retention, report age<=5s and not future. Any final conditional write must have exact RowsAffected, then fresh UTC recheck. Rollback on failure. No network/file/audit/new lock after guard."
+    }
+  ],
+  "new_proposal_citation": {
+    "path": "docs/system-backup-d-bootstrap-candidate-consumption-proposal-20261026.md",
+    "line": 43,
+    "quote": "L10: 只写前面已经锁定的 keys，复查原事实/预期后态、SQL 时钟和原 context，然后由 A 唯一 commit；无新范围、provider/network/file 观察或新事务。",
+    "classification": "new bootstrap proposal stage requirement, not an earlier whole-transaction local-file ban"
+  },
+  "legacy_citation": {
+    "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+    "line": 12,
+    "meaning": "Original BootstrapResourceValidator requires provider/network preparation before locks; Recheck describes local immutable snapshots/transactional state and explicitly forbids network/commit. It does not itself state a whole-transaction local-file ban.",
+    "actual_CA_late": "ca.go check.Recheck calls v.files to refuse removed/changed descriptor/CA",
+    "actual_nonce_late": "nonce.go check.Recheck calls validateKey on every mapped active/retained key to refuse descriptor/material changes"
+  },
+  "findings": [
+    "The inspected original machine contracts expressly prohibit external I/O at L10 and all network/file/audit/new locks after FinalGuard. They do not expressly provide a general local-file exception.",
+    "No equally explicit whole-transaction local-file ban was found in these original machine-contract passages. New bootstrap interface comments/proposal restrictions must not be presented as pre-existing broader contract.",
+    "Neither absence of a broad ban nor a memory snapshot proves late changed/deleted material should be accepted. The original current-material/ref/lifecycle guarantees still need concrete evidence.",
+    "A1/D2 should explicitly locate resource Recheck relative to the fixed FinalGuard: either review bounded original local-file validation before final independent guard with all original deadlines/context and no work afterward, or supply a concrete original immutable-version/current revocation source. Do not silently delete old validation or declare an unreviewed local-I/O exception.",
+    "Nonce global config prefix remains A1 L1, retained nonce range A2 L5, final readback must acquire no new earlier business locks."
+  ],
+  "CA_snapshot_draft": "withdrawn_before_tests_or_wiring",
+  "adapter_accepted": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "source_pins": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "size": 18415,
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "size": 16609,
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "docs/system-backup-d-bootstrap-candidate-consumption-proposal-20261026.md",
+      "size": 10777,
+      "sha256": "009b9bc51962f029094c4aca6d9b3302f150f7970f8e9514a1f6ddbba979a302"
+    },
+    {
+      "path": "docs/system-backup-a-bootstrap-consumer-contract-20261026.md",
+      "size": 7747,
+      "sha256": "1fdd387884bdb2b0d5da4429c7cac120dad5c892486c805872b6dfadabb131db"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 16041,
+      "sha256": "268af71aee9412c360bf860ee2cb09f809976abfeba9554229cf76005f12cbff"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "size": 7037,
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "size": 9634,
+      "sha256": "46e695c7c0b9efa819f6f60f7fba52587ce74d1348912f1c57fe9782126e57f1"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "size": 10529,
+      "sha256": "780be82610a39d306577537a3981d1a3444c9fea82e412621b078aed36d3407c"
+    }
+  ]
+}

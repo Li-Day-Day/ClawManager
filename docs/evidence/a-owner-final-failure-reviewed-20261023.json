@@ -1,0 +1,59 @@
+{
+  "kind": "a_owner_final_local_failure_review.v1",
+  "status": "terminal_failed_original_frozen_owner_gate_not_a_baseline",
+  "native_outer_exit": 1,
+  "source_sha256": "78017e480f5580a22592c8a9d8445467bd579074411df80dcafe78d05207622e",
+  "source_files": 1617,
+  "security_package": {
+    "passed": true,
+    "elapsed_seconds": 730.708
+  },
+  "evidence_package": {
+    "passed": false,
+    "elapsed_seconds": 2717.161,
+    "timeout_seconds": 2700
+  },
+  "failed_tests": [
+    "TestADownloadNativeBufferedOutputKeepsOriginalDeadline",
+    "TestADownloadNativeBufferedOutputKeepsOriginalDeadline/http1/result_crosses_deadline",
+    "TestAdmittedDownloadHTTPInterruptionRevocationAndResultFailure",
+    "TestAdmittedDownloadHTTPInterruptionRevocationAndResultFailure/result_failure",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/complete"
+  ],
+  "failure_details": [
+    "admitted HTTP result_failure returned 503 before expected response",
+    "http1 result_crosses_deadline did not observe the native original deadline",
+    "producer independent result rejected capacity observation",
+    "evidence timed out during Windows test temporary-file cleanup"
+  ],
+  "tagged_owner_seeds_executed": false,
+  "detached_owner_seeds_executed": false,
+  "linux_owner_probe_built": false,
+  "migration_runner_built": false,
+  "outer_owner_independently_absent": true,
+  "inner_cache_cleanup_reported": true,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "current_baseline_registered": false,
+  "current_collect_source_covered": false,
+  "test_failure_root_cause": "under_investigation_not_classified_as_safe_retry",
+  "evidence": [
+    {
+      "path": "docs/evidence/a-owner-final-full-local-20261023-144309.txt",
+      "size": 694381,
+      "sha256": "73fd51e7972d14f554804a809094b26d950d6b3b1de78f0112f0ef42356aa530"
+    },
+    {
+      "path": "docs/evidence/a-owner-final-full-local-20261023-144309-source.json",
+      "size": 317842,
+      "sha256": "d44a6832dcb68d6bf9671a3398139b5d0b4ab03a9c7cd5e8db16cca12d9a2b51"
+    },
+    {
+      "path": "docs/evidence/a-owner-final-failure-review-20261023.mjs",
+      "size": 4081,
+      "sha256": "7e17d3168edf8f1510db318174dff24978346f3cfd4bcee3ab9e69514c72a8bb"
+    }
+  ]
+}

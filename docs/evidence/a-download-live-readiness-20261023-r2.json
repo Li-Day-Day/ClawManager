@@ -1,0 +1,134 @@
+{
+  "kind": "a_download_live_readiness.v1",
+  "observed_at": "2026-10-23T04:01:01.588Z",
+  "execution_mode": "local_only_by_user_choice",
+  "user_choice": "暂时只推进本地工作",
+  "scope": "task ownership, permissions, real login, MFA, download and audit",
+  "local_preparation": {
+    "status": "complete_for_exact_reviewed_sources",
+    "full_gate": {
+      "acceptance": "docs/evidence/a-owner-gc-full-accepted-20261023.json",
+      "roots": 636,
+      "pass_events": 5138,
+      "prior_pass_events_preserved": 5105,
+      "new_GC_pass_events": 33,
+      "seed_checks_each_location": 13,
+      "Linux_owner_probe_built": true,
+      "Linux_migration_runner_built": true,
+      "default_vet": true,
+      "frozen_postcheck": true,
+      "terminal_exit": 0,
+      "cleanup_verified": true
+    },
+    "source_composition": {
+      "acceptance": "docs/evidence/a-owner-gc-dependency-accepted-20261023-r3.json",
+      "platforms": [
+        "windows",
+        "linux"
+      ],
+      "resources_in_owner_dependency_graph": false,
+      "current_resources_approved": false
+    },
+    "source_preflight": {
+      "status": "ready_for_original_snapshot_gate",
+      "source_sha256": "58e8675e0213ad3542957108b625e9cc85b14a762bd5275e4ca7830ea9688a3b",
+      "tests_started": false,
+      "actual_sql": false
+    },
+    "receiver_regression": {
+      "command": "node --test docs/evidence/a-owner-baseline-registration-20261023.test.mjs",
+      "exit": 0,
+      "tests": 13,
+      "pass": 13,
+      "fail": 0,
+      "skip": 0,
+      "provenance": "tool execution session 63049; native output returned by write_stdin",
+      "local_transcripts_cannot_be_accepted_as_actual_SQL": true,
+      "unreviewed_GC_inputs_rejected": true
+    }
+  },
+  "remaining_acceptance": [
+    {
+      "requirement": "download task ownership",
+      "status": "actual_owner_eleven_SQL_pending",
+      "local_gate_complete": true
+    },
+    {
+      "requirement": "runtime permissions",
+      "status": "production_runtime_identity_and_grants_pending",
+      "historical_isolated_role_receipt": "docs/evidence/a-download-gc-role-mysql-accepted-sbk-mig-261021091731-79c1.json"
+    },
+    {
+      "requirement": "real login and human MFA",
+      "status": "actual_human_login_MFA_pending",
+      "historical_synthetic_owner_MFA_receipt": "docs/evidence/a-download-mfa-mysql-accepted-sbk-mig-261019074200-5d04.json"
+    },
+    {
+      "requirement": "real provider download and correlated audit",
+      "status": "actual_HTTP_provider_and_audit_links_pending",
+      "historical_isolated_audit_collector_receipt": "docs/evidence/a-live-audit-mysql-accepted-20261022.json"
+    }
+  ],
+  "transport": {
+    "target": "root@10.130.14.23",
+    "batch_authentication": "Permission denied (publickey,password).",
+    "attached_app_terminal": false,
+    "matching_local_SSH_target_config": false,
+    "remote_command_started": false,
+    "credentials_written": false
+  },
+  "field_plan": {
+    "status": "PLAN_INCOMPLETE",
+    "exit": 2,
+    "missing_count": 10,
+    "actual_material_presence": "unknown",
+    "cluster_contacted": false,
+    "database_contacted": false
+  },
+  "cleanup": {
+    "full_gate_owner": ".tmp-d-index-cache-8b161440c7974bb59cb7477fd6d3d4d4",
+    "dependency_owner": ".tmp-d-index-cache-cb6386d59a4b4ad687c15ffa0a5423f4",
+    "both_independently_absent": true
+  },
+  "actual_owner_SQL_accepted": false,
+  "real_login_MFA_download_audit_accepted": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "docs/evidence/a-owner-gc-full-accepted-20261023.json",
+      "size": 28526,
+      "sha256": "73058cc7276e80eef360c71cccf40154bdc9e858d46fa7f2740053ba4bd96978"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-dependency-accepted-20261023-r3.json",
+      "size": 3773,
+      "sha256": "293b0530be1efea88f3ea39fe3ce6f8a830f4819d3f67cde7840b305cb9ddbef"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-full-review-20261023.mjs",
+      "size": 5179,
+      "sha256": "61552559b291131e21a43ba1caf3baa1435c69b47915d1a32b4afc0530ac68d8"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-dependency-review-20261023-r3.mjs",
+      "size": 5569,
+      "sha256": "7351b4df3a4c45f6016bcf26ff3fb41ae0d7a4220c072056432420a5127666d8"
+    },
+    {
+      "path": "docs/evidence/a-owner-baseline-registration-20261023.test.mjs",
+      "size": 5403,
+      "sha256": "11fbda89edb1a411255c135bfeabeabc1d0d0e08fe9c649b0ec13e21b755c7ad"
+    },
+    {
+      "path": "docs/evidence/a-download-owners-actual-review-20261020.mjs",
+      "size": 29424,
+      "sha256": "c60d2643e97c8fe7374ad85fc5c510edd919caf4783e7cc554f2ae5598d01901"
+    },
+    {
+      "path": "docs/evidence/a-field-evidence-plan-20261021.json",
+      "size": 376,
+      "sha256": "5a5fe9bfc20d20189cc379dfba6ccd25d0a2c882cf71f1325a52428cb234ebd0"
+    }
+  ]
+}

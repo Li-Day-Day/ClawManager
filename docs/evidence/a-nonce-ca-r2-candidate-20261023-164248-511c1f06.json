@@ -1,0 +1,1953 @@
+{
+  "kind": "a_nonce_bootstrap_candidate_validation.v2",
+  "status": "failed",
+  "packages": [
+    "clawreef/internal/systembackupnoncebootstrap",
+    "clawreef/internal/systembackupcatrust"
+  ],
+  "files": [
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main_test.go",
+      "size": 1633,
+      "sha256": "b860617abd5e93fe6487084be7d570e696e487f91a056a94f271a7df1d3b3224"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "size": 3609,
+      "sha256": "6309733321361c08ba45afb98811d4eee3b539c6b8c6f07c5cd82a65ee29f27d"
+    },
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "size": 6518,
+      "sha256": "292e0f7b5c02d24e5cc2b49c2b9ff9c8db0ceb5671b72d08c6c03ddf2778455d"
+    },
+    {
+      "path": "backend/internal/db/migrations/002_add_webtop_instance_type.sql",
+      "size": 138,
+      "sha256": "428b7a6f38ef3d24d19bf2f9c239289ccc6aae646c0911ca93051802064239b5"
+    },
+    {
+      "path": "backend/internal/db/migrations/003_add_system_image_settings.sql",
+      "size": 556,
+      "sha256": "8d95e0d89e2fe775ebbfa3a16eb31ba7ba7705bb01b7e86259561b5d421fa9dd"
+    },
+    {
+      "path": "backend/internal/db/migrations/004_fix_seeded_admin_password.sql",
+      "size": 311,
+      "sha256": "2780650ad526ba3136c9e3e280ec666f0be5405283108476176aa2cf92dfadac"
+    },
+    {
+      "path": "backend/internal/db/migrations/005_update_openclaw_default_image.sql",
+      "size": 265,
+      "sha256": "4205bdc8aa009707f9741ed96ff1f614c90f9bcbd15517243886ca795e5e8494"
+    },
+    {
+      "path": "backend/internal/db/migrations/006_add_openclaw_config_center.sql",
+      "size": 3639,
+      "sha256": "8c85c60a05eac1e6da3064dcf5261955f3aa8f5716f775ce58fedfd33ba4765c"
+    },
+    {
+      "path": "backend/internal/db/migrations/007_add_instance_agent_control_plane.sql",
+      "size": 5696,
+      "sha256": "d9251c794d65d13aa5b2edb746d5a94913e529c58c91bd6dfad5d9fcec8c9118"
+    },
+    {
+      "path": "backend/internal/db/migrations/008_add_skill_management.sql",
+      "size": 4286,
+      "sha256": "5ab9418ecde7b63a03f64f319c088733a0763874dd456f586cde7b42167a6c4c"
+    },
+    {
+      "path": "backend/internal/db/migrations/009_cpu_cores_decimal.sql",
+      "size": 232,
+      "sha256": "fb41dfddf7aff75e165a332f1c0339de0087f0ce0fe9c9e6b9780ee67fa3c313"
+    },
+    {
+      "path": "backend/internal/db/migrations/010_add_instance_environment_overrides.sql",
+      "size": 674,
+      "sha256": "4678024f72c6d320e2509d87af2ea064c7b559b0b9c9ed4920526f08f8a1f4bc"
+    },
+    {
+      "path": "backend/internal/db/migrations/011_add_hermes_instance_type.sql",
+      "size": 138,
+      "sha256": "428b7a6f38ef3d24d19bf2f9c239289ccc6aae646c0911ca93051802064239b5"
+    },
+    {
+      "path": "backend/internal/db/migrations/012_update_agents_runtime_default_images.sql",
+      "size": 513,
+      "sha256": "a9bf1452e66f1b84748345177a3f03029820ce8f245ca5156c6b11574b6d5daa"
+    },
+    {
+      "path": "backend/internal/db/migrations/013_normalize_agents_runtime_image_names.sql",
+      "size": 328,
+      "sha256": "67fad4189558eb4f9276dc6b1eed714a71be99d744b28b00f9d229ac5af3607f"
+    },
+    {
+      "path": "backend/internal/db/migrations/014_add_team_mvp.sql",
+      "size": 4052,
+      "sha256": "bc10b111779a79c279df4ce3c3cd31eb95a8ff91a5ec561341de14ed01e7c6be"
+    },
+    {
+      "path": "backend/internal/db/migrations/015_add_team_member_description.sql",
+      "size": 592,
+      "sha256": "59298f4511246a5236f405b79e97659a4aae76d955f1791d8ae4d5b3000e5cb3"
+    },
+    {
+      "path": "backend/internal/db/migrations/016_release_deleted_team_names.sql",
+      "size": 203,
+      "sha256": "2f050818a968712a7ab4cb054cb744df391f1e64e77c05959523bb20a27aa5cd"
+    },
+    {
+      "path": "backend/internal/db/migrations/017_add_team_member_runtime_state.sql",
+      "size": 3787,
+      "sha256": "4de02d687c26accd96b1b0d1184d755525c5327f840c6becedde68ddf5f31242"
+    },
+    {
+      "path": "backend/internal/db/migrations/018_add_team_member_runtime_type.sql",
+      "size": 633,
+      "sha256": "bc782c21fcbc00506f265dcee9ece1e3dd9042d241732804042436a86237f4c0"
+    },
+    {
+      "path": "backend/internal/db/migrations/019_add_instance_runtime_type.sql",
+      "size": 622,
+      "sha256": "387e4fd24ceb496d45be8d2700a287d206b61e7f2f4f45c6119859e5f63fc9bd"
+    },
+    {
+      "path": "backend/internal/db/migrations/020_add_system_image_runtime_type.sql",
+      "size": 683,
+      "sha256": "4d25b675f092051735254c8a21a7509ee90e50a0975164d55b08d0687ae153d6"
+    },
+    {
+      "path": "backend/internal/db/migrations/021_add_openclaw_shell_runtime_image.sql",
+      "size": 2414,
+      "sha256": "4c27bbfb0b9d44b3fec35ec4518a38874d0c4d8629c83e4f6617cbefbe9a84a8"
+    },
+    {
+      "path": "backend/internal/db/migrations/022_add_openclaw_config_bundle_skills.sql",
+      "size": 632,
+      "sha256": "55d7f70cc8cbbcd4f5738d769480ad2daf26cfc800f7da39bf72325b623bd9af"
+    },
+    {
+      "path": "backend/internal/db/migrations/023_add_runtime_pool_v2.sql",
+      "size": 5361,
+      "sha256": "baf0b2c4b5eb4ed5487b23b362a9cf464130a10ce70905418f84b538fb019e44"
+    },
+    {
+      "path": "backend/internal/db/migrations/023_add_skill_hub.sql",
+      "size": 2418,
+      "sha256": "a4401b658d6a7fa2805eba769b2c37685cd778fb0e8e3249783e43d7b42407db"
+    },
+    {
+      "path": "backend/internal/db/migrations/023_normalize_runtime_config_mounts.sql",
+      "size": 211,
+      "sha256": "7a1453d0e006626d624b114412ae31b77615e672086426d0b9a03f169a8844a1"
+    },
+    {
+      "path": "backend/internal/db/migrations/024_add_gateway_runtime_type.sql",
+      "size": 117,
+      "sha256": "32cdf5d0925a2cdbee82e9ff459d06bbb62e8c31ae8fa5b5f39bb73e1db134c1"
+    },
+    {
+      "path": "backend/internal/db/migrations/025_add_instance_mode.sql",
+      "size": 794,
+      "sha256": "bd55c03b4d9ba617fee4f304cb7b13b993ef31d48332b2b6b7de3c0451c9b415"
+    },
+    {
+      "path": "backend/internal/db/migrations/027_add_instance_external_access.sql",
+      "size": 1133,
+      "sha256": "74a43f2c24497cd9fa8b35c8addaa5524a4e6510155a02388ac2c0d465a310b0"
+    },
+    {
+      "path": "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql",
+      "size": 12604,
+      "sha256": "f2380337403b740b7144088350c7595ed9d215e22ec3fda5ef65922e54c8eaf3"
+    },
+    {
+      "path": "backend/internal/db/migrations/029_add_short_external_access_links.sql",
+      "size": 1336,
+      "sha256": "66967c43e7014811e83020cea6a73df3e0a009bcbe42e91d22837c43b23587e8"
+    },
+    {
+      "path": "backend/internal/db/migrations/030_add_external_access_password_value.sql",
+      "size": 435,
+      "sha256": "4fa170251443e4c03a07573b9fca0eba0da3461b1e91366cc8874553cbf687ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/031_add_hermes_lite_runtime_image.sql",
+      "size": 841,
+      "sha256": "fe3157bc4a44e092c48a74d687c81682c2e087222b701f4e1b28284600a464a5"
+    },
+    {
+      "path": "backend/internal/db/migrations/032_add_team_member_instance_mode.sql",
+      "size": 1139,
+      "sha256": "2726f52714d7fe396655ce80160e230d4a6007d32b9762bbb3cdb1faa15f06c8"
+    },
+    {
+      "path": "backend/internal/db/migrations/033_system_image_gateway_runtime_type.sql",
+      "size": 841,
+      "sha256": "a73cda1b48a67fd081ae0570b4387a8023449e4e2299864563a3df4268215136"
+    },
+    {
+      "path": "backend/internal/db/migrations/034_update_lite_default_images.sql",
+      "size": 1680,
+      "sha256": "63cb904c09f27aab38f3f493030db9c3467dafb0038551ed3a5fb633c84d2ffa"
+    },
+    {
+      "path": "backend/internal/db/migrations/035_harden_team_event_protocol.sql",
+      "size": 1580,
+      "sha256": "5d377a12ba71994b9f4b22b08b975609af3716328d0ed8db435f349b3e721087"
+    },
+    {
+      "path": "backend/internal/db/migrations/036_add_team_event_outbox.sql",
+      "size": 950,
+      "sha256": "8cdfbade686b29a6db2466b601f8c0f20d295aa4615fd130880a414813e58f83"
+    },
+    {
+      "path": "backend/internal/db/migrations/037_add_team_workflow_ledger.sql",
+      "size": 2570,
+      "sha256": "d9971f24b4973c1aa03da29ea7ca4dc131e0f5a42b765f9d5993e9be828b6962"
+    },
+    {
+      "path": "backend/internal/db/migrations/038_add_instance_gateway_token_aliases.sql",
+      "size": 777,
+      "sha256": "95b6c99694438b502c340a21bfe0201298c5dd588e7ed76991daf3bfe157b869"
+    },
+    {
+      "path": "backend/internal/db/migrations/039_add_skill_package_materialize.sql",
+      "size": 3088,
+      "sha256": "99440c13e1a407eb20110408b19a851eae91193f58d73dc9b872452952cf8f6a"
+    },
+    {
+      "path": "backend/internal/db/migrations/040_fix_injected_skill_provenance.sql",
+      "size": 260,
+      "sha256": "9f73d68ecbcd46415f73ca3a134f2ddfc83dc18a2f60c11bfdf9502dd31b8da0"
+    },
+    {
+      "path": "backend/internal/db/migrations/041_add_session_usage_indexes.sql",
+      "size": 1491,
+      "sha256": "414161ba14f881528bdf37a34305ea258d915e196f6d423706a19934c60a89ad"
+    },
+    {
+      "path": "backend/internal/db/migrations/042_add_skill_summary_status.sql",
+      "size": 234,
+      "sha256": "2a462bb94cdb5d46de7cb6ff540db66a6aea0f8e09f4acd717a85c86779d4084"
+    },
+    {
+      "path": "backend/internal/db/migrations/042_add_team_review_contract.sql",
+      "size": 312,
+      "sha256": "3f4f19889a5eab91b2ac1cd8e3f564498e865ca43c2178709bc44f11d8ff5bbe"
+    },
+    {
+      "path": "backend/internal/db/migrations/043_add_external_access_workspace_scope.sql",
+      "size": 561,
+      "sha256": "2339f9be408c11295731f168fe71a9834f7e88e53b518825df564eb5f60895a9"
+    },
+    {
+      "path": "backend/internal/db/migrations/043_drop_skill_summary_status.sql",
+      "size": 313,
+      "sha256": "a0875c5b87410b4c92d7e85cc68e82f83f864aa47a9ab94bff8b720094dfb991"
+    },
+    {
+      "path": "backend/internal/db/migrations/044_add_egress_private_exceptions.sql",
+      "size": 625,
+      "sha256": "e8c24e9b81d61c4faf93d146a9e35c4c67b7439400a2195e471a0a5a0d92b7d7"
+    },
+    {
+      "path": "backend/internal/db/migrations/044_add_workbuddy_instance_type.sql",
+      "size": 420,
+      "sha256": "7207714199de290f23e6898e4a8279e00105427a923ee79680a914acc56d90d6"
+    },
+    {
+      "path": "backend/internal/db/migrations/045_add_llm_model_reasoning_control.sql",
+      "size": 1702,
+      "sha256": "95635ba7d7b456549ec5471c9b570bdccb57e42d728bb6763eeaa55abc0cce43"
+    },
+    {
+      "path": "backend/internal/db/migrations/045_add_northbound_api.sql",
+      "size": 3891,
+      "sha256": "cbdb58f733fb23c2c9d60f991b73848651438427a049be4a05763a73f337618a"
+    },
+    {
+      "path": "backend/internal/db/migrations/045_add_opencode_instance_type.sql",
+      "size": 927,
+      "sha256": "a3fc39bcc9221e56eec910040be84222829b3780b1366e256ce770f35235c154"
+    },
+    {
+      "path": "backend/internal/db/migrations/046_add_custom_team_templates.sql",
+      "size": 746,
+      "sha256": "f276a6a24eb333ec70611d3fbe1d0a787dcc9a822ddeac770c5b725b1aa64fa6"
+    },
+    {
+      "path": "backend/internal/db/migrations/046_add_enterprise_auth_identity.sql",
+      "size": 1463,
+      "sha256": "468bb2625b46b49d2e995bd33438f4470d35bfa902bbfbd01a93dc4161e32a7f"
+    },
+    {
+      "path": "backend/internal/db/migrations/046_add_opencode_lite_runtime.sql",
+      "size": 582,
+      "sha256": "5960efb8ef886df38db9c28f217019080bb97e089e2a11f2ac9f899468a4324e"
+    },
+    {
+      "path": "backend/internal/db/migrations/047_add_deepseek_harness_runtime.sql",
+      "size": 1003,
+      "sha256": "f9c2ff9e3fbe359e351858887853a80c0e7d7d6861e2719e0a964875139f14eb"
+    },
+    {
+      "path": "backend/internal/db/migrations/047_add_instance_owner.sql",
+      "size": 1621,
+      "sha256": "64bd858211e8af77b7ea3c380c7e4de4720af4a2d8f702bdfaeef46bce26f49e"
+    },
+    {
+      "path": "backend/internal/db/migrations/048_add_workbuddy_instance_type.sql",
+      "size": 420,
+      "sha256": "7207714199de290f23e6898e4a8279e00105427a923ee79680a914acc56d90d6"
+    },
+    {
+      "path": "backend/internal/db/migrations/048_fix_instance_type_enum.sql",
+      "size": 453,
+      "sha256": "30fab567d8d9c64ca59df32215523a9329709f95b1d66c48cb8fbdd4d6764828"
+    },
+    {
+      "path": "backend/internal/db/migrations/049_add_ldap_login_alias.sql",
+      "size": 2879,
+      "sha256": "3738f85732d503bb675c7dc45717f0f1e2fc9f9d6a0be3c51be855dfbd843319"
+    },
+    {
+      "path": "backend/internal/db/migrations/049_add_opencode_instance_type.sql",
+      "size": 927,
+      "sha256": "a3fc39bcc9221e56eec910040be84222829b3780b1366e256ce770f35235c154"
+    },
+    {
+      "path": "backend/internal/db/migrations/050_add_enterprise_auth_settings.sql",
+      "size": 1575,
+      "sha256": "5d5a4f24ec46743fd09d8928326b04b99a16d79c330dc80b07bef202a31c26a1"
+    },
+    {
+      "path": "backend/internal/db/migrations/050_update_workbuddy_windows_runtime.sql",
+      "size": 287,
+      "sha256": "d4a295d88abed8721331a3e67edd3855457b3dacfacab435db4f5de5a01dd026"
+    },
+    {
+      "path": "backend/internal/db/migrations/051_add_codex_and_claude_code_instance_types.sql",
+      "size": 875,
+      "sha256": "8b21c234cc485d236ef6a282b4051626753f7ff06b1c5ff52bf8a45d13026254"
+    },
+    {
+      "path": "backend/internal/db/migrations/052_add_instance_pvc_name.sql",
+      "size": 555,
+      "sha256": "ed3cd066ddadbf66897df3b0c607e0db8fe08302873e2c5eaf16c20ec9cc8b11"
+    },
+    {
+      "path": "backend/internal/db/migrations/053_add_instance_runtime_variant.sql",
+      "size": 1076,
+      "sha256": "19bdf41e5e64e0acd134cf369e866b35a81ae2f1f0c397a5933cd7cd51484753"
+    },
+    {
+      "path": "backend/internal/db/migrations/054_add_system_image_runtime_variant.sql",
+      "size": 1552,
+      "sha256": "c5417ea16344e1e018fd72a20d18c94cbe779710d8d29cdf7e808c51ffeb34ca"
+    },
+    {
+      "path": "backend/internal/db/migrations/055_reconcile_instance_type_enum.sql",
+      "size": 368,
+      "sha256": "3774e26e547bb72a12f0a4c2f339fbc7268cd3f59eec177cd54b0eb23d7d136a"
+    },
+    {
+      "path": "backend/internal/db/migrations/056_add_llm_provider_models.sql",
+      "size": 379,
+      "sha256": "1ac4da5472c60076dc750fdd19bb2c5b65e6cbaeb00fd20ae0a3721117e7c9cd"
+    },
+    {
+      "path": "backend/internal/db/migrations/057_add_northbound_admin_settings.sql",
+      "size": 3208,
+      "sha256": "5a7ce8c21b80d102addfda84d4aacd19ddf9883d6c6417694e4580119a76668e"
+    },
+    {
+      "path": "backend/internal/db/migrations/058_add_openclaw_runtime_upgrade_safety.sql",
+      "size": 3506,
+      "sha256": "8c7553191b26751122ce9cd53e80c4e47b2161612701813213429a9994a9e037"
+    },
+    {
+      "path": "backend/internal/db/migrations/058_enable_deepseek_harness_pro.sql",
+      "size": 687,
+      "sha256": "582aa57f73aedc72dbb6a1460e5cb0f0fcfe059d7c80fed382c7ee85c65f0691"
+    },
+    {
+      "path": "backend/internal/db/migrations/059_pin_openclaw_2026_8_1_images.sql",
+      "size": 697,
+      "sha256": "c3ea00b110374d7094372af2e53e67b53dc8432df8bb99533d87483847f62679"
+    },
+    {
+      "path": "backend/internal/db/migrations/060_allow_terminal_runtime_upgrade_instance_deletion.sql",
+      "size": 329,
+      "sha256": "02336282eef73cb7f07bccf3c7b8fecf3fce761880e168997e00f34891e9238b"
+    },
+    {
+      "path": "backend/internal/db/migrations/061_persist_runtime_upgrade_source_identity.sql",
+      "size": 404,
+      "sha256": "33af7388c3a8637a2c2e868d9f4df0c477e0db274bfe6c961d0e7361be6b2961"
+    },
+    {
+      "path": "backend/internal/db/migrations/062_follow_openclaw_latest_images.sql",
+      "size": 566,
+      "sha256": "016afc6b7b70a8222c0a7b9208f804aa619e38279cf6fb8b959231e5c82bb602"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_add_security_scan_tables.sql",
+      "size": 2878,
+      "sha256": "d42b4478cb2f0c2b603b24da85062c30c566e075ee954224d104738e3110068a"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_unique_usernames.sql",
+      "size": 472,
+      "sha256": "38b3ca9bdb5d4bd813b0c5cb447e563577df3e74fb4372bacde75f693a79f020"
+    },
+    {
+      "path": "backend/internal/db/migrations/064_add_instance_browser_workers.sql",
+      "size": 1059,
+      "sha256": "28739f76876983bd42d6e5afaffd7e1510b72b067a8815626d27caa306126581"
+    },
+    {
+      "path": "backend/internal/db/migrations/064_reconcile_system_image_settings_schema.sql",
+      "size": 4156,
+      "sha256": "5b4dcb9d59a5ccda9863edeeeb60f751966c21706e0b389e29fb78c86b71bc86"
+    },
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "size": 26225,
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "size": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "size": 56783,
+      "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+    },
+    {
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "size": 21146,
+      "sha256": "c1297b8341fe7d3f4eeab55ba355526b920d633349053a047420d2cca26df8de"
+    },
+    {
+      "path": "backend/internal/db/migrations/069_add_system_backup_promotion_authority.sql",
+      "size": 7222,
+      "sha256": "d4636b628347afbb2454436b193e30889202974d892366951e89f1a88ed6e259"
+    },
+    {
+      "path": "backend/internal/db/migrations/070_add_system_backup_prune_authority.sql",
+      "size": 19926,
+      "sha256": "9e0862c9f52fb54a32b7a5b70d391aa44e490818369672510989a51b8667a63c"
+    },
+    {
+      "path": "backend/internal/db/migrations/071_add_system_backup_external_action_authority.sql",
+      "size": 9910,
+      "sha256": "4d18e2e3cf0da6ab1f5181b76b7b9957fd59d10ff22d58d75c4fe6267928e428"
+    },
+    {
+      "path": "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+      "size": 15741,
+      "sha256": "9ed7b536fe44cfd3c0b2bb88efeece13ded67cfeeb78b8ee044d344d63f20c00"
+    },
+    {
+      "path": "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+      "size": 6838,
+      "sha256": "0bf4a07de699ff237cf4674761bc12879f3806b454214fc4f1802870efc5f5b9"
+    },
+    {
+      "path": "backend/internal/db/migrations/074_add_system_maintenance_participants.sql",
+      "size": 4941,
+      "sha256": "95af0741827f4db834c9169d11f5116721f3fdcfb3154c14bc17bd0fab509a28"
+    },
+    {
+      "path": "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+      "size": 3157,
+      "sha256": "c24af0413ff6b8dd98c3b7eb59b8c6dade70c385c5f49e48302bb07b98b1ed84"
+    },
+    {
+      "path": "backend/internal/db/migrations/076_add_system_backup_job_observations.sql",
+      "size": 5257,
+      "sha256": "947ab3471b8445fa743b40702447c22df96b9f49c6c5e8b8bc069a13778517b3"
+    },
+    {
+      "path": "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql",
+      "size": 5931,
+      "sha256": "26105cd49490837b44138a5df91d978c33a5994ef1477996f52aeadb1844b59e"
+    },
+    {
+      "path": "backend/internal/db/migrations/078_reconcile_local_username_key.sql",
+      "size": 981,
+      "sha256": "4a1373ba89af6a3c2e2d29a45c7a00e4740aaa87b8b55a5bde45c1fe69d860aa"
+    },
+    {
+      "path": "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql",
+      "size": 2744,
+      "sha256": "6674b4b57ae8dcbeaa4d4a548f20b66a1bf53a1285ea58f01efe503e3b175de0"
+    },
+    {
+      "path": "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql",
+      "size": 2277,
+      "sha256": "5c5d29066a91efb0c215e59b230c0c4535b1411ecebb31fd62afe90757d08f7f"
+    },
+    {
+      "path": "backend/internal/db/migrations/081_fix_system_backup_prune_item_identity.sql",
+      "size": 777,
+      "sha256": "3cf5ea4a70637fcd7e053aacdd32acd42feb0b669e75e95091ba184aa5de9cc9"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/issuers_test.go",
+      "size": 13760,
+      "sha256": "596ed883a02b2638c8ea65fadb33cbd9c52e58dacebc50ad2a967f82d24ce463"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/issuers.go",
+      "size": 5234,
+      "sha256": "124789339490092fcb079c5d797b6e236b60c8e29b211ce9b1d60da4a5f4b112"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/rbac_test.go",
+      "size": 9938,
+      "sha256": "af3cb2884b891443146a93d1bb0b88c35ee9cdd106d5a8e22e201a0823620c63"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/rbac.go",
+      "size": 5075,
+      "sha256": "77a95ae82716650e5ba8b4975c86d3ebd9ab4571989a1c07b7394a2aae34afa4"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference_test.go",
+      "size": 5920,
+      "sha256": "b7fbe4e6a491d80007aa272f9c6c2e4d2f2c4c00b0ed03932aa4075e7fd93b75"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+      "size": 7804,
+      "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca_test.go",
+      "size": 13311,
+      "sha256": "f5e2e650778d52140d7d6cc1c6e59226d7c10b6f822eff9378079e9b65030c54"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "size": 10529,
+      "sha256": "780be82610a39d306577537a3981d1a3444c9fea82e412621b078aed36d3407c"
+    },
+    {
+      "path": "backend/internal/systembackupcontract/types.go",
+      "size": 32814,
+      "sha256": "322756010509bca44f5807aef67a30bb98f593e09817ccdd2c1dbb4896e75738"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+      "size": 46247,
+      "sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce_test.go",
+      "size": 10807,
+      "sha256": "696b4f87883bc699d81c999b0e2c465b2769dcbb4956c35cd4c4dc750ce848c3"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "size": 9634,
+      "sha256": "46e695c7c0b9efa819f6f60f7fba52587ce74d1348912f1c57fe9782126e57f1"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_backfill_source.go",
+      "size": 3668,
+      "sha256": "6cafc4a6cfe824895f6f577402a360f46874c624b0c72298a66d9950113cf8ad"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_list_cursor.go",
+      "size": 3511,
+      "sha256": "0707447c95f18531ffcde8bd4b28c720d1f61ad5077b4e0afada93be07c61e86"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_list_dto.go",
+      "size": 2329,
+      "sha256": "0dce9cb08653e9418f014a3fd5498b9ac6f3e0665205296a08d0e319c7284f7f"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_list.go",
+      "size": 4268,
+      "sha256": "25665d9baefdcd4d1872a7894468a6e3fc189860ec3104b5bb4eb2c335019951"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_materialized.go",
+      "size": 3665,
+      "sha256": "347edd6571cd7aa6e7e015ed1e7a727c08c69b2f87e6ba3bd1e17df33ef01fe5"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_projection_rules.go",
+      "size": 5565,
+      "sha256": "3c9a13fafa6a24592aa472302489a13519e3033a585dbf6f3b722c28354f43ca"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_projection.go",
+      "size": 9142,
+      "sha256": "f1401f31e2dfec5b0fc67396f944ccec861c6eb78d44336203822fb0f3ef67e1"
+    },
+    {
+      "path": "backend/internal/systembackupread/config_snapshot.go",
+      "size": 5858,
+      "sha256": "ca944653819b521712f2e56e3f5ff749574d0b6f93d795d95db3cb863cde9f6b"
+    },
+    {
+      "path": "backend/internal/systembackupread/control_health.go",
+      "size": 3212,
+      "sha256": "dcbe533dd21704c763be4bc974f5a715b3a73102442493d1ee81f4bf5c2fa2d7"
+    },
+    {
+      "path": "backend/internal/systembackupread/cursor.go",
+      "size": 4558,
+      "sha256": "cff06a7a2b332354ce6cd6507cbed25ebeb84c545deffd6d22606d60b664a440"
+    },
+    {
+      "path": "backend/internal/systembackupread/drill_detail.go",
+      "size": 8750,
+      "sha256": "f431e19f68493d86f3bdb0d7e047024b811d25b991ae0b8a38ee4b65a759a9a5"
+    },
+    {
+      "path": "backend/internal/systembackupread/operation_detail.go",
+      "size": 9032,
+      "sha256": "cf09974c8c59677f347034734117a0fe57e248fbd461ade9dd9d962f7e945ff0"
+    },
+    {
+      "path": "backend/internal/systembackupread/operation_dto.go",
+      "size": 3410,
+      "sha256": "2d7b9595b9f66e30717ccb81bf4fbe3b31c668f2d0023eef96ccc0a1e576cc64"
+    },
+    {
+      "path": "backend/internal/systembackupread/operation_list.go",
+      "size": 7446,
+      "sha256": "160d685227d38ef88380c4270ba5f24ff388defc92a463cde8aa10257676a74b"
+    },
+    {
+      "path": "backend/internal/systembackupread/overview_control.go",
+      "size": 10651,
+      "sha256": "d48170d2e40ca4020a0a77641818a50d381d0da91bf6c5cb7c4b6545b319a3cd"
+    },
+    {
+      "path": "backend/internal/systembackupread/overview_promotion.go",
+      "size": 14395,
+      "sha256": "fd19c8e8873258e570734326cc4a6d7ae6a33757bc6ce1f2041e3673ae6f6d43"
+    },
+    {
+      "path": "backend/internal/systembackupread/page_sql.go",
+      "size": 596,
+      "sha256": "f4ddd3f51b6d3bc3767b520c2b78f860503ec6937a67239b2b56db5a5c458a15"
+    },
+    {
+      "path": "backend/internal/systembackupread/service.go",
+      "size": 1889,
+      "sha256": "c9723beb064858657f08e4bbe9f3ed21f8dcf9e075f530dba80670b866e4e1ac"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_check_control.go",
+      "size": 7562,
+      "sha256": "5327c6beaa310b4f191d7b1813ec07744838c16912ef5751e24ef839223f4336"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_check_evidence_control.go",
+      "size": 5010,
+      "sha256": "e8fe650ba4c7599805d67f366e4a759a5038a792708fd667cc60a1842bbe5d9a"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_detail_base.go",
+      "size": 4068,
+      "sha256": "71777e6887d55f5622e49dd996559e456a482fda8493ac44ce59c7abe99661fb"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_detail_control.go",
+      "size": 21961,
+      "sha256": "2eb88f63ec033bdb3bd8877b598358fb890b85a9b72a8c45393bea74fd1eb089"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_dto.go",
+      "size": 4349,
+      "sha256": "8e88f4a13169ad17e2ce9644dc4e17352621a4fb5d5193eeb47cdcfe6989912d"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_event_control_cursor.go",
+      "size": 3860,
+      "sha256": "7cdf24fb627f9959582660e1895c660615a78f4155ea62cb3dfa6d390d2ad413"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_event_control.go",
+      "size": 11514,
+      "sha256": "827d0e088ff38a4cd767ecaf1c7d7f68f7a5c0ff7eb9be05c3da02b013384bc7"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_event_dto.go",
+      "size": 5484,
+      "sha256": "206a07a2175f8295e76bd7caeb549585c72f035844294c97274bf5ee61aca3c2"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_execution.go",
+      "size": 11134,
+      "sha256": "459496c5d3383ea44f4c8c744c66064b98c45ed31e6db881bffdf4be59dec143"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_pages.go",
+      "size": 10554,
+      "sha256": "bd98a2190d5b5a5c06bf414b41a62827efba2801b485156aa3b807399ff6d919"
+    },
+    {
+      "path": "backend/internal/systembackupread/verification_detail.go",
+      "size": 9599,
+      "sha256": "1b4cd2832a8d9dad1cab4941b883eb3e7c8fc7fa7a325038a084c94f9787207e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/artifact_acceptance_candidate_test.go",
+      "size": 8719,
+      "sha256": "1ff4773c7875ca8897aba1b5e29699d75b0581b6b1b5daa43c18d620889c7213"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/artifact_acceptance_candidate.go",
+      "size": 9438,
+      "sha256": "f9f91487db328d98f23f12db8de16ed92c450c3efa6565b0c3bdf8aafed0c80d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/artifact_signing_history_test.go",
+      "size": 7341,
+      "sha256": "79021d5169aac75a72b5e93ad56ff73b3fdd627e312916e138a758ffdcc35e17"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+      "size": 6432,
+      "sha256": "3b0ae3770437afec0af7e68376a2d589cb9a6262d0c8d8714ac0dee5f617b2ab"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission_test.go",
+      "size": 7854,
+      "sha256": "7070b93d93de17d44f7168d71ed10b889bd784e771a1c2c43c005843dc897c6d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "size": 7037,
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_test.go",
+      "size": 9429,
+      "sha256": "4efccad284d15171f4e31b5a2dba99d7f5cd483cb6a8996311be3948e384c0c9"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "size": 9116,
+      "sha256": "88b5a7c8e0e4c60d22da3e465dffd76cfa0e6acd2061086a5f943921e3d9a703"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_grant.go",
+      "size": 1212,
+      "sha256": "b9b301e525825eb6230c89d68d736df36a7c138eb37129d6f5ad8991c03fc014"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash_a_test.go",
+      "size": 5516,
+      "sha256": "45961482d0f333fb16374102a9e78ded97f1ca3f296d567611ff898bfafa717c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash.go",
+      "size": 4367,
+      "sha256": "91a94ec9662117ca149675619cc5ff5d2ce6abadfbf31dbe71b9aca1f63114c5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability_test.go",
+      "size": 4061,
+      "sha256": "82a9aab4c76420e79f1838ba6cc88414d4ec151504d7ca1b073c9a716faa2107"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "size": 6128,
+      "sha256": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity_a_test.go",
+      "size": 12716,
+      "sha256": "d6cbdae043ce214eb4b20c4eb718fedb431895965af20f51dccd87f366673eb0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity.go",
+      "size": 7438,
+      "sha256": "270bc9df869a7679c50b6c63ac4397ec43e37af7a98ea7c13b3173c6412014d6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_canonical_candidate_test.go",
+      "size": 1136,
+      "sha256": "6c0ddecb492a6860beefdd89f972c35b2186b11c3166b47506778f0865133d0c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_canonical_candidate.go",
+      "size": 770,
+      "sha256": "590bc4cbef87f9f76a146b04ebece02f424d60c399985aceb68443f7624c28df"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_mysql_test.go",
+      "size": 6805,
+      "sha256": "6e7365d9051868fa3c14db04de67f1a976d035cbe09654f245da7afacca4e1a6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+      "size": 7176,
+      "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_test.go",
+      "size": 7847,
+      "sha256": "8b18878162087c912af97bdbed9a6ff32ad12581a6110fc6076072d4850fe53f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction_test.go",
+      "size": 10391,
+      "sha256": "c504d97eac651feb6977758627b099452c7b5e7b33747b79647e6a6df230b8e3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "size": 9648,
+      "sha256": "25876e8991a02d3c855f98d89cfde2a02bffbcfe9b1ec4fb8978d75679fb959f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+      "size": 9555,
+      "sha256": "634034b7a652a5293c12c0af9109bfbb70b5f0b4afcdb0b751ff3dc02e4a202b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_a_test.go",
+      "size": 24573,
+      "sha256": "458aa4379e2e2a48f6625ebd8b8a7005501d92d14ae27480c93d8985d774e2d0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_mysql_test.go",
+      "size": 16530,
+      "sha256": "d7d33008afd919ada66849f2cc9873f4d6ee69248514df2e50a911d4e7faa9b6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_precision_test.go",
+      "size": 2273,
+      "sha256": "a733888cd872e794e10ddd41889f284babffd4c92125b2184d02bfe2002f3d46"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_row_test.go",
+      "size": 17768,
+      "sha256": "b48013b37022754f22ef08588fdc587bc3109e008b83c5eec054affc870ad406"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_row.go",
+      "size": 8829,
+      "sha256": "37210ff32bc09793b29c39661a010833f1ca58c687dd43055097948765898b62"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill.go",
+      "size": 14631,
+      "sha256": "7fe2a1eed2e484fe3cb29bfd0be29c4cc2a748170c8f43c4ed7a315c01a3f6eb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority_a_mysql_test.go",
+      "size": 13283,
+      "sha256": "ca6eacb5cebb61ee8cd4a50aa1425aa9165b33aaef6e30e1f305e7c32d7b6526"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority_a_test.go",
+      "size": 25646,
+      "sha256": "b59ef0ab57b282b6dceb04ab4010818771e68f6cc19062835d15bc6c68126ced"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority.go",
+      "size": 13868,
+      "sha256": "ca29ecb65d2e8762bee8267f7acbea8807e24a1086041896115fd34077b5f90f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_a_test.go",
+      "size": 3319,
+      "sha256": "dafc8ca1eb6575e2bd8807d88cb78cc7a16948c05d9870405cc42356b85c229f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_mysql_test.go",
+      "size": 26449,
+      "sha256": "d3ed1efad6da063ec2137fbd747aa807348e15c15cd8afb178dc3acbf5202028"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+      "size": 15522,
+      "sha256": "ccf50c06b7afcc47d4374b5c92ae4619056caf90a638f82145b0d6eec920c63a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_test.go",
+      "size": 23857,
+      "sha256": "150baead7578be2e7ad4ec998946f65dc8700fb5d5d774416131ddfa3a7255d2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt.go",
+      "size": 7127,
+      "sha256": "fd91500aede239e044f778467781a2a1d4d07aa3dfe04e5e65ec96e54903038d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_session_holder_a_test.go",
+      "size": 8106,
+      "sha256": "24f1a246d232617f5a849af9492e17a4edcc49d297c46ad5578d320c3fbc10ff"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_session_holder.go",
+      "size": 4291,
+      "sha256": "9ffd2010045e61759f08699b4210407cca535f1fffa394052bfbf4fc8332427f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_a_contract_test.go",
+      "size": 10020,
+      "sha256": "46b91d3a39f19d60d4f62a3dc1333ec717830440c16e1d34e12f9b50e868f422"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_authority_test.go",
+      "size": 6385,
+      "sha256": "806bc759e23f41f6ac03afe646b9955dcd55f01f3037e5a39940736b4d498b2a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_authority.go",
+      "size": 5410,
+      "sha256": "2651bc04f9d01dd24886a9494e900b60a44bcdc59a28e3845831ff71672b4c2e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_capacity_guard_test.go",
+      "size": 2809,
+      "sha256": "7b35056eb2cc0ce649ae87b2c8bc5e1c07f11e41f8980273c01053ea958d7504"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_capacity_test.go",
+      "size": 12223,
+      "sha256": "1c5c7b6f5d701bb112de1ed235a6490862437fe17658008e2ce229f1f06283bd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_capacity.go",
+      "size": 6311,
+      "sha256": "c3d93719cc69cdd0881a54dd8e5916e5ff9cea7cb57fbd6c3fb1cd01fd00a32a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_http_test.go",
+      "size": 13518,
+      "sha256": "44d4b38243d454698c61459e5bb9243848370e6ef400ee850f6e67c19f30a445"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_http.go",
+      "size": 6053,
+      "sha256": "65bb8a99b766649d513dc7284e401365ab883c02edcee504c837d950afd73092"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_rbac_a_contract_test.go",
+      "size": 2129,
+      "sha256": "617c1710bfd883d2fc160b25c3bad8625b0900eb413b019e506bb66fbe32a3f3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_rbac_test.go",
+      "size": 8063,
+      "sha256": "8d5a439e916e817a0d00e2d672320bd5663af6dcbd6b16307cbb26e4127be2de"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_rbac.go",
+      "size": 4960,
+      "sha256": "8a6b78f740fa10df7bcd46d60d3e1fdde0ba04c976529b398ce3673316dbc4b7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_replay_authority_test.go",
+      "size": 9006,
+      "sha256": "260283c0b85e7dff50a9076c976f2176ed5046479a69588bf785440518bedbab"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_replay_authority.go",
+      "size": 4199,
+      "sha256": "324c33502265eb7b95764beae542b1bc40e78ecb818c73758ea782e642edc4f4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_replay_guard_test.go",
+      "size": 3045,
+      "sha256": "7e096dce31f5ee292483799d62dbc235126cebeedaeda1ca2dd8f3eff010af1b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_request.go",
+      "size": 6117,
+      "sha256": "a85430c0e1bbca2d75202ad4c383c9f53bddb43ce6d1da14181648fe10a395f0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_resolver_test.go",
+      "size": 14832,
+      "sha256": "ce54bfa2c6bd596069b7b138b41d7cd39a012d5cdb5bd745e923f5750feff4e8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_resolver.go",
+      "size": 11368,
+      "sha256": "004c81a7f1538b0269842feee72967fe1fc794e3dcc2d628c689d0d536f6d947"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_binding_test.go",
+      "size": 7040,
+      "sha256": "7aaede9637315b65c9e2c8dd7c51bc4f4a3a4906147f4fc1b6ed8b8679b9eda6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_binding.go",
+      "size": 5822,
+      "sha256": "66e85c25d53018e6bf9dc6ffe4bb4fdc679307f403fc6f8078ab007e36aa1622"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_guard_test.go",
+      "size": 1987,
+      "sha256": "3726b8c082c9b4ccab2a8a90a9b8ee944b08540ed097b466d0b5ab98bab04703"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_preparation.go",
+      "size": 3165,
+      "sha256": "a579cf0c0d825189febabf4b65b265b2d827c71a8ef3623ef7963fdf4b9820cb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_replay.go",
+      "size": 2219,
+      "sha256": "e196d47139f5a6b916f6231e018fd72427b1f7c46f580cbd2224503a1a0417a6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session_a_integration_test.go",
+      "size": 7652,
+      "sha256": "29cff40d67740285b366fee58a1b5fc75796bd554adcac580fdb03352558d0b0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session_test.go",
+      "size": 10054,
+      "sha256": "c8d0d761d1d44bdccf52fd498eed9645aeec251c35f1dafba9077a9aaea24c99"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session.go",
+      "size": 2761,
+      "sha256": "8ef1e2903fd7da0e52093eda5a379a5916e0356d5396769d124fd2b635c8e31d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_strongauth_test.go",
+      "size": 12555,
+      "sha256": "6f7d11d9473b2a3ae6bdb8288add388e907800dd71215d53c1d3d79acf4888fe"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_strongauth.go",
+      "size": 5966,
+      "sha256": "f8aff72825226af8edd6aa3a6e498f1e8740ecf9258ed4e00bdfe84781425d7e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_test.go",
+      "size": 9262,
+      "sha256": "143d030feb8f8a97976ff642e0dbcbf3506206ad3ad44137fb2ef62d4824402a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_totp_test.go",
+      "size": 18384,
+      "sha256": "1ddaecf4a4db8df70c93a98c7357da39ae2f033bf2c3e59d6c7b7114b256d8a2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_totp.go",
+      "size": 3022,
+      "sha256": "3e27cc66ff5ae43a709fce9bad3f2d094329578521a693befe3f350c60a00096"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+      "size": 27039,
+      "sha256": "acc659e7aa3d20d57832c96f93fb25befcaddd034db77100baff8e5d503aea2d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 40162,
+      "sha256": "6179c547c49891739c5659b65c14c163f215d1358a0fc3a081358a74a703cd4c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_values.go",
+      "size": 1759,
+      "sha256": "9353022ae63da27d80ded4a786f62e0b1b5613ce72ce10678b63b466450922f8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_binding_a_test.go",
+      "size": 9002,
+      "sha256": "4a89159eaec215e84f417a24cd569c50f7aececb640a2542ed019952678dfe67"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_preparation.go",
+      "size": 3789,
+      "sha256": "655052299372beb3d0433fc3889881139cfe4c86379944e5dab906dca65a04f3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_response_a_test.go",
+      "size": 7941,
+      "sha256": "c3169dea34bbf95a5b1a6e137e499e09ea6cda6647f7cb44bdc26e1512e8534c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_response.go",
+      "size": 5596,
+      "sha256": "ae74ca430c2813267873d96c3f3096ee6980a54e4da46c76095ab86d3bdf5ec6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_store_a_test.go",
+      "size": 9862,
+      "sha256": "25fd9f10f8b19faac7e211c0ac9cd2863212c81579cc08dc59e1be23beca23d0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_store_test.go",
+      "size": 9004,
+      "sha256": "b3d91a42755e36ed54f0d931263fa77994d045ee321ae333871df9d5fddad769"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_operation_store.go",
+      "size": 12788,
+      "sha256": "4ec4ae97efa652ded6c24432129ec5b000e3e9fcdbf9faa86b21bd3971b459ef"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_fixture_schema_test.go",
+      "size": 2975,
+      "sha256": "bd4905ae31b670c9dcc6e8a90b9a01587ca6242449c52bb10706eb10c87547bd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_mysql_seed_test.go",
+      "size": 4098,
+      "sha256": "7f077595196e759588a5e80979a85c33b0a4d3e79c1a82981e87e8df0b722250"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_mysql_test.go",
+      "size": 26631,
+      "sha256": "a304a16dfb1ebb34f2e93ca01ed09c8dfd58d6260a053b4420ba78a8e766227a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_response_canonical_a_test.go",
+      "size": 2550,
+      "sha256": "9467b2343f720457ed8205e7f613bc1f32391e190cee608dda8a5aa3071cebe6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_response_canonical.go",
+      "size": 1916,
+      "sha256": "3881249a9ee2baf066cbe0ce870e8b28ce1a6823e63d15e74a95b1d10cd03250"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_writer_mysql_seed_test.go",
+      "size": 2915,
+      "sha256": "b9543d4190da6a33ec23eba3d5832ebba9894c954473657d7bf6960a34a6e17b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_writer_mysql_test.go",
+      "size": 27896,
+      "sha256": "4aff54d895076282d8c1929e6467c544261c9e7e50171b50a68b5db995c0e980"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_writer_security_a_mysql_test.go",
+      "size": 14348,
+      "sha256": "1203bd7423d60256e17ab348ff7822e8531332361152357cb964de786e5434ae"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/d_detail_control_mysql_test.go",
+      "size": 9465,
+      "sha256": "596d14a53343821af4f08841e12b129faed235ba17d1fc8fe52ae194497b849a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/evidence_rbac.go",
+      "size": 1793,
+      "sha256": "ee5a637ca52b11e0ed715845427f544301c801bbf12747f4addff6240529a121"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions_close_test.go",
+      "size": 870,
+      "sha256": "7998ada3bf5e088f1303e270a9eaf336c8183ed66f1035e44c1ab4b1abd0a30f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions_mysql_test.go",
+      "size": 18833,
+      "sha256": "84a285a83af84e29186644f3842eaa020adf10c7ea7b6770bb5247939f87d7a6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions_test.go",
+      "size": 13814,
+      "sha256": "9e048a7ec05f86ed3b0ab6bb19f7ede31c468c0a07250b5c3e7cef5476104902"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions.go",
+      "size": 8661,
+      "sha256": "c4c57961f527a2fddd0d89fbc850b89ce43e3a8dfed50ce7f5a182791b544e83"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/nonce_acceptance_time_a_mysql_test.go",
+      "size": 15089,
+      "sha256": "ed20a47a9c4f8e298abaca311c8c0f70caefbadd6c8075497ce383ed55f6ed47"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/nonce_acceptance_time_a_test.go",
+      "size": 9539,
+      "sha256": "16fb1a5044dc4099181e7fd4f09ffb510a48021f90fd4914bb22464fbada9dd9"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_ed25519_test.go",
+      "size": 13435,
+      "sha256": "e58fca9b941693796d5abe816afaf6cf140b1625dbf6e879a7a70420584b6300"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_ed25519.go",
+      "size": 9757,
+      "sha256": "c489eedaf6d6450543c583da93b75cc492be8c7102fa9aeeb22b82d630af9ea3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_http_test.go",
+      "size": 5447,
+      "sha256": "a1d133611ee6b4f4c0749510b128248ee58c0deb9c2b7c9f2eaec9d3016d315c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_http.go",
+      "size": 6231,
+      "sha256": "9b6c8c71f0df162300fe10fae11be049c0d1a0fdf6a7ca95f117a6a8b0307118"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_json.go",
+      "size": 1069,
+      "sha256": "b88090465e9040b84c3ee6701ea295023e95c935755a1991b17f56c63260173a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_mysql_test.go",
+      "size": 14153,
+      "sha256": "7a2a55d864f5a3616229b82d99c96671da4ce881059805c546f2720bf7c2d0d5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_registration.go",
+      "size": 10665,
+      "sha256": "090ae8bc5f2ba1dd678758f946f8641c5a9109c3d274833decfb68d77ec3aa6e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_registry_test.go",
+      "size": 4506,
+      "sha256": "22871ee478a55180abdfd7a8edaeea9f92bab1a9fa6d6f9599156c3b0434660f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_registry.go",
+      "size": 12720,
+      "sha256": "c3657c99655a724f4c0be9a94eac2e3ec20aaccd1eb0156c77958b9b3a490632"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_s3.go",
+      "size": 6779,
+      "sha256": "3010b49cd27062e8451f13fc9b9479997869143aaefb703576f390616d4384d4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_sql_test.go",
+      "size": 4983,
+      "sha256": "3e0229770a7bb90132fbcd37c695dc7e76de2c2101a091a5f95aeec83df8c991"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_sql.go",
+      "size": 2903,
+      "sha256": "e76f88601ae965662229fdf7a670b7ff25b7550810bf0da6c5c35aaa7e135083"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_test.go",
+      "size": 5953,
+      "sha256": "b6b95847c393a1a6359a78da316334537f42d482431c104d9a23fdc6a3499648"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction_test.go",
+      "size": 13749,
+      "sha256": "d33718006b6da2e53df7e672fdd9a70229e6afdce20e7b55b168c296fb88dede"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 17853,
+      "sha256": "622a15d9ee7925253fefdb0d0c950221200e689b78febae2cbbea069cd94772a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof.go",
+      "size": 9650,
+      "sha256": "550827d2ace9d502223d6ce5af64e579ca73378d2a532ee056d8c673739db363"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_config_candidate_mysql_test.go",
+      "size": 12804,
+      "sha256": "88221b2bd419053f899c488f84958c08167c5fa1ec407066290b9698be345b47"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+      "size": 28875,
+      "sha256": "cfb61dcc20db4e7d6b288e22d97da4d004219b7cda138c243b670fe49aa98956"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_mysql_test.go",
+      "size": 7624,
+      "sha256": "4039ddf8dd5137baccd02592cec601a4bc51178a7ae79c086b264ace1ad7503f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_test.go",
+      "size": 10272,
+      "sha256": "fe8a3189db9c81a7237a53e396f48af7a814638bc501780c68c5d6945bc83e16"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope.go",
+      "size": 6062,
+      "sha256": "cb25978ed8ec4765cc8090728eb2fe73d860cfeaf8c1ad53e839a4caf40c49cc"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_api.go",
+      "size": 9070,
+      "sha256": "a93954c137891ee2587d26c17598f4c759fd89b0c92fad38ccab3833f928d040"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_linux.go",
+      "size": 1396,
+      "sha256": "8c00a9eefbcc7aef8dee7f401c94e47315e1d1c22e4f70a7421999eda39f3ca9"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_measurement_test.go",
+      "size": 5973,
+      "sha256": "e1f1c753bdb957824135ff078f2a9b2fc8bf760460b7416eced0aa378b651e5d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_measurement.go",
+      "size": 2283,
+      "sha256": "5027b2bedbb2f85df3c18ba3c953644633de97fe713337baa9271aa876c2a8d2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_other.go",
+      "size": 255,
+      "sha256": "df8482332bf6787b56b73dd13e59ecb479c98d3947afe645b3353189356113ab"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_source_test.go",
+      "size": 4200,
+      "sha256": "1c1a27cfb4b608ab248c6dcc5e129a651a011b5b5a22aadd48f7b68da5744e8b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_source.go",
+      "size": 4997,
+      "sha256": "7a443b046d85e3605a5bfacc7bb0bc1739c705b685177f135d362e055d472744"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity.go",
+      "size": 3049,
+      "sha256": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_contract_error_a_test.go",
+      "size": 8326,
+      "sha256": "bbfc59217c057df199b0d249450f0b3b10fb6a996d522f45c36df408d7a385ca"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_database_test.go",
+      "size": 1622,
+      "sha256": "94c2b29e522e2088762205c49cbafdc6890687060d35a7c5c640fa723877fb56"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_database.go",
+      "size": 1038,
+      "sha256": "211e272e5cc194a230e356b5def83e03956bb3ac2d4543435b128e07b06011c0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_error_boundary_a_test.go",
+      "size": 5274,
+      "sha256": "442773899d67bc2b8ce3845e4b4965941ad8f2e25bf5236a9693e59d178ae9f7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_files.go",
+      "size": 2842,
+      "sha256": "6597f252283569df33a5e1738a43088f2342881e8c469c0d7fadb15b4efb23f5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_http_mysql_test.go",
+      "size": 17122,
+      "sha256": "10c1c3a218a097cfb9b71f2f3fec05e27e0665b2096a55fb54bd1a2500299c12"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_mfa_authorization_test.go",
+      "size": 6198,
+      "sha256": "4c4842ae6441a47f8718b81e9bed4515fe1d0a716800867a58e4e6d70def3c92"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_runtime.go",
+      "size": 13065,
+      "sha256": "c8c0da5ad912fe2556c331fb18f7a3da25faf03ddddc14f5f67cf9d97e2a6ab4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/s3_read_client_test.go",
+      "size": 3458,
+      "sha256": "f534f627adee87e4a926fc258d28b74d4ce63fd503221a26c13e22432493e825"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/s3_read_client.go",
+      "size": 4279,
+      "sha256": "5c81b6f2411de0a7e19b1215ba4678376510b9c76bb0b0166d5d32e59bd23118"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_config.go",
+      "size": 5009,
+      "sha256": "5742cd67ece863f30b66dc57466f2fe5c1fc106f73015b24132abb6413b9aedb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_deadline_a_test.go",
+      "size": 2630,
+      "sha256": "a49fe1c78f2776451a14b8880cd722dca2006cf60032b20301e31ee2193ab8da"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+      "size": 1336,
+      "sha256": "43789c3f35c03673409a4ac650937d522145e09df8db5a436844ab17c995a37c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_nonce_scope_test.go",
+      "size": 12526,
+      "sha256": "a8cd44002595fa538db19b9049e7ddf8c7d502196f44ad1cc0cefd4722eb532b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_nonce_scope.go",
+      "size": 11428,
+      "sha256": "6833fc55d1b8b0c2b6bfa28b75baad2ac366941ecbaca7ba19fd46e820104753"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_nonce_use_test.go",
+      "size": 2954,
+      "sha256": "815e2a792f48ecefccbb9b74283d178bf6ab7f950a692e4bbb07cc3e2b6de65c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request_a_test.go",
+      "size": 11779,
+      "sha256": "b40a3faa528e94e0ccbbbb41237c94ead076bda5cfd5a6e0d7f3e6f909ea58ea"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request.go",
+      "size": 12971,
+      "sha256": "280ecc49acbda8fe49606254f5b335c2a6899e293eea8d5a118bc976f7adff2e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_totp_test.go",
+      "size": 15197,
+      "sha256": "e4e697635ceef7ed67a31d158039195d2ac22b3a40fc6474dd3b54de32e7e442"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_totp.go",
+      "size": 6309,
+      "sha256": "378a5ac6fb4150bb441666d8d057b7ba09d283977315df6da825e80839f48408"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_verification_identity_test.go",
+      "size": 2674,
+      "sha256": "ff33cd579013f5c702ac6b15292f1b074b041fff1d6528d1fc4b75dba12fd161"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth_registry.go",
+      "size": 2343,
+      "sha256": "2efa85a7c41808af237907ea8b9962861a99498d8ed798ba677fd3f8936f6943"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth_test.go",
+      "size": 15316,
+      "sha256": "f7e7c080d41f373e394b9a87210592a6ed3d16bc0a20557a8811f5252eb0e3a4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "size": 20858,
+      "sha256": "23c079dcdc24405731e1d04a7b996011f7e0e0ad77ef20ddf12c6c842a47f37e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_backfill_identity_vectors.json",
+      "size": 118731,
+      "sha256": "bdcf7f84c340ac2d7af5374d2d33707453163503b178fde26e0141d7d18e4a9f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_maintenance_candidate_082.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_operation_response_vectors.json",
+      "size": 3810,
+      "sha256": "d186a812a555c54f25e528ed2537a4582d5be6df8cd115fab7c9a8f09ed92fef"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_proof_installation_schema_065.sql",
+      "size": 1991,
+      "sha256": "197dca000c3d0f1d48df5370cc64d2ef49dee4a01b4a9d629a0e6311740840ce"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_writer_candidate_081.sql",
+      "size": 881,
+      "sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/sensitive_download_request_vectors.json",
+      "size": 6720,
+      "sha256": "329f731f2da01a2a5732aecadd942bef7540f0535b9457c78dd3dc62ac35646c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_mysql_test.go",
+      "size": 3953,
+      "sha256": "c8e6960376ca435ee75ce64f685083692a6832f2c96ef6d12577a96823c95301"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_sql.go",
+      "size": 13976,
+      "sha256": "c8cac3d4f853c056703d5b6d6ee9b7252451ab4520127fc27bd976b7af768a25"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_test.go",
+      "size": 1512,
+      "sha256": "a26cdc6043415212791aa11a1d069a019877fb025e3b62758ab435dcac2241c4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp.go",
+      "size": 5778,
+      "sha256": "d0ce082d2298d58a03dc7cc9dc12a939cc6962db9cd0f21a991d6b193bc9ab10"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/transit_signer_test.go",
+      "size": 2459,
+      "sha256": "ee3662571cbf06cf2cfeb97957253369ab8fddb1e2c6ccf758e071abf2aa8a2d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/transit_signer.go",
+      "size": 6296,
+      "sha256": "04bf4ccfc3f891888dbbb48b78a05afc7039705d64cd85542c6ef4440902f62b"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-artifact-signature-vectors.json",
+      "size": 642,
+      "sha256": "325ac29edba4ebbd58d6ab334501f73d8a9a4790b28a78abae5df3e72666a54e"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "size": 3422,
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-status-reason-vectors.json",
+      "size": 3030,
+      "sha256": "f63d2bbd2df657d1f003c122cdda80b079cf498777b667f01cc256fe3bd8c3eb"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixture-policies.json",
+      "size": 23456,
+      "sha256": "dead868a94fe4cba19634d03c867bd555afa5063d8a19cb8ae11ac6abb71302d"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixtures.json",
+      "size": 61789,
+      "sha256": "c14546cfe9995467c9955a275acad2f5ff13d243021bbc34cbd2838c9bb7d155"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "size": 4985,
+      "sha256": "eff9e7ebf5a14992cfbe8562aa869dfcbacee4481914db1e708249c6f341dbf0"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-provider-proof-parity-vectors.json",
+      "size": 95822,
+      "sha256": "b89eeedbb3d217892f506d0cad734d11897892ed68ca14164414c2317e7da2f3"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-provider-proof-signature-vectors.json",
+      "size": 15165,
+      "sha256": "7200738b962b2cfa3d0592283e8f1eadb7a9cfa9afcf738d74874cad259b9a76"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-secret-ref-vectors.json",
+      "size": 21259,
+      "sha256": "90eeca215129fb792221b4b5661a077045265bb30c1009d38a855833380f1f65"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-strong-auth-signature-vectors.json",
+      "size": 7617,
+      "sha256": "10d4ff8d3bbfdcb81416bb48ca0f7cd456bcd227d4986f69744ebdc14dc1cf07"
+    },
+    {
+      "path": "contracts/system-backup/v12/acceptance-marker.schema.json",
+      "size": 3591,
+      "sha256": "d82e1ef6511df9542093586d85ceaa3ef42917c0ca48747b5ceb473d1d3fa06c"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-activity-redacted-examples.json",
+      "size": 4418,
+      "sha256": "0637474b8bef907a1a70f8b35abe37e04304c741f62bed5fa85bbf9ffb4018e4"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-activity-resources.schema.json",
+      "size": 24146,
+      "sha256": "035633cde22b5f4deffb61cfcc370014c7ba5a9066c9d0123c3d5eadcbf2797f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-api-common.schema.json",
+      "size": 7401,
+      "sha256": "40a8cbafbfa4697835901eea4fad8b5e8fd4a6eb287fa4f866992e848b16a990"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-redacted-examples.json",
+      "size": 10544,
+      "sha256": "51a28169fd6b5ac15af4a076c62fa7b70e5e8023c892931214a3a713a5f7063f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "size": 25084,
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-mutation-requests.schema.json",
+      "size": 8828,
+      "sha256": "a84a5fcf5f5a02ce6a186f38c057440f6ea7cd622d63376c31a997cd73c2bbca"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-errors.json",
+      "size": 10878,
+      "sha256": "0d38fa7b967f1c6065c08a2efbea239be864334fc900e0df2c65ffbaefd3ad0f"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-errors.schema.json",
+      "size": 2314,
+      "sha256": "4e2ecbada3241982056a03e9c005ead315f1239af106647333444f402440e5b6"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-policy.json",
+      "size": 31606,
+      "sha256": "1ac9a8bc15dd69cf691134498ad5387c3a2410c8fb162fe2da8a91fc3b32c429"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-policy.schema.json",
+      "size": 5269,
+      "sha256": "9b59cf845b967d6da573443378a2e3b5de1bf7816e4548993b0673818d6642cc"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-task-detail-redacted-examples.json",
+      "size": 10118,
+      "sha256": "5ff68bdb81af2837571a5299452dba033cf14e2d8a00e98cffa4ed4492f3ed4b"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-task-detail-resources.schema.json",
+      "size": 19964,
+      "sha256": "40ba79f9782fc668a3f0f864572685936312860e0e0f127e860286977305154e"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "size": 39204,
+      "sha256": "bd41b280168ad6c9dfda40152cedc907a4c3e19bc1b832a772ef83412cf8e18b"
+    },
+    {
+      "path": "contracts/system-backup/v12/artifact-common.schema.json",
+      "size": 3867,
+      "sha256": "5a10236b7e0f96b597b884b538ec93c04848d7b4db0d87f96dc341ecec1df095"
+    },
+    {
+      "path": "contracts/system-backup/v12/artifact-index.schema.json",
+      "size": 1786,
+      "sha256": "46a9ed4e3dd75719a2172ef041bd329f4a4b19af69ca9833cb935ea596fcd3d0"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "size": 24887,
+      "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+    },
+    {
+      "path": "contracts/system-backup/v12/committed-marker.schema.json",
+      "size": 902,
+      "sha256": "3b8d48fb62f86db76a2e1df88d0bc9c7bcd35122f1864b0c04bbcb4f77cc3bbf"
+    },
+    {
+      "path": "contracts/system-backup/v12/compact-tombstone.schema.json",
+      "size": 3658,
+      "sha256": "1977e6d7d2e1b172a18896d55f66295ff8deda08cd7da06e2ea76ca3815b8c05"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "size": 5256,
+      "sha256": "0df58467415015293f2cd4f5ca04db2182a2fb585b11c2e4a15128a3eb7114ba"
+    },
+    {
+      "path": "contracts/system-backup/v12/control-evidence-sidecar-redacted-example.json",
+      "size": 6036,
+      "sha256": "93ae116f2d4d0ee30780c276c7e700e98b6cce31f6a60924dfbab9b4a8f5c7b1"
+    },
+    {
+      "path": "contracts/system-backup/v12/control-evidence-sidecar.schema.json",
+      "size": 10007,
+      "sha256": "387f74342e2711118a378f850bbe1ea32b6427b9cf9ddaa234a84bccb44e283c"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "size": 8220,
+      "sha256": "9e63ea1d46a530876df258689672c747e46fe0ae6723fb3f32b6bbdc2f645af0"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability-redacted-examples.json",
+      "size": 4454,
+      "sha256": "4c805fd977e3516de667478f984856c0047222982ff0b3bb3080ef8a47818ce5"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+      "size": 14436,
+      "sha256": "b1c596590f182577511e5e888786798d5c246d33e47b29e8f9bf068cf555ed12"
+    },
+    {
+      "path": "contracts/system-backup/v12/download-admission-public-vector.json",
+      "size": 1275,
+      "sha256": "ca6f32fa017f01fd076783fb272513e86129765074740d94a7ede7db5cbbf8f6"
+    },
+    {
+      "path": "contracts/system-backup/v12/dto-parity.json",
+      "size": 1042,
+      "sha256": "042bdb9fe8e67b8032a1e7fefb9a67b6ac511559c85ae12151c23f0043e73db3"
+    },
+    {
+      "path": "contracts/system-backup/v12/evidence-chunk-log-redacted-examples.json",
+      "size": 5583,
+      "sha256": "72a8477fb60d52a617e92446afa0bc6865a7096f1d8040cc218211bd3129502b"
+    },
+    {
+      "path": "contracts/system-backup/v12/evidence-chunk-log.schema.json",
+      "size": 20926,
+      "sha256": "783be43e40eb5ede9ce06376bb62918c1c69ed3c37ef4a3dfcc2c2e79c833131"
+    },
+    {
+      "path": "contracts/system-backup/v12/external-action-payload.schema.json",
+      "size": 3807,
+      "sha256": "6096e4a3d09722421581533afc1dba8e0e3ea32083fc7ad07b55917a833f656f"
+    },
+    {
+      "path": "contracts/system-backup/v12/hash-algorithms.json",
+      "size": 2333,
+      "sha256": "f9845b0b1199c9b188924c7167ef1358700db1a9690c3168d6c9ba9c2ac7e5e4"
+    },
+    {
+      "path": "contracts/system-backup/v12/installation-state.schema.json",
+      "size": 3203,
+      "sha256": "70f92036e89f505292820ece305c5b3fdac8c0547b5d061524fbe713e51006cd"
+    },
+    {
+      "path": "contracts/system-backup/v12/job-observation-cursor.schema.json",
+      "size": 7927,
+      "sha256": "818d6dca16ef7dc26b99e64f6cb8cbc045c32da71460c44ad189a9a5419cfa80"
+    },
+    {
+      "path": "contracts/system-backup/v12/maintenance-participant-state.schema.json",
+      "size": 6837,
+      "sha256": "e6b5d2339f0b3f4a2be6365d6a67dbfb4766010aac265364a226d1b04474e637"
+    },
+    {
+      "path": "contracts/system-backup/v12/manifest-system-backup-v1.schema.json",
+      "size": 8990,
+      "sha256": "97ff3a94db45ea165653241b6b6d9c174b9432505133299933b512c359026fdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194100,
+      "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.schema.json",
+      "size": 6859,
+      "sha256": "6f3e30a1ee322170edbe17f156854317ac9b2ce480a1843a4710910e12803b58"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "size": 16609,
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "size": 18415,
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "size": 141814,
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "size": 34573,
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/provider-finalizer-request.schema.json",
+      "size": 3945,
+      "sha256": "74da7d8613e98097553d50ea88b06c6da8f85b0fc6a30280c925eaeb335e9450"
+    },
+    {
+      "path": "contracts/system-backup/v12/provider-proof-registration.schema.json",
+      "size": 10345,
+      "sha256": "618754245abc64cb2c9ca88a0099bfddae98bbe46caa5580f95d26b354542626"
+    },
+    {
+      "path": "contracts/system-backup/v12/publication-redacted-examples.json",
+      "size": 5972,
+      "sha256": "518c9ea34b26f00bafdccfa653dd18d553cca9707146f7169555c79c4519a51a"
+    },
+    {
+      "path": "contracts/system-backup/v12/redacted-examples.json",
+      "size": 4526,
+      "sha256": "a5560e94f167326fd7313f2486022555a087170892d559f418da4e0fcb1fb129"
+    },
+    {
+      "path": "contracts/system-backup/v12/registry-enums.json",
+      "size": 924,
+      "sha256": "f2a4a5e06d0efda1edddaf19fbe7548a12a82b2fc65344033d545a3fa58520ee"
+    },
+    {
+      "path": "contracts/system-backup/v12/restore-drill-resource-lifecycle.schema.json",
+      "size": 6910,
+      "sha256": "6b1850b2fce2a8b0907d77a0deb30ca732ddcb0cdf767149018776de876e8d87"
+    },
+    {
+      "path": "contracts/system-backup/v12/runner-data-interfaces.schema.json",
+      "size": 4237,
+      "sha256": "16c968886bbdc7c7c86cebf3391ccd5b932d5ac0ba0d2d670b61d8e82a309b3e"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-hash-live-evidence.schema.json",
+      "size": 6310,
+      "sha256": "a06ea9d4b7019b60ba0099e1298be24986050e42c04a9b4f16c12c7a799a6ae5"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-hash-observation.schema.json",
+      "size": 6084,
+      "sha256": "2aa279643892e71195b88583b15db96241316adc50d4b057ba99463f9eefb746"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-hash-result.schema.json",
+      "size": 1615,
+      "sha256": "021bafa597e93e40d348e621ee0ba3b72a2ca5bbe018b86a3823373ca8dfcaee"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry-decisions.json",
+      "size": 45955,
+      "sha256": "1928dd48a4efe6842e2d7565f66381c65d7a922f6eba29b156254da936fff6ee"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "size": 98179,
+      "sha256": "8b72c233d83844e8d36e64b75d0bb690b27aa902ef99c28f38b61f5dedeae9f8"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.schema.json",
+      "size": 6010,
+      "sha256": "0c783fb0359327345d356d783b9f86dd1ec8daee4e8c161b335b6b77a6682856"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-allowlist-functional-test.json",
+      "size": 512,
+      "sha256": "83c39f19e379bf25951ab3e75a2e99df62c448f6ae0bc2b18b4bbbfd8f7bc9dd"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-broker-read-allowlist.json",
+      "size": 334,
+      "sha256": "29288aa0e21a145e26a6f10b134ca36a139aa5898bee31ec594411bea40b8eab"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "size": 23434,
+      "sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9"
+    },
+    {
+      "path": "contracts/system-backup/v12/source-writer-check-state.schema.json",
+      "size": 2976,
+      "sha256": "9403a9e148a2efb0ecdf7bb04d0727b911cde7b2af48077ea44b8df01c01317f"
+    },
+    {
+      "path": "contracts/system-backup/v12/staging-resource-lifecycle.schema.json",
+      "size": 7898,
+      "sha256": "f244dfe88b2bff394f9904d9fc119d2598ebda539a346551fa348b7c44584e3f"
+    },
+    {
+      "path": "contracts/system-backup/v12/status-failure-enums.schema.json",
+      "size": 4229,
+      "sha256": "02e8d13bb8e96ff13da4049b8673835015445bc4b60d6b736095c914f829f676"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-nonce-ledger.schema.json",
+      "size": 3653,
+      "sha256": "d08a8eb8f1f542458a2238d02c496bc14edb2fbe799b90d18da3638aafff3da5"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json",
+      "size": 7197,
+      "sha256": "ff3aaf4780f207cec5b7a864fc8c36b958ad750bdb2b6c9c26d017fc02005805"
+    },
+    {
+      "path": "contracts/system-backup/v12/task-operation.schema.json",
+      "size": 12114,
+      "sha256": "4d3ce85314bd607b21e1f9a1a445fc6391c8408d3d52255e84a926ee7ca4a4a9"
+    },
+    {
+      "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+      "size": 18782,
+      "sha256": "32957c05eb59c70abcac99ddfc5f6eabf3be330c0489dc55494959522b69513c"
+    },
+    {
+      "path": "docs/evidence/a-ca-binding-original-source-20261023.json",
+      "size": 30182,
+      "sha256": "f1bc50c34e6b35b2b7cd381c931d3c6ae5386eb0091b352683aa2983fab78ec1"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-vectors-20261015.json",
+      "size": 9770,
+      "sha256": "9a37c004f4ab13ad8b462418aca07dd4f544407a24e3fe9f49e6b42da6531acc"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-request-vectors-20261014.json",
+      "size": 18710,
+      "sha256": "fbb7955e87987f6811c2b721de38087a4a80ba3a736be9b29ac2bc9f311178de"
+    },
+    {
+      "path": "docs/evidence/system-backup-provider-issuer-d-issuer-d7f0a14ec84d78927620d25f.registry.json",
+      "size": 822,
+      "sha256": "c1b76a352d37cee763235c645cf82ded5e4193cb66fb12614a83c4cb950ed4a8"
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "scripts/system-backup-a-bootstrap-source.ps1",
+      "size": 3873,
+      "sha256": "aa82f664b564f538c6d0646f5855134a5faf8cd9346e6d616dc33837d32bd7eb"
+    },
+    {
+      "path": "scripts/system-backup-a-compilation-cache-seed.mjs",
+      "size": 3467,
+      "sha256": "09c76d71609363b919eb5e24ebd55405bbb0a123f018aad12d945bb20e392de3"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    },
+    {
+      "path": "scripts/system-backup-a-nonce-ca-r2-validation.ps1",
+      "size": 9875,
+      "sha256": "55da150a9638cefc536578d21c9c663ca7b1cfc8f385eb7ed0f5f2eef7c815a1"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5615,
+      "sha256": "34ea566ef0bd646aa93c2e530a0d1c6a8a059db760f425696c0f8129c0de3081"
+    }
+  ],
+  "source_sha256": "62b5b48d3937c889f0269295c2c81bf15c9a4e3eaad483ba9a5ffbfa33f15755",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-90c13cdff5e54654bdc229ce952cb0c0",
+  "test_exit": null,
+  "linux_build": false,
+  "frozen_inputs_match": false,
+  "current_inputs_match": false,
+  "cleanup_verified": true,
+  "default_vet": true,
+  "dependencies_installed": false,
+  "external_provider_contacted": false,
+  "synthetic_SQL_driver": true,
+  "synthetic_loopback_TLS": true,
+  "production_linked": false,
+  "production_approved": false,
+  "original_counterexample_verified": false,
+  "counterexample_exit": null,
+  "counterexample_log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-nonce-ca-r2-candidate-20261023-164248-511c1f06.old.jsonl",
+  "cache_seed_audit": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-nonce-ca-r2-candidate-20261023-164248-511c1f06.cache-seed.json"
+}

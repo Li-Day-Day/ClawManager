@@ -79,6 +79,9 @@ type DownloadRetentionGCConfig struct {
 	ClientCAPEM                       []byte
 	ClientCASHA256, CertificateSHA256 string
 	ExpiresAt                         time.Time
+	// Explicit deployment wiring. Nil retains the historical non-freeze path;
+	// it does not approve that path for production metadata GC.
+	Freeze *DownloadGCFullFreezeConfig
 }
 
 func (DownloadRetentionGCConfig) MarshalJSON() ([]byte, error) { return nil, ErrInvalid }
@@ -89,6 +92,7 @@ type SQLDownloadRetentionGC struct {
 	c         DownloadRetentionGCConfig
 	roots     *x509.CertPool
 	principal string
+	freeze    *downloadGCFullFreeze
 }
 
 func (SQLDownloadRetentionGC) MarshalJSON() ([]byte, error) { return nil, ErrInvalid }
@@ -108,6 +112,20 @@ func NewSQLDownloadRetentionGC(c DownloadRetentionGCConfig) (*SQLDownloadRetenti
 	if !roots.AppendCertsFromPEM(c.ClientCAPEM) {
 		return nil, ErrDenied
 	}
+	var freeze *downloadGCFullFreeze
+	if c.Freeze != nil {
+		var err error
+		freeze, err = newDownloadGCFullFreeze(*c.Freeze, c)
+		if err != nil {
+			return nil, ErrDenied
+		}
+		c.Policy = &downloadGCFullFreezePolicy{freeze: freeze, domain: c.Policy}
+	} else if _, requiresFreeze := c.Policy.(DownloadGCFullFreezeAuthority); requiresFreeze {
+		// A full-profile policy must never silently downgrade if its explicit
+		// owner configuration is omitted.
+		return nil, ErrDenied
+	}
+	c.Freeze = nil // retain only the validated, private value copy
 	c.ClientCAPEM = nil
 	principal := hash(canonical(struct {
 		Installation, Server, Database, Certificate, Worker, Claim, Config string
@@ -115,7 +133,7 @@ func NewSQLDownloadRetentionGC(c DownloadRetentionGCConfig) (*SQLDownloadRetenti
 	}{
 		r.Installation, r.ServerUUID, r.Database, c.CertificateSHA256, c.OperationID, c.OperationClaim, c.ConfigSHA256, c.ConfigVersion, c.OperationRowVersion,
 	}))
-	return &SQLDownloadRetentionGC{c: c, roots: roots, principal: principal}, nil
+	return &SQLDownloadRetentionGC{c: c, roots: roots, principal: principal, freeze: freeze}, nil
 }
 
 func (s *SQLDownloadRetentionGC) AuthenticateRequest(r *http.Request) (context.Context, error) {
@@ -170,6 +188,9 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if s == nil || ctx == nil || ctx.Err() != nil || !downloadAdmissionOperationID.MatchString(operation) || operation == s.c.OperationID {
 		return ErrDenied
 	}
+	if s.freeze != nil {
+		return s.collectWithFullFreeze(ctx, operation)
+	}
 	peer, err := pinnedPeerExpiry(ctx, s, s.roots, s.c.CertificateSHA256, s.c.ExpiresAt)
 	if err != nil {
 		return ErrDenied
@@ -185,6 +206,66 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 		}
 	}()
 	tx := owned.tx
+	if err := s.collectInTransaction(ctx, tx, operation, peer, now); err != nil {
+		return err
+	}
+	return owned.commit()
+}
+
+// collectInTransaction is the protected work stage, shared by the existing
+// connection owner and a future reviewed freeze adapter. The caller owns the
+// exact authenticated session, its initial SQL clock sample and peer bound.
+// This stage never acquires a connection, begins/ends a transaction, unlocks,
+// retries or renews authority. A nil return still requires the caller's final
+// freeze/authority checks and sole commit; any later failure must roll back.
+// It is not a production freeze adapter or a default metadata-GC policy.
+func (s *SQLDownloadRetentionGC) collectInTransaction(ctx context.Context, tx *sql.Tx, operation string, peer, now time.Time) error {
+	return s.collectProtectedWork(ctx, tx, operation, peer, now, nil)
+}
+
+// capture is private candidate wiring. Ordinary Collect preserves its original
+// guards and transaction owner. A completion is issued only after all real
+// protected work and post-delete checks succeeded on this exact transaction.
+func (s *SQLDownloadRetentionGC) collectProtectedWork(ctx context.Context, tx *sql.Tx, operation string, peer, now time.Time, capture **downloadGCWorkFinalizer) error {
+	return s.collectProtectedWorkWithCapacity(ctx, tx, operation, peer, now, capture, nil)
+}
+
+func (s *SQLDownloadRetentionGC) collectProtectedWorkWithCapacity(ctx context.Context, tx *sql.Tx, operation string, peer, now time.Time, capture **downloadGCWorkFinalizer, prepared *sec.PreparedConfigMutationCapacity) error {
+	var reservation sec.ConfigMutationCapacityReservation
+	clock := func(c context.Context, t *sql.Tx, floor, until time.Time) (time.Time, error) {
+		if prepared != nil && reservation != nil {
+			pinned, ok := reservation.(interface {
+				SQLFloor(context.Context, *sql.Tx) (time.Time, error)
+			})
+			if !ok {
+				return time.Time{}, ErrDenied
+			}
+			observed, err := pinned.SQLFloor(c, t)
+			if err != nil {
+				return time.Time{}, ErrDenied
+			}
+			if observed.After(floor) {
+				floor = observed
+			}
+		}
+		return s.clock(c, t, floor, until)
+	}
+	if capture != nil {
+		*capture = nil
+	}
+	if s == nil || ctx == nil || ctx.Err() != nil || tx == nil || !downloadAdmissionOperationID.MatchString(operation) || operation == s.c.OperationID || now.IsZero() || !now.Before(peer) {
+		return ErrDenied
+	}
+	if s.freeze != nil && prepared == nil {
+		return ErrDenied
+	}
+	// Revalidate the original authenticated context, without extending the
+	// caller's bound. This also rejects an unrelated context before any SQL.
+	currentPeer, err := pinnedPeerExpiry(ctx, s, s.roots, s.c.CertificateSHA256, s.c.ExpiresAt)
+	if err != nil || peer.After(currentPeer) {
+		return ErrDenied
+	}
+	r := s.c.Registry
 	database := sec.DatabaseIdentity{ServerUUID: r.ServerUUID, Database: r.Database}
 	nonceScope, err := sec.LockSensitiveDownloadNonceScope(ctx, tx, database, r.Installation)
 	if err != nil {
@@ -225,7 +306,7 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 		return err
 	}
 	until := earlier(peer, earlier(worker.lease, worker.deadline))
-	now, err = s.clock(ctx, tx, now, until)
+	now, err = clock(ctx, tx, now, until)
 	if err != nil {
 		return err
 	}
@@ -261,11 +342,15 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if direct.lockL5(ctx, tx, g) != nil {
 		return ErrDenied
 	}
-	now, err = s.clock(ctx, tx, now, until)
+	now, err = clock(ctx, tx, now, until)
 	if err != nil || now.Before(minimum) || now.Before(g.receipt.ClaimExpiresAt) || now.Before(g.operation.DeadlineAt) || now.Before(g.result.at) {
 		return ErrDenied
 	}
-	reservation, err := s.c.Capacity.Reserve(ctx, tx, config.Values(), config.Values(), s.c.MeasuredReservationBytes, now)
+	if prepared != nil {
+		reservation, err = prepared.Reserve(ctx, tx, s.c.Capacity, config.Values(), config.Values(), now)
+	} else {
+		reservation, err = s.c.Capacity.Reserve(ctx, tx, config.Values(), config.Values(), s.c.MeasuredReservationBytes, now)
+	}
 	if err != nil || nilSystemAdapter(reservation) || !downloadAdmissionContentTime(reservation.ValidUntil()) || !now.Before(reservation.ValidUntil()) {
 		return ErrAudit
 	}
@@ -280,7 +365,7 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if err != nil {
 		return err
 	}
-	now, err = s.clock(ctx, tx, now, until)
+	now, err = clock(ctx, tx, now, until)
 	if err != nil || now.Before(minimum) || guard.Recheck(ctx, tx, scope, now) != nil || reservation.Recheck(ctx, tx, now) != nil || g.Recheck(ctx, tx) != nil || early.Recheck(ctx, tx, scope, now) != nil || direct.Recheck(ctx, tx, scope, now) != nil {
 		return ErrDenied
 	}
@@ -291,7 +376,7 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if err = deleteDownloadGCGroup(ctx, tx, g); err != nil {
 		return err
 	}
-	now, err = s.clock(ctx, tx, now, until)
+	now, err = clock(ctx, tx, now, until)
 	if err != nil || guard.Recheck(ctx, tx, scope, now) != nil || reservation.Recheck(ctx, tx, now) != nil || early.Recheck(ctx, tx, scope, now) != nil || direct.Recheck(ctx, tx, scope, now) != nil {
 		return ErrDenied
 	}
@@ -301,10 +386,30 @@ func (s *SQLDownloadRetentionGC) Collect(ctx context.Context, operation string) 
 	if err != nil || !currentWorker.lease.Equal(worker.lease) || !currentWorker.deadline.Equal(worker.deadline) || config.Recheck(ctx, tx) != nil || evidence.recheck(ctx, tx, scope, now) != nil || stone.verify(ctx, tx) != nil || verifyDownloadGCAbsent(ctx, tx, g) != nil {
 		return ErrAudit
 	}
-	if _, err = s.clock(ctx, tx, now, until); err != nil {
+	if now, err = clock(ctx, tx, now, until); err != nil {
 		return err
 	}
-	return owned.commit()
+	if capture != nil {
+		// All values below belong to THIS completed work. No replacement DTO,
+		// newly acquired prefix, renewed reservation or deleted-group Recheck.
+		*capture = issueDownloadGCFinalizer(ctx, tx, s, operation, func(finalCtx context.Context, finalTx *sql.Tx) error {
+			last, err := clock(finalCtx, finalTx, now, until)
+			if err != nil || last.Before(minimum) || guard.Recheck(finalCtx, finalTx, scope, last) != nil || reservation.Recheck(finalCtx, finalTx, last) != nil || early.Recheck(finalCtx, finalTx, scope, last) != nil || direct.Recheck(finalCtx, finalTx, scope, last) != nil {
+				return ErrDenied
+			}
+			// Every deployment callback precedes these independent checks.
+			current, err := s.worker(finalCtx, finalTx)
+			if err != nil || !current.lease.Equal(worker.lease) || !current.deadline.Equal(worker.deadline) || config.Recheck(finalCtx, finalTx) != nil || evidence.recheck(finalCtx, finalTx, scope, last) != nil || stone.verify(finalCtx, finalTx) != nil || verifyDownloadGCAbsent(finalCtx, finalTx, g) != nil {
+				return ErrAudit
+			}
+			_, err = clock(finalCtx, finalTx, last, until)
+			return err
+		})
+		if *capture == nil {
+			return ErrDenied
+		}
+	}
+	return nil
 }
 
 const downloadGCEvidenceHintSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type,created_at

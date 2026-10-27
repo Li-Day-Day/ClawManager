@@ -1,0 +1,125 @@
+**********************
+PowerShell transcript start
+Start time: 20261023092528
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+gofmt -w backend/internal/systembackupevidence/download_result_test.go backend/internal/systembackupevidence/download_runtime_test.go; & scripts/system-backup-a-owner-eof-validation.ps1 -RuntimeDiagnosticOnly
+Process ID: 8532
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_PASS isolated-go-telemetry=off
+{"Time":"2026-10-23T09:35:06.825105+08:00","Action":"start","Package":"clawreef/internal/systembackupevidence"}
+{"Time":"2026-10-23T09:35:09.9038023+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead"}
+{"Time":"2026-10-23T09:35:09.9038023+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead\n"}
+{"Time":"2026-10-23T09:35:09.9109387+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof"}
+{"Time":"2026-10-23T09:35:09.9119499+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof\n"}
+{"Time":"2026-10-23T09:35:10.4452546+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof (0.54s)\n"}
+{"Time":"2026-10-23T09:35:10.4457965+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof","Elapsed":0.54}
+{"Time":"2026-10-23T09:35:10.4457965+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/data"}
+{"Time":"2026-10-23T09:35:10.4457965+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/data","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/data\n"}
+{"Time":"2026-10-23T09:35:10.5273126+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/data","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/data (0.08s)\n"}
+{"Time":"2026-10-23T09:35:10.5273126+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/data","Elapsed":0.08}
+{"Time":"2026-10-23T09:35:10.5273126+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/no_progress"}
+{"Time":"2026-10-23T09:35:10.5273126+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/no_progress","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/no_progress\n"}
+{"Time":"2026-10-23T09:35:10.6133106+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/no_progress","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/no_progress (0.09s)\n"}
+{"Time":"2026-10-23T09:35:10.6143557+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/no_progress","Elapsed":0.09}
+{"Time":"2026-10-23T09:35:10.6143557+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/private_error"}
+{"Time":"2026-10-23T09:35:10.6143557+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/private_error","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/private_error\n"}
+{"Time":"2026-10-23T09:35:10.6839138+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/private_error","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/private_error (0.06s)\n"}
+{"Time":"2026-10-23T09:35:10.6839138+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/private_error","Elapsed":0.06}
+{"Time":"2026-10-23T09:35:10.6839138+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/read_unsupported"}
+{"Time":"2026-10-23T09:35:10.6839138+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/read_unsupported","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/read_unsupported\n"}
+{"Time":"2026-10-23T09:35:10.7309011+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/read_unsupported","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/read_unsupported (0.05s)\n"}
+{"Time":"2026-10-23T09:35:10.7309011+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/read_unsupported","Elapsed":0.05}
+{"Time":"2026-10-23T09:35:10.7309011+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/reset_error"}
+{"Time":"2026-10-23T09:35:10.7309011+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/reset_error","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/reset_error\n"}
+{"Time":"2026-10-23T09:35:10.822885+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/reset_error","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/reset_error (0.09s)\n"}
+{"Time":"2026-10-23T09:35:10.822885+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/reset_error","Elapsed":0.09}
+{"Time":"2026-10-23T09:35:10.822885+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/canceled"}
+{"Time":"2026-10-23T09:35:10.8233932+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/canceled","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/canceled\n"}
+{"Time":"2026-10-23T09:35:10.9257949+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/canceled","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/canceled (0.10s)\n"}
+{"Time":"2026-10-23T09:35:10.9257949+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/canceled","Elapsed":0.1}
+{"Time":"2026-10-23T09:35:10.9257949+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_eof"}
+{"Time":"2026-10-23T09:35:10.9257949+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_eof","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_eof\n"}
+{"Time":"2026-10-23T09:35:12.0450423+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_eof","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_eof (1.12s)\n"}
+{"Time":"2026-10-23T09:35:12.0450423+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_eof","Elapsed":1.12}
+{"Time":"2026-10-23T09:35:12.0450423+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_trailer"}
+{"Time":"2026-10-23T09:35:12.0450423+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_trailer","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_trailer\n"}
+{"Time":"2026-10-23T09:35:12.1803403+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_trailer","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_trailer (0.13s)\n"}
+{"Time":"2026-10-23T09:35:12.1803403+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/late_trailer","Elapsed":0.13}
+{"Time":"2026-10-23T09:35:12.1803403+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/positive_length"}
+{"Time":"2026-10-23T09:35:12.1803403+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/positive_length","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/positive_length\n"}
+{"Time":"2026-10-23T09:35:13.0164596+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/positive_length","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/positive_length (0.83s)\n"}
+{"Time":"2026-10-23T09:35:13.0164596+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/positive_length","Elapsed":0.83}
+{"Time":"2026-10-23T09:35:13.0183027+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/unknown_length"}
+{"Time":"2026-10-23T09:35:13.0183027+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/unknown_length","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/unknown_length\n"}
+{"Time":"2026-10-23T09:35:13.150884+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/unknown_length","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/unknown_length (0.14s)\n"}
+{"Time":"2026-10-23T09:35:13.150884+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/unknown_length","Elapsed":0.14}
+{"Time":"2026-10-23T09:35:13.150884+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/transfer"}
+{"Time":"2026-10-23T09:35:13.150884+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/transfer","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/transfer\n"}
+{"Time":"2026-10-23T09:35:13.3053991+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/transfer","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/transfer (0.15s)\n"}
+{"Time":"2026-10-23T09:35:13.3053991+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/transfer","Elapsed":0.15}
+{"Time":"2026-10-23T09:35:13.3053991+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/trailer"}
+{"Time":"2026-10-23T09:35:13.3053991+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/trailer","Output":"=== RUN   TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/trailer\n"}
+{"Time":"2026-10-23T09:35:13.57063+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/trailer","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/trailer (0.28s)\n"}
+{"Time":"2026-10-23T09:35:13.57063+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/trailer","Elapsed":0.28}
+{"Time":"2026-10-23T09:35:13.57063+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead","Output":"--- PASS: TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead (3.67s)\n"}
+{"Time":"2026-10-23T09:35:13.57063+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead","Elapsed":3.67}
+{"Time":"2026-10-23T09:35:13.5721578+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness"}
+{"Time":"2026-10-23T09:35:13.5721578+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness","Output":"=== RUN   TestADownloadEmptyBodySQLClockFreshness\n"}
+{"Time":"2026-10-23T09:35:13.5721578+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/stale"}
+{"Time":"2026-10-23T09:35:13.5721578+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/stale","Output":"=== RUN   TestADownloadEmptyBodySQLClockFreshness/stale\n"}
+{"Time":"2026-10-23T09:35:13.7808943+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/stale","Output":"--- PASS: TestADownloadEmptyBodySQLClockFreshness/stale (0.21s)\n"}
+{"Time":"2026-10-23T09:35:13.7849653+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/stale","Elapsed":0.21}
+{"Time":"2026-10-23T09:35:13.795452+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/fresh"}
+{"Time":"2026-10-23T09:35:13.795452+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/fresh","Output":"=== RUN   TestADownloadEmptyBodySQLClockFreshness/fresh\n"}
+{"Time":"2026-10-23T09:35:14.3836038+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/fresh","Output":"--- PASS: TestADownloadEmptyBodySQLClockFreshness/fresh (0.60s)\n"}
+{"Time":"2026-10-23T09:35:14.3836038+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness/fresh","Elapsed":0.6}
+{"Time":"2026-10-23T09:35:14.3836038+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness","Output":"--- PASS: TestADownloadEmptyBodySQLClockFreshness (0.81s)\n"}
+{"Time":"2026-10-23T09:35:14.3836038+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestADownloadEmptyBodySQLClockFreshness","Elapsed":0.81}
+{"Time":"2026-10-23T09:35:14.3840478+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit"}
+{"Time":"2026-10-23T09:35:14.3840478+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit\n"}
+{"Time":"2026-10-23T09:35:14.4122522+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success"}
+{"Time":"2026-10-23T09:35:14.4122522+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success\n"}
+{"Time":"2026-10-23T09:35:16.5272814+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success (2.11s)\n"}
+{"Time":"2026-10-23T09:35:16.527793+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success","Elapsed":2.11}
+{"Time":"2026-10-23T09:35:16.527793+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_decrypt"}
+{"Time":"2026-10-23T09:35:16.527793+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_decrypt","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_decrypt\n"}
+{"Time":"2026-10-23T09:35:17.3738795+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_decrypt","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_decrypt (0.84s)\n"}
+{"Time":"2026-10-23T09:35:17.3744195+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_decrypt","Elapsed":0.84}
+{"Time":"2026-10-23T09:35:17.3744195+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_headers"}
+{"Time":"2026-10-23T09:35:17.3744195+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_headers","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_headers\n"}
+{"Time":"2026-10-23T09:35:17.8913594+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_headers","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_headers (0.53s)\n"}
+{"Time":"2026-10-23T09:35:17.8913594+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/revoked_after_headers","Elapsed":0.53}
+{"Time":"2026-10-23T09:35:17.8913594+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_sql_after_provider_wait"}
+{"Time":"2026-10-23T09:35:17.8913594+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_sql_after_provider_wait","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_sql_after_provider_wait\n"}
+{"Time":"2026-10-23T09:35:24.2178478+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_sql_after_provider_wait","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_sql_after_provider_wait (6.33s)\n"}
+{"Time":"2026-10-23T09:35:24.2178478+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_sql_after_provider_wait","Elapsed":6.33}
+{"Time":"2026-10-23T09:35:24.2178478+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/fresh_sql_after_provider_wait"}
+{"Time":"2026-10-23T09:35:24.2178478+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/fresh_sql_after_provider_wait","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/fresh_sql_after_provider_wait\n"}
+{"Time":"2026-10-23T09:35:30.5507956+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/fresh_sql_after_provider_wait","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/fresh_sql_after_provider_wait (6.33s)\n"}
+{"Time":"2026-10-23T09:35:30.5507956+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/fresh_sql_after_provider_wait","Elapsed":6.33}
+{"Time":"2026-10-23T09:35:30.5507956+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_capacity_after_provider_wait"}
+{"Time":"2026-10-23T09:35:30.5507956+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_capacity_after_provider_wait","Output":"=== RUN   TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_capacity_after_provider_wait\n"}
+{"Time":"2026-10-23T09:35:37.6694862+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_capacity_after_provider_wait","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_capacity_after_provider_wait (7.10s)\n"}
+{"Time":"2026-10-23T09:35:37.6694862+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/stale_capacity_after_provider_wait","Elapsed":7.1}
+{"Time":"2026-10-23T09:35:37.6694862+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit","Output":"--- PASS: TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit (23.27s)\n"}
+{"Time":"2026-10-23T09:35:37.6704851+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit","Elapsed":23.27}
+{"Time":"2026-10-23T09:35:37.6704851+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"PASS\n"}
+{"Time":"2026-10-23T09:35:37.8032293+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"ok  \tclawreef/internal/systembackupevidence\t30.978s\n"}
+{"Time":"2026-10-23T09:35:37.8032293+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Elapsed":30.978}
+**********************
+PowerShell transcript end
+End time: 20261023093602
+**********************

@@ -16,6 +16,7 @@ type DownloadRetentionGCBatchResult struct {
 	Cursor                                     DownloadRetentionGCBatchCursor
 	Examined, Collected, Rejected              int
 	EndOfRange, CommitUnknown, RollbackUnknown bool
+	ReleaseUnknown                             bool
 }
 
 func (DownloadRetentionGCBatchResult) MarshalJSON() ([]byte, error) { return nil, ErrInvalid }
@@ -145,13 +146,26 @@ func runDownloadGCBatch(ctx context.Context, result DownloadRetentionGCBatchResu
 			result.Cursor.AfterID = c.id
 			continue
 		}
-		if errors.Is(err, ErrDownloadRetentionGCCommitUnknown) {
-			result.CommitUnknown = true
-			return result, ErrDownloadRetentionGCCommitUnknown
-		}
-		if errors.Is(err, ErrDownloadRetentionGCRollbackUnknown) {
-			result.RollbackUnknown = true
-			return result, ErrDownloadRetentionGCRollbackUnknown
+		result.CommitUnknown = errors.Is(err, ErrDownloadRetentionGCCommitUnknown)
+		result.RollbackUnknown = errors.Is(err, ErrDownloadRetentionGCRollbackUnknown)
+		result.ReleaseUnknown = errors.Is(err, ErrDownloadRetentionGCReleaseUnknown)
+		if result.CommitUnknown || result.RollbackUnknown || result.ReleaseUnknown {
+			// Preserve every uncertainty, including a known commit whose lock
+			// release could not be confirmed. Never advance or retry this hint.
+			var uncertain []error
+			if result.CommitUnknown {
+				uncertain = append(uncertain, ErrDownloadRetentionGCCommitUnknown)
+			}
+			if result.RollbackUnknown {
+				uncertain = append(uncertain, ErrDownloadRetentionGCRollbackUnknown)
+			}
+			if result.ReleaseUnknown {
+				uncertain = append(uncertain, ErrDownloadRetentionGCReleaseUnknown)
+			}
+			if len(uncertain) == 1 {
+				return result, uncertain[0]
+			}
+			return result, errors.Join(uncertain...)
 		}
 		if ctx.Err() != nil {
 			return result, ctx.Err()

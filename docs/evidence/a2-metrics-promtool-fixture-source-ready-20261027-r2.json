@@ -1,0 +1,701 @@
+{
+  "kind": "a2_metrics_promtool_raw_series_fixture_source_ready.v1",
+  "status": "prepared_not_executed",
+  "fixture": {
+    "path": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+    "size": 38608,
+    "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39"
+  },
+  "official_format": "https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/",
+  "counter_semantics_reference": "https://github.com/prometheus/prometheus/blob/main/promql/promqltest/testdata/functions.test",
+  "original_registry": {
+    "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+    "size": 194100,
+    "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+  },
+  "exact_combined_candidate": {
+    "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+    "size": 194141,
+    "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+  },
+  "test_groups": 59,
+  "promql_expression_checks_prepared": 117,
+  "rule_files_loaded": 0,
+  "expression_rule_ids": [
+    "acceptance-task-failed",
+    "confirmation-rejections-critical",
+    "confirmation-rejections-warning",
+    "isolation-rejections-critical",
+    "isolation-rejections-warning",
+    "redaction-failures-critical",
+    "redaction-failures-warning",
+    "signature-or-checksum-failure",
+    "strong-auth-rejections-critical",
+    "strong-auth-rejections-warning"
+  ],
+  "bindings": [
+    {
+      "test_group": "confirmation-rejections/warning_split",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "warning_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/warning_boundary",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "warning_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/warning_below",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "warning_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/critical_split",
+      "alert_id": "confirmation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "case": "critical_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/critical_boundary",
+      "alert_id": "confirmation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "case": "critical_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/critical_below",
+      "alert_id": "confirmation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "case": "critical_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/single_warning",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "single_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/single_critical",
+      "alert_id": "confirmation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "case": "single_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/reset_warning",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "reset_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "confirmation-rejections/reset_critical",
+      "alert_id": "confirmation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "case": "reset_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "confirmation-rejections/empty_warning",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "empty_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/empty_critical",
+      "alert_id": "confirmation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "case": "empty_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "confirmation-rejections/present_zero_warning",
+      "alert_id": "confirmation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "case": "present_zero_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/warning_split",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "warning_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/warning_boundary",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "warning_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/warning_below",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "warning_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/critical_split",
+      "alert_id": "redaction-failures-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "case": "critical_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/critical_boundary",
+      "alert_id": "redaction-failures-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "case": "critical_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/critical_below",
+      "alert_id": "redaction-failures-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "case": "critical_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/single_warning",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "single_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/single_critical",
+      "alert_id": "redaction-failures-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "case": "single_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/reset_warning",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "reset_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "redaction-failures/reset_critical",
+      "alert_id": "redaction-failures-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "case": "reset_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "redaction-failures/empty_warning",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "empty_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/empty_critical",
+      "alert_id": "redaction-failures-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "case": "empty_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "redaction-failures/present_zero_warning",
+      "alert_id": "redaction-failures-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "case": "present_zero_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/warning_split",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "warning_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/warning_boundary",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "warning_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/warning_below",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "warning_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/critical_split",
+      "alert_id": "isolation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "case": "critical_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/critical_boundary",
+      "alert_id": "isolation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "case": "critical_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/critical_below",
+      "alert_id": "isolation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "case": "critical_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/single_warning",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "single_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/single_critical",
+      "alert_id": "isolation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "case": "single_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/reset_warning",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "reset_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "isolation-rejections/reset_critical",
+      "alert_id": "isolation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "case": "reset_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "isolation-rejections/empty_warning",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "empty_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/empty_critical",
+      "alert_id": "isolation-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "case": "empty_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "isolation-rejections/present_zero_warning",
+      "alert_id": "isolation-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "case": "present_zero_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/warning_split",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "warning_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/warning_boundary",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "warning_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/warning_below",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "warning_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/critical_split",
+      "alert_id": "strong-auth-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "case": "critical_split",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/critical_boundary",
+      "alert_id": "strong-auth-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "case": "critical_boundary",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/critical_below",
+      "alert_id": "strong-auth-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "case": "critical_below",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/single_warning",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "single_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/single_critical",
+      "alert_id": "strong-auth-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "case": "single_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/reset_warning",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "reset_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "strong-auth-rejections/reset_critical",
+      "alert_id": "strong-auth-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "case": "reset_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": true
+    },
+    {
+      "test_group": "strong-auth-rejections/empty_warning",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "empty_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/empty_critical",
+      "alert_id": "strong-auth-rejections-critical",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "case": "empty_critical",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "strong-auth-rejections/present_zero_warning",
+      "alert_id": "strong-auth-rejections-warning",
+      "candidate_expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
+      "old_expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "case": "present_zero_warning",
+      "role": "Exact candidate expression and original-expression control",
+      "expected_results_proven": false,
+      "raw_counter_reset": false
+    },
+    {
+      "test_group": "signature/legal_success",
+      "alert_id": "signature-or-checksum-failure",
+      "candidate_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "old_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "case": "Original closed metric_result success",
+      "expected_results_proven": false
+    },
+    {
+      "test_group": "signature/legal_failure",
+      "alert_id": "signature-or-checksum-failure",
+      "candidate_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "old_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "case": "Original closed metric_result failure",
+      "expected_results_proven": false
+    },
+    {
+      "test_group": "signature/legal_rejected",
+      "alert_id": "signature-or-checksum-failure",
+      "candidate_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "old_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "case": "Original closed metric_result rejected",
+      "expected_results_proven": false
+    },
+    {
+      "test_group": "signature/legal_timeout",
+      "alert_id": "signature-or-checksum-failure",
+      "candidate_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "old_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "case": "Original closed metric_result timeout",
+      "expected_results_proven": false
+    },
+    {
+      "test_group": "signature/legal_conflict",
+      "alert_id": "signature-or-checksum-failure",
+      "candidate_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "old_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "case": "Original closed metric_result conflict",
+      "expected_results_proven": false
+    },
+    {
+      "test_group": "signature/legal_canceled",
+      "alert_id": "signature-or-checksum-failure",
+      "candidate_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "old_expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "case": "Original closed metric_result canceled",
+      "expected_results_proven": false
+    },
+    {
+      "test_group": "status/valid_failed_preserved",
+      "alert_id": "acceptance-task-failed",
+      "unchanged_expression": "increase(clawmanager_system_backup_task_transitions_total{task_purpose=\"acceptance\",status=\"failed\"}[5m]) > 0",
+      "case": "Valid task status failed is not a metric_result spelling",
+      "expected_results_proven": false
+    }
+  ],
+  "coverage": [
+    "split threshold boundaries",
+    "below threshold",
+    "single series",
+    "counter reset",
+    "empty series",
+    "present zero series",
+    "all six legitimate metric_result values",
+    "valid failed task status"
+  ],
+  "yaml_structural_roundtrip_only": true,
+  "yaml_parser": {
+    "package": "js-yaml",
+    "version": "4.2.0",
+    "already_present": true
+  },
+  "expected_results_proven": false,
+  "promtool_executed": false,
+  "PromQL_parser_or_evaluator_executed": false,
+  "source_ready_is_not_PASS": true,
+  "missing_series_loader_or_production_behavior_proven": false,
+  "dependencies_installed": false,
+  "Go_executed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/manifest-system-backup-v1.schema.json",
+      "size": 8990,
+      "sha256": "97ff3a94db45ea165653241b6b6d9c174b9432505133299933b512c359026fdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194100,
+      "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+    },
+    {
+      "path": "contracts/system-backup/v12/status-failure-enums.schema.json",
+      "size": 4229,
+      "sha256": "02e8d13bb8e96ff13da4049b8673835015445bc4b60d6b736095c914f829f676"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-promtool-fixture-20261027.mjs",
+      "size": 11831,
+      "sha256": "03c2923691b3c4800230519d951cb23df3c71be327fcb6bfc96a460471ec3ebe"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.mjs.txt",
+      "size": 41281,
+      "sha256": "74d2bc36169bdf6157bf14e26c353c581b78309d2faef66954d8e685e1a7ee85"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.yaml",
+      "size": 70799,
+      "sha256": "245bf3d97317b679509aabac1ffb85258a1720d2bc40b6e200f87e322f5ac018"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.json",
+      "size": 194101,
+      "sha256": "c82415b341835d8a1055a1f87984b81cf0bed4842a35c08feb951a7cc08df45f"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.mjs.txt",
+      "size": 41175,
+      "sha256": "16fd91c22fd3625655207dec8fa85432d0f99e82408ca57b05c623abe6030ed1"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.yaml",
+      "size": 70759,
+      "sha256": "ace20dd31431247b28d4fd03d42443bb31bbb7015099caaad826d9f5eea3e144"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-selector-enum-reviewed-20261027.json",
+      "size": 15018,
+      "sha256": "346d0e5add048f08f508f08f3e10aeee10b8768d8bf19ad71ce7f414c612f92c"
+    },
+    {
+      "path": "frontend/node_modules/js-yaml/package.json",
+      "size": 2153,
+      "sha256": "a60d092d63c8108375c203870ad8dc50af32bc373d45816ecee98eacc389bbba"
+    }
+  ]
+}

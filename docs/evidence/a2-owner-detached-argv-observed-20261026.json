@@ -1,0 +1,55 @@
+{
+  "kind": "a2_owner_detached_native_argv_probe.v1",
+  "powershell_version": "7.6.5",
+  "execution_mode": "saved_ps1_file",
+  "literal_argv": [
+    "-test",
+    ".run",
+    "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+    "-test",
+    ".v",
+    "-test",
+    ".count=1",
+    "-test",
+    ".timeout=60s"
+  ],
+  "variable_executable_bare_pipeline_argv": [
+    "-test",
+    ".run",
+    "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+    "-test",
+    ".v",
+    "-test",
+    ".count=1",
+    "-test",
+    ".timeout=60s"
+  ],
+  "explicit_string_array_argv": [
+    "-test.run",
+    "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+    "-test.v",
+    "-test.count=1",
+    "-test.timeout=60s"
+  ],
+  "literal_matches_expected": true,
+  "variable_executable_bare_pipeline_matches_expected": true,
+  "explicit_string_array_preserves_switches": true,
+  "literal_probe_exit": 0,
+  "string_array_probe_exit": 0,
+  "variable_executable_bare_pipeline_exit": 0,
+  "runner": {
+    "path": "docs/evidence/d-gc-finalizer-validation-20261026.ps1",
+    "sha256": "32f5859ebd45de412a44592e2298e129716ade5a030c830a63b2af3b76c94bfb"
+  },
+  "runner_still_contains_unquoted_call": true,
+  "probe": {
+    "path": "docs/evidence/a2-owner-detached-argv-probe-20261026.ps1",
+    "sha256": "bec07a2a7342548b50e3efc66259ba8b5627d1ffe510d543f574f14176afdf0c"
+  },
+  "in_flight_peer_runner_modified": false,
+  "saved_runner_failure_proven": false,
+  "Go_or_test_binary_executed": false,
+  "scratch_created": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

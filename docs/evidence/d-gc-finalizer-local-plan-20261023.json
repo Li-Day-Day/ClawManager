@@ -1,0 +1,27 @@
+{
+  "kind": "d_gc_finalizer_local_preparation_plan.v1",
+  "status": "required_local_work_waiting_current_frozen_gate_terminal",
+  "finding": "A-GC-WORK-01",
+  "independently_implementable": true,
+  "why_local": "The existing work stage already has the exact authorized context/transaction, original scope, worker/config/peer/fence bounds, guards, reservation, evidence envelope, tombstone and absent keys. Capturing these in a private one-use finalizer and validating its sequencing needs no new B/C provider or production grant.",
+  "current_gate": {"exec_session": 88351, "source_sha256": "ede12e280a902b194bb729727d8b3dac8c13d38a830eb3605a25a33d10ee2e7e", "backend_must_remain_unchanged_until_terminal": true},
+  "required_local_deliverables": [
+    "Private exact-tx/original-context finalizer whose copied values share one consumption state, rejects nil/wrong tx/reuse/cancellation and protects serialization/formatting",
+    "Issue only after the real protected work succeeds; capture original facts instead of accepting caller DTO/allow callbacks as authority",
+    "Private candidate adapter sequences final ticket observation, original authority/worker/fence/SQL-clock/capacity and post-delete independent checks, sole commit, explicit release",
+    "Same synthetic collector SQL/state model proves late authority/capacity/deadline/fence failure after ticket rolls back all original mutations without renewing any original bound",
+    "Preserve ordinary Collect transaction ownership and its guards; do not wire production or enlarge Early grant whitelist",
+    "Exact new source freeze, appropriate complete local regressions and same-version incremental review; clean the new pipeline's precise owner artifacts"
+  ],
+  "external_conditions_not_substituted": [
+    "A/D exact grants, observer visibility and joint lock order/protocol approval",
+    "complete production metadata/Policy and B/C missing schema/domain/current facts",
+    "real MySQL ticket/revocation/cancellation/unknown outcome/takeover and physical capacity evidence",
+    "production adapter activation"
+  ],
+  "current_design_response": "docs/system-backup-d-gc-work-handoff-20261023.md",
+  "local_algorithm_complete": false,
+  "joint_protocol_approved": false,
+  "production_approved": false,
+  "goal_complete": false
+}

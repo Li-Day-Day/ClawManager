@@ -1,0 +1,123 @@
+{
+  "kind": "a2_new_materials_composition_source_review.v1",
+  "status": "source_reviewed_at_exact_pins_native_and_real_entry_integration_not_accepted",
+  "source_owner_thread": "01a17760-0338-7f51-8334-21abfe091be1",
+  "reviewer_thread": "01a1678d-6a44-73a2-bab5-3382fa10fa67",
+  "files": [
+    {
+      "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+      "size": 11728,
+      "sha256": "c5514c6342edc96b86825c485005055f859cab053bb0084a7b9f85dca509144f"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapmaterials/inputs.go",
+      "size": 1397,
+      "sha256": "7a9de1babfc30a8f6cdac586cdb1e67282a46e3c9ebec87cbd2f8789cdeae9be"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapmaterials/materials_test.go",
+      "size": 19560,
+      "sha256": "4242b49596ac196f41691dbddbfc7aeb3d80756d11257f5c1095f07568c9fc97"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 18777,
+      "sha256": "0dd61b6dafb78ebc9bc755ef3087bb52fd61b69cc71e040f848ded443c041cc8"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume.go",
+      "size": 14040,
+      "sha256": "db0192271bcb7c2b651cfedd1e43c2104fa773bef2041f9312d2bf79171f7cea"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_records.go",
+      "size": 16112,
+      "sha256": "bea6fb3847bbc91385662ff5534a4c0827d60c4306cf31eb3068c6be58a2470e"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "size": 12360,
+      "sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+      "size": 6433,
+      "sha256": "374b9097787f8def36a5e8e807f2d8ab2500242f6b87b5bd9d6983ee34a35312"
+    },
+    {
+      "path": "docs/system-backup-a-api-readiness-20261026.md",
+      "size": 15427,
+      "sha256": "d4fe014560b2c51087965155487b968dd3a3ad45283f95b7e648c3b1e51f95a1"
+    }
+  ],
+  "checks": [
+    {
+      "id": "mandatory_original_authority",
+      "observation": "New rejects nil and typed-nil original authority; each session phase delegates the mandatory original session. Constructor consistency does not authenticate mapping.",
+      "source_review": true
+    },
+    {
+      "id": "binding_consistency",
+      "observation": "Nonce and both CA bindings must share installation, server UUID, database and canonical config hash; purposes are artifact_ca/evidence_ca in their exact positions.",
+      "source_review": true
+    },
+    {
+      "id": "explicit_owner_composition",
+      "observation": "Owners copies maps, rejects existing candidate route and any of the three occupied slots, then adds exactly the real nonce and two CA validators. Remaining owners/cross-resource requirements remain mandatory.",
+      "source_review": true
+    },
+    {
+      "id": "prepare_before_locks",
+      "observation": "Prepare requires a live comparable bounded original context, prepares real nonce/two CA helpers before original authority preparation, and detaches mutable config/request data.",
+      "source_review": true
+    },
+    {
+      "id": "shared_session_state",
+      "observation": "Material session value copies share a mutex, original context, request hash, exact transaction binding, authorized/locked/failed state and prepared checks. Failure latches; repeated Authorize and LockReferences reject.",
+      "source_review": true
+    },
+    {
+      "id": "expiry_and_history",
+      "observation": "Material bounds intersect only DependencyExpiresAt; failed observations produce an expired dependency, without reducing IdentityExpiresAt. Producer exact-operation replay precedes fresh dependency/resource/capacity use.",
+      "source_review": true
+    },
+    {
+      "id": "fresh_material_checks",
+      "observation": "Fresh LockReferences delegates original L5 then checks real nonce global retained/config coverage and both CA observations; Reserve requires all three check handles.",
+      "source_review": true
+    },
+    {
+      "id": "late_recheck",
+      "observation": "Original Recheck is always mandatory. Fresh material rechecks use original helpers and existing read/time capability; exact replay skips fresh resources only when no resource locks were taken.",
+      "source_review": true
+    },
+    {
+      "id": "inspection_not_admission",
+      "observation": "InspectInputs exposes fixed slot/status strings, reads/wipes nonce and inspects CA bytes without TLS; report has no route into Apply or candidate authority.",
+      "source_review": true
+    },
+    {
+      "id": "sensitive_formatting",
+      "observation": "Materials and materialSession value-receiver String/GoString and rejecting JSON serialization avoid default material/authority field serialization.",
+      "source_review": true
+    },
+    {
+      "id": "existing_tests_source_scope",
+      "observation": "Two test roots cover 11 composition modes plus constructor/owner/input inspection conditions, using synthetic authority and SQL connector with real local nonce/CA/TLS fixtures. Native results were not replayed by this review.",
+      "source_review": true
+    }
+  ],
+  "limitations": [
+    "No Go command, test, build, SQL, provider or cluster action was executed by this review.",
+    "Materials test source uses a synthetic materialPolicy and calls Recheck within its Work; it does not by itself demonstrate the real ConfigBootstrapCandidates/CLI final private-view callback composition.",
+    "Current CLI has not imported/wired this package and still lacks 27 slots. Optional composition can add exactly three only when original bindings/authority and every other owner are explicitly supplied.",
+    "Original deployment/resource authority, real provider scope/permissions, all remaining contracts and actual owner/complete chain remain unverified.",
+    "ae7 frozen-source native passes do not cover these new files or bytes. The API 60108 run failed full tests from missing frozen fixtures; a new successful accurate receipt is required."
+  ],
+  "production_approved": false,
+  "current_CLI_slots_cleared": 0,
+  "Go_executed": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "scratch_created": false
+}

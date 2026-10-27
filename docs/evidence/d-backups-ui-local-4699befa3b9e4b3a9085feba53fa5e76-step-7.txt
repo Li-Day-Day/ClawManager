@@ -1,0 +1,22 @@
+✔ operations use actual read-client endpoints independently of overview/config and preserve cursor encoding (105.5131ms)
+✔ empty operations do not infer installation or health and terminal page makes no request (0.7511ms)
+✔ rejects duplicate across pages without a partial result (1.4761ms)
+✔ rejects duplicate within page without a partial result (0.7662ms)
+✔ rejects foreign installation without a partial result (0.3989ms)
+✔ rejects cursor loop without a partial result (0.3359ms)
+✔ rejects consistency drift without a partial result (0.3251ms)
+✔ detail rejects wrong ID (0.4373ms)
+✔ detail rejects foreign installation (0.3256ms)
+✔ detail rejects stale row version (0.5666ms)
+✔ a changed parent installation rejects even a completed old page (0.6183ms)
+✔ permissions, missing adapters and network errors propagate instead of becoming empty records (1.0573ms)
+✔ cancellation rejects late page and detail responses (0.7657ms)
+✔ identity and cursor baselines are fixed before awaiting an uncooperative reader (8.7149ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 155.6414

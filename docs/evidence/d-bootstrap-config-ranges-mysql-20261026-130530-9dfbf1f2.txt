@@ -1,0 +1,43 @@
+**********************
+PowerShell transcript start
+Start time: 20261026130531
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+gofmt -w backend/internal/systembackupevidence/bootstrap_consumer_ranges_mysql_test.go; & .\scripts\system-backup-d-bootstrap-ranges-mysql-validation.ps1
+Process ID: 40056
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+
+{"Time":"2026-10-26T13:10:32.2133742+08:00","Action":"start","Package":"clawreef/internal/systembackupevidence"}
+{"Time":"2026-10-26T13:10:34.7184912+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed"}
+{"Time":"2026-10-26T13:10:34.8710652+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"=== RUN   TestDBootstrapConsumerMySQLSeed\n"}
+{"Time":"2026-10-26T13:10:35.3444625+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"    bootstrap_consumer_mysql_test.go:283: PASS bootstrap-consumer-mysql-seed original_compatible_lifecycle=yes complete_manifest=yes capacity_report_prepare=real_helper migrations=96 candidate_tables=8 actual_mysql=not_run synthetic_authority=yes production=no\n"}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"--- PASS: TestDBootstrapConsumerMySQLSeed (0.70s)\n"}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Elapsed":0.7}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerRangesMySQLSeed"}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerRangesMySQLSeed","Output":"=== RUN   TestDBootstrapConsumerRangesMySQLSeed\n"}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerRangesMySQLSeed","Output":"    bootstrap_consumer_ranges_mysql_test.go:129: PASS bootstrap-config-ranges-seed separated_gaps=yes actual_mysql=not_run direct_writer_installation_lock=no lock_wait_graph_required=yes\n"}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerRangesMySQLSeed","Output":"--- PASS: TestDBootstrapConsumerRangesMySQLSeed (0.00s)\n"}
+{"Time":"2026-10-26T13:10:35.4169476+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerRangesMySQLSeed","Elapsed":0}
+{"Time":"2026-10-26T13:10:35.417959+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"PASS\n"}
+{"Time":"2026-10-26T13:10:35.5536148+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"ok  \tclawreef/internal/systembackupevidence\t3.339s\n"}
+{"Time":"2026-10-26T13:10:35.5541234+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Elapsed":3.341}
+LOCAL_PASS bootstrap-config-ranges targeted_seed=yes default_vet=yes seed=yes linux_probe=yes pinned_migrations=yes binary_sha256=382801e70cc56b2cc39e2d7ae7f230fe7afa00c455d5ddb6ed8828c57f1599b1 real_mysql=not_run
+CLEANED bootstrapConsumer-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-9dfbf1f2c5894446b1fd14bfefac8f11 removed=True
+BOOTSTRAP_CONFIG_RANGES_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-bootstrap-config-ranges-mysql-20261026-130530-9dfbf1f2.json
+**********************
+PowerShell transcript end
+End time: 20261026131607
+**********************

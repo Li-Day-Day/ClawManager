@@ -1,0 +1,11 @@
+{
+  "name": "inventory-strict",
+  "args": [
+    "scripts/system-backup-schema-inventory.mjs",
+    "--check",
+    "--strict"
+  ],
+  "exit_code": 1,
+  "stdout": "{\r\n  \"summary\": {\r\n    \"plan_business_tables\": 99,\r\n    \"plan_control_tables\": 32,\r\n    \"plan_control_without_inventory\": 3,\r\n    \"inventoried_objects\": 100,\r\n    \"migration_objects\": 99,\r\n    \"without_migration\": 0,\r\n    \"unassigned\": 0,\r\n    \"repository_runtime_create\": 0,\r\n    \"repository_runtime_alter\": 0,\r\n    \"deployment_bootstrap_create\": 0\r\n  },\r\n  \"gaps\": {\r\n    \"plan_control_without_inventory\": [\r\n      \"system_backup_catalog_imports\",\r\n      \"system_backup_catalog_records\",\r\n      \"system_backup_catalog_scan_states\"\r\n    ],\r\n    \"without_migration\": [],\r\n    \"unassigned\": [],\r\n    \"repository_runtime_create\": [],\r\n    \"repository_runtime_alter\": [],\r\n    \"deployment_bootstrap_create\": []\r\n  },\r\n  \"database_comparison\": null\r\n}\r\n",
+  "stderr": ""
+}

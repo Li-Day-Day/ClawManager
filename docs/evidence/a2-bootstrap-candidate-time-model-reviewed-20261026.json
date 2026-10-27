@@ -1,0 +1,100 @@
+{
+  "kind": "a2_bootstrap_candidate_consumer_time_model.v1",
+  "status": "A_proposed_consumer_semantics_pending_A1_D_contract_review",
+  "based_on": "R1 independent bootstrap consumption and separate execution, original observation and retention horizons",
+  "synthetic": true,
+  "relation_positives": [
+    "committed_result_after_execution_lease_auth_and_write_cutoff",
+    "committed_result_before_execution_bounds"
+  ],
+  "rejections": [
+    {
+      "name": "equality_observationUntil",
+      "result": "expired_observationUntil"
+    },
+    {
+      "name": "equality_domainAdmissionUntil",
+      "result": "expired_domainAdmissionUntil"
+    },
+    {
+      "name": "equality_bootstrapAuthorityUntil",
+      "result": "expired_bootstrapAuthorityUntil"
+    },
+    {
+      "name": "equality_resourceDependencyUntil",
+      "result": "expired_resourceDependencyUntil"
+    },
+    {
+      "name": "equality_evidenceRetentionUntil",
+      "result": "expired_evidenceRetentionUntil"
+    },
+    {
+      "name": "original_observation_expired_even_with_long_retention",
+      "result": "expired_observationUntil"
+    },
+    {
+      "name": "observation_is_in_future",
+      "result": "SQL_clock_or_observation_order"
+    },
+    {
+      "name": "intermediate_SQL_rollback",
+      "result": "SQL_clock_or_observation_order"
+    },
+    {
+      "name": "original_context_cancelled",
+      "result": "cancelled"
+    },
+    {
+      "name": "producer_grant_explicitly_revoked",
+      "result": "explicit_authority_state_invalid"
+    },
+    {
+      "name": "producer_grant_superseded",
+      "result": "explicit_authority_state_invalid"
+    },
+    {
+      "name": "domain_revoked",
+      "result": "explicit_authority_state_invalid"
+    },
+    {
+      "name": "domain_epoch_changed",
+      "result": "original_epoch_generation_or_target_invalid"
+    },
+    {
+      "name": "grant_generation_changed",
+      "result": "original_epoch_generation_or_target_invalid"
+    },
+    {
+      "name": "new_target_run",
+      "result": "original_epoch_generation_or_target_invalid"
+    }
+  ],
+  "old_execution_lease_auth_and_write_cutoff_expiry_alone_rejects_consumption": false,
+  "explicit_revocation_or_epoch_generation_target_conflict_rejects": true,
+  "original_observation_and_current_domain_bootstrap_dependency_bounds_required": true,
+  "retention_is_not_observation_authority": true,
+  "original_producer_was_lawfully_committed_proof_still_required": true,
+  "returns_or_mints_execution_authority": false,
+  "current_bootstrap_authority_authenticated_by_model": false,
+  "old_execution_bound_relevance_is_new_recorded_contract_clarification": true,
+  "production_approved": false,
+  "Go_or_builds_run": false,
+  "dependencies_installed": false,
+  "scratch_created": false,
+  "actual_SQL": false,
+  "inputs": [
+    {
+      "path": "docs/system-backup-d-producer-authority-revision-20260930.md",
+      "sha256": "d5f88c707ad1aaf55e73d4534cec8049d5989ddc5bae25cf856d2e68312c8a85"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    }
+  ],
+  "model_sha256": "ff27d0cc8c8a0de4274d2f31062f0620b0cda5817367761bbf52cda580a8d20e"
+}

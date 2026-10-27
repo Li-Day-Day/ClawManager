@@ -1,0 +1,41 @@
+{
+  "kind": "a2_cleanup_recorder_source_review.v1",
+  "reviewed_at": "2026-10-27T08:11:19.991Z",
+  "status": "raw_SQL_executor_commit_escape_removed_in_exact_source_native_and_integration_pending",
+  "input": {
+    "path": "docs/evidence/d2-cleanup-recorder-candidate-20261027.go.txt",
+    "size": 24316,
+    "sha256": "111d2c69f5b762a4ec3351ec74d489dbf0f01e773cb40137f3d0cfea24042c96"
+  },
+  "archive": {
+    "path": "docs/evidence/a2-cleanup-recorder-source-reviewed-20261027-r1.go.txt",
+    "size": 24316,
+    "sha256": "111d2c69f5b762a4ec3351ec74d489dbf0f01e773cb40137f3d0cfea24042c96"
+  },
+  "reported_problem": "The initial MutationExecutor.Exec(query,args) API could express COMMIT or implicit-commit DDL before a callback error; rollback could not undo already committed timing facts.",
+  "fix_scope": "The executor API now exposes only fixed once-only Apply; no arbitrary query, transaction commit or DDL method. This does not sandbox arbitrary Go caller code or captured outer transaction references.",
+  "source_checks": {
+    "arbitrary_Exec_method_absent": true,
+    "fixed_once_only_Apply_present": true,
+    "duplicate_or_inactive_use_sets_error": true,
+    "completion_requires_used_completed_and_nil_error": true,
+    "caller_mutable_resource_slice_detached": true,
+    "final_parent_and_resource_row_checks": true,
+    "settled_lifecycle_not_resurrected": true
+  },
+  "remaining_requirements": [
+    "Actual native success/failure/panic/ignored-error/duplicate Apply tests and real SQL rollback evidence",
+    "Original D admission/verifier/prerequisite checks before the automatic terminal CAS; fixed Apply is not independent authority",
+    "Actual caller integration into the original bounded transaction and lock order",
+    "Reader/provider facts, new migration and GC/reference composition",
+    "Exact final input/source checks and owned artifact cleanup"
+  ],
+  "Go_executed": false,
+  "SQL_executed": false,
+  "agent_SSH": false,
+  "live_source_changed_by_A2": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

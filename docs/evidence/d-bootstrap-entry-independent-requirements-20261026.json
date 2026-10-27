@@ -1,0 +1,24 @@
+{
+  "kind": "d_bootstrap_entry_independent_requirements.v1",
+  "status": "review_requirements_not_execution_or_acceptance",
+  "reason": "The deployed Apply/legacy Bootstrap entry must preserve C1 candidate consumption and epoch closure; explicit library composition alone does not cover this entry.",
+  "owner_implementation": "D2 producer negative domain fence and deployment composition; A1 legacy service entry and final checks",
+  "D1_scope": "Independent review, tagged fixture ordering and exact local/remote evidence intake",
+  "requirements": [
+    {"id":"BE1","requirement":"Complete C1 storage forbids first-use legacy initialization even if the exact installation domain is absent. Candidate selection and independently authenticated original authority remain mandatory; no opt-in allow bool or fabricated domain is authorization."},
+    {"id":"BE2","requirement":"Only exact absence of all eight C1 control tables supports old-schema compatibility. Partial tables, views, wrong engine, unknown/duplicate rows, metadata/query/permission errors and invisible storage fail closed."},
+    {"id":"BE3","requirement":"information_schema zero rows alone is insufficient evidence of absence because metadata visibility depends on the SQL identity. Test real C1 tables with an A-only identity lacking C1 privileges; never classify hidden existing tables as an old schema."},
+    {"id":"BE4","requirement":"Keep A global installation/config L0/L1, exact domain or its absence range before users L2, then original operation/history and remaining resource prefix. The negative fence cannot commit, mint producer capabilities or replace A authorization."},
+    {"id":"BE5","requirement":"Current grant, local admin, RBAC, independent mapping and exact successful operation/config remain mandatory for history. Compatible configured-v1 domains may be read despite expired execution authority; unconfigured, wrong config/version/scope or malformed domain cannot authorize fallback."},
+    {"id":"BE6","requirement":"Fence binds original context and exact caller transaction. Recheck after all resource callbacks/writes observes the same closed schema/domain facts, then original final shared time/context and A sole commit; wrong context, transaction, late schema/domain/epoch/record changes reject."},
+    {"id":"BE7","requirement":"Explicit deployment candidate composition prepares all original authorization/material sources before reading DSN or opening SQL. Missing owner/original mapping, invalid current grant/RBAC, a Prepare returned error, expired grant or cancelled attempt must not touch database credentials. Under the original authority contract, a non-RBAC physical failure may instead be captured as a nil-error closed prepared state; valid current grant/RBAC then permits opening SQL only to determine exact locked L3 history versus new use. That state never authorizes new consumption, producer execution, observation refresh or charge. Do not add a permissive default authority or skip original preparation."},
+    {"id":"BE8","requirement":"One bounded attempt covers preparation, SQL waits and final work. Preserve original material/observation/resource limits; no nested fresh attempt or second preparation after opening SQL may renew them."},
+    {"id":"BE9","requirement":"Tagged range fixtures create unrelated anchors through the original real legacy writer before installing C1, then install the original full eight-table DDL and Acquire normally. No domain-table deletion, permission bypass or handwritten config-row shortcut."},
+    {"id":"BE10","requirement":"Native and actual-SQL receipts bind their own exact frozen sources, test roots, binary and cleanup. The prior a2e7/245/6a evidence and GC staged-source supplement cannot approve this later entry increment or live tagged helper changes."}
+  ],
+  "native_tests_passed_by_this_record": 0,
+  "actual_mysql_run": false,
+  "implementation_accepted": false,
+  "production_approved": false,
+  "goal_complete": false
+}

@@ -1,0 +1,83 @@
+{
+  "kind": "d_bootstrap_A_contract_independent_review.v1",
+  "date": "2026-10-26",
+  "result": "SEMANTIC_DESIGN_ALIGNED_EXACT_D_PREFIX_AND_IMPLEMENTATION_PENDING",
+  "reviewer_chat": "01a1676d-ff9a-7a71-9df5-bfb6b97c3f84",
+  "reviewed_contract": {
+    "path": "docs/system-backup-a-bootstrap-consumer-contract-20261026.md",
+    "sha256": "1fdd387884bdb2b0d5da4429c7cac120dad5c892486c805872b6dfadabb131db"
+  },
+  "agreed_design_points": [
+    "Consume lawful committed bootstrap_candidate result rather than pre-commit call or revived ExecutionHandle",
+    "Require independently trusted original OfflineBootstrapGrant/config/domain/admission/target/ref mapping, not equal DTOs or self-consistent digests",
+    "Expired old producer lease/execution-authorization/write cutoff alone do not reject otherwise valid committed consumption; explicit revocation/supersession/current epoch/generation/target conflict still reject",
+    "Original observation/current domain admission/independent bootstrap authority/dependency bounds remain effective, equality denied, retention does not create observation authority",
+    "Batch request binding includes full usage/ref/version/mapping/scope to receipt/request/result-version relation, with deterministic ordering and duplicate rejection, retaining original inline compatibility",
+    "Acquire early shared union prefix, then atomically write disabled v1 and close epoch under sole Bootstrap transaction; fixed final checks follow callbacks and writes",
+    "Exact authorized committed retry reads original result without new consumption, epoch close, charge or observation refresh; unknown commit uses stable operation key"
+  ],
+  "blocking_semantic_findings": [],
+  "implementation_review_still_required": [
+    "D exact table/key/range and union-prefix API proposal",
+    "Original trusted deployment-authority mapping issuer and precise internal encoding/compatibility",
+    "Candidate reference disposition and expected post-close/config final state",
+    "Actual implementation and native BC1-BC12 scope, rollback/order/late mutation/cancellation/retry and cleanup"
+  ],
+  "native_read_only_peer_checks": [
+    {
+      "command": [
+        "node",
+        "docs/evidence/a2-bootstrap-capture-binding-model-20261026.mjs",
+        "--check"
+      ],
+      "exit_code": 0,
+      "relationship_positive": 1,
+      "resealed_rejections": 41,
+      "authority": false
+    },
+    {
+      "command": [
+        "node",
+        "docs/evidence/a2-bootstrap-candidate-time-model-20261026.mjs",
+        "--check"
+      ],
+      "exit_code": 0,
+      "relationship_positives": 2,
+      "rejections": 15,
+      "authority": false
+    }
+  ],
+  "independent_batch_model": {
+    "path": "docs/evidence/d-bootstrap-candidate-idempotency-model-reviewed-20261026.json",
+    "sha256": "33cd214d8ffb277bb0b6bf9aa1a956549b48a41a04299a48bbb127f9cc3ee844"
+  },
+  "requirements": {
+    "path": "docs/evidence/d-bootstrap-candidate-independent-requirements-20261026.json",
+    "sha256": "5238d298cd850d803b82440f51d7987b3cd5db297ddd666f78070b6dcba6e34c"
+  },
+  "peer_models": [
+    {
+      "path": "docs/evidence/a2-bootstrap-capture-binding-model-20261026.mjs",
+      "sha256": "009b4409db2fd3dead9b20b3d245aa7073ce33ec99c4cdb6639411f81dc3bc09"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-capture-binding-model-reviewed-20261026.json",
+      "sha256": "f23f9eef99ec1e4d50c63b17fd1f629eb5247ba32ad428e46480bdff53d35801"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-candidate-time-model-20261026.mjs",
+      "sha256": "ff27d0cc8c8a0de4274d2f31062f0620b0cda5817367761bbf52cda580a8d20e"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-candidate-time-model-reviewed-20261026.json",
+      "sha256": "ab7e13afa70656926692345da1b2234e083fda5f6cc3dd91295a4af59eda6f83"
+    }
+  ],
+  "implementation_accepted": false,
+  "bootstrap_SQL_executed": false,
+  "Go_or_builds_run": false,
+  "dependencies_installed": false,
+  "build_artifacts_created": 0,
+  "production_approved": false,
+  "original_full_goal_complete": false
+}

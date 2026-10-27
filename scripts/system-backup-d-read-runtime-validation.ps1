@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$SeedCache='',
+    [ValidateRange(1,4)][int]$BuildParallelism=1,
     [ValidateSet('./internal/systembackupread','./cmd/server','./internal/db')]
     [string[]]$TestPackages=@('./internal/systembackupread','./cmd/server','./internal/db')
 )
@@ -15,6 +16,7 @@ $readNames=@('GOOS','GOARCH','CGO_ENABLED','GOFLAGS','GO111MODULE','GOWORK','GOP
 $readPrior=@{}
 foreach($readName in $readNames){$readPrior[$readName]=[Environment]::GetEnvironmentVariable($readName,'Process')}
 $readResult=[ordered]@{kind='d_read_runtime_local_validation.v1';status='failed';source_sha256='';packages=@($TestPackages|ForEach-Object {$_.Replace('./','clawreef/')});windows_tests=$false;linux_server_build=$false;mysql_probe_compiled=$false;http_mysql_probe_compiled=$false;actual_mysql_run=$false;dependencies_installed=$false;remote_contacted=$false;cleanup_verified=$false;seed_cache_used=$false}
+$readResult.build_parallelism=$BuildParallelism
 $readReceipt=Join-Path $readRoot ('docs/evidence/d-read-runtime-local-'+$readID+'.json')
 $readResult.stage='source_freeze'
 $readOutput=New-Object 'System.Collections.Generic.List[string]'
@@ -70,8 +72,8 @@ try {
     $readResult.source_sha256=$readSnapshot.source_sha256
     $readResult.source_files=$readSnapshot.files.Count
     $readResult.files=$readSnapshot.files
-    $env:GOOS='windows';$env:GOARCH='amd64';$env:CGO_ENABLED='0';$env:GOFLAGS='-mod=readonly -p=1'
-    $env:GO111MODULE='on';$env:GOWORK='off';$env:GOPROXY='off';$env:GOSUMDB='off';$env:GOTOOLCHAIN='local';$env:GOMAXPROCS='1'
+    $env:GOOS='windows';$env:GOARCH='amd64';$env:CGO_ENABLED='0';$env:GOFLAGS=('-mod=readonly -p='+$BuildParallelism)
+    $env:GO111MODULE='on';$env:GOWORK='off';$env:GOPROXY='off';$env:GOSUMDB='off';$env:GOTOOLCHAIN='local';$env:GOMAXPROCS=[string]$BuildParallelism
     $env:GOCACHE=Join-Path $readOwned 'cache';$env:GOTMPDIR=Join-Path $readOwned 'tmp'
     $env:TEMP=$env:GOTMPDIR;$env:TMP=$env:GOTMPDIR
     $env:TEST_TELEMETRY_DIR=Join-Path $readOwned 'telemetry'

@@ -1,0 +1,135 @@
+{
+  "kind": "d_bootstrap_candidate_independent_review_requirements.v1",
+  "date": "2026-10-26",
+  "status": "requirements_not_implementation_or_runtime_acceptance",
+  "source_pins": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/result.go",
+      "sha256": "c5f288ce41d834bc7b6517cb57c1b4739df75bad257728b1acf3d53b5b1c2e98"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/domain_revoke.go",
+      "sha256": "2a0042b1a5cf8b31103f150fdb22c47623680d08a620ee49446e17de0a4507bd"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution_policy.go",
+      "sha256": "3264b58051fcc612e50282c439cf4af505b9063cb51217047133dc2d5f0dbcbc"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "cfb0b3d18c677fe062870e1e1b02cd439d90bc4ad537cb13cff7985f9601489a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "25876e8991a02d3c855f98d89cfde2a02bffbcfe9b1ec4fb8978d75679fb959f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "docs/system-backup-a2-bootstrap-producer-consumption-review-20261026.md",
+      "sha256": "983a745eccd8836e1891f88a2f34744a5bbf9e76836d6bc630b3585bd94bbac5"
+    }
+  ],
+  "existing_contract_direction": "C1 committed bootstrap_candidate consumption and atomic epoch close; draft remains draft",
+  "requirements": [
+    {
+      "id": "BC1",
+      "title": "Consume the exact committed candidate lifecycle",
+      "requirement": "Bind the original full ResultRequest, receipt key/request hash/result version, run/history, target generation and candidate/receipt/hold references. Never revive ExecutionHandle/CallSnapshot or accept a pre-commit observation as this consumer.",
+      "proof": "Committed candidate succeeds only under independently authenticated bootstrap authority; structurally valid/rehashed replacements, acquired/published runs and stale target versions reject."
+    },
+    {
+      "id": "BC2",
+      "title": "Authenticate the cross-owner mapping independently",
+      "requirement": "A must bind the original OfflineBootstrapGrant, full disabled config, registry/ref set, policy/profile and exact producer scope/admission/target through a trusted original mapping. Neither matching DTOs nor matching hashes establish authorization.",
+      "proof": "Changed database/installation/config/purpose/ref/profile and a self-consistent resealed alternative cannot authorize consumption. Existing direct nonce/CA paths retain their own reviewed scope."
+    },
+    {
+      "id": "BC3",
+      "title": "Keep external work before transaction locks",
+      "requirement": "Prepare original resource/TLS/permission/capability observations outside SQL locks. Locked checks use immutable original observations and caller SQL only; no network, provider call, new transaction or grant/handle issuance.",
+      "proof": "Track provider calls and transaction boundaries; late guard and retry paths cannot start new external work or mint a refreshed observation."
+    },
+    {
+      "id": "BC4",
+      "title": "Acquire one complete shared prefix in global order",
+      "requirement": "Select every candidate key and the union of A bootstrap and producer locks before acquiring them. Follow existing C1 L0-L10 including absence ranges, stable within-layer ordering and exact FK actor keys. No complete GuardInTx policy may be injected after later A locks.",
+      "proof": "Ordered lock trace covers installation/config absence, domain, admin, operation/receipt keys, grants/runs/history, targets/references/nonces, capacity, audits and evidence/chunks; a deliberately late early-layer acquisition is rejected."
+    },
+    {
+      "id": "BC5",
+      "title": "Retain original transaction and authority identity",
+      "requirement": "Any opaque prepared/locked/final object binds original service/context/tx/scope and complete candidate set, with no exported field constructor or caller-selected Policy that supplies permission.",
+      "proof": "Zero, forged, replaced/copy-rebound scope/tx/context and changed candidate set reject without unauthorized SQL; no shared object creates an extra commit."
+    },
+    {
+      "id": "BC6",
+      "title": "Resolve consumer deadline semantics before implementation",
+      "requirement": "Distinguish committed-result consumption from producer execution. Specify each binding deadline from existing C1/A authority: original observation and admission validity, retention and current bootstrap authorization; explicitly decide original execution lease/owner-write-cutoff relevance rather than inheriting executionPolicy or arbitrarily restricting accepted committed results. Never extend original bounds or substitute fresh context.",
+      "proof": "Include an otherwise valid committed candidate with expired execution lease but still-valid observation, plus observation equality/expiry, domain/admission expiry, cancellation and intermediate SQL-clock rollback; expected lease-case result must follow the recorded A/D decision."
+    },
+    {
+      "id": "BC7",
+      "title": "Close the epoch atomically with disabled v1",
+      "requirement": "In one caller-owned transaction write disabled config v1, installation/bootstrap operation/audits, precisely specified candidate reference transition and monotonic closed domain epoch/row-version CAS. Preserve original receipt/history and receipt/hold protection. No unbounded child-grant update or implicit live projection promotion.",
+      "proof": "Successful readback proves config disabled, exact result/reference retention and closed incremented epoch; error at each write or final check rolls all changes back."
+    },
+    {
+      "id": "BC8",
+      "title": "Place a fixed independent final guard before sole commit",
+      "requirement": "All resource/authority/capacity callbacks and writes finish before final independent verification of original candidate evidence, references, expected post-close domain/config and original time/context. No later callback may mutate those facts.",
+      "proof": "Late callback mutation and final-write wait/clock change fail shared rollback; legal expected closed-domain/config state succeeds rather than being mistaken for external drift."
+    },
+    {
+      "id": "BC9",
+      "title": "Separate exact committed retry from new consumption",
+      "requirement": "Current offline/bootstrap authorization remains mandatory. Exact prior success may return its original result under the agreed historical-read rule without a new candidate consume, epoch increment, activation, execution handle or observation refresh; changed request/key bindings conflict.",
+      "proof": "Replay is read-only for candidate/domain/capacity; old observation cannot be renewed by retry, and changed current authority cannot read an otherwise matching success."
+    },
+    {
+      "id": "BC10",
+      "title": "Preserve unknown commit and failure semantics",
+      "requirement": "Bootstrap alone owns transaction completion. Commit response uncertainty returns unknown and requires stable operation-key readback, without reopening a domain, regenerating IDs or treating rollback as proof of no commit. Conservative capacity accounting has no fabricated release.",
+      "proof": "Inject SQL/audit/CAS/cancel/unknown-commit failures and verify same-key resolution plus no second consume or authority renewal."
+    },
+    {
+      "id": "BC11",
+      "title": "Keep captured authority out of output",
+      "requirement": "Opaque original mapping/consumption state and diagnostic errors must not expose grant/domain/result/provider credentials or private descriptor material through value/pointer formatting or serialization.",
+      "proof": "Constant formatting/rejected serialization for opaque objects; explicit sentinels absent from public errors and returned bootstrap response."
+    },
+    {
+      "id": "BC12",
+      "title": "Verify the exact implementation and preserve previous evidence",
+      "requirement": "Run meaningful affected package and shared-bootstrap regressions, boundary/order/rollback tests and relevant Linux builds with current source-set/bytes checks. Independent review must examine actual implementation and native outcomes. Keep prior GC/owner/remote receipts scoped to their frozen inputs, install no dependencies and remove exact run-owned test/build artifacts.",
+      "proof": "Native complete results, source manifests, original failure counterexamples where used, affected-scope preservation and exact owner cleanup; model success alone is not production, grant or actual SQL approval."
+    }
+  ],
+  "implementation_ownership": {
+    "producer_consumer_and_union_prefix": "D2 01a1678e-27d8-7823-af8d-ea362169a481",
+    "A_binding_adapter_and_negative_model": "A2 01a1678d-6a44-73a2-bab5-3382fa10fa67",
+    "A_offline_grant_deadline_and_integration": "A1 01a1676e-1c7a-7cd3-89fe-f188be645950",
+    "independent_boundary_review": "D1 01a1676d-ff9a-7a71-9df5-bfb6b97c3f84"
+  },
+  "open_contract_decisions": [
+    "trusted original OfflineBootstrapGrant to C1 admission/target/reference mapping issuer",
+    "committed consumer original execution lease versus observation/current bootstrap authority semantics",
+    "complete union prefix and exact candidate reference disposition/closed-domain expected final state"
+  ],
+  "current_GC_receipt_inherits_this_scope": false,
+  "implementation_accepted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "tests_or_builds_run": false
+}

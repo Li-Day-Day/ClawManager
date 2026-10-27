@@ -1,0 +1,611 @@
+{
+  "kind": "d_gc_full_lifecycle_operator_source_review_request.v2",
+  "status": "source_only_native_and_global_review_pending",
+  "source_version": "20261027-r4",
+  "prepared_on_client_date": "2026-10-27",
+  "candidate": {
+    "path": "docs/evidence/d-gc-full-lifecycle-source-candidate-20261027-r4.json",
+    "size": 662113,
+    "sha256": "cbbd28eb2c925d5134fe89d7717e0e0378ecc4b38ed006adf7bee52a51c70faa"
+  },
+  "source_sha256": "46bcb2758c1aabb0839f2b6452aec53c2642b136d1f0f55601ef31118b4156f5",
+  "source_file_count": 1721,
+  "original_source_sha256": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+  "original_source_file_count": 1720,
+  "inventory_scope": [
+    "backend",
+    "contracts",
+    "scripts",
+    "selected immutable docs inputs"
+  ],
+  "inventory_frame": "sha256 of ordinal sorted path NUL sha256 NUL bytecount LF entries",
+  "cases": [
+    "killed_after_delete",
+    "holder_exit_before_begin",
+    "cancel_before_begin",
+    "takeover_after_kill",
+    "two_public_holders",
+    "foreign_holder_retained",
+    "fresh_after_rollback",
+    "fresh_after_success",
+    "stale_registry_pool_ignored",
+    "temp_shadow_other_session",
+    "bad_timezone_rejected",
+    "lock_wait_restored_to_bound",
+    "public_ddl_pending",
+    "bounded_batch_plan",
+    "oversized_program_rejected"
+  ],
+  "case_count": 15,
+  "capsule": {
+    "path": "backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+    "size": 46247,
+    "sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0"
+  },
+  "component_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+      "size": 23173,
+      "sha256": "e9806c4892ac770ae2f3cf97e9bcb6ba2f123d125b6d5a00d9533e055d9bdf09"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+      "size": 32957,
+      "sha256": "c05714705f0e489f13004095ca9648f90edd5e2786fed1b182400083913f3e55"
+    }
+  ],
+  "parser_pins": [
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+      "size": 7736,
+      "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference_contract_parity_test.go",
+      "size": 3372,
+      "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+    }
+  ],
+  "origin_harness_pins": [
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-phase-20261026.sh",
+      "size": 3932,
+      "sha256": "d26ea549735c2e9002b686accf2b1c8f3cb3324de310d037c6dff99e38aff552"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-20261026.mjs",
+      "size": 7836,
+      "sha256": "95b95f64c5e625ac99f166b75bd96e1c276a04491a3ef2686352c9951ccf960b"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-operator-20261026.ps1",
+      "size": 3037,
+      "sha256": "cd6451a1ddeeb6eb74a99b730107bccd495cf3298daf8c6774ab83a981b4b9d4"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-receiver-20261026.mjs",
+      "size": 8272,
+      "sha256": "957e8767fd53dfdec82136374e1b9c48f57c58900cdf241715b655d72184e62f"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-requirements-20261026.json",
+      "size": 7014,
+      "sha256": "78fec2dd6cf58acdc36c2d59a46f5790ef31190e3beab546a68f711d68ccd6d4"
+    }
+  ],
+  "additional_harness_and_preparation_pins": [
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-operator-20261026.ps1",
+      "size": 3037,
+      "sha256": "cd6451a1ddeeb6eb74a99b730107bccd495cf3298daf8c6774ab83a981b4b9d4"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-20261026.mjs",
+      "size": 7836,
+      "sha256": "95b95f64c5e625ac99f166b75bd96e1c276a04491a3ef2686352c9951ccf960b"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-phase-20261026.sh",
+      "size": 3932,
+      "sha256": "d26ea549735c2e9002b686accf2b1c8f3cb3324de310d037c6dff99e38aff552"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-receiver-20261026.mjs",
+      "size": 8272,
+      "sha256": "957e8767fd53dfdec82136374e1b9c48f57c58900cdf241715b655d72184e62f"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-requirements-20261026.json",
+      "size": 7014,
+      "sha256": "78fec2dd6cf58acdc36c2d59a46f5790ef31190e3beab546a68f711d68ccd6d4"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-full-collect-receiver.mjs",
+      "size": 7492,
+      "sha256": "83bcd8ee9ed5ee8d473dc3b95c6596a4c1c8b9e7359735bfbbea9fe32c27e189"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 61004,
+      "sha256": "e74c7a3f21e95a580b83f8475ca13726ffa83be983f88bc4888fb2f05c7d0502"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    },
+    {
+      "path": "scripts/system-backup-a-download-mfa-inputs.mjs",
+      "size": 2073,
+      "sha256": "e3ccb3c8097d20e5d7fb0512b4f9c722cf7df809617bc524647b434e7d619bd4"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-preparation-20261027.mjs",
+      "size": 9971,
+      "sha256": "b7209cf8e4d5b4602c749ca01a80b9da11302dd082089748394b417e831e8ca3"
+    }
+  ],
+  "rendered_runner": {
+    "path": "docs/evidence/d-gc-full-lifecycle-rendered-harness-20261027-r4.ps1",
+    "size": 60940,
+    "sha256": "d94305ae3e06fbb2903717bbd6db5e663c28032bccb097e45302b00e8fa45f3b"
+  },
+  "overlays": [
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "reason": "exclusive lifecycle selector and narrow ordinary-test scope"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-full-lifecycle-phase.sh",
+      "origin": "docs/evidence/d-gc-full-lifecycle-phase-20261026.sh"
+    }
+  ],
+  "overlay_byte_pins": [
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "before": {
+        "path": "scripts/system-backup-a-evidence-validation.ps1",
+        "size": 61004,
+        "sha256": "e74c7a3f21e95a580b83f8475ca13726ffa83be983f88bc4888fb2f05c7d0502"
+      },
+      "after": {
+        "path": "scripts/system-backup-a-evidence-validation.ps1",
+        "size": 60940,
+        "sha256": "d94305ae3e06fbb2903717bbd6db5e663c28032bccb097e45302b00e8fa45f3b"
+      }
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-full-lifecycle-phase.sh",
+      "before": null,
+      "after": {
+        "path": "scripts/system-backup-d-download-gc-full-lifecycle-phase.sh",
+        "size": 3932,
+        "sha256": "d26ea549735c2e9002b686accf2b1c8f3cb3324de310d037c6dff99e38aff552"
+      }
+    }
+  ],
+  "old_r3_preserved": [
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-candidate-20261026-r3.json",
+      "size": 657068,
+      "sha256": "756a150f32331620e94eee44723e454d7c509640e57ba49d4dc100eb78d9a8b8"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-review-request-20261026-r3.json",
+      "size": 5337,
+      "sha256": "1a836a5779d3eba259443706d9fae357fe6bf52307b09d200de66ac210d80054"
+    }
+  ],
+  "all_original_inventory_deltas_since_old_r3": [
+    {
+      "path": "backend/cmd/server/main.go",
+      "before": {
+        "path": "backend/cmd/server/main.go",
+        "size": 50735,
+        "sha256": "4abde90a8dd0752df203b4a504fbccbe6b8bd1f552bb352639ada9945ba8afbe"
+      },
+      "after": {
+        "path": "backend/cmd/server/main.go",
+        "size": 50988,
+        "sha256": "cf41460bad3f4cb61c51e2b0ce51cf38149aa32937b03d7abdb81f1ff6a3c534"
+      }
+    },
+    {
+      "path": "backend/cmd/server/system_backup_api_tls.go",
+      "before": null,
+      "after": {
+        "path": "backend/cmd/server/system_backup_api_tls.go",
+        "size": 1067,
+        "sha256": "e73404add732fbc0e5f6aff590e6791b8ba85fb54e8bfcd883b8226d43fdd157"
+      }
+    },
+    {
+      "path": "backend/cmd/server/system_backup_api_tls_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/cmd/server/system_backup_api_tls_test.go",
+        "size": 2755,
+        "sha256": "3fe7fd6fd1caa04aa3bc1c5631872c2be0726fd3bbfc45eeb0e403818f849d59"
+      }
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "before": {
+        "path": "backend/cmd/server/system_backup_read_live.go",
+        "size": 11293,
+        "sha256": "c560d01ac45e1e03c6e58fa2eff072ae3693917dd9224ab4ea349d2219e57838"
+      },
+      "after": {
+        "path": "backend/cmd/server/system_backup_read_live.go",
+        "size": 11302,
+        "sha256": "c919bf59f47f0dd0c174801d42ad5f23fa6741da5cfe818696500221caae5e1f"
+      }
+    },
+    {
+      "path": "backend/cmd/server/system_backup_tasks_live.go",
+      "before": {
+        "path": "backend/cmd/server/system_backup_tasks_live.go",
+        "size": 1268,
+        "sha256": "05434e462fa7f6bd5bd08beb21c05e666c46053415a58ef98817ea7587913336"
+      },
+      "after": {
+        "path": "backend/cmd/server/system_backup_tasks_live.go",
+        "size": 2658,
+        "sha256": "e5407ae4ebde00e9b0b6137a728f08cdecd765df7b67397448b81ca7e2b6cba6"
+      }
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/materials.go",
+      "before": null,
+      "after": {
+        "path": "backend/cmd/system-backup-bootstrap/materials.go",
+        "size": 2708,
+        "sha256": "d8c39383bf6fab0943da519ac27f4e1a1e98f7e4d5376956b16335f3b7d869d8"
+      }
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/materials_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/cmd/system-backup-bootstrap/materials_test.go",
+        "size": 2936,
+        "sha256": "e395a451188bf19b908f2aba6af413831290a99e9759724d0eae5658ba1d0ac3"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupapi/submission.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupapi/submission.go",
+        "size": 10025,
+        "sha256": "70935c14be1823d098915eec4801abfc97d545409ce0a4ef3d05c94014162b62"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupapi/submission_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupapi/submission_test.go",
+        "size": 8041,
+        "sha256": "01c2ecc53b6e0666ef29022068e126a187f7653bbafef62a03c246b0aca7a893"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupapi/tasks.go",
+      "before": {
+        "path": "backend/internal/systembackupapi/tasks.go",
+        "size": 8185,
+        "sha256": "38f3425687487a13ea8376a91b63103db3953f3b0a1c1c4586d386b933d86d0d"
+      },
+      "after": {
+        "path": "backend/internal/systembackupapi/tasks.go",
+        "size": 8215,
+        "sha256": "d099e72285d0721394d03691c9a0000ff9aeab1b5316002fa38ca0050ffddee4"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+      "before": {
+        "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+        "size": 7804,
+        "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+      },
+      "after": {
+        "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+        "size": 7736,
+        "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference_contract_parity_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupbootstrapsecurity/reference_contract_parity_test.go",
+        "size": 3372,
+        "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+        "size": 3917,
+        "sha256": "fc44562e7375cb1af78b6f28ecc64817814ba67d15cbe92707a8d8f72642bc8d"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+        "size": 5796,
+        "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+        "size": 3587,
+        "sha256": "4f805fbb90face2db78cdeff5fe55e338b655b6571e4c7db7a2eaaeae92a21dc"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+        "size": 12669,
+        "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+      "before": {
+        "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+        "size": 32901,
+        "sha256": "cac6c2bc0be61f48d28835828b26f17d92fe9f97deeea4dea3a87c7b5354a7e2"
+      },
+      "after": {
+        "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+        "size": 32957,
+        "sha256": "c05714705f0e489f13004095ca9648f90edd5e2786fed1b182400083913f3e55"
+      }
+    },
+    {
+      "path": "contracts/system-backup/v12/README.md",
+      "before": {
+        "path": "contracts/system-backup/v12/README.md",
+        "size": 18604,
+        "sha256": "b66b1b078fd5b9448ef208e496fa4da88fe5e63ff58a96d797f0d62e03e8e465"
+      },
+      "after": {
+        "path": "contracts/system-backup/v12/README.md",
+        "size": 18605,
+        "sha256": "cbc0b73767d9f2ac29210eacd388966fc6dbdf44329e34992ad2fad6179fdd1f"
+      }
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "before": {
+        "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+        "size": 194100,
+        "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+      },
+      "after": {
+        "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+        "size": 195161,
+        "sha256": "59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade"
+      }
+    },
+    {
+      "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+      "before": {
+        "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+        "size": 70758,
+        "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+      },
+      "after": {
+        "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+        "size": 69960,
+        "sha256": "af3a2917e8f8c455c142c4ede16399edbc6b1af78a63fc4a8d9f2a3bb7212b72"
+      }
+    },
+    {
+      "path": "scripts/system-backup-a-api-linux-supplement.ps1",
+      "before": null,
+      "after": {
+        "path": "scripts/system-backup-a-api-linux-supplement.ps1",
+        "size": 9925,
+        "sha256": "fe27a3a445cf1979e3f25055ff4d9226c6fc455cf930ce9e8653539283e8bd93"
+      }
+    },
+    {
+      "path": "scripts/system-backup-a-api-readiness-validation.ps1",
+      "before": {
+        "path": "scripts/system-backup-a-api-readiness-validation.ps1",
+        "size": 7576,
+        "sha256": "c6db302161ed917e253f141f5f10f69f6fec28bc32b894ea6f91ff747bc6129b"
+      },
+      "after": {
+        "path": "scripts/system-backup-a-api-readiness-validation.ps1",
+        "size": 9076,
+        "sha256": "fb3a5b80852caf2abeb762472e198b6197c2140d30c3956dc696af456ab57812"
+      }
+    },
+    {
+      "path": "scripts/system-backup-contract-artifacts.test.mjs",
+      "before": {
+        "path": "scripts/system-backup-contract-artifacts.test.mjs",
+        "size": 214718,
+        "sha256": "a0197bd22525c12095c387015907483dd2e4923bb2f385a88e5fa9fdffbc0adb"
+      },
+      "after": {
+        "path": "scripts/system-backup-contract-artifacts.test.mjs",
+        "size": 214718,
+        "sha256": "d2f37befbda4db3c9d8ea342d2624197203421b96dc62384afdbb5bb96d02bc6"
+      }
+    },
+    {
+      "path": "scripts/system-backup-d-api-smoke.mjs",
+      "before": {
+        "path": "scripts/system-backup-d-api-smoke.mjs",
+        "size": 11904,
+        "sha256": "8f1fb754ddf5467dc4e90bc629574e87a1b0adf598a58d0282aa39c5321e743c"
+      },
+      "after": {
+        "path": "scripts/system-backup-d-api-smoke.mjs",
+        "size": 12449,
+        "sha256": "b6ed4d55ca0c844bf106f622ab0b743169a392556c833126a0a264d305038a12"
+      }
+    },
+    {
+      "path": "scripts/system-backup-d-api-smoke.test.mjs",
+      "before": {
+        "path": "scripts/system-backup-d-api-smoke.test.mjs",
+        "size": 5475,
+        "sha256": "6c601c53d7ba02c4967054f7f1c7ead89a3f557c98c4057a076a5312bc141111"
+      },
+      "after": {
+        "path": "scripts/system-backup-d-api-smoke.test.mjs",
+        "size": 6681,
+        "sha256": "add68670f2a1ef3f2534f3901a3f2673368ffa7671382add9cb15da468c53a55"
+      }
+    },
+    {
+      "path": "scripts/system-backup-d-api-validation.ps1",
+      "before": {
+        "path": "scripts/system-backup-d-api-validation.ps1",
+        "size": 6414,
+        "sha256": "fe52ed328d2beb7171a50f3ba2cdcb4c75b7a3c9f89457613fdc9831eaff671e"
+      },
+      "after": {
+        "path": "scripts/system-backup-d-api-validation.ps1",
+        "size": 9292,
+        "sha256": "9660b0ceeb1d5d2adeb2e8a3b2dc5415ce82fd5499d5a5f6e54f08d5321ebc22"
+      }
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-entry-linux-supplement.ps1",
+      "before": null,
+      "after": {
+        "path": "scripts/system-backup-d-bootstrap-entry-linux-supplement.ps1",
+        "size": 11711,
+        "sha256": "c396995dc65b80389d2daa5b801090976b7b0209d6ab2c6082f4068301452bea"
+      }
+    },
+    {
+      "path": "scripts/system-backup-metrics-registry.mjs",
+      "before": {
+        "path": "scripts/system-backup-metrics-registry.mjs",
+        "size": 41174,
+        "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+      },
+      "after": {
+        "path": "scripts/system-backup-metrics-registry.mjs",
+        "size": 41662,
+        "sha256": "bd99200411dbf1ab3a757e57f424e1d145c60d5a06e2e9ec9a38e9dbb76f6a39"
+      }
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.test.mjs",
+      "before": {
+        "path": "scripts/system-backup-prometheus-rules.test.mjs",
+        "size": 2496,
+        "sha256": "97f4a6f4bf6df93edc37a67ca9413784d792fd8592f521d32cc3e7d8ba2e4011"
+      },
+      "after": {
+        "path": "scripts/system-backup-prometheus-rules.test.mjs",
+        "size": 3331,
+        "sha256": "8e26caf7127d02091f8f365639fb2dd3e4d392d3fdc86df27ea3290c6825e339"
+      }
+    },
+    {
+      "path": "scripts/system-backup-promql-prepare.ps1",
+      "before": null,
+      "after": {
+        "path": "scripts/system-backup-promql-prepare.ps1",
+        "size": 5496,
+        "sha256": "c6cb38cd748d9f7bb72f309e0946d1a30a820e9417667ea890fa7cf56f3795be"
+      }
+    },
+    {
+      "path": "scripts/system-backup-promql-prepare.test.ps1",
+      "before": null,
+      "after": {
+        "path": "scripts/system-backup-promql-prepare.test.ps1",
+        "size": 6589,
+        "sha256": "06f01fbd4c5c8bb3741db0c52e317f7d72b2bbd4c0700a17852d9249e3deab6e"
+      }
+    }
+  ],
+  "prior_native_context": {
+    "scope": "Accepted parser composition and exact tagged component are context only; they do not approve this complete operator inventory or its harness overlays",
+    "pins": [
+      {
+        "path": "docs/evidence/a-gc-tagged-component-reviewed-20261027-r2.json",
+        "size": 4765,
+        "sha256": "48be9d08eaed5bfe348b0c58551acd0da6654dc54a03648e0af76d0840b7a6b0"
+      },
+      {
+        "path": "docs/evidence/d1-a2-reference-capability-composed-reviewed-20261027-b53.json",
+        "size": 4960,
+        "sha256": "0feed6f414669b0ade7ec1b9ca63e2e7cf61a38db14ebd29b0771b828b20205e"
+      },
+      {
+        "path": "docs/evidence/d1-parser-promotion-observed-20261027-b53.json",
+        "size": 1331,
+        "sha256": "84a614471160ca9434e4ec076ccfa73ae1b9e20168ec47968cf79d83dcdc4c62"
+      },
+      {
+        "path": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.promoted.json",
+        "size": 1300,
+        "sha256": "ee5216796d27a16ec0ad6ef3efb56870eff85e31d8e7a5bce16575000a139a8d"
+      }
+    ],
+    "composition_status": "accepted_exact_local_parser_candidate_composition_only",
+    "current_whole_baseline_accepted": false,
+    "formal_A_operator_source_review_exists": false
+  },
+  "preparation_actions": {
+    "current_source_inventory_twice": true,
+    "rendered_selector_to_independent_review_artifact": true,
+    "capture_into_execution_owner": false,
+    "Go_started": false,
+    "tests_rerun": false,
+    "SSH": false,
+    "kubectl": false,
+    "SQL": false,
+    "backend_contracts_central_scripts_changed": false,
+    "active_frozen_sources_changed": false,
+    "dependencies_installed": false,
+    "build_products_created": false
+  },
+  "required_before_formal_operator_execution": [
+    "Current ordinary eight-stage closure terminal/postcheck/cleanup and exact source match",
+    "Root fifteen-stage owner and seed obligations terminal/postcheck/cleanup, including exact GC seed events",
+    "A review of this exact complete source inventory, seven runner selector substitutions, phase and transitive harness pins",
+    "Recompute a new version if any inventoried source or harness input changes; never promote this draft or reuse a stale accepted source review"
+  ],
+  "required_future_A_review_contract": {
+    "kind": "d_gc_full_lifecycle_source_review.v1",
+    "reviewer": "A",
+    "status": "accepted_exact_lifecycle_candidate_inputs",
+    "exact_fields": [
+      "source_sha256",
+      "files",
+      "original_source_sha256",
+      "original_files",
+      "origin_harness_pins"
+    ],
+    "capsule_sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0",
+    "production_approved": false,
+    "note": "This is the expected schema for a future actual A-created review; this request is not that review"
+  },
+  "operator": {
+    "path": "docs/evidence/d-gc-full-lifecycle-operator-20261026.ps1",
+    "reviewed_source_argument": "Future actual A-created exact review JSON, not this draft request",
+    "source_manifest_argument": "New exclusive manifest directly in docs/evidence",
+    "remote_default": false,
+    "execution_authorized_by_this_draft": false
+  },
+  "native_and_global_review_pending": true,
+  "ordinary_scope_review_complete": false,
+  "actual_new_lifecycle_SQL_cases": 0,
+  "actual_SQL_executed_by_this_preparation": false,
+  "production_approved": false,
+  "complete_real_domain_authority": false,
+  "whole_goal_complete": false
+}

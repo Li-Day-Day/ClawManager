@@ -1,0 +1,149 @@
+{
+  "kind": "d1_gate_budget_SQL_and_runtime_candidate.v1",
+  "status": "source_only_native_and_independent_review_pending",
+  "base": {
+    "path": "docs/evidence/a-owner-current-full-source-composed-reviewed-20261027-r2.json",
+    "size": 332655,
+    "sha256": "3555b4257818218a37c6099111d36907f37f124a3cd83ff0e866889963220760"
+  },
+  "base_source_sha256": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+  "base_source_files": 1720,
+  "candidate_source_sha256": "957f40f4cfd56bdad195828461621c2a032c160668267934817da8dbf4745890",
+  "candidate_source_files": 1722,
+  "changes": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+        "size": 11398,
+        "sha256": "579844eedb28b9546c8e6639be72cf91db43e6dd9d56b86eb098207ccfcb42eb"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-sql-candidate-20261027-r1.go.txt",
+        "size": 11398,
+        "sha256": "579844eedb28b9546c8e6639be72cf91db43e6dd9d56b86eb098207ccfcb42eb"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+        "size": 14620,
+        "sha256": "01b0277871eba1ee83db191d46a9f1008efe5c63012fa3fa6a2a7668a5a7b980"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-test-candidate-20261027-r1.go.txt",
+        "size": 14620,
+        "sha256": "01b0277871eba1ee83db191d46a9f1008efe5c63012fa3fa6a2a7668a5a7b980"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/metrics_http.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 6658,
+        "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-http-candidate-20261027-r1.go.txt",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      }
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "before": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22140,
+        "sha256": "1d1b63326ffd7490f5e702f0b3125f688a826454c42fec150814ceb14b23cfeb"
+      },
+      "after": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-main-candidate-20261027-r1.go.txt",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      }
+    }
+  ],
+  "requirements": {
+    "authority": "same read-only RR statement joins original installation/matrix, exact active config and singleton CaptureGateScope; one UTC database clock",
+    "labels": "original 065/067 four persisted matrix values determine profile=cluster|single-node and runner=k8s|k3s; not arbitrary constructor labels or lock_owner",
+    "active_threshold": "original gate frozen acquisition/max-hold seconds, bounded by original start/deadline windows; never current active config",
+    "inactive_threshold": "positive current snapshot config only for inactive dimensions with confirmed zero age, avoiding false 0>=0",
+    "lease_expiry": "expired leases and absolute deadlines remain observable while original gate state remains active",
+    "release": "preserves held_at through releasing and never uses release_started_at as hold-age origin",
+    "runtime": "existing leader/ready HTTP handler buffers queue and gate bytes, suppresses partial/canceled/late-leader results; main explicitly constructs SQLGateBudgetReader",
+    "migration": "no new SQL columns, grants or metric labels",
+    "scope": "four existing PromQL singleton projections; not cleanup owner persistence or a full metrics collector"
+  },
+  "prepared_test_roots": [
+    "TestGateBudgetFrozenThresholdsAcrossConfigurationChanges",
+    "TestGateBudgetExpiredLeaseDoesNotHideOverdueGate",
+    "TestGateBudgetExactBoundariesAndOriginalMatrixLabels",
+    "TestGateBudgetRejectsUnknownOrContradictoryOriginalFacts",
+    "TestSQLGateBudgetReadsBoundedOriginalSourcesInOneUTCReadOnlySnapshot",
+    "TestSQLGateBudgetNeverPublishesMissingPartialFailedOrCanceledSnapshots",
+    "TestGateBudgetHTTPRejectsPartialMetricsAndSuppressesAfterLeaderLoss"
+  ],
+  "original_source_inputs": [
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "size": 56783,
+      "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+    },
+    {
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "size": 21146,
+      "sha256": "c1297b8341fe7d3f4eeab55ba355526b920d633349053a047420d2cca26df8de"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap.go",
+      "size": 18666,
+      "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate.go",
+      "size": 27781,
+      "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+      "size": 1330,
+      "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+    },
+    {
+      "path": "scripts/system-backup-metrics-registry.mjs",
+      "size": 41662,
+      "sha256": "bd99200411dbf1ab3a757e57f424e1d145c60d5a06e2e9ec9a38e9dbb76f6a39"
+    }
+  ],
+  "source_preparer": {
+    "path": "docs/evidence/d1-gate-budget-candidate-20261027.mjs",
+    "size": 6712,
+    "sha256": "85056dc697bb4420454dc99bacd83e132d052e5ad6c95723bb2374e47ca33880"
+  },
+  "Go_started": false,
+  "tests_executed": false,
+  "actual_SQL": false,
+  "PromQL_executed": false,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

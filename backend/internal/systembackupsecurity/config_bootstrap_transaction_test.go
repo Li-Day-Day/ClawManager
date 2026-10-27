@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	mysqldriver "github.com/go-sql-driver/mysql"
 )
 
 // Fault-injection tests are not evidence of real InnoDB concurrency or DDL.
@@ -23,6 +25,13 @@ type bootstrapTestState struct {
 	authorized, validated                                        int
 	tx                                                           *sql.Tx
 	canonical                                                    []byte
+	config, savedConfig                                          map[string]driver.Value
+	matrix, savedMatrix                                          string
+	queries                                                      []string
+	coreTables                                                   bool
+	probeError                                                   error
+	sqlNow                                                       time.Time
+	afterInstallation                                            func()
 }
 type bootstrapConnector struct{ s *bootstrapTestState }
 
@@ -45,11 +54,36 @@ func (c *bootstrapConn) BeginTx(_ context.Context, o driver.TxOptions) (driver.T
 	c.s.pending = nil
 	c.s.stagedOp = ""
 	c.s.stagedHash = ""
+	c.s.savedMatrix = c.s.matrix
+	c.s.savedConfig = make(map[string]driver.Value, len(c.s.config))
+	for key, value := range c.s.config {
+		c.s.savedConfig[key] = value
+	}
 	return &bootstrapTx{c.s}, nil
 }
-func (c *bootstrapConn) QueryContext(_ context.Context, q string, _ []driver.NamedValue) (driver.Rows, error) {
+func (c *bootstrapConn) QueryContext(_ context.Context, q string, args []driver.NamedValue) (driver.Rows, error) {
 	s := c.s
+	s.queries = append(s.queries, q)
 	switch {
+	case strings.HasPrefix(q, "SELECT TABLE_NAME,TABLE_TYPE,ENGINE FROM information_schema.tables"):
+		if s.coreTables {
+			if len(args) != 9 || args[0].Value != s.grant.Database {
+				return nil, errors.New("wrong closed schema scope")
+			}
+			var rows [][]driver.Value
+			for _, arg := range args[1:] {
+				rows = append(rows, []driver.Value{arg.Value, "BASE TABLE", "InnoDB"})
+			}
+			return &registrationTestRows{data: rows, width: 3}, nil
+		}
+		return &registrationTestRows{width: 3}, nil // Original non-C1 fixture.
+	case strings.HasPrefix(q, "SELECT 1 FROM ") && strings.HasSuffix(q, " LIMIT 0"):
+		if s.probeError != nil {
+			return nil, s.probeError
+		}
+		return nil, &mysqldriver.MySQLError{Number: 1146}
+	case strings.Contains(q, " WHERE scope_key = ? FOR UPDATE"):
+		return &registrationTestRows{width: 1}, nil // Complete C1, no scoped domain.
 	case strings.Contains(q, "SELECT @@server_uuid"):
 		server := s.grant.ServerUUID
 		if s.wrongDB {
@@ -58,18 +92,40 @@ func (c *bootstrapConn) QueryContext(_ context.Context, q string, _ []driver.Nam
 		if q == "SELECT @@server_uuid,DATABASE()" {
 			return registrationRow(server, s.grant.Database), nil
 		}
-		return registrationRow(server, s.grant.Database, time.Now().UTC(), int64(0)), nil
+		now := s.sqlNow
+		if now.IsZero() {
+			now = time.Now().UTC().Truncate(time.Microsecond)
+		}
+		return registrationRow(server, s.grant.Database, now, int64(0)), nil
+	case q == bootstrapCandidateGlobalConfigSQL:
+		if len(s.config) == 0 {
+			return &registrationTestRows{width: 7}, nil
+		}
+		return registrationRow(int64(1), s.grant.InstallationID, s.config["version"], s.config["config_sha256"], s.config["enabled"], s.config["nonce_hmac_ref_version"], s.config["nonce_hmac_identity_hash"]), nil
+	case strings.HasPrefix(q, "SELECT origin_installation_id,version,config_sha256,"):
+		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "SELECT "), " FROM ")[0], ",")
+		values := make([]driver.Value, len(columns))
+		for i, column := range columns {
+			values[i] = s.config[column]
+		}
+		return registrationRow(values...), nil
 	case strings.Contains(q, "SELECT origin_installation_id"):
+		if s.afterInstallation != nil {
+			s.afterInstallation()
+		}
 		return &registrationTestRows{width: 1}, nil
 	case strings.Contains(q, "SELECT username,role"):
 		return registrationRow(s.grant.Username, "admin", !s.inactive, "local"), nil
 	case strings.Contains(q, "SELECT public_id,result_config_version"):
+		if s.stagedOp != "" {
+			return registrationRow(s.stagedOp, int64(1), s.stagedHash, "succeeded", int64(201)), nil
+		}
 		if s.op == "" {
 			return &registrationTestRows{width: 5}, nil
 		}
 		return registrationRow(s.op, int64(1), s.hash, "succeeded", int64(201)), nil
 	case strings.Contains(q, "SELECT c.config_sha256"):
-		return registrationRow(s.grant.ConfigSHA256, int64(1), false), nil
+		return registrationRow(s.grant.ConfigSHA256, int64(1), false, s.matrix), nil
 	case strings.Contains(q, "SELECT active_config_version"), strings.Contains(q, "SELECT version FROM"):
 		if s.exists || s.op != "" {
 			return registrationRow(int64(1)), nil
@@ -91,6 +147,11 @@ func (c *bootstrapConn) ExecContext(_ context.Context, q string, a []driver.Name
 		kind = "audit"
 	case strings.Contains(q, "INSERT INTO system_backup_configs"):
 		kind = "config"
+		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "INSERT INTO system_backup_configs ("), ")")[0], ",")
+		s.config = make(map[string]driver.Value, len(columns))
+		for i, column := range columns {
+			s.config[column] = a[i].Value
+		}
 		wantArgs := 132
 		if s.canonical != nil {
 			wantArgs++
@@ -108,6 +169,7 @@ func (c *bootstrapConn) ExecContext(_ context.Context, q string, a []driver.Name
 		}
 	case strings.Contains(q, "INSERT INTO system_backup_installation_state"):
 		kind = "state"
+		s.matrix = a[2].Value.(string)
 	case strings.Contains(q, "INSERT INTO system_backup_operations"):
 		kind = "operation"
 		s.stagedOp = a[0].Value.(string)
@@ -137,6 +199,8 @@ func (t *bootstrapTx) Rollback() error {
 	t.s.pending = nil
 	t.s.stagedOp = ""
 	t.s.stagedHash = ""
+	t.s.config = t.s.savedConfig
+	t.s.matrix = t.s.savedMatrix
 	return nil
 }
 
@@ -178,7 +242,7 @@ func TestBootstrapAtomicIdempotencyAndReauthorization(t *testing.T) {
 		t.Fatal(first, err, s.committed)
 	}
 	retry, err := svc.Bootstrap(context.Background(), g, raw)
-	if err != nil || !retry.Replayed || retry.OperationPublicID != first.OperationPublicID || len(s.committed) != 6 || s.authorized != 2 || s.validated != 1 {
+	if err != nil || !retry.Replayed || retry.OperationPublicID != first.OperationPublicID || len(s.committed) != 6 || s.authorized != 4 || s.validated != 1 {
 		t.Fatal("retry", retry, err)
 	}
 	g.ChangeReason = "different reason"

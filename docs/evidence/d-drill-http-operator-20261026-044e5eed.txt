@@ -1,0 +1,82 @@
+RUN namespace=sbk-mig-261026012249-32ca uid=b1ccc8fa-4e64-4981-be31-6d7634ced000 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe","migration_count":96,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=ed0cb9f047c543e07df8e8ba0aa04cefadf7d85571e02f411174bc5bbd12bc6c catalog_sha256=0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe
+PASS fresh-migration-replay=001..081 applied=96 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestDAdminReadLiveHTTPMySQL
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_pending_no_attempt
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_current_attempt_history
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_catalog_import
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_parallel_jobs
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_parallel_phases
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_single_job
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_heartbeat_only
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_summary_drift
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_report_hash_drift
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_report_wrong_owner
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_report_before_attempt
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_historical_preflight_before_retry
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_shared_reference_strict_cutoff
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_expired_evidence_history
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_foreign_installation
+    system_backup_read_drill_history_mysql_test.go:181: isolated drill fixture SQL failed (details redacted)
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_missing_task
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_unknown_query
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_missing_auth
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_revoked_session
+=== NAME  TestDAdminReadLiveHTTPMySQL
+    system_backup_read_live_mysql_test.go:239: PASS drill-history-http-mysql synthetic_cases=19 actual_provider=no production_approval=no
+--- FAIL: TestDAdminReadLiveHTTPMySQL (0.57s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_pending_no_attempt (0.06s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_current_attempt_history (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_catalog_import (0.04s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_parallel_jobs (0.03s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_parallel_phases (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_single_job (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_heartbeat_only (0.04s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_summary_drift (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_report_hash_drift (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_report_wrong_owner (0.04s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_report_before_attempt (0.03s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_historical_preflight_before_retry (0.03s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_shared_reference_strict_cutoff (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_expired_evidence_history (0.04s)
+    --- FAIL: TestDAdminReadLiveHTTPMySQL/drill_history_foreign_installation (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_missing_task (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_unknown_query (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_missing_auth (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_revoked_session (0.01s)
+FAIL
+command terminated with exit code 1
+CLEANED namespace=sbk-mig-261026012249-32ca uid=b1ccc8fa-4e64-4981-be31-6d7634ced000
+close - IO is still pending on closed socket. read:1, write:0, io:00000244484A23C0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000027575DA3560
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+Exception: C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-ff018d43988849228dbab5660e249eea\source\scripts\system-backup-a-evidence-validation.ps1:432
+Line |
+ 432 |  … it -ne 0) { throw 'MySQL validation failed; retain any CLEANUP_PENDIN …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | MySQL validation failed; retain any CLEANUP_PENDING identity
+LOCAL_CLEANUP drill-detail-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-ff018d43988849228dbab5660e249eea removed=True
+pwsh.exe : Exception: C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\scripts\system-backup-d-drill-detail-validation.ps1:48
+所在位置 行:1 字符: 1
++ & pwsh -NoProfile -File .\scripts\system-backup-d-drill-detail-valida ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Exceptio...tion.ps1:48:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Line |
+  48 |  … Exit -ne 0){throw ('Admin read validation failed exit='+$readChildExi …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Admin read validation failed exit=1; preserve any CLEANUP_PENDING identity in the log
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager>
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> $drillExit = $LASTEXITCODE
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> "drill_detail_http_exit=$drillExit" | Tee-Object -FilePath $drillLog -Append
+drill_detail_http_exit=1
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "日志=$drillLog"
+日志=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-drill-http-remote-20261026-084817-044e5eed.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "来源清单=$drillSource"
+来源清单=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-drill-http-remote-20261026-084817-044e5eed-source.json
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "本轮结果=$drillSource.result.json"
+本轮结果=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-drill-http-remote-20261026-084817-044e5eed-source.json.result.json

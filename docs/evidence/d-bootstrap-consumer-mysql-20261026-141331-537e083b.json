@@ -1,0 +1,67 @@
+{
+  "kind": "d_bootstrap_consumer_mysql_preparation.v1",
+  "suite": "bootstrap-consumer",
+  "error": "BootstrapConsumer remote step failed; retain original output and any CLEANUP_PENDING identity",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDBootstrapConsumerMySQLSeed$",
+        "-count=1",
+        "-timeout=180s",
+        "-json",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "platform": "windows",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-141331-537e083b-step-0.jsonl",
+      "log_sha256": "20c121524a59b71c3b398b364340eb69a31faad1f4d6724ba3b7fa9ff0383d46"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-537e083be9404a4ea5cce2a3982beb0f\\bundle\\d-bootstrap-consumer.test",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-141331-537e083b-step-1.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-537e083be9404a4ea5cce2a3982beb0f\\bundle\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-141331-537e083b-step-2.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-141331-537e083b-source.json",
+  "source_postcheck": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-537e083be9404a4ea5cce2a3982beb0f",
+  "owner_removed": true,
+  "remote_requested": true,
+  "remote_scratch_removed": true,
+  "binary_sha256": "e6a1e39ff0f2cbe74cf20622516f79069a309aada54cf39f9154fbfc40c100de",
+  "migration_binary_sha256": "3b55473bd656a7ca1c77c2739820c8201dd8b1ad3bb4f225525088c4bba684c6",
+  "inputs_sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa",
+  "dependencies_installed": false,
+  "synthetic_proofs": true,
+  "actual_mysql_results_accepted": false,
+  "production_approved": false
+}

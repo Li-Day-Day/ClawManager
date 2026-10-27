@@ -1,0 +1,124 @@
+{
+  "observed_at": "2026-10-27T04:29:58.205Z",
+  "receipt": "docs/evidence/d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95.json",
+  "receipt_sha256": "d9645cef72d962b1dc6c30852c374df9ba6a121eac5f22828d7e6948f5374332",
+  "status": "terminal_fifteen_stages_observed_scope_acceptance_pending",
+  "steps": 15,
+  "exits": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1
+  ],
+  "expected_counterexample_failures": 2,
+  "log_and_attempt_hashes_verified": true,
+  "scope_artifact_hashes_verified": true,
+  "source_files": 1718,
+  "live_source_pins_match_at_observation": true,
+  "frozen_postcheck_reported": true,
+  "owner_removed_reported": true,
+  "owner_independently_absent": true,
+  "Go_started": true,
+  "binaries_deleted_not_reconstructed": true,
+  "binary_header_independent_replay_performed": false,
+  "full_native_inventory_receiver_replayed_after_cleanup": false,
+  "native_inventory_reported": {
+    "resource_seed_names": [
+      "TestAResourcesWriteFKMySQLSeed",
+      "TestDResourcesReadbackMySQLSeed",
+      "TestDResourcesWriteMySQLSeed"
+    ],
+    "http_seed_names": [
+      "TestDDrillDetailHTTPSeed",
+      "TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture",
+      "TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture/drill_history_foreign_installation"
+    ],
+    "admin_seed_checks": 1,
+    "packaged_owner_seed_names": [
+      "TestADownloadAdmissionMySQLSeed",
+      "TestADownloadAdmissionMySQLSeed/detached_embedded_config",
+      "TestADownloadAdmissionMySQLSeed/historical_config_projection",
+      "TestADownloadAdmissionMySQLSeed/independent_encrypted_object",
+      "TestASQLTaskDownloadOwnersMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells",
+      "TestASensitiveDownloadMFAMySQLSeed/budget",
+      "TestASensitiveDownloadMFAMySQLSeed/catalog",
+      "TestASensitiveDownloadMFAMySQLSeed/ddl",
+      "TestASensitiveDownloadMFAMySQLSeed/duplicate",
+      "TestASensitiveDownloadMFAMySQLSeed/trailing",
+      "TestASensitiveDownloadMFAMySQLSeed/unknown"
+    ],
+    "detached_owner_seed_names": [
+      "TestADownloadAdmissionMySQLSeed",
+      "TestADownloadAdmissionMySQLSeed/detached_embedded_config",
+      "TestADownloadAdmissionMySQLSeed/historical_config_projection",
+      "TestADownloadAdmissionMySQLSeed/independent_encrypted_object",
+      "TestASQLTaskDownloadOwnersMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells",
+      "TestASensitiveDownloadMFAMySQLSeed/budget",
+      "TestASensitiveDownloadMFAMySQLSeed/catalog",
+      "TestASensitiveDownloadMFAMySQLSeed/ddl",
+      "TestASensitiveDownloadMFAMySQLSeed/duplicate",
+      "TestASensitiveDownloadMFAMySQLSeed/trailing",
+      "TestASensitiveDownloadMFAMySQLSeed/unknown"
+    ],
+    "standalone_roots": [
+      "TestAFreezeTypedNilConnectorBoundary",
+      "TestDownloadGCFinalizerClosedBindingAndSingleUse",
+      "TestDownloadGCFinalizerConcurrentCopiesConsumeOnce",
+      "TestDownloadGCFinalizerDeadlineZeroAndOutput",
+      "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext",
+      "TestDownloadGCFreezeCandidateClosedPreflight",
+      "TestDownloadGCFreezeCandidateFailures",
+      "TestDownloadGCFreezeCandidateOrderAndFreshDisposal",
+      "TestDownloadGCFreezeFinalizationFollowsTicket"
+    ],
+    "standalone_pass_events": 49,
+    "counterexamples": [
+      {
+        "target": "TestDownloadGCFinalizerProtectedCandidate/worker_claim",
+        "parent": "TestDownloadGCFinalizerProtectedCandidate",
+        "native_exit": 1,
+        "assertion_not_build_failure": true,
+        "unsafe_single_regression_commit_observed": true
+      },
+      {
+        "target": "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+        "parent": "TestDownloadGCFinalizerProtectedCandidate",
+        "native_exit": 1,
+        "assertion_not_build_failure": true,
+        "unsafe_single_regression_commit_observed": true
+      }
+    ],
+    "real_native_inventory_checked": true,
+    "actual_mysql": false,
+    "gc_seed_names": [
+      "TestDDownloadGCFullCollectMySQLSeed",
+      "TestDDownloadGCFullLifecycleMySQLSeed",
+      "TestDDownloadGCFullProfileMySQLSeed"
+    ],
+    "current_linux_evidence_binary_sha256": "f2649a0f5b560e72bdc0703e40d101ecaa4461d176bd04c20d155619c0bd6e25",
+    "linux_binary_executed": false,
+    "stages": 15,
+    "source_scope_acceptance_claimed": false,
+    "parent_status_observed": "failed",
+    "parent_stage_inventory_only": true
+  },
+  "current_baseline_accepted": false,
+  "actual_mysql": false,
+  "remote_contacted": false,
+  "dependencies_installed": false
+}

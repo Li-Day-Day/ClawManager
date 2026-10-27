@@ -1,0 +1,41 @@
+{
+  "kind": "a_owner_transcript_locale_compatibility_review.v1",
+  "status": "locale_fix_regressions_and_exact_actual_owner_intake_passed",
+  "before": {
+    "path": "docs/evidence/a-owner-footer-locale-receiver-before-20261027.mjs.txt",
+    "size": 30787,
+    "sha256": "ebd9bfcfb1c9d3b0dd6344ca4a92dc1ac2bce803ee4a20315e49956cfc29bd83"
+  },
+  "receiver": {
+    "path": "docs/evidence/a-download-owners-actual-review-20261020.mjs",
+    "size": 30920,
+    "sha256": "c19eef8ae8c3a484161dc246e502e612c1ecff13b6a4d155a8babdda894481fa"
+  },
+  "tests": {
+    "path": "docs/evidence/a-owner-footer-locale-parser-tests-20261027.txt",
+    "size": 7268,
+    "sha256": "978dee80d4a619c103752700888f74f1157fff97d54fa42704495478c340d7d8"
+  },
+  "parser_controls": 136,
+  "synthetic_controls_are_not_actual_SQL": true,
+  "receiver_delta": "Only add anchored Chinese PowerShell 7 terminal footer with stars, exact fourteen-digit end time and end-of-log. Existing English/Windows behavior and all SQL/source/inventory/cleanup gates unchanged.",
+  "historical_synthetic_fixture": "Old INPLACE test reads its retained 14522-byte/19a5705a... archive, verified against its original source manifest; no fabricated current test bytes.",
+  "actual_acceptance": {
+    "path": "docs/evidence/a-download-owners-mysql-accepted-sbk-mig-261027083544-2360.json",
+    "size": 14371,
+    "sha256": "51251213ce30e872cc78be69ebf6da40fbe706705c6f25ecf3ba2e8798dafb79"
+  },
+  "actual_cases": 11,
+  "actual_checks": 161,
+  "old_failed_SQL_run_still_rejected": {
+    "path": "docs/evidence/a-owner-footer-locale-old-failure-rejection-20261027.txt",
+    "size": 102,
+    "sha256": "847c35bbffcf4d9a20c404b3078e65dc2b79c95ec15dc5754fbaae515daeb61a"
+  },
+  "SQL_rerun_for_locale_fix": false,
+  "original_transcript_edited": false,
+  "Go_started": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

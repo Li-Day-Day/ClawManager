@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # Sourced by the fresh migration smoke; only its emptyDir MySQL is writable.
+drill_history_only=0
+[[ "$drill_history_only" == 0 || "$drill_history_only" == 1 ]] || return 1
+if [[ "$drill_history_only" == 1 ]]; then
+  [[ "${D_CONFIG_CANDIDATE:-0}" == 0 && "${D_ADMIN_INDEX_CANDIDATE:-0}" == 0 ]] || return 1
+fi
 [[ "$RUN_NAMESPACE" =~ ^sbk-mig-[0-9]{12}-[0-9a-f]{4}$ && "$RUN_NAMESPACE_UID" =~ ^[0-9a-f-]{36}$ ]] || return 1
 [[ -s "$D_INVARIANT_BINARY" && "$D_INVARIANT_BINARY_SHA256" =~ ^[a-f0-9]{64}$ && -s "$D_PROVIDER_REGISTRATION_DDL" && "$D_PROVIDER_REGISTRATION_DDL_SHA256" =~ ^[a-f0-9]{64}$ ]] || return 1
 [[ -s "$D_ADMIN_READ_HTTP_BINARY" && "$D_ADMIN_READ_HTTP_BINARY_SHA256" =~ ^[a-f0-9]{64}$ ]] || return 1
@@ -60,14 +65,20 @@ kubectl --context="$CONTEXT" --namespace="$RUN_NAMESPACE" exec pod/mysql -- sh -
     [ "$(/tmp/d-admin-read-index.test -test.list "^TestDAdminReadIndexCandidateMySQL$")" = TestDAdminReadIndexCandidateMySQL ] || { echo "D admin index probe test absent" >&2; exit 1; }
     D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_ADMIN_INDEX_DDL=/tmp/d-admin-read-index.sql D_ADMIN_INDEX_DDL_SHA256="${11}" D_ADMIN_INDEX_VARIANT="${12}" /tmp/d-admin-read-index.test -test.run "^TestDAdminReadIndexCandidateMySQL$" -test.v -test.count=1 -test.timeout=540s
   fi
-  D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_PROVIDER_REGISTRATION_DDL=/tmp/d-provider-registration.sql D_PROVIDER_REGISTRATION_DDL_SHA256="$4" /tmp/d-provider-registration.test -test.run "^TestAAdminReadAuthorityMySQL$" -test.v -test.count=1 -test.timeout=180s
-  D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_ADMIN_READ_FULL_FIXTURE=/tmp/d-admin-read-full-fixture.sql D_ADMIN_READ_FULL_FIXTURE_SHA256="$5" /tmp/d-provider-registration.test -test.run "^TestDAdminReadFullSchemaMySQL$" -test.v -test.count=1 -test.timeout=180s
-  D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_ADMIN_READ_FULL_FIXTURE=/tmp/d-admin-read-full-fixture.sql D_ADMIN_READ_FULL_FIXTURE_SHA256="$5" /tmp/d-admin-read-http.test -test.run "^TestDAdminReadLiveHTTPMySQL$" -test.v -test.count=1 -test.timeout=180s
+  if [ "${13}" = 0 ]; then
+    D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_PROVIDER_REGISTRATION_DDL=/tmp/d-provider-registration.sql D_PROVIDER_REGISTRATION_DDL_SHA256="$4" /tmp/d-provider-registration.test -test.run "^TestAAdminReadAuthorityMySQL$" -test.v -test.count=1 -test.timeout=180s
+    D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_ADMIN_READ_FULL_FIXTURE=/tmp/d-admin-read-full-fixture.sql D_ADMIN_READ_FULL_FIXTURE_SHA256="$5" /tmp/d-provider-registration.test -test.run "^TestDAdminReadFullSchemaMySQL$" -test.v -test.count=1 -test.timeout=180s
+  fi
+  D_ADMIN_DRILL_HISTORY_ONLY="${13}" D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_ADMIN_READ_FULL_FIXTURE=/tmp/d-admin-read-full-fixture.sql D_ADMIN_READ_FULL_FIXTURE_SHA256="$5" /tmp/d-admin-read-http.test -test.run "^TestDAdminReadLiveHTTPMySQL$" -test.v -test.count=1 -test.timeout=180s
   if [ "$7" = 1 ]; then
     D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" D_CONFIG_CANDIDATE_DDL=/tmp/d-config-candidate.sql D_CONFIG_CANDIDATE_DDL_SHA256="$8" /tmp/d-provider-registration.test -test.run "^TestDConfigCanonicalCandidateMySQL$" -test.v -test.count=1 -test.timeout=180s
     D_INVARIANT_RUN="$1" D_INVARIANT_NAMESPACE_UID="$2" /tmp/d-admin-read-http.test -test.run "^TestDAdminReadConfigHTTPMySQL$" -test.v -test.count=1 -test.timeout=180s
   fi
-' probe "$RUN_NAMESPACE" "$RUN_NAMESPACE_UID" "$D_INVARIANT_BINARY_SHA256" "$D_PROVIDER_REGISTRATION_DDL_SHA256" "$full_fixture_sha256" "$D_ADMIN_READ_HTTP_BINARY_SHA256" "${D_CONFIG_CANDIDATE:-0}" "${D_CONFIG_CANDIDATE_DDL_SHA256:-}" "${D_ADMIN_INDEX_CANDIDATE:-0}" "${D_ADMIN_INDEX_BINARY_SHA256:-}" "${D_ADMIN_INDEX_DDL_SHA256:-}" "${D_ADMIN_INDEX_VARIANT:-all}"
+' probe "$RUN_NAMESPACE" "$RUN_NAMESPACE_UID" "$D_INVARIANT_BINARY_SHA256" "$D_PROVIDER_REGISTRATION_DDL_SHA256" "$full_fixture_sha256" "$D_ADMIN_READ_HTTP_BINARY_SHA256" "${D_CONFIG_CANDIDATE:-0}" "${D_CONFIG_CANDIDATE_DDL_SHA256:-}" "${D_ADMIN_INDEX_CANDIDATE:-0}" "${D_ADMIN_INDEX_BINARY_SHA256:-}" "${D_ADMIN_INDEX_DDL_SHA256:-}" "${D_ADMIN_INDEX_VARIANT:-all}" "$drill_history_only" || return 1
+if [[ "$drill_history_only" == 1 ]]; then
+  printf 'PASS d-drill-detail-http-mysql synthetic_cases=19 binary_sha256=%s actual_provider=no production_approval=no\n' "$D_ADMIN_READ_HTTP_BINARY_SHA256"
+  return 0
+fi
 if [[ "${D_ADMIN_INDEX_CANDIDATE:-0}" == 1 ]]; then printf 'PASS d-admin-read-index-candidate-mysql binary_sha256=%s ddl_sha256=%s synthetic=yes production_approval=no\n' "$D_ADMIN_INDEX_BINARY_SHA256" "$D_ADMIN_INDEX_DDL_SHA256"; fi
 printf 'PASS d-admin-read-live-http-mysql binary_sha256=%s\n' "$D_ADMIN_READ_HTTP_BINARY_SHA256"
 if [[ "${D_CONFIG_CANDIDATE:-0}" == 1 ]]; then printf 'PASS d-config-canonical-candidate-mysql binary_sha256=%s ddl_sha256=%s\n' "$D_INVARIANT_BINARY_SHA256" "$D_CONFIG_CANDIDATE_DDL_SHA256"; printf 'PASS d-config-bootstrap-canonical-mysql binary_sha256=%s\n' "$D_INVARIANT_BINARY_SHA256"; printf 'PASS d-config-live-http-mysql binary_sha256=%s\n' "$D_ADMIN_READ_HTTP_BINARY_SHA256"; fi

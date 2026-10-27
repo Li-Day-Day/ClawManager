@@ -1,0 +1,52 @@
+// Read-only owner registration/handoff audit. Does not run Go, SSH or SQL.
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {workspace,sha256,decode,loadReviewedOwnerBaseline} from './a-download-owners-actual-review-20261020.mjs';
+const read=p=>fs.readFileSync(path.join(workspace,p));
+const json=p=>JSON.parse(decode(read(p)));
+const pin=p=>({path:p,size:read(p).length,sha256:sha256(read(p))});
+const acceptancePath='docs/evidence/a-owner-final-local-accepted-20261026.json';
+const accepted=json(acceptancePath);
+assert.equal(accepted.status,'complete_exact_current_local_owner_profile');
+assert.deepEqual(accepted.owner_baseline,{main:647,all:5190});
+assert.equal(accepted.current_baseline_registration_permitted,true);
+assert.equal(accepted.actual_SQL,false);assert.equal(accepted.production_approved,false);
+for(const p of [accepted.source,accepted.events,...accepted.inputs])assert.deepEqual(pin(p.path),p);
+const parser=read(accepted.parser_dependency_prefix.path);
+assert.equal(sha256(parser.subarray(0,accepted.parser_dependency_prefix.bytes)),accepted.parser_dependency_prefix.sha256);
+const source=json(accepted.source.path),baseline=loadReviewedOwnerBaseline(read(accepted.source.path));
+assert.deepEqual(baseline.baselineSource,source);
+const passed=baseline.baselineEvents.filter(e=>e.Test&&e.Action==='pass');
+assert.equal(passed.length,5190);assert.equal(passed.filter(e=>!e.Test.includes('/')).length,647);
+assert.equal(source.source_sha256,accepted.source_sha256);
+assert.equal(source.tested_owner_source_sha256,accepted.tested_owner_source_sha256);
+const skip=new Set(['.git','node_modules','vendor','uploads','cache','dist','build','__pycache__']);
+function walk(dir){return fs.readdirSync(path.join(workspace,dir),{withFileTypes:true}).flatMap(e=>{
+ const p=dir+'/'+e.name;assert.equal(e.isSymbolicLink(),false,'redirected source');
+ return e.isDirectory()?(skip.has(e.name)?[]:walk(p)):e.isFile()&&/\.(?:go|mod|sum|sql|json|md|txt|sh|ps1|mjs|yaml|yml|tmpl|html|pem)$/.test(p)?[p]:[];
+});}
+const ordinary=files=>files.filter(p=>/^(backend|contracts)\//.test(p.path)&&!p.path.endsWith('_mysql_test.go')).sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0);
+assert.deepEqual(ordinary(['backend','contracts'].flatMap(walk).map(pin)),ordinary(source.files));
+const readyPath='docs/evidence/a-owner-final-preflight-ready-20261026.json',ready=json(readyPath);
+assert.deepEqual(ready,{status:'ready_for_original_snapshot_gate',reviewed_source_sha256:source.source_sha256,actual_sql:false,tests_started:false,dependencies_installed:false});
+const peerPath='docs/evidence/a2-owner-final-current-reviewed-20261026.json',peer=json(peerPath);
+assert.equal(peer.status,'accepted_current_dependency_matched_owner_preparation_and_baseline_registration');
+assert.equal(peer.registered_baseline_selects_current_source_and_original_native_events,true);
+for(const p of peer.inputs)assert.deepEqual(pin(p.path),p);
+const registrationLog='docs/evidence/a-owner-baseline-registration-tests-20261026-approved.txt';
+const testText=decode(read(registrationLog));
+for(const [name,n]of [['tests',15],['pass',15],['fail',0],['skipped',0]])assert.match(testText,new RegExp('^.*'+name+' '+n+'\\s*$','m'));
+const parserLog='docs/evidence/a-owner-actual-receiver-tests-20261026.txt',parserTests=json(parserLog);
+assert.equal(parserTests.status,'PASS');assert.equal(parserTests.parser_checks,67);
+assert.equal(parserTests.actual_acceptance_receipts_written,0);assert.equal(parserTests.test_build_artifacts_created,false);
+const cleanupPath='docs/evidence/a-owned-artifact-resume-audit-20261026.json';
+const owners=[...new Set([...accepted.all_test_owners_independently_absent,...json(cleanupPath).observations.map(p=>p.owner)])].sort();
+for(const owner of owners){assert.equal(path.dirname(owner),workspace);assert.match(path.basename(owner),/^\.tmp-(?:d-index-cache|a-resource-deps)-[a-f0-9]{32}$/);assert.equal(fs.existsSync(owner),false);}
+const inputs=[acceptancePath,accepted.source.path,accepted.events.path,readyPath,peerPath,registrationLog,parserLog,cleanupPath,'docs/evidence/a-owner-registration-handoff-20261026.mjs'];
+const report={kind:'a_owner_registration_handoff_audit.v1',status:'current_owner_local_preparation_and_registration_complete_actual_eleven_pending',current_source_sha256:source.source_sha256,tested_owner_source_sha256:source.tested_owner_source_sha256,owner_roots:647,owner_pass_events:5190,registered_native_baseline_verified:true,fresh_ordinary_source_set_and_bytes_verified:true,original_preflight:ready,registration_tests:15,actual_parser_checks:67,actual_parser_receipts_written:0,completed_owners_independently_absent:owners,other_chat_active_owners_not_deleted:true,Go_or_builds_run:false,remote_contacted:false,actual_SQL:false,dependencies_installed:false,test_build_artifacts_created:false,production_approved:false,bootstrap_candidate_consumer_completed:false,goal_complete:false,remaining_local:['A-BOOT-CONSUME-01 authority/deadline contract and implementation','affected current-source validation and nonimplementer review','resource-specific local adapters and original mapping/qualification'],remaining_actual:['owner eleven','repaired drill nineteen; collect existing D run before considering another run'],inputs:inputs.map(pin)};
+const output=path.join(workspace,'docs/evidence/a-owner-registration-handoff-reviewed-20261026.json');
+assert.ok(['--write','--check'].includes(process.argv[2])&&process.argv.length===3);
+if(process.argv[2]==='--write')fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+else assert.deepEqual(JSON.parse(fs.readFileSync(output,'utf8')),report);
+console.log('A_OWNER_REGISTERED roots=647 events=5190 registration=15 parser=67 fresh_preflight=ready actual_SQL=no bootstrap_consumer=pending');

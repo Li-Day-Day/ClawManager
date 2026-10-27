@@ -1,0 +1,111 @@
+{
+  "kind": "d_bootstrap_consumer_file_ownership.v1",
+  "revision": 13,
+  "purpose": "Avoid cross-chat overwrites; this is coordination only, not implementation approval or authority.",
+  "producer_core": {
+    "chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+    "files": [
+      "backend/internal/systembackupproducer/bootstrap_consume_contract.go",
+      "backend/internal/systembackupproducer/bootstrap_consume.go",
+      "backend/internal/systembackupproducer/bootstrap_consume_records.go",
+      "backend/internal/systembackupproducer/bootstrap_consume_snapshot.go",
+      "backend/internal/systembackupproducer/transaction.go",
+      "backend/internal/systembackupproducer/record_sql.go",
+      "backend/internal/systembackupproducer/bootstrap_transaction_copy_test.go",
+      "backend/internal/systembackupproducer/bootstrap_callback_phase_test.go",
+      "backend/internal/systembackupproducer/bootstrap_inline_domain.go",
+      "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go"
+    ]
+  },
+  "A_service_and_stage_tests": {
+    "chat": "01a1676e-1c7a-7cd3-89fe-f188be645950",
+    "files": [
+      "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_candidates_test.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_transaction_test.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt_test.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_inline_gate_test.go"
+    ]
+  },
+  "A_relation": {
+    "chat": "01a1678d-6a44-73a2-bab5-3382fa10fa67",
+    "files": [
+      "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+      "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding_test.go"
+    ]
+  },
+  "A_pinned_candidate_authority": {
+    "chat": "01a1678d-6a44-73a2-bab5-3382fa10fa67",
+    "files": [
+      "backend/internal/systembackupsecurity/bootstrap_candidate_authority.go",
+      "backend/internal/systembackupsecurity/bootstrap_candidate_authority_test.go"
+    ],
+    "resolution": "A1 assigned these concrete grant/registry/RBAC wrapper files to A2; no duplicate config_bootstrap_candidate_authority implementation is created. Resource/nonce/CA narrow adaptation is a separate remaining local task."
+  },
+  "D_concrete_bootstrap_capacity_adapter": {
+    "chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+    "files": [
+      "backend/internal/systembackupsecurity/bootstrap_candidate_capacity.go",
+      "backend/internal/systembackupsecurity/bootstrap_candidate_capacity_test.go"
+    ],
+    "scope": "Prepare the original RegistrationCapacity report outside locks; reuse its charge/budget/freshness semantics through narrow shared-clock SQL with transaction-bound final ledger checks. No new report or authority is issued."
+  },
+  "A_controlled_current_files_nonce_and_CA_next_increment": {
+    "chat": "01a1678d-6a44-73a2-bab5-3382fa10fa67",
+    "files": [
+      "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go",
+      "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+      "backend/internal/systembackupcatrust/candidate_adapter.go",
+      "backend/internal/systembackupcatrust/candidate_adapter_test.go"
+    ],
+    "scope": "Reuse original controlled exact file paths/pins and late changes/revocation refusal before fixed FinalGuard. No snapshot-only replacement, network under locks, new grant or default allow.",
+    "not_in_88b2_frozen_acceptance": true
+  },
+  "D_independent_tests_joint_validation_and_cross_package_integration": {
+    "chat": "01a17616-0a6c-7821-86d2-68e068819b85",
+    "files": [
+      "backend/internal/systembackupproducer/bootstrap_consume_independent_test.go",
+      "backend/internal/systembackupsecurity/config_bootstrap_consumer_integration_test.go",
+      "scripts/system-backup-d-bootstrap-consumer-validation.ps1"
+    ],
+    "integration_resolution": "New D remains the single integration-file writer. A1 confirms it has not created that file and provides read-only fixture/review assistance. Earlier crossed reassignment messages are superseded."
+  },
+  "D_review_and_actual_probe_preparation": {
+    "chat": "01a1676d-ff9a-7a71-9df5-bfb6b97c3f84",
+    "files": [
+      "backend/internal/systembackupevidence/bootstrap_consumer_mysql_test.go",
+      "backend/internal/systembackupevidence/bootstrap_consumer_ranges_mysql_test.go",
+      "backend/internal/systembackupevidence/bootstrap_original_materials_mysql_test.go",
+      "backend/internal/systembackupevidence/d_producer_mysql_test.go",
+      "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go"
+    ],
+    "additional_scope": "Dedicated operator/probe scripts and receiver/requirements artifacts; prepare locally only, no remote execution."
+  },
+  "D_full_GC_prepared_capacity_increment": {
+    "chat": "01a17616-6c55-7870-a876-6ad8d729e5c6",
+    "files": [
+      "backend/internal/systembackupsecurity/config_mutation_capacity_prepared.go",
+      "backend/internal/systembackupsecurity/config_mutation_capacity_prepared_test.go"
+    ],
+    "scope": "GC-owned original fixed report preparation before connector/freeze/BEGIN; L6 uses the original sample and ledger. Separate from D2 bootstrap_candidate_capacity.go and legacy capacity APIs. A1 reported ownership for cross-package coordination; not implementation acceptance.",
+    "capture_requirement": "Joint snapshots enumerate backend inputs: coordinate a short stable capture window with the GC owner before freezing while this increment is being written."
+  },
+  "D_deployment_candidate_entry_increment": {
+    "chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+    "files": [
+      "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "backend/internal/systembackupsecurity/bootstrap_deployment_test.go",
+      "backend/internal/systembackupsecurity/bootstrap_deployment_candidates.go",
+      "backend/internal/systembackupsecurity/bootstrap_deployment_candidates_test.go",
+      "backend/cmd/system-backup-bootstrap/main.go",
+      "backend/cmd/system-backup-bootstrap/main_test.go"
+    ],
+    "scope": "Explicit fixed Go candidate selection/original authority composition, original missing-owner and pre-credential checks, and A's prepared candidate attempt integration. Entry is a new local increment after a2e7 freeze; no production mapping is synthesized."
+  },
+  "goal_complete": false,
+  "implementation_accepted": false
+}

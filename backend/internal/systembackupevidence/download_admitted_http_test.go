@@ -62,11 +62,40 @@ func newAdmittedHTTPFixture(t *testing.T, classification string) *admittedHTTPFi
 		}
 	}}
 	var err error
-	x.h, err = newAdmittedDownloadHandler(f.service, a, resultFixture(t, f), service, Handler{Service: service, Auth: a})
+	results, sampleResult := resultFixtureWithReportSampler(t, f)
+	x.h, err = newAdmittedDownloadHandler(f.service, a, results, service, Handler{Service: service, Auth: a})
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Sample the INITIAL request SQL clock only after file/provider setup.
+	// Setup can exceed the production five-second skew budget on a busy host.
+	// This creates the initial synthetic reservation before any Admit; it does
+	// not re-sign a proof or renew session/provider/owner/claim/retention limits.
+	now := time.Now().UTC().Truncate(time.Microsecond)
+	if oneOf(classification, "public", "internal") {
+		// Public/internal requests deliberately have no strong-auth header.
+		f.db.now = now
+	} else if err := sampleAAdmissionProofTime(f, now); err != nil {
+		t.Fatal(err)
+	}
+	f.env.reservationUntil = f.db.now.Add(20 * time.Second)
+	if err := sampleResult(f.db.now); err != nil {
+		t.Fatal(err)
+	}
 	return x
+}
+
+func TestAdmittedHTTPFixtureStillRejectsStaleSQLClock(t *testing.T) {
+	x := newAdmittedHTTPFixture(t, "sensitive")
+	// Keep the original production skew rejection and all authority limits.
+	if err := sampleAAdmissionProofTime(x.f, time.Now().UTC().Add(-6*time.Second).Truncate(time.Microsecond)); err != nil {
+		t.Fatal(err)
+	}
+	w := admittedWriter()
+	x.h.ServeHTTP(w, x.f.request)
+	if w.Code < 400 || len(x.store.scopes) != 0 || bytes.Contains(w.Body.Bytes(), x.plain[:21]) {
+		t.Fatal("stale SQL clock bypassed the original guard", w.Code)
+	}
 }
 
 type admittedTestWriter struct {

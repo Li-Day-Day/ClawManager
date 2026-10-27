@@ -1,0 +1,1024 @@
+{
+  "kind": "a2_complete_immutable_deadline_rule_source_scope_audit.v1",
+  "status": "source_scope_reviewed_two_mixed_owner_cleanup_rules_require_owner_predicates_four_singleton_gate_projections_unproven",
+  "sources": [
+    {
+      "path": "docs/evidence/a2-metrics-security-original-20261027/metrics-alert-registry.json",
+      "size": 194100,
+      "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/queue_budget.go",
+      "size": 1296,
+      "sha256": "5140c399c0e0ca3b704a342d667f5167d32c8283b7fc824f85748d595e7448c5"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_queue_budget.go",
+      "size": 6696,
+      "sha256": "edaa42ab480b2d81e4a6cb0d5ef53a0a7ff4f6e63aecd589e0044cf9b170698e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+      "size": 1330,
+      "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate.go",
+      "size": 27781,
+      "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+    },
+    {
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "size": 21146,
+      "sha256": "c1297b8341fe7d3f4eeab55ba355526b920d633349053a047420d2cca26df8de"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "scanned_promql_alerts": 95,
+  "immutable_task_config_alerts": 22,
+  "selected_including_direct_global_cleanup_deadline": 23,
+  "unselected_promql_alerts": 72,
+  "all_promql_inventory": [
+    {
+      "id": "backup-disabled-after-monitoring-armed.warning",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "backup-disabled-after-monitoring-armed.critical",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "eligible-recovery-point-missing.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "eligible-recovery-point-missing.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "eligible-recovery-point-rpo-exceeded.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "eligible-recovery-point-rpo-exceeded.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "recovery-point-failure-domain-shortage.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "recovery-point-failure-domain-shortage.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "promotion-baseline-missing.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "promotion-baseline-missing.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "promotion-baseline-degraded",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "task-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "task-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "task-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "task-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "operation-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "operation-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "operation-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "operation-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "preflight-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "preflight-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "preflight-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "preflight-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "artifact-verify-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "artifact-verify-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "artifact-verify-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "artifact-verify-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "task-stuck",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "operation-stuck",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "acceptance-task-failed",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "gate-wait-near-timeout",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "gate-wait-timeout",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "capture-hold-near-limit",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "capture-hold-limit",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "mutation-lease-blocked",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "participant-error",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "participant-forced-resume",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "participant-resume-failure",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "capture-kms-identity-revocation-pending",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "restore-credential-destroy-pending",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "controller-reconcile-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "artifact-health-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "catalog-scan-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "alert-evaluator-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "finalization-unknown-over-grace",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "external-action-reconcile-warning",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "external-action-reconcile-critical",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "cleanup-overdue",
+      "threshold_source": "current_system_config",
+      "selected": true
+    },
+    {
+      "id": "restore-residual-volume",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "restore-residual-volume-overdue",
+      "threshold_source": "immutable_task_config",
+      "selected": true
+    },
+    {
+      "id": "staging-capacity-warning.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "staging-capacity-warning.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "staging-capacity-critical.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "staging-capacity-critical.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "staging-retention-overdue",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "catalog-import-verification-pending-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "catalog-import-verification-pending-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "catalog-tombstone-pending-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "catalog-tombstone-pending-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "catalog-record-invalid",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "catalog-conflict",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "dependency-health-unhealthy",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "dependency-expiry-warning",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "dependency-protection-expired",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "strong-auth-nonce-key-expiring",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "strong-auth-nonce-key-expired",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "provider-proof-issuer-key-expired",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "confirmation-rejections-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "confirmation-rejections-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "idempotency-conflicts-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "idempotency-conflicts-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "redaction-failures-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "redaction-failures-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "isolation-rejections-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "isolation-rejections-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "strong-auth-rejections-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "strong-auth-rejections-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "evidence-integrity-failure",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "signature-or-checksum-failure",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "control-metadata-capacity-warning.production",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "control-metadata-capacity-warning.development",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "control-metadata-safety-reserve",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "control-metadata-gc-consecutive-failures",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "control-metadata-gc-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "evidence-gc-consecutive-failures",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "evidence-gc-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "provider-capability-refresh-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "source-writer-registry-drift",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "source-writer-registry-check-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "log-ingest-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "orphan-gc-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "evidence-reconcile-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "status-relay-stale",
+      "threshold_source": "current_system_config",
+      "selected": false
+    },
+    {
+      "id": "status-relay-rejections-warning",
+      "threshold_source": "contract_default",
+      "selected": false
+    },
+    {
+      "id": "status-relay-rejections-critical",
+      "threshold_source": "contract_default",
+      "selected": false
+    }
+  ],
+  "categories": {
+    "queue": [
+      "task-queue-age-warning.production",
+      "task-queue-age-warning.development",
+      "task-queue-age-critical.production",
+      "task-queue-age-critical.development",
+      "operation-queue-age-warning.production",
+      "operation-queue-age-warning.development",
+      "operation-queue-age-critical.production",
+      "operation-queue-age-critical.development",
+      "preflight-queue-age-warning.production",
+      "preflight-queue-age-warning.development",
+      "preflight-queue-age-critical.production",
+      "preflight-queue-age-critical.development",
+      "artifact-verify-queue-age-warning.production",
+      "artifact-verify-queue-age-warning.development",
+      "artifact-verify-queue-age-critical.production",
+      "artifact-verify-queue-age-critical.development"
+    ],
+    "gate": [
+      "gate-wait-near-timeout",
+      "gate-wait-timeout",
+      "capture-hold-near-limit",
+      "capture-hold-limit"
+    ],
+    "cleanup": [
+      "cleanup-overdue"
+    ],
+    "residual_presence": [
+      "restore-residual-volume"
+    ],
+    "residual_overdue": [
+      "restore-residual-volume-overdue"
+    ]
+  },
+  "selected_rules": [
+    {
+      "id": "task-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+          "labels": [
+            "task_type",
+            "task_purpose"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "task-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+          "labels": [
+            "task_type",
+            "task_purpose"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "task-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+          "labels": [
+            "task_type",
+            "task_purpose"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "task-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+          "labels": [
+            "task_type",
+            "task_purpose"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operation-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+          "labels": [
+            "operation_type"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operation-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+          "labels": [
+            "operation_type"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operation-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+          "labels": [
+            "operation_type"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operation-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+          "labels": [
+            "operation_type"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preflight-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+          "labels": [
+            "preflight_mode"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preflight-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+          "labels": [
+            "preflight_mode"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preflight-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+          "labels": [
+            "preflight_mode"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preflight-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+          "labels": [
+            "preflight_mode"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "artifact-verify-queue-age-warning.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+          "labels": [
+            "verification_scope"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "artifact-verify-queue-age-warning.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.5",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+          "labels": [
+            "verification_scope"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "artifact-verify-queue-age-critical.production",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+          "labels": [
+            "verification_scope"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "artifact-verify-queue-age-critical.development",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.9",
+      "category": "queue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+          "labels": [
+            "verification_scope"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gate-wait-near-timeout",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_gate_wait_current_seconds >= scalar(clawmanager_system_backup_configured_gate_acquisition_timeout_seconds) * 0.8",
+      "category": "gate",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_gate_wait_current_seconds",
+          "labels": [
+            "profile"
+          ]
+        },
+        {
+          "name": "clawmanager_system_backup_configured_gate_acquisition_timeout_seconds",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "gate-wait-timeout",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_gate_wait_current_seconds >= scalar(clawmanager_system_backup_configured_gate_acquisition_timeout_seconds)",
+      "category": "gate",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_gate_wait_current_seconds",
+          "labels": [
+            "profile"
+          ]
+        },
+        {
+          "name": "clawmanager_system_backup_configured_gate_acquisition_timeout_seconds",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "capture-hold-near-limit",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_capture_hold_current_seconds >= scalar(clawmanager_system_backup_configured_quiesce_max_hold_seconds) * 0.8",
+      "category": "gate",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_capture_hold_current_seconds",
+          "labels": [
+            "profile",
+            "runner"
+          ]
+        },
+        {
+          "name": "clawmanager_system_backup_configured_quiesce_max_hold_seconds",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "capture-hold-limit",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_capture_hold_current_seconds >= scalar(clawmanager_system_backup_configured_quiesce_max_hold_seconds)",
+      "category": "gate",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_capture_hold_current_seconds",
+          "labels": [
+            "profile",
+            "runner"
+          ]
+        },
+        {
+          "name": "clawmanager_system_backup_configured_quiesce_max_hold_seconds",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "cleanup-overdue",
+      "threshold_source": "current_system_config",
+      "expression": "clawmanager_system_backup_cleanup_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+      "category": "cleanup",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_cleanup_oldest_age_seconds",
+          "labels": []
+        },
+        {
+          "name": "clawmanager_system_backup_configured_cleanup_deadline_seconds",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "restore-residual-volume",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_restore_residual_volumes_current > 0",
+      "category": "residual_presence",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_restore_residual_volumes_current",
+          "labels": []
+        }
+      ]
+    },
+    {
+      "id": "restore-residual-volume-overdue",
+      "threshold_source": "immutable_task_config",
+      "expression": "clawmanager_system_backup_restore_residual_volumes_current > 0 and clawmanager_system_backup_restore_residual_volume_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+      "category": "residual_overdue",
+      "declared_metric_labels": [
+        {
+          "name": "clawmanager_system_backup_restore_residual_volumes_current",
+          "labels": []
+        },
+        {
+          "name": "clawmanager_system_backup_restore_residual_volume_oldest_age_seconds",
+          "labels": []
+        },
+        {
+          "name": "clawmanager_system_backup_configured_cleanup_deadline_seconds",
+          "labels": []
+        }
+      ]
+    }
+  ],
+  "interpretations": {
+    "queue": "16 rules consume max of per-owner frozen elapsed/window ratios. Existing source computes ratios before aggregation under one bounded read-only database snapshot; no global current-deadline substitution is used in these predicates.",
+    "gate": "4 formulas can retain scalar thresholds if the metrics collector atomically projects the same single active D capture gate frozen policy. Current active-config substitution is incorrect; frozen gauge emission is not proven by this source audit.",
+    "cleanup": "cleanup-overdue loses per-owner immutable budgets when reduced to global oldest age and current config; metadata current_system_config does not override the task-snapshot requirement.",
+    "residual_presence": "restore-residual-volume is a presence warning, with no deadline comparison. Keeping it does not itself resolve critical timing or notification suppression behavior.",
+    "residual_overdue": "restore-residual-volume-overdue has the same irreversible mixed-owner budget loss even though its metadata already says immutable_task_config."
+  },
+  "residual_information_loss_countermodels": [
+    {
+      "name": "younger_residual_owner_overdue",
+      "ages": [
+        700,
+        100
+      ],
+      "frozen_deadlines": [
+        900,
+        60
+      ],
+      "current_deadline": 900,
+      "residual_owners": [
+        true,
+        true
+      ],
+      "global_residual_count": 2,
+      "global_residual_oldest_age": 700,
+      "current_global_expression": false,
+      "owner_correct_critical": true
+    },
+    {
+      "name": "same_global_inputs_no_residual_owner_overdue",
+      "ages": [
+        700,
+        100
+      ],
+      "frozen_deadlines": [
+        900,
+        900
+      ],
+      "current_deadline": 900,
+      "residual_owners": [
+        true,
+        true
+      ],
+      "global_residual_count": 2,
+      "global_residual_oldest_age": 700,
+      "current_global_expression": false,
+      "owner_correct_critical": false
+    }
+  ],
+  "singleton_current_config_countermodels": [
+    {
+      "rule": "gate-wait-near-timeout",
+      "age": 100,
+      "frozen": 120,
+      "current": 240,
+      "fraction": 0.8,
+      "using_frozen_gate_value": true,
+      "using_current_config": false
+    },
+    {
+      "rule": "gate-wait-timeout",
+      "age": 100,
+      "frozen": 120,
+      "current": 60,
+      "fraction": 1,
+      "using_frozen_gate_value": false,
+      "using_current_config": true
+    },
+    {
+      "rule": "capture-hold-near-limit",
+      "age": 250,
+      "frozen": 300,
+      "current": 600,
+      "fraction": 0.8,
+      "using_frozen_gate_value": true,
+      "using_current_config": false
+    },
+    {
+      "rule": "capture-hold-limit",
+      "age": 350,
+      "frozen": 300,
+      "current": 600,
+      "fraction": 1,
+      "using_frozen_gate_value": true,
+      "using_current_config": false
+    }
+  ],
+  "controller_state_direction": {
+    "rules": [
+      "cleanup-overdue",
+      "restore-residual-volume-overdue"
+    ],
+    "expected_total": 100,
+    "expected_promql": 94,
+    "expected_controller_state": 6,
+    "new_metric_required_by_predicate": false,
+    "source_fact_inputs_not_approved_by_model": true,
+    "residual_classification": "A ResidualVolume boolean suffices only after a complete authoritative resource/owner collection proves that classification; unknown is not false.",
+    "completeness": "Complete must cover the full owner/resource domain, frozen budgets, durable cleanup clock and residual-volume classification; missing/partial/unknown cannot be healthy.",
+    "implementation_and_native_validation_pending": true
+  },
+  "actual_gate_metric_emitter_and_frozen_projection_proven": false,
+  "SQL_executed": false,
+  "Go_executed": false,
+  "PromQL_executed": false,
+  "source_models_are_not_runtime_PASS": true,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "whole_baseline_accepted": false,
+  "production_approved": false
+}

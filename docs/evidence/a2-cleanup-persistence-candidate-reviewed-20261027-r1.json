@@ -1,0 +1,115 @@
+{
+  "kind": "a2_cleanup_persistence_candidate_source_review.v1",
+  "reviewed_at": "2026-10-27T07:23:02.347Z",
+  "status": "changes_required_before_native_validation",
+  "review_scope": "Four archived initial D persistence candidates; source and arithmetic comparison only, not Go/SQL execution or complete integration review.",
+  "inputs": [
+    {
+      "original_path": "docs/evidence/d2-cleanup-persistence-implementation-20261027.md",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r1/d2-cleanup-persistence-implementation-20261027.md",
+      "size": 4266,
+      "sha256": "7f732851c6575a211e51b8da3e837d900f970fbef87579b5713e7e268bc70a16"
+    },
+    {
+      "original_path": "docs/evidence/d2-cleanup-clock-candidate-20261027.go.txt",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r1/d2-cleanup-clock-candidate-20261027.go.txt",
+      "size": 7312,
+      "sha256": "85a9aafbb504f5e8f4d4d4d412023bfbf0ab2d3f70a0c304d4a969d4d1819a76"
+    },
+    {
+      "original_path": "docs/evidence/d2-cleanup-clock-tests-candidate-20261027.go.txt",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r1/d2-cleanup-clock-tests-candidate-20261027.go.txt",
+      "size": 5583,
+      "sha256": "0598fb8267fbbd5d24220e8b6a2828035755acef38f7d927025d328e01dc23bc"
+    },
+    {
+      "original_path": "docs/evidence/d2-cleanup-attempt-ledger-candidate-20261027.sql",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r1/d2-cleanup-attempt-ledger-candidate-20261027.sql",
+      "size": 6195,
+      "sha256": "cd2dc5a00e9acc8e660bbc21312605a5581e772715fb6e6ae919c0a34391f92e"
+    }
+  ],
+  "findings": [
+    {
+      "id": "A2-CLEANUP-PERSISTENCE-01",
+      "priority": 2,
+      "status": "sent_to_original_D_owner",
+      "title": "Operation clock constructor accepts windows rejected by candidate ledger",
+      "Go_source_lines": "151-166",
+      "SQL_source_lines": "76-81",
+      "existing_contract": "backend/internal/systembackupsecurity/config_bootstrap_rules.go:49 operation_deadline_seconds integer range 60..86400",
+      "example": "A valid bound cleanup operation created at 2026-10-27T01:02:03Z with deadline one second later passes the Go source window conditions, but the ledger rejects its duration.",
+      "impact": "The clock constructor and database boundary disagree; admitted clocks can fail persistence. A fractional 60s+1us window is also admitted by both local predicates even though the configured duration is integer seconds; bind and validate the original operation window explicitly.",
+      "requested_change": "Align Go and SQL to original operation-window semantics; add lower/upper and fractional-second cases in the original candidate tests."
+    }
+  ],
+  "arithmetic_counterexamples": [
+    {
+      "window_microseconds": "1",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": false,
+      "whole_seconds": false
+    },
+    {
+      "window_microseconds": "1000000",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": false,
+      "whole_seconds": true
+    },
+    {
+      "window_microseconds": "59000000",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": false,
+      "whole_seconds": true
+    },
+    {
+      "window_microseconds": "60000000",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": true,
+      "whole_seconds": true
+    },
+    {
+      "window_microseconds": "60000001",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": true,
+      "whole_seconds": false
+    },
+    {
+      "window_microseconds": "86400000000",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": true,
+      "whole_seconds": true
+    },
+    {
+      "window_microseconds": "86401000000",
+      "Go_source_window_predicate_admits": true,
+      "SQL_candidate_window_constraint_admits": false,
+      "whole_seconds": true
+    }
+  ],
+  "arithmetic_execution_is_not_Go_execution": true,
+  "common_other_Go_preconditions_assumed_valid_and_bound": true,
+  "correct_existing_direction": [
+    "automatic and explicit operation clocks separated",
+    "first automatic drill requires exact terminal transaction clock",
+    "backup does not use task finished_at",
+    "snapshot size/SHA/canonical complete ConfigValues validated",
+    "zero/unknown residual provider facts not inferred by this timing package"
+  ],
+  "remaining_implementation_from_D_plan": [
+    "transactional start CAS and attempt persistence",
+    "operation/resource parent origin type target and retry binding",
+    "complete bounded consistent SQL reader",
+    "provider residual-medium fact adapter",
+    "GC/reference/catalog/grant integration",
+    "native and real SQL validation after current owner window"
+  ],
+  "current_1720_source_unchanged_by_A2": true,
+  "Go_executed": false,
+  "SQL_executed": false,
+  "agent_SSH": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

@@ -1,0 +1,113 @@
+{
+  "kind": "d2_metrics_controller_private_native.v1",
+  "status": "failed",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e08fbb1a239c4e48a05f97e7c2614616",
+  "source_manifest": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.source.json",
+  "Go_started": true,
+  "tests_started": true,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "windows",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-0.jsonl",
+      "sha256": "a8d8973ff4cacf6f71d4e851bf7ecfd5be16495d93f24e03901fa62f179ef4cc",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-0.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "windows",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-1.jsonl",
+      "sha256": "b65e10cd0b3cdca88eb451deb7b29eab4f29c1a7327edd8c1038f76161189ecd",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-1.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-2.jsonl",
+      "sha256": "dc99ec34e74cbc44dae0050c57ddf7e85720561d27a7bd02013013bf20fab063",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-2.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-3.jsonl",
+      "sha256": "0cabffe055faeb0abcd5997c11272269204fa8ab0feac3ae0b6cc682bed5204c",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-3.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "windows",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-4.jsonl",
+      "sha256": "1b106c8d09abf7133983cb71c3603d91ea2c957c339620cfcf9d97fec05933f6"
+    }
+  ],
+  "error": "Could not find file 'C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-5.jsonl'.",
+  "source_precheck": true,
+  "source_postcheck": true,
+  "owner_removed": true,
+  "actual_SQL": false,
+  "remote_contacted": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "live_sources_promoted": false,
+  "collector_and_automatic_clock_bindings_approved": false,
+  "go_telemetry": {
+    "GOTELEMETRY": "off",
+    "GOTELEMETRYDIR": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e08fbb1a239c4e48a05f97e7c2614616\\telemetry"
+  },
+  "runner_sha256": "6e03c173718af03cc3dbe4ef9763f4db253d3d0c98d78bebe3b207d047331a8e",
+  "source_manifest_sha256": "390f53de28da2e052bb2622aa3df77185e28241a084c7d322be85cb73b5620f9"
+}

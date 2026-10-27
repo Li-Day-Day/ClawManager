@@ -1,0 +1,54 @@
+✔ history reads only requested pages, preserves descending versions and carries opaque cursors (191.3253ms)
+✔ single-version reads bind the exact version and current configuration on both sides (5.618ms)
+▶ continuations reject installation, active version, row version and effective-state changes before a request
+  ✔ origin_installation_id (1.3429ms)
+  ✔ version (0.3296ms)
+  ✔ row_version (0.4379ms)
+  ✔ effective_enabled (0.3355ms)
+✔ continuations reject installation, active version, row version and effective-state changes before a request (4.3283ms)
+▶ history rejects loops, cross-page overlaps and foreign installation rows
+  ✔ loop (51.0347ms)
+  ✔ overlap (30.2423ms)
+  ✔ foreign (81.1984ms)
+✔ history rejects loops, cross-page overlaps and foreign installation rows (164.8373ms)
+▶ history activation flags and active row version must agree with the workspace baseline
+  ✔ active (2.2975ms)
+  ✔ row_version (1.4245ms)
+  ✔ effective_enabled (1.1339ms)
+✔ history activation flags and active row version must agree with the workspace baseline (13.9673ms)
+▶ current-configuration drift before or after a page cannot publish that page
+  ✔ before (0.532ms)
+  ✔ after (0.3783ms)
+✔ current-configuration drift before or after a page cannot publish that page (2.1338ms)
+✔ an empty first history is not reported when the active configuration exists (0.7223ms)
+▶ single-version rows reject a different installation, wrong version, stale row or wrong activation
+  ✔ origin_installation_id (1.5798ms)
+  ✔ version (0.3384ms)
+  ✔ row_version (0.194ms)
+  ✔ active (0.1704ms)
+✔ single-version rows reject a different installation, wrong version, stale row or wrong activation (6.7055ms)
+▶ both config reads discard canceled results at every request stage
+  ✔ history/0 (0.6722ms)
+  ✔ history/1 (0.2975ms)
+  ✔ history/2 (0.331ms)
+  ✔ history/3 (0.2256ms)
+  ✔ version/0 (0.2443ms)
+  ✔ version/1 (0.2011ms)
+  ✔ version/2 (0.2683ms)
+  ✔ version/3 (0.1822ms)
+✔ both config reads discard canceled results at every request stage (4.1297ms)
+✔ invalid version selection cannot issue a request (0.8831ms)
+▶ config failures and unreviewed fields never fall back to an empty history or preview
+  ✔ 401 (5.9278ms)
+  ✔ 403 (9.9792ms)
+  ✔ 503 (1.4707ms)
+✔ config failures and unreviewed fields never fall back to an empty history or preview (25.3271ms)
+✔ the baseline is captured before awaiting external reads (26.204ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 494.0569

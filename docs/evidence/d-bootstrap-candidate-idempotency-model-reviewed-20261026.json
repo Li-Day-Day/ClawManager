@@ -1,0 +1,59 @@
+{
+  "kind": "d_bootstrap_candidate_idempotency_design_counterexample.v1",
+  "status": "synthetic_counterexample_not_implementation_acceptance",
+  "C1_structurally_valid_rehashed_candidates": 2,
+  "weak_digest_set_alias_demonstrated": true,
+  "cryptographic_collision_claimed": false,
+  "original_and_swapped_complete_mapping_distinguished": true,
+  "checks": [
+    "same_result_set_with_swapped_purpose_mapping_changes_complete_binding",
+    "permuting_the_same_complete_items_preserves_binding",
+    "changed_purpose_changes_binding",
+    "changed_identity_changes_binding",
+    "changed_version_changes_binding",
+    "changed_mapping_changes_binding",
+    "changed_receipt_changes_binding",
+    "changed_request_changes_binding",
+    "changed_result_version_changes_binding",
+    "changed_scope_component_0_changes_binding",
+    "changed_scope_component_1_changes_binding",
+    "changed_scope_component_2_changes_binding",
+    "duplicate_purpose_rejected_before_hashing",
+    "omitted_consumer_changes_binding",
+    "extra_consumer_changes_binding"
+  ],
+  "limitation": "Complete digests distinguish relations but do not authenticate the mapping or define a production request_hash encoding. A/D must supply the original trusted association and compatibility decision.",
+  "production_schema_or_enum_added": false,
+  "actual_bootstrap_operation_executed": false,
+  "provider_or_SQL_executed": false,
+  "Go_or_builds_run": false,
+  "dependencies_installed": false,
+  "scratch_or_build_artifacts_created": false,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "scripts/system-backup-producer-contract.mjs",
+      "sha256": "26933981e308f86ee2c2173f455c9de8869264f95dc0f5fd719be0b698f5d4fa"
+    },
+    {
+      "path": "scripts/system-backup-a-schema-validation.mjs",
+      "sha256": "6ed33bd899736b6e4231e111f7a86c1ba472d5ff105089d0a88dd26d1b7b8e50"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-candidate-idempotency-model-20261026.mjs",
+      "sha256": "62dffe891ed2141b24459578e25f0780bcbb907ee4056861b10d6f199c486d9b"
+    }
+  ]
+}

@@ -19,8 +19,8 @@ test('candidate Prometheus rules preserve every PromQL alert without claiming co
   assert.match(rendered, /DO NOT LOAD: no rule loader, missing-series execution, or PromQL fixture validation exists yet/);
   const compiled = registry.alerts.filter((alert) => alert.expression_language === 'promql');
   const controllerState = registry.alerts.filter((alert) => alert.expression_language === 'controller_state');
-  assert.equal(compiled.length, 95);
-  assert.equal(controllerState.length, 4);
+  assert.equal(compiled.length, 94);
+  assert.equal(controllerState.length, 6);
   assert.equal((rendered.match(/^      - alert: /gm) ?? []).length, compiled.length);
   for (const alert of compiled) {
     assert.ok(rendered.includes(`contract_rule_id: ${JSON.stringify(alert.id)}`), `${alert.id} was omitted`);
@@ -41,4 +41,20 @@ test('candidate generator rejects duplicate or unassigned rules', () => {
   const missing = structuredClone(registry);
   missing.alerts.pop();
   assert.throws(() => renderPrometheusRules(missing, sourceHash), /inventory is incomplete/);
+});
+
+
+test('literal metric_result selectors use the original plan closed values', () => {
+  const plan = readFileSync(join(root, 'docs/system-backup-restore-division-plan.md'), 'utf8');
+  const declaration = plan.match(/`metric_result=([a-z_]+(?:\|[a-z_]+)+)`/);
+  assert.ok(declaration, 'original metric_result closed declaration missing');
+  const allowed = new Set(declaration[1].split('|'));
+  let checked = 0;
+  for (const alert of registry.alerts.filter((entry) => entry.expression_language === 'promql')) {
+    for (const match of alert.expression.matchAll(/\bmetric_result\s*(?:=|!=)\s*"([^"]*)"/g)) {
+      checked++;
+      assert.ok(allowed.has(match[1]), alert.id + ': metric_result=' + match[1] + ' is outside the original closed contract');
+    }
+  }
+  assert.ok(checked > 0, 'no literal metric_result selector checked');
 });

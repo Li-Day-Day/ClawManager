@@ -1,0 +1,74 @@
+{
+  "kind": "a2_metrics_exact_live_application_composed_review.v1",
+  "status": "exact_eight_file_application_independently_verified",
+  "promotion": {
+    "path": "docs/evidence/d2-metrics-controller-live-promotion-20261027.json",
+    "size": 7922,
+    "sha256": "6eeba4cdd7fbb9fad1509b498b40fe02f6e78bf740b4c1c922b064538c6661e1"
+  },
+  "A1_exact_composition": {
+    "path": "docs/evidence/a-metrics-current-candidate-composed-reviewed-20261027-r1.json",
+    "size": 8692,
+    "sha256": "a93df13888e11dbc01f17102381cfefc8ed09933350ca73fdf7e5ac61917201c"
+  },
+  "tagged_security_receipt": {
+    "path": "docs/evidence/d2-metrics-tagged-security-candidate-73d13ff796d44907bc4079ef728c983e-20261027.json",
+    "size": 5599,
+    "sha256": "13bd899f9cfc4e4f6040f1a1250eba1b8d743d0db0b1bafc7ff28deadb8333f6"
+  },
+  "controller_leaf": {
+    "path": "docs/evidence/a2-metrics-strict-native-reviewed-20261027-r2.json",
+    "size": 5694,
+    "sha256": "bd029a78d952d10bd868487c058063ac2121af2ca10a492655fe4a07221cadd2"
+  },
+  "earlier_leaf_scope_limitation": {
+    "path": "docs/evidence/a2-metrics-strict-native-scope-20261027-r3.json",
+    "size": 1178,
+    "sha256": "fb001c81ff359e39919f003a03bd8133b914b1b17f024aa6ddfc2864453d10cb"
+  },
+  "base_source_sha256": "4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964",
+  "current_source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+  "current_source_files": 1718,
+  "current_complete_input_set_and_bytes_match_tested_manifest": true,
+  "exact_changed_files": [
+    "backend/internal/systembackupcontroller/controller_state_alerts.go",
+    "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+    "scripts/system-backup-metrics-registry.mjs",
+    "contracts/system-backup/v12/metrics-alert-registry.json",
+    "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+    "scripts/system-backup-prometheus-rules.test.mjs",
+    "scripts/system-backup-contract-artifacts.test.mjs",
+    "contracts/system-backup/v12/README.md"
+  ],
+  "current_eight_files_match_reviewed_candidates": true,
+  "new_tagged_security_requirement_now_received": true,
+  "earlier_controller_leaf_ready_flag_not_used_alone": true,
+  "A2_replayed_commands": [
+    [
+      "node",
+      "docs/evidence/a-metrics-tagged-security-native-review-20261027.mjs",
+      "--check"
+    ],
+    [
+      "node",
+      "docs/evidence/a-metrics-current-candidate-composition-review-20261027.mjs",
+      "--check"
+    ]
+  ],
+  "A2_replay_exits": [
+    0,
+    0
+  ],
+  "Root_six_build_owners_independently_absent": true,
+  "live_code_written_by_A2": false,
+  "whole_baseline_registration_accepted": false,
+  "collector_and_automatic_clock_bindings_approved": false,
+  "four_frozen_gate_projections_proven": false,
+  "PromQL_executed": false,
+  "remote_execution_owner": "human user",
+  "agent_SSH_performed": false,
+  "SQL_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "remaining_scope": "This accepts the eight-file source application only. Global baseline, bootstrap original authority/mappings, collector authority and actual first chain remain separate requirements."
+}

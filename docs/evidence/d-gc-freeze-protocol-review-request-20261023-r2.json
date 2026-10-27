@@ -1,0 +1,103 @@
+{
+  "kind": "d_gc_freeze_private_protocol_review_request.v1",
+  "status": "review_requested_not_approved",
+  "owners": [
+    "A",
+    "D"
+  ],
+  "scope": "private_connection_lock_transaction_release_protocol_not_full_Collect",
+  "validation": "docs/evidence/d-gc-freeze-protocol-7a4b70acbce0404cb69575b312747d90.json",
+  "actual_mysql": false,
+  "collector_wired": false,
+  "privileges_changed": false,
+  "production_approved": false,
+  "review_receipts": [
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-reviewed-20261023.json",
+      "scope": "typed_nil_counterexamples_and_repair_only",
+      "full_protocol_approved": false
+    }
+  ],
+  "required_decisions": [
+    "Exact BACKUP_ADMIN and metadata observer grants, current revocation and worker admission authority.",
+    "Placement of the global freeze relative to existing L0/L1/L2/L3 locking and complete metadata observation.",
+    "Fresh connector/private pool trust, temporary-table exclusion and session disposal.",
+    "Commit/rollback/acquisition/unlock reply loss and cancellation: truthful outcomes and independent server observation.",
+    "Original SQL time/fence/reference/owner/capacity/deadline and final guards in full Collect; this helper supplies none of those authorities.",
+    "Actual MySQL protocol and complete Collect with late-failure rollback before production wiring."
+  ],
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "sha256": "a0ea232611d1ea7b6878b23c04da18500f896fcaa281228eebda408cbf7312b0"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "sha256": "c567e6db30ad77e7e7a68cb0c6b0d4a0917fc2bb5bd331df496621db0c75fcb8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "f919c6b2f13e111e3bebf95ca239787a22baee6321f3f9a4c2a33af8e20fae29"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+      "sha256": "daaf8a8278b786d002080581de0f2323e9de8e11fcb926ef8481e545a6b0f299"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+      "sha256": "964b5d9cd2d7bb71e3201003c2538edfe45b550b585d19428cf7991ece6a9cf5"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-freeze-candidate-validation.ps1",
+      "sha256": "4e104ebd343c2202ed11fa5bbbae65a8baa10c3f6921de70533bbcb6f92aea85"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-freeze-review-request.mjs",
+      "sha256": "f70f27dbfe6854b50a7d9a660a00812fbcb7a828687f51e9226ac36750d9e75a"
+    },
+    {
+      "path": "docs/system-backup-d-independent-work-20261023.md",
+      "sha256": "bdab3231a8d0ffed16df0b13926b1d3227e238cef813b2a7f3474ea072ed9194"
+    },
+    {
+      "path": "docs/evidence/d-gc-backup-lock-protocol-requirements-20261021.json",
+      "sha256": "66b298543dc323e7684269b633e4150bd23dc1d5ac36fbe5900d53435cc7113d"
+    },
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-7a4b70acbce0404cb69575b312747d90.json",
+      "sha256": "7d0d994dab4b4682cfa2dcd3cdea98d68126b5dd7ff582fd1a406d347f14b787"
+    },
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-7a4b70acbce0404cb69575b312747d90-source.json",
+      "sha256": "3b62b7176e209619d9610234a72c02b3ca5c7aba2c32e9b6f00c3e26a98f129a"
+    },
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-7a4b70acbce0404cb69575b312747d90.jsonl",
+      "sha256": "fc9f91ca9ecb730cc4cc011c352eb73f150272761b0b1546ced78d2038412d4a"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-reviewed-20261023.json",
+      "sha256": "14696e73295859fcddd20f738ae3452da093b414791d777311bcc5e096248a7e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "sha256": "ff26954ff8e337d2eb3657fdc6b3d2b1cb483286f882312dd7c5b50ace1cb082"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-20261023-105422.json",
+      "sha256": "424864f7de6d3748c2c76e291fbdbe1c3ddfcd4cfb6bc8127e46341db5eeedb0"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-20261023-105422-old.jsonl",
+      "sha256": "4487d442ab263e6a8c74ba470724fcbf0a2bd5f2121f9683087d7665ee7ea98a"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-20261023-105422-fixed.jsonl",
+      "sha256": "13421b0e6e56c4e891336b49b7f3abb961f54fea669850ec49341607a51b3995"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-review-20261023.mjs",
+      "sha256": "bf654256a15623c5e1b546303b7db6f7e712966d06e7f126e90f05c8963c878b"
+    }
+  ]
+}

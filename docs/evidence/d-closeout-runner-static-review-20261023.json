@@ -1,0 +1,73 @@
+{
+  "kind": "d_closeout_runner_static_review.v1",
+  "runner": "docs/evidence/d-local-closeout-validation-r2-20261023.ps1",
+  "sha256": "22e99025e825081cdf22001924f8e2f42bf0d641cca4a97ccc52be39c40edbbf",
+  "parse_error_count": 15,
+  "errors": [
+    {
+      "line": 9,
+      "message": "Unexpected token 'd-local-closeout-'+$closeToken)\n$closeManifest=$closePrefix+'-source.json'\n$closeVariables=@('GO111MODULE','GOWORK','GOFLAGS','GOOS','GOARCH','CGO_ENABLED','GOTOOLCHAIN','GOPROXY','GOSUMDB','GOCACHE','GOTMPDIR','GOMAXPROCS','TEST_TELEMETRY_DIR')\n$closePrevious=@{};foreach($closeVariable in $closeVariables){$closePrevious[$closeVariable]=[Environment]::GetEnvironmentVariable($closeVariable,'Process')}\n$closeSteps=@();$closeError=$null;$closePost=$false;$closeCleanup=$false;$closeBinaries=@()\nfunction Invoke-CloseGo([string[]]$GoArguments){\n    $closeStepLog=$closePrefix+'-step-'+$script:closeSteps.Count+'.log'\n    & go @GoArguments 2>&1 | Tee-Object -FilePath $closeStepLog\n    $closeExit=$LASTEXITCODE\n    $script:closeSteps+=@([ordered]@{command=@('go')+$GoArguments;platform=$env:GOOS;exit_code=$closeExit;log=$closeStepLog;sha256=(Get-FileHash -LiteralPath $closeStepLog -Algorithm SHA256).Hash.ToLowerInvariant()})\n    if($closeExit -ne 0){throw ('Local' in expression or statement."
+    },
+    {
+      "line": 9,
+      "message": "Missing closing ')' after expression in 'if' statement."
+    },
+    {
+      "line": 6,
+      "message": "Missing closing '}' in statement block or type definition."
+    },
+    {
+      "line": 41,
+      "message": "Unexpected token ')' in expression or statement."
+    },
+    {
+      "line": 53,
+      "message": "Unexpected token '}' in expression or statement."
+    },
+    {
+      "line": 58,
+      "message": "Unexpected token '}' in expression or statement."
+    },
+    {
+      "line": 58,
+      "message": "Unexpected token 'finally' in expression or statement."
+    },
+    {
+      "line": 72,
+      "message": "Unexpected token ')' in expression or statement."
+    },
+    {
+      "line": 74,
+      "message": "Unexpected token '}' in expression or statement."
+    },
+    {
+      "line": 134,
+      "message": "Unexpected token ')' in expression or statement."
+    },
+    {
+      "line": 147,
+      "message": "Unexpected token '}' in expression or statement."
+    },
+    {
+      "line": 151,
+      "message": "Unexpected token '}' in expression or statement."
+    },
+    {
+      "line": 151,
+      "message": "Unexpected token 'finally' in expression or statement."
+    },
+    {
+      "line": 165,
+      "message": "Unexpected token ')' in expression or statement."
+    },
+    {
+      "line": 167,
+      "message": "Unexpected token '}' in expression or statement."
+    }
+  ],
+  "accepted": false,
+  "test_or_build_started": false,
+  "dependencies_installed": false,
+  "review_scope": "PowerShell parse only; original failed native round remains failed; current reviewer step profile must match the repaired launcher",
+  "owner_notified": true
+}

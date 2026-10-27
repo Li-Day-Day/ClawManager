@@ -1,0 +1,36 @@
+// Static extraction review only; neither package tests nor production approval.
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+const root=path.resolve(import.meta.dirname,'../..');
+const read=p=>fs.readFileSync(path.join(root,p));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const pin=p=>({path:p,size:read(p).length,sha256:sha(read(p))});
+const file='backend/internal/systembackupevidence/download_retention_gc.go';
+const raw=read(file).toString('utf8');
+assert.equal(sha(read(file)),'77718ddf597105ca73544bd270024e3f5c8fa989316471122ef27468df303417');
+const start=raw.indexOf('\tif err := s.collectInTransaction(ctx, tx, operation, peer, now);');
+const end=raw.indexOf('\tdatabase := sec.DatabaseIdentity',start);
+assert.ok(start>0&&end>start);
+const inserted=raw.slice(start,end).replaceAll('\r\n','\n');
+assert.ok(inserted.startsWith('\tif err := s.collectInTransaction(ctx, tx, operation, peer, now); err != nil {\n\t\treturn err\n\t}\n\treturn owned.commit()\n}\n'));
+assert.ok(inserted.includes('peer.After(currentPeer)'));
+assert.ok(inserted.includes('ctx.Err() != nil || tx == nil'));
+assert.ok(inserted.endsWith('\tr := s.c.Registry\n'));
+const normalized=(raw.slice(0,start)+raw.slice(end)).replaceAll('\r\n','\n');
+const target='\treturn nil\n}\n\nconst downloadGCEvidenceHintSQL';
+assert.equal(normalized.split(target).length,2);
+const previous=normalized.replace(target,'\treturn owned.commit()\n}\n\nconst downloadGCEvidenceHintSQL');
+const previousSHA='f919c6b2f13e111e3bebf95ca239787a22baee6321f3f9a4c2a33af8e20fae29';
+assert.equal(sha(previous),previousSHA,'protected collector body changed beyond exact extraction');
+const oldSource='docs/evidence/a-owner-final-full-local-20261023-144309-source.json';
+const source=JSON.parse(read(oldSource).toString('utf8').replace(/^\uFEFF/,''));
+const original=source.files.filter(p=>p.path===file);assert.equal(original.length,1);assert.equal(original[0].sha256,previousSHA);
+const helper=raw.slice(raw.indexOf('func (s *SQLDownloadRetentionGC) collectInTransaction'),raw.indexOf('\nconst downloadGCEvidenceHintSQL'));
+assert.doesNotMatch(helper,/\.(?:Begin|BeginTx|Commit|Rollback|commit|close)\(/);
+const report={kind:'a_gc_work_extraction_static_review.v1',decision:'exact_extraction_confirmed_production_freeze_composition_pending',current:pin(file),previous_pinned_sha256:previousSHA,reconstructed_previous_sha256:sha(previous),protected_body_byte_identical_after_reversing_extraction:true,work_stage_owns_transaction_end:false,original_connection_owner_retains_sole_commit:true,additional_context_and_original_peer_bound_recheck:true,current_package_gate_received:false,actual_MySQL:false,joint_privileges_and_freeze_approved:false,production_approved:false,dependencies_installed:false,remaining:['A-GC-WORK-01 final business deadline/authority recheck after freeze query and before commit','exact worker/observer grants and revocation rules','complete metadata/lock ordering and failure takeover','current full package gates and actual protocol acceptance'],inputs:[oldSource,'backend/internal/systembackupevidence/download_retention_gc_work_test.go','docs/evidence/a-gc-work-extraction-review-20261023.mjs'].map(pin)};
+const output=path.join(root,'docs/evidence/a-gc-work-extraction-reviewed-20261023.json');
+if(process.argv.includes('--write'))fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+else{assert.ok(process.argv.includes('--check'));assert.deepEqual(JSON.parse(fs.readFileSync(output,'utf8')),report);}
+console.log('A_GC_WORK_EXTRACTION exact_previous_hash=yes protected_body_preserved=yes production=no');

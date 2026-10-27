@@ -1,0 +1,85 @@
+{
+  "kind": "a2_joint_windows_package_native_leaf_review.v1",
+  "reviewed_at": "2026-10-27T09:02:15.662Z",
+  "status": "accepted_two_complete_Windows_package_test_runs_only_command_build_failed_Linux_pending",
+  "source_manifest": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.source.json",
+    "size": 666726,
+    "sha256": "5e0c8f4bc782c8fce92ce53095fd37829eb2879a3e1527e88e17d543e2c6e754"
+  },
+  "source_sha256": "fd71b0aff897210a9c2e830167b74f1085bdc1aed9ae41c0d960e3be4abedade",
+  "source_files": 1727,
+  "complete_private_physical_file_set_and_bytes_independently_checked": true,
+  "physical_files": 1728,
+  "windows_phase_receipt": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.json",
+    "size": 46534,
+    "sha256": "d220f9cd3ed78711889c950f46d276b38959e2cd8dd38d5e1bb3ac0862ebdd32"
+  },
+  "raw_test_events": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.tests.jsonl",
+    "size": 329655,
+    "sha256": "55cf2b793c89f5e7648a6f2646fc725865ae8e682a0a701b40f0e7e6ccef9e2f"
+  },
+  "raw_go_list": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.list.jsonl",
+    "size": 558878,
+    "sha256": "668bed44de41112b9d325c575b788ecc697e5a308b1db54ee817919130fece21"
+  },
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupcleanup",
+      "roots": 14,
+      "pass_events": 60
+    },
+    {
+      "package": "clawreef/internal/systembackupcontroller",
+      "roots": 155,
+      "pass_events": 284
+    }
+  ],
+  "total_roots": 169,
+  "total_pass_events": 344,
+  "no_test_run_filter": true,
+  "count": 1,
+  "no_fail_skip_or_duplicate_events": true,
+  "source_postcheck_recorded": true,
+  "subsequent_command_build": {
+    "command": [
+      "go",
+      "build",
+      "-o",
+      "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\binary\\system-backup-controller.exe",
+      "./cmd/system-backup-controller"
+    ],
+    "exit_code": 1,
+    "stdout": {
+      "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.controller-build.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr": {
+      "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.controller-build.log.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "reason_not_inferred_from_empty_logs": true
+  },
+  "terminal_composition_failure": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.terminal.json",
+    "size": 655,
+    "sha256": "6fe119c0f59c2213040ea39e8728a356328eb28e3a6b64c50aca4129baa24e88"
+  },
+  "source_owner_retained_for_followup": true,
+  "full_joint_window_accepted": false,
+  "Windows_controller_entry_build_accepted": false,
+  "Linux_accepted": false,
+  "actual_SQL": false,
+  "ledger_schema_installed": false,
+  "live_source_promoted": false,
+  "Go_started_by_A2": false,
+  "dependencies_installed": false,
+  "test_build_products_created_by_A2": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

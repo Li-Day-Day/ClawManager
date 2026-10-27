@@ -1,0 +1,98 @@
+{
+  "kind": "a2_bootstrap_original_files_material_adapters_ready.v1",
+  "status": "source_ready_gofmt_static_review_only_not_native_or_acceptance",
+  "files": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "size": 10160,
+      "sha256": "f9325dd859d8073b0710cf93f58eccb52a80dded6eef5940a3df56d466f288dd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go",
+      "size": 11994,
+      "sha256": "94aee73fe0cd3e56aa23a8ace2e3118b07188b96ca89c57c098202e07fe33593"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "size": 12360,
+      "sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+      "size": 16624,
+      "sha256": "28e8e69dfbfb45e3b5895e3ccbe48d826afa988a7046ca68d356712da8850590"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+      "size": 6433,
+      "sha256": "374b9097787f8def36a5e8e807f2d8ab2500242f6b87b5bd9d6983ee34a35312"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter_test.go",
+      "size": 11798,
+      "sha256": "d2f5f2c679f7c7682c5362f2ab28ac34de5f0aac614faae50d80154da123cccb"
+    }
+  ],
+  "test_roots": [
+    "TestBootstrapCandidateFilesRequireClosedOriginalProfileAndAuthority",
+    "TestBootstrapCandidateFilesRejectLateOriginalGrantAndRBACChanges",
+    "TestBootstrapCandidateFilesKeepResourceFailureAfterHistoricalBranch",
+    "TestBootstrapCandidateFilesBoundLocalReadsByOriginalWindowAndContext",
+    "TestBootstrapCandidateFilesDelegateResourcesOnceAndRedact",
+    "TestCandidateNonceGlobalSourcesAndOriginalCurrentMaterials",
+    "TestCandidateNonceFinalGlobalSetAllowsOnlyIntendedDisabledConfig",
+    "TestCandidateNonceStreamsDuplicateRowsAndRetainsOriginalCutoff",
+    "TestCandidateNonceAttemptFailureContextDeadlineAndRedaction",
+    "TestCandidateCAUsesOriginalTLSAndCurrentFilesWithoutAnotherNetworkCall",
+    "TestCandidateCAAttemptDefersOnlyPhysicalFailureWithoutPermissionOrDeadline",
+    "TestCandidateCAOriginalDeadlineOwnershipContextAndRedaction"
+  ],
+  "test_root_count": 12,
+  "legacy_sources": [
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "unchanged": true
+    }
+  ],
+  "API": [
+    "NewBootstrapCandidateFileAuthority(original BootstrapDeploymentConfig, mandatory BootstrapCandidateAuthority)",
+    "nonce.Validator.PrepareCandidateAttempt / PreparedCandidateNonce.DependencyDeadline / LockReferences -> CandidateNonceCheck.Recheck",
+    "CA.Validator.PrepareCandidateAttempt / PreparedCandidateCA.DependencyDeadline / CheckCandidate -> CandidateCACheck.Recheck"
+  ],
+  "stages": "current concrete grant/RBAC at L2 and final source callback; new-use full9 before reserve; nonce global configs prelocked A1 L1, global retained original-cutoff L5, source callback with original exact files/wipe/deadlines; public writes close before final private read/time callbacks, then view closes and SQL-only fixed FinalGuard",
+  "scope_limits": [
+    "Independent original deployment/purpose/resource authority is still mandatory. Real files/TLS/hash/data do not authenticate that mapping.",
+    "No native Go run started for these six files yet. Existing 88b2 snapshot excludes them.",
+    "Helper/synthetic driver tests do not prove whole-consumer real-material composition or InnoDB gap locks.",
+    "No new grant/DTO approved bool, no generic source callback lock-safety assumption, no original execution/observation renewal."
+  ],
+  "requested_next_gate": {
+    "targeted_packages": 5,
+    "targeted_regex": "^Test(BootstrapIndependent|BootstrapCandidate|CaptureCandidate|CandidateConfig|PinnedBootstrapCandidate|CandidateCA|CandidateNonce)",
+    "full_ordinary_packages": 9,
+    "extra_packages": [
+      "./internal/systembackupnoncebootstrap",
+      "./internal/systembackupcatrust"
+    ],
+    "Linux_material_test_compiles": [
+      "./internal/systembackupnoncebootstrap",
+      "./internal/systembackupcatrust"
+    ],
+    "old_nonce_CA_roots_and_passes_must_be_preserved": true
+  },
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "test_only_revision": "late-cancel drivers synchronize rollback completion before counting; production/API/12 roots unchanged; no native run started",
+  "nonce_compile_revision": "6c6519 targeted nonce build failed: std hash import collided with legacy nonce_test.go hash function. Import renamed stdhash only; digest logic/API unchanged. Failed run preserved; no new Go started by A2.",
+  "TLS_scope": "CA PrepareCandidateAttempt invokes the original real-TLS Prepare on each invocation before locks, including when assembly prepares a later historical attempt. L3 historical branch does not use that new resource observation or CheckCandidate. No old producer probe/execution, receipt-observation refresh, or Work-end TLS is implied; do not claim whole-attempt zero TLS.",
+  "record_scope": "Historical source-ready handoff; later native observations are separately pinned and do not rewrite this handoff as whole acceptance.",
+  "latest_native_observation": "docs/evidence/a2-original-files-materials-targeted-observed-20261026.json",
+  "latest_whole_gate_failure_observation": "docs/evidence/a2-bootstrap-a2e7-timeout-observed-20261026.json",
+  "latest_terminal_failure_review": "docs/evidence/a2-bootstrap-a2e7-terminal-reviewed-20261026.json"
+}

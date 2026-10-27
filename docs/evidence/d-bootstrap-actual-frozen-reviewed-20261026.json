@@ -1,0 +1,197 @@
+{
+  "kind": "d_bootstrap_actual_frozen_run_audit.v1",
+  "result": "PASS_EXACT_FROZEN_RUN_ONLY",
+  "scope": "two user-supplied operator runs; later workspace edits are not covered",
+  "source_sha256": "4a5f56e418afd4e028ed782282f2b9aa8f3a85afc9b27e6a8592e530c14fa33e",
+  "actual_mysql_cases_passed": 29,
+  "strict_current_source_acceptance": false,
+  "original_wrappers_rewritten": false,
+  "new_remote_execution": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "synthetic_authority": true,
+  "physical_capacity_verified": false,
+  "provider_permission_verified": false,
+  "human_mfa_verified": false,
+  "receiver_tests": {
+    "pass": 78,
+    "fail": 0,
+    "skip": 0
+  },
+  "runs": [
+    {
+      "suite": "bootstrap-consumer",
+      "result": "PASS_EXACT_FROZEN_RUN_ONLY",
+      "namespace": "sbk-mig-261026080433-05aa",
+      "namespace_uid": "3d155f1a-66dc-4093-af1b-65b57d6673fc",
+      "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+      "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+      "mysql_version": "8.4.8",
+      "actual_mysql_cases": 26,
+      "source_sha256": "4a5f56e418afd4e028ed782282f2b9aa8f3a85afc9b27e6a8592e530c14fa33e",
+      "source_files": 1694,
+      "current_critical_inputs_match": false,
+      "current_source_drift": [
+        {
+          "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+          "frozen_size": 21773,
+          "frozen_sha256": "fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c",
+          "current_size": 21772,
+          "current_sha256": "ba5414ace5a76d653c4865ad63738aae72612cb7c738da4fbb647471a449a956"
+        },
+        {
+          "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+          "frozen_size": 9304,
+          "frozen_sha256": "b89d371554e2e3d11c335903bd46714a0fe75445950d1a0708adc665e93bee8d",
+          "current_size": 9302,
+          "current_sha256": "2e651bc713551a731c4ac5977a076d98868cdda2a4ffbcaf66b42a43062fa0c7"
+        }
+      ],
+      "native_step_exits": [
+        0,
+        0,
+        0
+      ],
+      "operator_exit": 0,
+      "source_postcheck": true,
+      "owner_independently_absent": true,
+      "test_build_products_removed": true,
+      "binary_sha256": "198a5c3de9339c874518a3f5ad9cdaffa742afd7299edf1f803921e00895c560",
+      "migration_binary_sha256": "434c36ee55b69b79bbf124d078f3b998e83c05ac052bcd9d812140704f46c756",
+      "inputs_sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa",
+      "operator_log": "docs/evidence/d-bootstrap-consumer-operator-20261026-154612.txt",
+      "pasted_attachment": {
+        "path": "C:/Users/zhanghui08/.codex/attachments/2db1e5c7-6774-45f1-a2f5-4f1393820d95/已粘贴的文本.txt",
+        "sha256": "5d6f95f140fefb67508974324f4c9be5fafe7b9e03ba2c1961459ed0f75912e6"
+      },
+      "strict_current_source_acceptance": false,
+      "production_approved": false
+    },
+    {
+      "suite": "bootstrap-config-ranges",
+      "result": "PASS_EXACT_FROZEN_RUN_ONLY",
+      "namespace": "sbk-mig-261026080436-31de",
+      "namespace_uid": "ad17e4ad-4be9-4cdb-addc-eb5b020ef9f5",
+      "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+      "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+      "mysql_version": "8.4.8",
+      "actual_mysql_cases": 3,
+      "source_sha256": "4a5f56e418afd4e028ed782282f2b9aa8f3a85afc9b27e6a8592e530c14fa33e",
+      "source_files": 1694,
+      "current_critical_inputs_match": false,
+      "current_source_drift": [
+        {
+          "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+          "frozen_size": 21773,
+          "frozen_sha256": "fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c",
+          "current_size": 21772,
+          "current_sha256": "ba5414ace5a76d653c4865ad63738aae72612cb7c738da4fbb647471a449a956"
+        },
+        {
+          "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+          "frozen_size": 9304,
+          "frozen_sha256": "b89d371554e2e3d11c335903bd46714a0fe75445950d1a0708adc665e93bee8d",
+          "current_size": 9302,
+          "current_sha256": "2e651bc713551a731c4ac5977a076d98868cdda2a4ffbcaf66b42a43062fa0c7"
+        }
+      ],
+      "native_step_exits": [
+        0,
+        0,
+        0
+      ],
+      "operator_exit": 0,
+      "source_postcheck": true,
+      "owner_independently_absent": true,
+      "test_build_products_removed": true,
+      "binary_sha256": "47530828134a57756313de3f9afe3ed5353f5274ba81994e00d44f75559ab46e",
+      "migration_binary_sha256": "5eef35718d01efdb3627314e12ea3b42627f94922edc4fda71029196263cd593",
+      "inputs_sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa",
+      "operator_log": "docs/evidence/d-bootstrap-config-ranges-operator-20261026-154616.txt",
+      "pasted_attachment": {
+        "path": "C:/Users/zhanghui08/.codex/attachments/9ece7981-f029-4501-8b40-f70b3ce1e7b4/已粘贴的文本.txt",
+        "sha256": "a4f1a1651a79b472fa2415350f96e151849ce8dd15444c7db1cbcb9dc79cf3ce"
+      },
+      "strict_current_source_acceptance": false,
+      "production_approved": false
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/evidence/d-bootstrap-actual-frozen-review-20261026.mjs",
+      "sha256": "d687be9037474c743767fb2f66f5bbbac8b8b39884a9a2db29f3f01d380c0b87"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-review-20261026.mjs",
+      "sha256": "3651170da2264a5f48b98d2ddd37c311a749d414d34cdfa0fd018b795a7460cd"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.mjs",
+      "sha256": "2f427d7cf3ca6ee2b9adb9de102056b3bce6183e07a6ea4f3442e7e759b2deab"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-review-20261026.test.mjs",
+      "sha256": "4d6b57590a9407576e09b393d3dddabab790358c338abc6bab678635ef3b952a"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.test.mjs",
+      "sha256": "9910d483774ad0d56837e1a30b573735dc5a8dc6edcb63c2c8f00d5717c51627"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-actual-receivers-grouped-tests-20261026.txt",
+      "sha256": "91816d6ce4371a5a86b512252008d0ac527d582b5cd0bbba0bbb0d12edcd0ba4"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-20261026-154623-72b5ae6d-step-0.jsonl",
+      "sha256": "b972826a0d73b09fb0023ef8149e890ade84394c139d5129da5fe7f572d6a784"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-20261026-154623-72b5ae6d-step-1.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-20261026-154623-72b5ae6d-step-2.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-20261026-154623-72b5ae6d.json",
+      "sha256": "fc0005e6e35a3ce25f2c16e1ed27042fb405351122170938962e58e47dec61fb"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-20261026-154623-72b5ae6d-source.json",
+      "sha256": "03d1fb3cd6ce423707ed5299de861bf9a858ff79a2b6428f268addb3620a1e07"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-operator-20261026-154612.txt",
+      "sha256": "411691729a7ea7a87ef31880149340ce6622c324d689790e42d9eca2f4823f84"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-154625-f0f6587b-step-0.jsonl",
+      "sha256": "643e29e8b8a950a5ef5f3607bc7de72bcda2d95f622cfbab9c9916372a8ee1d2"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-154625-f0f6587b-step-1.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-154625-f0f6587b-step-2.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-154625-f0f6587b.json",
+      "sha256": "b0f16585546db124baade8a4d07e28e12f6cfd2e847c23b14c2ed20bbd1309a0"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-154625-f0f6587b-source.json",
+      "sha256": "03d1fb3cd6ce423707ed5299de861bf9a858ff79a2b6428f268addb3620a1e07"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-operator-20261026-154616.txt",
+      "sha256": "04c841fb3e6fd50be92ca6ebd293c7050d5f3d1d161db666b8a389364f0c6cbe"
+    }
+  ]
+}

@@ -15,6 +15,7 @@ function New-SourceTestFixture {
     foreach($path in @('backend/internal/systembackupsecurity/security.go','backend/internal/systembackupsecurity/security_test.go',
         'backend/internal/systembackupsecurity/testdata/fixture.sql','backend/internal/systembackupread/read.go','backend/internal/systembackupread/read_test.go',
         'backend/internal/systembackupcontract/contract.go','backend/internal/systembackupbootstrapsecurity/bootstrap.go','backend/internal/systembackupbootstrapsecurity/bootstrap_test.go',
+        'backend/internal/systembackupproducer/producer.go','backend/internal/systembackupproducer/producer_test.go',
         'backend/cmd/system-backup-bootstrap/main.go','backend/cmd/system-backup-bootstrap/main_test.go','backend/internal/db/migrations/001.sql',
         'contracts/system-backup/v12/contract.json','docs/evidence/ignored.json')+(Get-ABootstrapRequiredFiles)){
         Write-SourceTestFile -Root $root -Path $path
@@ -30,7 +31,7 @@ function Assert-SourceTest {
 try {
     $root=New-SourceTestFixture 'differences'
     $baseline=Get-ABootstrapSourceState -Root $root
-    Assert-SourceTest ($baseline.source_files -eq 18 -and $baseline.missing_required.Count -eq 0) 'selected production, security tests, command tests and required fixtures; excluded unrelated tests and receipts'
+    Assert-SourceTest ($baseline.source_files -eq 19 -and $baseline.missing_required.Count -eq 0) 'selected production including producer dependency, security tests, command tests and required fixtures; excluded unrelated tests and receipts'
     $same=Compare-ABootstrapSourceState -Root $root -Baseline $baseline
     Assert-SourceTest ($same.matches -and $same.source_sha256 -eq $baseline.source_sha256) 'unchanged source matches'
     Write-SourceTestFile $root 'backend/internal/systembackupread/new.go' 'new input'
@@ -47,6 +48,8 @@ try {
     Write-SourceTestFile $root 'backend/internal/systembackupread/unrelated_test.go'
     Write-SourceTestFile $root 'docs/evidence/unrelated-receipt.json'
     Assert-SourceTest (Compare-ABootstrapSourceState -Root $root -Baseline $baseline).matches 'unselected tests and run receipts do not invalidate the source scope'
+    Write-SourceTestFile $root 'backend/internal/systembackupproducer/new_test.go'
+    Assert-SourceTest (Compare-ABootstrapSourceState -Root $root -Baseline $baseline).matches 'producer dependency tests are not misrepresented as executed bootstrap-package tests'
     Write-SourceTestFile $root '.gitignore' 'ignored.go'
     Write-SourceTestFile $root 'backend/internal/systembackupread/ignored.go'
     Assert-SourceTest (-not (Compare-ABootstrapSourceState -Root $root -Baseline $baseline).matches) 'ignored build source is still detected'
@@ -58,6 +61,14 @@ try {
     $rejected=$false
     try {Compare-ABootstrapPins -Expected $duplicates -Actual $baseline.files | Out-Null}catch{$rejected=$true}
     Assert-SourceTest $rejected 'duplicate baseline paths are rejected'
+
+    $root=New-SourceTestFixture 'producer'
+    $baseline=Get-ABootstrapSourceState -Root $root
+    Write-SourceTestFile $root 'backend/internal/systembackupproducer/new.go' 'new dependency'
+    Write-SourceTestFile $root 'backend/internal/systembackupproducer/producer.go' 'changed dependency'
+    $delta=Compare-ABootstrapSourceState -Root $root -Baseline $baseline
+    Assert-SourceTest (-not $delta.matches -and $delta.added -contains 'backend/internal/systembackupproducer/new.go' -and
+        $delta.changed -contains 'backend/internal/systembackupproducer/producer.go') 'new and modified producer production dependencies invalidate the bootstrap source'
 
     # Run the actual wrapper with synthetic source and a fake Go executor. This
     # exercises receipt/exit/cleanup behavior without compiling or claiming Go passed.

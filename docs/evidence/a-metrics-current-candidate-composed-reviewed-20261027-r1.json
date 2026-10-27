@@ -1,0 +1,209 @@
+{
+  "kind": "a_metrics_current_candidate_native_composition_review.v1",
+  "reviewer": "A1",
+  "status": "accepted_exact_eight_file_application_after_controller_and_impacted_security_native_composition",
+  "source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+  "base_source_sha256": "4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964",
+  "source_files": 1718,
+  "candidate_manifest": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.source.json",
+    "size": 337319,
+    "sha256": "554b074615e4d73c5e0f58b38c7221786f2ecdaa669d74328d24a4c185718b96"
+  },
+  "changes": [
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+        "size": 3917,
+        "sha256": "fc44562e7375cb1af78b6f28ecc64817814ba67d15cbe92707a8d8f72642bc8d"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+        "size": 5796,
+        "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-controller-state-alerts-candidate-20261027-r2.go.txt",
+        "size": 5796,
+        "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+        "size": 3587,
+        "sha256": "4f805fbb90face2db78cdeff5fe55e338b655b6571e4c7db7a2eaaeae92a21dc"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+        "size": 12669,
+        "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-controller-state-alerts-test-candidate-20261027-r2.go.txt",
+        "size": 12669,
+        "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+      }
+    },
+    {
+      "path": "scripts/system-backup-metrics-registry.mjs",
+      "before": {
+        "path": "scripts/system-backup-metrics-registry.mjs",
+        "size": 41174,
+        "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+      },
+      "after": {
+        "path": "scripts/system-backup-metrics-registry.mjs",
+        "size": 41662,
+        "sha256": "bd99200411dbf1ab3a757e57f424e1d145c60d5a06e2e9ec9a38e9dbb76f6a39"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-controller-registry-generator-candidate-20261027-r3.mjs.txt",
+        "size": 41662,
+        "sha256": "bd99200411dbf1ab3a757e57f424e1d145c60d5a06e2e9ec9a38e9dbb76f6a39"
+      }
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "before": {
+        "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+        "size": 194100,
+        "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+      },
+      "after": {
+        "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+        "size": 195161,
+        "sha256": "59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-controller-registry-candidate-20261027-r3.json",
+        "size": 195161,
+        "sha256": "59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade"
+      }
+    },
+    {
+      "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+      "before": {
+        "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+        "size": 70758,
+        "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+      },
+      "after": {
+        "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+        "size": 69960,
+        "sha256": "af3a2917e8f8c455c142c4ede16399edbc6b1af78a63fc4a8d9f2a3bb7212b72"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-controller-rules-candidate-20261027-r3.yaml",
+        "size": 69960,
+        "sha256": "af3a2917e8f8c455c142c4ede16399edbc6b1af78a63fc4a8d9f2a3bb7212b72"
+      }
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.test.mjs",
+      "before": {
+        "path": "scripts/system-backup-prometheus-rules.test.mjs",
+        "size": 2496,
+        "sha256": "97f4a6f4bf6df93edc37a67ca9413784d792fd8592f521d32cc3e7d8ba2e4011"
+      },
+      "after": {
+        "path": "scripts/system-backup-prometheus-rules.test.mjs",
+        "size": 3331,
+        "sha256": "8e26caf7127d02091f8f365639fb2dd3e4d392d3fdc86df27ea3290c6825e339"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-prometheus-tests-candidate-20261027-r3.mjs.txt",
+        "size": 3331,
+        "sha256": "8e26caf7127d02091f8f365639fb2dd3e4d392d3fdc86df27ea3290c6825e339"
+      }
+    },
+    {
+      "path": "scripts/system-backup-contract-artifacts.test.mjs",
+      "before": {
+        "path": "scripts/system-backup-contract-artifacts.test.mjs",
+        "size": 214718,
+        "sha256": "a0197bd22525c12095c387015907483dd2e4923bb2f385a88e5fa9fdffbc0adb"
+      },
+      "after": {
+        "path": "scripts/system-backup-contract-artifacts.test.mjs",
+        "size": 214718,
+        "sha256": "d2f37befbda4db3c9d8ea342d2624197203421b96dc62384afdbb5bb96d02bc6"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-contract-tests-candidate-20261027-r3.mjs.txt",
+        "size": 214718,
+        "sha256": "d2f37befbda4db3c9d8ea342d2624197203421b96dc62384afdbb5bb96d02bc6"
+      }
+    },
+    {
+      "path": "contracts/system-backup/v12/README.md",
+      "before": {
+        "path": "contracts/system-backup/v12/README.md",
+        "size": 18604,
+        "sha256": "b66b1b078fd5b9448ef208e496fa4da88fe5e63ff58a96d797f0d62e03e8e465"
+      },
+      "after": {
+        "path": "contracts/system-backup/v12/README.md",
+        "size": 18605,
+        "sha256": "cbc0b73767d9f2ac29210eacd388966fc6dbdf44329e34992ad2fad6179fdd1f"
+      },
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-contract-readme-candidate-20261027-r3.md.txt",
+        "size": 18605,
+        "sha256": "cbc0b73767d9f2ac29210eacd388966fc6dbdf44329e34992ad2fad6179fdd1f"
+      }
+    }
+  ],
+  "independent_reviews": [
+    {
+      "path": "docs/evidence/a-metrics-controller-candidate-source-reviewed-20261027-r1.json",
+      "size": 8384,
+      "sha256": "ae93f78a82ec932149d36984e7e90f417ea2a8ed08735c8f5c54f284116809be"
+    },
+    {
+      "path": "docs/evidence/a-metrics-controller-native-reviewed-20261027-r1.json",
+      "size": 30758,
+      "sha256": "f5412367c2c514fed434a6018d7e90907e9aaabe347ebb16bac69e427be32d5e"
+    },
+    {
+      "path": "docs/evidence/a-metrics-tagged-security-native-reviewed-20261027-r1.json",
+      "size": 56939,
+      "sha256": "75f96407db0e4d2c149ceb556c64e6f8da4ccdb6fd93d7d347aa17aa1268b3a9"
+    },
+    {
+      "path": "docs/evidence/a-metrics-native-impact-reviewed-20261027-r1.json",
+      "size": 24324,
+      "sha256": "099764776e80c983000b9f32d210bead795852c2166037c01f798579a03ce238"
+    }
+  ],
+  "controller_native_stages": 7,
+  "tagged_security_native_stages": 4,
+  "ordinary_roots": 147,
+  "ordinary_pass_events": 237,
+  "Admin_seed_checks": 1,
+  "Linux_controller_compiles": 2,
+  "Linux_tagged_security_compiles": 1,
+  "source_and_complete_set_postchecks_verified": true,
+  "all_native_owners_independently_absent": true,
+  "ordinary_contexts_with_identical_selected_dependencies": 22,
+  "tagged_contexts_with_identical_selected_dependencies": 20,
+  "both_changed_tagged_security_contexts_supplemented": true,
+  "ready_for_exact_eight_file_application": true,
+  "application_performed_by_this_command": false,
+  "current_whole_baseline_accepted": false,
+  "production_approved": false,
+  "actual_SQL": false,
+  "actual_PromQL_executed": false,
+  "trusted_collector_or_automatic_cleanup_clock_proven": false,
+  "dependencies_installed": false,
+  "new_Go_executed_by_A1": false,
+  "whole_goal_complete": false,
+  "application_constraints": [
+    "Apply only the eight exact candidate bytes after full live-before inventory verification.",
+    "Verify complete live source bytes and set equal the tested candidate after application.",
+    "Keep all historical scope helpers and receipts unchanged; register a new owner baseline separately.",
+    "Regenerate the GC operator source candidate and A source review after these source changes."
+  ]
+}

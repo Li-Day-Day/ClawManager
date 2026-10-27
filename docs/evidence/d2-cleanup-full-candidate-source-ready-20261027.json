@@ -1,0 +1,74 @@
+{
+  "kind": "d2_cleanup_full_candidate_source.v1",
+  "status": "source_ready_full_new_package_native_pending",
+  "base_source_sha256": "dc79d81f74d6d6c293372f6c5404b2a673c3f469da1c4d14d4adc763199efa8e",
+  "base_source_files": 1720,
+  "mappings": [
+    {
+      "target": "backend/internal/systembackupcleanup/clock.go",
+      "candidate": {
+        "path": "docs/evidence/d2-cleanup-clock-candidate-20261027.go.txt",
+        "size": 8259,
+        "sha256": "3add7030e122b7c19db002a7221fbd0a7ce3051d7c872f4139cd6920e10bf6c2"
+      }
+    },
+    {
+      "target": "backend/internal/systembackupcleanup/reader.go",
+      "candidate": {
+        "path": "docs/evidence/d2-cleanup-reader-candidate-20261027.go.txt",
+        "size": 13591,
+        "sha256": "9af5a78c3a558f78da769d1be6a37892b182446a17201cdfe7e303291ffccb65"
+      }
+    },
+    {
+      "target": "backend/internal/systembackupcleanup/recorder.go",
+      "candidate": {
+        "path": "docs/evidence/d2-cleanup-recorder-candidate-20261027.go.txt",
+        "size": 25784,
+        "sha256": "83bc4cb2b9939e154206fad5c5122d67ea63301c2dea30cd9f5aceb5533945d3"
+      }
+    },
+    {
+      "target": "backend/internal/systembackupcleanup/clock_test.go",
+      "candidate": {
+        "path": "docs/evidence/d2-cleanup-clock-tests-candidate-20261027.go.txt",
+        "size": 7879,
+        "sha256": "0830f824489714ee8dd74d99973a3ccb54200d802e932fa6f8be4950ab6a4856"
+      }
+    },
+    {
+      "target": "backend/internal/systembackupcleanup/database_test.go",
+      "candidate": {
+        "path": "docs/evidence/d2-cleanup-database-tests-candidate-20261027.go.txt",
+        "size": 22020,
+        "sha256": "3ef36800e16704ed83ffaefde61fc8f12cdf0b10ceae4535223657fc4cb2c8e0"
+      }
+    }
+  ],
+  "declared_test_roots": [
+    "TestAutomaticBackupClockPrecedesTaskTerminalState",
+    "TestAutomaticCleanupClockUsesOriginalAtomicStart",
+    "TestCleanupBudgetRejectsMissingOrAlteredSnapshot",
+    "TestCleanupMutationBoundaryCannotExpressTransactionSQL",
+    "TestCleanupReaderActiveParentWithoutResourcesIsUnknown",
+    "TestCleanupReaderConfirmedEmptySnapshotAndFailureBoundary",
+    "TestCleanupReaderRetainsFailedAttemptResidualAfterNewRetry",
+    "TestCleanupRecorderCommitsOnlyOriginalAtomicStateAndClock",
+    "TestCleanupRecorderInvalidInputsCloseOriginalTransaction",
+    "TestCleanupRecorderRejectsClockRemovalAndRetiming",
+    "TestCleanupReplayRejectsZeroAndInvalidClocks",
+    "TestExplicitCleanupClockPreservesOperationQueueWindow",
+    "TestExplicitCleanupRetryPreservesAllOriginalBindings",
+    "TestOperationCleanupWindowMatchesOriginalConfigBounds"
+  ],
+  "expected_test_roots": 14,
+  "expected_pass_events": 60,
+  "SQL_candidate": "docs/evidence/d2-cleanup-attempt-ledger-candidate-20261027.sql",
+  "production_linked": false,
+  "migration_installed": false,
+  "source_changed": false,
+  "Go_started": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "original_verifier_required": "AutomaticDrill may run only inside the original verified-success workflow and original admission/audit boundary. This metadata timing module is not an independent success adjudicator."
+}

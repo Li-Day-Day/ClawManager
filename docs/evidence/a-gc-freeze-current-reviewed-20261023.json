@@ -1,0 +1,98 @@
+{
+  "kind": "a_gc_freeze_current_local_validation_review.v1",
+  "decision": "current_four_file_candidate_locally_validated_not_full_GC",
+  "roots": 4,
+  "pass_events": 33,
+  "original_full_owner_names_preserved": true,
+  "production_Go_unchanged_since_original_owner_gate": true,
+  "A_typed_nil_regression_included": true,
+  "windows_standalone_and_default_vet": true,
+  "linux_standalone_compiled": true,
+  "current_selected_inputs_match": true,
+  "cleanup_independently_absent": true,
+  "required_actual_groups": [
+    "privileges",
+    "transaction_boundary",
+    "table_and_foreign_fk",
+    "routine_ddl",
+    "trigger_event_view_ddl",
+    "account_and_dml_controls",
+    "holder_lifecycle",
+    "pool_reuse",
+    "multiple_holders",
+    "temporary_and_session_state",
+    "scale_and_wait",
+    "full_collector"
+  ],
+  "joint_A_D_approval": false,
+  "grants_approved": false,
+  "collector_wired": false,
+  "full_GC_accepted": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "source_files": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "size": 6357,
+      "sha256": "a0ea232611d1ea7b6878b23c04da18500f896fcaa281228eebda408cbf7312b0"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "size": 8725,
+      "sha256": "c567e6db30ad77e7e7a68cb0c6b0d4a0917fc2bb5bd331df496621db0c75fcb8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "size": 2788,
+      "sha256": "ff26954ff8e337d2eb3657fdc6b3d2b1cb483286f882312dd7c5b50ace1cb082"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-freeze-candidate-validation.ps1",
+      "size": 5291,
+      "sha256": "24346f38ec4de94d3825166adc7e21cccd32967296139f298d6b42e46c7658f6"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd.json",
+      "size": 858,
+      "sha256": "38fd97c60c61b45b3fd9e145662776c2aa27ea8541ddb918dfe3db377d979845"
+    },
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd-source.json",
+      "size": 31708,
+      "sha256": "b553d6ae05f0d81d30a91187aba4434f2e6c280d6cb605a257d81e4e26ac3c0d"
+    },
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd.jsonl",
+      "size": 39122,
+      "sha256": "01525e3938a0096d76a9cb302ec61db5cfc7e63cf6c2dfe91d419d8d08ea25d0"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-protocol-reviewed-20261023.json",
+      "size": 6206,
+      "sha256": "7f3f2df1b3fc02a4a58cb7e1b1e852d047319a942f76620b923f26e607818056"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-full-local-20261023-111154-source.json",
+      "size": 315863,
+      "sha256": "121d6586f0ce06eda7887e40e21e5dbca12591e8c29a736336262b04481503bd"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-full-local-20261023-111154-inventory.json",
+      "size": 389069,
+      "sha256": "2985bb09929aec33e6afa0d7c5ebb49b90b18ac7caf4adb69932cf8894addcd6"
+    },
+    {
+      "path": "docs/evidence/d-gc-backup-lock-protocol-requirements-20261021.json",
+      "size": 8848,
+      "sha256": "66b298543dc323e7684269b633e4150bd23dc1d5ac36fbe5900d53435cc7113d"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-current-review-20261023.mjs",
+      "size": 4661,
+      "sha256": "14450c7bb2375a776f48cb0beaf399566a521ce278ced7dfffd2876911be6426"
+    }
+  ]
+}

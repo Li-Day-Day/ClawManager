@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+
+const root=path.resolve(import.meta.dirname,'../..');
+const read=name=>fs.readFileSync(path.join(root,name));
+const text=b=>(b[0]===255&&b[1]===254?b.toString('utf16le'):b.toString('utf8')).replace(/^\uFEFF/,'');
+const json=name=>JSON.parse(text(read(name)));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const prefix='docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8';
+const reportFile=prefix+'.json',r=json(reportFile);
+assert.deepEqual(process.argv.slice(2).filter(x=>x!=='--check'),[]);
+assert.equal(r.kind,'d_bootstrap_entry_native.v1');assert.equal(r.status,'failed');
+assert.equal(r.error,'Entry Linux build/compile failed: server');
+for(const k of ['tests_started','snapshot_verified','cleaned'])assert.equal(r[k],true,k);
+for(const k of ['dependencies_installed','actual_mysql_executed','production_approved'])assert.equal(r[k],false,k);
+for(const k of ['targeted_exit','full_exit','seeds_exit','actual_sql_cases_executed'])assert.equal(r[k],0,k);
+assert.equal(r.snapshot_unchanged??null,null);assert.equal(r.current_source_matches_snapshot??null,null);
+assert.deepEqual(r.linux_steps,[]);
+const owner='.tmp-d-bootstrap-entry-ae7af3833e1f424f946638b88c7f68d8';
+assert.equal(fs.existsSync(path.join(root,owner)),false);
+assert.equal(r.files.length,1741);
+const pinMap=new Map(r.files.map(p=>[p.path,p]));assert.equal(pinMap.size,r.files.length);
+for(const p of r.files){assert.match(p.sha256,/^[a-f0-9]{64}$/);assert.ok(Number.isSafeInteger(p.size)&&p.size>=0);assert.ok(!p.path.includes('\\')&&!p.path.split('/').some(x=>['','.','..'].includes(x)));}
+const driver='scripts/system-backup-d-bootstrap-entry-validation.ps1';
+assert.equal(pinMap.get(driver).sha256,r.driver_sha256);assert.equal(sha(read(driver)),r.driver_sha256);
+const parse=name=>text(read(name)).trim().split(/\r?\n/).map(JSON.parse);
+function observed(suite,packages){
+ const e=parse(prefix+'.'+suite+'.jsonl');
+ assert.equal(e.filter(x=>['fail','skip','build-fail'].includes(x.Action)).length,0);
+ assert.deepEqual(e.filter(x=>x.Action==='pass'&&!x.Test).map(x=>x.Package).sort(),packages.toSorted());
+ const runs=e.filter(x=>x.Action==='run'&&x.Test),passed=e.filter(x=>x.Action==='pass'&&x.Test);
+ const key=x=>x.Package+'\0'+x.Test;
+ assert.deepEqual(runs.map(key).sort(),passed.map(key).sort());assert.equal(new Set(passed.map(key)).size,passed.length);
+ return {packages,root_tests:passed.filter(x=>!x.Test.includes('/')).length,pass_events:passed.length,roots:passed.filter(x=>!x.Test.includes('/')).map(x=>x.Test).sort()};
+}
+const target=observed('targeted',['clawreef/internal/systembackupproducer','clawreef/internal/systembackupsecurity','clawreef/cmd/system-backup-bootstrap']);
+const full=observed('full',['clawreef/internal/systembackupproducer','clawreef/internal/systembackupbootstrapsecurity','clawreef/internal/systembackupsecurity','clawreef/internal/systembackupevidence','clawreef/internal/systembackupresources','clawreef/internal/systembackupread','clawreef/cmd/server','clawreef/internal/systembackupnoncebootstrap','clawreef/internal/systembackupcatrust','clawreef/cmd/system-backup-bootstrap']);
+const seeds=observed('seeds',['clawreef/internal/systembackupevidence']);
+assert.equal(target.pass_events,164);assert.equal(full.pass_events,8546);assert.equal(full.root_tests,1006);
+assert.deepEqual(seeds.roots,['TestDBootstrapConsumerMySQLSeed','TestDBootstrapConsumerRangesMySQLSeed','TestDBootstrapEntryMySQLSeed','TestDBootstrapOriginalMaterialsMySQLSeed']);
+assert.equal(r.targeted_pass_events,target.pass_events);assert.equal(r.full_pass_events,full.pass_events);
+assert.deepEqual(r.package_passes.toSorted(),full.packages.toSorted());assert.deepEqual(r.local_seed_roots.toSorted(),seeds.roots);
+const linuxLog=prefix+'.linux-server.txt';assert.match(text(read(linuxLog)),/There is not enough space on the disk\./);
+const gatePrefix='docs/evidence/d1-entry-ae7-rejected-20261027',gates=json(gatePrefix+'-gates.json');
+assert.deepEqual(gates,{strict_exit:1,frozen_exit:1,strict_output_created:false,frozen_output_created:false});
+for(const mode of ['strict','frozen'])assert.match(text(read(gatePrefix+'-'+mode+'.txt')),/AssertionError|ERR_ASSERTION/);
+for(const name of ['docs/evidence/d1-entry-ae7-never-accepted-20261027.json','docs/evidence/d1-entry-ae7-never-accepted-frozen-20261027.json'])assert.equal(fs.existsSync(path.join(root,name)),false);
+const files=[reportFile,driver,prefix+'.targeted.jsonl',prefix+'.full.jsonl',prefix+'.seeds.jsonl',linuxLog,gatePrefix+'-gates.json',gatePrefix+'-strict.txt',gatePrefix+'-frozen.txt','docs/evidence/d-bootstrap-entry-local-review-20261026.mjs','docs/evidence/d-bootstrap-entry-failed-native-review-20261027.mjs'];
+const result={kind:'d_bootstrap_entry_failed_native_independent_review.v1',status:'rejected_linux_disk_full',parent_receipt:reportFile,parent_status_preserved:'failed',error:r.error,observed_partial_test_events:{target,full,seeds},source_files:r.files.length,source_sha256:sha(r.files.map(p=>p.path+'\0'+p.sha256+'\0'+p.size).join('\n')+'\n'),initial_snapshot_verified:true,final_snapshot_postcheck_completed:false,linux_steps_passed:0,current_source_accepted:false,frozen_complete_run_accepted:false,failed_parent_reclassified:false,owner,owner_independently_absent:true,run_artifacts_cleaned:true,acceptance_gates:gates,actual_mysql_executed:false,actual_sql_cases_passed:0,production_approved:false,dependencies_installed:false,whole_goal_complete:false,artifacts:files.map(p=>({path:p,sha256:sha(read(p))}))};
+const out=path.join(root,'docs/evidence/d-bootstrap-entry-native-rejected-20261027-ae7.json');
+if(process.argv.includes('--check'))assert.deepEqual(JSON.parse(text(fs.readFileSync(out))),result);else fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log('ENTRY_FAILED_NATIVE_REVIEWED targeted=164 full=8546 seeds=4 linux=failed_disk_full cleaned=yes acceptance=no actual_mysql=not_run');

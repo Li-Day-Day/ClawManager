@@ -1,0 +1,31 @@
+// Original owner seeds and compile stages only; full package gate is separate.
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import assert from 'node:assert/strict';
+import {validateGoEvents} from './d-resources-mysql-actual-review-20261023.mjs';
+import {validateCloseoutSource} from './a-owner-closeout-source-20261023.mjs';
+const root=path.resolve(import.meta.dirname,'../..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const local=p=>{const f=path.resolve(root,p);assert.ok(f.startsWith(root+path.sep));return f};
+const read=p=>fs.readFileSync(local(p)),json=p=>JSON.parse(read(p).toString('utf8').replace(/^\uFEFF/,''));
+const pin=p=>({path:path.relative(root,local(p)).replaceAll('\\','/'),size:read(p).length,sha256:sha(read(p))});
+const [receiptPath,mode]=process.argv.slice(2);assert.ok(receiptPath&&['--write','--check'].includes(mode));
+const r=json(receiptPath);assert.equal(r.kind,'a_owner_profile_supplement.v1');
+assert.equal(r.error,null);assert.equal(r.frozen_postcheck,true);assert.equal(r.owner_removed,true);assert.equal(fs.existsSync(r.owner),false);assert.equal(path.dirname(r.owner),root);assert.match(path.basename(r.owner),/^\.tmp-d-index-cache-[a-f0-9]{32}$/);
+for(const k of ['ordinary_source_identical_before_tests','peer_cache_read_only'])assert.equal(r[k],true);
+for(const k of ['test_result_reused','full_package_gate_approved','actual_mysql','dependencies_installed','production_approved'])assert.equal(r[k],false);
+const source=json(r.source),full=json(r.expected_full_package_source);validateCloseoutSource(source);validateCloseoutSource(full);assert.equal(full.source_sha256,r.expected_full_package_source_sha256);
+const backendContracts=s=>s.files.filter(p=>/^(backend|contracts)\//.test(p.path));assert.deepEqual(backendContracts(source),backendContracts(full));
+const names=['TestASQLTaskDownloadOwnersMySQLSeed','TestADownloadAdmissionMySQLSeed',...['detached_embedded_config','historical_config_projection','independent_encrypted_object'].map(n=>'TestADownloadAdmissionMySQLSeed/'+n),'TestASensitiveDownloadMFAMySQLSeed',...['actual_config_required_cells','duplicate','unknown','trailing','catalog','ddl','budget'].map(n=>'TestASensitiveDownloadMFAMySQLSeed/'+n)].sort();
+const pattern='^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$';
+assert.equal(r.steps.length,3);assert.deepEqual(r.steps.map(s=>s.platform),['windows','windows','linux']);
+for(const s of r.steps){assert.equal(s.exit_code,0);assert.equal(sha(read(s.log)),s.sha256);}
+assert.deepEqual(r.steps[0].command,['go','test','-json','-tags','systembackup_mysql','-run',pattern,'-count=1','-timeout=180s','./internal/systembackupevidence']);
+assert.deepEqual(validateGoEvents(read(r.steps[0].log).toString('utf8'),'clawreef/internal/systembackupevidence'),names);
+assert.deepEqual(r.steps[1].command,['go','test','-c','-tags','systembackup_mysql','-o',path.join(r.owner,'binary/owner-seeds.exe'),'./internal/systembackupevidence']);
+assert.deepEqual(r.steps[2].command,['go','test','-c','-tags','systembackup_mysql','-o',path.join(r.owner,'binary/owners.test'),'./internal/systembackupevidence']);
+assert.equal(r.detached_exit,0);const detached=read(r.detached_log).toString('utf8');assert.doesNotMatch(detached,/--- (?:FAIL|SKIP):|^FAIL|^panic:/m);assert.match(detached,/^PASS\s*$/m);
+for(const regex of [/^=== RUN\s+(\S+)\s*$/gm,/^\s*--- PASS: (\S+) /gm])assert.deepEqual([...detached.matchAll(regex)].map(m=>m[1]).sort(),names);
+assert.deepEqual(r.binaries.map(b=>b.name),['owner-seeds.exe','owners.test']);for(const b of r.binaries)assert.match(b.sha256,/^[a-f0-9]{64}$/);
+const runner='docs/evidence/a-owner-profile-supplement-20261023.ps1';assert.equal(sha(read(runner)),r.runner_sha256);
+const report={kind:'a_owner_original_profile_supplement_acceptance.v1',status:'complete_exact_frozen_seed_and_probe_stages_only',source_sha256:source.source_sha256,expected_full_package_source_sha256:full.source_sha256,backend_contracts_including_tagged_match:true,packaged_seed_names:names,detached_seed_names:names,default_vet:true,Linux_owner_probe_sha256:r.binaries[1].sha256,exact_owner_absent:true,full_package_gate_approved:false,current_baseline_registration_permitted:false,actual_SQL:false,dependencies_installed:false,production_approved:false,inputs:[receiptPath,r.source,r.expected_full_package_source,...r.steps.map(s=>s.log),r.detached_log,runner,'docs/evidence/a-owner-closeout-source-20261023.mjs','docs/evidence/a-owner-profile-supplement-review-20261023.mjs'].map(pin)};
+const output=local(receiptPath).replace(/\.json$/,'-reviewed.json');assert.notEqual(output,local(receiptPath));
+if(mode==='--write')fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});else assert.deepEqual(JSON.parse(fs.readFileSync(output,'utf8')),report);
+console.log('A_OWNER_PROFILE_SUPPLEMENT_ACCEPTED seeds=13 detached=13 Linux_probe=yes cleanup=yes baseline=no actual_SQL=no');

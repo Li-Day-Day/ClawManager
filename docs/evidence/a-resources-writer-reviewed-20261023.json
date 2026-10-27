@@ -1,0 +1,327 @@
+{
+  "kind": "a_resources_writer_incremental_review.v1",
+  "date": "2026-10-23",
+  "status": "offline_test_receipt_verified_FK_transition_policy_or_schedule_changes_required",
+  "frozen_inputs": 39,
+  "roots": 68,
+  "pass_events": 826,
+  "writer_pass_events": 76,
+  "mutation_failure_leaves": 54,
+  "preflight_late_failure_leaves": 19,
+  "prior_pass_names_preserved": 678,
+  "old_failed_control_cases_preserved": true,
+  "owner_independently_absent": true,
+  "default_vet": true,
+  "dependencies_installed": false,
+  "Go_tests_repeated": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "registry_written": false,
+  "scope": "private writer transaction/control boundaries; no B/C proof or field normalization approval",
+  "finding": {
+    "id": "A-WRITER-FK-01",
+    "severity": "P2",
+    "status": "requires_explicit_plan_policy_or_FK_safe_scheduling_and_real_FK_regression",
+    "source": "backend/internal/systembackupresources/restore_write.go",
+    "trigger": "retain child IDs while changing their job_id from a deleted old job to a new job",
+    "effect": "delete phase cascades retained children; later UPDATE cannot affect exactly one row, so a FK-valid transition is rejected and must roll back",
+    "qualification": "B/C domain rules are not delivered. If this transition is prohibited, the candidate adapter must enforce that explicitly; the current helper contract does not state such a restriction.",
+    "real_MySQL_reproduction_pending": true
+  },
+  "model": {
+    "engine": "Node built-in SQLite in-memory",
+    "executes_Go_writer": false,
+    "actual_MySQL": false,
+    "before": {
+      "jobs": [
+        {
+          "id": 1
+        }
+      ],
+      "items": [
+        {
+          "id": 7,
+          "job_id": 1
+        }
+      ],
+      "reports": [
+        {
+          "id": 9,
+          "job_id": 1
+        }
+      ]
+    },
+    "after": {
+      "jobs": [
+        {
+          "id": 2
+        }
+      ],
+      "items": [
+        {
+          "id": 7,
+          "job_id": 2
+        }
+      ],
+      "reports": [
+        {
+          "id": 9,
+          "job_id": 2
+        }
+      ]
+    },
+    "production_phase_model": {
+      "delete_old_parent_first": true,
+      "cascaded_retained_children": 2,
+      "first_retained_child_UPDATE_affected": 0,
+      "writer_requires_affected": 1,
+      "rollback_restores_before": true
+    },
+    "FK_valid_control_order_succeeds": true,
+    "files_created": 0
+  },
+  "inputs": [
+    {
+      "path": "docs/evidence/d-resources-rules-local-d25149d0a27c4a7395680767a8f40802.json",
+      "size": 857,
+      "sha256": "039350e2d2faba7a0db4551b813a7bab16a055ac0d926c97e1179d70e16ff861"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-d25149d0a27c4a7395680767a8f40802-source.json",
+      "size": 625840,
+      "sha256": "a66e5017e5d97df68dc18f287bafdd2cf578f4643651ae0072a3f2aa63edaf5b"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-d25149d0a27c4a7395680767a8f40802.jsonl",
+      "size": 1148382,
+      "sha256": "6ee43ec29b5da5046ebed2e8168f955aa9a95de2bcd5d9da99a94040d59ebccb"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-a7788a3e6b8a474db6fb5bb667aa36cd.jsonl",
+      "size": 939486,
+      "sha256": "f8134dcbc4e0d4e05ed5001ea92e69b6548166d33bce2c225e25fa1a7ccc2af4"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-707446ecef2d48b0ba3552ddd937f7ea.json",
+      "size": 888,
+      "sha256": "9df9573782a93b11ec12630fa82ac86add2614bf5a7f283d93f93f23d9fbb32c"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-707446ecef2d48b0ba3552ddd937f7ea.jsonl",
+      "size": 1149068,
+      "sha256": "39d5144165df7ffa7802e63c79f4b18760291ccb4d6791f0594999ec7219b4fb"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_add_security_scan_tables.sql",
+      "size": 2878,
+      "sha256": "d42b4478cb2f0c2b603b24da85062c30c566e075ee954224d104738e3110068a"
+    },
+    {
+      "path": "docs/system-backup-d-resources-writer-20261023.md",
+      "size": 6023,
+      "sha256": "9bfef737af2b3634a6d504545c99840f6f33da2519f9b3404dbc5f3e9f7c8c9c"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-review-20261023.mjs",
+      "size": 8629,
+      "sha256": "e66f3f1830d54cbf260f0124377c3017f9cd4be4086cd8af05b7094e5c6643b4"
+    }
+  ],
+  "reviewed_source_pins": [
+    {
+      "path": "backend/internal/systembackupresources/capture_scope_test.go",
+      "size": 5578,
+      "sha256": "8b8c8c3b6c425ae12823e58861946384bd7676a4bd19a1d69bd3b58906edad81"
+    },
+    {
+      "path": "backend/internal/systembackupresources/capture_scope.go",
+      "size": 7231,
+      "sha256": "173ff582cc19bd8fe9b9a91a45183c4f16a5b5492422c6127f268f3cba36c867"
+    },
+    {
+      "path": "backend/internal/systembackupresources/completion_context_test.go",
+      "size": 5743,
+      "sha256": "c42fdf80e850caaffcf4f0afb78049728d3ea054ba45b4d9baca335f1568b15c"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion_runtime_test.go",
+      "size": 4973,
+      "sha256": "3649462a39098312109114baa518b52ce04f0b20f34d9e5a93af035ef2af3602"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion_test.go",
+      "size": 5809,
+      "sha256": "b670331a5889fc6b887c607858b64c4ffcb5fb7d1a2812a8ff70b4167e4b1b86"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion.go",
+      "size": 6484,
+      "sha256": "f98fb102dcfdf64321c077b8bf75b411b8b2a559e3c6a48f2716b3635b7cbf07"
+    },
+    {
+      "path": "backend/internal/systembackupresources/normalization_rules_test.go",
+      "size": 11047,
+      "sha256": "27a879e20125cf8144adc764488bafbe533a7f60c6a12ba6e9b091996f464a49"
+    },
+    {
+      "path": "backend/internal/systembackupresources/normalization_rules.go",
+      "size": 9532,
+      "sha256": "5be0fed405284506870ab3f4fd28501960293a09de592d56358fcf58b782c100"
+    },
+    {
+      "path": "backend/internal/systembackupresources/proof_presence_test.go",
+      "size": 5047,
+      "sha256": "5306ed70cf68282c6aa8a0c574352d8f01a0ae026a69a7f9a31336463a6c3bf6"
+    },
+    {
+      "path": "backend/internal/systembackupresources/proof_presence.go",
+      "size": 554,
+      "sha256": "24d8f1f1a80bfe977bd9c51adb6702b3e141229675cfebad72483c3be16309c1"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_audit_test.go",
+      "size": 9755,
+      "sha256": "edfc121ec39404d47d1331e1231c319fb96ab41be465bd927a974f144c82e9fc"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_audit.go",
+      "size": 8714,
+      "sha256": "21df94ca157ccef492e5e56246076a4d8843a292171eb67be9c445ed4c6948ed"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_egress_test.go",
+      "size": 7426,
+      "sha256": "05c812b63b71dd6290f6d280b2168d4a31f4cf0443bcf9d7e0e5ae2bd78f3495"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_egress.go",
+      "size": 5348,
+      "sha256": "b31cda0ba1ecd78d552406d0046017bba8f18f2c23c97314d04b26240d524533"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_fields_sql_test.go",
+      "size": 10209,
+      "sha256": "a3eb12a77361fd5dd10ae33fe68d37ef2019fb6082f12c0cf536acf55193a305"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_fields_sql.go",
+      "size": 6675,
+      "sha256": "8f761034361e2d29e52e60bd3657b63e2df927986a11f81f978863f0eabd3d7c"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_fields_test.go",
+      "size": 6436,
+      "sha256": "fe664aff5b6571b315e26bb1c73fcca7bfd8dd655893c18fed8b970bd2891f1f"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_fields.go",
+      "size": 6556,
+      "sha256": "5b9d8c758adde72b3e12004485edd62c7d8375e810a9251c0f73873b75388fb9"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_five_test.go",
+      "size": 4818,
+      "sha256": "c7f5d1ce649007cb0b0e4dddf1a05de892951a61d8ccb62755639bc876e785d5"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_five.go",
+      "size": 4514,
+      "sha256": "819c5f48adb7588c9e38475ea247c96ca61ad44ff48bd091fe0aef148b17d471"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_images_test.go",
+      "size": 7812,
+      "sha256": "bccfaf3edaab1bd1198a616285734c27936b312da023049970502d121014f31b"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_images.go",
+      "size": 6743,
+      "sha256": "5e26b0e46173cbc84d5d0896cab83ee789be06f18ddeb6aefa0d9da0c4f04fde"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_northbound_test.go",
+      "size": 10587,
+      "sha256": "eecae9a516e832f279406f4ba022280ea8a3f4839423ae1750c0c650ca4ce242"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_northbound.go",
+      "size": 9797,
+      "sha256": "c3881e64943d16cb8f45babc77cb4b9838859e08fa1b1fe46e7574b194df587b"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_readback_mysql_test.go",
+      "size": 16912,
+      "sha256": "e67d3a143773ca7c2f2113f77ce8926b13b18dc588eb51f5aefc3c5ea676d782"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_readback_test.go",
+      "size": 12345,
+      "sha256": "d014ccbeaaeecbe2fb8de8eeac620cd821d69f8b88518921fea0ff99c3ec40e6"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_readback.go",
+      "size": 4864,
+      "sha256": "7860b74cda22c3f18f0b2372b1bfaa63c699198fbbbb30cfec2b1d793642d864"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_write_test.go",
+      "size": 12846,
+      "sha256": "910aa8b314afea6a7f5f395157f4c648c0ce102100d17793d4cd9cfd917db6ae"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_write.go",
+      "size": 7790,
+      "sha256": "acf046d364e68703b67f87b09ee6fc0803e8a69c4155edd8ef8ee3537b72f7f6"
+    },
+    {
+      "path": "backend/internal/systembackupresources/sql_counts_test.go",
+      "size": 8311,
+      "sha256": "cd4680ce268b73244807e32c00ae056d16fb9157904971278a0878a427bfdc83"
+    },
+    {
+      "path": "backend/internal/systembackupresources/sql_counts.go",
+      "size": 3737,
+      "sha256": "0701dd9ab92b089f84ce7aa15f70440c9717d22b3bf379544a4bb187e677d81e"
+    },
+    {
+      "path": "backend/internal/systembackupresources/testdata/resources-backup-verify-draft.json",
+      "size": 1804,
+      "sha256": "85bbbd72fb655b345761b2809a28aeeec029d76385c4d529c545eb97440493ea"
+    },
+    {
+      "path": "backend/internal/systembackupresources/testdata/restore-readback-mysql-inputs.json",
+      "size": 85438,
+      "sha256": "b129488961375a7e523a2265d9d22c98dd0c0c664da2916403ee3e79a215f302"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier_input_isolation_test.go",
+      "size": 7693,
+      "sha256": "684d5c0c2ddf66e35359792c547701285c0a97f596eb2d33484f4e8eab94fe62"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier_test.go",
+      "size": 3931,
+      "sha256": "652f2d29493953274d296520030a0766af9d7570ae53f69e6646e78c03620057"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier.go",
+      "size": 5725,
+      "sha256": "ccd414f865b66d47a4a4853dc3840c48228585904a0aa882a8b5388108827573"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "size": 98179,
+      "sha256": "8b72c233d83844e8d36e64b75d0bb690b27aa902ef99c28f38b61f5dedeae9f8"
+    },
+    {
+      "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+      "size": 18782,
+      "sha256": "32957c05eb59c70abcac99ddfc5f6eabf3be330c0489dc55494959522b69513c"
+    },
+    {
+      "path": "scripts/system-backup-d-resources-rules-validation.ps1",
+      "size": 6903,
+      "sha256": "7122a248f1217fcb4b62f30e7d47e305d38274e76a25ba8de0126075694edd09"
+    }
+  ]
+}

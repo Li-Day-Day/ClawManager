@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {validateOrdinaryInventory,validateBootstrapRepairSeeds,bootstrapRepairSeedRoots} from './d2-current-ordinary-inventory-20261027.mjs';
+const pkg='clawreef/internal/systembackupproducer';
+const events=(names=['TestOld'],action='pass')=>[{Action:'start',Package:pkg},...names.flatMap(Test=>[{Action:'run',Package:pkg,Test},{Action:action,Package:pkg,Test,Elapsed:0.01}]),{Action:action,Package:pkg,Elapsed:0.1}].map(JSON.stringify).join('\n');
+test('synthetic complete current inventory preserves old tests and accepts added tests',()=>assert.equal(validateOrdinaryInventory(events(['TestOld','TestNew']),['internal/systembackupproducer'],events()).packages[0].roots,2));
+test('missing previous test rejected',()=>assert.throws(()=>validateOrdinaryInventory(events(['TestNew']),['internal/systembackupproducer'],events())));
+test('failed package rejected',()=>assert.throws(()=>validateOrdinaryInventory(events(['TestOld'],'fail'),['internal/systembackupproducer'],events())));
+test('skipped test rejected',()=>assert.throws(()=>validateOrdinaryInventory(events(['TestOld'],'skip'),['internal/systembackupproducer'],events())));
+test('missing requested package rejected',()=>assert.throws(()=>validateOrdinaryInventory(events(),['internal/systembackupproducer','cmd/server'],events())));
+test('unreviewed package rejected',()=>assert.throws(()=>validateOrdinaryInventory(events(),['internal/db'],events())));
+test('duplicate requested package rejected',()=>assert.throws(()=>validateOrdinaryInventory(events(),['internal/systembackupproducer','internal/systembackupproducer'],events())));
+test('zero tests rejected',()=>assert.throws(()=>validateOrdinaryInventory(events([]),['internal/systembackupproducer'],events())));
+const seedEvents=names=>events(names).replaceAll(pkg,'clawreef/internal/systembackupevidence');
+test('exact three missing local seeds accepted as synthetic inventory',()=>assert.equal(validateBootstrapRepairSeeds(seedEvents(bootstrapRepairSeedRoots)).names.length,3));
+test('original materials seed is excluded from this supplement',()=>assert.throws(()=>validateBootstrapRepairSeeds(seedEvents([...bootstrapRepairSeedRoots,'TestDBootstrapOriginalMaterialsMySQLSeed']))));
+test('missing bootstrap seed rejected',()=>assert.throws(()=>validateBootstrapRepairSeeds(seedEvents(bootstrapRepairSeedRoots.slice(1)))));

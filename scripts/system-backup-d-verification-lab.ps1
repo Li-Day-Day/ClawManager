@@ -1,4 +1,4 @@
-param([switch]$Smoke)
+﻿param([switch]$Smoke)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $repo = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -34,11 +34,11 @@ try {
     $ready = $false
     for ($attempt=0; $attempt -lt 80; $attempt++) {
         if ($backendProcess.HasExited -or $webProcess.HasExited) { throw ('测试进程退出。' + (Get-Content -LiteralPath (Join-Path $owned 'backend.err'),(Join-Path $owned 'web.err') -Raw)) }
-        try { $null = Invoke-WebRequest -Uri 'http://127.0.0.1:19032/verification-lab/state' -TimeoutSec 1; $ready=$true; break } catch { Start-Sleep -Milliseconds 250 }
+        try { $null = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:19032/verification-lab/state' -TimeoutSec 1; $ready=$true; break } catch { Start-Sleep -Milliseconds 250 }
     }
     if (!$ready) { throw '测试服务未在限定时间内就绪。' }
     if ($Smoke) {
-        $null = Invoke-WebRequest -Uri 'http://127.0.0.1:19032/verification-lab.html' -TimeoutSec 5
+        $null = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:19032/verification-lab.html' -TimeoutSec 5
         $env:VERIFICATION_LAB_URL='http://127.0.0.1:19031'
         & node --test (Join-Path $repo 'frontend/scripts/system-backups-verification-lab.test.mjs')
         if ($LASTEXITCODE -ne 0) { throw '独立入口 HTTP/合同/下载回归失败。' }

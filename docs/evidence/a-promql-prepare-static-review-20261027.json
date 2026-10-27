@@ -1,0 +1,20 @@
+{
+  "kind": "a_promql_prepare_static_AST_review.v1",
+  "status": "source_parsed_commands_reviewed_not_executed",
+  "path": "scripts/system-backup-promql-prepare.ps1",
+  "sha256": "c6cb38cd748d9f7bb72f309e0946d1a30a820e9417667ea890fa7cf56f3795be",
+  "AST_errors": 0,
+  "docker_source_commands": [
+    "& docker image inspect $Image",
+    "& docker create --pull=never --platform \"linux/$Architecture\" --network none $info.Id",
+    "& docker cp \"${containerId}:/bin/promtool\" $binary",
+    "& docker rm -v $containerId"
+  ],
+  "script_executed": false,
+  "Go": false,
+  "SSH": false,
+  "containers_created": false,
+  "dependencies_installed": false,
+  "PromQL_executed": false,
+  "test_build_products_created": false
+}

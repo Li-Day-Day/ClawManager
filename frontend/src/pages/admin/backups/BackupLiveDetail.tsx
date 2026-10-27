@@ -67,6 +67,8 @@ export default function BackupLiveDetail({ selection, close, reader = systemBack
         fields.push(
           [b('detailSourceArtifact'), detail.source.source_public_id],
           [b('purpose'), label(detail.task_purpose)],
+          [b('targetProfile'), label(detail.target_profile)],
+          [b('cleanupPolicy'), label(detail.cleanup_policy)],
           [b('cleanupStatus'), label(detail.cleanup_status)],
           [b('detailCleanupFailure'), label(detail.cleanup_failure_code)],
           [b('drillEligibility'), detail.acceptance_eligible ? b('status_eligible') : b('ineligible')],

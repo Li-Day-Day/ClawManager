@@ -1,0 +1,98 @@
+{
+  "kind": "d_gc_full_collect_capsule_fix_source_ready.v1",
+  "status": "tagged_capsule_fixture_source_ready_native_empty_cwd_regression_pending",
+  "before": {
+    "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+    "size": 23173,
+    "sha256": "e9806c4892ac770ae2f3cf97e9bcb6ba2f123d125b6d5a00d9533e055d9bdf09"
+  },
+  "after": {
+    "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+    "size": 25657,
+    "sha256": "4efec42b77082c31ea9d73f4274a9e2f06afa191d87c0a03d875a27001994505"
+  },
+  "exact_inverse_reconstructs_before": true,
+  "tagged_calls_replaced": 2,
+  "coverage": [
+    "in-checkout FullCollect seed",
+    "actual newDGCColdFixture used by cold7 and lifecycle15"
+  ],
+  "config_source": "decoded embedded aDownloadMFASeed / validated remote capsule EffectiveConfig via existing admissionConfigBytes API",
+  "preserved": [
+    "original store Ref setup",
+    "committed owner policy",
+    "original fixture reservation interval",
+    "SQL authority constructor",
+    "real model Admit",
+    "real model result Finish",
+    "existing sealed retention GC group constructor",
+    "all seven cold SQL statements and assertions"
+  ],
+  "shared_inputs_unchanged": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "size": 37682,
+      "sha256": "c89c5a9791175689aa19cf296ca55c7e074e3f7c5a3b6606a45da3a0c283b067"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_committed_test.go",
+      "size": 23948,
+      "sha256": "6b1463f0e15dd086edd8429c3688392b5ee33c11e14b8ec3a04bb66a1aaa6a3f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_group_test.go",
+      "size": 13735,
+      "sha256": "ca382db8117b48ccd7a4370e940b72f41c743cdaeaa14ccc01b3543bd8a45254"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_test.go",
+      "size": 25630,
+      "sha256": "7061106002cbae4d23a842a2ad76a85dff6a2688669c34369f8924e93fbaae69"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_mfa_mysql_test.go",
+      "size": 32443,
+      "sha256": "91759e494a24616ff785fffe5ab6c3ae71d625bebcaaeb5cc8356bb8ede70c0e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+      "size": 46247,
+      "sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-full-collect-receiver.mjs",
+      "size": 7492,
+      "sha256": "83bcd8ee9ed5ee8d473dc3b95c6596a4c1c8b9e7359735bfbbea9fe32c27e189"
+    }
+  ],
+  "failed_run_retained": {
+    "path": "docs/evidence/d-gc-full-lifecycle-remote-5c1c51457b1f42aa94223469a5f2ae92.txt",
+    "size": 4996,
+    "sha256": "a3e63bced6c98e5c75b7f0b026715b3c38fe4006551e2e2e5f2033b6d4fa1632"
+  },
+  "prior_formal_review": {
+    "path": "docs/evidence/a-gc-lifecycle-operator-source-reviewed-20261027-r3.json",
+    "size": 664726,
+    "sha256": "7425805a56e061e999956777845c472eb330b89b3cbf7981f9bf95237255fc2b"
+  },
+  "checker": {
+    "path": "docs/evidence/d-gc-full-collect-capsule-fix-20261027.mjs",
+    "size": 5293,
+    "sha256": "e9787a4864665803574262cd347399ef183aada1e25dffdea4a43c2c0f7c4116"
+  },
+  "required_native_regression": [
+    "GC3 actual source-context native events",
+    "one current tagged evidence executable",
+    "same executable executes all GC3 from a genuinely empty cwd; do not copy docs or repository data there",
+    "current Linux tagged evidence compile/hash",
+    "source/input postcheck and exact owned cleanup"
+  ],
+  "Go_started": false,
+  "SQL": false,
+  "SSH": false,
+  "receiver_weakened": false,
+  "missing_docs_fabricated": false,
+  "ordinary_model_loader_modified": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

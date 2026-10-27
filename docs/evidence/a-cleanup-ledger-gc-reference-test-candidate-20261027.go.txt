@@ -1,0 +1,106 @@
+// Candidate only: apply together with the exact cleanup ledger migration and
+// GC reference/required-read-table overlays in one private reviewed source.
+package systembackupevidence
+
+import (
+	"database/sql/driver"
+	"strings"
+	"testing"
+)
+
+func TestACleanupLedgerReferenceBlocksOriginalGroup(t *testing.T) {
+	for _, mode := range []string{"empty", "present", "late_reference", "missing_column", "wrong_type", "unknown_column", "foreign_schema_fk", "cascade_fk"} {
+		t.Run(mode, func(t *testing.T) {
+			f := newRetentionGCFixture(t)
+			// Independent published SQL fact; do not derive this selector from
+			// gcDirectReferences, which could omit the very row under test.
+			query := "SELECT id FROM system_backup_cleanup_attempts WHERE cleanup_operation_id=? LIMIT 1 FOR UPDATE"
+			key := gcTaskRangeKey(query, int64(73))
+			columns := f.d.early.catalog[downloadGCEarlyColumnsSQL]
+			var ledgerColumn []driver.Value
+			found := 0
+			filtered := make([][]driver.Value, 0, len(columns))
+			for _, row := range columns {
+				if row[0] == "system_backup_cleanup_attempts" && row[1] == "cleanup_operation_id" {
+					found++
+					ledgerColumn = append([]driver.Value(nil), row...)
+					// Force the independently declared BIGINT, even if a
+					// mistaken production classifier supplied another type.
+					row[3] = "bigint unsigned"
+					if mode == "missing_column" {
+						continue
+					}
+					if mode == "wrong_type" {
+						row[3] = "varchar(40)"
+					}
+				}
+				filtered = append(filtered, row)
+			}
+			if found != 1 {
+				t.Fatal("cleanup operation reference was not inventoried exactly once")
+			}
+			f.d.early.catalog[downloadGCEarlyColumnsSQL] = filtered
+			if mode == "unknown_column" {
+				ledgerColumn[1], ledgerColumn[2], ledgerColumn[3] = "unexpected_operation_id", "997", "bigint unsigned"
+				f.d.early.catalog[downloadGCEarlyColumnsSQL] = append(filtered, ledgerColumn)
+			}
+			if mode == "foreign_schema_fk" || mode == "cascade_fk" {
+				database, rule := f.d.identity.Database, "RESTRICT"
+				if mode == "foreign_schema_fk" {
+					database = "foreign_schema"
+				} else {
+					rule = "CASCADE"
+				}
+				f.d.early.catalog[downloadGCEarlyForeignKeysSQL] = append(f.d.early.catalog[downloadGCEarlyForeignKeysSQL], []driver.Value{
+					database, "system_backup_cleanup_attempts", "cleanup_operation_ref", "1", "cleanup_operation_id",
+					f.d.identity.Database, "system_backup_operations", "id", "RESTRICT", rule,
+				})
+			}
+			if mode == "present" {
+				f.d.direct.refs[key] = [][]driver.Value{{int64(4001)}}
+			}
+			if mode == "late_reference" {
+				reads := 0
+				f.d.direct.afterRead = func(q string) {
+					if q == query {
+						reads++
+						if reads == 2 {
+							f.d.direct.refs[key] = [][]driver.Value{{int64(4001)}}
+						}
+					}
+				}
+			}
+			// Re-pin the synthetic outer metadata so these counterexamples
+			// exercise the closed direct catalog and the actual collector.
+			f.d.early.service.c.Metadata = f.d.early.pins()
+			before := f.d.reserved
+			err := f.s.Collect(f.ctx, f.operation)
+			if mode != "empty" {
+				if err == nil || f.d.commits != f.commits || f.d.rollbacks != f.rollbacks+1 || len(f.d.writes) != 0 || f.d.reserved != before {
+					t.Fatal("cleanup ledger reference or metadata drift did not roll back the complete group", err)
+				}
+				return
+			}
+			if err != nil || f.d.commits != f.commits+1 {
+				t.Fatal("confirmed empty cleanup reference range prevented an eligible collection", err)
+			}
+			seen := false
+			for _, locked := range f.d.direct.initial {
+				if locked.query == query {
+					seen = true
+					if locked.stage != 5 || len(locked.args) != 1 || locked.args[0] != int64(73) {
+						t.Fatal("cleanup ledger reference was scoped, exempted or locked in the wrong phase")
+					}
+				}
+			}
+			if !seen {
+				t.Fatal("empty cleanup ledger range was silently omitted")
+			}
+			for _, write := range f.d.writes {
+				if strings.Contains(write, "system_backup_cleanup_attempts") {
+					t.Fatal("download GC wrote or deleted cleanup timing facts")
+				}
+			}
+		})
+	}
+}

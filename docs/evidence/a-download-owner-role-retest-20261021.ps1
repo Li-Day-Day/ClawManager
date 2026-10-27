@@ -24,7 +24,7 @@ try {
         $aRetestID=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8)
         $aRetestLog=Join-Path $aRetestRoot ('docs/evidence/a-download-'+$aRetestMode+'-mysql-remote-'+$aRetestID+'.txt')
         $aRetestSource=Join-Path $aRetestRoot ('docs/evidence/a-download-'+$aRetestMode+'-mysql-remote-source-'+$aRetestID+'.json')
-        $aRetestArgs=@{Remote=$true;BuildParallelism=1;SshTarget='root@10.130.14.23';SourceManifestPath=$aRetestSource}
+        $aRetestArgs=@{Remote=$true;RequireReviewedOwnerBaseline=$true;BuildParallelism=1;SshTarget='root@10.130.14.23';SourceManifestPath=$aRetestSource}
         if($aRetestMode -eq 'owners'){$aRetestArgs.DownloadOwnersOnly=$true}else{$aRetestArgs.DownloadGCRoleOnly=$true}
         $aRetestExit=1
         Start-Transcript -LiteralPath $aRetestLog -NoClobber|Out-Null

@@ -1,0 +1,71 @@
+{
+  "kind": "a_download_live_readiness.v1",
+  "observed_at": "2026-10-23T03:33:24.773Z",
+  "scope": "task ownership, permissions, real login, MFA, download and audit",
+  "owner_gate": {
+    "pid": 39728,
+    "stem": "docs/evidence/a-owner-gc-full-local-20261023-111154",
+    "process_confirmed_live": true,
+    "security_package_passed": true,
+    "evidence_package_terminal": false,
+    "baseline_accepted": false,
+    "reviewer": "docs/evidence/a-owner-gc-full-review-20261023.mjs",
+    "incomplete_gate_rejected_without_acceptance": true
+  },
+  "transport": {
+    "target": "root@10.130.14.23",
+    "executable": "C:/Windows/System32/OpenSSH/ssh.exe",
+    "batch_mode": true,
+    "strict_host_key_checking": true,
+    "connect_timeout_seconds": 8,
+    "exit_code": 1,
+    "result": "Permission denied (publickey,password).",
+    "remote_command_started": false,
+    "credentials_written": false
+  },
+  "field_plan": {
+    "status": "PLAN_INCOMPLETE",
+    "exit_code": 2,
+    "missing": [
+      "existing_capacity_public_input",
+      "existing_observer_connection",
+      "existing_registration_connection",
+      "existing_download_connection",
+      "existing_collector_connection",
+      "existing_data_volume",
+      "existing_report_volume",
+      "existing_journal_volume",
+      "pinned_public_provider_ca",
+      "pinned_original_public_materials"
+    ],
+    "cluster_contacted": false,
+    "database_contacted": false,
+    "actual_material_presence": "unknown"
+  },
+  "actual_owner_SQL_accepted": false,
+  "real_login_MFA_download_audit_accepted": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "docs/evidence/a-owner-gc-full-local-20261023-111154-source.json",
+      "size": 315863,
+      "sha256": "121d6586f0ce06eda7887e40e21e5dbca12591e8c29a736336262b04481503bd"
+    },
+    {
+      "path": "docs/evidence/a-field-evidence-plan-20261021.json",
+      "size": 376,
+      "sha256": "5a5fe9bfc20d20189cc379dfba6ccd25d0a2c882cf71f1325a52428cb234ebd0"
+    },
+    {
+      "path": "scripts/system-backup-a-field-evidence.py",
+      "size": 38976,
+      "sha256": "dad858d939c8c3b7bf8d449da4524bfc0a200dcd4e9ae368e0f30b3570676fcc"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-full-review-20261023.mjs",
+      "size": 5015,
+      "sha256": "437cd3cec51ed20ef46b827ddb5ad67e94926302aa90715b02a0c9618a01debe"
+    }
+  ]
+}

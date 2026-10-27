@@ -1,0 +1,51 @@
+LOCAL_PASS resources-readback complete_package=yes default_vet=yes seed=yes linux_probe=yes pinned_migrations=yes binary_sha256=b83d1984e5255ea8291cd607795eea9c9efb287350ca762286182ee8f76a4c91 real_mysql=not_run
+root@10.130.14.23's password:
+
+close - IO is still pending on closed socket. read:1, write:0, io:000001BAE318F300
+root@10.130.14.23's password:
+bundle.tar                                                                                         100%   19MB   3.5MB/s   00:05
+close - IO is still pending on closed socket. read:1, write:0, io:000001B47740CE40
+root@10.130.14.23's password:
+bundle.tar: OK
+tar: Ignoring unknown extended header keyword 'SCHILY.fflags'
+RUN namespace=sbk-mig-261023083448-0414 uid=7990d355-d21f-480e-806e-74cd3a8def97 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe","migration_count":96,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=3c857daabdf16ebc7dc50e88a0d625ef3ab45a676e5df3f8397c14b55e6011aa catalog_sha256=0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe
+PASS fresh-migration-replay=001..081 applied=96 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestDResourcesWriteMySQL
+    restore_write_mysql_test.go:109: RESOURCES_FIXTURE mysql=8.4.8 migrations=96 tables=44 clone=LIKE foreign_key_proof=no synthetic_registry=yes
+=== RUN   TestDResourcesWriteMySQL/commit_updates_then_select_only_readback
+=== RUN   TestDResourcesWriteMySQL/insert_into_complete_empty_target
+=== RUN   TestDResourcesWriteMySQL/delete_complete_row_set
+=== RUN   TestDResourcesWriteMySQL/later_common_stage_rollback
+=== RUN   TestDResourcesWriteMySQL/final_authority_failure_rollback
+=== RUN   TestDResourcesWriteMySQL/late_sql_failure_rollback
+=== RUN   TestDResourcesWriteMySQL/old_rr_snapshot_rejects_current_drift
+=== RUN   TestDResourcesWriteMySQL/existing_primary_row_lock
+=== RUN   TestDResourcesWriteMySQL/empty_primary_range_lock
+=== NAME  TestDResourcesWriteMySQL
+    restore_write_mysql_test.go:242: PASS resources-write-mysql cases=9 tables=9 independent_select_only=yes synthetic_proofs=yes foreign_key_proof=no ddl_freeze_proof=no production=no
+    restore_readback_mysql_test.go:144: CLEANED resources-mysql-owned-database-and-user=yes
+--- PASS: TestDResourcesWriteMySQL (6.72s)
+    --- PASS: TestDResourcesWriteMySQL/commit_updates_then_select_only_readback (0.56s)
+    --- PASS: TestDResourcesWriteMySQL/insert_into_complete_empty_target (0.48s)
+    --- PASS: TestDResourcesWriteMySQL/delete_complete_row_set (0.53s)
+    --- PASS: TestDResourcesWriteMySQL/later_common_stage_rollback (0.54s)
+    --- PASS: TestDResourcesWriteMySQL/final_authority_failure_rollback (0.46s)
+    --- PASS: TestDResourcesWriteMySQL/late_sql_failure_rollback (0.45s)
+    --- PASS: TestDResourcesWriteMySQL/old_rr_snapshot_rejects_current_drift (0.24s)
+    --- PASS: TestDResourcesWriteMySQL/existing_primary_row_lock (1.33s)
+    --- PASS: TestDResourcesWriteMySQL/empty_primary_range_lock (1.37s)
+PASS
+PASS d-resources-write-mysql cases=9 binary_sha256=b83d1984e5255ea8291cd607795eea9c9efb287350ca762286182ee8f76a4c91 inputs_sha256=b129488961375a7e523a2265d9d22c98dd0c0c664da2916403ee3e79a215f302 synthetic_proofs=yes full_restore=no production=no
+CLEANED namespace=sbk-mig-261023083448-0414 uid=7990d355-d21f-480e-806e-74cd3a8def97
+close - IO is still pending on closed socket. read:1, write:0, io:0000026AE4CB3450
+root@10.130.14.23's password:
+
+close - IO is still pending on closed socket. read:1, write:0, io:0000019D9883D990
+CLEANED resources-remote-scratch=yes
+CLEANED resources-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-671eb051f5944f9b82f254c6241bff9d removed=True
+RESOURCES_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-resources-mysql-20261023-155828-671eb051.json
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager>                                                                     ]
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "resources_writer_exit=$LASTEXITCODE"
+resources_writer_exit=0

@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -17,11 +18,19 @@ import (
 // SQL/provider/owner inputs remain synthetic; this tests the actual HTTP stack.
 type aDownloadDeadlineResponse struct {
 	http.ResponseWriter
-	deadline *time.Time
-	clears   *int
+	deadline     *time.Time
+	clears       *int
+	beforeResult func()
 }
 
 func (w aDownloadDeadlineResponse) Unwrap() http.ResponseWriter { return w.ResponseWriter }
+func (w aDownloadDeadlineResponse) Write(body []byte) (int, error) {
+	count, err := w.ResponseWriter.Write(body)
+	if err == nil && count == len(body) && !w.deadline.IsZero() && w.beforeResult != nil {
+		w.beforeResult()
+	}
+	return count, err
+}
 func (w aDownloadDeadlineResponse) SetWriteDeadline(at time.Time) error {
 	if at.IsZero() {
 		*w.clears++
@@ -107,20 +116,32 @@ func TestADownloadNativeBufferedOutputKeepsOriginalDeadline(t *testing.T) {
 						http.Error(w, "test fixture unavailable", http.StatusInternalServerError)
 						return
 					}
-					if mode == "result_crosses_deadline" {
-						// Allow the original native admission/provider/write path its
-						// four-second budget. Delay only at the final result clock, after
-						// audit/release work; never refresh the limit after Admit.
-						x.f.env.reservationUntil = x.f.db.now.Add(4 * time.Second)
-					}
+					// Keep the normal original reservation for admission/provider work.
+					// The writer below pauses BEFORE the independent result transaction;
+					// only its final clock then crosses the unchanged native deadline.
 					originalReservation = x.f.env.reservationUntil
-					x.h.ServeHTTP(aDownloadDeadlineResponse{w, &deadline, &clears}, r)
+					beforeResult := func() {
+						if mode != "result_crosses_deadline" {
+							return
+						}
+						// Leave two seconds of the ORIGINAL write limit when
+						// the separate five-second result budget starts. This
+						// wait is after native buffering and never renews a
+						// committed reservation, SQL limit or local deadline.
+						timer := time.NewTimer(time.Until(deadline.Add(-2 * time.Second)))
+						defer timer.Stop()
+						select {
+						case <-timer.C:
+						case <-r.Context().Done():
+						}
+					}
+					x.h.ServeHTTP(aDownloadDeadlineResponse{w, &deadline, &clears, beforeResult}, r)
 				}))
 				server.EnableHTTP2 = protocol == "http2"
 				server.StartTLS()
 				defer server.Close()
 				client := server.Client()
-				client.Timeout = 8 * time.Second
+				client.Timeout = 30 * time.Second
 				request, err := http.NewRequest(http.MethodGet, server.URL+x.f.request.URL.Path, nil)
 				if err != nil {
 					t.Fatal(err)
@@ -294,6 +315,11 @@ func TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead(t *testing.T) {
 			case "trailer":
 				x.f.request.Trailer = http.Header{"X-Trailer": {"PRIVATE trailer"}}
 			}
+			// Fixture signing and provider setup are outside admission. Sample
+			// SQL time now, keeping the SAME proof and all original limits.
+			if err := sampleAAdmissionProofTime(x.f, time.Now().UTC().Truncate(time.Microsecond)); err != nil {
+				t.Fatal("sample pre-admission SQL time", err)
+			}
 			x.h.ServeHTTP(w, x.f.request)
 			if w.Code != wantStatus || bytes.Contains(w.Body.Bytes(), []byte("PRIVATE")) || x.f.request.Body != body {
 				t.Fatal("body validation response or original request changed", w.Code, w.Body.String())
@@ -315,6 +341,52 @@ func TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead(t *testing.T) {
 				}
 			} else if reads != 1 || len(w.deadlines) != 2 || w.deadlines[0].IsZero() || !w.deadlines[1].IsZero() {
 				t.Fatal("read deadline was not set and cleared around one bounded read")
+			}
+		})
+	}
+}
+
+// Deterministically model slow fixture construction without sleeping or
+// weakening the production five-second SQL clock check. Sampling is permitted
+// only before admission; it must not renew any original authorization limit.
+func TestADownloadEmptyBodySQLClockFreshness(t *testing.T) {
+	for _, stale := range []bool{true, false} {
+		t.Run(map[bool]string{true: "stale", false: "fresh"}[stale], func(t *testing.T) {
+			x := newAdmittedHTTPFixture(t, "sensitive")
+			proofHeader := x.f.request.Header.Get("X-Strong-Auth-Proof")
+			originalProof := x.f.proof
+			reservation, authorityUntil, ownerDeadline := x.f.env.reservationUntil, x.f.env.validUntil, x.f.initial.OwnerDeadline
+			now := time.Now().UTC().Truncate(time.Microsecond)
+			if stale {
+				now = now.Add(-6 * time.Second)
+			}
+			if err := sampleAAdmissionProofTime(x.f, now); err != nil {
+				t.Fatal("sample original proof", err)
+			}
+			reads := 0
+			x.f.request.Body = &aDownloadBodyReader{read: func(p []byte) (int, error) {
+				reads++
+				if len(p) != 1 {
+					t.Error("unbounded body read")
+				}
+				return 0, io.EOF
+			}}
+			w := &aDownloadReadDeadlineWriter{admittedTestWriter: admittedWriter()}
+			x.h.ServeHTTP(w, x.f.request)
+			if reads != 1 || len(w.deadlines) != 2 || len(x.f.db.queries) == 0 {
+				t.Fatal("did not reach SQL after bounded EOF")
+			}
+			if stale {
+				// Admission is SQL-relative; the subsequent authority enforces
+				// SQL/local freshness before any provider read or plaintext.
+				if w.Code != http.StatusForbidden || x.f.db.inserts != 1 || len(x.store.scopes) != 0 || bytes.Contains(w.Body.Bytes(), x.plain[:21]) {
+					t.Fatal("stale SQL clock bypassed post-admission authority", w.Code)
+				}
+			} else if w.Code != http.StatusPartialContent || !bytes.Equal(w.Body.Bytes(), x.plain[:21]) || x.f.db.inserts != 1 || x.f.db.resultInserts != 1 || x.f.db.record.Claim != "" {
+				t.Fatal("fresh SQL clock did not complete original download", w.Code)
+			}
+			if !reflect.DeepEqual(x.f.proof, originalProof) || x.f.request.Header.Get("X-Strong-Auth-Proof") != proofHeader || x.f.env.reservationUntil != reservation || x.f.env.validUntil != authorityUntil || x.f.initial.OwnerDeadline != ownerDeadline {
+				t.Fatal("SQL sampling renewed original authorization")
 			}
 		})
 	}

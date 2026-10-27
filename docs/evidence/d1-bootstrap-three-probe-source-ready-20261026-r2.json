@@ -1,0 +1,37 @@
+{
+  "kind": "d1_bootstrap_probe_source_coordination.v2",
+  "source_ready": true,
+  "meaning": "Stable tagged source for fresh owned capture only; no native or SQL acceptance",
+  "files": [
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_mysql_test.go",
+      "size": 24353,
+      "sha256": "903aef5cbfc7fcc29b4e8d932b4b7c10f725efde30339fbc1ba7c418e2e994e8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_ranges_mysql_test.go",
+      "size": 15917,
+      "sha256": "462fc97e5bb9531b241f7d94bbeffd2a87c7764c126a9d7706de79756d7fbae5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_original_materials_mysql_test.go",
+      "size": 25537,
+      "sha256": "19b1c83160c3cc93f707ed90dfbe06155e2ae6a5f04d727a8d1e3e97496ee2ad"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/d_producer_mysql_test.go",
+      "size": 35080,
+      "sha256": "a15ad457a3e582bb661f907cd9933bcd218678dab2ad0d5a698821abf07b9b6a"
+    }
+  ],
+  "previous_ready_record": "docs/evidence/d1-bootstrap-three-probe-source-ready-20261026.json",
+  "changes": [
+    "nonce and CA real Prepare on every attempt, no unlocked history hint",
+    "seed requires real nonce and two CA original deadlines",
+    "test-only beforeDDL hook and pre-C1 real legacy anchors"
+  ],
+  "owned_go_running": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "dependencies_installed": false
+}

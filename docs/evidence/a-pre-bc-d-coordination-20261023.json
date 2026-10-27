@@ -1,0 +1,1284 @@
+{
+  "kind": "a_pre_bc_d_coordination.v1",
+  "status": "exact_parser_fix_promoted_independently_reviewed_27_slots_and_current_baseline_pending",
+  "owned_scope": "A before B/C: standalone nonce/CA candidate implementation, scoped validators/receivers and independent review handoff",
+  "current_owned_runtime_files": [
+    "backend/internal/systembackupnoncebootstrap/nonce.go",
+    "backend/internal/systembackupnoncebootstrap/nonce_test.go",
+    "backend/internal/systembackupcatrust/ca.go",
+    "backend/internal/systembackupcatrust/ca_test.go"
+  ],
+  "coordination_boundaries": {
+    "common_receivers_modified": false,
+    "GC_Go_files_modified": false,
+    "D_complete_closeout_outputs_modified": false,
+    "FK_or_owner_failure_fixtures_modified": false,
+    "new_duplicate_FK_or_owner_gate_started": false
+  },
+  "nonce_CA_r1": {
+    "status": "exact_local_preparation_accepted_peer_changes_requested",
+    "source_sha256": "c8cd927fb10133cabab70dd00f58dce092534d1d6e05a33a59314488a99d1e34",
+    "acceptance": "docs/evidence/a-nonce-ca-local-accepted-20261023.json",
+    "raw_receipt": "docs/evidence/a-nonce-bootstrap-candidate-20261023-153724-cd693e2c.json",
+    "log": "docs/evidence/a-nonce-ca-final-local-20261023-153722.txt",
+    "roots": 8,
+    "pass_events": 54,
+    "both_Linux_builds": true,
+    "frozen_and_current_source_postchecks": true,
+    "cleanup_independently_verified": true,
+    "peer_decision": "docs/evidence/d-a-nonce-ca-reviewed-20261023.json",
+    "peer_finding": "D-A-CA-01",
+    "old_CA_source_capsule": "docs/evidence/a-ca-binding-original-source-20261023.json",
+    "historical_receipts_rewritten": false
+  },
+  "nonce_CA_r2": {
+    "status": "terminal_exit_0_exact_local_and_D_peer_review_accepted",
+    "tool_session_id": 96502,
+    "entry": "scripts/system-backup-a-nonce-ca-r2-validation.ps1",
+    "log": "docs/evidence/a-nonce-ca-r2-local-20261023-164638.txt",
+    "repair": "CA Binding value-receiver String/GoString/JSON rejection; eight value/pointer formatting/JSON cases",
+    "required_evidence": [
+      "old exact CA overlay produces all eight expected failures",
+      "new full nonce/CA packages pass with default vet",
+      "both Linux test programs compile",
+      "complete frozen/current source postchecks",
+      "terminal exit and exact owner cleanup"
+    ],
+    "cache_source": ".tmp-d-index-cache-becb8b4d45194f83bcd50d6423f8e8b4/cache",
+    "cache_source_read_only": true,
+    "Go_count": 1,
+    "cache_seed_helper": "scripts/system-backup-a-compilation-cache-seed.mjs",
+    "next_peer_action": "Exact r2 peer review complete. Further source changes need a new accurate review; do not rewrite r1 or r2 evidence.",
+    "source_sha256": "3f10b7cb687f2ecb666b428600b44850436afb051b72673d7d0a30aa604710bb",
+    "source_files": 385,
+    "cache_source_available": false,
+    "cache_entries_copied": 0,
+    "pretest_failures_preserved": [
+      "docs/evidence/a-nonce-ca-r2-candidate-20261023-163540-606e73a9.json",
+      "docs/evidence/a-nonce-ca-r2-candidate-20261023-164248-511c1f06.json"
+    ],
+    "terminal_exit": 0,
+    "receipt": "docs/evidence/a-nonce-ca-r2-candidate-20261023-164639-61dbbaab.json",
+    "acceptance": "docs/evidence/a-nonce-ca-r2-local-accepted-20261023.json",
+    "peer_request": "docs/evidence/a-nonce-ca-peer-review-request-20261023-r2.json",
+    "peer_decision": "docs/evidence/d-a-nonce-ca-reviewed-20261023-r2.json",
+    "peer_finding_closed_for_exact_r2": true,
+    "roots": 9,
+    "pass_events": 63,
+    "original_tests_preserved": 54,
+    "old_failed_boundaries": 8,
+    "both_Linux_builds": true,
+    "frozen_and_current_source_postchecks": true,
+    "cleanup_independently_verified": true,
+    "receiver_positive_cases": 2,
+    "receiver_rejection_cases": 19
+  },
+  "GC_A_static_opinion": {
+    "document": "docs/system-backup-a-gc-work-review-20261023.md",
+    "scope": "static architecture review only; no runtime/role/production approval",
+    "finding": "A-GC-WORK-01: formal production composition must place last authority/worker/fence/SQL deadline/capacity checks after the final ticket query and before the sole commit",
+    "D_followup": "Resolve the future composition decision together with exact grants/lock order/actual protocol evidence; this note does not request edits to current GC Go or additional tests in D's active gate.",
+    "D_design_response": "docs/system-backup-d-gc-work-handoff-20261023.md",
+    "response_status": "D accepted proposed after-ticket finalizer ordering as design only; production finalizer, joint authority/protocol and actual acceptance remain pending"
+  },
+  "other_failure_evidence": {
+    "FK_final": "docs/evidence/a-writer-fk-final-failure-reviewed-20261023.json",
+    "FK_final_accepted": false,
+    "snapshot_no_build_reproduction": "docs/evidence/a-snapshot-diagnostic-20261023-160818-486b3c9f.json",
+    "snapshot_reproduction_result": "1623 files; set/order/bytes passed; exact owned clone removed; old FK failure not reinterpreted",
+    "owner_log": "docs/evidence/a-owner-final-full-local-20261023-144309.txt",
+    "owner_terminal_exit": 1,
+    "owner_failures": [
+      "admitted HTTP result_failure",
+      "native HTTP1 result_crosses_deadline",
+      "producer GC complete capacity assertion",
+      "evidence package 45-minute timeout"
+    ],
+    "owner_diagnosis_owner": "A chat: 作为A，现在该做什么"
+  },
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "current_resources_preparation": {
+    "review": "docs/evidence/a-resources-current-preparation-reviewed-20261023.json",
+    "ordinary_roots": 71,
+    "ordinary_pass_events": 843,
+    "seeds": 3,
+    "Linux_programs": 2,
+    "scope": "resource_and_migration_dependency_closure_only",
+    "actual_writer_FK_pending": true
+  },
+  "GC_design_response_review": {
+    "status": "after_ticket_finalizer_design_order_accepted_implementation_and_joint_authority_pending",
+    "finding": "A-GC-WORK-01",
+    "design_accepted": true,
+    "implementation_complete": false,
+    "full_GC_accepted": false,
+    "actual_SQL": false,
+    "joint_A_D_approval": false,
+    "production_approved": false,
+    "inputs": [
+      {
+        "path": "docs/system-backup-a-gc-work-review-20261023.md",
+        "size": 6421,
+        "sha256": "e127d640e1d14e836285e8c85b593fd305f87ff986c84cf87290e8e6891376b4"
+      },
+      {
+        "path": "docs/system-backup-d-gc-work-handoff-20261023.md",
+        "size": 6884,
+        "sha256": "7789fdb7ed930daf42d10d74806211ed742f2701dd4276c34d3df7c7df20fd6b"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+        "size": 31451,
+        "sha256": "77718ddf597105ca73544bd270024e3f5c8fa989316471122ef27468df303417"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+        "size": 6357,
+        "sha256": "a0ea232611d1ea7b6878b23c04da18500f896fcaa281228eebda408cbf7312b0"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_work_test.go",
+        "size": 5152,
+        "sha256": "f445d6b7648a8948e37217cf531ec040c25e358a52b2b4b6b0bd09ab64366b64"
+      }
+    ]
+  },
+  "owner_composition_input_crosscheck": "docs/evidence/a2-owner-composition-input-crosscheck-20261023.json",
+  "current_owner_ordinary_inventory_review": "docs/evidence/a2-owner-ordinary-inventory-reviewed-20261023.json",
+  "owner_composer_format_observation": {
+    "observed_at": "2026-10-23T09:26:51.973Z",
+    "status": "wrong_snapshot_parser_detected_before_acceptance",
+    "actual_snapshot_kind": "d_local_closeout_snapshot.v1",
+    "resources_parser_requires": "d_index_group_source_snapshot",
+    "affected_inputs": [
+      {
+        "path": "docs/evidence/a-owner-current-composed-review-20261023.mjs",
+        "size": 10024,
+        "sha256": "9353a21e3ff57319c5592ea6ee33f446b4f99be5351fa009460e7a0b58047ab1"
+      },
+      {
+        "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+        "size": 26152,
+        "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+      },
+      {
+        "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-source.json",
+        "size": 311104,
+        "sha256": "23ca648c8e0c1c8a781c833a21c5b33c22116e7c14bac514daf54cb6e2468717"
+      }
+    ],
+    "observation": "A2 first independent command rejected with AssertionError at resources validateManifest; no acceptance was written. Native ordinary logs independently checked with their actual snapshot format: 640 roots, 5148 pass events, old5138 preserved. A1 owns composer changes; the full owner gate remains unaccepted.",
+    "production_approved": false,
+    "user_authorized_send_to_A1": true,
+    "sent_to_thread": "01a1676e-1c7a-7cd3-89fe-f188be645950",
+    "current_status": "fixed_in_dedicated_closeout_parser_independently_reviewed_20261026",
+    "review": "docs/evidence/a2-owner-closeout-source-reviewed-20261026.json"
+  },
+  "current_owner_supplement_review": "docs/evidence/a2-owner-supplement-native-reviewed-20261023.json",
+  "owner_source_format_fix_review": {
+    "status": "reviewed_exact_schema_fix_not_full_gate",
+    "date": "2026-10-26",
+    "review": "docs/evidence/a2-owner-closeout-source-reviewed-20261026.json",
+    "actual_positive_manifests": 2,
+    "rejection_cases": 30,
+    "recomputed_digest_rejections": 21,
+    "supplement_module_check_passed": true,
+    "incomplete_gate_rejected_without_output_changes": true,
+    "Go_or_builds_run": false,
+    "scratch_created": false
+  },
+  "resume_20261026": {
+    "observed_at": "2026-10-26T00:20:35.175Z",
+    "old_full_receipt": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a.json",
+    "old_full_receipt_exists": false,
+    "old_server_build_fail_log": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-step-6.log",
+    "old_native_build_fail_imports": [
+      "k8s.io/kube-openapi/pkg/common",
+      "k8s.io/kube-openapi/pkg/handler3",
+      "k8s.io/client-go/openapi",
+      "k8s.io/client-go/discovery",
+      "k8s.io/client-go/applyconfigurations/internal",
+      "k8s.io/client-go/applyconfigurations/meta/v1",
+      "k8s.io/client-go/applyconfigurations/admissionregistration/v1",
+      "github.com/pkg/errors",
+      "gopkg.in/evanphx/json-patch.v4"
+    ],
+    "old_gate_accepted": false,
+    "recovery_owner": "D2",
+    "finalizer_implementation_owner": "D2",
+    "finalizer_implementation_accepted": false,
+    "note": "Do not inherit old running status or restart the peer-owned Go job. D2 handles old interrupted gate, exact-owner cleanup, and finalizer final-source validation."
+  },
+  "finalizer_incremental_clock_review": "docs/evidence/a2-gc-finalizer-clock-review-20261026.json",
+  "finalizer_resumed_static_observation": {
+    "observed_at": "2026-10-26T00:35:07.766Z",
+    "dynamic_context_value_comparability_checked": true,
+    "source": {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "size": 2816,
+      "sha256": "28e93f205ee04d8692e996b709485e6f7582f63f3a15b2cf7177f72bdcb269bc"
+    },
+    "old_interrupted_owner": ".tmp-d-index-cache-53f39288bb914e1ca2f2bd9287e7874a",
+    "old_interrupted_owner_independently_absent": true,
+    "new_peer_validation_complete": false,
+    "production_approved": false
+  },
+  "finalizer_diagnostic_r2_observation": "docs/evidence/a2-finalizer-diagnostic-observed-20261026.json",
+  "owner_detached_argv_review": {
+    "valid_evidence": "docs/evidence/a2-owner-detached-argv-observed-20261026-r2.json",
+    "previous_invalid_comparison_report": "docs/evidence/a2-owner-detached-argv-observed-20261026.json",
+    "probe": "docs/evidence/a2-owner-detached-argv-probe-20261026.ps1",
+    "literal_argument_count": 9,
+    "expected_argument_count": 5,
+    "explicit_string_array_count": 5,
+    "ordinal_comparison_passed": true,
+    "Go_or_test_executable_run": false,
+    "peer_runner_modified": false,
+    "peer_process_stopped": false,
+    "shared_with_A1": true,
+    "current_gate_accepted": false,
+    "comparison_invalidation": "docs/evidence/a2-owner-detached-argv-comparison-invalidated-20261026.json"
+  },
+  "bootstrap_producer_consumption_interface_review": "docs/evidence/a2-bootstrap-producer-consumption-reviewed-20261026.json",
+  "final_owner_receiver_boundary_review": "docs/evidence/a2-owner-final-receiver-reviewed-20261026.json",
+  "final_owner_native_helper_tests": {
+    "log": "docs/evidence/a2-owner-finalizer-native-tests-20261026.txt",
+    "tests": 16,
+    "failed": 0,
+    "skipped": 0,
+    "native_exit": 0,
+    "Go_repeated": false
+  },
+  "writer_fk_actual_review_20261026": {
+    "review": "docs/evidence/a2-writer-fk-actual-reviewed-20261026.json",
+    "actual_cases": 10,
+    "declared_FKs": 2,
+    "scope": "synthetic_proofs_only",
+    "critical_inputs_match": true,
+    "formal_A1_signoff_claimed": false,
+    "remote_cleanup_independently_queried": false,
+    "remote_rerun_required_for_FK_evidence": false,
+    "current_full_source_matches": false,
+    "source_drift": "backend/cmd/server/system_backup_read_drill_history_mysql_test.go"
+  },
+  "finalizer_terminal_observation_20261026": {
+    "receipt": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25.json",
+    "wrapper_terminal": true,
+    "frozen_postcheck_reported": true,
+    "owner_removed_reported": true,
+    "final_acceptance": false,
+    "current_source_drift_reported_to_A1_D2": true
+  },
+  "drill_http_actual_20261026": {
+    "failure_review": "docs/evidence/d-drill-http-actual-rejected-20261026-044e5eed.json",
+    "passed": 18,
+    "failed": 1,
+    "actual_accepted": false,
+    "fixture_repair_source": "docs/evidence/d-drill-http-repair-local-20261026.json",
+    "new_actual_nineteen_case_run_required": true
+  },
+  "finalizer_F4_exact_frozen_review_20261026": {
+    "review": "docs/evidence/a2-gc-finalizer-f4-reviewed-20261026.json",
+    "status": "accepted_exact_frozen_private_candidate_F4_clock_boundary",
+    "D_frozen_23_check_replayed": true,
+    "clock_cases_passed": 5,
+    "single_regression_native_assertion_observed": true,
+    "Go_repeated": false,
+    "current_whole_tree_accepted": false,
+    "production_composition_approved": false
+  },
+  "drill_current_increment_20261026": {
+    "review": "docs/evidence/a2-drill-current-increment-reviewed-20261026.json",
+    "local_increment_accepted": true,
+    "source_files": 1629,
+    "only_tagged_delta": 1,
+    "six_ordinary_packages_inputs_unchanged": true,
+    "three_Linux_builds_and_seed_received": true,
+    "owner_independently_absent": true,
+    "current_owner_baseline_registration_pending_A1": false,
+    "actual_mysql_cases": 0
+  },
+  "owner_final_current_20261026": {
+    "review": "docs/evidence/a2-owner-final-current-reviewed-20261026.json",
+    "source_sha256": "2099a08cb03ebf57e9c9411765ff166ac189e097dedb153971fb46b72f8133b0",
+    "source_files": 1629,
+    "roots": 647,
+    "pass_events": 5190,
+    "prior_5138_and_5148_preserved": true,
+    "current_baseline_registered_and_selected": true,
+    "current_dependency_matched_preparation_accepted": true,
+    "one_whole_current_native_run_claimed": false,
+    "owners_independently_absent": true,
+    "actual_SQL": false,
+    "production_approved": false
+  },
+  "bootstrap_consumer_concrete_models_20261026": {
+    "binding_proposal": "docs/evidence/a2-bootstrap-candidate-binding-proposal-20261026.json",
+    "capture_relation_model": "docs/evidence/a2-bootstrap-capture-binding-model-reviewed-20261026.json",
+    "relation_positive_not_authority": 1,
+    "resealed_valid_C1_rejections": 41,
+    "time_model": "docs/evidence/a2-bootstrap-candidate-time-model-reviewed-20261026.json",
+    "time_positives": 2,
+    "time_rejections": 15,
+    "A1_D_contract_review_pending": true,
+    "production_adapter_implemented": false,
+    "entry_missing_slots_reduced": 0,
+    "backend_contracts_scripts_modified": false
+  },
+  "bootstrap_A_relation_implementation_20261026": {
+    "files": [
+      "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+      "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding_test.go"
+    ],
+    "status": "written_gofmt_native_validation_pending_joint_source",
+    "ConfigCanonicalRawMessageHashImplemented": true,
+    "D_Selection_data_bridge_implemented": true,
+    "immutable_relation_not_authority": true,
+    "production_adapter_implemented": false,
+    "entry_missing_slots_reduced": 0,
+    "old_2099_baseline_is_historical_for_new_source": true,
+    "source_pins": [
+      {
+        "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+        "size": 8000,
+        "sha256": "d18cdf9bcceae8d444c7e98514f9f559e9df3b4f77422466adbed5271469a78d"
+      },
+      {
+        "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding_test.go",
+        "size": 16011,
+        "sha256": "66a3cb8fa78caef977e777145abe96a0c5914042e1c99692107764f329a893d9"
+      }
+    ],
+    "validation_source_helper_fix": {
+      "review": "docs/evidence/a2-bootstrap-producer-source-reviewed-20261026.json",
+      "checks": 32,
+      "native_exit": 0,
+      "synthetic_wrapper_executor": true,
+      "Go_tests_claimed": false,
+      "owned_fixture_absent": true
+    }
+  },
+  "drill_actual_final_20261026": {
+    "D_acceptance": "docs/evidence/d-drill-http-actual-accepted-20261026-c5f6a4a2.json",
+    "A_limited_acceptance": "docs/evidence/a-drill-actual-limited-reviewed-20261026-c5f6a4a2.json",
+    "A2_exact_intake_check_before_new_source_edits_exit": 0,
+    "actual_mysql_cases": 19,
+    "source_sha256": "b267397adc7696879a17a32a39f2637ebaf046f00a92c285a3b92ed2ea9c6348",
+    "namespace": "sbk-mig-261026022412-229b",
+    "namespace_uid": "5ef5cdba-24f1-4cf0-b579-04ef0ac53e5d",
+    "remote_cleanup_independently_queried": false,
+    "retest_required": false,
+    "old_failure_preserved": true,
+    "bootstrap_consumer_accepted": false
+  },
+  "bootstrap_pinned_authority_20261026": {
+    "status": "snapshot_component_88b2_accepted_new_materials_targeted_pass_full_timeout",
+    "authority_source": "backend/internal/systembackupsecurity/bootstrap_candidate_authority.go",
+    "authority_tests": "backend/internal/systembackupsecurity/bootstrap_candidate_authority_test.go",
+    "authority_sha256": "28eda3b3e8b8eb02e9ecb67432d8504a8513c45209e4a038eb9323f9fa066bc6",
+    "authority_tests_sha256": "0acc99e1f39a6d21701bf22836fe36ce95343c224a33f64198b6ee75d4c932a6",
+    "test_roots": 10,
+    "source_files": 413,
+    "source_sha256": "1915fa93d2b24f2e3247a5beb071f23b4803f5b07318dfe0b337ae5bce584f14",
+    "native_session": 58003,
+    "owner": ".tmp-a-evidence-361dcc523056415ca8c2baa12efaebd1",
+    "runner": "docs/evidence/a2-bootstrap-authority-validation-20261026.ps1",
+    "native_scope": "full ordinary security + bootstrapsecurity packages and two Linux test compiles; not producer tests or actual SQL",
+    "retry_rule": "fresh original full grant/current RBAC + mandatory independent original mapping on both branches; capture all9 but defer non-RBAC resource failure until new-consumption stages; no second metadata charge",
+    "previous_targeted": {
+      "receipt": "docs/evidence/a2-bootstrap-capture-native-20261026-110655-6428e6cd.json",
+      "status": "failed_runner_empty_linux_log",
+      "Windows_test_roots": 5,
+      "Windows_test_pass_events": 51,
+      "Windows_native_exit": 0,
+      "owner_removed": true,
+      "Linux_accepted": false,
+      "retained": true
+    },
+    "first_authority_freeze": {
+      "receipt": "docs/evidence/a2-bootstrap-authority-native-20261026-115706-f65d7412.json",
+      "status": "source_changed_before_Go",
+      "owner_removed": true
+    },
+    "materials_plan": "docs/evidence/a2-bootstrap-candidate-materials-plan-20261026.json",
+    "nonce_CA_candidate_adapters_implemented": true,
+    "dependencies_installed": false,
+    "production_approved": false,
+    "native_terminal_receipt": "docs/evidence/a2-bootstrap-authority-native-20261026-120305-61d51903.json",
+    "owner_removed": true,
+    "current_source_sha256": "56d4a4f436729b2fa3f42753c21af7b73320f2664b2c2a9ad21482f174cd1be3",
+    "current_tests_sha256": "e4c722221fd92ee3303d258242a957da72a89577314c6054ae1264b088ce5c6c",
+    "native_failure": "JSON-copy invoked wire union codecs on zero intermediate Domain/Facts; fixed by DTO copy without wire decoding. Integration separately failed after L8 snapshots; sole writer notified. No Linux step ran.",
+    "current_joint_native": {
+      "run_id": "88b2cfd9f32b454183e60d9f0f1259ec",
+      "owner": ".tmp-d-bootstrap-consumer-88b2cfd9f32b454183e60d9f0f1259ec",
+      "status": "88b2_exact_frozen_accepted_excludes_next_six",
+      "A2_pair_frozen_hashes_match": true,
+      "A2_did_not_restart": true
+    },
+    "material_IO_source_review": "docs/evidence/a2-bootstrap-material-IO-contract-reviewed-20261026.json",
+    "nonce_API_plan": "docs/evidence/a2-bootstrap-nonce-candidate-API-plan-20261026.json",
+    "CA_snapshot_only_withdrawal": "docs/evidence/a2-bootstrap-ca-snapshot-withdrawn-20261026.json",
+    "snapshot_component_targeted_observed": "docs/evidence/a2-bootstrap-pinned-authority-targeted-observed-20261026.json",
+    "next_materials_implementation": {
+      "status": "five_package_targeted_pass_complete9_failed_evidence_timeout",
+      "receipt": "docs/evidence/a2-bootstrap-original-files-material-adapters-ready-20261026.json",
+      "test_roots": 12,
+      "file_authority": 5,
+      "nonce": 4,
+      "CA": 3,
+      "old_material_sources_unchanged": true,
+      "current_grant_RBAC_source_gap": "concrete_original_file_candidate_targeted_pass_whole_and_real_SQL_pending",
+      "phase": "public writes close, private read/time bounded-original-file callbacks, read view closes, fixed SQL-only FinalGuard, last time/context, A sole commit",
+      "production_approved": false,
+      "targeted_observation": "docs/evidence/a2-original-files-materials-targeted-observed-20261026.json"
+    },
+    "exact_88b2_frozen_review": "docs/evidence/a2-bootstrap-88b2-frozen-reviewed-20261026.json",
+    "failed_6c6519_delta": "docs/evidence/a2-bootstrap-6c6519-failure-delta-20261026.json",
+    "complete9_active": {
+      "run": "a2e7cbc234ca4e0e9ea79ec7adce1f49",
+      "targeted_packages": 5,
+      "targeted_pass_events": 393,
+      "A2_new_roots": 12,
+      "A2_new_pass_events": 113,
+      "all_six_source_ready_pins_match_snapshot": true,
+      "whole_accepted": false,
+      "status": "terminal_failed_evidence_timeout_eight_package_pass_observations",
+      "failure_observation": "docs/evidence/a2-bootstrap-a2e7-timeout-observed-20261026.json",
+      "cleanup_pending": false,
+      "exact_owner_independently_absent": true,
+      "terminal_failure_review": "docs/evidence/a2-bootstrap-a2e7-terminal-reviewed-20261026.json",
+      "source_postcheck_reached": false,
+      "Linux_started": false,
+      "supplement_run": "2775832f44dc48d28bc8c68c88c74d4b",
+      "supplement_accepted": true,
+      "supplement_observation": {
+        "run": "2775832f44dc48d28bc8c68c88c74d4b",
+        "steps": [
+          {
+            "name": "evidence",
+            "roots": 399,
+            "pass_events": 3228,
+            "packages": [
+              {
+                "package": "clawreef/internal/systembackupevidence",
+                "elapsed": 657.844
+              }
+            ]
+          },
+          {
+            "name": "metadata",
+            "roots": 13,
+            "pass_events": 281,
+            "packages": [
+              {
+                "package": "clawreef/internal/systembackupgcmetadata",
+                "elapsed": 6.047
+              }
+            ]
+          },
+          {
+            "name": "seeds",
+            "roots": 3,
+            "pass_events": 3,
+            "packages": [
+              {
+                "package": "clawreef/internal/systembackupevidence",
+                "elapsed": 8.795
+              }
+            ]
+          }
+        ],
+        "ordinary_backend_go_mod_sum_mismatches": [],
+        "source_postcheck_and_cleanup_not_yet_accepted": false,
+        "entry_increment_excluded": true
+      },
+      "supplement_acceptance_scope": "supplement itself: evidence/metadata complete, three local seeds, five recorded Linux builds; not whole nine or entry",
+      "supplement_limited_review": "docs/evidence/a2-bootstrap-gc-supplement-reviewed-20261026.json"
+    },
+    "first_native_fields_are_historical": true
+  },
+  "bootstrap_entry_source_review_20261026": {
+    "status": "first_read_only_review_new_source_not_native_acceptance",
+    "implementation_owners": [
+      "A1 legacy service and attempt",
+      "D2 negative domain fence and deployment assembly"
+    ],
+    "requirements": "docs/evidence/d-bootstrap-entry-independent-requirements-20261026.json",
+    "observed": [
+      "First-use legacy initialization denies when complete C1 tables exist, even with no domain.",
+      "Zero metadata rows require exact typed 1146 for each of eight fixed names; hidden/permission/partial/unknown storage denies.",
+      "Candidate path prepares once before DSN/DB and retains original bounded context through sole commit.",
+      "Final legacy reauthorization and fixed SQL/domain readback follow writes; new source requires separate accurate native gate."
+    ],
+    "feedback_sent_to_D2": [
+      "Legacy deployment fallback creates operation timeout only after resource preparation and opening DB; confirm BE8 coverage and close budget renewal if required.",
+      "Legacy MissingBootstrapAdapters still uses interface == nil; typed-nil owners can escape missing check even though candidate inspection separately rejects.",
+      "Pending GC supplement driver hashes itself only at finally although outside source manifest; capture/verify start digest and actual off/owned telemetry before Go."
+    ],
+    "native_Go_started_by_A2": false,
+    "source_acceptance": false,
+    "actual_SQL": false,
+    "production_approved": false,
+    "feedback_status": "Verified current source: legacy deadline starts before Prepare and same ctx enters bootstrapLegacyPrepared; Inspect robust typed-nil owner rejection; native gate remains pending."
+  },
+  "bootstrap_27_slot_audit_20261026": {
+    "status": "exact_current_source_audit_and_readonly_Node_check_pass_not_admission",
+    "matrix": "docs/system-backup-a2-bootstrap-27-slot-matrix-20261026.md",
+    "machine": "docs/evidence/a2-bootstrap-27-slot-audit-20261026.json",
+    "reviewer": "docs/evidence/a2-bootstrap-27-slot-audit-20261026.mjs",
+    "Node_write_exit": 0,
+    "Node_check_exit": 0,
+    "total_owner_slots": 30,
+    "CLI_linked_registry_slots": 3,
+    "CLI_missing_slots": 27,
+    "concrete_material_validator_candidate_helpers_unwired": 3,
+    "other_runtime_or_metadata_helpers_unwired": 17,
+    "business_registry_adapter_pending": 6,
+    "partial_cross_resource_checks": 1,
+    "SecretRef_draft_correspondences": 15,
+    "no_single_SecretRef_mapping": 5,
+    "slots_cleared": 0,
+    "Go_executed": false,
+    "production_approved": false,
+    "readonly_check_report_and_matrix_sha_unchanged": true,
+    "Codex_preview_status": "queued"
+  },
+  "bootstrap_entry_D1_independent_source_review_20261026": {
+    "previous_review": "docs/evidence/a2-bootstrap-entry-source-reviewed-20261026.json",
+    "status": "preliminary_review_withdrawn_exact_fixes_verified_not_native_acceptance",
+    "diagnosis": "docs/evidence/a2-bootstrap-entry-vector-lookup-gap-20261026.json",
+    "original_review_reproduced_before_finding": true,
+    "synthetic_Node33_still_not_Go_seed": true,
+    "current_native_gate_failed": "7582937f2d644279917714206041d1df",
+    "Go_executed": false,
+    "actual_SQL": false,
+    "correction_review": "docs/evidence/a2-bootstrap-entry-fixture-correction-reviewed-20261026.json",
+    "D2_ready_mismatch_count": 1,
+    "failed_87_and_758_owners_independently_absent": true
+  },
+  "bootstrap_entry_fresh_native_after_lookup_fix_20261026": {
+    "run": "ae7af3833e1f424f946638b88c7f68d8",
+    "three_owner_current_ready_pin_mismatches": [
+      {
+        "ready": "docs/evidence/d2-bootstrap-entry-source-ready-20261026.json",
+        "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go"
+      }
+    ],
+    "targeted_events": 449,
+    "targeted_package_start_events": [
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupsecurity",
+      "clawreef/cmd/system-backup-bootstrap"
+    ],
+    "targeted_pass_events": 109,
+    "receipt_present": false,
+    "whole_accepted": false
+  },
+  "native_linux_space_failures_20261026": {
+    "review": "docs/evidence/a2-bootstrap-linux-space-failures-reviewed-20261026.json",
+    "reviewer": "docs/evidence/a2-bootstrap-linux-space-failures-review-20261026.mjs",
+    "Node_write_exit": 0,
+    "Node_check_exit": 0,
+    "entry_run": "ae7af3833e1f424f946638b88c7f68d8",
+    "API_run": "148b2d3547074f7ca4c4a046f19be373",
+    "both_status_failed": true,
+    "both_owners_independently_absent": true,
+    "source_postchecks_not_reached": true,
+    "complete_accepted": false,
+    "Root_and_NewD_notified": true,
+    "D1_notification_dispatched": true,
+    "Go_started_by_A2": false,
+    "peer_owner_or_cache_mutated": false
+  },
+  "reference_capability_native_20261027": {
+    "id": "9c2f727f86c548a38792cebd423489e7",
+    "status": "failed",
+    "terminal_exit": 1,
+    "receipt": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+    "Go_started": true,
+    "tests_started": true,
+    "old_exact_exit": 1,
+    "old_failed_capabilities": 4,
+    "fixed_pass_events": 9,
+    "full_runtime_packages": 5,
+    "full_roots": 42,
+    "full_pass_events": 347,
+    "tagged_seed_exit": 1,
+    "tagged_test_executed": false,
+    "linux_completed": 0,
+    "reviewed_inputs_unchanged": true,
+    "snapshot_unchanged": true,
+    "cleanup": true,
+    "owner_independently_absent": true,
+    "independent_windows_review": "docs/evidence/d1-a2-reference-capability-windows-reviewed-20261027-9c2f.json",
+    "whole_accepted": false,
+    "live_decoder_modified": false
+  },
+  "reference_capability_supplement_20261027": {
+    "status": "exact_candidate_composed_independently_accepted_and_two_file_live_promotion_verified",
+    "driver": "docs/evidence/a2-reference-capability-supplement-20261027.ps1",
+    "receiver": "docs/evidence/a2-reference-capability-supplement-review-20261027.mjs",
+    "receiver_tests": 14,
+    "receiver_tests_passed": 14,
+    "GC_exact_component": "docs/evidence/a-gc-tagged-component-reviewed-20261027-r2.json",
+    "ordinary_tests_to_repeat": false,
+    "remaining": [
+      "fresh four actual GoList contexts/selected-file comparison",
+      "original materials tagged local seed",
+      "six Linux test compiles",
+      "source/input postchecks and owned cleanup",
+      "independent composed review and exact live promotion"
+    ],
+    "first_verify_only": {
+      "receipt": "docs/evidence/a2-reference-capability-supplement-ccb8c1d77a574d19a651f2dbafcd227a.json",
+      "status": "failed",
+      "reason": "A2 edited its staged receiver while source-only verification was finishing; reviewed-input postcheck correctly rejected",
+      "Go_started": false,
+      "cleanup": true
+    },
+    "peer_window": {
+      "receipt": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+      "status": "passed_exact_linux_supplement",
+      "linux_steps": 4,
+      "postcheck": true,
+      "cleaned": true,
+      "owner_independently_absent": true
+    },
+    "verify_only": {
+      "receipt": "docs/evidence/a2-reference-capability-supplement-c04f74a531794dc99231cfa3f4a29b57.json",
+      "terminal_exit": 0,
+      "Go_started": false,
+      "tests_started": false,
+      "files": 1765,
+      "ordinary_reuse_verified": true,
+      "snapshot_postcheck": true,
+      "input_postcheck": true,
+      "owner_independently_absent": true
+    },
+    "source_ready": "docs/evidence/a2-reference-capability-supplement-source-ready-20261027-r1.json",
+    "independent_source_review": "docs/evidence/d1-a2-reference-capability-supplement-source-reviewed-20261027.json",
+    "native": {
+      "id": "b53eccbdc25449d1947e7bf90b179b92",
+      "owner": ".tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92",
+      "exec_session_id": 18820,
+      "powershell_pid": 42764,
+      "driver": "docs/evidence/a2-reference-capability-supplement-20261027-r2.ps1",
+      "receiver": "docs/evidence/a2-reference-capability-supplement-review-20261027-r2.mjs",
+      "Go_started_observed": true,
+      "status": "terminal_passed_cleaned_promoted_exact_candidate_only",
+      "whole_accepted": false,
+      "observed_actual_scope_captures": 4,
+      "scope_reuse_verified": true,
+      "actual_go_pid": null,
+      "actual_go_start_local": "2026-10-27T10:06:06.5615737+08:00",
+      "cache_seed": {
+        "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-df6a273644de4dee85594ba48d1c2953",
+        "source_read_only": true,
+        "copied_entries": 4907,
+        "skipped_locked_or_missing_entries": 0,
+        "test_result_reuse": false
+      },
+      "terminal_exit": 0,
+      "seed_pass_events": 1,
+      "linux_test_programs": 6,
+      "snapshot_postcheck": true,
+      "input_postcheck": true,
+      "cleanup": true,
+      "owner_independently_absent": true,
+      "composed_review": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.composed.json",
+      "composed_check_exit": 0,
+      "current_parent_unchanged": true,
+      "live_parser_promoted": true,
+      "promotion": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.promoted.json",
+      "promotion_check_exit": 0,
+      "all_candidate_current_source_files_matched": 1765
+    },
+    "promotion_entry": "docs/evidence/a2-reference-capability-promote-20261027.mjs",
+    "promotion_verify_only_rejection": {
+      "exit": 1,
+      "source_unchanged": true,
+      "log": "docs/evidence/a2-reference-capability-promote-incomplete-rejected-20261027-r2.txt"
+    },
+    "driver_r2": "docs/evidence/a2-reference-capability-supplement-20261027-r2.ps1",
+    "receiver_r2": "docs/evidence/a2-reference-capability-supplement-review-20261027-r2.mjs",
+    "source_ready_r2": "docs/evidence/a2-reference-capability-supplement-source-ready-20261027-r2.json",
+    "r2_verify_only": {
+      "receipt": "docs/evidence/a2-reference-capability-supplement-9fc0e65987a549b7b28d6cc33510c0f2.json",
+      "terminal_exit": 0,
+      "Go_started": false,
+      "snapshot_postcheck": true,
+      "input_postcheck": true,
+      "cleanup": true
+    },
+    "cancelled_r1": {
+      "id": "df6a273644de4dee85594ba48d1c2953",
+      "owner": ".tmp-a-reference-supplement-df6a273644de4dee85594ba48d1c2953",
+      "exec_session_id": 8164,
+      "powershell_pid": 42592,
+      "Go_started_observed": false,
+      "driver_frozen": true,
+      "receipt": "docs/evidence/a2-reference-capability-supplement-df6a273644de4dee85594ba48d1c2953.json",
+      "whole_accepted": false,
+      "status": "cancelled_before_Go",
+      "Go_started": false,
+      "cleanup_pending": false,
+      "snapshot_postcheck": true,
+      "input_postcheck": true,
+      "cleanup_review": "docs/evidence/a2-reference-capability-pre-Go-cancelled-owner-cleanup-20261027.json"
+    },
+    "independent_composed_review": "docs/evidence/d1-a2-reference-capability-composed-reviewed-20261027-b53.json",
+    "root_next_window": "Released after exact promotion for current ordinary8 and later thin15; A2 has no Go or build/cache owner"
+  },
+  "bootstrap_27_slot_audit_20261027": {
+    "report": "docs/evidence/a2-bootstrap-27-slot-audit-20261027.json",
+    "matrix": "docs/system-backup-a2-bootstrap-27-slot-matrix-20261027.md",
+    "write_exit": 0,
+    "check_exit": 0,
+    "missing_slots": 27,
+    "slots_cleared": 0,
+    "material_composition_helpers_included": true,
+    "default_main_still_three_registry_owners": true,
+    "actual_authority_and_mapping_facts_verified": false
+  },
+  "bootstrap_mapping_decisions_20261027": {
+    "report": "docs/evidence/a2-bootstrap-mapping-decisions-20261027.json",
+    "document": "docs/system-backup-a2-bootstrap-mapping-decisions-20261027.md",
+    "write_exit": 0,
+    "check_exit": 0,
+    "bootstrap_purposes": 20,
+    "SecretRef_purposes": 23,
+    "mapped": 15,
+    "unmapped_bootstrap": 5,
+    "extra_SecretRef": 8,
+    "M10_local_decoder_fix": "closed_exact_reviewed_pair",
+    "original_credential_authority": "unverified",
+    "slots_cleared": 0
+  },
+  "bootstrap_registry_contract_coverage_20261027": {
+    "report": "docs/evidence/a2-bootstrap-registry-contract-coverage-20261027-r2.json",
+    "document": "docs/system-backup-a2-bootstrap-registry-contract-coverage-20261027-r2.md",
+    "schemas_read": 39,
+    "registry_rows": 6,
+    "write_exit": 0,
+    "check_exit": 0,
+    "acceptance_required_parts": [
+      "mysql",
+      "redis",
+      "object_storage",
+      "workspace",
+      "deployment_resources",
+      "secret_bundle"
+    ],
+    "known_mandatory_parts_need_new_owner_decision": false,
+    "remaining_parts_inputs": "original source identity/owner/collector/depends_on and registry body",
+    "freeze_annotations": 3,
+    "freeze_annotation_schema_definitions": 1,
+    "annotation_presence_alone_is_not_unresolved_delivery_proof": true,
+    "initial_incomplete_audit_correction": "docs/evidence/a2-bootstrap-registry-contract-coverage-20261027-r1-limitation.json",
+    "actual_authority_or_deployment_facts_verified": false,
+    "slots_cleared": 0,
+    "Go_executed": false
+  },
+  "shared_current_ordinary_window_20261027": {
+    "owner": ".tmp-d-index-cache-01cb9a3a3e1d48d7b56da8ffa138bc9b",
+    "last_verified_live_go_pid": null,
+    "actual_go_start_local": "2026-10-27T10:39:22.2698253+08:00",
+    "native_prefix": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b",
+    "status": "terminal_passed_eight_steps_frozen_postcheck_and_cleanup",
+    "package_pass_observations": [
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupsecurity",
+      "clawreef/internal/systembackupresources",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupevidence"
+    ],
+    "failed_events_observed": 0,
+    "whole_native_accepted": false,
+    "source_postcheck_not_yet_received": true
+  },
+  "A_metrics_security_source_review_20261027": {
+    "source_ready": "docs/evidence/a2-metrics-security-source-ready-20261027-r1.json",
+    "review": "docs/evidence/a2-metrics-security-source-reviewed-20261027.json",
+    "document": "docs/system-backup-a2-metrics-security-source-review-20261027.md",
+    "status": "changes_requested_concrete_candidate_delivered_to_original_D_owner",
+    "metrics": 210,
+    "alerts": 99,
+    "closed_declared_label_names": 31,
+    "threshold_expression_candidates": 8,
+    "post_increase_model_cases": 24,
+    "existing_checks_exit": 0,
+    "existing_tests_passed": 2,
+    "candidate_generator_actual_check_exit": 0,
+    "private_candidate_receipt": "docs/evidence/a2-metrics-security-candidate-validation-12108daf32dd4711a4a33a2d4794685f.json",
+    "source_and_private_postcheck": true,
+    "private_owner_independently_absent": true,
+    "missing_signature_branch_dedupe_labels": [
+      "task_type",
+      "failure_category"
+    ],
+    "live_contracts_or_scripts_modified": false,
+    "PromQL_evaluator_executed": false,
+    "runtime_label_values_or_missing_series_behavior_proven": false,
+    "B_cross_review_complete": false,
+    "production_approved": false
+  },
+  "config_recovery_closed_schema_investigation_20261027": {
+    "manifest_pointer": "/properties/config_recovery/properties/redacted_parameters",
+    "manifest_source": "contracts/system-backup/v12/manifest-system-backup-v1.schema.json",
+    "closed_ConfigValues_definition": "contracts/system-backup/v12/admin-control-resources.schema.json#/$defs/ConfigValues",
+    "ConfigValues_required_fields": 9,
+    "redacted_recovery_projection_fields_specified": false,
+    "local_exact_RedactedParameters_consumer_search": "No matched Go/TS/TSX type in inspected backend/frontend sources",
+    "new_recovery_schema_invented": false,
+    "original_owner_projection_decision_required": true
+  },
+  "current_ordinary_repair_20261027": {
+    "receipt": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.json",
+    "status": "passed_selected_complete_ordinary_packages",
+    "steps": 8,
+    "all_exits_zero": true,
+    "frozen_postcheck": true,
+    "windows_postcheck": true,
+    "seed_postcheck": true,
+    "owner_removed": true,
+    "event_preservation_review": "docs/evidence/a2-bootstrap-current-repair-events-reviewed-20261027.json",
+    "review_write_exit": 0,
+    "review_check_exit": 0,
+    "original_events_preserved": 8546,
+    "current_packages": 11,
+    "current_events": 8603,
+    "current_roots": 1016,
+    "local_bootstrap_seeds": 4,
+    "source_scope_accepted": false,
+    "fifteen_stage_gate_still_required": true
+  },
+  "current_security_linux_20261027": {
+    "receipt": "docs/evidence/a-security-linux-compile-native-bac9b1ac4dbf4bbaa0281fbf02a5dd10.json",
+    "review": "docs/evidence/a-security-linux-compile-reviewed-20261027-r1.json",
+    "A2_independent_check_exit": 0,
+    "source_files": 1718,
+    "frozen_postcheck": true,
+    "cleanup": true,
+    "current_baseline_ready": false
+  },
+  "prior_API_442_postcheck_limitation_20261027": {
+    "report": "docs/evidence/a2-api-linux-442-postcheck-limitation-20261027.json",
+    "recorded_driver_hash_matched": true,
+    "actual_successful_Linux_builds_preserved": true,
+    "live_postcheck_present": true,
+    "frozen_final_postcheck_present": false,
+    "current_security_gate_repaired_by": "bac9b1ac4dbf4bbaa0281fbf02a5dd10",
+    "old_parent_failure_not_relabelled": true
+  },
+  "metrics_selector_and_raw_fixture_20261027": {
+    "source_ready": "docs/evidence/a2-metrics-security-source-ready-20261027-r2.json",
+    "selector_review": "docs/evidence/a2-metrics-selector-enum-reviewed-20261027.json",
+    "all_promql_alerts_scanned": 95,
+    "selector_groups": 9,
+    "quoted_matchers": 10,
+    "original_invalid": 1,
+    "corrected_invalid": 0,
+    "valid_status_failed_preserved": true,
+    "old_eight_candidate_preserved": true,
+    "combined_expression_changes": 9,
+    "private_generator_exits": [
+      0,
+      0
+    ],
+    "private_owner_removed": true,
+    "raw_fixture": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+    "raw_test_groups": 59,
+    "expression_checks_prepared": 117,
+    "promtool_executed": false,
+    "expected_results_proven": false,
+    "original_source_archive": "docs/evidence/a2-metrics-security-original-source-20261027.json",
+    "current_live_metrics_files_modified": false,
+    "signature_dedupe_issue_still_pending": true,
+    "original_D_confirmed_application_after_fifteen_stage": true,
+    "signature_dedupe_resolution_owner": "A1 and original D; local A/D specification decision, not a B/C environmental input gap"
+  },
+  "current_fifteen_stage_window_20261027": {
+    "active_receipt": "docs/evidence/d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95.json",
+    "active_owner": ".tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95",
+    "last_observed_live_go_pid": null,
+    "last_observed_go_start_local": "2026-10-27T12:19:25.7593758+08:00",
+    "source_files": 1718,
+    "GC_seed_pass_observations": [
+      "TestDDownloadGCFullCollectMySQLSeed",
+      "TestDDownloadGCFullLifecycleMySQLSeed",
+      "TestDDownloadGCFullProfileMySQLSeed"
+    ],
+    "last_observed_fail_events": 0,
+    "terminal_receipt_observed": true,
+    "full_scope_accepted": false,
+    "prior_attempt": {
+      "id": "350432a64996420e85b3e9625b8208e0",
+      "Go_started": false,
+      "steps": 0,
+      "owner_removed": true,
+      "error": "Independent exact target/scope review rejected; no native acceptance"
+    },
+    "status": "A1_D1_accepted_exact_fifteen_stage_supplement_only",
+    "terminal_observation": "docs/evidence/a2-fifteen-stage-terminal-observed-20261027.json",
+    "steps": 15,
+    "expected_counterexample_failures": 2,
+    "log_hashes_verified": true,
+    "owner_independently_absent": true,
+    "live_source_pins_match_at_observation": true,
+    "A2_direct_D1_strict_replay_exit": 0,
+    "A2_peer_replay": "docs/evidence/a2-current-fifteen-stage-peer-replay-20261027.json",
+    "exact_fifteen_stage_scope_accepted": true,
+    "whole_baseline_accepted": false,
+    "scope_source_is_current_live": false,
+    "consumed_as_4003_parent_with_exact_eight_file_delta": true,
+    "old_4003_current_source_replay_expected_to_expire_after_promotion": true
+  },
+  "metrics_dedupe_carrier_audit_20261027": {
+    "report": "docs/evidence/a2-metrics-dedupe-carriers-reviewed-20261027.json",
+    "helper": "docs/evidence/a2-metrics-dedupe-carriers-20261027.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "promql_alerts_with_dedupe": 47,
+    "naive_any_reference_flags": 20,
+    "declared_output_carrier_deficiencies": 2,
+    "issues": [
+      "A-METRICS-02 signature branch task_type/failure_category",
+      "A-METRICS-04 cleanup-overdue cleanup_status"
+    ],
+    "combined_nine_candidate_still_has_both": true,
+    "local_original_A_D_decision_required": true,
+    "live_source_modified": false,
+    "promql_evaluator_executed": false
+  },
+  "existing_promql_tool_availability_20261027": {
+    "promtool_on_PATH": false,
+    "prometheus_on_PATH": false,
+    "Go_bin_or_default_module_cache_tool_found": false,
+    "docker_CLI_present": true,
+    "docker_image_query_exit": 1,
+    "docker_error": "dockerDesktopLinuxEngine named pipe absent",
+    "docker_started": false,
+    "images_pulled": false,
+    "dependencies_installed": false,
+    "fixture_executed": false
+  },
+  "metrics_r3_proposal_consumer_audit_20261027": {
+    "status": "original_D_proposal_waiting_A1_spec_review_not_applied",
+    "proposal": {
+      "cleanup_dedupe": [],
+      "signature_split_ids": [
+        "signature-operation-failure",
+        "checksum-or-signature-verifier-failure"
+      ],
+      "expected_alerts": 100,
+      "expected_promql": 96,
+      "approved_by_A1": false
+    },
+    "required_consumer_changes": [
+      {
+        "path": "scripts/system-backup-contract-artifacts.test.mjs",
+        "line": 2846,
+        "current_assertion": "alerts.length == 99"
+      },
+      {
+        "path": "scripts/system-backup-prometheus-rules.test.mjs",
+        "line": 22,
+        "current_assertion": "compiled.length == 95"
+      },
+      {
+        "path": "contracts/system-backup/v12/README.md",
+        "lines": [
+          198,
+          204
+        ],
+        "current_counts": [
+          99,
+          95
+        ]
+      }
+    ],
+    "schema_has_fixed_alert_count_99": false,
+    "contract_manifest_only_schema_registration_observed": true,
+    "search_no_direct_backend_frontend_registry_or_old_rule_ID_consumer": true,
+    "search_is_not_Go_dependency_closure_proof": true,
+    "old_r2_fixture_preserved": true,
+    "new_split_rule_fixture_needed_if_approved": true,
+    "live_source_modified": false
+  },
+  "metrics_D_draft_nonimplementer_review_20261027": {
+    "report": "docs/evidence/a2-metrics-dedupe-proposal-reviewed-20261027-r1.json",
+    "helper": "docs/evidence/a2-metrics-dedupe-proposal-review-20261027.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "decision": "split_branch_and_global_dedupe_corrections_source_compatible; preservation_count_correction_and_cleanup_deadline_semantics_remain_open",
+    "unchanged_rows": 97,
+    "cleanup_dedupe_only_change": true,
+    "old_rule_split_into_two": true,
+    "post_predicate_boolean_models": 4,
+    "owner_immutable_cleanup_countermodels": 3,
+    "cleanup_owner_threshold_semantics_resolved": false,
+    "proposal_preservation_count_correction_required": true,
+    "inverse_restores_r2": true,
+    "metrics_unchanged": true,
+    "source_compatible_draft_correction_is_not_full_approval": true,
+    "PromQL_executed": false,
+    "full_schema_evaluator_executed": false,
+    "live_source_modified": false,
+    "owner_recipients": [
+      "A1",
+      "original D"
+    ]
+  },
+  "cleanup_controller_state_source_review_20261027": {
+    "report": "docs/evidence/a2-cleanup-alert-authority-source-reviewed-20261027.json",
+    "helper": "docs/evidence/a2-cleanup-alert-authority-source-20261027.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "DDL_tables": 4,
+    "original_plan_facts": 5,
+    "existing_language_permits_controller_state": true,
+    "new_metric_required_by_predicate": false,
+    "existing_explicit_operation_times": true,
+    "dedicated_drill_cleanup_start_or_deadline_columns": false,
+    "resource_operation_links_nullable": true,
+    "id_only_FK_insufficient_for_origin_type_target": true,
+    "automatic_cleanup_time_projection_approved": false,
+    "collection_completeness_must_be_explicit": true,
+    "controller_package_requires_actual_current_validation_if_changed": true,
+    "Go_or_SQL_executed": false,
+    "live_source_modified": false,
+    "whole_baseline_accepted": false
+  },
+  "original_D_metrics_revision_20261027": {
+    "path": "docs/evidence/d2-metrics-dedupe-proposal-20261027-r2.json",
+    "pins_independently_match": true,
+    "old_r1_preserved": true,
+    "preservation_count_corrected_to_97": true,
+    "signature_split_source_scope_reviewed": true,
+    "cleanup_immutable_semantics_unresolved": true,
+    "controller_state_direction_under_review": true,
+    "live_sources_modified": false
+  },
+  "existing_Docker_PromQL_attempt_20261027": {
+    "report": "docs/evidence/a2-existing-docker-promql-attempt-20261027.json",
+    "status": "existing_runtime_start_failed_then_restored_initial_off_state",
+    "backend_failed": true,
+    "restored_initial_off_state": true,
+    "dependencies_installed": false,
+    "images_pulled": false,
+    "containers_run": false,
+    "PromQL_executed": false,
+    "Root_notified_no_further_runtime_start": true
+  },
+  "cleanup_controller_candidate_r1_source_review_20261027": {
+    "report": "docs/evidence/a2-cleanup-controller-candidate-source-reviewed-20261027-r1.json",
+    "write_exit": 0,
+    "check_exit": 0,
+    "status": "source_only_ready_for_private_native_validation_r1",
+    "old_tests_roots_preserved": 3,
+    "new_test_roots": 5,
+    "production_inverse_restores_original": true,
+    "full_native_executed_by_A2": false,
+    "r2_residual_extension_not_covered": true
+  },
+  "immutable_alert_threshold_scope_20261027": {
+    "report": "docs/evidence/a2-metrics-immutable-threshold-scope-reviewed-20261027.json",
+    "helper": "docs/evidence/a2-metrics-immutable-threshold-scope-20261027.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "scanned_promql": 95,
+    "immutable_metadata_rules": 22,
+    "selected_including_direct_cleanup_deadline": 23,
+    "queue_per_owner_ratio_rules": 16,
+    "gate_rules_require_frozen_singleton_projection": 4,
+    "cleanup_mixed_owner_critical_rules": 2,
+    "residual_presence_warning_rules": 1,
+    "planned_controller_direction_counts": {
+      "total": 100,
+      "promql": 94,
+      "controller_state": 6
+    },
+    "actual_gate_frozen_metric_projection_proven": false,
+    "Go_SQL_PromQL_executed_by_A2": false,
+    "live_sources_modified": false
+  },
+  "cleanup_controller_candidate_r2_source_review_20261027": {
+    "report": "docs/evidence/a2-cleanup-controller-candidate-source-reviewed-20261027-r2.json",
+    "helper": "docs/evidence/a2-cleanup-controller-candidate-source-review-20261027-r2.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "Go_candidate_sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077",
+    "test_candidate_sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2",
+    "r2_inverse_restores_r1": true,
+    "test_roots": 7,
+    "residual_test_cases_authored": 7,
+    "unknown_residual_pointer_nil_rejected": true,
+    "Root_private_native_receipt_pending": true,
+    "registry_100_94_6_alignment_not_reviewed_here": true,
+    "collector_authority_not_proven": true,
+    "full_native_executed_by_A2": false
+  },
+  "metrics_controller_registry_r3_A2_review_20261027": {
+    "report": "docs/evidence/a2-metrics-controller-registry-reviewed-20261027-r3.json",
+    "helper": "docs/evidence/a2-metrics-controller-registry-review-20261027-r3.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "counts": {
+      "metrics": 210,
+      "alerts": 100,
+      "promql": 94,
+      "controller_state": 6
+    },
+    "unchanged_from_combined9": 96,
+    "changed_existing_cleanup": 2,
+    "old_signature_removed": 1,
+    "new_signature_rules": 2,
+    "inverse_restores_r2": true,
+    "actual_renderer_executed": true,
+    "YAML_exact_match": true,
+    "application_targets": 8,
+    "Go_SQL_PromQL_executed_by_A2": false,
+    "collector_authority_pending": true
+  },
+  "metrics_split_raw_fixture_r3_20261027": {
+    "source_ready": "docs/evidence/a2-metrics-split-promtool-source-ready-20261027-r3.json",
+    "fixture": "docs/evidence/a2-metrics-split-promtool-raw-series-20261027-r3.yml",
+    "helper": "docs/evidence/a2-metrics-split-promtool-fixture-20261027-r3.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "groups": 38,
+    "expression_checks_prepared": 114,
+    "YAML_roundtrip_only": true,
+    "promtool_executed": false,
+    "expected_results_proven": false,
+    "prior_fixture_117_preserved": true,
+    "dependencies_installed": false
+  },
+  "metrics_controller_e08f_failed_window_20261027": {
+    "report": "docs/evidence/a2-metrics-e08f-failed-window-observed-20261027.json",
+    "helper": "docs/evidence/a2-metrics-e08f-failed-window-review-20261027.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "formal_status": "failed",
+    "error": "Could not find file 'C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-e08f-20261027.step-5.jsonl'.",
+    "Windows_roots": 147,
+    "Windows_pass_events": 237,
+    "actual_GoList_contexts": 4,
+    "recorded_steps_all_zero": 5,
+    "source_content_pin_postcheck_reported": true,
+    "full_source_namespace_postcheck_proven": false,
+    "Linux_exit_recorded": false,
+    "Linux_ELF_accepted": false,
+    "owner_independently_absent": true,
+    "original_helper_and_driver_archived_by_exact_control_hash": true,
+    "whole_candidate_accepted": false
+  },
+  "metrics_independent_namespace_observer_20261027": {
+    "report": "docs/evidence/a2-metrics-namespace-observer-rejected-20261027-r1.json",
+    "status": "preflight_rejected_no_post_native_observation",
+    "actual_exit": 1,
+    "reason": "initial observer omitted 11 manifest docs paths",
+    "post_native_namespace_proven": false,
+    "peer_files_modified": false,
+    "Go_executed": false,
+    "process_running": false
+  },
+  "metrics_strict_file_set_counterexamples_20261027": {
+    "report": "docs/evidence/a2-metrics-file-set-counterexamples-reviewed-20261027.json",
+    "helper": "docs/evidence/a2-metrics-file-set-counterexamples-20261027.mjs",
+    "actual_execution_exit": 0,
+    "original_D_function_executed": true,
+    "positive_files": 5,
+    "manifest_docs_and_extra_plan_included": true,
+    "rejections": 7,
+    "post_case_positive_restored": true,
+    "scratch_removed": true,
+    "peer_files_modified": false,
+    "empty_log_precreation_source_order_verified": true,
+    "PowerShell_Go_SQL_PromQL_executed": false,
+    "Root_actual_full_snapshot_not_accepted_by_this_test": true
+  },
+  "current_strict_controller_window_20261027": {
+    "owner": ".tmp-d-index-cache-6eb295fa53fa4b299fc506a66bc76960",
+    "prefix": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2",
+    "last_observed_live_Go_pid": null,
+    "last_observed_Go_start_local": "2026-10-27T13:44:10.4817746+08:00",
+    "source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+    "A2_readonly_strict_source_check_exit": 0,
+    "physical_files": 1719,
+    "content_and_path_set_precheck_match": true,
+    "terminal_observed": true,
+    "independent_terminal_receiver_prepared": "docs/evidence/a2-metrics-strict-native-review-20261027.mjs",
+    "receiver_executed": true,
+    "Go_started_by_A2": false,
+    "status": "terminal_passed_exact_controller_leaf_received",
+    "owner_independently_absent": true,
+    "receiver_write_exit": 0,
+    "receiver_check_exit": 0,
+    "tagged_security_requirement_received_in_application_composition": true
+  },
+  "metrics_current_application_20261027": {
+    "report": "docs/evidence/a2-metrics-live-promotion-reviewed-20261027-r4.json",
+    "helper": "docs/evidence/a2-metrics-live-promotion-review-20261027.mjs",
+    "write_exit": 0,
+    "check_exit": 0,
+    "current_source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+    "current_source_files": 1718,
+    "exact_files_applied": 8,
+    "full_live_set_and_content_match": true,
+    "strict_controller_stages": 7,
+    "controller_roots": 147,
+    "controller_pass_events": 237,
+    "tagged_security_stages": 4,
+    "Admin_seed_roots": 1,
+    "Linux_builds_recorded_not_executed": 3,
+    "A1_tagged_security_replay_exit": 0,
+    "A1_composition_replay_exit": 0,
+    "Root_six_owners_independently_absent": true,
+    "old_failed_e08f_preserved": true,
+    "old_single_leaf_ready_overclaim_not_used_alone": true,
+    "whole_baseline_registration_accepted": false,
+    "collector_and_clock_authority_approved": false,
+    "PromQL_executed": false
+  },
+  "promql_manual_remote_handoff_20261027": {
+    "report": "docs/evidence/a2-promql-human-remote-handoff-20261027.json",
+    "commands_doc": "docs/system-backup-a2-metrics-promtool-fixture-20261027.md",
+    "bundle": "docs/evidence/a2-promql-remote-bundle-20261027",
+    "target": "root@10.130.14.23",
+    "human_requested_self_execution": true,
+    "agent_SSH_performed": false,
+    "prepared_groups": 97,
+    "prepared_checks": 231,
+    "D1_successful_Bash_syntax_exit": 0,
+    "bundle_script_SHA_matches_syntax_checked_source": true,
+    "original_failed_local_Bash_attempt_preserved": true,
+    "original_r2_note_archived_before_append": true,
+    "PromQL_results_received": false,
+    "dependencies_installed": false
+  },
+  "current_support_source_freshness_20261027": {
+    "report": "docs/evidence/a2-source-support-addition-observed-20261027-r2.json",
+    "previous_application_asof_source": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+    "current_source": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+    "current_files": 1720,
+    "old1718_unchanged": true,
+    "new_support_paths": [
+      "scripts/system-backup-promql-prepare.ps1",
+      "scripts/system-backup-promql-prepare.test.ps1"
+    ],
+    "writer_thread": "01a17c06-b1f9-70c0-a94a-2729e681eaeb",
+    "writer_title": "远程没有promtool 该怎么做",
+    "writer_observed_idle": true,
+    "this_chat_authorship": false,
+    "this_chat_did_not_execute_new_helpers": true,
+    "this_chat_frozen_backend_contracts_scripts": true,
+    "old_r4_not_extended_to_current_wholematch": true,
+    "current_source_registration_owner": "A1",
+    "whole_goal_complete": false
+  }
+}

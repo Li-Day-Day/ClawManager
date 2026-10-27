@@ -1,0 +1,34 @@
+PASS selected production including producer dependency, security tests, command tests and required fixtures; excluded unrelated tests and receipts
+PASS unchanged source matches
+PASS added, deleted and modified inputs are separately reported
+PASS deleted required input fails comparison with an explicit path
+PASS unselected tests and run receipts do not invalidate the source scope
+PASS producer dependency tests are not misrepresented as executed bootstrap-package tests
+PASS ignored build source is still detected
+PASS inconsistent baseline digest is rejected
+PASS duplicate baseline paths are rejected
+PASS new and modified producer production dependencies invalidate the bootstrap source
+PASS unchanged: creates one receipt
+PASS unchanged: cleans owned snapshot and restores environment
+PASS unchanged wrapper succeeds with separate frozen/current results; error=
+PASS added: creates one receipt
+PASS added: cleans owned snapshot and restores environment
+PASS added: frozen success with current drift exits with failure
+PASS removed: creates one receipt
+PASS removed: cleans owned snapshot and restores environment
+PASS removed: frozen success with current drift exits with failure
+PASS modified: creates one receipt
+PASS modified: cleans owned snapshot and restores environment
+PASS modified: frozen success with current drift exits with failure
+PASS validation-script: creates one receipt
+PASS validation-script: cleans owned snapshot and restores environment
+PASS validation-script: frozen success with current drift exits with failure
+PASS validation helper mutation is independently detected
+PASS frozen-added: creates one receipt
+PASS frozen-added: cleans owned snapshot and restores environment
+PASS frozen-added: failed frozen validation is never promoted
+PASS go-failed: creates one receipt
+PASS go-failed: cleans owned snapshot and restores environment
+PASS go-failed: failed frozen validation is never promoted
+PASSED bootstrap source checks=32
+CLEANED bootstrap source fixtures=True

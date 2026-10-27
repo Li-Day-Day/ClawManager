@@ -2850,7 +2850,7 @@ test('D-owned alert registry closes section-15 defaults and profile behavior', (
   const byID = new Map(alerts.map((alert) => [alert.id, alert]));
   const metricNames = new Set(metricsAlertRegistry.metrics.map((metric) => metric.name));
   const allowedLabels = new Set(metricsAlertSchema.$defs.AllowedLabel.enum);
-  assert.equal(alerts.length, 99);
+  assert.equal(alerts.length, 100);
   assert.equal(byID.size, alerts.length);
   assert.equal(metricsAlertRegistry.source.alert_count, alerts.length);
 
@@ -3021,13 +3021,13 @@ test('D controller self telemetry is wired to the loop and remains leader-only',
   assert.match(outlet, /if !h\.Leader\(\) \{\s*w\.WriteHeader\(http\.StatusOK\)\s*return\s*\}\s*if !h\.Ready\(\) \{\s*http\.Error\(w, "metrics unavailable", http\.StatusServiceUnavailable\)\s*return\s*\}\s*if h\.Controller != nil/);
 });
 
-test('D controller-state predicates cover the four non-PromQL registry rules', () => {
+test('D controller-state predicates cover the six non-PromQL registry rules', () => {
   const source = readFileSync(join(root, 'backend/internal/systembackupcontroller/controller_state_alerts.go'), 'utf8');
   const stateReader = readFileSync(join(root, 'backend/internal/systembackupcontroller/sql_acceptance_alert_state.go'), 'utf8');
   const sequence = readFileSync(join(root, 'backend/internal/systembackupcontroller/acceptance_alert_sequence.go'), 'utf8');
   const sequenceTx = readFileSync(join(root, 'backend/internal/systembackupcontroller/acceptance_alert_transaction.go'), 'utf8');
   const stateRules = metricsAlertRegistry.alerts.filter((rule) => rule.expression_language === 'controller_state');
-  assert.equal(stateRules.length, 4);
+  assert.equal(stateRules.length, 6);
   for (const rule of stateRules) {
     const ruleStem = rule.id.replace(/\.(production|development)$/, '');
     assert.ok(source.includes(ruleStem), `${rule.id} is missing from the D predicate core`);

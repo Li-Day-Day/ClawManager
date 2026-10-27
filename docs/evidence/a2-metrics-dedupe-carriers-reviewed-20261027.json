@@ -1,0 +1,1863 @@
+{
+  "kind": "a2_metrics_declared_dedupe_carriers_source_audit.v1",
+  "scope": "Bounded current expression syntax and declared labels, original archive plus combined nine-expression candidate",
+  "versions": [
+    {
+      "input": {
+        "path": "docs/evidence/a2-metrics-security-original-20261027/metrics-alert-registry.json",
+        "size": 194100,
+        "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+      },
+      "registry_metrics": 210,
+      "registry_alerts": 99,
+      "promql_alerts_with_nonempty_dedupe": 47,
+      "output_carrier_deficiencies": 2,
+      "naive_any_reference_flags": 20,
+      "rows": [
+        {
+          "id": "eligible-recovery-point-missing.production",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_eligible_usable_recovery_points",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "eligible-recovery-point-missing.development",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_eligible_usable_recovery_points",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "eligible-recovery-point-rpo-exceeded.production",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose",
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds",
+              "declared_labels": [
+                "task_type",
+                "task_purpose",
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_recovery_point_objective_seconds",
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "eligible-recovery-point-rpo-exceeded.development",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose",
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds",
+              "declared_labels": [
+                "task_type",
+                "task_purpose",
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_recovery_point_objective_seconds",
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "recovery-point-failure-domain-shortage.production",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_recovery_point_shortage_domains",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "recovery-point-failure-domain-shortage.development",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_recovery_point_shortage_domains",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "promotion-baseline-missing.production",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_promotion_baseline_present",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "promotion-baseline-missing.development",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_promotion_baseline_present",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "promotion-baseline-degraded",
+          "dedupe_key": [
+            "matrix",
+            "health_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_promotion_health{health_state=~\"degraded|stale|unknown\"} == 1",
+              "carrier_metric": "clawmanager_system_backup_promotion_health",
+              "declared_labels": [
+                "matrix",
+                "health_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-warning.production",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-warning.development",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-critical.production",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-critical.development",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-warning.production",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-warning.development",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-critical.production",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-critical.development",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-warning.production",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-warning.development",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-critical.production",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-critical.development",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-warning.production",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-warning.development",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-critical.production",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-critical.development",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-stuck",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_stuck == 1",
+              "carrier_metric": "clawmanager_system_backup_task_stuck",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-stuck",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operations_stuck == 1",
+              "carrier_metric": "clawmanager_system_backup_operations_stuck",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "acceptance-task-failed",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_task_transitions_total{task_purpose=\"acceptance\",status=\"failed\"}[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_task_transitions_total",
+              "declared_labels": [
+                "task_type",
+                "task_purpose",
+                "status"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "gate-wait-near-timeout",
+          "dedupe_key": [
+            "profile"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_gate_wait_current_seconds >= scalar(clawmanager_system_backup_configured_gate_acquisition_timeout_seconds) * 0.8",
+              "carrier_metric": "clawmanager_system_backup_gate_wait_current_seconds",
+              "declared_labels": [
+                "profile"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_gate_acquisition_timeout_seconds"
+          ]
+        },
+        {
+          "id": "gate-wait-timeout",
+          "dedupe_key": [
+            "profile"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_gate_wait_current_seconds >= scalar(clawmanager_system_backup_configured_gate_acquisition_timeout_seconds)",
+              "carrier_metric": "clawmanager_system_backup_gate_wait_current_seconds",
+              "declared_labels": [
+                "profile"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_gate_acquisition_timeout_seconds"
+          ]
+        },
+        {
+          "id": "capture-hold-near-limit",
+          "dedupe_key": [
+            "profile",
+            "runner"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_capture_hold_current_seconds >= scalar(clawmanager_system_backup_configured_quiesce_max_hold_seconds) * 0.8",
+              "carrier_metric": "clawmanager_system_backup_capture_hold_current_seconds",
+              "declared_labels": [
+                "profile",
+                "runner"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_quiesce_max_hold_seconds"
+          ]
+        },
+        {
+          "id": "capture-hold-limit",
+          "dedupe_key": [
+            "profile",
+            "runner"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_capture_hold_current_seconds >= scalar(clawmanager_system_backup_configured_quiesce_max_hold_seconds)",
+              "carrier_metric": "clawmanager_system_backup_capture_hold_current_seconds",
+              "declared_labels": [
+                "profile",
+                "runner"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_quiesce_max_hold_seconds"
+          ]
+        },
+        {
+          "id": "mutation-lease-blocked",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_mutation_lease_blockers_current > 0 and clawmanager_system_backup_mutation_lease_oldest_age_seconds >= scalar(clawmanager_system_backup_configured_mutation_lease_ttl_seconds)",
+              "carrier_metric": "clawmanager_system_backup_mutation_lease_blockers_current",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_mutation_lease_ttl_seconds"
+          ]
+        },
+        {
+          "id": "participant-error",
+          "dedupe_key": [
+            "participant_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_participant_state{participant_state=\"error\"} == 1",
+              "carrier_metric": "clawmanager_system_backup_participant_state",
+              "declared_labels": [
+                "participant_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "participant-resume-failure",
+          "dedupe_key": [
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_participant_resume_failures_total[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_participant_resume_failures_total",
+              "declared_labels": [
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "finalization-unknown-over-grace",
+          "dedupe_key": [
+            "external_action_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_finalization_pending_current > 0 and clawmanager_system_backup_artifact_finalization_oldest_age_seconds > scalar(clawmanager_system_backup_configured_finalization_resolution_grace_seconds)",
+              "carrier_metric": "clawmanager_system_backup_artifact_finalization_pending_current",
+              "declared_labels": [
+                "external_action_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_finalization_resolution_grace_seconds"
+          ]
+        },
+        {
+          "id": "external-action-reconcile-warning",
+          "dedupe_key": [
+            "external_action_type",
+            "external_action_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_external_actions_current > 0 and on() (time() - clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds > 2 * clawmanager_system_backup_configured_retry_max_backoff_seconds)",
+              "carrier_metric": "clawmanager_system_backup_external_actions_current",
+              "declared_labels": [
+                "external_action_type",
+                "external_action_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds",
+            "clawmanager_system_backup_configured_retry_max_backoff_seconds"
+          ]
+        },
+        {
+          "id": "external-action-reconcile-critical",
+          "dedupe_key": [
+            "external_action_type",
+            "external_action_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_external_actions_current > 0 and on() (time() - clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds > 3 * clawmanager_system_backup_configured_retry_max_backoff_seconds)",
+              "carrier_metric": "clawmanager_system_backup_external_actions_current",
+              "declared_labels": [
+                "external_action_type",
+                "external_action_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds",
+            "clawmanager_system_backup_configured_retry_max_backoff_seconds"
+          ]
+        },
+        {
+          "id": "cleanup-overdue",
+          "dedupe_key": [
+            "cleanup_status"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_cleanup_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+              "carrier_metric": "clawmanager_system_backup_cleanup_oldest_age_seconds",
+              "declared_labels": [],
+              "missing_dedupe_fields": [
+                "cleanup_status"
+              ]
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_cleanup_oldest_age_seconds",
+            "clawmanager_system_backup_configured_cleanup_deadline_seconds"
+          ]
+        },
+        {
+          "id": "catalog-record-invalid",
+          "dedupe_key": [
+            "catalog_record_type",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_catalog_record_invalid_current > 0",
+              "carrier_metric": "clawmanager_system_backup_catalog_record_invalid_current",
+              "declared_labels": [
+                "catalog_record_type",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "dependency-health-unhealthy",
+          "dedupe_key": [
+            "dependency_kind",
+            "health_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_dependency_health{health_state=~\"degraded|unknown|stale\"} == 1",
+              "carrier_metric": "clawmanager_system_backup_dependency_health",
+              "declared_labels": [
+                "dependency_kind",
+                "health_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "dependency-protection-expired",
+          "dedupe_key": [
+            "dependency_kind"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_dependency_protection_active == 1 and clawmanager_system_backup_dependency_protection_margin_seconds < 0",
+              "carrier_metric": "clawmanager_system_backup_dependency_protection_active",
+              "declared_labels": [
+                "dependency_kind"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "signature-or-checksum-failure",
+          "dedupe_key": [
+            "task_type",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_signature_operations_total",
+              "declared_labels": [
+                "key_purpose",
+                "metric_result"
+              ],
+              "missing_dedupe_fields": [
+                "task_type",
+                "failure_category"
+              ]
+            },
+            {
+              "branch": "increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_verifier_checks_total",
+              "declared_labels": [
+                "task_type",
+                "metric_result",
+                "warning_category",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_signature_operations_total"
+          ]
+        },
+        {
+          "id": "provider-capability-refresh-stale",
+          "dedupe_key": [
+            "provider",
+            "provider_role"
+          ],
+          "carriers": [
+            {
+              "branch": "time() - clawmanager_system_backup_provider_capability_last_success_timestamp_seconds > 3 * scalar(clawmanager_system_backup_configured_artifact_health_interval_seconds)",
+              "carrier_metric": "clawmanager_system_backup_provider_capability_last_success_timestamp_seconds",
+              "declared_labels": [
+                "provider",
+                "provider_role"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_artifact_health_interval_seconds"
+          ]
+        },
+        {
+          "id": "orphan-gc-stale",
+          "dedupe_key": [
+            "resource_lifecycle"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_orphan_resources_current > 0 and on() (time() - clawmanager_system_backup_orphan_gc_last_success_timestamp_seconds > 3 * clawmanager_system_backup_configured_orphan_safety_window_seconds)",
+              "carrier_metric": "clawmanager_system_backup_orphan_resources_current",
+              "declared_labels": [
+                "resource_lifecycle"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_orphan_gc_last_success_timestamp_seconds",
+            "clawmanager_system_backup_configured_orphan_safety_window_seconds"
+          ]
+        },
+        {
+          "id": "status-relay-rejections-warning",
+          "dedupe_key": [
+            "metric_result",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_status_relay_rejections_total[5m]) >= 5",
+              "carrier_metric": "clawmanager_system_backup_status_relay_rejections_total",
+              "declared_labels": [
+                "metric_result",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "status-relay-rejections-critical",
+          "dedupe_key": [
+            "metric_result",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_status_relay_rejections_total[5m]) >= 20",
+              "carrier_metric": "clawmanager_system_backup_status_relay_rejections_total",
+              "declared_labels": [
+                "metric_result",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        }
+      ]
+    },
+    {
+      "input": {
+        "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+        "size": 194141,
+        "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+      },
+      "registry_metrics": 210,
+      "registry_alerts": 99,
+      "promql_alerts_with_nonempty_dedupe": 47,
+      "output_carrier_deficiencies": 2,
+      "naive_any_reference_flags": 20,
+      "rows": [
+        {
+          "id": "eligible-recovery-point-missing.production",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_eligible_usable_recovery_points",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "eligible-recovery-point-missing.development",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_eligible_usable_recovery_points",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "eligible-recovery-point-rpo-exceeded.production",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose",
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds",
+              "declared_labels": [
+                "task_type",
+                "task_purpose",
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_recovery_point_objective_seconds",
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "eligible-recovery-point-rpo-exceeded.development",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose",
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_last_eligible_usable_timestamp_seconds",
+              "declared_labels": [
+                "task_type",
+                "task_purpose",
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_recovery_point_objective_seconds",
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "recovery-point-failure-domain-shortage.production",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_recovery_point_shortage_domains",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "recovery-point-failure-domain-shortage.development",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)",
+              "carrier_metric": "clawmanager_system_backup_recovery_point_shortage_domains",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed"
+          ]
+        },
+        {
+          "id": "promotion-baseline-missing.production",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_promotion_baseline_present",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "promotion-baseline-missing.development",
+          "dedupe_key": [
+            "matrix"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)",
+              "carrier_metric": "clawmanager_system_backup_promotion_baseline_present",
+              "declared_labels": [
+                "matrix"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_backup_monitoring_armed",
+            "clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds"
+          ]
+        },
+        {
+          "id": "promotion-baseline-degraded",
+          "dedupe_key": [
+            "matrix",
+            "health_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_promotion_health{health_state=~\"degraded|stale|unknown\"} == 1",
+              "carrier_metric": "clawmanager_system_backup_promotion_health",
+              "declared_labels": [
+                "matrix",
+                "health_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-warning.production",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-warning.development",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-critical.production",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-queue-age-critical.development",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_task_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-warning.production",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-warning.development",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-critical.production",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-queue-age-critical.development",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_operation_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-warning.production",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-warning.development",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-critical.production",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "preflight-queue-age-critical.development",
+          "dedupe_key": [
+            "preflight_mode"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_preflight_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "preflight_mode"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-warning.production",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-warning.development",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.5",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-critical.production",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "artifact-verify-queue-age-critical.development",
+          "dedupe_key": [
+            "verification_scope"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio >= 0.9",
+              "carrier_metric": "clawmanager_system_backup_artifact_verify_queue_deadline_utilization_ratio",
+              "declared_labels": [
+                "verification_scope"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "task-stuck",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_task_stuck == 1",
+              "carrier_metric": "clawmanager_system_backup_task_stuck",
+              "declared_labels": [
+                "task_type",
+                "task_purpose"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "operation-stuck",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_operations_stuck == 1",
+              "carrier_metric": "clawmanager_system_backup_operations_stuck",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "acceptance-task-failed",
+          "dedupe_key": [
+            "task_type",
+            "task_purpose"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_task_transitions_total{task_purpose=\"acceptance\",status=\"failed\"}[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_task_transitions_total",
+              "declared_labels": [
+                "task_type",
+                "task_purpose",
+                "status"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "gate-wait-near-timeout",
+          "dedupe_key": [
+            "profile"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_gate_wait_current_seconds >= scalar(clawmanager_system_backup_configured_gate_acquisition_timeout_seconds) * 0.8",
+              "carrier_metric": "clawmanager_system_backup_gate_wait_current_seconds",
+              "declared_labels": [
+                "profile"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_gate_acquisition_timeout_seconds"
+          ]
+        },
+        {
+          "id": "gate-wait-timeout",
+          "dedupe_key": [
+            "profile"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_gate_wait_current_seconds >= scalar(clawmanager_system_backup_configured_gate_acquisition_timeout_seconds)",
+              "carrier_metric": "clawmanager_system_backup_gate_wait_current_seconds",
+              "declared_labels": [
+                "profile"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_gate_acquisition_timeout_seconds"
+          ]
+        },
+        {
+          "id": "capture-hold-near-limit",
+          "dedupe_key": [
+            "profile",
+            "runner"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_capture_hold_current_seconds >= scalar(clawmanager_system_backup_configured_quiesce_max_hold_seconds) * 0.8",
+              "carrier_metric": "clawmanager_system_backup_capture_hold_current_seconds",
+              "declared_labels": [
+                "profile",
+                "runner"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_quiesce_max_hold_seconds"
+          ]
+        },
+        {
+          "id": "capture-hold-limit",
+          "dedupe_key": [
+            "profile",
+            "runner"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_capture_hold_current_seconds >= scalar(clawmanager_system_backup_configured_quiesce_max_hold_seconds)",
+              "carrier_metric": "clawmanager_system_backup_capture_hold_current_seconds",
+              "declared_labels": [
+                "profile",
+                "runner"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_quiesce_max_hold_seconds"
+          ]
+        },
+        {
+          "id": "mutation-lease-blocked",
+          "dedupe_key": [
+            "operation_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_mutation_lease_blockers_current > 0 and clawmanager_system_backup_mutation_lease_oldest_age_seconds >= scalar(clawmanager_system_backup_configured_mutation_lease_ttl_seconds)",
+              "carrier_metric": "clawmanager_system_backup_mutation_lease_blockers_current",
+              "declared_labels": [
+                "operation_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_mutation_lease_ttl_seconds"
+          ]
+        },
+        {
+          "id": "participant-error",
+          "dedupe_key": [
+            "participant_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_participant_state{participant_state=\"error\"} == 1",
+              "carrier_metric": "clawmanager_system_backup_participant_state",
+              "declared_labels": [
+                "participant_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "participant-resume-failure",
+          "dedupe_key": [
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_participant_resume_failures_total[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_participant_resume_failures_total",
+              "declared_labels": [
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "finalization-unknown-over-grace",
+          "dedupe_key": [
+            "external_action_type"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_artifact_finalization_pending_current > 0 and clawmanager_system_backup_artifact_finalization_oldest_age_seconds > scalar(clawmanager_system_backup_configured_finalization_resolution_grace_seconds)",
+              "carrier_metric": "clawmanager_system_backup_artifact_finalization_pending_current",
+              "declared_labels": [
+                "external_action_type"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_finalization_resolution_grace_seconds"
+          ]
+        },
+        {
+          "id": "external-action-reconcile-warning",
+          "dedupe_key": [
+            "external_action_type",
+            "external_action_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_external_actions_current > 0 and on() (time() - clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds > 2 * clawmanager_system_backup_configured_retry_max_backoff_seconds)",
+              "carrier_metric": "clawmanager_system_backup_external_actions_current",
+              "declared_labels": [
+                "external_action_type",
+                "external_action_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds",
+            "clawmanager_system_backup_configured_retry_max_backoff_seconds"
+          ]
+        },
+        {
+          "id": "external-action-reconcile-critical",
+          "dedupe_key": [
+            "external_action_type",
+            "external_action_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_external_actions_current > 0 and on() (time() - clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds > 3 * clawmanager_system_backup_configured_retry_max_backoff_seconds)",
+              "carrier_metric": "clawmanager_system_backup_external_actions_current",
+              "declared_labels": [
+                "external_action_type",
+                "external_action_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_external_action_reconcile_last_success_timestamp_seconds",
+            "clawmanager_system_backup_configured_retry_max_backoff_seconds"
+          ]
+        },
+        {
+          "id": "cleanup-overdue",
+          "dedupe_key": [
+            "cleanup_status"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_cleanup_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+              "carrier_metric": "clawmanager_system_backup_cleanup_oldest_age_seconds",
+              "declared_labels": [],
+              "missing_dedupe_fields": [
+                "cleanup_status"
+              ]
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_cleanup_oldest_age_seconds",
+            "clawmanager_system_backup_configured_cleanup_deadline_seconds"
+          ]
+        },
+        {
+          "id": "catalog-record-invalid",
+          "dedupe_key": [
+            "catalog_record_type",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_catalog_record_invalid_current > 0",
+              "carrier_metric": "clawmanager_system_backup_catalog_record_invalid_current",
+              "declared_labels": [
+                "catalog_record_type",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "dependency-health-unhealthy",
+          "dedupe_key": [
+            "dependency_kind",
+            "health_state"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_dependency_health{health_state=~\"degraded|unknown|stale\"} == 1",
+              "carrier_metric": "clawmanager_system_backup_dependency_health",
+              "declared_labels": [
+                "dependency_kind",
+                "health_state"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "dependency-protection-expired",
+          "dedupe_key": [
+            "dependency_kind"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_dependency_protection_active == 1 and clawmanager_system_backup_dependency_protection_margin_seconds < 0",
+              "carrier_metric": "clawmanager_system_backup_dependency_protection_active",
+              "declared_labels": [
+                "dependency_kind"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "signature-or-checksum-failure",
+          "dedupe_key": [
+            "task_type",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_signature_operations_total",
+              "declared_labels": [
+                "key_purpose",
+                "metric_result"
+              ],
+              "missing_dedupe_fields": [
+                "task_type",
+                "failure_category"
+              ]
+            },
+            {
+              "branch": "increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+              "carrier_metric": "clawmanager_system_backup_verifier_checks_total",
+              "declared_labels": [
+                "task_type",
+                "metric_result",
+                "warning_category",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_signature_operations_total"
+          ]
+        },
+        {
+          "id": "provider-capability-refresh-stale",
+          "dedupe_key": [
+            "provider",
+            "provider_role"
+          ],
+          "carriers": [
+            {
+              "branch": "time() - clawmanager_system_backup_provider_capability_last_success_timestamp_seconds > 3 * scalar(clawmanager_system_backup_configured_artifact_health_interval_seconds)",
+              "carrier_metric": "clawmanager_system_backup_provider_capability_last_success_timestamp_seconds",
+              "declared_labels": [
+                "provider",
+                "provider_role"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_configured_artifact_health_interval_seconds"
+          ]
+        },
+        {
+          "id": "orphan-gc-stale",
+          "dedupe_key": [
+            "resource_lifecycle"
+          ],
+          "carriers": [
+            {
+              "branch": "clawmanager_system_backup_orphan_resources_current > 0 and on() (time() - clawmanager_system_backup_orphan_gc_last_success_timestamp_seconds > 3 * clawmanager_system_backup_configured_orphan_safety_window_seconds)",
+              "carrier_metric": "clawmanager_system_backup_orphan_resources_current",
+              "declared_labels": [
+                "resource_lifecycle"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": [
+            "clawmanager_system_backup_orphan_gc_last_success_timestamp_seconds",
+            "clawmanager_system_backup_configured_orphan_safety_window_seconds"
+          ]
+        },
+        {
+          "id": "status-relay-rejections-warning",
+          "dedupe_key": [
+            "metric_result",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_status_relay_rejections_total[5m]) >= 5",
+              "carrier_metric": "clawmanager_system_backup_status_relay_rejections_total",
+              "declared_labels": [
+                "metric_result",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        },
+        {
+          "id": "status-relay-rejections-critical",
+          "dedupe_key": [
+            "metric_result",
+            "failure_category"
+          ],
+          "carriers": [
+            {
+              "branch": "increase(clawmanager_system_backup_status_relay_rejections_total[5m]) >= 20",
+              "carrier_metric": "clawmanager_system_backup_status_relay_rejections_total",
+              "declared_labels": [
+                "metric_result",
+                "failure_category"
+              ],
+              "missing_dedupe_fields": []
+            }
+          ],
+          "any_referenced_metric_missing_fields": []
+        }
+      ]
+    }
+  ],
+  "semantics_reference": "https://prometheus.io/docs/prometheus/latest/querying/operators/",
+  "decision": "A-METRICS-02 and newly observed A-METRICS-04 cleanup-overdue require local A/D specification decisions; no new label, default value or dedupe key is approved",
+  "initial_single_issue_expectation_rejected": true,
+  "interpretation": [
+    "A missing declared field on a right-side scalar or and-gate metric alone is not an output-carrier deficiency.",
+    "The signature and verifier branches retain distinct declared label sets under or; one branch cannot enrich the other.",
+    "After correcting metric_result to failure, the signature branch can select compliant failure samples but still lacks task_type and failure_category.",
+    "cleanup-overdue declares cleanup_status in its dedupe key, while both compared gauges declare no labels; the expression cannot derive that field from these declared inputs."
+  ],
+  "promql_evaluator_executed": false,
+  "runtime_emitter_label_presence_proven": false,
+  "rule_loader_or_notification_dedupe_executed": false,
+  "actual_series_matching_or_missing_series_proven": false,
+  "source_ready_is_not_PASS": true,
+  "live_source_modified": false,
+  "Go_or_SQL_executed": false,
+  "dependencies_installed": false
+}

@@ -1,0 +1,45 @@
+RUN namespace=sbk-mig-261026005733-6904 uid=c95e7743-0206-4aa5-a2fb-b76f74757a07 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe","migration_count":96,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=e95539bd4434f8720e95f21afae3bea66e4078b18ad36156f838572a03856ffb catalog_sha256=0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe
+PASS fresh-migration-replay=001..081 applied=96 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestAResourcesWriteFKMySQL
+    restore_write_fk_mysql_test.go:113: RESOURCES_FIXTURE mysql=8.4.8 migrations=96 tables=44 clone=LIKE foreign_key_proof=no synthetic_registry=yes
+    restore_write_fk_mysql_test.go:114: FK_SCHEMA canonical_and_owned=matched job_relations=2 cascade=yes checks=1
+=== RUN   TestAResourcesWriteFKMySQL/reparent_items
+=== RUN   TestAResourcesWriteFKMySQL/reparent_reports
+=== RUN   TestAResourcesWriteFKMySQL/reparent_both
+=== RUN   TestAResourcesWriteFKMySQL/reparent_existing_parent
+=== RUN   TestAResourcesWriteFKMySQL/delete_children_and_parent
+=== RUN   TestAResourcesWriteFKMySQL/server_cascade_control_rollback
+=== RUN   TestAResourcesWriteFKMySQL/server_rejects_orphan_1452
+=== RUN   TestAResourcesWriteFKMySQL/late_common_failure_rollback
+=== RUN   TestAResourcesWriteFKMySQL/final_denial_after_reparent_rollback
+=== RUN   TestAResourcesWriteFKMySQL/unique_conflict_after_new_parent_rollback
+=== NAME  TestAResourcesWriteFKMySQL
+    restore_write_fk_mysql_test.go:244: PASS a-resources-write-fk-mysql cases=10 declared_job_fks=2 checks=1 synthetic_proofs=yes production=no
+    restore_readback_mysql_test.go:144: CLEANED resources-mysql-owned-database-and-user=yes
+--- PASS: TestAResourcesWriteFKMySQL (3.84s)
+    --- PASS: TestAResourcesWriteFKMySQL/reparent_items (0.42s)
+    --- PASS: TestAResourcesWriteFKMySQL/reparent_reports (0.33s)
+    --- PASS: TestAResourcesWriteFKMySQL/reparent_both (0.35s)
+    --- PASS: TestAResourcesWriteFKMySQL/reparent_existing_parent (0.35s)
+    --- PASS: TestAResourcesWriteFKMySQL/delete_children_and_parent (0.26s)
+    --- PASS: TestAResourcesWriteFKMySQL/server_cascade_control_rollback (0.15s)
+    --- PASS: TestAResourcesWriteFKMySQL/server_rejects_orphan_1452 (0.12s)
+    --- PASS: TestAResourcesWriteFKMySQL/late_common_failure_rollback (0.32s)
+    --- PASS: TestAResourcesWriteFKMySQL/final_denial_after_reparent_rollback (0.47s)
+    --- PASS: TestAResourcesWriteFKMySQL/unique_conflict_after_new_parent_rollback (0.28s)
+PASS
+PASS a-resources-write-fk-mysql cases=10 binary_sha256=0019f127cc720316782e88759202e7a520f7056412e35a77d574fea18dfb6f14 inputs_sha256=b129488961375a7e523a2265d9d22c98dd0c0c664da2916403ee3e79a215f302 synthetic_proofs=yes full_restore=no production=no
+CLEANED namespace=sbk-mig-261026005733-6904 uid=c95e7743-0206-4aa5-a2fb-b76f74757a07
+close - IO is still pending on closed socket. read:1, write:0, io:000001C6B4312810
+root@10.130.14.23's password:
+
+close - IO is still pending on closed socket. read:1, write:0, io:000002565A852BF0
+CLEANED resources-remote-scratch=yes
+CLEANED resources-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-2a9906c3d60843758ef7f350cdbc8776 removed=True
+RESOURCES_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-resources-mysql-20261026-084808-2a9906c3.json
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager>                                                                     ]
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "resources_writer_fk_exit=$LASTEXITCODE"
+resources_writer_fk_exit=0
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager>

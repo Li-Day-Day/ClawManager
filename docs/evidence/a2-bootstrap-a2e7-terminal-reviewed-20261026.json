@@ -1,0 +1,146 @@
+{
+  "kind": "a2_bootstrap_failed_complete9_terminal_review.v1",
+  "status": "failed_complete9_targeted_and_eight_package_observations_only",
+  "run": "a2e7cbc234ca4e0e9ea79ec7adce1f49",
+  "receipt": {
+    "path": "docs/evidence/d-bootstrap-consumer-native-a2e7cbc234ca4e0e9ea79ec7adce1f49.json",
+    "size": 340009,
+    "sha256": "d7187d55aef27598017341782470410f328b80df1f25e365d681e8b0eba87c60"
+  },
+  "frozen_pretest_source_files": 1729,
+  "targeted_test_pass_events": 393,
+  "A2_new_roots": 12,
+  "A2_new_test_pass_events": 113,
+  "completed_packages": [
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "roots": 86,
+      "test_pass_events": 851
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "roots": 285,
+      "test_pass_events": 2230
+    },
+    {
+      "package": "clawreef/internal/systembackupbootstrapsecurity",
+      "roots": 20,
+      "test_pass_events": 193
+    },
+    {
+      "package": "clawreef/internal/systembackupresources",
+      "roots": 71,
+      "test_pass_events": 843
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "roots": 102,
+      "test_pass_events": 976
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "roots": 7,
+      "test_pass_events": 22
+    },
+    {
+      "package": "clawreef/internal/systembackupnoncebootstrap",
+      "roots": 8,
+      "test_pass_events": 73
+    },
+    {
+      "package": "clawreef/internal/systembackupcatrust",
+      "roots": 8,
+      "test_pass_events": 56
+    }
+  ],
+  "complete_log_test_pass_events": 6753,
+  "failure": {
+    "Time": "2026-10-26T14:25:03.4666128+08:00",
+    "Action": "fail",
+    "Package": "clawreef/internal/systembackupevidence",
+    "Elapsed": 604.327
+  },
+  "snapshot_verified_before_tests": true,
+  "snapshot_postcheck_reached": false,
+  "snapshot_unchanged_claimed": false,
+  "Linux_started": false,
+  "original_failure_preserved": true,
+  "whole_run_accepted": false,
+  "independently_accepted_eight_package_frozen_postcheck": false,
+  "A2_six_pins_match_pretest_manifest_and_current": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "size": 10160,
+      "sha256": "f9325dd859d8073b0710cf93f58eccb52a80dded6eef5940a3df56d466f288dd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go",
+      "size": 11994,
+      "sha256": "94aee73fe0cd3e56aa23a8ace2e3118b07188b96ca89c57c098202e07fe33593"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "size": 12360,
+      "sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+      "size": 16624,
+      "sha256": "28e8e69dfbfb45e3b5895e3ccbe48d826afa988a7046ca68d356712da8850590"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+      "size": 6433,
+      "sha256": "374b9097787f8def36a5e8e807f2d8ab2500242f6b87b5bd9d6983ee34a35312"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter_test.go",
+      "size": 11798,
+      "sha256": "d2f5f2c679f7c7682c5362f2ab28ac34de5f0aac614faae50d80154da123cccb"
+    }
+  ],
+  "exact_run_owner_independently_absent": true,
+  "testing_TempDir_root": {
+    "path": "C:/Program Files/Go/src/testing/testing.go",
+    "sha256": "bb48f8fd36ad46a7d67dfe720dd367a25cdac91739f568830d1b0863ae0255ce",
+    "implementation": "os.MkdirTemp(os.Getenv(\"GOTMPDIR\"), pattern)",
+    "correction": "Go testing.TempDir in this toolchain uses the owned GOTMPDIR. TMP/TEMP were unset by the driver but this does not move testing.TempDir to global TEMP.",
+    "reported_timeout_residue": "owned tmp/TestDownloadRetention...late_valid_fk2529048737",
+    "owned_parent_now_absent": true,
+    "global_TEMP_same_parent_prefix_candidates_observed": 0
+  },
+  "identity_overlay_expected_unsafe_commit_failure": true,
+  "logs": [
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-native-a2e7cbc234ca4e0e9ea79ec7adce1f49.jsonl",
+      "size": 6493511,
+      "sha256": "77d2213727c1526f935998c6c4209b5161974d71e8fd9895b7a90fb80bb39061"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-native-a2e7cbc234ca4e0e9ea79ec7adce1f49.targeted.jsonl",
+      "size": 408381,
+      "sha256": "bd4fa692ee71beb7f6e6b8cec6025c036ba974cce4c04fe77e355d471176d30a"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-native-a2e7cbc234ca4e0e9ea79ec7adce1f49.identity-overlay.jsonl",
+      "size": 3841,
+      "sha256": "7544ed110490c29c1a2cb810da9109daddcf9ac32fa0515d670daebdf968904e"
+    }
+  ],
+  "scope_limits": [
+    "Passing logs are meaningful observations but the runner skipped its source postcheck after failure.",
+    "The separate GC evidence supplement must preserve this failure; it is not a single completed nine-package gate.",
+    "New deployment entry bytes require their own accurate source gate."
+  ],
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "complete9_receiver_negative_check": {
+    "mode": "--write",
+    "native_exit": 1,
+    "rejected_on_failed_status": true,
+    "acceptance_file_absent": true
+  }
+}

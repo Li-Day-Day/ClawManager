@@ -1,0 +1,35 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import {enumerate,sourceDigest} from './a-owner-pre-thin-target-20261026.mjs';
+const root=path.resolve(import.meta.dirname,'../..');
+const raw=p=>fs.readFileSync(path.resolve(root,p));
+const json=p=>JSON.parse(raw(p).toString('utf8').replace(/^\uFEFF/,''));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const pin=p=>({path:p,size:raw(p).length,sha256:sha(raw(p))});
+const verify=p=>assert.deepEqual(pin(p.path),p);
+assert.ok(process.argv.slice(2).length<=1&&process.argv.slice(2).every(x=>x==='--check'));
+const promotion='docs/evidence/d2-metrics-controller-live-promotion-20261027.json',r=json(promotion);
+assert.equal(r.kind,'d2_metrics_controller_exact_live_promotion.v1');assert.equal(r.status,'promoted_exact_eight_file_candidate');assert.equal(r.error,null);
+for(const k of ['source_before_complete_set_verified','source_after_complete_set_verified','live_sources_promoted'])assert.equal(r[k],true,k);
+for(const k of ['rollback_performed','current_baseline_accepted','contract_frozen','collector_and_automatic_clock_bindings_approved','PromQL_executed','actual_SQL','dependencies_installed','production_approved'])assert.equal(r[k],false,k);
+for(const p of [r.A_exact_composition,r.candidate_manifest,r.before_capsule])verify(p);
+const a=json(r.A_exact_composition.path),m=json(r.candidate_manifest.path),before=json(r.before_capsule.path);
+assert.equal(a.status,'accepted_exact_eight_file_application_after_controller_and_impacted_security_native_composition');assert.equal(a.ready_for_exact_eight_file_application,true);
+assert.equal(a.controller_native_stages,7);assert.equal(a.tagged_security_native_stages,4);assert.equal(a.all_native_owners_independently_absent,true);
+for(const p of a.independent_reviews)verify(p);
+assert.deepEqual(a.changes,m.changes);assert.deepEqual(r.changes,m.changes);assert.equal(m.changes.length,8);assert.equal(m.files.length,1718);assert.equal(r.files,1718);
+assert.equal(r.before_source_sha256,'4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964');
+assert.equal(r.after_source_sha256,'7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101');assert.equal(sourceDigest(m.files),r.after_source_sha256);
+assert.deepEqual(enumerate(root),m.files,'live source bytes or complete path set differ from tested candidate');
+const ordinary=json('docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.json'),base=json(ordinary.source_manifest);
+assert.equal(sourceDigest(base.files),r.before_source_sha256);assert.equal(before.base_source_sha256,r.before_source_sha256);
+const expected=new Map(base.files.map(p=>[p.path,p]));assert.equal(before.files.length,8);
+for(const change of m.changes){assert.deepEqual(change.before,expected.get(change.path));verify(change.candidate);assert.deepEqual(raw(change.path),raw(change.candidate.path));expected.set(change.path,change.after);const original=before.files.find(p=>p.path===change.path);assert.ok(original);assert.deepEqual(original.original,change.before);const bytes=Buffer.from(original.bytes_base64,'base64');assert.equal(bytes.length,change.before.size);assert.equal(sha(bytes),change.before.sha256);}
+assert.deepEqual([...expected.values()],m.files);
+for(const entry of r.test_build_owners_independently_absent){assert.equal(entry.absent,true);assert.match(entry.owner,/^\.tmp-d-[a-z-]+[a-f0-9]{32}$/);assert.equal(fs.existsSync(path.join(root,entry.owner)),false);}
+const artifacts=[promotion,r.A_exact_composition.path,r.candidate_manifest.path,r.before_capsule.path,...a.independent_reviews.map(p=>p.path),'docs/evidence/d1-metrics-live-promotion-review-20261027.mjs'];
+const result={kind:'d1_metrics_live_promotion_independent_observation.v1',status:'exact_eight_file_application_and_full_current_source_set_verified',before_source_sha256:r.before_source_sha256,current_source_sha256:r.after_source_sha256,source_files:1718,exact_changed_files:m.changes.map(p=>p.path),unchanged_base_files:1710,all_eight_original_bytes_preserved_and_checked:true,current_bytes_and_complete_set_match_tested_candidate:true,controller_native_stages:7,tagged_security_native_stages:4,ordinary_roots:147,ordinary_pass_events:237,Admin_seed_checks:1,Linux_compiles:3,all_recorded_native_owners_independently_absent:true,D1_actual_replays_zero:['a-metrics-controller-native-review-20261027.mjs --check','a2-metrics-strict-native-review-20261027.mjs --check','a-metrics-tagged-security-native-review-20261027.mjs --check','a-metrics-current-candidate-composition-review-20261027.mjs --check'],old_failed_e08f_reclassified:false,old_4003_reviews_automatically_valid_for_new_source:false,current_whole_baseline_accepted:false,formal_GC_operator_refreshed:false,trusted_collector_or_automatic_clock_proven:false,PromQL_executed:false,actual_SQL:false,production_approved:false,dependencies_installed:false,Go_repeated_by_D1:false,whole_goal_complete:false,artifacts:[...new Set(artifacts)].map(pin)};
+const output=path.join(root,'docs/evidence/d1-metrics-live-promotion-observed-20261027.json');if(process.argv.includes('--check'))assert.deepEqual(json(output),result);else fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log('D1_METRICS_LIVE_PROMOTION_VERIFIED source=7c428878 files=1718 changed=8 preserved=1710 native=7+4 cleanup=yes whole_baseline=no');

@@ -73,14 +73,74 @@ func nilPolicy(p Policy) bool {
 // must consume and close query rows before returning. The executor closes this
 // capability before FinalGuard, rejecting retained use and goroutine late writes.
 type Transaction struct {
-	mu    sync.Mutex
-	tx    *sql.Tx
-	open  bool
-	fault error
-	scope Scope
+	mu           sync.Mutex
+	tx           *sql.Tx
+	open         bool
+	fault        error
+	scope        Scope
+	clockContext context.Context
+	clockFloor   time.Time
+	identity     *Transaction
+}
+
+// A copied public Transaction value must not copy an open SQL capability or a
+// separate failure latch. Factory-issued sessions keep their original address;
+// reject a value copy before locking its copied mutex and poison the ORIGINAL
+// guard even when its caller ignores the error.
+func (t *Transaction) rejectCopy() bool {
+	if t == nil {
+		return true
+	}
+	if original := t.identity; original != nil && original != t {
+		original.mu.Lock()
+		if original.fault == nil {
+			original.fault = ErrGuardRequired
+		}
+		original.mu.Unlock()
+		return true
+	}
+	return false
+}
+
+// SampleTime is the shared A/D clock for caller-owned guarded work. Callers
+// must not scan independent authority timestamps from raw SQL in that path.
+// Each successful sample advances one floor; a failed or backward sample is
+// latched even if a callback ignores its error. Closing Work closes this API.
+func (t *Transaction) SampleTime(ctx context.Context) (time.Time, error) {
+	return t.sampleGuardTime(ctx, false)
+}
+
+func (t *Transaction) sampleGuardTime(ctx context.Context, internal bool) (time.Time, error) {
+	if t.rejectCopy() {
+		return time.Time{}, ErrGuardRequired
+	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	if t.fault != nil {
+		return time.Time{}, t.fault
+	}
+	fail := func(err error) (time.Time, error) { t.fault = err; return time.Time{}, err }
+	if t.tx == nil || t.clockContext == nil || !sameBootstrapContext(ctx, t.clockContext) || (!internal && !t.open) {
+		return fail(ErrGuardRequired)
+	}
+	if ctx.Err() != nil {
+		return fail(ErrExpired)
+	}
+	now, err := sampleTime(ctx, t.tx)
+	if err != nil {
+		return fail(err)
+	}
+	if now.Before(t.clockFloor) {
+		return fail(ErrExpired)
+	}
+	t.clockFloor = now
+	return now, nil
 }
 
 func (t *Transaction) ExecContext(ctx context.Context, q string, args ...any) (sql.Result, error) {
+	if t.rejectCopy() {
+		return nil, ErrGuardRequired
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if !t.open {
@@ -97,6 +157,9 @@ func (t *Transaction) ExecContext(ctx context.Context, q string, args ...any) (s
 	return r, e
 }
 func (t *Transaction) QueryContext(ctx context.Context, q string, args ...any) (*sql.Rows, error) {
+	if t.rejectCopy() {
+		return nil, ErrGuardRequired
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if !t.open {
@@ -113,6 +176,14 @@ func (t *Transaction) QueryContext(ctx context.Context, q string, args ...any) (
 	return r, e
 }
 func (t *Transaction) QueryRowContext(ctx context.Context, q string, args ...any) *sql.Row {
+	if t.rejectCopy() {
+		if t == nil || t.identity == nil || t.identity.tx == nil {
+			return nil
+		}
+		canceled, cancel := context.WithCancel(context.Background())
+		cancel()
+		return t.identity.tx.QueryRowContext(canceled, q, args...)
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if !t.open || !statement(q, true) {
@@ -127,6 +198,9 @@ func (t *Transaction) QueryRowContext(ctx context.Context, q string, args ...any
 // CAS must affect exactly one row; 0 or >1, RowsAffected errors and SQL errors
 // make the whole transaction uncommittable even if Work ignores the result.
 func (t *Transaction) CAS(ctx context.Context, q string, args ...any) error {
+	if t.rejectCopy() {
+		return ErrGuardRequired
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if !t.open {
@@ -148,8 +222,23 @@ func (t *Transaction) CAS(ctx context.Context, q string, args ...any) error {
 	}
 	return nil
 }
-func (t *Transaction) close() error   { t.mu.Lock(); defer t.mu.Unlock(); t.open = false; return t.fault }
-func (t *Transaction) failure() error { t.mu.Lock(); defer t.mu.Unlock(); return t.fault }
+func (t *Transaction) close() error {
+	if t.rejectCopy() {
+		return ErrGuardRequired
+	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	t.open = false
+	return t.fault
+}
+func (t *Transaction) failure() error {
+	if t.rejectCopy() {
+		return ErrGuardRequired
+	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	return t.fault
+}
 
 // Only reviewed single-statement SELECT/DML with parameterized data belongs in
 // this API. Reject transaction control/DDL (which could commit before Guard),
@@ -229,6 +318,7 @@ func (r *Transactions) Run(ctx context.Context, work func(context.Context, *Tran
 		return empty, ErrUnavailable
 	}
 	session := &Transaction{tx: tx, open: true, scope: r.scope}
+	session.identity = session
 	defer session.close()
 	plan, e := r.policy.LockAndAuthorize(ctx, session, r.scope)
 	if e != nil {
@@ -267,6 +357,9 @@ func (r *Transactions) Run(ctx context.Context, work func(context.Context, *Tran
 	if readFailure != nil {
 		return empty, readFailure
 	}
+	if e = session.failure(); e != nil {
+		return empty, e
+	}
 	// Recheck queries can also wait; they cannot reuse their earlier timestamp.
 	if now, e = sampleTime(ctx, tx); e != nil {
 		return empty, e
@@ -292,7 +385,7 @@ func (r *Transactions) Run(ctx context.Context, work func(context.Context, *Tran
 // on every error, and commit only after this method succeeds. A nil return is
 // an uncommitted authorization decision, never a persisted receipt.
 func (r *Transactions) GuardInTx(ctx context.Context, tx *sql.Tx, work func(context.Context, *Transaction) error) error {
-	if r == nil || tx == nil || nilPolicy(r.policy) || work == nil || ctx == nil || ctx.Err() != nil {
+	if r == nil || tx == nil || nilPolicy(r.policy) || work == nil || !sameBootstrapContext(ctx, ctx) || ctx.Err() != nil {
 		return ErrGuardRequired
 	}
 	var server, database string
@@ -301,7 +394,8 @@ func (r *Transactions) GuardInTx(ctx context.Context, tx *sql.Tx, work func(cont
 	if err := tx.QueryRowContext(ctx, "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))").Scan(&server, &database, &now, &offset); err != nil || server != string(r.scope.ServerUUID) || database != string(r.scope.Database) || offset != 0 || !validDBTime(now) {
 		return ErrUnavailable
 	}
-	session := &Transaction{tx: tx, open: true, scope: r.scope}
+	session := &Transaction{tx: tx, open: true, scope: r.scope, clockContext: ctx, clockFloor: now}
+	session.identity = session
 	defer session.close()
 	plan, err := r.policy.LockAndAuthorize(ctx, session, r.scope)
 	if err != nil {
@@ -314,7 +408,7 @@ func (r *Transactions) GuardInTx(ctx context.Context, tx *sql.Tx, work func(cont
 	if !validPlan(plan) {
 		return ErrGuardRequired
 	}
-	if now, err = sampleTime(ctx, tx); err != nil {
+	if now, err = session.sampleGuardTime(ctx, true); err != nil {
 		return err
 	}
 	if err = checkTime(ctx, plan, now); err != nil {
@@ -326,7 +420,7 @@ func (r *Transactions) GuardInTx(ctx context.Context, tx *sql.Tx, work func(cont
 	if err = session.close(); err != nil {
 		return err
 	}
-	if now, err = sampleTime(ctx, tx); err != nil {
+	if now, err = session.sampleGuardTime(ctx, true); err != nil {
 		return err
 	}
 	if err = checkTime(ctx, plan, now); err != nil {
@@ -339,7 +433,10 @@ func (r *Transactions) GuardInTx(ctx context.Context, tx *sql.Tx, work func(cont
 	if readFailure != nil {
 		return readFailure
 	}
-	if now, err = sampleTime(ctx, tx); err != nil {
+	if err = session.failure(); err != nil {
+		return err
+	}
+	if now, err = session.sampleGuardTime(ctx, true); err != nil {
 		return err
 	}
 	return checkTime(ctx, plan, now)

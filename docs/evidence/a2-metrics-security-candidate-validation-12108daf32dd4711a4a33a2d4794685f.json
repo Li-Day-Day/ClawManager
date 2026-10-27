@@ -1,0 +1,34 @@
+{
+  "kind": "a2_metrics_security_candidate_generator_validation.v1",
+  "id": "12108daf32dd4711a4a33a2d4794685f",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-metrics-review-12108daf32dd4711a4a33a2d4794685f",
+  "status": "passed_exact_candidate_generator_consistency_only",
+  "Go_executed": false,
+  "PromQL_parser_or_evaluator_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "cleanup": true,
+  "inputs": [
+    {
+      "source": "docs/evidence/a2-metrics-security-generator-candidate-20261027.mjs.txt",
+      "target": "scripts/system-backup-metrics-registry.mjs",
+      "size": 41280,
+      "sha256": "a36cfd35228aac2a012839085b9c976dc6e98eb429e7f88cd97b3220598abe64"
+    },
+    {
+      "source": "docs/evidence/a2-metrics-security-threshold-candidate-20261027.json",
+      "target": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194140,
+      "sha256": "ad08c669e86e079d1a66f989be078193efae786992199ea62d24bd3b05d32f4f"
+    },
+    {
+      "source": "docs/system-backup-restore-division-plan.md",
+      "target": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "generator_check_exit": 0,
+  "source_and_snapshot_postcheck": true
+}

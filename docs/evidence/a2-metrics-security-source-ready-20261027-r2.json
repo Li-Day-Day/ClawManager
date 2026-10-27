@@ -1,0 +1,123 @@
+{
+  "kind": "a2_metrics_security_source_review_handoff.v2",
+  "status": "source_ready_D_application_and_evaluator_pending",
+  "prior_eight_expression_candidate_preserved": true,
+  "original_D_owner_total_aggregation_confirmed": true,
+  "findings": {
+    "A-METRICS-01": "eight total-threshold expressions staged; original D owner confirmed intended total aggregation",
+    "A-METRICS-02": "signature branch still lacks original dedupe fields; original owner decision pending",
+    "A-METRICS-03": "one invalid metric_result selector confirmed; standalone and combined candidates staged"
+  },
+  "source_selector_scope": {
+    "promql_alerts": 95,
+    "controller_state_excluded": 4,
+    "selector_groups": 9,
+    "quoted_matchers": 10,
+    "original_invalid": 1,
+    "candidate_invalid": 0,
+    "valid_status_failed_preserved": true
+  },
+  "combined_expression_changes": 9,
+  "actual_private_generator_checks": [
+    0,
+    0
+  ],
+  "private_source_postcheck": true,
+  "private_owner_independently_absent": true,
+  "raw_series_fixture": {
+    "test_groups": 59,
+    "expression_checks_prepared": 117,
+    "YAML_structure_checked": true,
+    "promtool_executed": false,
+    "expected_results_proven": false
+  },
+  "candidate_application_target_files": [
+    "scripts/system-backup-metrics-registry.mjs",
+    "contracts/system-backup/v12/metrics-alert-registry.json",
+    "contracts/system-backup/v12/prometheus-alert-rules.yaml"
+  ],
+  "files": [
+    {
+      "path": "docs/evidence/a2-metrics-security-source-ready-20261027-r1.json",
+      "size": 2622,
+      "sha256": "cecef8c2c035b645db83b873b4795e714ddfee1bf455ed1160345c077ccdb91c"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-selector-enum-reviewed-20261027.json",
+      "size": 15018,
+      "sha256": "346d0e5add048f08f508f08f3e10aeee10b8768d8bf19ad71ce7f414c612f92c"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-selector-enum-review-20261027.mjs",
+      "size": 11849,
+      "sha256": "be76a7ed0c032b393cbf04b5835f97419a17d8ac8367ac466161efc9894d8b27"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-selector-candidate-validation-26e09bd27e1c44e3ab25b9dceac307e6.json",
+      "size": 3051,
+      "sha256": "40aed2c88e0b38a90e97a6871bc5c51c672fe1e0322ef63ef9486d7f09b4de33"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-promtool-fixture-source-ready-20261027-r2.json",
+      "size": 36186,
+      "sha256": "788d232b9dadfb0332a611479ae4e7d6676500995752dc2ac8c761a9f6826984"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-promtool-fixture-20261027.mjs",
+      "size": 11831,
+      "sha256": "03c2923691b3c4800230519d951cb23df3c71be327fcb6bfc96a460471ec3ebe"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+      "size": 38608,
+      "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.json",
+      "size": 194101,
+      "sha256": "c82415b341835d8a1055a1f87984b81cf0bed4842a35c08feb951a7cc08df45f"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.mjs.txt",
+      "size": 41175,
+      "sha256": "16fd91c22fd3625655207dec8fa85432d0f99e82408ca57b05c623abe6030ed1"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.yaml",
+      "size": 70759,
+      "sha256": "ace20dd31431247b28d4fd03d42443bb31bbb7015099caaad826d9f5eea3e144"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.mjs.txt",
+      "size": 41281,
+      "sha256": "74d2bc36169bdf6157bf14e26c353c581b78309d2faef66954d8e685e1a7ee85"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.yaml",
+      "size": 70799,
+      "sha256": "245bf3d97317b679509aabac1ffb85258a1720d2bc40b6e200f87e322f5ac018"
+    },
+    {
+      "path": "docs/system-backup-a2-metrics-selector-enum-review-20261027.md",
+      "size": 1230,
+      "sha256": "c5bee15d3b7b69f749f880ecc329c3e3820c218dff7006431d886fbefcad1c7f"
+    },
+    {
+      "path": "docs/system-backup-a2-metrics-promtool-fixture-20261027.md",
+      "size": 1497,
+      "sha256": "2972e49512acf33af09e9ce0935b77311759daba607169785cdfc3cc4b1a0211"
+    }
+  ],
+  "live_contracts_or_scripts_modified": false,
+  "Go_executed": false,
+  "PromQL_parser_or_evaluator_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false
+}

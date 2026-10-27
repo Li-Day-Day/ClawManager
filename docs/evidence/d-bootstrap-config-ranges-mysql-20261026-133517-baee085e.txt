@@ -1,0 +1,35 @@
+**********************
+PowerShell 记录开始
+开始时间: 20261026133517
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Program Files\WindowsApps\Microsoft.PowerShell_7.6.8.0_x64__8wekyb3d8bbwe\pwsh.dll -NoProfile -File .\scripts\system-backup-d-bootstrap-ranges-mysql-validation.ps1 -Remote
+进程 ID: 43704
+PSVersion: 7.6.8
+PSEdition: Core
+GitCommitId: 7.6.8
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+BOOTSTRAP_CONSUMER_MYSQL_INPUTS_OK migrations=96 catalog=0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe synthetic_a
+uthority=yes production=no
+{"ImportPath":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]","Action":"build-output","Output":"# clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]\n"}
+{"ImportPath":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]","Action":"build-output","Output":"internal\\systembackupevidence\\download_gc_full_collect_mysql_test.go:20:2: \"github.com/go-sql-driver/mysql\" imported and not used\n"}
+{"ImportPath":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]","Action":"build-fail"}
+{"Time":"2026-10-26T13:47:28.3442152+08:00","Action":"start","Package":"clawreef/internal/systembackupevidence"}
+{"Time":"2026-10-26T13:47:28.3457345+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"FAIL\tclawreef/internal/systembackupevidence [build failed]\n"}
+{"Time":"2026-10-26T13:47:28.3457345+08:00","Action":"fail","Package":"clawreef/internal/systembackupevidence","Elapsed":0.002,"FailedBuild":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]"}
+PS>TerminatingError(): "BootstrapConsumer Go step failed exit=1"
+CLEANED bootstrapConsumer-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-baee085e04b849149ce06c60a7909cc0 removed=True
+BOOTSTRAP_CONFIG_RANGES_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-bootstrap-config-ranges-mysql-20261026-133517-baee085e.json
+**********************
+PowerShell 记录结束
+结束时间: 20261026134818
+**********************

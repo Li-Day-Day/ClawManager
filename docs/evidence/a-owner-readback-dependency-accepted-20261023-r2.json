@@ -1,0 +1,80 @@
+{
+  "kind": "a_owner_unchanged_dependency_readback_composition.v1",
+  "date": "2026-10-23",
+  "status": "owner_inventory_retained_after_non_dependency_layout_changes",
+  "source": "docs/evidence/a-owner-dependency-freeze-20261023-r2-source.json",
+  "source_manifest_sha256": "5c8bd979bd1b90e14d86499c4d8906a3a8721495cf9c2528eca3200e90aeab88",
+  "source_sha256": "c6655d2dff3f4666a34e6ce2f401bb1ae4acd1a6e458d149ee144a7b44e96353",
+  "source_files": 1601,
+  "events": "docs/evidence/a-owner-current-full-local-20261023-093734-inventory.json",
+  "events_sha256": "91915db1aa359370e67bfd5a7aa1cb3da9906f1ed2fed2cc6e7b5005700eadc4",
+  "inventory_source_sha256": "d27224a655b1dbb2f332f77a06f0fc412043b3e5daa25a9c25f5fd7301e71885",
+  "owner_baseline": {
+    "main": 632,
+    "all": 5105
+  },
+  "tested_source": "docs/evidence/a-owner-current-full-local-20261023-093734-source.json",
+  "tested_source_manifest_sha256": "44356e4c741add7b330dc0b616bcae776c4fece91c44f5219b3e0a83c42366ec",
+  "changed_ordinary_inputs": [
+    "backend/internal/systembackupresources/restore_fields_sql_test.go"
+  ],
+  "added_ordinary_inputs": [
+    "backend/internal/systembackupresources/restore_five.go",
+    "backend/internal/systembackupresources/restore_five_test.go",
+    "backend/internal/systembackupresources/restore_readback.go",
+    "backend/internal/systembackupresources/restore_readback_test.go",
+    "backend/internal/systembackupresources/testdata/restore-readback-mysql-inputs.json"
+  ],
+  "ordinary_owner_dependency_inputs_unchanged": true,
+  "tagged_dependency_graph_resolved": true,
+  "resources_in_owner_dependency_closure": false,
+  "current_resources_package_accepted": false,
+  "resource_fixture_delta": "test-only optional table values; nil retains previous fixture",
+  "tests_repeated": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "current_whole_worktree_verified": false,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e240b89af1de40a883ee2cfc3ae59710",
+    "independently_absent": true
+  },
+  "evidence": [
+    {
+      "path": "docs/evidence/a-owner-current-full-accepted-20261023.json",
+      "sha256": "815ec8f60fd755880f2046fe7bd6df52bec2776df91c066e8559bf79cd0f1b75"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r2-source.json",
+      "sha256": "5c8bd979bd1b90e14d86499c4d8906a3a8721495cf9c2528eca3200e90aeab88"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r2-native.json",
+      "sha256": "78d7177409200f6e87a67e52dbe5dec8986ffcafffe6f87e3ea7d89bb34a4b4a"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r2-imports.txt",
+      "sha256": "362fc11e7de0f045a3c3d92ebe03e002d691bac209f7d681fdbdaf05c9a69379"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r2-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r2.ps1",
+      "sha256": "607fd081e0bd2f006bfc5bee6e61e9c12af2d5a2cf934ea1f920859bb55442e5"
+    },
+    {
+      "path": "docs/evidence/a-resources-readback-reviewed-20261023.json",
+      "sha256": "58c285dc7f50c6cc697dacfc8f9d5efb85fa7610d78f55b51d0c40adeb7dd585"
+    },
+    {
+      "path": "docs/evidence/d-resources-readback-review-request-20261023.json",
+      "sha256": "b3ad1bc806b0159623f0cb595021c75624c27cbd4129aabd6ecfd4f6c90c47a4"
+    },
+    {
+      "path": "docs/evidence/a-owner-readback-dependency-review-20261023-r2.mjs",
+      "sha256": "eaabd6a5b7f1f8372741b1a3a1a0a2ad05155cd70ccdf729f34a463a8d18dc7d"
+    }
+  ]
+}

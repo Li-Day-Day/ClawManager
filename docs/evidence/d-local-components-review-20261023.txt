@@ -1,0 +1,23 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: resources preparation drift: backend/internal/systembackupresources/restore_write_fk_mysql_test.go
++ actual - expected
+
++ 'faf55ef231d2953be86560de0258729fe9b18445e38c5db144df3f8e8b22e924'
+- 'fe6fbd08f2389e4b839d75d01e49491e61244c13ddb23a287560854b779c21e6'
+
+    at file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-independent-work-review.mjs:76:318
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'faf55ef231d2953be86560de0258729fe9b18445e38c5db144df3f8e8b22e924',
+  expected: 'fe6fbd08f2389e4b839d75d01e49491e61244c13ddb23a287560854b779c21e6',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.15.0

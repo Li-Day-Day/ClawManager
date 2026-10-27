@@ -1,0 +1,85 @@
+{
+  "kind": "d_bootstrap_entry_parent_stage_observation.v1",
+  "parent_receipt": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+  "parent_sha256": "fb27a21187e66442dc80191279fc225d5c857d8fd7c78891905b20e958ed0c1f",
+  "parent_status": "failed",
+  "parent_snapshot_postcheck_reached": false,
+  "complete_run_accepted": false,
+  "linux_accepted": false,
+  "parent_postcheck_retroactively_claimed": false,
+  "stages": [
+    {
+      "stage": "targeted",
+      "log": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.targeted.jsonl",
+      "sha256": "fa5543dfac3461501749cf95b36973b865053d610b0aa9091181d737994aed88",
+      "package_passes": [
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupproducer",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "test_pass_events": 164,
+      "required_roots": [
+        "TestBootstrapCandidateAttemptCancellationAndConcurrentCopies",
+        "TestBootstrapCandidateAttemptOpenerFailureClosesDatabaseAndSealsCopies",
+        "TestBootstrapCandidateAttemptPreparationFailureNeverNeedsDatabase",
+        "TestBootstrapCandidateAttemptPreparesBeforeDatabaseAndDoesNotRenew",
+        "TestBootstrapCandidateServiceConsumerIntegration",
+        "TestBootstrapDeploymentCandidatesApplyConsumerAndHistoricalRetry",
+        "TestBootstrapDeploymentCandidatesImmutableComposition",
+        "TestBootstrapDeploymentCandidatesPreparationAndLateFilesBeforeCredentials",
+        "TestBootstrapInlineCannotInitializeAfterC1StorageExists",
+        "TestBootstrapInlineDomainFenceBindingAndRedaction",
+        "TestBootstrapInlineDomainFenceLegacyAndHistoricalBranches",
+        "TestBootstrapInlineDomainFenceRejectsPartialUnknownAndDrift",
+        "TestBootstrapInlineExactHistoryMayReadWithoutDomainButNeverWriteAgain",
+        "TestBootstrapInlineLateAuthorizationAndFixedChecksRollback",
+        "TestBootstrapInlinePreparedKeepsOriginalBoundedContext",
+        "TestBootstrapInlineUsesFreshSQLTimeAfterInstallationWait",
+        "TestCommandRejectsMixedModesBypassFlagsAndUnpinnedFiles",
+        "TestDeploymentLegacyAttemptKeepsPreparationContextThroughSQL",
+        "TestDeploymentLegacyClosesDatabaseReturnedWithOpenError",
+        "TestDeploymentLegacyRejectsTypedNilOwnersBeforeCredentials",
+        "TestRequirementsReportDoesNotPretendOwnersAreDelivered"
+      ],
+      "failure_or_skip_events": 0
+    },
+    {
+      "stage": "full",
+      "log": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.full.jsonl",
+      "sha256": "6536e5268c6a4d3e89c878da2e016cdaf6fa624765f710ace1e974d86e4b7173",
+      "package_passes": [
+        "clawreef/cmd/server",
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupevidence",
+        "clawreef/internal/systembackupnoncebootstrap",
+        "clawreef/internal/systembackupproducer",
+        "clawreef/internal/systembackupread",
+        "clawreef/internal/systembackupresources",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "test_pass_events": 8546,
+      "required_roots": [],
+      "failure_or_skip_events": 0
+    },
+    {
+      "stage": "seeds",
+      "log": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.seeds.jsonl",
+      "sha256": "aacdc45135fe67a2f421ababe10dd5e5910264db383869ee0f08bd20e2fce961",
+      "package_passes": [
+        "clawreef/internal/systembackupevidence"
+      ],
+      "test_pass_events": 4,
+      "required_roots": [
+        "TestDBootstrapConsumerMySQLSeed",
+        "TestDBootstrapConsumerRangesMySQLSeed",
+        "TestDBootstrapOriginalMaterialsMySQLSeed",
+        "TestDBootstrapEntryMySQLSeed"
+      ],
+      "failure_or_skip_events": 0
+    }
+  ],
+  "actual_mysql_executed": false,
+  "dependencies_installed": false
+}

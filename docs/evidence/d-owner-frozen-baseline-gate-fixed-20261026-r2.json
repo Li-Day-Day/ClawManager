@@ -1,0 +1,115 @@
+{
+  "kind": "d_owner_frozen_baseline_gate_fix.v1",
+  "status": "future_retest_snapshot_gate_fixed_exact_native_mock_scope",
+  "observed_race": {
+    "source": {
+      "path": "docs/evidence/a-download-owners-mysql-remote-source-20261026-103443-4904e85a.json",
+      "sha256": "34aa726a05705670b550946c7c612209c4efe17ad4deb6ddeb2f1f43e5e83c1c"
+    },
+    "source_sha256": "952dd06b4e142a3222f6ca44d654388a75a30dd0030c7a3a39e58a4953bd7e05",
+    "files": 1629,
+    "original_live_transcript": "docs/evidence/a-download-owners-mysql-remote-20261026-103443-4904e85a.txt",
+    "immutable_startup_prefix": {
+      "path": "docs/evidence/d-owner-frozen-gate-observed-race-prefix-20261026.txt",
+      "sha256": "a58ad57494bd91c862b1a77eb51ff19128cc9ef5b7f610899c7d2aab17458690"
+    },
+    "prior_reviewed_source": "2099a08cb03ebf57e9c9411765ff166ac189e097dedb153971fb46b72f8133b0",
+    "changed_ordinary_input": {
+      "before": {
+        "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+        "size": 9648,
+        "sha256": "25876e8991a02d3c855f98d89cfde2a02bffbcfe9b1ec4fb8978d75679fb959f"
+      },
+      "after": {
+        "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+        "size": 10279,
+        "sha256": "7589700e8f850b272221d6f6ed7deb8391d49e2a3808b13992d5999e5f6fee65"
+      }
+    },
+    "live_run_not_rewritten_or_stopped": true,
+    "actual_SQL_result_accepted": false
+  },
+  "implementation": [
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "sha256": "07937556bba05020d6a6194540f0ef4a774c3797e274bc3a8c9468ed17064d98"
+    },
+    {
+      "path": "docs/evidence/a-download-owner-role-retest-20261021.ps1",
+      "sha256": "09bbe126025dd574aa3145b6d59fb619f55489e49413d17bd93b14c71ce8146d"
+    },
+    {
+      "path": "docs/evidence/a-download-retest-source-preflight-20261021.mjs",
+      "sha256": "983e0ed0c5f6bebfd30553ab668de84f8068402fb9daf5fd2f7d7af3782697e2"
+    },
+    {
+      "path": "docs/evidence/a-download-owners-actual-review-20261020.mjs",
+      "sha256": "69dfb9d6c0d43115aa21825134e9217554dc8c555c49e01a4cee06478bc62c18"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-regression-20261026.ps1",
+      "sha256": "a86d5387dcccf48b6beaf6eae26205fbe4c0f9fcb06ad9032e0694d1422eee44"
+    }
+  ],
+  "native_mock_regression": {
+    "path": "docs/evidence/d-owner-frozen-gate-regression-20261026-r5.json",
+    "sha256": "27977c1e8c59f62c84798e95b225a7ac92109db1bdbc4609b81dce6dd47a13bc"
+  },
+  "cases": 14,
+  "expected_predecessor_mock_dispatch": 1,
+  "expected_fixed_changed_snapshot_mock_dispatch": 0,
+  "PowerShell_AST_checked": [
+    "scripts/system-backup-d-config-writer-validation.ps1",
+    "docs/evidence/a-download-owner-role-retest-20261021.ps1",
+    "docs/evidence/d-owner-frozen-gate-regression-20261026.ps1"
+  ],
+  "scope": "fixed operator opt-in for remote owner/role; local new-source preparation remains possible; actual exact frozen manifest checked after successful capture and before any dispatch",
+  "old_predecessors": [
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-predecessor-wrapper-20261026.txt",
+      "sha256": "8c469c6fedf4a0a30e0491a47b22cde1ebdbb8ce9319950647cdc7be1f4737f3"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-predecessor-entry-20261026.txt",
+      "sha256": "1c18abec57f0c57b8884492c62219d5fb1855dbbe4b16e82e7efa241d9914abf"
+    }
+  ],
+  "failed_fixture_attempts_preserved": [
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-regression-20261026-r1.json",
+      "sha256": "bfc4111780abf71e8a3f8e58e8ec924c0d04a135b8147e90e8d663b149400cab"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-regression-20261026-r2.json",
+      "sha256": "ae3b539cd4bdeafd431352043e24d85b6fc44ff747ce1c75a02f7a11692433e1"
+    }
+  ],
+  "test_build_artifacts_removed": true,
+  "own_test_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-42f14fe74abd490691756a0f35f608fe",
+  "own_test_owner_absent": true,
+  "Go_or_builds_run": false,
+  "SSH_or_SQL_executed_by_fix_review": false,
+  "dependencies_installed": false,
+  "independent_A_review_pending": true,
+  "production_approved": false,
+  "full_D_goal_complete": false,
+  "previous_receipt": {
+    "path": "docs/evidence/d-owner-frozen-baseline-gate-fixed-20261026.json",
+    "sha256": "7b9174f1ae04be254a79bfb1f0b944ee60ee381b7577f421b850871ebe5434a4"
+  },
+  "completion_code_fix": "Successful driver now explicitly exits zero; negative child LASTEXITCODE is not its completion code.",
+  "observed_driver_process": {
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "docs/evidence/d-owner-frozen-gate-regression-20261026.ps1",
+      "-OutputPrefix",
+      "docs/evidence/d-owner-frozen-gate-regression-20261026-r5"
+    ],
+    "native_exit": 0,
+    "outer_explicit_LASTEXITCODE": 0
+  },
+  "A_independent_prior_inline_outer_exit": 1,
+  "prior_inline_outer_exit_reclassified": false
+}

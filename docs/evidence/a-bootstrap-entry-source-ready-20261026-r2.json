@@ -1,0 +1,75 @@
+{
+  "kind": "a_bootstrap_entry_source_ready.v1",
+  "date": "2026-10-26",
+  "status": "A1_owned_source_ready_for_joint_native_not_acceptance",
+  "owner_chat": "01a1676e-1c7a-7cd3-89fe-f188be645950",
+  "files": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 18777,
+      "sha256": "0dd61b6dafb78ebc9bc755ef3087bb52fd61b69cc71e040f848ded443c041cc8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates_test.go",
+      "size": 18361,
+      "sha256": "c7c43a905c41693b1eb8591d9e4646af2fca3db9ea2e16cba39d9cc0c0395fce"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "size": 17202,
+      "sha256": "f68bbb98aff199fdb1a54e1ed598d4d0f2dcfe52bc635b78e0cdd6b356a26773"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction_test.go",
+      "size": 13280,
+      "sha256": "c7d15ceadf19db0c0958efa425634e5a08deadc9b4543df4a4098faa5674b74e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt.go",
+      "size": 5752,
+      "sha256": "42cf8b3bf73bd93462308e2d14eb35d1ecf11f7fca0af4b0f64c1a6be1325436"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt_test.go",
+      "size": 7575,
+      "sha256": "35ac4fda494698f72f14bab97b74e09297820fc48257ab48c286dc951bcf918e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_inline_gate_test.go",
+      "size": 6114,
+      "sha256": "1c8374f0eff545913749b2c23117eb3556a62a6406314172152abdf1f15bfe5d"
+    }
+  ],
+  "candidate_attempt": "Original independent authority and resource Prepare before credential/database opener; single bounded context, operation ID and owned original capacity sample; one-use state shared across copies; no provider re-Prepare after database open",
+  "legacy_entry": "Keep exact bounded preparation context; L0/global-config-L1/domain-L1/users-L2/operation-L3; first legacy initialization refuses full or partial/inaccessible C1; exact historical branch requires original current authorization plus fixed final checks",
+  "native_tests_started": false,
+  "checks": [
+    "gofmt parser/format",
+    "tracked diff whitespace"
+  ],
+  "new_roots": [
+    "TestBootstrapCandidateAttemptPreparesBeforeDatabaseAndDoesNotRenew",
+    "TestBootstrapCandidateAttemptPreparationFailureNeverNeedsDatabase",
+    "TestBootstrapCandidateAttemptCancellationAndConcurrentCopies",
+    "TestBootstrapCandidateAttemptOpenerFailureClosesDatabaseAndSealsCopies",
+    "TestBootstrapInlineCannotInitializeAfterC1StorageExists",
+    "TestBootstrapInlineExactHistoryMayReadWithoutDomainButNeverWriteAgain",
+    "TestBootstrapInlineLateAuthorizationAndFixedChecksRollback",
+    "TestBootstrapInlineUsesFreshSQLTimeAfterInstallationWait",
+    "TestBootstrapInlinePreparedKeepsOriginalBoundedContext"
+  ],
+  "joint_validation_required": "New D-owned entry/CLI/domain source ready, source pin check, exact snapshot targeted plus full nine packages with justified 45m evidence budget, Linux compile, tagged probe preparation, final source check and exact-owner product cleanup",
+  "does_not_cover": [
+    "actual MySQL",
+    "production resource mapping",
+    "27 owner slots",
+    "formal migration",
+    "production approval"
+  ],
+  "dependencies_installed": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "supersedes": "docs/evidence/a-bootstrap-entry-source-ready-20261026.json",
+  "revision": 2,
+  "fixed_installation_invariant": "Both exact historical read and final legacy guard independently require installation matrix_key equal to original grant; late mutation rolls back"
+}

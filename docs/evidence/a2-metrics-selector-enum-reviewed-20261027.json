@@ -1,0 +1,453 @@
+{
+  "kind": "a2_metrics_selector_closed_enum_source_review.v1",
+  "status": "confirmed_one_metric_result_literal_violation_candidates_only",
+  "finding": "A-METRICS-03",
+  "metric_result_original_plan_values": [
+    "success",
+    "failure",
+    "rejected",
+    "timeout",
+    "conflict",
+    "canceled"
+  ],
+  "closed_value_cases": [
+    {
+      "value": "success",
+      "old_match": false,
+      "corrected_match": false
+    },
+    {
+      "value": "failure",
+      "old_match": false,
+      "corrected_match": true
+    },
+    {
+      "value": "rejected",
+      "old_match": false,
+      "corrected_match": false
+    },
+    {
+      "value": "timeout",
+      "old_match": false,
+      "corrected_match": false
+    },
+    {
+      "value": "conflict",
+      "old_match": false,
+      "corrected_match": false
+    },
+    {
+      "value": "canceled",
+      "old_match": false,
+      "corrected_match": false
+    }
+  ],
+  "source_scan": {
+    "promql_alerts": 95,
+    "controller_state_alerts": 4,
+    "selector_groups": 9,
+    "matchers": [
+      {
+        "alert": "backup-disabled-after-monitoring-armed.warning",
+        "metric": "clawmanager_system_backup_alert_profile_info",
+        "label": "alert_profile",
+        "operator": "=",
+        "value": "production",
+        "admitted_values": [
+          "production"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "backup-disabled-after-monitoring-armed.critical",
+        "metric": "clawmanager_system_backup_alert_profile_info",
+        "label": "alert_profile",
+        "operator": "=",
+        "value": "production",
+        "admitted_values": [
+          "production"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "promotion-baseline-degraded",
+        "metric": "clawmanager_system_backup_promotion_health",
+        "label": "health_state",
+        "operator": "=~",
+        "value": "degraded|stale|unknown",
+        "admitted_values": [
+          "degraded",
+          "unknown",
+          "stale"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "acceptance-task-failed",
+        "metric": "clawmanager_system_backup_task_transitions_total",
+        "label": "task_purpose",
+        "operator": "=",
+        "value": "acceptance",
+        "admitted_values": [
+          "acceptance"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "acceptance-task-failed",
+        "metric": "clawmanager_system_backup_task_transitions_total",
+        "label": "status",
+        "operator": "=",
+        "value": "failed",
+        "admitted_values": [
+          "failed"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "participant-error",
+        "metric": "clawmanager_system_backup_participant_state",
+        "label": "participant_state",
+        "operator": "=",
+        "value": "error",
+        "admitted_values": [
+          "error"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "dependency-health-unhealthy",
+        "metric": "clawmanager_system_backup_dependency_health",
+        "label": "health_state",
+        "operator": "=~",
+        "value": "degraded|unknown|stale",
+        "admitted_values": [
+          "degraded",
+          "unknown",
+          "stale"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "dependency-expiry-warning",
+        "metric": null,
+        "label": "__name__",
+        "operator": "=~",
+        "value": "clawmanager_system_backup_(credential|ca|catalog_credential|kek|signing_key|attestation|evidence)_expiry_timestamp_seconds",
+        "admitted_values": [
+          "clawmanager_system_backup_credential_expiry_timestamp_seconds",
+          "clawmanager_system_backup_ca_expiry_timestamp_seconds",
+          "clawmanager_system_backup_catalog_credential_expiry_timestamp_seconds",
+          "clawmanager_system_backup_kek_expiry_timestamp_seconds",
+          "clawmanager_system_backup_signing_key_expiry_timestamp_seconds",
+          "clawmanager_system_backup_attestation_expiry_timestamp_seconds",
+          "clawmanager_system_backup_evidence_expiry_timestamp_seconds"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "signature-or-checksum-failure",
+        "metric": "clawmanager_system_backup_signature_operations_total",
+        "label": "metric_result",
+        "operator": "=",
+        "value": "failed",
+        "admitted_values": [],
+        "illegal_literal_values": [
+          "failed"
+        ]
+      },
+      {
+        "alert": "signature-or-checksum-failure",
+        "metric": "clawmanager_system_backup_verifier_checks_total",
+        "label": "failure_category",
+        "operator": "=~",
+        "value": "checksum_mismatch|signature_invalid",
+        "admitted_values": [
+          "checksum_mismatch",
+          "signature_invalid"
+        ],
+        "illegal_literal_values": []
+      }
+    ],
+    "invalid_selectors": [
+      {
+        "alert": "signature-or-checksum-failure",
+        "metric": "clawmanager_system_backup_signature_operations_total",
+        "label": "metric_result",
+        "operator": "=",
+        "value": "failed",
+        "admitted_values": [],
+        "illegal_literal_values": [
+          "failed"
+        ]
+      }
+    ],
+    "unsupported_current_selector_syntax": 0,
+    "full_PromQL_parser_executed": false
+  },
+  "corrected_source_scan": {
+    "promql_alerts": 95,
+    "controller_state_alerts": 4,
+    "selector_groups": 9,
+    "matchers": [
+      {
+        "alert": "backup-disabled-after-monitoring-armed.warning",
+        "metric": "clawmanager_system_backup_alert_profile_info",
+        "label": "alert_profile",
+        "operator": "=",
+        "value": "production",
+        "admitted_values": [
+          "production"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "backup-disabled-after-monitoring-armed.critical",
+        "metric": "clawmanager_system_backup_alert_profile_info",
+        "label": "alert_profile",
+        "operator": "=",
+        "value": "production",
+        "admitted_values": [
+          "production"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "promotion-baseline-degraded",
+        "metric": "clawmanager_system_backup_promotion_health",
+        "label": "health_state",
+        "operator": "=~",
+        "value": "degraded|stale|unknown",
+        "admitted_values": [
+          "degraded",
+          "unknown",
+          "stale"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "acceptance-task-failed",
+        "metric": "clawmanager_system_backup_task_transitions_total",
+        "label": "task_purpose",
+        "operator": "=",
+        "value": "acceptance",
+        "admitted_values": [
+          "acceptance"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "acceptance-task-failed",
+        "metric": "clawmanager_system_backup_task_transitions_total",
+        "label": "status",
+        "operator": "=",
+        "value": "failed",
+        "admitted_values": [
+          "failed"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "participant-error",
+        "metric": "clawmanager_system_backup_participant_state",
+        "label": "participant_state",
+        "operator": "=",
+        "value": "error",
+        "admitted_values": [
+          "error"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "dependency-health-unhealthy",
+        "metric": "clawmanager_system_backup_dependency_health",
+        "label": "health_state",
+        "operator": "=~",
+        "value": "degraded|unknown|stale",
+        "admitted_values": [
+          "degraded",
+          "unknown",
+          "stale"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "dependency-expiry-warning",
+        "metric": null,
+        "label": "__name__",
+        "operator": "=~",
+        "value": "clawmanager_system_backup_(credential|ca|catalog_credential|kek|signing_key|attestation|evidence)_expiry_timestamp_seconds",
+        "admitted_values": [
+          "clawmanager_system_backup_credential_expiry_timestamp_seconds",
+          "clawmanager_system_backup_ca_expiry_timestamp_seconds",
+          "clawmanager_system_backup_catalog_credential_expiry_timestamp_seconds",
+          "clawmanager_system_backup_kek_expiry_timestamp_seconds",
+          "clawmanager_system_backup_signing_key_expiry_timestamp_seconds",
+          "clawmanager_system_backup_attestation_expiry_timestamp_seconds",
+          "clawmanager_system_backup_evidence_expiry_timestamp_seconds"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "signature-or-checksum-failure",
+        "metric": "clawmanager_system_backup_signature_operations_total",
+        "label": "metric_result",
+        "operator": "=",
+        "value": "failure",
+        "admitted_values": [
+          "failure"
+        ],
+        "illegal_literal_values": []
+      },
+      {
+        "alert": "signature-or-checksum-failure",
+        "metric": "clawmanager_system_backup_verifier_checks_total",
+        "label": "failure_category",
+        "operator": "=~",
+        "value": "checksum_mismatch|signature_invalid",
+        "admitted_values": [
+          "checksum_mismatch",
+          "signature_invalid"
+        ],
+        "illegal_literal_values": []
+      }
+    ],
+    "invalid_selectors": [],
+    "unsupported_current_selector_syntax": 0,
+    "full_PromQL_parser_executed": false
+  },
+  "valid_failed_task_status_selector_preserved": true,
+  "standalone_expression_changes": 1,
+  "combined_expression_changes": 9,
+  "prior_eight_expression_candidates_preserved": true,
+  "prior_review": "docs/evidence/a2-metrics-security-source-reviewed-20261027.json",
+  "signature_dedupe_inconsistency_resolved": false,
+  "labels_metrics_counts_or_thresholds_changed": false,
+  "candidates": [
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.json",
+      "size": 194101,
+      "sha256": "c82415b341835d8a1055a1f87984b81cf0bed4842a35c08feb951a7cc08df45f"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.mjs.txt",
+      "size": 41175,
+      "sha256": "16fd91c22fd3625655207dec8fa85432d0f99e82408ca57b05c623abe6030ed1"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.yaml",
+      "size": 70759,
+      "sha256": "ace20dd31431247b28d4fd03d42443bb31bbb7015099caaad826d9f5eea3e144"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.mjs.txt",
+      "size": 41281,
+      "sha256": "74d2bc36169bdf6157bf14e26c353c581b78309d2faef66954d8e685e1a7ee85"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.yaml",
+      "size": 70799,
+      "sha256": "245bf3d97317b679509aabac1ffb85258a1720d2bc40b6e200f87e322f5ac018"
+    }
+  ],
+  "coverage": "All 95 current PromQL alert strings and their nine selector groups/ten quoted matchers; four controller-state expressions excluded. Only present syntax is inspected; functions/evaluation are not run.",
+  "PromQL_parser_or_evaluator_executed": false,
+  "live_contracts_or_scripts_modified": false,
+  "Go_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "size": 25084,
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "contracts/system-backup/v12/maintenance-participant-state.schema.json",
+      "size": 6837,
+      "sha256": "e6b5d2339f0b3f4a2be6365d6a67dbfb4766010aac265364a226d1b04474e637"
+    },
+    {
+      "path": "contracts/system-backup/v12/manifest-system-backup-v1.schema.json",
+      "size": 8990,
+      "sha256": "97ff3a94db45ea165653241b6b6d9c174b9432505133299933b512c359026fdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194100,
+      "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.schema.json",
+      "size": 6859,
+      "sha256": "6f3e30a1ee322170edbe17f156854317ac9b2ce480a1843a4710910e12803b58"
+    },
+    {
+      "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+      "size": 70758,
+      "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+    },
+    {
+      "path": "contracts/system-backup/v12/status-failure-enums.schema.json",
+      "size": 4229,
+      "sha256": "02e8d13bb8e96ff13da4049b8673835015445bc4b60d6b736095c914f829f676"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-generator-candidate-20261027.mjs.txt",
+      "size": 41280,
+      "sha256": "a36cfd35228aac2a012839085b9c976dc6e98eb429e7f88cd97b3220598abe64"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-rules-candidate-20261027.yaml",
+      "size": 70798,
+      "sha256": "78734c94f6ff6ab76bf0dbfa7b8afcf34e822a4b5846301287262af3f15ff8f0"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-source-review-20261027.mjs",
+      "size": 11192,
+      "sha256": "e8502d2f5ff09af8efedc8d1b2d37e7bdf54ac3e9c7e984db6f308f6e684c631"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-source-reviewed-20261027.json",
+      "size": 16961,
+      "sha256": "a540975f4a411e6c06ae7430be00bc364b5adba3efe84f4a17b99b5dc79f45e0"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-threshold-candidate-20261027.json",
+      "size": 194140,
+      "sha256": "ad08c669e86e079d1a66f989be078193efae786992199ea62d24bd3b05d32f4f"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-selector-enum-review-20261027.mjs",
+      "size": 11849,
+      "sha256": "be76a7ed0c032b393cbf04b5835f97419a17d8ac8367ac466161efc9894d8b27"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "scripts/system-backup-metrics-registry.mjs",
+      "size": 41174,
+      "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.mjs",
+      "size": 4307,
+      "sha256": "0e5b1ef127e84d358fe24fc2c752eef77e3f76321e85c2e5c2adf67060d23606"
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.test.mjs",
+      "size": 2496,
+      "sha256": "97f4a6f4bf6df93edc37a67ca9413784d792fd8592f521d32cc3e7d8ba2e4011"
+    }
+  ]
+}

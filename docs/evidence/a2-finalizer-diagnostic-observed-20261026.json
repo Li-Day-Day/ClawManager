@@ -1,0 +1,113 @@
+{
+  "kind": "a2_finalizer_diagnostic_observation.v1",
+  "date": "2026-10-26",
+  "scope": "filtered_native_diagnostic_only_not_complete_package_or_owner_gate",
+  "log": {
+    "path": "docs/evidence/d-gc-finalizer-diagnostic-20261026-r2.jsonl",
+    "size": 35937,
+    "sha256": "21e2edc2aa6f124ea0bd9c7f7267cc731312d0f08ef9f022fff81ab4a20b86aa"
+  },
+  "preserved_failed_first_log": {
+    "path": "docs/evidence/d-gc-finalizer-diagnostic-20261026-r1.jsonl",
+    "size": 34484,
+    "sha256": "a38438a4408425cb582b256b84b032770355296ec58c57a1d57a5504a443c88e"
+  },
+  "roots": 7,
+  "pass_events": 39,
+  "failed_or_skipped": 0,
+  "critical_passed": [
+    "TestDownloadGCFinalizerProtectedCandidate/capacity",
+    "TestDownloadGCFinalizerProtectedCandidate/capacity_overflow",
+    "TestDownloadGCFinalizerProtectedCandidate/capacity_sample",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_advance",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+    "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext/[]int",
+    "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext/map[string]int"
+  ],
+  "tests": [
+    "TestDownloadGCFinalizerCapturedFactsCannotBeRebound",
+    "TestDownloadGCFinalizerCapturedFactsCannotBeRebound/unrelated_context",
+    "TestDownloadGCFinalizerCapturedFactsCannotBeRebound/wrong_collector",
+    "TestDownloadGCFinalizerCapturedFactsCannotBeRebound/wrong_scope",
+    "TestDownloadGCFinalizerCapturedFactsCannotBeRebound/wrong_tx",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/cancel_during_check",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/canceled_original",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/checker_failure",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/nil_tx",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/unrelated_context",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/valid",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/wrong_collector",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/wrong_operation",
+    "TestDownloadGCFinalizerClosedBindingAndSingleUse/wrong_tx",
+    "TestDownloadGCFinalizerConcurrentCopiesConsumeOnce",
+    "TestDownloadGCFinalizerDeadlineZeroAndOutput",
+    "TestDownloadGCFinalizerProtectedCandidate",
+    "TestDownloadGCFinalizerProtectedCandidate/absent_key",
+    "TestDownloadGCFinalizerProtectedCandidate/authority",
+    "TestDownloadGCFinalizerProtectedCandidate/callback_changes_worker",
+    "TestDownloadGCFinalizerProtectedCandidate/capacity",
+    "TestDownloadGCFinalizerProtectedCandidate/capacity_overflow",
+    "TestDownloadGCFinalizerProtectedCandidate/capacity_sample",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_advance",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_backwards",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+    "TestDownloadGCFinalizerProtectedCandidate/commit",
+    "TestDownloadGCFinalizerProtectedCandidate/config",
+    "TestDownloadGCFinalizerProtectedCandidate/envelope",
+    "TestDownloadGCFinalizerProtectedCandidate/tombstone",
+    "TestDownloadGCFinalizerProtectedCandidate/until_equality",
+    "TestDownloadGCFinalizerProtectedCandidate/worker_claim",
+    "TestDownloadGCFinalizerProtectedCandidate/worker_deadline",
+    "TestDownloadGCFinalizerProtectedCandidate/worker_fence",
+    "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext",
+    "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext/[]int",
+    "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext/map[string]int",
+    "TestDownloadGCFreezeFinalizationFollowsTicket"
+  ],
+  "tested_source_manifest_attested_by_this_review": false,
+  "current_observed_source_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "size": 33161,
+      "sha256": "6e973153f4f2f59b891211c3ece8b782b54e277078dbeb82427351221cf968b8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "size": 2816,
+      "sha256": "28e93f205ee04d8692e996b709485e6f7582f63f3a15b2cf7177f72bdcb269bc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "size": 6950,
+      "sha256": "085ec806d6cc0147c3c9147ec45077f847b30357bcfe7d4d9415e771b582cf48"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work.go",
+      "size": 1820,
+      "sha256": "5d9ec0a60074d9b2b4dfcd7e9119ce4e78e3e87c3a2a2f76ec61356f29cd4843"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize_test.go",
+      "size": 5426,
+      "sha256": "a7c0a5125a71f3fb315ea1e6bc20f76c9de045858a92e0ae6a5e4151303e7db6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work_test.go",
+      "size": 7050,
+      "sha256": "ea4349acdc2baa904dcd203a2de07e915094a4e746a00059c5f7fd6571861e0e"
+    }
+  ],
+  "parser": {
+    "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+    "size": 26152,
+    "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+  },
+  "Go_repeated_by_this_review": false,
+  "full_gate_accepted": false,
+  "owner_baseline_approved": false,
+  "final_cleanup_accepted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false
+}

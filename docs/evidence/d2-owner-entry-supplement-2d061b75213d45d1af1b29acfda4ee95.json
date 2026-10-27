@@ -1,0 +1,618 @@
+{
+  "kind": "d2_owner_current_baseline_supplement.v1",
+  "error": null,
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-source.json",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDDownloadGCFull(Collect|Profile|Lifecycle)MySQLSeed$",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-0-attempt-1.log",
+      "sha256": "14cc9f434cf8b73a05bc11c99a80632468c8b7052444121f96c93f8e8339c116",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-0-attempt-1.log",
+          "sha256": "14cc9f434cf8b73a05bc11c99a80632468c8b7052444121f96c93f8e8339c116",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-vet=off",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\current-evidence.test",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-1-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-1-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": "",
+      "binary": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\current-evidence.test",
+      "binary_sha256": "f2649a0f5b560e72bdc0703e40d101ecaa4461d176bd04c20d155619c0bd6e25"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(DResources(Readback|Write)|AResourcesWriteFK)MySQLSeed$",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupresources"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-2-attempt-1.log",
+      "sha256": "01824aa4496e3aec3ab8c1bd54983f66821e3fa0e7bbf1a69c1d3e4910450113",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-2-attempt-1.log",
+          "sha256": "01824aa4496e3aec3ab8c1bd54983f66821e3fa0e7bbf1a69c1d3e4910450113",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDDrillDetailHTTPSeed$",
+        "-count=1",
+        "-timeout=2700s",
+        "./cmd/server/system_backup_read_live.go",
+        "./cmd/server/system_backup_read_cursor_key.go",
+        "./cmd/server/system_backup_read_live_test.go",
+        "./cmd/server/system_backup_read_cursor_key_test.go",
+        "./cmd/server/system_backup_read_live_mysql_test.go",
+        "./cmd/server/system_backup_read_verification_history_mysql_test.go",
+        "./cmd/server/system_backup_read_drill_history_mysql_test.go"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-3-attempt-1.log",
+      "sha256": "fe1773534a7e34637d7b1bc0c2e9d9173e652da916d87abbb907e9456f53a062",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-3-attempt-1.log",
+          "sha256": "fe1773534a7e34637d7b1bc0c2e9d9173e652da916d87abbb907e9456f53a062",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestAAdminReadMySQLSeed$",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-4-attempt-1.log",
+      "sha256": "ae31ca12d46691b6725173bb4f575a5de17497d5c1032b32d9dbaeedac40cbf7",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-4-attempt-1.log",
+          "sha256": "ae31ca12d46691b6725173bb4f575a5de17497d5c1032b32d9dbaeedac40cbf7",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-5-attempt-1.log",
+      "sha256": "fb95caf89160c9e6eb6e3c126d67b003980acf63bbef0a83edcf5fc94f62a094",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-5-attempt-1.log",
+          "sha256": "fb95caf89160c9e6eb6e3c126d67b003980acf63bbef0a83edcf5fc94f62a094",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\owner-seeds.exe",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-6-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-6-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\owner-seeds.exe",
+        "-test.run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-test.v",
+        "-test.count=1",
+        "-test.timeout=2700s"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-detached.log",
+      "sha256": "c4cd45233f55470c0b0a2991a5f671671bc45938c066b482dd9dffe03af315e3",
+      "working_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\detached\\work\\probe",
+      "initial_directory_empty": true
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\resources.test",
+        "./internal/systembackupresources"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-8-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-8-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\drill-http.test",
+        "./cmd/server/system_backup_read_live.go",
+        "./cmd/server/system_backup_read_cursor_key.go",
+        "./cmd/server/system_backup_read_live_test.go",
+        "./cmd/server/system_backup_read_cursor_key_test.go",
+        "./cmd/server/system_backup_read_live_mysql_test.go",
+        "./cmd/server/system_backup_read_verification_history_mysql_test.go",
+        "./cmd/server/system_backup_read_drill_history_mysql_test.go"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-9-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-9-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\admin-read.test",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-10-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-10-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=2700s",
+        "."
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-11-attempt-1.log",
+      "sha256": "496687a1eb5ad7e2f4d3cbe5f5b8ddbd5d5756863f467f10714c7ed5786faab4",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-11-attempt-1.log",
+          "sha256": "496687a1eb5ad7e2f4d3cbe5f5b8ddbd5d5756863f467f10714c7ed5786faab4",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\binary\\freeze-finalizer.test",
+        "."
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-12-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-12-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=2700s",
+        "-overlay",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\entry-owner-counterexamples\\missing_finalizer.json",
+        "-run",
+        "^TestDownloadGCFinalizerProtectedCandidate$/^worker_claim$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 1,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-13-attempt-1.log",
+      "sha256": "15718a3e7702ba18cbb0cab3d53df44607d73dac2cec90b5a3c36843c69cdaf7",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 1,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-13-attempt-1.log",
+          "sha256": "15718a3e7702ba18cbb0cab3d53df44607d73dac2cec90b5a3c36843c69cdaf7",
+          "known_tool_crash": false,
+          "assertion_failure": true
+        }
+      ],
+      "expected_failure_test": "TestDownloadGCFinalizerProtectedCandidate/worker_claim"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=2700s",
+        "-overlay",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\entry-owner-counterexamples\\earlier_clock_floor.json",
+        "-run",
+        "^TestDownloadGCFinalizerProtectedCandidate$/^clock_intermediate_rollback$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 1,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-14-attempt-1.log",
+      "sha256": "89ba189942d4ee888e64ae33cee49db49e84615e3c1ace3341f3ae7bb4b5c2ee",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 1,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95-step-14-attempt-1.log",
+          "sha256": "89ba189942d4ee888e64ae33cee49db49e84615e3c1ace3341f3ae7bb4b5c2ee",
+          "known_tool_crash": false,
+          "assertion_failure": true
+        }
+      ],
+      "expected_failure_test": "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback"
+    }
+  ],
+  "binaries": [
+    {
+      "name": "admin-read.test",
+      "sha256": "306083997597efa47cef969d4f2322d4c0e344667ba02a1a4c582af91a5e5d3a"
+    },
+    {
+      "name": "current-evidence.test",
+      "sha256": "f2649a0f5b560e72bdc0703e40d101ecaa4461d176bd04c20d155619c0bd6e25"
+    },
+    {
+      "name": "drill-http.test",
+      "sha256": "bfb886437863fa7a1843808e54a768702818e2bd95b5b61680144a6d3acf7fbe"
+    },
+    {
+      "name": "freeze-finalizer.test",
+      "sha256": "e2faef6a254e1e877732aee27494673c70ebf936df5b1234e65229879654c6f5"
+    },
+    {
+      "name": "owner-seeds.exe",
+      "sha256": "31127a5bf244da1adcdb221eda77ec0670fc8d81359891b5bc06919b6576f4fb"
+    },
+    {
+      "name": "resources.test",
+      "sha256": "6c3129dfc1dd4d5253ac73e631d70caae2038e8b47236698863f84342cdb2ee6"
+    }
+  ],
+  "frozen_postcheck": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95",
+  "owner_removed": true,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "runner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-current-baseline-supplement-20261027.ps1",
+  "runner_profile": "fifteen_stages_after_independent_exact_target_scope_review",
+  "entry_validation": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+  "entry_validation_sha256": "fb27a21187e66442dc80191279fc225d5c857d8fd7c78891905b20e958ed0c1f",
+  "source_binding": {
+    "target_sha256": "4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964",
+    "scope_review_sha256": "c6510f8d1625c99233798b8b1d27c2c3af636579e817e3bd27f6bb44b22843d3",
+    "independent_scope_check": {
+      "kind": "a_owner_pre_thin_scope_check.v1",
+      "status": "ready_for_fifteen_stage_local_supplement_only",
+      "target_manifest": {
+        "path": "docs/evidence/a-owner-pre-thin-target-20261027-r2.json",
+        "size": 364045,
+        "sha256": "c76f49ff9200e5ad7704ead7924efd97dc3e5a14794cde5237969bba570a025a"
+      },
+      "scope_review": {
+        "path": "docs/evidence/a-owner-pre-thin-scope-reviewed-20261027-r1.json",
+        "size": 38525,
+        "sha256": "c6510f8d1625c99233798b8b1d27c2c3af636579e817e3bd27f6bb44b22843d3"
+      },
+      "target_sha256": "4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964",
+      "source_root": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95\\source",
+      "files": 1718,
+      "deltas": 84,
+      "native_start_authorized": true,
+      "current_baseline_ready": false,
+      "actual_sql_authorized": false
+    },
+    "parent_terminal_status": "failed",
+    "parent_final_postcheck_retroactively_claimed": false,
+    "current_baseline_accepted": false
+  },
+  "counterexample_helper_sha256": "20f7bad7ce9e59489c25e3f7cf4c592decd9b52127c1f14d5454c9a51679d0fb",
+  "standalone_scope": "five_explicit_standard_library_sources_not_concrete_collector",
+  "prepared_cache": null,
+  "runner_sha256": "be1fe08c44317877aa75d46e07fa1e61803893afda5fbbd4971151d04462b614",
+  "snapshotter_sha256": "d993e6772372e90d43f76327e503d669fd907497ad73c6319853d9d9abe6fbec",
+  "native_inventory": {
+    "resource_seed_names": [
+      "TestAResourcesWriteFKMySQLSeed",
+      "TestDResourcesReadbackMySQLSeed",
+      "TestDResourcesWriteMySQLSeed"
+    ],
+    "http_seed_names": [
+      "TestDDrillDetailHTTPSeed",
+      "TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture",
+      "TestDDrillDetailHTTPSeed/foreign_installation_fk_fixture/drill_history_foreign_installation"
+    ],
+    "admin_seed_checks": 1,
+    "packaged_owner_seed_names": [
+      "TestADownloadAdmissionMySQLSeed",
+      "TestADownloadAdmissionMySQLSeed/detached_embedded_config",
+      "TestADownloadAdmissionMySQLSeed/historical_config_projection",
+      "TestADownloadAdmissionMySQLSeed/independent_encrypted_object",
+      "TestASQLTaskDownloadOwnersMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells",
+      "TestASensitiveDownloadMFAMySQLSeed/budget",
+      "TestASensitiveDownloadMFAMySQLSeed/catalog",
+      "TestASensitiveDownloadMFAMySQLSeed/ddl",
+      "TestASensitiveDownloadMFAMySQLSeed/duplicate",
+      "TestASensitiveDownloadMFAMySQLSeed/trailing",
+      "TestASensitiveDownloadMFAMySQLSeed/unknown"
+    ],
+    "detached_owner_seed_names": [
+      "TestADownloadAdmissionMySQLSeed",
+      "TestADownloadAdmissionMySQLSeed/detached_embedded_config",
+      "TestADownloadAdmissionMySQLSeed/historical_config_projection",
+      "TestADownloadAdmissionMySQLSeed/independent_encrypted_object",
+      "TestASQLTaskDownloadOwnersMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed",
+      "TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells",
+      "TestASensitiveDownloadMFAMySQLSeed/budget",
+      "TestASensitiveDownloadMFAMySQLSeed/catalog",
+      "TestASensitiveDownloadMFAMySQLSeed/ddl",
+      "TestASensitiveDownloadMFAMySQLSeed/duplicate",
+      "TestASensitiveDownloadMFAMySQLSeed/trailing",
+      "TestASensitiveDownloadMFAMySQLSeed/unknown"
+    ],
+    "standalone_roots": [
+      "TestAFreezeTypedNilConnectorBoundary",
+      "TestDownloadGCFinalizerClosedBindingAndSingleUse",
+      "TestDownloadGCFinalizerConcurrentCopiesConsumeOnce",
+      "TestDownloadGCFinalizerDeadlineZeroAndOutput",
+      "TestDownloadGCFinalizerRejectsDynamicallyIncomparableContext",
+      "TestDownloadGCFreezeCandidateClosedPreflight",
+      "TestDownloadGCFreezeCandidateFailures",
+      "TestDownloadGCFreezeCandidateOrderAndFreshDisposal",
+      "TestDownloadGCFreezeFinalizationFollowsTicket"
+    ],
+    "standalone_pass_events": 49,
+    "counterexamples": [
+      {
+        "target": "TestDownloadGCFinalizerProtectedCandidate/worker_claim",
+        "parent": "TestDownloadGCFinalizerProtectedCandidate",
+        "native_exit": 1,
+        "assertion_not_build_failure": true,
+        "unsafe_single_regression_commit_observed": true
+      },
+      {
+        "target": "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+        "parent": "TestDownloadGCFinalizerProtectedCandidate",
+        "native_exit": 1,
+        "assertion_not_build_failure": true,
+        "unsafe_single_regression_commit_observed": true
+      }
+    ],
+    "real_native_inventory_checked": true,
+    "actual_mysql": false,
+    "gc_seed_names": [
+      "TestDDownloadGCFullCollectMySQLSeed",
+      "TestDDownloadGCFullLifecycleMySQLSeed",
+      "TestDDownloadGCFullProfileMySQLSeed"
+    ],
+    "current_linux_evidence_binary_sha256": "f2649a0f5b560e72bdc0703e40d101ecaa4461d176bd04c20d155619c0bd6e25",
+    "linux_binary_executed": false,
+    "stages": 15,
+    "source_scope_acceptance_claimed": false,
+    "parent_status_observed": "failed",
+    "parent_stage_inventory_only": true
+  },
+  "Go_started": true,
+  "tests_started": true,
+  "scope_artifacts": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-pre-thin-target-20261027-r2.json",
+      "sha256": "c76f49ff9200e5ad7704ead7924efd97dc3e5a14794cde5237969bba570a025a"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-pre-thin-scope-reviewed-20261027-r1.json",
+      "sha256": "c6510f8d1625c99233798b8b1d27c2c3af636579e817e3bd27f6bb44b22843d3"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-pre-thin-scope-review-20261027.mjs",
+      "sha256": "44fb0810212fe041f2dca7b0ae34644e8c985f79567325e7518559e0e212168c"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-pre-thin-target-20261026.mjs",
+      "sha256": "b4b0f676999e619a325b825a5e91d1e3454524520e95d11519ff8caddb05f155"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-current-supplement-inventory-20261027.mjs",
+      "sha256": "895d80c7f9a3f798a8753b3b4f7d75e375d79a0b9832a95b8a93f1b5db2f4b6b"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-owner-entry-supplement-inventory-20261026.mjs",
+      "sha256": "58f10ea50e358986a285ccdf7713d249e49589ee64468d087e9c76bcdbaaacdb"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-actual-review-20261023.mjs",
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-finalizer-native-20261026.mjs",
+      "sha256": "a9c64c9ccbecb7737e2ef2fd775d0b8d34094aef521d7d10970b105222fe4865"
+    }
+  ],
+  "current_baseline_accepted": false,
+  "inventory_checker_sha256": "895d80c7f9a3f798a8753b3b4f7d75e375d79a0b9832a95b8a93f1b5db2f4b6b"
+}

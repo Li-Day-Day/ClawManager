@@ -1,0 +1,61 @@
+✔ complete synthetic text tests parser only, BOM/CRLF accepted (13.8018ms)
+✔ reject missing FK observation (2.6714ms)
+✔ reject wrong FK count (1.7903ms)
+✔ reject disabled FK checks (0.9977ms)
+✔ reject case missing (21.3029ms)
+✔ reject duplicate pass (44.0553ms)
+✔ reject wrong case same count (1.1864ms)
+✔ reject case failed (0.5159ms)
+✔ reject case skipped (0.504ms)
+✔ reject root absent (0.7286ms)
+✔ reject root failed (0.5281ms)
+✔ reject root omitted (1.0416ms)
+✔ reject no native completion (19.9423ms)
+✔ reject mixed remote roots (7.192ms)
+✔ reject wrong binary (2.9377ms)
+✔ reject wrong inputs (1.3331ms)
+✔ reject wrong migrations (19.6543ms)
+✔ reject wrong catalog (1.4383ms)
+✔ reject wrong namespace UID (1.0095ms)
+✔ reject pending cleanup (0.405ms)
+✔ reject database cleanup missing (0.8706ms)
+✔ reject scratch cleanup missing (1.9444ms)
+✔ reject owner cleanup missing (0.8038ms)
+✔ reject truncated success (0.7086ms)
+✔ reject case before FK check (33.922ms)
+✔ real local preparation cannot be received as actual FK SQL; no receipt written (34.878ms)
+✖ synthetic file-level FK receipt binds current sources, native logs and old inventory; files removed (32913.4958ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 26
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33324.9694
+
+✖ failing tests:
+
+test at docs\evidence\a-resources-writer-fk-actual-review-20261023.test.mjs:61:1
+✖ synthetic file-level FK receipt binds current sources, native logs and old inventory; files removed (32913.4958ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '096' !== '081'
+  
+      at validateWriteTranscript (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-resources-writer-fk-actual-review-20261023.mjs:27:9)
+      at validateFKTranscript (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-resources-writer-fk-actual-review-20261023.mjs:15:50)
+      at reviewTransaction (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-resources-writer-fk-actual-review-20261023.mjs:81:15)
+      at reviewFK (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-resources-writer-fk-actual-review-20261023.mjs:51:42)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-resources-writer-fk-actual-review-20261023.test.mjs:81:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '096',
+    expected: '081',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

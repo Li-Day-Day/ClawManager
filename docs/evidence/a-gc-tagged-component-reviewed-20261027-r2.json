@@ -1,0 +1,107 @@
+{
+  "kind": "a_gc_tagged_component_scope_review.v1",
+  "status": "reviewed_exact_two_tagged_test_components_only_global_source_NOT_ready",
+  "parent_entry_id": "ae7af3833e1f424f946638b88c7f68d8",
+  "base_tagged_evidence": "docs/evidence/a-gc-prepared-full-reviewed-20261026.json",
+  "changes": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+      "before": {
+        "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+        "size": 23008,
+        "sha256": "d1b0c295339e9e6e61fec08dddf7336cb499a82b9645ff250bab8ca7c9d6818f"
+      },
+      "after": {
+        "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+        "size": 23173,
+        "sha256": "e9806c4892ac770ae2f3cf97e9bcb6ba2f123d125b6d5a00d9533e055d9bdf09"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+        "size": 32957,
+        "sha256": "c05714705f0e489f13004095ca9648f90edd5e2786fed1b182400083913f3e55"
+      }
+    }
+  ],
+  "reviewed_cold_delta": "Two synthetic SHOW CREATE hash call sites plus explicit empty-pin rejection",
+  "reviewed_new_component": "Fifteen-case tagged lifecycle test and normalizer seed, with unquoted comments/nested tails rejected; TEMP denied by exact1044 after database/worker identity checks; production code unchanged",
+  "ordinary_backend_contracts_unchanged": false,
+  "ordinary_scope_review_complete": false,
+  "global_two_tag_checker_rejected_additional_ordinary_changes": true,
+  "known_unreviewed_API_examples": [
+    "backend/cmd/server/main.go",
+    "backend/cmd/server/system_backup_read_live.go",
+    "backend/cmd/server/system_backup_tasks_live.go",
+    "backend/internal/systembackupapi/tasks.go",
+    "backend/internal/systembackupsecurity/action_scope.go",
+    "backend/internal/systembackupsecurity/action_scope_test.go",
+    "backend/internal/systembackupsecurity/read_scope.go",
+    "backend/internal/systembackupbootstrapmaterials"
+  ],
+  "known_unreviewed_API_list_is_not_complete": true,
+  "required_scope_before_use": "Successful parent full10/postcheck/cleanup and separately reviewed exact native evidence for ALL ordinary deltas; this component never waives ordinary-source checks",
+  "required_GC_seed_roots": [
+    "TestDDownloadGCFullProfileMySQLSeed",
+    "TestDDownloadGCFullCollectMySQLSeed",
+    "TestDDownloadGCFullLifecycleMySQLSeed"
+  ],
+  "current_Linux_tagged_evidence_compile_required": true,
+  "original_owner_thin_obligations_still_required": true,
+  "actual_Go_run_by_this_review": false,
+  "actual_SQL": false,
+  "complete_domain_authority": false,
+  "production_approved": false,
+  "current_owner_baseline_ready": false,
+  "goal_complete": false,
+  "supersedes": {
+    "path": "docs/evidence/a-gc-tagged-component-reviewed-20261026-r1.json",
+    "size": 2926,
+    "sha256": "0b1c99d1b5c27af1e4cbdb4128d728b92a74ceb48be4c43c9d40a24fb896b016"
+  },
+  "exact_identifier_delta": {
+    "before": {
+      "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+      "size": 32901,
+      "sha256": "cac6c2bc0be61f48d28835828b26f17d92fe9f97deeea4dea3a87c7b5354a7e2"
+    },
+    "after": {
+      "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+      "size": 32957,
+      "sha256": "c05714705f0e489f13004095ca9648f90edd5e2786fed1b182400083913f3e55"
+    },
+    "renames": [
+      {
+        "from": "dGCLifecyclePool",
+        "to": "dGCFullLifecyclePool",
+        "occurrences": 2
+      },
+      {
+        "from": "dGCLifecycleReleased",
+        "to": "dGCFullLifecycleReleased",
+        "occurrences": 12
+      }
+    ],
+    "reverse_transform_size": 32901,
+    "reverse_transform_sha256": "cac6c2bc0be61f48d28835828b26f17d92fe9f97deeea4dea3a87c7b5354a7e2",
+    "old_owner_file_unchanged": {
+      "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go",
+      "size": 13125,
+      "sha256": "56c14b89a7a670d1d4529961fbbf65799d9edaab1f20ae683b100f8034314ec9"
+    }
+  },
+  "original_tagged_compile_failure_preserved": {
+    "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+    "size": 697568,
+    "sha256": "67c12fd8e695c9778d69478f5b25cbb933faddb84da32399bf95e306853d5dc9"
+  },
+  "component_reviewer": {
+    "path": "docs/evidence/a-gc-tagged-component-rename-review-20261027.mjs",
+    "size": 3747,
+    "sha256": "62068ea379277b19d76eebc23b153384a2cd812adc75ed772ab17eae7567c45e"
+  },
+  "new_current_tagged_native_validation_required": true
+}

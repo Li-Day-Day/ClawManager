@@ -1,0 +1,22 @@
+import api from './api';
+import type { SystemBackupTask } from '../types/systemBackupContract';
+
+// Supply owner-reviewed JSON and retain the exact body/key on an unknown result.
+// This transport does not invent the missing backup/preflight request DTOs.
+export async function createSystemBackupTask(
+  kind: 'backup' | 'preflight', reviewedRequestJSON: string, idempotencyKey: string, signal?: AbortSignal,
+): Promise<SystemBackupTask> {
+  if (!/^[A-Za-z0-9._:-]{16,128}$/.test(idempotencyKey)) throw new Error('validation_failed');
+  JSON.parse(reviewedRequestJSON);
+  const path = kind === 'backup' ? '/admin/system-backups' : '/admin/system-backup-preflights';
+  const response = await api.post<SystemBackupTask>(path, reviewedRequestJSON, {
+    signal, headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey },
+  });
+  const task = response.data;
+  if (!task || response.status !== 202 || response.headers['x-system-backup-data-source'] !== 'live' ||
+      task.schema_version !== 'system-backup-task.v1' || task.task_type !== kind ||
+      task.idempotency_key !== idempotencyKey || !Number.isSafeInteger(task.config_version) || task.config_version < 1) {
+    throw new Error('not_ready');
+  }
+  return task;
+}

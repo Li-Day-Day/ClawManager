@@ -1,0 +1,41 @@
+{
+  "kind": "a_cleanup_timing_original_operation_contract_addendum.v1",
+  "status": "C2_original_bound_found_API_and_SQL_whole_second_alignment_required",
+  "prior_review": {
+    "path": "docs/evidence/a-cleanup-timing-candidate-source-review-20261027-r1.json",
+    "size": 3586,
+    "sha256": "af4256a435f15b40c86125952b51b95b8e87474dfe768d00e0c27c4b4d0669e6"
+  },
+  "original_sources": [
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "size": 25084,
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+      "size": 7176,
+      "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+    }
+  ],
+  "exact_schema": {
+    "path": "$defs.DurationConfig.properties.operation_deadline_seconds",
+    "value": {
+      "type": "integer",
+      "minimum": 60,
+      "default": 7200,
+      "maximum": 86400
+    }
+  },
+  "clarification": "The SQL 60..86400-second bound has an existing original contract. The prior review left this as a conditional source question; it is now resolved and is not a request for a new policy.",
+  "required_changes": [
+    "Reject invalid/zero Clock values before SameAttempt equality.",
+    "Make NewOperationClock enforce the existing integer-second window 60..86400 while preserving the original operation creation/deadline, including its queue time.",
+    "Make the SQL operation-window CHECK enforce the same integer-second granularity, not only a microsecond BETWEEN range.",
+    "Cover 59s, 60s, 86400s, 86401s and 60s+1us, plus the zero/replay cases; this is not a new user policy decision."
+  ],
+  "Go_executed": false,
+  "SQL_executed": false,
+  "live_source_changed": false,
+  "production_approved": false
+}

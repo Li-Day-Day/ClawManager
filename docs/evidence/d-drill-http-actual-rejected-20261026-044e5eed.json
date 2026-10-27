@@ -1,0 +1,114 @@
+{
+  "kind": "d_drill_http_actual_failure_review.v1",
+  "result": "FAIL",
+  "actual_mysql_results_accepted": false,
+  "scope": "isolated_mysql_nineteen_synthetic_drill_history_cases",
+  "namespace": "sbk-mig-261026012249-32ca",
+  "namespace_uid": "b1ccc8fa-4e64-4981-be31-6d7634ced000",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "migration_binary_sha256": "ed0cb9f047c543e07df8e8ba0aa04cefadf7d85571e02f411174bc5bbd12bc6c",
+  "migration_catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+  "passed_cases": [
+    "TestDAdminReadLiveHTTPMySQL/drill_history_pending_no_attempt",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_current_attempt_history",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_catalog_import",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_parallel_jobs",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_parallel_phases",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_single_job",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_heartbeat_only",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_summary_drift",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_report_hash_drift",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_report_wrong_owner",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_report_before_attempt",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_historical_preflight_before_retry",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_shared_reference_strict_cutoff",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_expired_evidence_history",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_missing_task",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_unknown_query",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_missing_auth",
+    "TestDAdminReadLiveHTTPMySQL/drill_history_revoked_session"
+  ],
+  "failed_cases": [
+    "TestDAdminReadLiveHTTPMySQL/drill_history_foreign_installation"
+  ],
+  "http_binary_sha256": "f5598ce9d00d2c77d02230ee0f8ca757dcfa198f406d8ce739e95234d3f410ce",
+  "expected_case_count": 19,
+  "passed_case_count": 18,
+  "failed_case_count": 1,
+  "native_root_pass": false,
+  "native_terminal_exit": 1,
+  "wrapper_status": "failed",
+  "source_postcheck": false,
+  "printed_semantic_PASS_is_not_test_success": true,
+  "final_phase_PASS_present": false,
+  "source_sha256": "5cdfb4ba2f167dffe4d516bc8165d4bc6e06df77db545b36c10c2473ac4f7ff4",
+  "frozen_files": 1629,
+  "current_all_frozen_files_match": true,
+  "original_postcheck_replaced": false,
+  "original_logs_rewritten": false,
+  "failure_location": {
+    "path": "backend/cmd/server/system_backup_read_drill_history_mysql_test.go",
+    "line": 181,
+    "stage": "fixture_SQL_before_HTTP_request",
+    "mysql_error_number": null
+  },
+  "diagnosis": {
+    "classification": "static_schema_inference",
+    "detail": "Fixture inserts drill check rows at the original installation, then updates the referenced parent installation key. Migration 072 declares a composite child FK with default restrictive UPDATE behavior. This fixture is inconsistent with that constraint; the redacted log does not identify the actual MySQL error code.",
+    "foreign_key": "fk_sb_check_result_drill",
+    "schema_path": "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+    "schema_line": 105
+  },
+  "followup": "Construct foreign-installation fixture with consistent parent/check/evidence installation identities from insertion, then run a new nineteen-case MySQL profile. Preserve this failed run; do not disable FK checks or accept eighteen cases as nineteen.",
+  "successful_receiver_rejects_metadata": "status\n+ actual - expected\n\n+ 'failed'\n- 'profile_completed_actual_results_require_review'\n",
+  "successful_receiver_rejects_log": "failed, skipped or incomplete native run",
+  "cleanup": {
+    "namespace_uid_matched_in_native_and_operator_logs": true,
+    "remote_scratch_recorded": true,
+    "inner_build_cache_recorded": true,
+    "outer_removed_recorded": true,
+    "outer_owner_absence_checked": true,
+    "outer_files_removed": 1630,
+    "remote_cleanup_independently_queried": false
+  },
+  "transcript_origin": "user_attached_terminal_output",
+  "remote_rerun_executed": false,
+  "dependencies_installed": false,
+  "review_build_artifacts_created": 0,
+  "production_approved": false,
+  "full_restore_accepted": false,
+  "full_gc_accepted": false,
+  "provider_or_human_MFA_accepted": false,
+  "artifacts": [
+    {
+      "path": "docs/evidence/d-drill-http-remote-20261026-084817-044e5eed-source.json",
+      "sha256": "87edb78972188c49f07d96e52df807ca7d12bed112fb41af6d20649c58a76974"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-remote-20261026-084817-044e5eed-source.json.result.json",
+      "sha256": "aaaf8a23e9daaa7cd08546f6d957c0132ce6f1363fd454184fb26ba11e33f644"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-remote-20261026-084817-044e5eed-source.json.native.log",
+      "sha256": "ce6e01de448af351eb9a8ef9762b640f1014fb44eace8dfd942a80d0bcbbc212"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-remote-20261026-084817-044e5eed.txt",
+      "sha256": "1f1270f1d90eb562445891a199f056d5e474825bd5a04257efdbbd7f94cbf6b6"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-operator-20261026-044e5eed.txt",
+      "sha256": "4c7d0110c916645795a7bc4cd2061cc3dcd3762878cb6b8f8426aac2b995eb3b"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-review-20261023.mjs",
+      "sha256": "b7e337ba69c227ce7f5e7462c85ae263bdf123b4b889f48b2ff1aeef9e1b3809"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-failure-review-20261026.mjs",
+      "sha256": "a2ef7372e97d88aee01986ca19d2fd3d24c6fcfc1e2106a395fb28737548e7f2"
+    }
+  ]
+}

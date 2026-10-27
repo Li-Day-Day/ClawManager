@@ -1,0 +1,94 @@
+{
+  "kind": "a2_nonimplementer_cleanup_controller_candidate_source_review.v2",
+  "status": "exact_two_rule_source_candidate_reviewed_private_native_and_collector_evidence_pending",
+  "inputs": [
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-candidate-20261027-r2.go.txt",
+      "size": 5796,
+      "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+    },
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-test-candidate-20261027-r2.go.txt",
+      "size": 12669,
+      "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+    },
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-candidate-20261027.go.txt",
+      "size": 5361,
+      "sha256": "5098d9e1356a856ce801df4069729877886bf69582dd49e5fafe8f11072b59be"
+    },
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-test-candidate-20261027.go.txt",
+      "size": 8638,
+      "sha256": "405bd92272253f2795aa85b22c8f894ba205db8365e1fc25e49435ceaf7b9d8e"
+    },
+    {
+      "path": "docs/evidence/a2-cleanup-controller-candidate-source-reviewed-20261027-r1.json",
+      "size": 4246,
+      "sha256": "d5080920bb1e300ec2d1c05656dc7ef70a6b9ebb8a0b268bd6141060baf7f3b3"
+    }
+  ],
+  "r2_inverse_restores_r1_after_line_ending_normalization": true,
+  "r1_original_production_inverse_preserved_by_exact_input_pins": true,
+  "source_findings": {
+    "residual_fact_explicitly_tristate": true,
+    "unknown_residual_fact_rejected_before_dereference": true,
+    "known_nonvolume_overdue_still_cleanup_critical_but_not_residual_critical": true,
+    "residual_critical_requires_known_volume_and_same_owner_frozen_deadline_exceeded": true,
+    "later_unknown_owner_not_bypassed_after_earlier_overdue": true,
+    "r1_complete_clock_and_all_owner_validation_preserved": true,
+    "original_acceptance_evidence_issuer_predicates_preserved": true
+  },
+  "authored_tests_observed": {
+    "old_roots": [
+      "TestControllerStateAlertsFixedClockAndProfile",
+      "TestControllerStateAlertsExactBoundariesAndMissingSeries",
+      "TestControllerStateAlertsRejectInvalidInputs",
+      "TestControllerCleanupUsesEachImmutableDeadline",
+      "TestControllerCleanupRejectsUnknownPartialOrInvalidCollections"
+    ],
+    "new_roots": [
+      "TestControllerStateAlertsFixedClockAndProfile",
+      "TestControllerStateAlertsExactBoundariesAndMissingSeries",
+      "TestControllerStateAlertsRejectInvalidInputs",
+      "TestControllerCleanupUsesEachImmutableDeadline",
+      "TestControllerCleanupRejectsUnknownPartialOrInvalidCollections",
+      "TestControllerResidualVolumeUsesEachImmutableDeadline",
+      "TestControllerCleanupRejectsUnknownResidualVolumeFacts"
+    ],
+    "residual_cases": [
+      "confirmed_empty",
+      "volume_before",
+      "volume_equal",
+      "volume_one_after",
+      "nonvolume_overdue_does_not_make_volume_overdue",
+      "younger_volume_overdue",
+      "same_global_gauges_no_volume_overdue"
+    ],
+    "unknown_residual_fact_rejection_root": "TestControllerCleanupRejectsUnknownResidualVolumeFacts",
+    "source_inventory_is_not_executed_test_PASS": true
+  },
+  "required_registry_alignment": {
+    "total_alerts": 100,
+    "promql": 94,
+    "controller_state": 6,
+    "moved_rules": [
+      "cleanup-overdue",
+      "restore-residual-volume-overdue"
+    ],
+    "metadata_and_generated_candidate_reviewed_here": false
+  },
+  "limitations": [
+    "Private full controller tests, actual Go source/caller inventory and current Linux build have not been executed by A2.",
+    "Complete and a nonnil residual bool are trusted predicate inputs, not proof of a complete authoritative read or real B-owned resource classification.",
+    "Collector integration, automatic-cleanup durable clock mapping, original frozen budget binding and notification delivery remain pending.",
+    "The residual presence warning and four gate frozen-metric projections are separate from this two-rule predicate."
+  ],
+  "Go_executed_by_A2": false,
+  "SQL_executed": false,
+  "PromQL_executed": false,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "whole_baseline_accepted": false,
+  "production_approved": false
+}

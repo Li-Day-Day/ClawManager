@@ -1,0 +1,150 @@
+{
+  "kind": "d2_current_local_validation_source_ready.v3",
+  "status": "source_only_with_actual_receiver_checks_no_native_acceptance",
+  "files": [
+    {
+      "path": "docs/evidence/d2-current-ordinary-complete-validation-20261027.ps1",
+      "size": 21164,
+      "sha256": "1bfb4417860a92aca1d3fd5e17159269f3ecb5df416e127d974330cbd31386c2"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-inventory-20261027.mjs",
+      "size": 4282,
+      "sha256": "e15cca9e3203d34b3f265cccdfc5bf43cfc6a2cf381cf739e780dbadc1856096"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-inventory-20261027.test.mjs",
+      "size": 2411,
+      "sha256": "9bf918eb9e974fb68d8b73b6e882fb77aa0e3a67bdfaceecab915614db112d58"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-go-scope-20261027.mjs",
+      "size": 5120,
+      "sha256": "835c38ba5f01ee99cedbd7b29885c8f0644ea0b4a6d1ecf2fea2c930c2ccd9fa"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-go-scope-20261027.test.mjs",
+      "size": 1727,
+      "sha256": "b3b6e50bb6647990c201b0d6f8588a344bbc7f941c2cab550424b0f97de58837"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-source-checks-20261027.ps1",
+      "size": 2766,
+      "sha256": "19316065c1dadce9f1d1e66c3b99952182bd35dee74d9e659d87f876854cd9be"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-helper-integrity-20261027-r2.json",
+      "size": 427,
+      "sha256": "45813cc00770143ac322932e8ebdec8ee4ff3853231bd5819b1a0ed66c54f097"
+    },
+    {
+      "path": "docs/evidence/d2-owner-current-baseline-supplement-20261027.ps1",
+      "size": 22878,
+      "sha256": "be1fe08c44317877aa75d46e07fa1e61803893afda5fbbd4971151d04462b614"
+    },
+    {
+      "path": "docs/evidence/d2-owner-current-supplement-inventory-20261027.mjs",
+      "size": 8139,
+      "sha256": "895d80c7f9a3f798a8753b3b4f7d75e375d79a0b9832a95b8a93f1b5db2f4b6b"
+    },
+    {
+      "path": "docs/evidence/d2-owner-current-supplement-inventory-20261027.test.mjs",
+      "size": 3636,
+      "sha256": "af36507030f9898bb71ff18782446c72b8f53661c4f6f71e17cbb5aaa179234a"
+    },
+    {
+      "path": "docs/evidence/d2-owner-current-scope-draft-rejected-20261027-r3.json",
+      "size": 690,
+      "sha256": "420c1e412add3e545d2d6050f9f918edaa8078985892c2c7de2d15ab0e154815"
+    },
+    {
+      "path": "docs/evidence/a-owner-pre-thin-scope-review-20261027.mjs",
+      "size": 14822,
+      "sha256": "210b924cd6be7cdf1f77b9cc9381d1b9cc79d21f952d92ab181216b1f710f37a"
+    },
+    {
+      "path": "docs/evidence/a-owner-pre-thin-target-20261026.mjs",
+      "size": 8958,
+      "sha256": "7f0c27f921bebd4f30d50a5fd756fade95c1d9aa2de1a082d8c3759f2e8e51ab"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-go-scope-20261026.mjs",
+      "size": 5752,
+      "sha256": "8f2a7b31fb7339802afe3196078c50cd5438806ce676a9c1430bcf5b264b0024"
+    },
+    {
+      "path": "docs/evidence/d2-owner-entry-supplement-inventory-20261026.mjs",
+      "size": 6181,
+      "sha256": "58f10ea50e358986a285ccdf7713d249e49589ee64468d087e9c76bcdbaaacdb"
+    }
+  ],
+  "supersedes_preparation": "docs/evidence/d2-current-local-validation-source-ready-20261027-r2.json",
+  "node_receiver_checks": [
+    {
+      "scope": "fifteen-stage inventory",
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "scope": "complete ordinary and three local bootstrap seeds",
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "scope": "actual Go metadata source selection",
+      "passed": 9,
+      "failed": 0
+    }
+  ],
+  "ps_drivers_ast_errors": 0,
+  "actual_driver_draft_rejected_before_Go": true,
+  "actual_integrity_function_controls_passed": true,
+  "ordinary_window": {
+    "packages": [
+      "internal/systembackupproducer",
+      "internal/systembackupsecurity",
+      "internal/systembackupresources",
+      "internal/systembackupread",
+      "internal/systembackupevidence",
+      "cmd/server"
+    ],
+    "stages": 8,
+    "actual_go_list_contexts": [
+      "windows ordinary",
+      "windows systembackup_mysql",
+      "linux ordinary",
+      "linux systembackup_mysql"
+    ],
+    "complete_windows_test_stage": 1,
+    "local_bootstrap_seed_stage": 1,
+    "local_bootstrap_seed_roots": [
+      "TestDBootstrapConsumerMySQLSeed",
+      "TestDBootstrapConsumerRangesMySQLSeed",
+      "TestDBootstrapEntryMySQLSeed"
+    ],
+    "linux_current_builds": [
+      "server",
+      "system-backup-bootstrap"
+    ],
+    "linux_binaries_executed": false,
+    "windows_checkpoint_persisted_immediately_after_tests": true,
+    "seed_checkpoint_persisted_immediately_after_tests": true,
+    "final_source_postcheck_attempted_on_failure": true
+  },
+  "fifteen_stage_window": {
+    "A_independent_registered_exact_target_required": true,
+    "live_frozen_final_scope_check": true,
+    "stages": 15,
+    "current_baseline_accepted": false
+  },
+  "native_Go_started": false,
+  "actual_mysql": false,
+  "dependencies_installed": false,
+  "all_own_mock_and_recovery_owners_removed": true,
+  "remaining": [
+    "GC private-helper collision must be fixed and accurately reviewed",
+    "A2 failed9c2f needs exact tagged/Linux repair and accepted candidate promotion; native prerequisite interface may need the published composed receiver instead of a new full rerun",
+    "Original1741 Linux four stages must reach its own accurate terminal and cleanup",
+    "Run the eight-stage current ordinary window with promoted source, then independent pre-thin scope review and fifteen-stage native window"
+  ]
+}

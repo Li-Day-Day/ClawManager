@@ -1,0 +1,74 @@
+{
+  "kind": "d_gc_three_seed_same_binary_two_cwd_native.v1",
+  "source_manifest": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-download-owners-mysql-remote-source-20261027-160458-2bce7205.json",
+  "source_manifest_sha256": "873b457f58e0b2e357c4c1fed62f518531d88277eb6ad63d8ef3be8df30c4909",
+  "source_candidate": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-gc-full-lifecycle-source-candidate-20261027-r5.json",
+  "source_candidate_sha256": "ab3dc8bb9460a92f85711a3a3d228c73aada7bd951b7bb9dda7039c33fc7c4b1",
+  "source_sha256": "dc79d81f74d6d6c293372f6c5404b2a673c3f469da1c4d14d4adc763199efa8e",
+  "binary_original": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-d9cec1f9ff704989b41ea30e453af991\\source\\.tmp-a-evidence-56ba2bd63868421aaebd3322607c533a\\a-config-proof-standalone.exe",
+  "binary_sha256": "fee29569c5276341f0368c02beecc9b0b7aaffe73431a61fb6614d2d0e9e2e4a",
+  "runs": [
+    {
+      "context": "source",
+      "working_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-d9cec1f9ff704989b41ea30e453af991\\source\\backend\\internal\\systembackupevidence",
+      "arguments": [
+        "-test.run",
+        "^TestDDownloadGCFull(Collect|Profile|Lifecycle)MySQLSeed$",
+        "-test.v",
+        "-test.count=1",
+        "-test.timeout=2700s"
+      ],
+      "exit": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-gc-three-seeds-same-binary-native-20261027-r1.source.log",
+      "log_sha256": "e7b4d7b1b20fc5ecf1934e0852787e9e5c66845fc0a92f74e8fd7d7627a3a502",
+      "ran": [
+        "TestDDownloadGCFullCollectMySQLSeed",
+        "TestDDownloadGCFullLifecycleMySQLSeed",
+        "TestDDownloadGCFullProfileMySQLSeed"
+      ],
+      "passed": [
+        "TestDDownloadGCFullCollectMySQLSeed",
+        "TestDDownloadGCFullLifecycleMySQLSeed",
+        "TestDDownloadGCFullProfileMySQLSeed"
+      ],
+      "exact_three_no_fail_skip": true,
+      "empty_initially_verified": false
+    },
+    {
+      "context": "empty",
+      "working_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-gc-binary-check-7e5f3f4ab5754c56bf269807ce535acf\\empty\\a\\b",
+      "arguments": [
+        "-test.run",
+        "^TestDDownloadGCFull(Collect|Profile|Lifecycle)MySQLSeed$",
+        "-test.v",
+        "-test.count=1",
+        "-test.timeout=2700s"
+      ],
+      "exit": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-gc-three-seeds-same-binary-native-20261027-r1.empty.log",
+      "log_sha256": "c13be12d505093190c08bcd025d115da108f0fac3782c77d5065fa0a97ad4de7",
+      "ran": [
+        "TestDDownloadGCFullCollectMySQLSeed",
+        "TestDDownloadGCFullLifecycleMySQLSeed",
+        "TestDDownloadGCFullProfileMySQLSeed"
+      ],
+      "passed": [
+        "TestDDownloadGCFullCollectMySQLSeed",
+        "TestDDownloadGCFullLifecycleMySQLSeed",
+        "TestDDownloadGCFullProfileMySQLSeed"
+      ],
+      "exact_three_no_fail_skip": true,
+      "empty_initially_verified": true
+    }
+  ],
+  "source_postcheck": true,
+  "owned_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-gc-binary-check-7e5f3f4ab5754c56bf269807ce535acf",
+  "cleaned": true,
+  "error": null,
+  "Go_compilation_started": false,
+  "native_test_executable_run": true,
+  "actual_SQL": false,
+  "SSH": false,
+  "missing_docs_fabricated": false,
+  "production_approved": false
+}

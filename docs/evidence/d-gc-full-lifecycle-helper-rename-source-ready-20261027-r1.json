@@ -1,0 +1,82 @@
+{
+  "kind": "d_gc_full_lifecycle_helper_rename_source_ready.v1",
+  "status": "pure_lexical_repair_ready_for_A_component_review_native_validation_pending",
+  "before": {
+    "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+    "size": 32901,
+    "sha256": "cac6c2bc0be61f48d28835828b26f17d92fe9f97deeea4dea3a87c7b5354a7e2"
+  },
+  "after": {
+    "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+    "size": 32957,
+    "sha256": "c05714705f0e489f13004095ca9648f90edd5e2786fed1b182400083913f3e55"
+  },
+  "renames": [
+    {
+      "before": "dGCLifecyclePool",
+      "after": "dGCFullLifecyclePool",
+      "occurrences": 2
+    },
+    {
+      "before": "dGCLifecycleReleased",
+      "after": "dGCFullLifecycleReleased",
+      "occurrences": 12
+    }
+  ],
+  "reverse_identifier_transform_restores_before_bytes": true,
+  "old_owner_file_unchanged": {
+    "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go",
+    "size": 13125,
+    "sha256": "56c14b89a7a670d1d4529961fbbf65799d9edaab1f20ae683b100f8034314ec9"
+  },
+  "cold_file_unchanged": {
+    "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+    "size": 23173,
+    "sha256": "e9806c4892ac770ae2f3cf97e9bcb6ba2f123d125b6d5a00d9533e055d9bdf09"
+  },
+  "scope": "Only fourteen identifier tokens in the new Full lifecycle tagged file; SQL/assertions/test roots/case catalog unchanged",
+  "textual_function_declaration_scan": {
+    "new_file_functions": 24,
+    "new_file_names_unique_across_current_package_text": true,
+    "compiler_run": false
+  },
+  "inputs": [
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+      "size": 697568,
+      "sha256": "67c12fd8e695c9778d69478f5b25cbb933faddb84da32399bf95e306853d5dc9"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.tagged_seed.jsonl",
+      "size": 4686,
+      "sha256": "e214bbad06f1743e490dcb2fea615f38b2271f11a2c19f061e21cb7739a05c03"
+    },
+    {
+      "path": "docs/evidence/a-gc-tagged-component-reviewed-20261026-r1.json",
+      "size": 2926,
+      "sha256": "0b1c99d1b5c27af1e4cbdb4128d728b92a74ceb48be4c43c9d40a24fb896b016"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-helper-rename-20261027.mjs",
+      "size": 5853,
+      "sha256": "99cdbcd58f0fcc3f4cfaf21fa038907646f3a5cfd2c2414117bb90486135995f"
+    }
+  ],
+  "previous_native_status": "failed",
+  "previous_tagged_build_failure_retained": true,
+  "previous_linux_validation_not_run": true,
+  "current_native_validation_passed": false,
+  "required_next": [
+    "A exact after-pin component review",
+    "single Go owner terminal and cleanup handoff",
+    "tagged evidence seed compilation with historical owner file included",
+    "all three GC seed roots and Linux tagged evidence compile in the coordinated caller scope",
+    "source postcheck and exact run-owned cleanup"
+  ],
+  "Go_run_by_this_repair": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "ordinary_code_modified": false,
+  "historical_owner_source_modified": false,
+  "dependencies_installed": false
+}

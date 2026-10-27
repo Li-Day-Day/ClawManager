@@ -1,0 +1,125 @@
+{
+  "kind": "a2_bootstrap_complete9_timeout_observation.v1",
+  "run": "a2e7cbc234ca4e0e9ea79ec7adce1f49",
+  "observed_at_utc": "2026-10-26T06:50:03.781Z",
+  "status": "complete9_failed_package_observed_while_runner_still_active_not_acceptance",
+  "log": "docs/evidence/d-bootstrap-consumer-native-a2e7cbc234ca4e0e9ea79ec7adce1f49.jsonl",
+  "log_bytes_at_observation": 6345464,
+  "log_sha256_at_observation": "bdcb534dbc491ba058d7fe7bc1725c7f66fbbd0b7d872ac96da8f6511ef322a5",
+  "log_is_terminal": false,
+  "terminal_receipt_present": false,
+  "observed_package_passes": [
+    {
+      "Time": "2026-10-26T14:11:54.8905663+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Elapsed": 56.695
+    },
+    {
+      "Time": "2026-10-26T14:12:56.742207+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupsecurity",
+      "Elapsed": 59.932
+    },
+    {
+      "Time": "2026-10-26T14:13:09.047465+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupbootstrapsecurity",
+      "Elapsed": 9.996
+    },
+    {
+      "Time": "2026-10-26T14:25:56.7710097+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupresources",
+      "Elapsed": 42.735
+    },
+    {
+      "Time": "2026-10-26T14:27:08.9808565+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupread",
+      "Elapsed": 44.236
+    }
+  ],
+  "observed_test_pass_events": 6602,
+  "observed_package_failures": [
+    {
+      "Time": "2026-10-26T14:25:03.4666128+08:00",
+      "Action": "fail",
+      "Package": "clawreef/internal/systembackupevidence",
+      "Elapsed": 604.327
+    }
+  ],
+  "timeout": {
+    "budget": "default package-wide 10m",
+    "running_root_seconds": 5,
+    "running_leaf_seconds": 1,
+    "stack": [
+      "testing.(*common).makeTempDir.func1",
+      "testing.removeAll",
+      "os.RemoveAll",
+      "Windows NtOpenFile/Deleteat"
+    ],
+    "inference": "The alarm exhausted the whole package budget; the shown leaf was cleaning t.TempDir. This does not prove a single SQL deadlock or correctness of unexecuted tests."
+  },
+  "targeted": {
+    "receipt": "docs/evidence/a2-original-files-materials-targeted-observed-20261026.json",
+    "packages": 5,
+    "pass_events": 393,
+    "A2_roots": 12,
+    "A2_pass_events": 113
+  },
+  "A2_six_current_pins_match_frozen": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "size": 10160,
+      "sha256": "f9325dd859d8073b0710cf93f58eccb52a80dded6eef5940a3df56d466f288dd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go",
+      "size": 11994,
+      "sha256": "94aee73fe0cd3e56aa23a8ace2e3118b07188b96ca89c57c098202e07fe33593"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "size": 12360,
+      "sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+      "size": 16624,
+      "sha256": "28e8e69dfbfb45e3b5895e3ccbe48d826afa988a7046ca68d356712da8850590"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+      "size": 6433,
+      "sha256": "374b9097787f8def36a5e8e807f2d8ab2500242f6b87b5bd9d6983ee34a35312"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter_test.go",
+      "size": 11798,
+      "sha256": "d2f5f2c679f7c7682c5362f2ab28ac34de5f0aac614faae50d80154da123cccb"
+    }
+  ],
+  "owner_absent": false,
+  "cleanup_pending": true,
+  "cleanup_note": "Runner owns scratch. TEMP/TMP were not isolated by this driver; owner must check exact attributed testing.TempDir leftovers after terminal. No broad shared-temp deletion authorized or performed.",
+  "next": "NewD waits for terminal/cleanup, then scoped evidence package 45m plus three seeds and Linux compiles at the GC supplement exact source. Preserve this failure; never call it a passing nine-package run. New entry source requires separate gate.",
+  "complete9_accepted": false,
+  "current_whole_source_accepted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "comparative_timing_observation": {
+    "prior_run": "88b2cfd9f32b454183e60d9f0f1259ec",
+    "prior_evidence_package_pass_seconds": 287.743,
+    "prior_evidence_roots": 396,
+    "current_evidence_completed_roots": 170,
+    "identically_named_completed_roots": 167,
+    "those_roots_prior_total_seconds": 170.88,
+    "those_roots_current_total_seconds": 585.79,
+    "inference": "Substantial slowdown already affected previously passing tests across the package before the final short leaf. This supports investigating aggregate host/I/O load and using a bounded package supplement; it does not establish root cause or excuse failures."
+  },
+  "superseded_by_terminal_review": "docs/evidence/a2-bootstrap-a2e7-terminal-reviewed-20261026.json",
+  "cleanup_inference_correction": "The local Go testing.go source uses os.MkdirTemp(os.Getenv(\"GOTMPDIR\"), pattern). The timeout residue was inside the exact owned tmp directory and the complete owner is now absent. Initial concern that testing.TempDir necessarily used global TEMP when TMP/TEMP were not set was too broad. Zero matching global TEMP parent-prefix candidates were observed; no global deletion was performed."
+}

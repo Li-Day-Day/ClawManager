@@ -1,0 +1,36 @@
+{
+  "kind": "d_local_closeout_validation.v1",
+  "error": "Local closeout native Go step failed exit=1",
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-becb8b4d45194f83bcd50d6423f8e8b4-source.json",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=20m",
+        "./internal/systembackupevidence",
+        "./internal/systembackupproducer",
+        "./internal/systembackupresources",
+        "./internal/systembackupread",
+        "./internal/systembackupsecurity",
+        "./cmd/server"
+      ],
+      "platform": "windows",
+      "exit_code": 1,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-becb8b4d45194f83bcd50d6423f8e8b4-step-0.log",
+      "sha256": "aca82e489050d5bfcebe694b607e82c73c932dc67bc5bf590a6e7e53c4382783"
+    }
+  ],
+  "binaries": [],
+  "frozen_postcheck": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-becb8b4d45194f83bcd50d6423f8e8b4",
+  "owner_removed": true,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "runner_sha256": "abcfe31c5c7674592a8ad5d5e8810ebf07cc42dcad4f5d8ecdf2415728b515b3",
+  "snapshotter_sha256": "d993e6772372e90d43f76327e503d669fd907497ad73c6319853d9d9abe6fbec"
+}

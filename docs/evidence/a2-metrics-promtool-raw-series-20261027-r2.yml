@@ -1,0 +1,850 @@
+# SOURCE READY ONLY: promtool and all PromQL expressions have NOT been executed.
+# Exact expressions are pinned in the companion JSON. No production rule loading.
+rule_files: []
+evaluation_interval: 1m
+tests:
+  - name: confirmation-rejections/warning_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 2 4
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 2 4
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 8
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/warning_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 1 3
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/warning_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/critical_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 6 12
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 6 12
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 24
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/critical_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 5 10
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 5 10
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/critical_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 4 9
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 4 9
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/single_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 2 5
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="confirmation_invalid"}'
+            value: 5
+  - name: confirmation-rejections/single_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 10 20
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="confirmation_invalid"}'
+            value: 20
+  - name: confirmation-rejections/reset_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 1 0 1 2
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 1 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 6
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/reset_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 4 0 3 6
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 4 0 3 6
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/empty_warning
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/empty_critical
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: confirmation-rejections/present_zero_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="confirmation_invalid"}
+        values: 0 0 0 0 0 0
+      - series: clawmanager_system_backup_confirmation_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 0 0
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/warning_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 2 4
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 2 4
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 8
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/warning_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 1 3
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/warning_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/critical_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 6 12
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 6 12
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 24
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/critical_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 5 10
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 5 10
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/critical_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 4 9
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 4 9
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/single_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 2 5
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="redaction_failed"}'
+            value: 5
+  - name: redaction-failures/single_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 10 20
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="redaction_failed"}'
+            value: 20
+  - name: redaction-failures/reset_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 1 0 1 2
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 1 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 6
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/reset_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 4 0 3 6
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 4 0 3 6
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/empty_warning
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/empty_critical
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: redaction-failures/present_zero_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="redaction_failed"}
+        values: 0 0 0 0 0 0
+      - series: clawmanager_system_backup_redaction_failures_total{failure_category="internal_error"}
+        values: 0 0 0 0 0 0
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/warning_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 2 4
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 2 4
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 8
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/warning_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 1 3
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/warning_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/critical_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 6 12
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 6 12
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 24
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/critical_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 5 10
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 5 10
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/critical_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 4 9
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 4 9
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/single_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 2 5
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="isolation_invalid",profile="cluster"}'
+            value: 5
+  - name: isolation-rejections/single_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 10 20
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="isolation_invalid",profile="cluster"}'
+            value: 20
+  - name: isolation-rejections/reset_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 1 0 1 2
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 1 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 6
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/reset_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 4 0 3 6
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 4 0 3 6
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/empty_warning
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/empty_critical
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: isolation-rejections/present_zero_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="cluster"}
+        values: 0 0 0 0 0 0
+      - series: clawmanager_system_backup_isolation_rejections_total{failure_category="isolation_invalid",profile="single-node"}
+        values: 0 0 0 0 0 0
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/warning_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 2 4
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 2 4
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 8
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/warning_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 1 3
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/warning_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 1 2
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/critical_split
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 6 12
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 6 12
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 24
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/critical_boundary
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 5 10
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 5 10
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/critical_below
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 4 9
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 4 9
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/single_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 2 5
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 5
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="validation_failed"}'
+            value: 5
+  - name: strong-auth-rejections/single_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 10 20
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="validation_failed"}'
+            value: 20
+  - name: strong-auth-rejections/reset_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 1 0 1 2
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 1 0 1 2
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 6
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/reset_critical
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 4 0 3 6
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 4 0 3 6
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples:
+          - labels: '{}'
+            value: 20
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/empty_warning
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/empty_critical
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20
+        eval_time: 5m
+        exp_samples: []
+  - name: strong-auth-rejections/present_zero_warning
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="validation_failed"}
+        values: 0 0 0 0 0 0
+      - series: clawmanager_system_backup_strong_auth_rejections_total{failure_category="permission_denied"}
+        values: 0 0 0 0 0 0
+    promql_expr_test:
+      - expr: sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5
+        eval_time: 5m
+        exp_samples: []
+  - name: signature/legal_success
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="success"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failed"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: signature/legal_failure
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="failure"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failed"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: signature/legal_rejected
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="rejected"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failed"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: signature/legal_timeout
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="timeout"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failed"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: signature/legal_conflict
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="conflict"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failed"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: signature/legal_canceled
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="canceled"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failed"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: status/valid_failed_preserved
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_task_transitions_total{status="failed",task_purpose="acceptance",task_type="backup"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_task_transitions_total{task_purpose="acceptance",status="failed"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{status="failed",task_purpose="acceptance",task_type="backup"}'
+            value: 1

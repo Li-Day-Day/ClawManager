@@ -1,0 +1,55 @@
+✔ the current server overview 503 no longer blocks independently available real records (125.4744ms)
+▶ unavailable config or task resources stay unavailable without invented empty pages
+  ✔ lists-only (9.4252ms)
+  ✔ config-only (3.2327ms)
+✔ unavailable config or task resources stay unavailable without invented empty pages (13.78ms)
+✔ authenticated empty lists preserve unknown installation and do not imply global health (7.3124ms)
+✔ no available endpoints retains the unavailable view (4.1457ms)
+▶ only the exact overview not_ready error enables records mode
+  ✔ 401/authentication_required (0.7853ms)
+  ✔ 403/permission_denied (0.5445ms)
+  ✔ 500/internal_error (0.6988ms)
+  ✔ 503/internal_error (0.8271ms)
+✔ only the exact overview not_ready error enables records mode (6.4656ms)
+▶ authorization, malformed DTO and fixture failures never publish partial records
+  ✔ 401 (6.8029ms)
+  ✔ 403 (3.7949ms)
+  ✔ invalid (10.8575ms)
+  ✔ fixture (4.111ms)
+✔ authorization, malformed DTO and fixture failures never publish partial records (27.8451ms)
+▶ cross-installation records are rejected with or without an available config
+  ✔ true (20.8645ms)
+  ✔ false (4.1145ms)
+✔ cross-installation records are rejected with or without an available config (25.6992ms)
+▶ config identity, version, row-version, effective-state and availability cannot change across records reads
+  ✔ installation (4.8365ms)
+  ✔ version (3.8784ms)
+  ✔ row-version (2.3163ms)
+  ✔ effective (2.2515ms)
+  ✔ becomes-unavailable (1.8971ms)
+  ✔ becomes-available (2.3039ms)
+✔ config identity, version, row-version, effective-state and availability cannot change across records reads (18.9355ms)
+✔ records pagination requests one cursor at a time with config checks and no overview dependency (8.4338ms)
+✔ a first nonempty continuation establishes installation without a placeholder identity (2.6816ms)
+▶ unsafe record continuations are rejected without mutating already displayed pages
+  ✔ installation (3.7672ms)
+  ✔ duplicate (4.516ms)
+  ✔ cursor-loop (3.0199ms)
+  ✔ consistency (10.2215ms)
+  ✔ config (13.0647ms)
+✔ unsafe record continuations are rejected without mutating already displayed pages (37.2746ms)
+✔ an unavailable record group cannot be paginated (3.2835ms)
+▶ cancellation discards initial and continued record results
+  ✔ initial (7.5535ms)
+  ✔ continuation (3.915ms)
+✔ cancellation discards initial and continued record results (12.5437ms)
+✔ available overview automatically restores the full existing read path (24.5972ms)
+✔ config comparison snapshots primitives before independent list callbacks (0.8402ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 390.0908

@@ -227,7 +227,10 @@ func newDIntegrationFixtureWithDB(t *testing.T, database *sql.DB, advanceClock .
 	if err != nil {
 		t.Fatal(err)
 	}
-	f.claimRequest = pd.ClaimRequest{EvidenceID: binding.EvidenceID, ExpectedEvidenceVersion: "1", Nonce: "d-integration-claim-0001", ExpiresAt: systemExecutionStamp(now.Add(45 * time.Second)), PolicyHash: f.policy, RefsVersionHash: f.policy, BudgetUntil: budget}
+	// The shortened recovery fixture must not request a claim beyond the
+	// original owner-write cutoff. Keep the production deadline guard intact.
+	claimWindow := min(45*time.Second, ownerWriteWindow)
+	f.claimRequest = pd.ClaimRequest{EvidenceID: binding.EvidenceID, ExpectedEvidenceVersion: "1", Nonce: "d-integration-claim-0001", ExpiresAt: systemExecutionStamp(now.Add(claimWindow)), PolicyHash: f.policy, RefsVersionHash: f.policy, BudgetUntil: budget}
 	version := pd.Text("Exact.Version/1")
 	f.finishRequest = pd.FinishRequest{State: "ready", ProofHash: pd.Hash(strings.Repeat("e", 64)), ObjectHash: binding.ObjectHash, ObjectBytes: binding.ObjectBytes, ImmutableVersion: &version, ObservedAt: h.CreatedAt, BudgetUntil: budget}
 	if err = pd.DecodeRecord(dIntegrationVector(t, "positive", "unconfigured_artifact"), &f.resultRequest); err != nil {

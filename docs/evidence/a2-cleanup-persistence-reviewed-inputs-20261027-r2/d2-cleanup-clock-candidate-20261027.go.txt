@@ -1,0 +1,213 @@
+// Candidate for backend/internal/systembackupcleanup/clock.go.
+// These are validated timing facts, not deletion or admission authority.
+package systembackupcleanup
+
+import (
+	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"regexp"
+	"time"
+
+	"clawreef/internal/systembackupcontract"
+	"clawreef/internal/systembackupsecurity"
+)
+
+var ErrClock = errors.New("invalid immutable cleanup clock or binding")
+
+var installationPattern = regexp.MustCompile(`^installation_[A-Za-z0-9._:-]{1,115}$`)
+var uuidSuffix = `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
+
+// Binding identifies an original resource and its original parent. A valid
+// shape is not proof of ownership; SQL must read and compare these fields.
+type Binding struct {
+	Installation     string
+	ParentKind       string
+	ParentPublicID   string
+	ResourceKind     string
+	ResourcePublicID string
+}
+
+func validID(value, prefix string) bool {
+	return regexp.MustCompile("^" + prefix + uuidSuffix).MatchString(value)
+}
+
+func (b Binding) valid() bool {
+	if !installationPattern.MatchString(b.Installation) {
+		return false
+	}
+	switch b.ParentKind {
+	case "backup":
+		return b.ResourceKind == "backup_staging" && validID(b.ParentPublicID, "sbk_") && validID(b.ResourcePublicID, "sbs_")
+	case "drill":
+		return b.ResourceKind == "restore_resource" && validID(b.ParentPublicID, "sdr_") && validID(b.ResourcePublicID, "srr_")
+	default:
+		return false
+	}
+}
+
+type frozenBudget struct {
+	version uint64
+	sha256  string
+	seconds int64
+}
+
+// DecodeBudget verifies the stored byte/hash/size identity and uses A's
+// existing complete ConfigValues parser. It never substitutes active config.
+// Authority and actual reference readiness remain the original caller's job.
+func DecodeBudget(raw []byte, size int64, digest string, version uint64) (Budget, error) {
+	if version == 0 || version > 9007199254740991 || size != int64(len(raw)) || size < 2 || size > 262144 {
+		return Budget{}, ErrClock
+	}
+	h := sha256.Sum256(raw)
+	if hex.EncodeToString(h[:]) != digest {
+		return Budget{}, ErrClock
+	}
+	validated, err := systembackupsecurity.DecodeConfigValues(raw)
+	if err != nil || !bytes.Equal(validated.CanonicalJSON(), raw) {
+		return Budget{}, ErrClock
+	}
+	var values systembackupcontract.ConfigValues
+	if json.Unmarshal(validated.CanonicalJSON(), &values) != nil {
+		return Budget{}, ErrClock
+	}
+	seconds := values.Durations.CleanupDeadlineSeconds
+	if seconds < 60 || seconds > 21600 {
+		return Budget{}, ErrClock
+	}
+	return Budget{frozenBudget{version: version, sha256: digest, seconds: seconds}}, nil
+}
+
+// Budget has no exported fields; its zero value is unusable. It establishes
+// immutable configuration identity, never producer or provider authority.
+type Budget struct{ frozenBudget }
+
+type Source string
+
+const (
+	AutomaticBackup   Source = "automatic_backup"
+	AutomaticDrill    Source = "automatic_drill"
+	ExplicitOperation Source = "operation"
+)
+
+type Clock struct {
+	binding           Binding
+	source            Source
+	started           time.Time
+	deadline          time.Time
+	budget            frozenBudget
+	operationID       uint64
+	operationPublicID string
+}
+
+// OperationFacts must be selected under the original SQL locks. The immutable
+// operation window includes queue time; the task budget does not replace it.
+type OperationFacts struct {
+	ID             uint64
+	Installation   string
+	PublicID       string
+	OperationType  string
+	TargetType     string
+	TargetPublicID string
+	CreatedAt      time.Time
+	DeadlineAt     time.Time
+}
+
+func databaseTime(t time.Time) bool {
+	_, offset := t.Zone()
+	return !t.IsZero() && offset == 0 && t.Year() >= 1000 && t.Year() <= 9999 && t.Nanosecond()%1000 == 0
+}
+
+func validBudget(b Budget) bool {
+	_, err := hex.DecodeString(b.sha256)
+	return b.version > 0 && b.version <= 9007199254740991 && len(b.sha256) == 64 && err == nil && b.seconds >= 60 && b.seconds <= 21600
+}
+
+func (c Clock) valid() bool {
+	if !c.binding.valid() || !validBudget(Budget{c.budget}) || !databaseTime(c.started) || !databaseTime(c.deadline) || !c.deadline.After(c.started) {
+		return false
+	}
+	window := c.deadline.Sub(c.started)
+	if !c.started.Add(window).Equal(c.deadline) {
+		return false
+	}
+	switch c.source {
+	case AutomaticBackup, AutomaticDrill:
+		expected := AutomaticBackup
+		if c.binding.ParentKind == "drill" {
+			expected = AutomaticDrill
+		}
+		return c.source == expected && c.operationID == 0 && c.operationPublicID == "" && window == time.Duration(c.budget.seconds)*time.Second
+	case ExplicitOperation:
+		return c.operationID > 0 && validID(c.operationPublicID, "sop_") && window >= 60*time.Second && window <= 86400*time.Second && window%time.Second == 0
+	default:
+		return false
+	}
+}
+
+// Automatic starts are recorded in the SAME original transaction as the
+// resource cleanup CAS. For a first automatic drill, finishedAt is exactly
+// that transaction's terminal-CAS clock. A later retry uses NewOperationClock.
+func NewAutomaticClock(binding Binding, budget Budget, now, finishedAt time.Time) (Clock, error) {
+	if !binding.valid() || !validBudget(budget) || !databaseTime(now) {
+		return Clock{}, ErrClock
+	}
+	source := AutomaticBackup
+	if binding.ParentKind == "drill" {
+		if !databaseTime(finishedAt) || !finishedAt.Equal(now) {
+			return Clock{}, ErrClock
+		}
+		source = AutomaticDrill
+	} else if !finishedAt.IsZero() {
+		// Backup staging is cleaned before the successful task terminal CAS.
+		return Clock{}, ErrClock
+	}
+	deadline := now.Add(time.Duration(budget.seconds) * time.Second)
+	if !databaseTime(deadline) || !deadline.After(now) {
+		return Clock{}, ErrClock
+	}
+	return Clock{binding: binding, source: source, started: now, deadline: deadline, budget: budget.frozenBudget}, nil
+}
+
+func NewOperationClock(binding Binding, budget Budget, operation OperationFacts, now time.Time) (Clock, error) {
+	if !binding.valid() || !validBudget(budget) || !databaseTime(now) || !databaseTime(operation.CreatedAt) || !databaseTime(operation.DeadlineAt) ||
+		operation.ID == 0 || operation.Installation != binding.Installation || !validID(operation.PublicID, "sop_") || operation.OperationType != "cleanup" ||
+		operation.CreatedAt.After(now) || !operation.DeadlineAt.After(operation.CreatedAt) {
+		return Clock{}, ErrClock
+	}
+	parentTarget := operation.TargetType == binding.ParentKind && operation.TargetPublicID == binding.ParentPublicID
+	resourceTarget := operation.TargetType == binding.ResourceKind && operation.TargetPublicID == binding.ResourcePublicID
+	if !parentTarget && !resourceTarget {
+		return Clock{}, ErrClock
+	}
+	window := operation.DeadlineAt.Sub(operation.CreatedAt)
+	if window < 60*time.Second || window > 86400*time.Second || window%time.Second != 0 || !operation.CreatedAt.Add(window).Equal(operation.DeadlineAt) {
+		return Clock{}, ErrClock
+	}
+	return Clock{binding: binding, source: ExplicitOperation, started: operation.CreatedAt, deadline: operation.DeadlineAt, budget: budget.frozenBudget, operationID: operation.ID, operationPublicID: operation.PublicID}, nil
+}
+
+// AlertWindow returns age and the original duration, without clipping an
+// overdue age or restarting a clock after claim renewal/takeover.
+func (c Clock) AlertWindow(now time.Time) (time.Duration, time.Duration, error) {
+	if !c.valid() || !databaseTime(now) || now.Before(c.started) {
+		return 0, 0, ErrClock
+	}
+	age, window := now.Sub(c.started), c.deadline.Sub(c.started)
+	if age < 0 || window <= 0 || !c.started.Add(age).Equal(now) || !c.started.Add(window).Equal(c.deadline) {
+		return 0, 0, ErrClock
+	}
+	return age, window, nil
+}
+
+// SameAttempt verifies an idempotent replay against its persisted clock. A
+// controller renewal is not an attempt and has no API that extends this clock.
+func (c Clock) SameAttempt(other Clock) bool {
+	return c.valid() && other.valid() && c.binding == other.binding && c.source == other.source && c.started.Equal(other.started) && c.deadline.Equal(other.deadline) &&
+		c.budget == other.budget && c.operationID == other.operationID && c.operationPublicID == other.operationPublicID
+}
+
+func (Clock) MarshalJSON() ([]byte, error) { return nil, ErrClock }
+func (Clock) String() string               { return "[immutable cleanup timing facts]" }

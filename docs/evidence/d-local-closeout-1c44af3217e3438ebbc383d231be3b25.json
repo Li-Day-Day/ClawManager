@@ -1,0 +1,402 @@
+{
+  "kind": "d_local_closeout_validation.v1",
+  "error": null,
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-source.json",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestAAdminReadMySQLSeed$",
+        "-count=1",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-0-attempt-1.log",
+      "sha256": "b352093850476b6189900ff69b2bd11520f5bc9d0afec7712c8b3909f2012d15",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-0-attempt-1.log",
+          "sha256": "b352093850476b6189900ff69b2bd11520f5bc9d0afec7712c8b3909f2012d15",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\owner-seeds.exe",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-1-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-1-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\owner-seeds.exe",
+        "-test.run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-test.v",
+        "-test.count=1",
+        "-test.timeout=60s"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-detached.log",
+      "sha256": "169816d1482ef889a982d549b3e98b4d74b8561d68f52e83a1290e056457ca30",
+      "working_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\detached\\work\\probe",
+      "initial_directory_empty": true
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\owners.test",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-3-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-3-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\resources.test",
+        "./internal/systembackupresources"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-4-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-4-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\drill-http.test",
+        "./cmd/server/system_backup_read_live.go",
+        "./cmd/server/system_backup_read_cursor_key.go",
+        "./cmd/server/system_backup_read_live_test.go",
+        "./cmd/server/system_backup_read_cursor_key_test.go",
+        "./cmd/server/system_backup_read_live_mysql_test.go",
+        "./cmd/server/system_backup_read_verification_history_mysql_test.go",
+        "./cmd/server/system_backup_read_drill_history_mysql_test.go"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-5-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-5-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\admin-read.test",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-6-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-6-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-7-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-7-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\server",
+        "./cmd/server"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-8-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-8-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "."
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-9-attempt-1.log",
+      "sha256": "10e3c9cba5842029c9abd083631279768aaa599137098bad8e078674dbf9bc4e",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-9-attempt-1.log",
+          "sha256": "10e3c9cba5842029c9abd083631279768aaa599137098bad8e078674dbf9bc4e",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\freeze-finalizer.test",
+        "."
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-10-attempt-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 0,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-10-attempt-1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "known_tool_crash": false,
+          "assertion_failure": false
+        }
+      ],
+      "expected_failure_test": ""
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "-overlay",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\counterexamples\\missing_finalizer.json",
+        "-run",
+        "^TestDownloadGCFinalizerProtectedCandidate$/^worker_claim$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 1,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-11-attempt-1.log",
+      "sha256": "2be3e4748679a6b73a2308540e7071610927118ec71fd8c088495af8a530eb5f",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 1,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-11-attempt-1.log",
+          "sha256": "2be3e4748679a6b73a2308540e7071610927118ec71fd8c088495af8a530eb5f",
+          "known_tool_crash": false,
+          "assertion_failure": true
+        }
+      ],
+      "expected_failure_test": "TestDownloadGCFinalizerProtectedCandidate/worker_claim"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "-overlay",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\counterexamples\\earlier_clock_floor.json",
+        "-run",
+        "^TestDownloadGCFinalizerProtectedCandidate$/^clock_intermediate_rollback$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 1,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-12-attempt-1.log",
+      "sha256": "55e2db7b5598c7f514ff7594ad262c328ea49a50fded5ef221895e10688fe5fa",
+      "attempts": [
+        {
+          "attempt": 1,
+          "exit_code": 1,
+          "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-12-attempt-1.log",
+          "sha256": "55e2db7b5598c7f514ff7594ad262c328ea49a50fded5ef221895e10688fe5fa",
+          "known_tool_crash": false,
+          "assertion_failure": true
+        }
+      ],
+      "expected_failure_test": "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback"
+    }
+  ],
+  "binaries": [
+    {
+      "sha256": "fe2302875b60966f56b881f538915883fc7edcfcb7dbc8ad2efc30bb671c1eae",
+      "name": "admin-read.test"
+    },
+    {
+      "sha256": "c4a9b7d4437f5f76b558f5b418619f5a819b6b4d07a93be38cec21059a2ec616",
+      "name": "drill-http.test"
+    },
+    {
+      "sha256": "f7fb302236380b5fbc82fb5fb083d37e4a40469fd3cfbed69d06fb67cf557abf",
+      "name": "freeze-finalizer.test"
+    },
+    {
+      "sha256": "6b3b5db09775e00204d91209a429536ddd8278347d7b5ec8f5213b6cb250901a",
+      "name": "owner-seeds.exe"
+    },
+    {
+      "sha256": "6335d8a729c3d5f86dc368b9a57802f283642470fbb2dddbd50f10320e434222",
+      "name": "owners.test"
+    },
+    {
+      "sha256": "47472c3e84a85a8c1ef06e2a8ec65cf6f51b107ce116c580d8b7f4446265558a",
+      "name": "resources.test"
+    },
+    {
+      "sha256": "aa78d5c15b64fb8aa37f0d3940bfb084e8ea58c07ad80ad147b860d4c102df21",
+      "name": "server"
+    },
+    {
+      "sha256": "a65f27b51701cb4b1684f9b2fe03e4de1e5f2c2c3d24447fecc5736b937dd998",
+      "name": "system-backup-migrate"
+    }
+  ],
+  "frozen_postcheck": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25",
+  "owner_removed": true,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "runner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-gc-finalizer-supplement-validation-20261026.ps1",
+  "runner_profile": "finalizer_same_source_supplement_after_primary_stages_0_to_10",
+  "primary_validation": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af.json",
+  "primary_source_checkpoint": "docs/evidence/d-gc-finalizer-first-segment-checkpoint-20261026.json",
+  "counterexample_helper_sha256": "b5c1b16ad82f06aa1b9f11485eb192c6baa0e36458727d04b99a9354b2066b0b",
+  "standalone_scope": "five_explicit_standard_library_sources_not_concrete_collector",
+  "prepared_cache": {
+    "kind": "d_gc_finalizer_preparation.v1",
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25",
+    "report": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-gc-finalizer-cache-transfer-20261026.json"
+  },
+  "runner_sha256": "9567fc03ff06a5c7ec82fcc316d012cbc0d27b8d95b61781357a3abae0d924b5",
+  "snapshotter_sha256": "d993e6772372e90d43f76327e503d669fd907497ad73c6319853d9d9abe6fbec"
+}

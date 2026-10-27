@@ -1,0 +1,30 @@
+// Preserve a terminal failed preparation, without upgrading passing substeps.
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+const root=path.resolve(import.meta.dirname,'../..');
+const read=p=>fs.readFileSync(path.resolve(root,p));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const json=p=>JSON.parse(read(p).toString('utf8').replace(/^\uFEFF/,''));
+const pin=p=>{const b=read(p);return {path:path.relative(root,path.resolve(root,p)).replaceAll('\\','/'),size:b.length,sha256:sha(b)};};
+const file='docs/evidence/a-writer-fk-final-20261023-145605-7d41cb5f.json';
+const r=json(file);assert.equal(r.kind,'a_resources_latest_tagged_preparation.v1');
+assert.equal(r.error,'Frozen grouped source file set drift');
+assert.equal(r.ordinary_inputs_unchanged,false);assert.equal(r.latest_tagged_source_postchecked,false);
+assert.equal(r.owner_removed,true);assert.equal(path.dirname(r.owner),root);assert.match(path.basename(r.owner),/^\.tmp-d-index-cache-[a-f0-9]{32}$/);
+assert.throws(()=>fs.lstatSync(r.owner),e=>e.code==='ENOENT');
+assert.deepEqual(r.steps.map(s=>[s.stage,s.exit]),[['latest_tagged_seeds_default_vet',0],['latest_linux_tagged_probe',0]]);
+assert.equal(sha(read(r.steps[0].log)),r.steps[0].sha256);
+const events=read(r.steps[0].log).toString('utf8').split(/\r?\n/).filter(Boolean).map(l=>JSON.parse(l));
+assert.equal(events.filter(e=>['fail','skip','build-fail'].includes(e.Action)).length,0);
+assert.equal(events.filter(e=>e.Action==='pass'&&!e.Test).length,1);
+const seeds=events.filter(e=>e.Action==='pass'&&e.Test).map(e=>e.Test).sort();
+assert.deepEqual(seeds,['TestAResourcesWriteFKMySQLSeed','TestDResourcesReadbackMySQLSeed','TestDResourcesWriteMySQLSeed']);
+const source=json(r.source);assert.equal(sha(Buffer.from(source.files.map(p=>p.path+'\0'+p.sha256+'\0'+p.size).join('\n')+'\n')),source.source_sha256);
+assert.match(r.binary_sha256,/^[a-f0-9]{64}$/);
+for(const k of ['dependencies_installed','actual_mysql','production_approved'])assert.equal(r[k],false);
+const report={kind:'a_writer_fk_failed_final_preparation_review.v1',status:'terminal_failure_preserved_not_accepted',error:r.error,frozen_source_set_verified:false,current_source_set_verified:false,passing_seed_names:seeds,reported_linux_build_exit:0,reported_binary_sha256:r.binary_sha256,original_owner_independently_absent:true,original_source_manifest_digest_valid:true,actual_SQL:false,production_approved:false,acceptance_written:false,next_requirement:'Fresh exact-version preparation and both frozen/current source-set checks; existing failed result must not be rewritten as success.',evidence:[file,r.source,r.steps[0].log,'docs/evidence/a-writer-fk-final-failure-review-20261023.mjs'].map(pin)};
+const output='docs/evidence/a-writer-fk-final-failure-reviewed-20261023.json';
+if(process.argv.includes('--write'))fs.writeFileSync(path.join(root,output),JSON.stringify(report,null,2)+'\n',{flag:'wx'});else{assert.ok(process.argv.includes('--check'));assert.deepEqual(json(output),report);}
+console.log('FK_FINAL_FAILURE_PRESERVED seeds=3 linux_exit=0 source_postcheck=failed cleanup=absent accepted=no');

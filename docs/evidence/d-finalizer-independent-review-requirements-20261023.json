@@ -1,0 +1,84 @@
+{
+  "kind": "d_finalizer_independent_review_requirements.v1",
+  "status": "requirements_not_runtime_pass_evidence",
+  "basis_source_manifest": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-source.json",
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "77718ddf597105ca73544bd270024e3f5c8fa989316471122ef27468df303417"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "sha256": "a0ea232611d1ea7b6878b23c04da18500f896fcaa281228eebda408cbf7312b0"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_work_test.go",
+      "sha256": "f445d6b7648a8948e37217cf531ec040c25e358a52b2b4b6b0bd09ab64366b64"
+    },
+    {
+      "path": "docs/system-backup-a-gc-work-review-20261023.md",
+      "sha256": "e127d640e1d14e836285e8c85b593fd305f87ff986c84cf87290e8e6891376b4"
+    }
+  ],
+  "local_work_required": true,
+  "production_approved": false,
+  "requirements": [
+    {
+      "id": "F1",
+      "requirement": "Concrete private completion captures original tx, collector/scope, original authenticated context, last SQL time, hard until, and original guards; caller cannot supply replacement facts.",
+      "proof": "Wrong tx/scope/unrelated context and zero/forged completion fail before SQL."
+    },
+    {
+      "id": "F2",
+      "requirement": "One-shot state is shared across copies and concurrent attempts; failed invocation cannot renew capability.",
+      "proof": "Serial replay, copied value and concurrent attempts cannot perform a second finalization or commit."
+    },
+    {
+      "id": "F3",
+      "requirement": "Finalizer runs after last freeze ticket observation and before sole commit on same tx.",
+      "proof": "Ordered events plus late ticket-phase clock/deadline or worker/authority mutation rejected; preserve old counterexample."
+    },
+    {
+      "id": "F4",
+      "requirement": "Original context cancellation/deadline remains binding even if caller supplies a fresh context; SQL time cannot roll back or reach original until.",
+      "proof": "Original cancellation, different/fresh context, clock rollback and equality-at-deadline fail closed."
+    },
+    {
+      "id": "F5",
+      "requirement": "All deployment guard callbacks precede independent worker/config/evidence/tombstone/absent-key rechecks and last clock/cancel checks.",
+      "proof": "Late callback mutations fail; no callback/provider/transaction or lock acquisition occurs after independent checks."
+    },
+    {
+      "id": "F6",
+      "requirement": "Post-delete state uses retained independent guards, never reuses g.Recheck that requires deleted group rows.",
+      "proof": "Successful committed deletion plus retained envelope/tombstone/absence proof; late capacity/reference/worker/config/envelope/stone/absent-key failures roll back all mutations."
+    },
+    {
+      "id": "F7",
+      "requirement": "No connection/Begin/commit/unlock/retry/authority or reservation extension inside finalizer.",
+      "proof": "Same physical connection and unique transaction/end remain owner responsibilities; unknown commit is not retried or called rollback success."
+    },
+    {
+      "id": "F8",
+      "requirement": "Completion cannot serialize or format captured deployment facts.",
+      "proof": "Value/pointer formatting and JSON sentinel checks; retain constant output/rejection conventions."
+    },
+    {
+      "id": "F9",
+      "requirement": "New local code receives exact source-set/native full-package, seed, Linux, peer review and exact cleanup evidence; previous r4 receipt retains historical scope.",
+      "proof": "Current dependency-matched tests preserve previous inventory and include new roots; do not forward old baseline approval."
+    },
+    {
+      "id": "F10",
+      "requirement": "Standalone freeze validator currently builds four explicit Go files; new concrete type dependencies must not silently break or escape that validation scope.",
+      "proof": "Preserve valid standalone boundary or update exact validator/request with tested current inputs; old 33-event receipt alone does not certify new finalizer."
+    }
+  ],
+  "external_pending": [
+    "joint real privileges and complete metadata/Policy protocol",
+    "actual lock/rollback/unknown-result/takeover evidence",
+    "B/C production proof and domain facts"
+  ],
+  "tests_or_builds_run": false,
+  "dependencies_installed": false
+}

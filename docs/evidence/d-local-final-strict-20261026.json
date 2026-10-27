@@ -1,0 +1,28 @@
+[
+  {
+    "name": "schema-inventory",
+    "native_exit": 1,
+    "command": [
+      "node",
+      "scripts/system-backup-schema-inventory.mjs",
+      "--check",
+      "--strict"
+    ],
+    "log": "docs/evidence/d-local-final-schema-inventory-20261026.txt",
+    "sha256": "0ffec3fab6f53e9ef8bec56c0ae2a71d4450bec0a5e177902e921aee72067510",
+    "script_sha256": "ab87d58a2836a22e079781cf05b396f8df3ed4b590999f8dc07b1877882c4300"
+  },
+  {
+    "name": "contract-check",
+    "native_exit": 1,
+    "command": [
+      "node",
+      "scripts/system-backup-contract-check.mjs",
+      "--check",
+      "--strict"
+    ],
+    "log": "docs/evidence/d-local-final-contract-check-20261026.txt",
+    "sha256": "004a963f4edb25e780107df25a644f67ee485444997ac2c2028cdb7976ecec77",
+    "script_sha256": "7acbbbebf00bf845929373b39a060e26745122f0df908757666eaa98f258a59c"
+  }
+]

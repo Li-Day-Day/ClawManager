@@ -1,0 +1,38 @@
+{
+  "kind": "d_bootstrap_original_materials_mysql_preparation.v1",
+  "suite": "bootstrap-original-materials",
+  "error": "BootstrapConsumer Go step failed exit=1",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDBootstrap(ConsumerMySQLSeed|OriginalMaterialsMySQLSeed)$",
+        "-count=1",
+        "-timeout=180s",
+        "-json",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 1,
+      "platform": "windows",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-original-materials-mysql-20261026-133656-3ff8211f-step-0.jsonl",
+      "log_sha256": "39674ead478dca1d6058f92196526a06cb371678506ee57a6aa9cd655bc1b1c1"
+    }
+  ],
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-original-materials-mysql-20261026-133656-3ff8211f-source.json",
+  "source_postcheck": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3ff8211fd284410aba2c3ab304cdd22b",
+  "owner_removed": true,
+  "remote_requested": false,
+  "remote_scratch_removed": false,
+  "binary_sha256": null,
+  "migration_binary_sha256": null,
+  "inputs_sha256": null,
+  "dependencies_installed": false,
+  "synthetic_proofs": true,
+  "actual_mysql_results_accepted": false,
+  "production_approved": false
+}

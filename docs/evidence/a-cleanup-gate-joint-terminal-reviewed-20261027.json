@@ -1,0 +1,87 @@
+{
+  "kind": "a_cleanup_gate_joint_current_round_terminal_review.v1",
+  "status": "accepted_exact_private_native_preparation_and_owned_cleanup_only",
+  "source": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.source.json",
+    "size": 666726,
+    "sha256": "5e0c8f4bc782c8fce92ce53095fd37829eb2879a3e1527e88e17d543e2c6e754"
+  },
+  "native": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.r2.terminal.json",
+    "size": 56489,
+    "sha256": "704391217980b1addac0b48b4884f60050fb2a3e1b9acc056e70d05a1b700a4e"
+  },
+  "original_Windows_packet": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.json",
+    "size": 46534,
+    "sha256": "d220f9cd3ed78711889c950f46d276b38959e2cd8dd38d5e1bb3ac0862ebdd32"
+  },
+  "source_files": 1727,
+  "source_sha256": "fd71b0aff897210a9c2e830167b74f1085bdc1aed9ae41c0d960e3be4abedade",
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupcleanup",
+      "roots": 14,
+      "pass_events": 60
+    },
+    {
+      "package": "clawreef/internal/systembackupcontroller",
+      "roots": 155,
+      "pass_events": 284
+    }
+  ],
+  "new_native_stages": 9,
+  "all_required_exits_zero": true,
+  "original_interrupted_build_retained": true,
+  "exact_same_command_recovery_passed": true,
+  "binaries": [
+    {
+      "name": "system-backup-controller.exe",
+      "size": 67585024,
+      "sha256": "853febfa5529ea5327ec4aa98daa9a3cec0bed7bad07c3990a8119e12547d079",
+      "header64": "4d5a90000300000004000000ffff00008b0000000000000040000000000000000000000000000000000000000000000000000000000000000000000080000000",
+      "executed": false
+    },
+    {
+      "name": "cleanup.linux.test",
+      "size": 12539385,
+      "sha256": "e7d86c925e35a84311536b006cc87d8a9534496bc2ab941353589c0b44f2aa47",
+      "header64": "7f454c4602010100000000000000000002003e00010000000054490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "controller.linux.test",
+      "size": 8634874,
+      "sha256": "922240e99ee2d238f828775adbc0c3b94cf8b0ad16ff5d21ca0a0f7b7ee0f059",
+      "header64": "7f454c4602010100000000000000000002003e0001000000e0fa480000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "security.tagged.linux.test",
+      "size": 18797751,
+      "sha256": "daf7fb8abb266749b67639a54c9eef182481ea0e1fdfde0aa5fae4e1645c98d4",
+      "header64": "7f454c4602010100000000000000000002003e00010000000015490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "system-backup-controller.linux",
+      "size": 66765084,
+      "sha256": "3ffb4fa83ba849062cf4cf1171f47debd08a86e32ba6e70bcb25c43f4178b4f7",
+      "header64": "7f454c4602010100000000000000000002003e0001000000400b490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    }
+  ],
+  "binary_headers_validated_from_recorded_build_metadata": true,
+  "Linux_binaries_executed": false,
+  "source_postcheck": true,
+  "Root_owner_absent": true,
+  "D1_owner_absent": true,
+  "new_round_started_by_this_review": false,
+  "live_promoted": false,
+  "SQL_ledger_or_grants_installed": false,
+  "real_provider_residual_adapter_proven": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

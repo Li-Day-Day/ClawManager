@@ -1,0 +1,51 @@
+{
+  "kind": "a2_bootstrap_first_native_failure_review.v1",
+  "status": "failure_retained_own_fix_awaits_new_native",
+  "receipt": "docs/evidence/a2-bootstrap-authority-native-20261026-120305-61d51903.json",
+  "native_exit": 1,
+  "owner_removed": true,
+  "own_failure": {
+    "cause": "JSON DTO copy invoked Admission/Host wire union codec on zero intermediate observations; failed before independent authority callbacks.",
+    "fix": "recursive pure DTO copy; no wire codecs; zero-union and populated nested observation copy regression added",
+    "fixed_source_sha256": "56d4a4f436729b2fa3f42753c21af7b73320f2664b2c2a9ad21482f174cd1be3",
+    "fixed_tests_sha256": "e4c722221fd92ee3303d258242a957da72a89577314c6054ae1264b088ce5c6c",
+    "native_verified": false
+  },
+  "integration_finding": {
+    "status": "source_backed_likely_cause_reported_to_owner_not_yet_native_verified",
+    "cause": "production sqlRecordValue(uint64) canonical decimal string differs from integration Seed int64; fake CAS uses reflect.DeepEqual for all columns; numeric column mismatch causes RowsAffected0 at domainReplace after L8 snapshot",
+    "recommended": "Compare exact typed counter SQL values canonically; keep byte/null/time types strict and require exactly one affected row",
+    "owned_test_file_edited": false
+  },
+  "Linux_steps_ran": false,
+  "run_accepted": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "size": 11810,
+      "sha256": "8cccd08f52c62cdb01acb53b8f64d8e08e05a5603998f83f117ea1513bfef646"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/storage.go",
+      "size": 7340,
+      "sha256": "d52843eaeb4d80ecea8e463bcc01e2b7f9fd867650169dbc46233c2b44f67f6c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_consumer_integration_test.go",
+      "size": 26896,
+      "sha256": "41b3f2e4dc37554708440c35a15de1539036385534a431083516df79eeebf53a"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-authority-native-20261026-120305-61d51903.json",
+      "size": 86363,
+      "sha256": "6626f485c970075d850da9bde2ecf3fd16c61032270bea707acf2545a59d2037"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-authority-native-20261026-120305-61d51903-step-0.log",
+      "size": 2383024,
+      "sha256": "fecaa4b2fb3dcb92a8c7bccff372f946c337e0a330a3af0bcb084747cb24d04e"
+    }
+  ]
+}

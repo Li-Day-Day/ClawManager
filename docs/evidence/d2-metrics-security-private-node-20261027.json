@@ -1,0 +1,113 @@
+{
+  "kind": "d2_metrics_private_combined_candidate_validation.v1",
+  "status": "passed_private_node_checks_before_live_promotion",
+  "private_workspace": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e08fbb1a239c4e48a05f97e7c2614616\\metrics-node",
+  "node_workspace_removed": true,
+  "cache_owner_retained_for_next_validation": true,
+  "before": {
+    "exit_code": 1,
+    "assertion_failure_not_compile": true,
+    "passed": 2,
+    "failed": 1,
+    "log": {
+      "path": "docs/evidence/d2-metrics-security-before-20261027.log",
+      "size": 1518,
+      "sha256": "d2d4b45f86196e4e71c815c7aba5609fffc8af8077735060358051f48b30a9ec"
+    },
+    "exec_chunk": "037c9c"
+  },
+  "checks": [
+    {
+      "command": "node scripts/system-backup-metrics-registry.mjs --check",
+      "exit_code": 0,
+      "exec_chunk": "407b21",
+      "output": ""
+    },
+    {
+      "command": "node scripts/system-backup-prometheus-rules.mjs --check",
+      "exit_code": 0,
+      "exec_chunk": "68d8a8",
+      "output": ""
+    },
+    {
+      "command": "node --test --test-isolation=none scripts/system-backup-prometheus-rules.test.mjs",
+      "exit_code": 0,
+      "exec_chunk": "0dd880",
+      "output": "✔ candidate Prometheus rules preserve every PromQL alert without claiming controller-state execution (8.5944ms)\n✔ candidate generator rejects duplicate or unassigned rules (12.6286ms)\n✔ literal metric_result selectors use the original plan closed values (7.2542ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 83.4523\n"
+    }
+  ],
+  "execution_output_provenance": "Exact exec_command results captured into this receipt after execution; before log was redirected by the original command",
+  "private_source_postcheck": true,
+  "live_original_three_files_unchanged": true,
+  "live_original_test": {
+    "path": "scripts/system-backup-prometheus-rules.test.mjs",
+    "size": 2496,
+    "sha256": "97f4a6f4bf6df93edc37a67ca9413784d792fd8592f521d32cc3e7d8ba2e4011"
+  },
+  "candidate_mappings": [
+    {
+      "candidate": {
+        "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.mjs.txt",
+        "size": 41281,
+        "sha256": "74d2bc36169bdf6157bf14e26c353c581b78309d2faef66954d8e685e1a7ee85"
+      },
+      "destination": "scripts/system-backup-metrics-registry.mjs"
+    },
+    {
+      "candidate": {
+        "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+        "size": 194141,
+        "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+      },
+      "destination": "contracts/system-backup/v12/metrics-alert-registry.json"
+    },
+    {
+      "candidate": {
+        "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.yaml",
+        "size": 70799,
+        "sha256": "245bf3d97317b679509aabac1ffb85258a1720d2bc40b6e200f87e322f5ac018"
+      },
+      "destination": "contracts/system-backup/v12/prometheus-alert-rules.yaml"
+    },
+    {
+      "candidate": {
+        "path": "docs/evidence/d2-metrics-prometheus-tests-candidate-20261027.mjs.txt",
+        "size": 3331,
+        "sha256": "99e8c427a9cda06ed311357753e4e3a933b615442b856adb09798700e3004e88"
+      },
+      "destination": "scripts/system-backup-prometheus-rules.test.mjs"
+    },
+    {
+      "candidate": {
+        "path": "scripts/system-backup-prometheus-rules.mjs",
+        "size": 4307,
+        "sha256": "0e5b1ef127e84d358fe24fc2c752eef77e3f76321e85c2e5c2adf67060d23606"
+      },
+      "destination": "scripts/system-backup-prometheus-rules.mjs"
+    },
+    {
+      "candidate": {
+        "path": "docs/system-backup-restore-division-plan.md",
+        "size": 269090,
+        "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+      },
+      "destination": "docs/system-backup-restore-division-plan.md"
+    }
+  ],
+  "original_source_archive": {
+    "path": "docs/evidence/a2-metrics-security-original-source-20261027.json",
+    "size": 3213,
+    "sha256": "a5010d2e3324cda0f92a1e9c8043aa596e2dafca668094c74970b8a082f56261"
+  },
+  "owner_fifteen_stage": {
+    "path": "docs/evidence/d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95.json",
+    "size": 27354,
+    "sha256": "d9645cef72d962b1dc6c30852c374df9ba6a121eac5f22828d7e6948f5374332"
+  },
+  "live_sources_modified": false,
+  "PromQL_executed": false,
+  "dependencies_installed": false,
+  "Go_executed": false,
+  "actual_SQL": false,
+  "production_approved": false
+}

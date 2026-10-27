@@ -1,0 +1,99 @@
+{
+  "kind": "a2_gate_budget_r3_independent_source_review.v1",
+  "reviewed_at": "2026-10-27T08:20:03.068Z",
+  "status": "exact_gate_r3_source_reviewed_shortened_window_finding_closed_native_pending",
+  "D_source_report": {
+    "path": "docs/evidence/d1-gate-budget-source-ready-20261027-r3.json",
+    "size": 5015,
+    "sha256": "8f493145b3a6e27dec2cded8190ce32cfbde8d932510bbe2dd8ab1de7aebcfbb"
+  },
+  "inputs": [
+    {
+      "path": "docs/evidence/d1-gate-budget-sql-candidate-20261027-r3.go.txt",
+      "size": 12644,
+      "sha256": "76332a6880a8037756db194212cd0b42fd4b804707eae0110c68fd6e9dee4d5a"
+    },
+    {
+      "path": "docs/evidence/d1-gate-budget-test-candidate-20261027-r3.go.txt",
+      "size": 17070,
+      "sha256": "6e132ecc7c3fef18ec46ca90758b5cea36af82718cd0f7ce1bba199501b0e05b"
+    },
+    {
+      "path": "docs/evidence/d1-gate-budget-http-candidate-20261027-r3.go.txt",
+      "size": 7207,
+      "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+    },
+    {
+      "path": "docs/evidence/d1-gate-budget-main-candidate-20261027-r3.go.txt",
+      "size": 22213,
+      "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+    }
+  ],
+  "original_gate_writer": {
+    "path": "backend/internal/systembackupcontroller/gate.go",
+    "size": 27781,
+    "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+  },
+  "source_check": {
+    "command": "node docs/evidence/d1-gate-budget-tighten-source-20261027-r3.mjs --check",
+    "actual_exit_code": 0,
+    "base_files": 1720,
+    "base_source_sha256": "dc79d81f74d6d6c293372f6c5404b2a673c3f469da1c4d14d4adc763199efa8e",
+    "candidate_source_sha256": "8be6028b7c2ca7a383d1bc7f7ec7b81bf3fb16e75ae6193ce645589d81dadb30",
+    "prepared_test_roots": 8
+  },
+  "reported_issue": "A shorter acquisition/absolute-hold deadline was accepted while a larger frozen seconds value was published, delaying the critical expression on contradictory row facts.",
+  "fix": "Only acquisition and hold use equality against their original frozen integer budget; heartbeat-to-lease remains a bounded <= window for legitimate LEAST clipping.",
+  "source_predicate_arithmetic_cases": [
+    {
+      "kind": "hold",
+      "duration_seconds": 60,
+      "budget_seconds": 300,
+      "old_source_predicate": true,
+      "new_source_predicate": false
+    },
+    {
+      "kind": "hold",
+      "duration_seconds": 300,
+      "budget_seconds": 300,
+      "old_source_predicate": true,
+      "new_source_predicate": true
+    },
+    {
+      "kind": "acquisition",
+      "duration_seconds": 15,
+      "budget_seconds": 30,
+      "old_source_predicate": true,
+      "new_source_predicate": false
+    },
+    {
+      "kind": "acquisition",
+      "duration_seconds": 30,
+      "budget_seconds": 30,
+      "old_source_predicate": true,
+      "new_source_predicate": true
+    },
+    {
+      "kind": "lease",
+      "duration_seconds": 1,
+      "budget_seconds": 30,
+      "old_source_predicate": true,
+      "new_source_predicate": true
+    }
+  ],
+  "http_and_main_r2_bytes_preserved": true,
+  "additional_Go_tests_declared": [
+    "shortened_acquisition",
+    "shortened_hold",
+    "TestGateBudgetClippedLeaseKeepsOriginalFrozenBudget"
+  ],
+  "Go_tests_executed": false,
+  "actual_SQL": false,
+  "actual_PromQL": false,
+  "arithmetic_checks_are_not_native_Go_execution": true,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

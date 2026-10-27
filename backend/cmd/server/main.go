@@ -24,6 +24,7 @@ import (
 	"clawreef/internal/services"
 	"clawreef/internal/services/k8s"
 	"clawreef/internal/services/leader"
+	"clawreef/internal/systembackupapi"
 	"clawreef/internal/systembackupsecurity"
 	"clawreef/internal/teamtemplate"
 
@@ -921,6 +922,10 @@ func main() {
 		// Real reads use A's request-bound installation/session/RBAC authority.
 		// The fixture keeps its separate explicit opt-in for contract previews.
 		adminBackupRead := api.Group("/admin")
+		backupTasks := systembackupapi.NewHandler(linkedSystemBackupTaskApplication(sessionDB, backupSessions))
+		// Mutations have a separate application authority, including when the
+		// read-only fixture preview is enabled. Never inherit fixture admission.
+		registerBackupTaskMutations(api.Group("/admin"), backupTasks)
 		liveBackupRead, readErr := loadLiveBackupRead(sessionDB, backupSessions, os.Getenv)
 		if readErr != nil {
 			if liveBackupRead == nil {
@@ -929,6 +934,7 @@ func main() {
 			log.Printf("system-backup live read unavailable: %v", readErr)
 		}
 		if liveBackupRead != nil {
+			liveBackupRead.tasks = backupTasks
 			registerBackupReadLive(adminBackupRead, liveBackupRead)
 		} else {
 			adminBackupRead.Use(middleware.SystemBackupReadFixtureAuth(userRepo))
@@ -989,11 +995,21 @@ func main() {
 		Addr:    cfg.Server.Address,
 		Handler: r,
 	}
+	srv.TLSConfig, err = loadSystemBackupAPITLS(os.Getenv)
+	if err != nil {
+		log.Fatal("system-backup API TLS configuration unavailable")
+	}
 
 	go func() {
 		log.Printf("Server starting on %s", cfg.Server.Address)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Failed to start server: %v", err)
+		var serveErr error
+		if srv.TLSConfig != nil {
+			serveErr = srv.ListenAndServeTLS("", "")
+		} else {
+			serveErr = srv.ListenAndServe()
+		}
+		if serveErr != nil && serveErr != http.ErrServerClosed {
+			log.Fatal("Failed to start server")
 		}
 	}()
 

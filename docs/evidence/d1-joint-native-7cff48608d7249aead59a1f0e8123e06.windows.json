@@ -1,0 +1,52 @@
+{
+  "kind": "d1_joint_windows_phase.v1",
+  "status": "passed_Windows_packages_pending_Linux_and_cmd_compilation",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-7cff48608d7249aead59a1f0e8123e06",
+  "source_manifest": "docs/evidence/d1-joint-native-7cff48608d7249aead59a1f0e8123e06.source.json",
+  "source_sha256": "fd71b0aff897210a9c2e830167b74f1085bdc1aed9ae41c0d960e3be4abedade",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupcontroller",
+        "./internal/systembackupcleanup"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d1-joint-native-7cff48608d7249aead59a1f0e8123e06.windows.step-0.jsonl",
+      "sha256": "201c63dd9573a5691b1c6428fe723b5c386bd3fa8d5fea4cf731cbfe6e69d2b3"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=300s",
+        "./internal/systembackupcontroller",
+        "./internal/systembackupcleanup"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d1-joint-native-7cff48608d7249aead59a1f0e8123e06.windows.step-1.jsonl",
+      "sha256": "6a72703def289798a22cb0ad4de4b2dc85d627f85d1b385c44262195effed364"
+    }
+  ],
+  "other_Go_at_start": [
+    46788
+  ],
+  "explicit_Root_schedule": "isolated Windows p1 while human completes Linux in separate source and cache",
+  "cache": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\cache",
+  "Go_started": true,
+  "source_postcheck": true,
+  "owner_kept_for_Linux_continuation": true,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "error": null,
+  "runner_sha256": "2539104f919f394a5eec5348f9ade269e240f6fe81d3749acfd52ec25c73d83f"
+}

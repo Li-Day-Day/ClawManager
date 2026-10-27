@@ -1,0 +1,124 @@
+{
+  "kind": "a_bootstrap_entry_observed_phase_linux_composition.v1",
+  "status": "native_phase_observations_plus_exact_linux_supplement_only",
+  "parent_receipt": {
+    "path": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+    "size": 344975,
+    "sha256": "fb27a21187e66442dc80191279fc225d5c857d8fd7c78891905b20e958ed0c1f"
+  },
+  "original_phase_observation": {
+    "path": "docs/evidence/a-bootstrap-entry-phase-observed-20261027-ae7af383.json",
+    "size": 108573,
+    "sha256": "87b04cf4951419d8d474dc431ed96e081574168e49972b0efb3b79d9910933ad"
+  },
+  "linux_receipt": {
+    "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+    "size": 345028,
+    "sha256": "8394b5383e885585368c930898a91acca58b71afe596202295e305ea73fd160a"
+  },
+  "linux_independent_review": {
+    "path": "docs/evidence/a-bootstrap-entry-linux-independent-reviewed-20261027-d846.json",
+    "size": 7032,
+    "sha256": "e79be0fa84775f586fc06f8c24218ebb08b318702196fa379634d774049cbf7c"
+  },
+  "review_validator": {
+    "path": "docs/evidence/a-bootstrap-entry-observed-composition-20261027.mjs",
+    "size": 5242,
+    "sha256": "7a99a441bb96ab14e5ab6192fca57742c2aafed0a87db36a212e2af943748de7"
+  },
+  "source_files": 1741,
+  "source_sha256": "1f446fb373207dc40b659fe2398abf46b79007e81febcc686490913a8f42e473",
+  "original_manifest_order_source_sha256": "8ef5ccb46077c0c93c6ed3e047d2b10d8e09dd12b2d6d4f38d9a12b03a29ca24",
+  "digest_order_note": "source_sha256 uses ASCII path order; the original-order digest preserves D1/PowerShell ordering over the identical 1741 tuples",
+  "observed_windows": {
+    "targeted_roots": 33,
+    "targeted_pass_events": 164,
+    "full_packages": [
+      "clawreef/cmd/server",
+      "clawreef/cmd/system-backup-bootstrap",
+      "clawreef/internal/systembackupbootstrapsecurity",
+      "clawreef/internal/systembackupcatrust",
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupnoncebootstrap",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupresources",
+      "clawreef/internal/systembackupsecurity"
+    ],
+    "full_roots": 1006,
+    "full_pass_events": 8546,
+    "seed_roots": 4,
+    "seed_pass_events": 4
+  },
+  "accepted_linux_steps": [
+    {
+      "name": "server",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-server",
+        "./cmd/server"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "8e5f1198b2691fa4c58421542d83a409ea5b7595ac98b95da683f62feb9d253e",
+      "binary_size": 98459012,
+      "binary_removed": true
+    },
+    {
+      "name": "bootstrap",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-bootstrap",
+        "./cmd/system-backup-bootstrap"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "5c678b4f35144cdd043d88d9b96670277967ac9d88e7943b96a312640eb99bd0",
+      "binary_size": 9877966,
+      "binary_removed": true
+    },
+    {
+      "name": "migration-runner",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-migration-runner",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "da6e6b30eeab136e2f754e2f00be77a0e0677198584c779378f672d9e4f9a3fd",
+      "binary_size": 9100627,
+      "binary_removed": true
+    },
+    {
+      "name": "tagged-evidence-test-compile-only",
+      "arguments": [
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-tagged-evidence-test-compile-only",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "8865af7792727037e8c518c36e6daff4edf09020e9171b7e7e1b35bc936a172f",
+      "binary_size": 24126346,
+      "binary_removed": true
+    }
+  ],
+  "new_linux_own_precheck": true,
+  "new_linux_own_postcheck": true,
+  "new_linux_cleanup_verified": true,
+  "original_parent_status": "failed",
+  "original_final_postcheck_observed": false,
+  "original_run_accepted": false,
+  "strict_original_windows_source_stability_accepted": false,
+  "complete_parent_obligations_verified": false,
+  "native_start_authorized": false,
+  "current_tree_ready": false,
+  "current_baseline_ready": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "remaining": "Current stable-source package/seed coverage and exact dependency closure must independently repair the strict pre-thin prerequisite; this composition cannot register itself as the complete-parent proof"
+}

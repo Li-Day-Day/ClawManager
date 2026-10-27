@@ -1,7 +1,6 @@
 {
   "kind": "a_remaining_work_execution_ledger.v1",
   "objective": "这些都做",
-  "status": "paused_at_user_request",
   "scope_reduced": false,
   "requirements": [
     {
@@ -9,7 +8,19 @@
       "status": "review_completed_changes_required",
       "decision": "docs/system-backup-a-resources-normalization-review-20261022.md",
       "evidence": "docs/evidence/a-resources-normalization-review-20261022.json",
-      "completion_boundary": "A reviewed each of the six proposed policies; runtime implementation and production approval are not granted"
+      "completion_boundary": "A reviewed each of the six proposed policies; runtime implementation and production approval are not granted",
+      "v2_review": "docs/evidence/a-resources-v2-reviewed-20261023.json",
+      "post_review_drift": "docs/evidence/a-resources-v2-current-drift-20261023.json",
+      "SQL_reader_incremental_review": "docs/evidence/a-resources-sql-reviewed-20261023.json",
+      "audit_candidate_static_review": "docs/evidence/a-resources-audit-static-reviewed-20261023.json",
+      "audit_candidate_validation": "docs/evidence/a-resources-audit-validated-20261023.json",
+      "egress_candidate_review": "docs/evidence/a-resources-egress-reviewed-20261023.json",
+      "northbound_candidate_review": "docs/evidence/a-resources-northbound-reviewed-20261023.json",
+      "readback_composition_review": "docs/evidence/a-resources-readback-reviewed-20261023.json",
+      "writer_incremental_review": "docs/evidence/a-resources-writer-reviewed-20261023.json",
+      "writer_FK_local_repair": "docs/evidence/a-writer-fk-repair-accepted-20261023.json",
+      "writer_FK_finding_status": "two_declared_relations_local_repair_and_ten_actual_MySQL_cases_accepted_no_generic_policy_approval",
+      "writer_FK_actual_acceptance": "docs/evidence/d-resources-writer-fk-actual-accepted-20261026.json"
     },
     {
       "id": "A-bootstrap-security-resource-adapters",
@@ -20,7 +31,7 @@
       "typed_metadata_acceptance": "docs/evidence/a-bootstrap-reference-typed-accepted-20261022.json",
       "ca_candidate": "backend/internal/systembackupcatrust/ca.go",
       "ca_candidate_document": "docs/system-backup-a-ca-trust-adapter-20261022.md",
-      "ca_candidate_status": "local_package_and_linux_compile_passed_not_linked_non_implementer_review_pending",
+      "ca_candidate_status": "R2_local_preparation_and_exact_nonimplementer_review_accepted_actual_mapping_and_composition_pending",
       "ca_candidate_validation_log": "docs/evidence/a-ca-trust-candidate-20261022-161356-5a01d072.txt",
       "remaining_owner_adapter_slots": 27,
       "still_required": [
@@ -30,11 +41,33 @@
         "non-implementer review",
         "explicit production composition",
         "actual environment evidence"
-      ]
+      ],
+      "ca_nonce_R2_acceptance": "docs/evidence/a-nonce-ca-r2-local-accepted-20261023.json",
+      "nonimplementer_R2_review": "docs/evidence/d-a-nonce-ca-reviewed-20261023-r2.json",
+      "local_consumer_gap": {
+        "independent_requirements": "docs/evidence/d-bootstrap-candidate-independent-requirements-20261026.json",
+        "A2": "A binding adapter and negative models",
+        "id": "A-BOOT-CONSUME-01",
+        "existing_direction": "C1 committed candidate receipt/evidence plus atomic domain epoch close",
+        "status": "concrete_A_service_and_D_consumer_implemented_joint_native_and_independent_review_pending",
+        "A1": "authority/deadline decision and integration review",
+        "evidence": "docs/evidence/a2-bootstrap-producer-consumption-reviewed-20261026.json",
+        "production_approved": false,
+        "D2": "producer consumer and shared prefix",
+        "A_contract_opinion": "docs/evidence/a-bootstrap-consumer-contract-reviewed-20261026.json",
+        "implementation": [
+          "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+          "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+          "backend/internal/systembackupproducer/bootstrap_consume_contract.go",
+          "backend/internal/systembackupproducer/bootstrap_consume.go"
+        ],
+        "integration_test": "backend/internal/systembackupsecurity/config_bootstrap_consumer_integration_test.go",
+        "concrete_pinned_A_authority": "A2 security/bootstrap_candidate_authority.go and test; original ReadGrant/9registry/RBAC capture implementation in progress",
+        "concrete_capacity": "D2 security/bootstrap_candidate_capacity.go and test implemented native pending; original report/window/ledger/cost retained"
+      }
     },
     {
       "id": "A-download-owner-eleven-actual-SQL",
-      "status": "new_local_gate_real_assertion_failed_actual_SQL_not_started",
       "previous_actual_result": "10 passed and missing_reference_column fixture failed",
       "new_local_log": "docs/evidence/a-download-owners-current-gate-20261022-153348-e32695c1.txt",
       "new_local_source": "docs/evidence/a-download-owners-current-gate-20261022-153348-e32695c1-source.json",
@@ -42,21 +75,111 @@
       "new_framework_budget_seconds": 2700,
       "budget_repair_log": "docs/evidence/a-download-owners-budget-repair-20261022-161813-2f7f4fdb.txt",
       "budget_repair_source": "docs/evidence/a-download-owners-budget-repair-20261022-161813-2f7f4fdb-source.json",
+      "failed_case": "TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof",
+      "diagnosis_status": "SQL_clock_fixture_repair_verified_no_production_deadline_changes",
+      "round_closeout": "docs/evidence/a-round-pause-reviewed-20261022.json",
+      "current_validation_log": "docs/evidence/a-owner-eof-20261023-084028.txt",
+      "previous_validation_log": "docs/evidence/a-owner-eof-20261023-083200.txt",
+      "original_full_gate": {
+        "log": "docs/evidence/a-owner-full-local-20261023-085715.txt",
+        "source": "docs/evidence/a-owner-full-local-20261023-085715-source.json",
+        "status": "terminal_exit_0_complete_historical_frozen_gate_independently_reviewed_cleanup_verified",
+        "remote_requested": false,
+        "baseline_accepted": false,
+        "current_source_changed_since_freeze": true
+      },
+      "current_full_failure": "docs/evidence/a-runtime-full-failure-reviewed-20261023.json",
+      "runtime_repair": {
+        "file": "backend/internal/systembackupevidence/download_runtime_test.go",
+        "diagnostic_log": "docs/evidence/a-owner-eof-20261023-092528.txt",
+        "status": "latest_three_roots_24_pass_events_frozen_bytes_postchecked_cleanup_verified",
+        "production_deadlines_changed": false,
+        "signature_or_material_limits_renewed": false,
+        "current_repair_requires_new_validation": false,
+        "previous_diagnostic_status": "terminal_exit_1_fresh_download_succeeded_result_capacity_stale_cleanup_verified",
+        "previous_diagnostic_review": "docs/evidence/a-runtime-diagnostic-failure-reviewed-20261023.json",
+        "result_fixture": "backend/internal/systembackupevidence/download_result_test.go",
+        "current_complete_owner_gate_required": true
+      },
+      "split_local_acceptance": "docs/evidence/a-owner-local-preparation-reviewed-20261023.json",
+      "current_full_gate": {
+        "log": "docs/evidence/a-owner-current-full-local-20261023-093734.txt",
+        "source": "docs/evidence/a-owner-current-full-local-20261023-093734-source.json",
+        "status": "terminal_exit_0_632_roots_5105_pass_events_independently_accepted_cleanup_verified",
+        "remote_requested": false,
+        "baseline_accepted": true,
+        "acceptance": "docs/evidence/a-owner-current-full-accepted-20261023.json",
+        "current_source_changed_since_freeze": true
+      },
+      "gc_typed_nil_review": "docs/evidence/a-gc-freeze-nil-reviewed-20261023.json",
+      "gc_current_full_gate": {
+        "log": "docs/evidence/a-owner-gc-full-local-20261023-111154.txt",
+        "source": "docs/evidence/a-owner-gc-full-local-20261023-111154-source.json",
+        "status": "terminal_exit_0_636_roots_5138_pass_events_independently_accepted_cleanup_verified",
+        "remote_requested": false,
+        "baseline_accepted": true,
+        "provisional_package_review": {
+          "roots": 636,
+          "pass_events": 5138,
+          "prior_pass_names_preserved": 5105,
+          "new_GC_pass_events": 33,
+          "packaged_seed_checks": 13,
+          "detached_seed_checks": 13,
+          "terminal_gate_accepted": true
+        },
+        "reviewer": "docs/evidence/a-owner-gc-full-review-20261023.mjs",
+        "dependency_resolution": "docs/evidence/a-owner-dependency-freeze-20261023-r3-native.json",
+        "acceptance": "docs/evidence/a-owner-gc-full-accepted-20261023.json",
+        "current_source_composition": "docs/evidence/a-owner-gc-dependency-accepted-20261023-r3.json",
+        "terminal_exit": 0,
+        "cleanup_verified": true
+      },
+      "previous_source_gate_before_writer_repair": {
+        "status": "ready_for_original_snapshot_gate",
+        "reviewed_source_sha256": "58e8675e0213ad3542957108b625e9cc85b14a762bd5275e4ca7830ea9688a3b",
+        "acceptance": "docs/evidence/a-owner-gc-dependency-accepted-20261023-r3.json",
+        "actual_sql": false,
+        "tests_started": false,
+        "dependencies_installed": false
+      },
+      "previous_historical_status": "complete_owner_profile_with_GC_accepted_current_preflight_ready_actual_SQL_pending",
+      "latest_local_supplement": "docs/evidence/a-owner-profile-supplement-a1af4a2e2f5645c79fadfade1051f398-reviewed.json",
+      "status": "current_local_profile_accepted_and_registered_actual_eleven_pending",
+      "final_local_acceptance": "docs/evidence/a-owner-final-local-accepted-20261026.json",
+      "final_nonimplementer_review": "docs/evidence/a2-owner-final-current-reviewed-20261026.json",
+      "receiver_registration_regression": {
+        "fail": 0,
+        "log": "docs/evidence/a-owner-baseline-registration-tests-20261026-approved.txt",
+        "pass": 15,
+        "actual_SQL": false,
+        "skip": 0,
+        "tests": 15
+      },
       "still_required": [
-        "review full new ordinary baseline and all original test inventories",
         "same-run source and binary pins",
         "eleven real SQL cases with actual lock witnesses",
         "original namespace UID and both-end cleanup",
-        "independent receiver acceptance"
+        "independent actual receiver acceptance"
       ],
-      "failed_case": "TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof",
-      "diagnosis_status": "fixed_SQL_clock_freshness_hypothesis_unverified",
-      "round_closeout": "docs/evidence/a-round-pause-reviewed-20261022.json"
+      "previous_current_source_gate": {
+        "status": "ready_for_original_snapshot_gate",
+        "reviewed_source_sha256": "2099a08cb03ebf57e9c9411765ff166ac189e097dedb153971fb46b72f8133b0",
+        "actual_sql": false,
+        "tests_started": false,
+        "dependencies_installed": false
+      },
+      "current_source_gate": {
+        "status": "not_ready",
+        "code": "ordinary_source_changed_requires_reviewed_baseline",
+        "actual_sql": false,
+        "tests_started": false
+      },
+      "current_validation": "2099 and 093f accepted only for exact historical frozen dependencies; new bootstrap ordinary source not_ready pending joint native acceptance; user owner952 actual round is separate exact captured source"
     },
     {
       "id": "A-real-deployment-and-full-chain",
-      "status": "incomplete_materials_not_prepared",
-      "user_confirmed": "未准备",
+      "status": "current_local_plan_incomplete_actual_material_presence_unknown",
+      "user_confirmed": "2026-10-23：不知道",
       "still_required": [
         "current installation config and original grant",
         "actual registry and typed resource mappings",
@@ -65,29 +188,38 @@
         "data/report/journal physical evidence and capacity",
         "TLS and real human login/MFA/provider",
         "HTTP and restore end-to-end acceptance"
-      ]
+      ],
+      "previous_user_confirmed": "未准备",
+      "local_plan_preflight": "docs/evidence/a-field-plan-preflight-20261023.json",
+      "remote_execution_deferred_by_user": true
     },
     {
       "id": "D-history-sixteen-independent-acceptance",
-      "status": "original_frozen_build_repair_accepted_actual_sixteen_pending",
+      "status": "actual_specialty_independently_reviewed_by_A",
       "failed_log": "docs/evidence/d-verification-detail-remote-20261022-150230-2e5ffbcd.txt",
       "repair": "scripts/system-backup-a-evidence-validation.ps1",
       "new_local_log": "docs/evidence/a-verification-detail-build-repair-20261022-153158-ef1ac83e.txt",
       "new_local_source": "docs/evidence/a-verification-detail-build-repair-20261022-153158-ef1ac83e-source.json",
       "local_build_acceptance": "docs/evidence/a-verification-detail-build-repair-accepted-20261022.json",
-      "still_required": [
+      "still_required": [],
+      "previous_status": "original_frozen_build_repair_accepted_actual_sixteen_pending",
+      "acceptance": "docs/evidence/a-d-actual-receipts-reviewed-20261023.json",
+      "previous_still_required": [
         "new actual sixteen-case run with same-run source",
         "independent result acceptance"
       ]
     },
     {
       "id": "D-GC-forty-two-independent-acceptance",
-      "status": "actual_41_of_42_passed_profile_failed",
+      "status": "actual_specialty_independently_reviewed_by_A",
       "failed_log": "docs/evidence/d-download-gc-owner-lifecycle-remote-20261022-144052-85261cfe.txt",
       "failed_case": "canceled_holder",
       "repair_owner_document": "docs/system-backup-d-gc-owner-lifecycle-20261022.md",
       "local_repair_review": "docs/evidence/a-d-gc-lifecycle-repair-reviewed-20261022.json",
-      "still_required": [
+      "still_required": [],
+      "previous_status": "actual_41_of_42_passed_profile_failed",
+      "acceptance": "docs/evidence/a-d-actual-receipts-reviewed-20261023.json",
+      "previous_still_required": [
         "review exact cancellation repair preparation",
         "new complete 42-case actual run",
         "same-run source and release witnesses",
@@ -102,10 +234,46 @@
     "old freeze prerequisite thirty-four",
     "cost snapshot five"
   ],
-  "runtime_process_state": "must poll live tool sessions; this ledger does not prove a process is running",
+  "runtime_process_state": "D2_r4_handle_missing_20261026_native_build_failure_no_terminal_receipt_A_supplement_terminal_cleaned",
   "subsequent_D_runtime_fix_review": "docs/evidence/a-d-resources-proof-presence-accepted-20261022.json",
   "dependencies_installed": false,
   "production_approved": false,
   "complete_field_acceptance": false,
-  "pause_review": "docs/evidence/a-round-pause-reviewed-20261022.json"
+  "pause_review": "docs/evidence/a-round-pause-reviewed-20261022.json",
+  "resumed_on": "2026-10-23",
+  "resumption_authorization": "用户：做吧",
+  "current_download_live_readiness": "docs/evidence/a-download-live-readiness-20261023-r2.json",
+  "current_remote_access": {
+    "target": "root@10.130.14.23",
+    "batch_authentication": "permission_denied",
+    "attached_app_terminal": false,
+    "matching_local_SSH_host_configuration": false,
+    "private_key_content_read": false,
+    "operator_session_choice_pending": false,
+    "checked_at": "2026-10-23T03:52:10.01Z",
+    "user_choice": "暂时只推进本地工作"
+  },
+  "current_local_gate_complete_actual_chain_pending": false,
+  "current_execution_mode": "local_only_no_dependencies_installed_remote_operator_commands_at_handoff",
+  "local_independent_work_20261023": {
+    "status": "writer_FK_local_repair_and_Go_regressions_completed_GC_joint_review_pending",
+    "writer_review": "docs/evidence/a-resources-writer-reviewed-20261023.json",
+    "writer_decision": "declared_scan_job_FK_reparenting_repaired_offline_actual_MySQL_pending",
+    "writer_finding": "A-WRITER-FK-01",
+    "GC_integration_review": "docs/evidence/a-gc-freeze-integration-review-20261023.json",
+    "dependencies_installed": false,
+    "actual_SQL": false,
+    "production_approved": false,
+    "writer_repair": "docs/evidence/a-writer-fk-repair-accepted-20261023.json",
+    "writer_repair_counts": {
+      "roots": 71,
+      "pass_events": 843,
+      "prior_pass_names_preserved": 826,
+      "old_failed_leaves": 4,
+      "added_events": 17,
+      "failure_leaves": 10
+    }
+  },
+  "status": "bootstrap_consumer_current_implementation_and_native_review_in_progress_old_owner_baselines_historical",
+  "full_GC_local_owner_candidate": "docs/evidence/a-gc-full-owner-reviewed-20261026.json"
 }

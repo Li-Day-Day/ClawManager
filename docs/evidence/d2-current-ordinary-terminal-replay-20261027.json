@@ -1,0 +1,106 @@
+{
+  "kind": "d2_current_ordinary_terminal_replay.v1",
+  "status": "passed_exact_terminal_and_retained_inventory",
+  "native_receipt": {
+    "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.json",
+    "size": 13032,
+    "sha256": "df629ed882ee8262559bef0dc5ed9efa00ddd84178c7875c9c89ad4e60592a05"
+  },
+  "checkpoints": [
+    {
+      "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.windows-postcheck.json",
+      "size": 7570,
+      "sha256": "abdee8b86a7b02879b841cda93c4bcc07f0cbc93627f6954d71963b9b8ef8641"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.bootstrap-seeds-postcheck.json",
+      "size": 1491,
+      "sha256": "3f43e858dc6489fe826e7453514ae96bddff07a54622d4553dcc26e67ec18160"
+    }
+  ],
+  "inventory": {
+    "kind": "d2_current_ordinary_inventory.v1",
+    "packages": [
+      {
+        "package": "clawreef/internal/systembackupproducer",
+        "roots": 89,
+        "pass_events": 883,
+        "parent_names_preserved": 883
+      },
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "roots": 304,
+        "pass_events": 2302,
+        "parent_names_preserved": 2270
+      },
+      {
+        "package": "clawreef/internal/systembackupresources",
+        "roots": 71,
+        "pass_events": 843,
+        "parent_names_preserved": 843
+      },
+      {
+        "package": "clawreef/internal/systembackupread",
+        "roots": 102,
+        "pass_events": 976,
+        "parent_names_preserved": 976
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "roots": 399,
+        "pass_events": 3228,
+        "parent_names_preserved": 3228
+      },
+      {
+        "package": "clawreef/cmd/server",
+        "roots": 9,
+        "pass_events": 24,
+        "parent_names_preserved": 22
+      }
+    ],
+    "all_selected_packages_complete": true,
+    "parent_scope_accepted": false,
+    "actual_mysql": false
+  },
+  "seeds": {
+    "kind": "d2_bootstrap_repair_seed_inventory.v1",
+    "names": [
+      "TestDBootstrapConsumerMySQLSeed",
+      "TestDBootstrapConsumerRangesMySQLSeed",
+      "TestDBootstrapEntryMySQLSeed"
+    ],
+    "actual_mysql": false,
+    "source_scope_accepted": false
+  },
+  "steps": 8,
+  "all_native_exits_zero": true,
+  "source_postchecks_true": true,
+  "exact_owner_independently_absent": true,
+  "linux_binaries": [
+    {
+      "program": "server",
+      "format": "ELF",
+      "sha256": "6b41603bf2fdeaf6038c46524d0992b2ffdacdef17754e5bdb1ec8b067530400",
+      "size": 98544111,
+      "executed": false,
+      "removed": true
+    },
+    {
+      "program": "system-backup-bootstrap",
+      "format": "ELF",
+      "sha256": "674785517283bfbb006634c9edebb95f8513111bd8344d2862d5459499aad9ce",
+      "size": 9881543,
+      "executed": false,
+      "removed": true
+    }
+  ],
+  "initial_replay_attempt": {
+    "status": "usage_rejected_before_review",
+    "reason": "live-owner CLI requires four arguments and is inappropriate after owner cleanup; replay uses the same exported validators against retained logs and compares durable checkpoint results",
+    "native_validation_affected": false
+  },
+  "independent_A1_scope_acceptance_claimed": false,
+  "current_baseline_ready": false,
+  "actual_SQL": false,
+  "dependencies_installed": false
+}

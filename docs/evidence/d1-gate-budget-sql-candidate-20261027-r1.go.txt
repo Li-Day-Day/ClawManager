@@ -1,0 +1,199 @@
+package systembackupcontroller
+
+import (
+	"bytes"
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"math"
+	"strconv"
+	"time"
+)
+
+// GateBudgetProjection is one installation's singleton capture gate and its
+// immutable timing. Labels come from the persisted installation matrix, never
+// from a caller-supplied task label or the controller's lock-owner string.
+type GateBudgetProjection struct {
+	Profile string
+	Runner string
+	WaitSeconds float64
+	HoldSeconds float64
+	AcquisitionTimeoutSeconds float64
+	MaxHoldSeconds float64
+}
+
+type GateBudgetCollector interface {
+	Collect(context.Context, string) (GateBudgetProjection, error)
+}
+
+type SQLGateBudgetReader struct { DB *sql.DB }
+
+// No live-lease filter: an expired lease or overdue absolute deadline must not
+// hide a gate that remains held/releasing in the authoritative database row.
+const gateBudgetSnapshotSQL = `SELECT
+ UTC_TIMESTAMP(6), TIMESTAMPDIFF(MICROSECOND, UTC_TIMESTAMP(6), CURRENT_TIMESTAMP(6)),
+ i.schema_version, i.origin_installation_id, i.active_config_version, i.matrix_key,
+ c.schema_version, c.origin_installation_id, c.version,
+ c.gate_acquisition_timeout_seconds, c.quiesce_max_hold_seconds,
+ g.origin_installation_id, g.scope, g.lock_name, g.gate_state,
+ g.generation, g.fencing_token, g.row_version, g.lock_owner, g.lock_ttl_seconds,
+ g.heartbeat_at, g.lease_expires_at, g.gate_acquisition_timeout_seconds,
+ g.quiesce_max_hold_seconds, g.acquiring_started_at, g.held_at,
+ g.release_started_at, g.acquisition_deadline_at, g.absolute_hold_deadline_at
+FROM system_backup_installation_state AS i
+LEFT JOIN system_backup_configs AS c
+ ON c.origin_installation_id = i.origin_installation_id AND c.version = i.active_config_version
+LEFT JOIN system_maintenance_locks AS g
+ ON g.origin_installation_id = i.origin_installation_id AND g.scope = ?
+WHERE i.origin_installation_id = ? LIMIT 2`
+
+type gateBudgetSnapshot struct {
+	Now time.Time
+	OffsetMicros int64
+	StateSchema, Installation string
+	ActiveVersion uint64
+	Matrix, ConfigSchema, ConfigInstallation string
+	ConfigVersion uint64
+	CurrentAcquisition, CurrentHold int64
+	GateInstallation, Scope, LockName string
+	State GateState
+	Generation, Fence, RowVersion uint64
+	Owner sql.NullString
+	LockTTL int64
+	Heartbeat, LeaseExpires sql.NullTime
+	Acquisition, Hold sql.NullInt64
+	AcquiringAt, HeldAt, ReleaseAt, AcquisitionDeadline, HoldDeadline sql.NullTime
+}
+
+func (r SQLGateBudgetReader) Collect(ctx context.Context, installationID string) (GateBudgetProjection, error) {
+	var empty GateBudgetProjection
+	if ctx == nil { return empty, errors.New("gate budget context is required") }
+	if err := ctx.Err(); err != nil { return empty, err }
+	if r.DB == nil || !installationIDPattern.MatchString(installationID) {
+		return empty, errors.New("gate budget database and installation are required")
+	}
+	tx, err := r.DB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
+	if err != nil { return empty, fmt.Errorf("begin gate budget snapshot: %w", err) }
+	defer tx.Rollback()
+	rows, err := tx.QueryContext(ctx, gateBudgetSnapshotSQL, CaptureGateScope, installationID)
+	if err != nil { return empty, fmt.Errorf("read gate budget snapshot: %w", err) }
+	defer rows.Close()
+	var snapshot gateBudgetSnapshot
+	count := 0
+	for rows.Next() {
+		count++
+		if count != 1 { return empty, errors.New("gate budget snapshot is not a singleton") }
+		err = rows.Scan(&snapshot.Now, &snapshot.OffsetMicros,
+			&snapshot.StateSchema, &snapshot.Installation, &snapshot.ActiveVersion, &snapshot.Matrix,
+			&snapshot.ConfigSchema, &snapshot.ConfigInstallation, &snapshot.ConfigVersion,
+			&snapshot.CurrentAcquisition, &snapshot.CurrentHold,
+			&snapshot.GateInstallation, &snapshot.Scope, &snapshot.LockName, &snapshot.State,
+			&snapshot.Generation, &snapshot.Fence, &snapshot.RowVersion, &snapshot.Owner, &snapshot.LockTTL,
+			&snapshot.Heartbeat, &snapshot.LeaseExpires, &snapshot.Acquisition, &snapshot.Hold,
+			&snapshot.AcquiringAt, &snapshot.HeldAt, &snapshot.ReleaseAt, &snapshot.AcquisitionDeadline, &snapshot.HoldDeadline)
+		if err != nil { return empty, fmt.Errorf("scan gate budget snapshot: %w", err) }
+	}
+	if err := errors.Join(rows.Err(), rows.Close()); err != nil { return empty, fmt.Errorf("close gate budget snapshot: %w", err) }
+	if count != 1 { return empty, errors.New("gate budget installation, config or gate is missing") }
+	projection, err := projectGateBudget(snapshot, installationID)
+	if err != nil { return empty, err }
+	if err := ctx.Err(); err != nil { return empty, err }
+	if err := tx.Commit(); err != nil { return empty, fmt.Errorf("commit gate budget snapshot: %w", err) }
+	if err := ctx.Err(); err != nil { return empty, err }
+	return projection, nil
+}
+
+func validGateMetricTime(value time.Time) bool {
+	_, offset := value.Zone()
+	return !value.IsZero() && value.Year() >= 1000 && value.Year() <= 9999 && offset == 0
+}
+
+func validGateMetricSeconds(value int64, minimum, maximum time.Duration) bool {
+	return value >= int64(minimum/time.Second) && value <= int64(maximum/time.Second)
+}
+
+func gateMetricWindow(start, end time.Time, budget int64) bool {
+	return validGateMetricTime(start) && validGateMetricTime(end) && end.After(start) &&
+		end.UnixMicro()-start.UnixMicro() <= budget*1000000
+}
+
+func projectGateBudget(s gateBudgetSnapshot, installationID string) (GateBudgetProjection, error) {
+	var result GateBudgetProjection
+	invalid := func() (GateBudgetProjection, error) { return GateBudgetProjection{}, errors.New("invalid gate budget authoritative snapshot") }
+	if !validGateMetricTime(s.Now) || s.OffsetMicros != 0 || s.StateSchema != "system-backup-installation-state.v1" ||
+		s.ConfigSchema != "system-backup-config.v1" || s.Installation != installationID ||
+		s.ConfigInstallation != installationID || s.GateInstallation != installationID ||
+		s.ActiveVersion == 0 || s.ActiveVersion != s.ConfigVersion || s.Scope != CaptureGateScope ||
+		s.LockName != "system_backup_capture_gate" || s.Generation == 0 || s.RowVersion == 0 ||
+		!validGateMetricSeconds(s.LockTTL, MinMaintenanceLockTTL, MaxMaintenanceLockTTL) ||
+		!validGateMetricSeconds(s.CurrentAcquisition, MinGateAcquisitionTimeout, MaxGateAcquisitionTimeout) ||
+		!validGateMetricSeconds(s.CurrentHold, MinQuiesceMaxHold, MaxQuiesceMaxHold) { return invalid() }
+	switch s.Matrix {
+	case "k8s-cluster": result.Profile, result.Runner = "cluster", "k8s"
+	case "k3s-cluster": result.Profile, result.Runner = "cluster", "k3s"
+	case "k8s-single-node": result.Profile, result.Runner = "single-node", "k8s"
+	case "k3s-single-node": result.Profile, result.Runner = "single-node", "k3s"
+	default: return invalid()
+	}
+	// Inactive dimensions retain positive current configuration thresholds, so
+	// the original >= expressions cannot mistake a confirmed zero age for 0>=0.
+	// Current values never replace the frozen budget of an active dimension.
+	result.AcquisitionTimeoutSeconds = float64(s.CurrentAcquisition)
+	result.MaxHoldSeconds = float64(s.CurrentHold)
+	if s.State == GateIdle {
+		if s.Owner.Valid || s.Heartbeat.Valid || s.LeaseExpires.Valid || s.Acquisition.Valid || s.Hold.Valid ||
+			s.AcquiringAt.Valid || s.HeldAt.Valid || s.ReleaseAt.Valid || s.AcquisitionDeadline.Valid || s.HoldDeadline.Valid { return invalid() }
+		return result, nil
+	}
+	if s.State != GateAcquiring && s.State != GateHeld && s.State != GateReleasing { return invalid() }
+	if !s.Owner.Valid || !controllerOwnerPattern.MatchString(s.Owner.String) || !s.Heartbeat.Valid || !s.LeaseExpires.Valid ||
+		!s.Acquisition.Valid || !validGateMetricSeconds(s.Acquisition.Int64, MinGateAcquisitionTimeout, MaxGateAcquisitionTimeout) ||
+		!s.AcquiringAt.Valid || !s.AcquisitionDeadline.Valid ||
+		!gateMetricWindow(s.AcquiringAt.Time, s.AcquisitionDeadline.Time, s.Acquisition.Int64) ||
+		!gateMetricWindow(s.Heartbeat.Time, s.LeaseExpires.Time, s.LockTTL) ||
+		s.AcquiringAt.Time.After(s.Now) || s.Heartbeat.Time.After(s.Now) || s.Heartbeat.Time.Before(s.AcquiringAt.Time) { return invalid() }
+	result.AcquisitionTimeoutSeconds = float64(s.Acquisition.Int64)
+	if s.State == GateAcquiring {
+		if s.Hold.Valid || s.HeldAt.Valid || s.ReleaseAt.Valid || s.HoldDeadline.Valid ||
+			!s.AcquisitionDeadline.Time.After(s.Heartbeat.Time) || s.LeaseExpires.Time.After(s.AcquisitionDeadline.Time) { return invalid() }
+		result.WaitSeconds = float64(s.Now.UnixMicro()-s.AcquiringAt.Time.UnixMicro()) / 1e6
+		return result, nil
+	}
+	if s.Fence == 0 || !s.Hold.Valid || !validGateMetricSeconds(s.Hold.Int64, MinQuiesceMaxHold, MaxQuiesceMaxHold) ||
+		!s.HeldAt.Valid || !s.HoldDeadline.Valid || !gateMetricWindow(s.HeldAt.Time, s.HoldDeadline.Time, s.Hold.Int64) ||
+		s.HeldAt.Time.Before(s.AcquiringAt.Time) || !s.HeldAt.Time.Before(s.AcquisitionDeadline.Time) || s.HeldAt.Time.After(s.Now) ||
+		s.Heartbeat.Time.Before(s.HeldAt.Time) { return invalid() }
+	if s.State == GateHeld && (s.ReleaseAt.Valid || !s.HoldDeadline.Time.After(s.Heartbeat.Time) || s.LeaseExpires.Time.After(s.HoldDeadline.Time)) { return invalid() }
+	if s.State == GateReleasing && (!s.ReleaseAt.Valid || !validGateMetricTime(s.ReleaseAt.Time) || s.ReleaseAt.Time.Before(s.HeldAt.Time) || s.ReleaseAt.Time.After(s.Now) || s.Heartbeat.Time.Before(s.ReleaseAt.Time)) { return invalid() }
+	result.HoldSeconds = float64(s.Now.UnixMicro()-s.HeldAt.Time.UnixMicro()) / 1e6
+	result.MaxHoldSeconds = float64(s.Hold.Int64)
+	return result, nil
+}
+
+func renderGateBudgetMetrics(p GateBudgetProjection) ([]byte, error) {
+	if (p.Profile != "cluster" && p.Profile != "single-node") || (p.Runner != "k8s" && p.Runner != "k3s") {
+		return nil, errors.New("invalid gate budget metric labels")
+	}
+	for _, value := range []float64{p.WaitSeconds, p.HoldSeconds, p.AcquisitionTimeoutSeconds, p.MaxHoldSeconds} {
+		if math.IsNaN(value) || math.IsInf(value, 0) || value < 0 { return nil, errors.New("invalid gate budget metric value") }
+	}
+	if p.WaitSeconds > 0 && p.HoldSeconds > 0 { return nil, errors.New("gate cannot wait and hold simultaneously") }
+	if p.AcquisitionTimeoutSeconds < 10 || p.AcquisitionTimeoutSeconds > 600 || p.MaxHoldSeconds < 30 || p.MaxHoldSeconds > 3600 ||
+		math.Trunc(p.AcquisitionTimeoutSeconds) != p.AcquisitionTimeoutSeconds || math.Trunc(p.MaxHoldSeconds) != p.MaxHoldSeconds {
+		return nil, errors.New("invalid gate budget metric threshold")
+	}
+	var out bytes.Buffer
+	for _, sample := range []struct{name, help, labels string; value float64}{
+		{"gate_wait_current_seconds", "Current system backup gate wait current value in seconds.", fmt.Sprintf(`profile=%q`, p.Profile), p.WaitSeconds},
+		{"capture_hold_current_seconds", "Current system backup capture hold current value in seconds.", fmt.Sprintf(`profile=%q,runner=%q`, p.Profile, p.Runner), p.HoldSeconds},
+		{"configured_gate_acquisition_timeout_seconds", "System backup gate acquisition timeout configured for alert evaluation.", "", p.AcquisitionTimeoutSeconds},
+		{"configured_quiesce_max_hold_seconds", "System backup quiesce max hold configured for alert evaluation.", "", p.MaxHoldSeconds},
+	} {
+		name := "clawmanager_system_backup_" + sample.name
+		fmt.Fprintf(&out, "# HELP %s %s\n# TYPE %s gauge\n", name, sample.help, name)
+		if sample.labels != "" { fmt.Fprintf(&out, "%s{%s} %s\n", name, sample.labels, strconv.FormatFloat(sample.value, 'g', -1, 64))
+		} else { fmt.Fprintf(&out, "%s %s\n", name, strconv.FormatFloat(sample.value, 'g', -1, 64)) }
+	}
+	return out.Bytes(), nil
+}

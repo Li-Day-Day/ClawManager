@@ -1,0 +1,61 @@
+{
+  "kind": "d_bootstrap_claim_window_fix.v1",
+  "cause": "short_fixture_owner_write_12s_but_claim_requested_45s",
+  "fix": "fixture_claim_window_min_45s_and_original_owner_window",
+  "production_claim_guard_unchanged": true,
+  "seed_uses_short_fixture": true,
+  "oversized_claim_rejected": true,
+  "valid_short_claim_finish_result_passed": true,
+  "preparation_receipt": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-144036-f69fd7c3.json",
+  "native_preparation_exit": 0,
+  "step_exits": [
+    0,
+    0,
+    0
+  ],
+  "source_sha256": "b4a90dadf43966a6c5d7b88d1d5e6df4cf7b1f417d9036b5e14707c41af266de",
+  "current_tested_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/d_producer_integration_test.go",
+      "size": 16264,
+      "sha256": "2078039695c4b283e2cdbf262865166c75f4db3d2f302942eeb73d395970517d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_mysql_test.go",
+      "size": 24798,
+      "sha256": "fd2af37acfd215ac31241c596fc5075c6a9987073f6e092b3ab179bcbb1a4f31"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_ranges_mysql_test.go",
+      "size": 15917,
+      "sha256": "462fc97e5bb9531b241f7d94bbeffd2a87c7764c126a9d7706de79756d7fbae5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/claim.go",
+      "size": 14501,
+      "sha256": "bc1085a97cbec0f48ebd007b7966425acfe5844d0186ec74973a407fdc2d2514"
+    }
+  ],
+  "source_postcheck": true,
+  "default_window_regression": {
+    "skip": 0,
+    "fail": 0,
+    "log": "docs/evidence/d-bootstrap-claim-window-regression-20261026-f69fd7c3.jsonl",
+    "native_exit": 0,
+    "roots": [
+      "TestDProducerActualAAdaptersLifecycleToReceipt",
+      "TestDProducerActualAAdaptersAtomicFailures"
+    ],
+    "atomic_failure_subcases_passed": 14
+  },
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f69fd7c342a945d0a607123bec479d28",
+  "owner_independently_absent": true,
+  "test_build_artifacts_removed": true,
+  "dependencies_installed": false,
+  "actual_mysql_rerun": false,
+  "production_approved": false,
+  "prior_failures_preserved": [
+    "docs/evidence/d-bootstrap-consumer-mysql-20261026-141331-537e083b.json",
+    "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-141340-2a2a4104.json"
+  ]
+}

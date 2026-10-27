@@ -1,0 +1,97 @@
+{
+  "kind": "d_drill_http_foreign_fixture_repair.v1",
+  "result": "LOCAL_PASS_ACTUAL_MYSQL_PENDING",
+  "source_sha256": "b267397adc7696879a17a32a39f2637ebaf046f00a92c285a3b92ed2ea9c6348",
+  "source_files": 1629,
+  "changed_frozen_paths": [
+    "backend/cmd/server/system_backup_read_drill_history_mysql_test.go"
+  ],
+  "production_code_changed": false,
+  "ordinary_packages_changed": false,
+  "fixture_owner_selected_before_parent_and_children": true,
+  "foreign_fixture_checks_confirmed_before_http": 3,
+  "foreign_fixture_http_expected_status": 404,
+  "semantic_PASS_suppressed_after_failure": true,
+  "receiver_accepts_deferred_Go_summaries": true,
+  "receiver_tests": {
+    "pass": 58,
+    "fail": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "docs/evidence/d-drill-http-repair-receiver-tests-20261026.txt"
+  },
+  "local_validation": {
+    "native_exit": 0,
+    "child_exit": 0,
+    "source_postcheck": true,
+    "current_all_sources_match": true,
+    "foreign_fixture_seed_pass": true,
+    "authorization_read_live_cursor_and_both_seeds_pass": true,
+    "linux_sql_probe_compiled": true,
+    "linux_http_probe_compiled": true,
+    "migration_runner_compiled": true,
+    "sql_binary_sha256": "3ce5bf6f98ced191d44c64039cb5e7daab94406d97cca895e4df2c65dadec5b9",
+    "http_binary_sha256": "1606b3997598862e77cea8c7cf063943aa64198b5f5e77605bf8856e74dd3efe",
+    "migration_binary_sha256": "b4e383d1c8e58353f2d069bc97886e684189fb1452413e434e4d782d4acb0130",
+    "review": "docs/evidence/d-drill-http-repair-local-reviewed-20261026.json",
+    "review_exit": 0
+  },
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-71541119ce3c4e208eb2120f908c4b1e",
+    "owner_absent": true,
+    "files_removed": 1630,
+    "test_build_artifacts_removed": true
+  },
+  "original_failed_remote": "docs/evidence/d-drill-http-actual-rejected-20261026-044e5eed.json",
+  "original_failed_remote_rewritten": false,
+  "remote_executed": false,
+  "actual_mysql_cases": 0,
+  "actual_nineteen_case_run_pending": true,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "full_restore_accepted": false,
+  "full_gc_accepted": false,
+  "rerun_command": "& pwsh -NoProfile -File .\\scripts\\system-backup-d-drill-detail-validation.ps1 -Remote -BuildParallelism 2 -SourceManifestPath \"docs/evidence/d-drill-http-remote-repaired-$(Get-Date -Format yyyyMMdd-HHmmss).json\"",
+  "artifacts": [
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.json",
+      "sha256": "77251752e1bc47ebd611229432228017555e9adcb0ff4f027e07232985807008"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.json.result.json",
+      "sha256": "c14a711d36f8d2b22e07af89db7f3201c32f5e6edc5d3528f96be9ad803b0e76"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-reviewed-20261026.json",
+      "sha256": "f16e75f58a6c119c6418a8a5f73a93b25998c8678c252c3e052652f3ebd09647"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.json.native.log",
+      "sha256": "d289a4e03900a4c1f33b9025e0bc89e957098521ac6a685ac38e7e6bffe43625"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.txt",
+      "sha256": "f602ef3e7bdc232c32c2ae86c63507365d89cfffaa68b2b179e8edc85f680033"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-receiver-tests-20261026.txt",
+      "sha256": "cabe5b245d91a79bd6fe30d810e014c9626d7abb6645563267df5f4c16909bdc"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_drill_history_mysql_test.go",
+      "sha256": "e8df47f25eb1765cb354a7f88a1dc2952bc56b699129d7ac8ba604c91b3e21b7"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-review-20261023.mjs",
+      "sha256": "7c086b8cf48a5722a3040232bae68c3fa367cb71acc47976b4a56dcbcfe98f9e"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-review-20261023.test.mjs",
+      "sha256": "146e83d45514c0288544f8a95c700f85c950e4663a5b9ebdc2f9b1cdb4ed6991"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-actual-rejected-20261026-044e5eed.json",
+      "sha256": "e2303986b1af7f5b006a40803687c0a47b89b2fe01a8fd37a7811bd9d11b6c38"
+    }
+  ]
+}

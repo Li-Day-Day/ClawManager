@@ -1,0 +1,42 @@
+{
+  "kind": "a_owner_profile_supplement.v1",
+  "error": "Could not find file 'C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-13c4b2ae4fd64b248f8bf043f61b502f-step-1.txt'.",
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-13c4b2ae4fd64b248f8bf043f61b502f-source.json",
+  "expected_full_package_source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-source.json",
+  "expected_full_package_source_sha256": "ede12e280a902b194bb729727d8b3dac8c13d38a830eb3605a25a33d10ee2e7e",
+  "steps": [
+    {
+      "platform": "windows",
+      "exit_code": 0,
+      "sha256": "57f274fa54013d5a945ff79aac53186a3aa390527c09f3ec7c867cb344aaa545",
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-count=1",
+        "-timeout=180s",
+        "./internal/systembackupevidence"
+      ],
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-13c4b2ae4fd64b248f8bf043f61b502f-step-0.txt"
+    }
+  ],
+  "detached_log": null,
+  "detached_exit": null,
+  "binaries": [],
+  "frozen_postcheck": false,
+  "ordinary_source_identical_before_tests": true,
+  "copied_existing_cache_files": 2138,
+  "peer_cache_read_only": true,
+  "test_result_reused": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-13c4b2ae4fd64b248f8bf043f61b502f",
+  "owner_removed": true,
+  "runner_sha256": "9850ef582459fadc23b5c75f0d9a6391255bc6f18599435d63e581b37e2c22b5",
+  "full_package_gate_approved": false,
+  "actual_mysql": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

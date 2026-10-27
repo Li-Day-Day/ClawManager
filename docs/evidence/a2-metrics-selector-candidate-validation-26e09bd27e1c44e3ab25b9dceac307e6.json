@@ -1,0 +1,75 @@
+{
+  "kind": "a2_metrics_selector_candidate_generator_validation.v1",
+  "id": "26e09bd27e1c44e3ab25b9dceac307e6",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-metrics-selector-review-26e09bd27e1c44e3ab25b9dceac307e6",
+  "status": "passed_two_exact_candidate_generators_only",
+  "checks": [
+    {
+      "variant": "selector",
+      "arguments": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-metrics-selector-review-26e09bd27e1c44e3ab25b9dceac307e6\\selector\\scripts\\system-backup-metrics-registry.mjs",
+        "--check"
+      ],
+      "exit": 0
+    },
+    {
+      "variant": "combined",
+      "arguments": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-metrics-selector-review-26e09bd27e1c44e3ab25b9dceac307e6\\combined\\scripts\\system-backup-metrics-registry.mjs",
+        "--check"
+      ],
+      "exit": 0
+    }
+  ],
+  "Go_executed": false,
+  "PromQL_parser_or_evaluator_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "cleanup": true,
+  "inputs": [
+    {
+      "variant": "selector",
+      "source": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.mjs.txt",
+      "target": "selector/scripts/system-backup-metrics-registry.mjs",
+      "size": 41175,
+      "sha256": "16fd91c22fd3625655207dec8fa85432d0f99e82408ca57b05c623abe6030ed1"
+    },
+    {
+      "variant": "selector",
+      "source": "docs/evidence/a2-metrics-security-selector-candidate-20261027-r2.json",
+      "target": "selector/contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194101,
+      "sha256": "c82415b341835d8a1055a1f87984b81cf0bed4842a35c08feb951a7cc08df45f"
+    },
+    {
+      "variant": "selector",
+      "source": "docs/system-backup-restore-division-plan.md",
+      "target": "selector/docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "variant": "combined",
+      "source": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.mjs.txt",
+      "target": "combined/scripts/system-backup-metrics-registry.mjs",
+      "size": 41281,
+      "sha256": "74d2bc36169bdf6157bf14e26c353c581b78309d2faef66954d8e685e1a7ee85"
+    },
+    {
+      "variant": "combined",
+      "source": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "target": "combined/contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "variant": "combined",
+      "source": "docs/system-backup-restore-division-plan.md",
+      "target": "combined/docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "source_and_snapshot_postcheck": true
+}

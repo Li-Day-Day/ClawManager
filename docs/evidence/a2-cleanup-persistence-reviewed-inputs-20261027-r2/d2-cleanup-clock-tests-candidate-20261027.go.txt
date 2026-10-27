@@ -1,0 +1,206 @@
+// Candidate for backend/internal/systembackupcleanup/clock_test.go.
+package systembackupcleanup
+
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"os"
+	"testing"
+	"time"
+
+	"clawreef/internal/systembackupsecurity"
+)
+
+func candidateBudget(t *testing.T) Budget {
+	t.Helper()
+	raw, err := os.ReadFile("../systembackupsecurity/testdata/config_backfill_identity_vectors.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fixture struct {
+		Vectors []struct {
+			Original string `json:"original_canonical"`
+		}
+	}
+	if json.Unmarshal(raw, &fixture) != nil || len(fixture.Vectors) == 0 {
+		t.Fatal("missing original fixture")
+	}
+	config, err := systembackupsecurity.DecodeConfigValues([]byte(fixture.Vectors[0].Original))
+	if err != nil {
+		t.Fatal(err)
+	}
+	canonical := config.CanonicalJSON()
+	sum := sha256.Sum256(canonical)
+	budget, err := DecodeBudget(canonical, int64(len(canonical)), hex.EncodeToString(sum[:]), 3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return budget
+}
+
+func candidateBinding(kind string) Binding {
+	b := Binding{Installation: "installation_test", ParentKind: kind}
+	if kind == "backup" {
+		b.ParentPublicID = "sbk_00000000-0000-0000-0000-000000000001"
+		b.ResourceKind = "backup_staging"
+		b.ResourcePublicID = "sbs_00000000-0000-0000-0000-000000000001"
+	} else {
+		b.ParentPublicID = "sdr_00000000-0000-0000-0000-000000000001"
+		b.ResourceKind = "restore_resource"
+		b.ResourcePublicID = "srr_00000000-0000-0000-0000-000000000001"
+	}
+	return b
+}
+
+func TestAutomaticCleanupClockUsesOriginalAtomicStart(t *testing.T) {
+	budget := candidateBudget(t)
+	now := time.Date(2026, 10, 27, 1, 2, 3, 456000, time.UTC)
+	for _, kind := range []string{"backup", "drill"} {
+		t.Run(kind, func(t *testing.T) {
+			finished := time.Time{}
+			if kind == "drill" {
+				finished = now
+			}
+			clock, err := NewAutomaticClock(candidateBinding(kind), budget, now, finished)
+			if err != nil {
+				t.Fatal(err)
+			}
+			age, window, err := clock.AlertWindow(now.Add(time.Duration(budget.seconds) * time.Second))
+			if err != nil || age != window {
+				t.Fatalf("equality was changed: %v %v %v", age, window, err)
+			}
+			age, window, err = clock.AlertWindow(now.Add(time.Duration(budget.seconds)*time.Second + time.Microsecond))
+			if err != nil || age <= window {
+				t.Fatalf("overdue age was reset or clipped: %v %v %v", age, window, err)
+			}
+			if _, _, err = clock.AlertWindow(now.Add(-time.Microsecond)); err == nil {
+				t.Fatal("future clock accepted")
+			}
+		})
+	}
+	if _, err := NewAutomaticClock(candidateBinding("backup"), budget, now, now); err == nil {
+		t.Fatal("backup finished_at used before cleanup")
+	}
+	if _, err := NewAutomaticClock(candidateBinding("drill"), budget, now, now.Add(-time.Microsecond)); err == nil {
+		t.Fatal("historical terminal time accepted as a new atomic start")
+	}
+	if _, err := NewAutomaticClock(candidateBinding("drill"), Budget{}, now, now); err == nil {
+		t.Fatal("missing immutable budget accepted")
+	}
+}
+
+func TestExplicitCleanupClockPreservesOperationQueueWindow(t *testing.T) {
+	budget := candidateBudget(t)
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	binding := candidateBinding("drill")
+	op := OperationFacts{ID: 8, Installation: binding.Installation, PublicID: "sop_00000000-0000-0000-0000-000000000001", OperationType: "cleanup", TargetType: "drill", TargetPublicID: binding.ParentPublicID, CreatedAt: now.Add(-700 * time.Second), DeadlineAt: now.Add(-100 * time.Second)}
+	clock, err := NewOperationClock(binding, budget, op, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	age, window, err := clock.AlertWindow(now)
+	if err != nil || age != 700*time.Second || window != 600*time.Second {
+		t.Fatalf("operation budget substituted: %v %v %v", age, window, err)
+	}
+	for name, change := range map[string]func(*OperationFacts){
+		"foreign_installation": func(o *OperationFacts) { o.Installation = "installation_foreign" },
+		"wrong_type":           func(o *OperationFacts) { o.OperationType = "config_update" },
+		"wrong_target":         func(o *OperationFacts) { o.TargetPublicID = "sdr_00000000-0000-0000-0000-000000000002" },
+		"cross_resource": func(o *OperationFacts) {
+			o.TargetType = "backup_staging"
+			o.TargetPublicID = "sbs_00000000-0000-0000-0000-000000000001"
+		},
+		"future_start":       func(o *OperationFacts) { o.CreatedAt = now.Add(time.Second) },
+		"nonpositive_window": func(o *OperationFacts) { o.DeadlineAt = o.CreatedAt },
+	} {
+		t.Run(name, func(t *testing.T) {
+			copy := op
+			change(&copy)
+			if _, err := NewOperationClock(binding, budget, copy, now); err == nil {
+				t.Fatal("invalid original operation binding accepted")
+			}
+		})
+	}
+	replayed, err := NewOperationClock(binding, budget, op, now.Add(time.Hour))
+	if err != nil || !clock.SameAttempt(replayed) {
+		t.Fatal("takeover changed immutable clock")
+	}
+	op.ID++
+	op.PublicID = "sop_00000000-0000-0000-0000-000000000002"
+	retry, err := NewOperationClock(binding, budget, op, now)
+	if err != nil || clock.SameAttempt(retry) {
+		t.Fatal("different operation collapsed into original attempt")
+	}
+}
+
+func TestCleanupBudgetRejectsMissingOrAlteredSnapshot(t *testing.T) {
+	for _, raw := range [][]byte{nil, []byte(`{"durations":{"cleanup_deadline_seconds":3600}}`), []byte(`{"durations":{"cleanup_deadline_seconds":3600,"cleanup_deadline_seconds":60}}`)} {
+		sum := sha256.Sum256(raw)
+		if _, err := DecodeBudget(raw, int64(len(raw)), hex.EncodeToString(sum[:]), 3); err == nil {
+			t.Fatal("partial/ambiguous configuration accepted")
+		}
+	}
+	if _, _, err := (Clock{}).AlertWindow(time.Now().UTC()); err == nil {
+		t.Fatal("zero clock accepted")
+	}
+}
+
+func TestOperationCleanupWindowMatchesOriginalConfigBounds(t *testing.T) {
+	budget := candidateBudget(t)
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	binding := candidateBinding("backup")
+	for _, tc := range []struct {
+		name   string
+		window time.Duration
+		valid  bool
+	}{
+		{"one_microsecond", time.Microsecond, false},
+		{"one_second", time.Second, false},
+		{"below_minimum", 59 * time.Second, false},
+		{"minimum", 60 * time.Second, true},
+		{"fractional_second", 60*time.Second + time.Microsecond, false},
+		{"maximum", 86400 * time.Second, true},
+		{"above_maximum", 86401 * time.Second, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			op := OperationFacts{ID: 1, Installation: binding.Installation, PublicID: "sop_00000000-0000-0000-0000-000000000001", OperationType: "cleanup", TargetType: "backup", TargetPublicID: binding.ParentPublicID, CreatedAt: now, DeadlineAt: now.Add(tc.window)}
+			_, err := NewOperationClock(binding, budget, op, now)
+			if (err == nil) != tc.valid {
+				t.Fatalf("window %v: %v", tc.window, err)
+			}
+		})
+	}
+}
+
+func TestCleanupReplayRejectsZeroAndInvalidClocks(t *testing.T) {
+	budget := candidateBudget(t)
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	clock, err := NewAutomaticClock(candidateBinding("backup"), budget, now, time.Time{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if (Clock{}).SameAttempt(Clock{}) || (Clock{}).SameAttempt(clock) || clock.SameAttempt(Clock{}) {
+		t.Fatal("zero clock authenticated a persisted replay")
+	}
+	if !clock.SameAttempt(clock) {
+		t.Fatal("valid same attempt rejected")
+	}
+	for name, change := range map[string]func(*Clock){
+		"unknown_source": func(c *Clock) { c.source = "unknown" },
+		"lost_budget":    func(c *Clock) { c.budget = frozenBudget{} },
+		"changed_window": func(c *Clock) { c.deadline = c.deadline.Add(time.Second) },
+		"wrong_branch":   func(c *Clock) { c.source = AutomaticDrill },
+	} {
+		t.Run(name, func(t *testing.T) {
+			corrupt := clock
+			change(&corrupt)
+			if corrupt.SameAttempt(corrupt) {
+				t.Fatal("corrupt persisted clock accepted itself")
+			}
+			if _, _, err := corrupt.AlertWindow(now); err == nil {
+				t.Fatal("corrupt clock emitted an alert window")
+			}
+		})
+	}
+}

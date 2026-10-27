@@ -1,0 +1,58 @@
+{
+  "kind": "a2_existing_promql_runtime_unavailable_result_observation.v1",
+  "observed_at": "2026-10-27T07:07:22.846Z",
+  "status": "payload_verified_runtime_unavailable_no_promql_checks_executed",
+  "result_directory": "docs/evidence/a2-promql-results-ca38f4d7dbe24f759d9b6f37e37925ed",
+  "evidence": [
+    {
+      "path": "docs/evidence/a2-promql-results-ca38f4d7dbe24f759d9b6f37e37925ed/console.txt",
+      "size": 1468,
+      "sha256": "5c507321732dbcd261a14c8ac92d9af117cadd264c6c0716047211f83a293b15"
+    },
+    {
+      "path": "docs/evidence/a2-promql-results-ca38f4d7dbe24f759d9b6f37e37925ed/results/summary.txt",
+      "size": 80,
+      "sha256": "ad5b08a271c973016b37edc355e86a56b4e7627107ca306c829823b0793a8e70"
+    },
+    {
+      "path": "docs/evidence/a2-promql-results-ca38f4d7dbe24f759d9b6f37e37925ed/results/payload.sha256",
+      "size": 230,
+      "sha256": "813667aa255e11cecd513ef0895c0f9663591606803deb6a314516f7e85335ef"
+    }
+  ],
+  "console_encoding": "UTF-16LE_with_BOM",
+  "reported_exit_code": 3,
+  "payload": [
+    {
+      "file": "thresholds.yml",
+      "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39",
+      "matches_current_historical_bundle": true
+    },
+    {
+      "file": "split.yml",
+      "sha256": "ca30557e658c18938fc53dce6e1a9cbe296b21ec4d957131bbb3340cbc7ffcde",
+      "matches_current_historical_bundle": true
+    },
+    {
+      "file": "run.sh",
+      "sha256": "df4ab1808b8ac89c76e2944a3442293a71bd41f0e931f8619db24c33dd32fe44",
+      "matches_current_historical_bundle": true
+    }
+  ],
+  "result_files": [
+    "payload.sha256",
+    "summary.txt"
+  ],
+  "fixture_check_count_prepared": 231,
+  "fixture_check_count_executed_proven": 0,
+  "version_and_fixture_logs_present": false,
+  "remote_target_and_executor_not_independently_authenticated_from_these_files": true,
+  "prior_missing_log_directory_observation_corrected": true,
+  "next_supported_workflow": "docs/system-backup-a2-promql-remote-no-docker-20261027.md",
+  "next_prerequisite": "Existing Linux promtool binary matching the target architecture, or an existing local official Prometheus image for offline extraction; do not install or pull.",
+  "existing_failed_run_not_relabelled_pass": true,
+  "agent_SSH_executed_this_turn": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "whole_goal_complete": false
+}

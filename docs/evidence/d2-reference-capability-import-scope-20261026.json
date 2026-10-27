@@ -1,0 +1,70 @@
+{
+  "kind": "d2_reference_capability_static_import_scope.v1",
+  "method": "static import blocks, runtime closure excludes test dependencies; Go build constraints beyond mysql not evaluated; native go-list and actual tests still required",
+  "runtime_affected": [
+    "clawreef/cmd/system-backup-bootstrap",
+    "clawreef/internal/systembackupbootstrapmaterials",
+    "clawreef/internal/systembackupbootstrapsecurity",
+    "clawreef/internal/systembackupcatrust",
+    "clawreef/internal/systembackupnoncebootstrap"
+  ],
+  "ordinary_test_callers": [],
+  "mysql_test_callers": [
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_original_materials_mysql_test.go",
+      "package": "clawreef/internal/systembackupevidence",
+      "test": true,
+      "mysql": true,
+      "imports": [
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap",
+        "clawreef/internal/systembackupproducer",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "size": 25537,
+      "sha256": "19b1c83160c3cc93f707ed90dfbe06155e2ae6a5f04d727a8d1e3e97496ee2ad"
+    }
+  ],
+  "direct_imports": [
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "package": "clawreef/cmd/system-backup-bootstrap",
+      "test": false,
+      "mysql": false,
+      "imports": [
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "size": 3917,
+      "sha256": "b62ada7f8cdb876290c59e6565f35b6570118f1ecc664f2e1602ba63998c6e7d"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "package": "clawreef/internal/systembackupcatrust",
+      "test": false,
+      "mysql": false,
+      "imports": [
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "size": 10529,
+      "sha256": "780be82610a39d306577537a3981d1a3444c9fea82e412621b078aed36d3407c"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "package": "clawreef/internal/systembackupnoncebootstrap",
+      "test": false,
+      "mysql": false,
+      "imports": [
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "size": 9634,
+      "sha256": "46e695c7c0b9efa819f6f60f7fba52587ce74d1348912f1c57fe9782126e57f1"
+    }
+  ],
+  "Go_started": false,
+  "source_fix_applied": false,
+  "native_acceptance": false,
+  "dependencies_installed": false
+}

@@ -1,0 +1,64 @@
+{
+  "kind": "a_cleanup_timing_candidate_source_review.v1",
+  "status": "changes_requested_source_only_no_native_acceptance",
+  "reviewed": [
+    {
+      "path": "docs/evidence/d2-cleanup-clock-candidate-20261027.go.txt",
+      "size": 7312,
+      "sha256": "85a9aafbb504f5e8f4d4d4d412023bfbf0ab2d3f70a0c304d4a969d4d1819a76"
+    },
+    {
+      "path": "docs/evidence/d2-cleanup-attempt-ledger-candidate-20261027.sql",
+      "size": 6195,
+      "sha256": "cd2dc5a00e9acc8e660bbc21312605a5581e772715fb6e6ae919c0a34391f92e"
+    }
+  ],
+  "captured_originals": [
+    {
+      "path": "docs/evidence/a-cleanup-clock-review-before-20261027.go.txt",
+      "size": 7312,
+      "sha256": "85a9aafbb504f5e8f4d4d4d412023bfbf0ab2d3f70a0c304d4a969d4d1819a76"
+    },
+    {
+      "path": "docs/evidence/a-cleanup-ledger-review-before-20261027.sql.txt",
+      "size": 6195,
+      "sha256": "cd2dc5a00e9acc8e660bbc21312605a5581e772715fb6e6ae919c0a34391f92e"
+    }
+  ],
+  "findings": [
+    {
+      "id": "C1",
+      "priority": 2,
+      "source": "Clock.SameAttempt",
+      "problem": "Both zero values compare equal because only field equality is checked. The unusable zero Clock therefore reports an idempotent persisted attempt match.",
+      "required": "Reject invalid/zero clocks before comparison and test zero/zero, zero/valid, valid/zero and valid replay.",
+      "evidence": "Direct source evaluation of the all-zero operands; not a Go execution claim."
+    },
+    {
+      "id": "C2",
+      "priority": 2,
+      "source": "NewOperationClock and chk_sb_cleanup_attempt_window",
+      "problem": "The constructor accepts any positive, representable operation window, while the SQL candidate additionally rejects windows below 60 seconds or above 86400 seconds.",
+      "required": "Use the original operation deadline contract consistently. If there is no original fixed operation-window bound, remove invented SQL limits rather than introducing a new policy; cover the constructor/persistence boundary cases.",
+      "evidence": "For example a one-microsecond window satisfies the constructor shape/arithmetic checks but not the SQL BETWEEN clause; no MySQL/Go execution claimed."
+    }
+  ],
+  "required_in_following_persistence_review": [
+    "Compare the real resource-to-parent relation, not merely two independent existing FK targets. Use full guarded SQL/locked row checks or a composite parent-resource FK.",
+    "Bind the budget identity to the original parent immutable snapshot; decoded arbitrary canonical bytes are not ownership or operation authority.",
+    "Operation retries use the new original operation window while claim takeover reuses exactly the persisted old attempt; neither can revive deleted resources.",
+    "Include new ledger references in A owner and GC reference catalogs, metadata/schema/grant gates, catalog migration version and affected native/SQL obligations.",
+    "Maintain original shared transaction lock order and no new business locks or external I/O after the final validation/CAS layer."
+  ],
+  "positive_scope": [
+    "Budget parser reuses the existing complete canonical ConfigValues decoder and verifies bytes/size/hash.",
+    "Automatic backup and first terminal drill timing branches are separated from explicit operation timing.",
+    "The draft explicitly distinguishes timing facts from provider/deletion authority and does not claim CAS/reader implementation."
+  ],
+  "live_source_changed": false,
+  "Go_started": false,
+  "SQL_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

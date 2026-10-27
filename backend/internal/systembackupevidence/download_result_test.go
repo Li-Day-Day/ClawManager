@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"encoding/json"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -15,13 +16,25 @@ import (
 )
 
 func resultFixture(t *testing.T, f *admissionTxFixture) *SQLDownloadResults {
+	r, _ := resultFixtureWithReportSampler(t, f)
+	return r
+}
+
+// The result audit is a separate operation with its own current capacity
+// observation. Sampling does not renew admission, proof or provider limits.
+func resultFixtureWithReportSampler(t *testing.T, f *admissionTxFixture) (*SQLDownloadResults, func(time.Time) error) {
 	t.Helper()
 	reportPath := filepath.Join(t.TempDir(), "synthetic-result-capacity.json")
-	raw, err := json.Marshal(sec.CapacityReport{ServerUUID: f.db.identity.ServerUUID, Database: f.db.identity.Database, ObservedAt: f.db.now, AllocatedBytes: 1048576, AvailableBytes: 1099511627776})
-	if err != nil {
+	sample := func(at time.Time) error {
+		raw, err := json.Marshal(sec.CapacityReport{ServerUUID: f.db.identity.ServerUUID, Database: f.db.identity.Database, ObservedAt: at, AllocatedBytes: 1048576, AvailableBytes: 1099511627776})
+		if err != nil {
+			return err
+		}
+		return os.WriteFile(reportPath, raw, 0600)
+	}
+	if err := sample(f.db.now); err != nil {
 		t.Fatal(err)
 	}
-	writeAdmissionPinnedFile(t, reportPath, raw)
 	capacity, err := sec.NewConfigMutationCapacity(f.db.identity, reportPath, 1)
 	if err != nil {
 		t.Fatal(err)
@@ -30,7 +43,7 @@ func resultFixture(t *testing.T, f *admissionTxFixture) *SQLDownloadResults {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return r
+	return r, sample
 }
 
 func TestDownloadResultActualIDOriginalGroupAndRevokedSession(t *testing.T) {

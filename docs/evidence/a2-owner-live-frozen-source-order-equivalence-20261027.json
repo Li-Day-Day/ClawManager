@@ -1,0 +1,45 @@
+{
+  "kind": "a2_live_owner_frozen_source_order_equivalence_observation.v1",
+  "observed_at": "2026-10-27T07:15:32.434Z",
+  "status": "all_1720_selected_frozen_source_bytes_match_current_review_order_only_digest_difference",
+  "frozen_source_manifest": {
+    "path": "docs/evidence/a-download-owners-mysql-remote-source-20261027-145649-489723bd.json",
+    "size": 338539,
+    "sha256": "cc97d3c37e5f9d7a6e2762e526fe033c630e08b86e2e423ae2199bd3a9fba62f"
+  },
+  "reviewed_complete_source": {
+    "path": "docs/evidence/a-owner-current-full-source-composed-reviewed-20261027-r2.json",
+    "size": 332655,
+    "sha256": "3555b4257818218a37c6099111d36907f37f124a3cd83ff0e866889963220760"
+  },
+  "frozen_source_root": ".tmp-d-index-cache-df29c8583e314f9db24075d9b954f7a3/source",
+  "selected_source_file_count": 1720,
+  "selected_frozen_source_paths_sizes_hashes_all_checked": true,
+  "source_manifest_digest": "ead9218956c53a91129c83e803762a6c64d8e1c9e4f250bfe4214b0578440a5d",
+  "reviewed_source_digest": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+  "original_order_digest_independently_recomputed": true,
+  "ordinal_reordered_frozen_digest": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+  "identical_path_size_sha256_sets": true,
+  "ordering_implementation": {
+    "PowerShell": "scripts/system-backup-d-index-source-snapshot.ps1:13 Sort-Object -CaseSensitive; digest lines35-39",
+    "Node": "docs/evidence/a-owner-pre-thin-target-20261026.mjs:35-37 and66-68"
+  },
+  "initial_entire_physical_namespace_equals_manifest_assertion_rejected": true,
+  "initial_rejected_observer_wrote_no_receipt_or_sources": true,
+  "physical_namespace_exact_manifest_only": false,
+  "additional_active_worker_directories": [
+    ".tmp-a-evidence-28f9ac50e7634937af49a85173c02b3f"
+  ],
+  "worker_directory_constructor": "scripts/system-backup-a-evidence-validation.ps1:104-105",
+  "worker_cache_and_tmp_binding": "scripts/system-backup-a-evidence-validation.ps1:121",
+  "worker_cleanup_guard": "scripts/system-backup-a-evidence-validation.ps1:450",
+  "worker_build_outputs_untouched_by_A2": true,
+  "scope": "During the existing owner run, selected frozen source only; not an end-of-run source postcheck, terminal test acceptance, remote SQL result, or cleanup verification.",
+  "owner_run_terminal": false,
+  "actual_SQL_accepted": false,
+  "Go_started_by_A2": false,
+  "agent_SSH": false,
+  "dependencies_installed": false,
+  "test_build_products_created_by_A2": false,
+  "whole_goal_complete": false
+}

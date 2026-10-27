@@ -1,0 +1,40 @@
+{
+  "kind": "d_local_closeout_validation.v1",
+  "error": "Local closeout native Go step failed exit=1",
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-c182ef28424d4b999793f44fd8f8f153-source.json",
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "-run",
+        "^(TestAdmittedHTTPFixtureStillRejectsStaleSQLClock|TestAdmittedDownloadHTTPCompleteRangeAuditAndNoReplay|TestAdmittedDownloadHTTPInterruptionRevocationAndResultFailure|TestAdmittedDownloadHTTPPublicInternalAndClassificationRace|TestADownloadNativeBufferedOutputKeepsOriginalDeadline|TestGCProducerResultCapacitySamplingDoesNotRenewAdmission|TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback)$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 1,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-c182ef28424d4b999793f44fd8f8f153-step-0.log",
+      "sha256": "d9423bb0d022b40294c110d3f2a2b314e2e6a5934bd29133ed2dea32971eb407"
+    }
+  ],
+  "binaries": [],
+  "frozen_postcheck": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c182ef28424d4b999793f44fd8f8f153",
+  "owner_removed": true,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "runner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-validation-r2-20261023.ps1",
+  "runner_profile": "http_native_producer_diagnostic_then_six_serial_packages",
+  "prepared_cache": {
+    "kind": "d_local_closeout_prepared_cache.v1",
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c182ef28424d4b999793f44fd8f8f153",
+    "report": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-local-closeout-cache-handoff-20261023.json"
+  },
+  "runner_sha256": "a8b7ec39e519d23128df895a37ec4addd4ad943dec40ecbafe31693fe2102646",
+  "snapshotter_sha256": "d993e6772372e90d43f76327e503d669fd907497ad73c6319853d9d9abe6fbec"
+}
