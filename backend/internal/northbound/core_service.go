@@ -1,6 +1,7 @@
 package northbound
 
 import (
+	"clawreef/internal/systembackup/mutation"
 	"context"
 	"encoding/json"
 	"errors"
@@ -704,6 +705,11 @@ func (w *OperationWorker) loop(ctx context.Context) {
 }
 
 func (w *OperationWorker) processOne(ctx context.Context) {
+	release, gateErr := mutation.Enter(ctx, "northbound-operations")
+	if gateErr != nil {
+		return
+	}
+	defer release()
 	claimID, err := randomToken(w.owner+"_", 8)
 	if err != nil {
 		return
@@ -985,8 +991,12 @@ func (w *OperationWorker) finishOrContinueLifecycle(ctx context.Context, item *m
 }
 
 func (w *OperationWorker) runLifecycleActionWithLease(ctx context.Context, item *models.NorthboundOperation, action func() error) error {
+	release, gateErr := mutation.Enter(ctx, "northbound-lifecycle")
+	if gateErr != nil {
+		return gateErr
+	}
 	result := make(chan error, 1)
-	go func() { result <- action() }()
+	go func() { defer release(); result <- action() }()
 	lease := time.Duration(w.service.settings().OperationLeaseSeconds) * time.Second
 	if lease <= 0 {
 		lease = 30 * time.Second

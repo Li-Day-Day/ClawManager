@@ -3,6 +3,7 @@ package services
 import (
 	"archive/zip"
 	"bytes"
+	"clawreef/internal/systembackup/mutation"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -436,6 +437,11 @@ func (s *teamService) consumerScanLoop(ctx context.Context) {
 }
 
 func (s *teamService) resumePendingTeamDeletions() {
+	release, gateErr := mutation.Enter(context.Background(), "team-deletions")
+	if gateErr != nil {
+		return
+	}
+	defer release()
 	repo, ok := s.repo.(repository.PendingTeamDeletionRepository)
 	if !ok {
 		return
@@ -3614,12 +3620,17 @@ func (s *teamService) consumeTeamEvents(ctx context.Context, teamID int) {
 			continue
 		}
 		for _, message := range messages {
+			release, gateErr := mutation.Wait(ctx, "team-event")
+			if gateErr != nil {
+				return
+			}
 			if err := s.projectTeamEvent(team, bus, message); err != nil {
 				fmt.Printf("Warning: failed to project Team %d event %s: %v\n", teamID, message.ID, err)
 			}
 			team.RedisEventsLastID = message.ID
 			team.UpdatedAt = time.Now().UTC()
 			_ = s.repo.UpdateTeam(team)
+			_ = release()
 		}
 	}
 }
@@ -3665,6 +3676,11 @@ func (s *teamService) monitorStaleTasks(ctx context.Context) {
 }
 
 func (s *teamService) sweepTeamEventOutbox() error {
+	release, gateErr := mutation.Enter(context.Background(), "team-outbox")
+	if gateErr != nil {
+		return gateErr
+	}
+	defer release()
 	if s == nil || s.repo == nil {
 		return nil
 	}
@@ -3752,6 +3768,11 @@ func (s *teamService) deliverTeamEventOutbox(team *models.Team, bus *redisBus, o
 }
 
 func (s *teamService) sweepStaleTasks() error {
+	release, gateErr := mutation.Enter(context.Background(), "team-stale-tasks")
+	if gateErr != nil {
+		return gateErr
+	}
+	defer release()
 	timeout := teamTaskStaleTimeout()
 	if timeout <= 0 {
 		return nil
@@ -3774,6 +3795,11 @@ func (s *teamService) sweepStaleTasks() error {
 // availability and restore an outbox receipt for an already accepted result,
 // but it never invents a result, changes an attempt outcome, or closes a root.
 func (s *teamService) sweepTeamControlPlaneConsistency() error {
+	release, gateErr := mutation.Enter(context.Background(), "team-consistency")
+	if gateErr != nil {
+		return gateErr
+	}
+	defer release()
 	if s == nil || s.repo == nil {
 		return nil
 	}
@@ -4101,6 +4127,11 @@ func workItemIsMisprojectedWaitingObservation(item models.TeamWorkItem) bool {
 }
 
 func (s *teamService) sweepAssignmentStatusChecks() error {
+	release, gateErr := mutation.Enter(context.Background(), "team-assignments")
+	if gateErr != nil {
+		return gateErr
+	}
+	defer release()
 	if s == nil || s.repo == nil {
 		return nil
 	}

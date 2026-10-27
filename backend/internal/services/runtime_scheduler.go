@@ -21,6 +21,7 @@ import (
 )
 
 type RuntimeScheduler struct {
+	BackupGate   BackupMutationGate
 	instanceRepo repository.InstanceRepository
 	podRepo      repository.RuntimePodRepository
 	bindingRepo  repository.InstanceRuntimeBindingRepository
@@ -1180,6 +1181,11 @@ func runtimePodsAlreadyAtImage(pods []models.RuntimePod, runtimeType, targetImag
 }
 
 func (s *RuntimeScheduler) reconcileIfLeader(ctx context.Context) {
+	release, err := enterBackupMutation(ctx, s.BackupGate, "runtime-scheduler")
+	if err != nil {
+		return
+	}
+	defer release()
 	if s.leader != nil && !s.leader.IsLeader(ctx) {
 		return
 	}

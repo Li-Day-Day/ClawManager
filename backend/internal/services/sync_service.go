@@ -16,6 +16,7 @@ import (
 
 // SyncService handles synchronization between database and K8s state
 type SyncService struct {
+	BackupGate           BackupMutationGate
 	instanceRepo         repository.InstanceRepository
 	runtimeStatusService InstanceRuntimeStatusService
 	podService           *k8s.PodService
@@ -93,6 +94,11 @@ func (s *SyncService) syncLoop(stop <-chan struct{}) {
 // syncAllInstances synchronizes the state of all instances
 func (s *SyncService) syncAllInstances() {
 	ctx := context.Background()
+	release, err := enterBackupMutation(ctx, s.BackupGate, "instance-sync")
+	if err != nil {
+		return
+	}
+	defer release()
 
 	fmt.Println("[SyncService] Fetching all instances from database...")
 	// Get all running instances from database

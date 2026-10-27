@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"clawreef/internal/systembackup/mutation"
 	"context"
 	"fmt"
 	"log"
@@ -90,6 +91,11 @@ func (c *WorkbuddyPrewarmController) Run(ctx context.Context) {
 }
 
 func (c *WorkbuddyPrewarmController) reconcileAndLog(ctx context.Context) {
+	release, gateErr := mutation.Enter(ctx, "workbuddy-prewarm")
+	if gateErr != nil {
+		return
+	}
+	defer release()
 	if err := c.Reconcile(ctx); err != nil && ctx.Err() == nil {
 		log.Printf("WorkBuddy prewarm reconcile failed: %v", err)
 	}

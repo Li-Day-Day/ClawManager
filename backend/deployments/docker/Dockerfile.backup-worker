@@ -1,0 +1,9 @@
+# Build the Linux binary using the repository's existing Go toolchain first:
+#   CGO_ENABLED=0 GOOS=linux go build -trimpath -o bin/backup-worker ./cmd/backup-worker
+# Build context: backend/. No tool/package downloads occur in this image build.
+FROM scratch
+COPY bin/backup-worker /backup-worker
+# Runtime Jobs grant only the capabilities required by capture/restore. CA and
+# short-lived task certificates are mounted explicitly by the coordinator.
+USER 0:0
+ENTRYPOINT ["/backup-worker"]

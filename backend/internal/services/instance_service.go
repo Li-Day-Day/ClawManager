@@ -1,6 +1,7 @@
 package services
 
 import (
+	"clawreef/internal/systembackup/mutation"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
@@ -2837,6 +2838,11 @@ func (s *instanceService) scheduleLegacyDeletion(userID, instanceID int) {
 	}
 	go func() {
 		defer s.finishDeletion(instanceID)
+		release, err := mutation.Wait(context.Background(), "legacy-deletion")
+		if err != nil {
+			return
+		}
+		defer release()
 		s.completeDeletion(userID, instanceID)
 	}()
 }
@@ -2846,6 +2852,11 @@ func (s *instanceService) scheduleLegacyDeletion(userID, instanceID int) {
 // deletion intent. Active data-safe rollouts remain protected by the same
 // fail-closed guard used by the HTTP and Team deletion paths.
 func (s *instanceService) ResumePendingDeletions(ctx context.Context) (int, error) {
+	release, gateErr := mutation.Enter(ctx, "pending-deletions")
+	if gateErr != nil {
+		return 0, gateErr
+	}
+	defer release()
 	repo, ok := s.instanceRepo.(repository.PendingInstanceDeletionRepository)
 	if !ok {
 		return 0, nil

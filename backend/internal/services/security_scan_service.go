@@ -1,6 +1,7 @@
 package services
 
 import (
+	"clawreef/internal/systembackup/mutation"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -287,6 +288,11 @@ func (s *securityScanService) GetJob(jobID int) (*SecurityScanJobPayload, error)
 }
 
 func (s *securityScanService) runJob(jobID int) {
+	release, gateErr := mutation.Wait(context.Background(), "security-scan")
+	if gateErr != nil {
+		return
+	}
+	defer release()
 	if _, loaded := s.running.LoadOrStore(jobID, struct{}{}); loaded {
 		return
 	}

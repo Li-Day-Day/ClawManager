@@ -81,6 +81,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title = '' }) => {
       matchPaths: ['/admin/models', '/admin/ai-audit', '/admin/costs', '/admin/risk-rules', '/admin/session-usage'],
     },
     { path: '/admin/settings', label: t('nav.settings'), icon: Settings },
+    { path: '/admin/system-backup', label: '备份恢复', icon: Server },
   ];
 
   const isActive = (item: NavItem) => {

@@ -1,0 +1,8 @@
+# Build context: backend/. Build the static Linux binary first; no downloads.
+# CGO_ENABLED=0 GOOS=linux go build -trimpath -o bin/backup-controller ./cmd/backup-controller
+FROM scratch
+COPY bin/backup-controller /backup-controller
+# Encrypted worker outputs are root-owned mode 0400 on the shared claim.
+# No privileged mode, host mounts or added capabilities are required.
+USER 0:0
+ENTRYPOINT ["/backup-controller"]

@@ -8,12 +8,13 @@ import (
 )
 
 type SkillPackageMaterializeWorker struct {
-	service            *SkillPackageMaterializeService
-	tick               time.Duration
-	batchSize          int
-	concurrency        int
-	perInstanceLimit   int
-	enabled            bool
+	BackupGate       BackupMutationGate
+	service          *SkillPackageMaterializeService
+	tick             time.Duration
+	batchSize        int
+	concurrency      int
+	perInstanceLimit int
+	enabled          bool
 
 	mu       sync.Mutex
 	running  bool
@@ -72,12 +73,7 @@ func (w *SkillPackageMaterializeWorker) Stop() {
 
 func (w *SkillPackageMaterializeWorker) loop(stop <-chan struct{}) {
 	ctx := context.Background()
-	if count, err := w.service.BackfillOnce(ctx, 500); err != nil {
-		log.Printf("skill package materialize backfill failed: %v", err)
-	} else if count > 0 {
-		log.Printf("skill package materialize backfill enqueued %d jobs", count)
-	}
-
+	w.backfill(ctx)
 	ticker := time.NewTicker(w.tick)
 	defer ticker.Stop()
 	for {
@@ -90,7 +86,26 @@ func (w *SkillPackageMaterializeWorker) loop(stop <-chan struct{}) {
 	}
 }
 
+func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) {
+	release, err := enterBackupMutation(ctx, w.BackupGate, "skill-backfill")
+	if err != nil {
+		return
+	}
+	defer release()
+	if count, err := w.service.BackfillOnce(ctx, 500); err != nil {
+		log.Printf("skill package materialize backfill failed: %v", err)
+	} else if count > 0 {
+		log.Printf("skill package materialize backfill enqueued %d jobs", count)
+	}
+
+}
+
 func (w *SkillPackageMaterializeWorker) processBatch(ctx context.Context) {
+	release, gateErr := enterBackupMutation(ctx, w.BackupGate, "skill-materialize")
+	if gateErr != nil {
+		return
+	}
+	defer release()
 	jobs, err := w.service.ClaimNextPending(ctx, w.batchSize)
 	if err != nil {
 		log.Printf("skill package materialize claim failed: %v", err)
