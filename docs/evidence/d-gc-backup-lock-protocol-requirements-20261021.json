@@ -1,0 +1,92 @@
+{
+  "kind": "d_gc_backup_lock_protocol_requirements",
+  "status": "candidate_requires_connection_ownership_and_actual_mysql_proof",
+  "runtime_changed": false,
+  "production_approved": false,
+  "mysql_executed": false,
+  "upstream": {
+    "mysql_tag": "mysql-8.4.8",
+    "release_commit": "0896fcd61dec11a0904166911a0126f59daaa1bf",
+    "release_url": "https://github.com/mysql/mysql-server/releases/tag/mysql-8.4.8",
+    "commit_url": "https://github.com/mysql/mysql-server/commit/0896fcd61dec11a0904166911a0126f59daaa1bf",
+    "inspection": "tagged source read through primary web sources; not a byte/build attestation of the deployed server"
+  },
+  "primary_sources": [
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/lock-instance-for-backup.html",
+      "facts": "BACKUP_ADMIN is required; concurrent backup holders are allowed; session termination releases its lock. Ordinary DML remains possible; temporary-table DDL and binary-log creation are exceptions. Account-management operations are blocked. These documented categories do not replace targeted deployed-server tests."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mysql/mysql-server/mysql-8.4.8/sql/sql_backup_lock.cc",
+      "lines": "52-71,122-170",
+      "facts": "The SQL command requests the backup lock with nontransactional duration. The implementation uses BACKUP_LOCK/SHARED/MDL_EXPLICIT; DDL uses the incompatible intention-exclusive mode. Explicit release removes backup-lock tickets."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mysql/mysql-server/mysql-8.4.8/sql/lock.cc",
+      "lines": "781-845",
+      "facts": "lock_object_name handles function, procedure and event namespaces and requests an intention-exclusive BACKUP_LOCK along with object/schema locks."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mysql/mysql-server/mysql-8.4.8/sql/sp.cc",
+      "lines": "735-750,853-865,971-984",
+      "facts": "Routine create, drop and alteration enter lock_object_name. This supplies a source-level reason to test backup-lock coverage of routines instead of assuming they escape because they lack individual files."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mysql/mysql-server/mysql-8.4.8/sql/sql_base.cc",
+      "lines": "5080-5177",
+      "facts": "Strong table-DDL name-lock acquisition adds intention-exclusive BACKUP_LOCK. Temporary-table and LOCK TABLES paths have explicit conditions; coverage cannot be inferred merely from the spelling of a statement."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mysql/mysql-server/mysql-8.4.8/sql/sql_view.cc",
+      "lines": "404-455",
+      "facts": "View creation/alteration opens its table list through the table-open machinery. The entire call path and deployed waiting behavior remain an acceptance requirement."
+    },
+    {
+      "url": "https://dev.mysql.com/doc/refman/8.4/en/performance-schema-metadata-locks-table.html",
+      "facts": "metadata_locks exposes BACKUP LOCK, SHARED, EXPLICIT, GRANTED/PENDING and OWNER_THREAD_ID. Instrumentation and exact thread mapping must be proved; a timeout alone is not lock evidence."
+    }
+  ],
+  "current_code_findings": [
+    "Collect calls SQLRegistry.begin; this begins via DB.BeginTx and exposes only Tx.",
+    "The only collector commit is tx.Commit; the policy interface has Early/Lock/Recheck and no post-commit session-release owner.",
+    "The current worker grants validator permits global REFERENCES, not BACKUP_ADMIN. The observer's exact profile also does not approve BACKUP_ADMIN.",
+    "No backup lock is currently acquired; this is a prospective integration hazard, not evidence of an existing leaked production lock.",
+    "Go Tx completion releases its connection capability; Tx cannot issue a later unlock. Conn.Close is pool return, not proof of physical disconnect.",
+    "The cached mysql v1.9.0 ResetSession checks liveness/busy state; it does not issue a server reset or unlock. Pool reset must not be treated as cleanup."
+  ],
+  "rejected_shortcuts": [
+    "acquire LOCK INSTANCE in Early and rely on transaction Commit/Rollback for unlock",
+    "unlock before commit to make a Tx-only API convenient",
+    "after commit run UNLOCK INSTANCE through DB.Exec and assume the pool gives back the old session",
+    "rely on Conn.Close or driver ResetSession to physically disconnect/reset a locked session",
+    "let a separate lock-owner connection die between a last recheck and collector commit",
+    "treat BACKUP_ADMIN as already approved, or use root/disable the exact grants gate",
+    "treat the Go fake-driver experiment as MySQL DDL blocking or rollback proof"
+  ],
+  "candidate_constraints": [
+    "A reviewed collector owner must retain one exact physical SQL connection through freeze acquisition, RR work, the sole commit/rollback and cleanup.",
+    "Acquire freeze before metadata observation and protect through commit; do not release to satisfy a Tx-only API. Placement relative to current worker admission and existing lock prefixes needs explicit review.",
+    "Preserve the original peer, worker, grant, schema, source, scope, retention, reservation and group rollback guards. No freeze substitutes for any of them.",
+    "Known transaction completion is followed by explicit unlock on that same connection before any allowed pool return. Unknown commit, failed cleanup or cancellation requires verified discard handling and a distinct truthful outcome.",
+    "Physical discard must use the database/sql bad-connection contract or a separately verified equivalent; ordinary Conn.Close is insufficient. Never leak raw driver handles.",
+    "Cleanup may not issue unlock against a fresh unrelated pooled connection, create a permissive worker profile or claim rollback after an ambiguous commit.",
+    "Review session initialization and pool exclusivity: temporary tables can survive pooling and are not frozen. Also review restoration or discard of session settings such as lock_wait_timeout and time zone.",
+    "BACKUP_ADMIN is a new global capability for the candidate worker profile. Account/grants approval, global DDL disruption bounds and recovery procedures remain unapproved.",
+    "Maintain bounded original authorization context, bounded wait and cleanup behavior; stop batches on unresolved commit/cleanup outcomes without claiming a known rollback.",
+    "Actual program observation, approved expected digests and complete catalog/import/logical/bootstrap/reference policy remain separately required."
+  ],
+  "actual_acceptance_groups": [
+    {"id":"privileges", "required":"approved exact account succeeds; missing/extra privilege, root fallback and role changes deny", "executed":false},
+    {"id":"transaction_boundary", "required":"canary DML rolls back; original group/tombstone/capacity remains one atomic transaction; BEGIN/COMMIT/ROLLBACK do not silently release the session freeze", "executed":false},
+    {"id":"table_and_foreign_fk", "required":"create/alter/drop/rename and new cross-schema incoming FK wait on the exact holder BACKUP LOCK, then resolve after its release", "executed":false},
+    {"id":"routine_ddl", "required":"procedure/function create, alter and drop with exact connection/thread/lock evidence", "executed":false},
+    {"id":"trigger_event_view_ddl", "required":"trigger create/drop, event create/alter/drop and view create/alter/drop/algorithm change with actual lock evidence", "executed":false},
+    {"id":"account_and_dml_controls", "required":"account/grant/revoke operations and their lock ordering; unrelated legal DML remains possible and no authority check is bypassed", "executed":false},
+    {"id":"holder_lifecycle", "required":"holder connection killed before/during writes rolls back; cancellation and lost commit response preserve truthful outcome and remove or surface the exact held lock", "executed":false},
+    {"id":"pool_reuse", "required":"after known unlock the next borrower sees no old lock; ambiguous/failed cleanup uses a new physical session, never a locked pool return", "executed":false},
+    {"id":"multiple_holders", "required":"prove this owner's lock rather than treating another holder's lock as its own or as its cleanup failure", "executed":false},
+    {"id":"temporary_and_session_state", "required":"dedicated clean-session/pool protocol excludes stale temporary-table shadowing and stale session settings; documented temporary-DDL exceptions are not hidden", "executed":false},
+    {"id":"scale_and_wait", "required":"actual bounded acquisition, full metadata capture, global DDL disruption and cross-participant deadlock behavior", "executed":false},
+    {"id":"full_collector", "required":"one real Collect with original references/owner/capacity/deadline/nonce/audits and late-failure rollback through actual freeze protocol", "executed":false}
+  ]
+}

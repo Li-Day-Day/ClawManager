@@ -1,0 +1,155 @@
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE login-state-only=yes full-login-http=no real_mysql=not_run
+=== RUN   TestBuildV2SchedulerInstanceQueryRequiresWorkspaceTypeAndStatuses
+--- PASS: TestBuildV2SchedulerInstanceQueryRequiresWorkspaceTypeAndStatuses (0.00s)
+=== RUN   TestV2DesiredRunningStatusesIncludeRecoverableErrorCandidates
+--- PASS: TestV2DesiredRunningStatusesIncludeRecoverableErrorCandidates (0.00s)
+=== RUN   TestBuildV2SchedulerInstanceQueryDefaultsLimit
+--- PASS: TestBuildV2SchedulerInstanceQueryDefaultsLimit (0.00s)
+=== RUN   TestGatewayTokenHashTrimsAndDoesNotExposeToken
+--- PASS: TestGatewayTokenHashTrimsAndDoesNotExposeToken (0.00s)
+=== RUN   TestAppendTimeFilterAddsSinceAndUntilClauses
+--- PASS: TestAppendTimeFilterAddsSinceAndUntilClauses (0.00s)
+=== RUN   TestAppendTimeFilterEmptyFilterLeavesQueryUnchanged
+--- PASS: TestAppendTimeFilterEmptyFilterLeavesQueryUnchanged (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyHermesNestedPath
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyHermesNestedPath (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyOpenClawFlatPath
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyOpenClawFlatPath (0.00s)
+=== RUN   TestWorkspaceDeleteTargetsSkillKeyRejectsMismatchedLeaf
+--- PASS: TestWorkspaceDeleteTargetsSkillKeyRejectsMismatchedLeaf (0.00s)
+=== RUN   TestUsernameUniqueConstraintRecognition
+--- PASS: TestUsernameUniqueConstraintRecognition (0.00s)
+PASS
+ok      clawreef/internal/repository    1.388s
+=== RUN   TestLoginStateMySQLSeed
+--- PASS: TestLoginStateMySQLSeed (0.01s)
+PASS
+ok      clawreef/internal/repository    1.291s
+LOCAL_PASS login-state-seed=yes real_mysql=not_run
+LOCAL_PASS login-state-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=b4b2ffd883ceaa82c29d8ec42c24ea4e7053182c53455c266154396227a1cf5f ddl_sha256=087a1da9e1cd0e1be328cfe51a57ab20260a0b944e5b087d97f48121f625e49a
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea
+root@10.130.14.23's password:
+
+close - IO is still pending on closed socket. read:1, write:0, io:000002848CD5C010
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000024C00789EE0
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-260930070728-6476 uid=de3370d1-365a-4708-8bfe-c0d13bfb3e45 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestALoginStateMySQL
+    user_login_mysql_test.go:194: MIGRATION_INPUT files=94 catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+    user_login_mysql_test.go:239: USERS_SCHEMA normalized_create_sha256=cc460b67cbea1e13ce2c21b0a799d643e1b5d7b7c5847dd89d87b7fb4c69ebb9
+=== RUN   TestALoginStateMySQL/local_changed_and_zero_changed_rows
+    user_login_mysql_test.go:281: OBSERVED zero-changed-rows fallback SELECT
+=== RUN   TestALoginStateMySQL/ldap_changed_and_zero_changed_rows
+    user_login_mysql_test.go:281: OBSERVED zero-changed-rows fallback SELECT
+=== RUN   TestALoginStateMySQL/ldap_role_to_admin
+=== RUN   TestALoginStateMySQL/ldap_role_to_user
+=== RUN   TestALoginStateMySQL/stale_password
+=== RUN   TestALoginStateMySQL/stale_password_case
+=== RUN   TestALoginStateMySQL/stale_password_trailing_space
+=== RUN   TestALoginStateMySQL/stale_disabled
+=== RUN   TestALoginStateMySQL/stale_role
+=== RUN   TestALoginStateMySQL/stale_provider
+=== RUN   TestALoginStateMySQL/stale_external_id
+=== RUN   TestALoginStateMySQL/stale_external_id_case
+=== RUN   TestALoginStateMySQL/stale_external_id_null
+=== RUN   TestALoginStateMySQL/null_external_is_not_empty
+=== RUN   TestALoginStateMySQL/missing_user
+=== RUN   TestALoginStateMySQL/waiting_for_password
+    user_login_mysql_test.go:391: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_disabled
+    user_login_mysql_test.go:391: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_role
+    user_login_mysql_test.go:391: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_provider
+    user_login_mysql_test.go:391: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_external_id
+    user_login_mysql_test.go:391: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/waiting_for_external_id_null
+    user_login_mysql_test.go:391: OBSERVED login-state lock wait table=users exact_blocker=yes
+=== RUN   TestALoginStateMySQL/database_failure_is_redacted
+--- FAIL: TestALoginStateMySQL (0.21s)
+    --- PASS: TestALoginStateMySQL/local_changed_and_zero_changed_rows (0.01s)
+    --- PASS: TestALoginStateMySQL/ldap_changed_and_zero_changed_rows (0.01s)
+    --- PASS: TestALoginStateMySQL/ldap_role_to_admin (0.00s)
+    --- PASS: TestALoginStateMySQL/ldap_role_to_user (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_password (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_password_case (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_password_trailing_space (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_disabled (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_role (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_provider (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_external_id (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_external_id_case (0.01s)
+    --- PASS: TestALoginStateMySQL/stale_external_id_null (0.02s)
+    --- PASS: TestALoginStateMySQL/null_external_is_not_empty (0.00s)
+    --- PASS: TestALoginStateMySQL/missing_user (0.00s)
+    --- PASS: TestALoginStateMySQL/waiting_for_password (0.02s)
+    --- PASS: TestALoginStateMySQL/waiting_for_disabled (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_role (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_provider (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_external_id (0.01s)
+    --- PASS: TestALoginStateMySQL/waiting_for_external_id_null (0.01s)
+    --- FAIL: TestALoginStateMySQL/database_failure_is_redacted (0.00s)
+panic: runtime error: invalid memory address or nil pointer dereference [recovered, repanicked]
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x20 pc=0x61dbf5]
+System.Management.Automation.RemoteException
+goroutine 172 [running]:
+testing.tRunner.func1.2({0x8a83a0, 0xd748e0})
+        C:/Program Files/Go/src/testing/testing.go:1974 +0x232
+testing.tRunner.func1()
+        C:/Program Files/Go/src/testing/testing.go:1977 +0x349
+panic({0x8a83a0?, 0xd748e0?})
+        C:/Program Files/Go/src/runtime/panic.go:860 +0x13a
+internal/sync.(*Mutex).Lock(...)
+        C:/Program Files/Go/src/internal/sync/mutex.go:63
+sync.(*Mutex).Lock(...)
+        C:/Program Files/Go/src/sync/mutex.go:46
+database/sql.(*DB).conn(0x0, {0x9b28c8, 0x263fb509c70}, 0x1)
+        C:/Program Files/Go/src/database/sql/sql.go:1317 +0x55
+database/sql.(*DB).exec(0x0, {0x9b28c8, 0x263fb509c70}, {0x263fb6e3b00, 0xb7}, {0x263fb594680, 0x8, 0x8}, 0x8?)
+        C:/Program Files/Go/src/database/sql/sql.go:1689 +0x54
+database/sql.(*DB).ExecContext.func1(0x4c?)
+        C:/Program Files/Go/src/database/sql/sql.go:1672 +0x4f
+database/sql.(*DB).retry(0x263fb6e3a00?, 0x263fb469b08)
+        C:/Program Files/Go/src/database/sql/sql.go:1576 +0x42
+database/sql.(*DB).ExecContext(0x263fb58e438?, {0x9b28c8?, 0x263fb509c70?}, {0x263fb6e3b00?, 0x8?}, {0x263fb594680?, 0xda9f20?, 0x9b0058?})
+        C:/Program Files/Go/src/database/sql/sql.go:1671 +0x9b
+github.com/upper/db/v4/internal/sqladapter/compat.ExecContext(...)
+        C:/Users/zhanghui08/go/pkg/mod/github.com/upper/db/v4@v4.10.0/internal/sqladapter/compat/query_go18.go:24
+github.com/upper/db/v4/internal/sqladapter.(*sessionWithContext).StatementExec(0x263fb58e438, {0x9b28c8, 0x263fb509c70}, 0x263fb411500, {0x263fb594680, 0x8, 0x8})
+        C:/Users/zhanghui08/go/pkg/mod/github.com/upper/db/v4@v4.10.0/internal/sqladapter/session.go:798 +0x5c5
+github.com/upper/db/v4/internal/sqlbuilder.(*sqlBuilder).ExecContext(0x263fb58e468, {0x9b28c8, 0x263fb509c70}, {0x881a60?, 0x9ab030?}, {0x263fb594600, 0x8, 0x8})
+        C:/Users/zhanghui08/go/pkg/mod/github.com/upper/db/v4@v4.10.0/internal/sqlbuilder/builder.go:160 +0x1fc
+github.com/upper/db/v4/internal/sqlbuilder.(*sqlBuilder).Exec(0x263fb58e468, {0x881a60, 0x9ab030}, {0x263fb594600, 0x8, 0x8})
+        C:/Users/zhanghui08/go/pkg/mod/github.com/upper/db/v4@v4.10.0/internal/sqlbuilder/builder.go:152 +0x65
+clawreef/internal/repository.(*userRepository).UpdateLoginState(0x263fb469ec8, {0x16, {0x92e92f, 0xd}, {0x92b4fb, 0x5}, {0x92b1d3, 0x4}, {0x92b1d3, 0x4}, ...})
+        C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login.go:27 +0x311
+clawreef/internal/repository_test.TestALoginStateMySQL.func11(0x263fb521b08)
+        C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/backend/internal/repository/user_login_mysql_test.go:418 +0x21a
+testing.tRunner(0x263fb521b08, 0x263fb54cdb0)
+        C:/Program Files/Go/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 20
+        C:/Program Files/Go/src/testing/testing.go:2101 +0x4c5
+command terminated with exit code 2
+
+CLEANED namespace=sbk-mig-260930070728-6476 uid=de3370d1-365a-4708-8bfe-c0d13bfb3e45
+close - IO is still pending on closed socket. read:1, write:0, io:000001F8B0462790
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000018AED75DEC0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+a_login_state_remote_exit=1
+日志文件：C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-login-state-remote-20260930-145608.txt
+MySQL validation failed; retain any CLEANUP_PENDING identity
+所在位置 C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\scripts\system-backup-a-evidence-validation.ps1:141 字符: 42
++ ... it -ne 0) { throw 'MySQL validation failed; retain any CLEANUP_PENDIN ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (MySQL validatio...ENDING identity:String) [], RuntimeException
+    + FullyQualifiedErrorId : MySQL validation failed; retain any CLEANUP_PENDING identity

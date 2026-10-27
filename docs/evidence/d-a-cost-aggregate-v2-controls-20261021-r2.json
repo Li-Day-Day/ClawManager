@@ -1,0 +1,32 @@
+{
+  "kind": "d_a_cost_aggregate_control_checks",
+  "success": true,
+  "source_sha256": "ff1f5c2c0a271dcecb24cd3b6205ecb56528b24e7c8ff36b7e56e6ff11321447",
+  "steps": [
+    {
+      "expected": 0,
+      "stdout_sha256": "a57ed9e967be90d1ef403dba7feb7e353d48a90769b96efbc424866b9ef4ef12",
+      "exit": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "inventory"
+    },
+    {
+      "expected": 0,
+      "stdout_sha256": "4565e572dc68135fe59ea722fb1f7d64697ca8a1315a6793da3fb1f741112ec4",
+      "exit": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "contract"
+    },
+    {
+      "expected": 1,
+      "stdout_sha256": "4565e572dc68135fe59ea722fb1f7d64697ca8a1315a6793da3fb1f741112ec4",
+      "exit": 1,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "strict"
+    }
+  ],
+  "source_postcheck": true,
+  "dependencies_installed": false,
+  "remote": false,
+  "strict_still_blocked": true
+}

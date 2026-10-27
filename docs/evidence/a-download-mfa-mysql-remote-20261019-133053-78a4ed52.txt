@@ -1,0 +1,33 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20261019133053
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 26236
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    & .\scripts\system-backup-d-config-writer-validation.ps1 `
+        -DownloadMFAOnly -Remote -BuildParallelism 2 `
+        -SourceManifestPath $mfaRemoteSource
+    $mfaRemoteExit = 0
+} finally {
+    Write-Host ("a_download_mfa_mysql_remote_exit=" + $mfaRemoteExit)
+    Stop-Transcript | Out-Null
+}
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Manifest must be a new docs/evidence file”
+a_download_mfa_mysql_remote_exit=1
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261019133053
+**********************

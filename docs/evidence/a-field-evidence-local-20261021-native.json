@@ -1,0 +1,66 @@
+{
+  "kind": "a_field_evidence_local_test_exits",
+  "provenance": "exec_command_and_write_stdin_results; terminal text saved separately",
+  "node": {
+    "exit": 0,
+    "tests": 34,
+    "pass": 34,
+    "fail": 0,
+    "output": "docs/evidence/a-field-evidence-local-20261021-node.txt"
+  },
+  "powershell51": {
+    "exit": 0,
+    "output": "docs/evidence/a-field-evidence-local-20261021-powershell51-terminal.txt",
+    "capture": "final output chunk only"
+  },
+  "powershell7": {
+    "exit": 0,
+    "output": "docs/evidence/a-field-evidence-local-20261021-powershell7-terminal.txt",
+    "capture": "terminal output"
+  },
+  "python": {
+    "exit": 0,
+    "tests": 8,
+    "subtests_include_thirteen_remote_fail_closed_modes": true,
+    "command": "py -3 -B scripts/system-backup-a-field-evidence_test.py",
+    "output_provenance": "completed tool result chunk 588ed8"
+  },
+  "production_sql_executed": false,
+  "ssh_executed": false,
+  "dependencies_installed": false,
+  "build_artifacts_created": false,
+  "retained_failures": [
+    {
+      "stage": "initial node runner",
+      "status": "spawn EPERM",
+      "tests_executed": false
+    },
+    {
+      "stage": "initial Python test",
+      "failure": "test space_low fixture set available bytes equal to minimum; fixture corrected to below minimum",
+      "repeated_full_suite_passed": true
+    },
+    {
+      "stage": "initial PowerShell test",
+      "failure": "mock advanced function treated native -o as ambiguous parameter; mock corrected",
+      "production_wrapper_changed_for_this_failure": false
+    },
+    {
+      "stage": "concurrent final verification",
+      "node_exit_status": 3221225794,
+      "node_hex": "0xc0000142",
+      "node_pass": 33,
+      "node_fail": 1,
+      "fail_case": "CLI child startup",
+      "ps51_fixture_startup_failed": true,
+      "ps7_plan_check_failed": true,
+      "original_results_not_relabelled": true
+    },
+    {
+      "stage": "serial final verification",
+      "node_exit": 0,
+      "powershell51_exit": 0,
+      "powershell7_exit": 0
+    }
+  ]
+}

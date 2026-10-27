@@ -15,15 +15,19 @@ ClawManager 是 Kubernetes 原生平台。先选择 Kubernetes 发行版，再�
 
 一次只使用一套完整 profile。Longhorn 的 StorageClass 名称只是示例，可以替换为访问模式等价的 CSI。不要混用清单，不要用临时 `/tmp` HostPath 修补多节点存储。
 
+这些 profile 表示最终的 post-cutover 安全状态。已有安装如果仍保留 app `cluster-admin` 兼容绑定，必须先灰度 broker PKI/工作负载并完成本安装的 RBAC 评审，不能把直接重放 profile 当作迁移流程。普通 `kubectl apply` 不会删除现存绑定，但在取得本安装独立批准证据前必须禁用 `--prune` 或 GitOps 自动清理。
+
 ## 部署内容与流程
 
-清单包含 ClawManager、MySQL、MinIO、Skill Scanner、Team Redis、共享工作区服务，以及 OpenClaw、Hermes、OpenCode、DeepSeek Harness Lite Runtime 池。Lite 实例在共享 Runtime Pod 中运行，不会每个实例创建独立 Pod。
+清单包含 ClawManager、MySQL、MinIO、Skill Scanner、Team Redis、共享工作区服务、强制 HTTPS 的独立 Secret broker，以及 OpenClaw、Hermes、OpenCode、DeepSeek Harness Lite Runtime 池。Lite 实例在共享 Runtime Pod 中运行，不会每个实例创建独立 Pod。
 
 1. 核对 Secret、镜像、StorageClass 和入口暴露方式。
 2. 单节点先设置清单要求的存储节点标签；集群先确认 RWO/RWX StorageClass。
-3. 应用一套完整清单，等待核心 Pod Ready 和 PVC Bound。
-4. 打开前端，配置普通模型，验证安全防护与 AI Gateway。
-5. 分别创建需要对外开放的 Runtime 测试实例。
+3. 先由安装 PKI 提供 `Secret/clawmanager-secret-broker-tls` 和 `ConfigMap/clawmanager-secret-broker-ca`，证书 SAN 必须包含 `clawmanager-secret-broker.clawmanager-system.svc.cluster.local`。测试安装可运行 `scripts/secret-broker-pki-bootstrap.sh`；生产环境应使用经评审的站点 PKI。
+4. 应用一套完整清单。每份 profile 都包含 broker 且 app 默认 migration=true；缺少 TLS Secret/CA ConfigMap 或 broker TLS 验证失败时，app init container 会有意阻止启动，不会回退到 HTTP 或直接 Secret 权限。
+5. 等待 `clawmanager-secret-broker`、`clawmanager-app` 和核心 Pod Ready，确认 PVC Bound。
+6. 打开前端，配置普通模型，验证安全防护与 AI Gateway。
+7. 分别创建需要对外开放的 Runtime 测试实例。
 
 全新 MySQL 使用 `clawmanager-mysql-init` 自动初始化；已有数据卷不会重复执行首次初始化脚本。MySQL、Redis、MinIO、工作区和对象数据都应使用持久卷，不能用 `emptyDir` 作为长期存储。
 

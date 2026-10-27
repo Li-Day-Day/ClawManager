@@ -1,0 +1,94 @@
+{
+  "kind": "a_download_owners_local_gate_repair_review",
+  "old_run": {
+    "log": "a-download-owners-mysql-remote-20261020-133409-ebbf810b.txt",
+    "source_sha256": "b23b2bce12b7735c991f87669d99fc3e5bd9b455912488dd3d955fa89f30a0ff",
+    "exit": 1,
+    "actual_mysql": "not_started",
+    "failed_main_tests": [
+      "TestDownloadRetentionGCEarlyReferencesAreL1AndRechecked",
+      "TestAGCDirectAuditResourcePublishedInteger",
+      "TestDownloadRetentionGCDirectPublishedColumnTypesAndFKs",
+      "TestDownloadRetentionGCDirectPhasesAndOriginalOwnLinks",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison",
+      "TestDownloadRetentionGCTaskCollectorRollbackAndFinalRecheck",
+      "TestDownloadRetentionGCOneTransactionAndPrivateFacts",
+      "TestDownloadRetentionGCUnknownCommitIsNotRetried",
+      "TestDownloadRetentionGCExpiryEquality"
+    ],
+    "package_timeout_seconds": 600
+  },
+  "accepted_local_run": {
+    "log": "a-download-owners-local-repair-20261020-144930-6819f05e.txt",
+    "source_manifest": "a-download-owners-local-repair-source-20261020-144930-6819f05e.json",
+    "source_sha256": "b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252",
+    "files": 1445,
+    "packages": [
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "main": 255,
+        "all": 2011,
+        "seconds": 118.123
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "main": 324,
+        "all": 2612,
+        "seconds": 455.894
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "main": 3,
+        "all": 13,
+        "seconds": 3.691
+      }
+    ],
+    "detached_seeds": {
+      "main": 3,
+      "all": 13
+    },
+    "exit": 0,
+    "default_vet": true,
+    "dependencies_installed": false,
+    "remote_requested": false,
+    "owned_artifacts_absent": true
+  },
+  "changed_old_inputs": [
+    "backend/internal/systembackupevidence/download_retention_gc_references.go",
+    "backend/internal/systembackupevidence/download_retention_gc_references_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc_test.go",
+    "backend/internal/systembackupevidence/task_authority_test.go",
+    "scripts/system-backup-a-evidence-validation.ps1"
+  ],
+  "current_frozen_input_drift": [
+    "backend/internal/systembackupevidence/download_retention_gc_task.go"
+  ],
+  "known_tool_failures_retained": [
+    "vendor/golang.org/x/sys/cpu: C:\\Program Files\\Go\\pkg\\tool\\windows_amd64\\asm.exe: exit status 0xc0000043"
+  ],
+  "checks": [
+    "manifest logical SHA: b23b2bce12b7735c991f87669d99fc3e5bd9b455912488dd3d955fa89f30a0ff",
+    "stable offline unapproved snapshot: b23b2bce12b7735c991f87669d99fc3e5bd9b455912488dd3d955fa89f30a0ff",
+    "manifest logical SHA: b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252",
+    "stable offline unapproved snapshot: b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252",
+    "old failure retained",
+    "old remote did not start",
+    "old cleanup verified",
+    "new source bound to log",
+    "new complete gate passed",
+    "new no assertion failures or skips",
+    "new remote not requested",
+    "new cleanup verified",
+    "detached seeds executed",
+    "Linux owner probe and migration runner compiled",
+    "all RUNs passed: clawreef/internal/systembackupsecurity:0",
+    "all RUNs passed: clawreef/internal/systembackupevidence:1",
+    "all RUNs passed: clawreef/internal/systembackupevidence:2",
+    "two complete business packages and tagged seeds",
+    "three detached seed roots all passed",
+    "complete package sizes retained",
+    "original failing roots passed in full package",
+    "published INT positive and timed-out publication test passed"
+  ],
+  "scope": "Accept the frozen local owner-profile preparation only. Actual eleven-case SQL validation and production approval remain pending; current drift is excluded."
+}

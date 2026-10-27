@@ -1,0 +1,30 @@
+Captured local tool stdout; not a PowerShell transcript.
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE a-business-fifteen-table-restore=yes synthetic-proof=yes real_mysql=not_run
+net/url: C:\Program Files\Go\pkg\tool\windows_amd64\compile.exe: exit status 0xc0000043
+FAIL	clawreef/internal/systembackupbusinessa [build failed]
+FAIL
+WARNING: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME test-vet command (1/3 
+failed). Vet remains enabled; isolated cache is retained only until this run ends.
+ok  	clawreef/internal/systembackupbusinessa	17.949s
+=== RUN   TestABusinessRestoreMySQLSeed
+=== RUN   TestABusinessRestoreMySQLSeed/generated-username-column
+=== NAME  TestABusinessRestoreMySQLSeed
+    restore_rows_mysql_test.go:776: PASS A business fifteen-table offline seed writable_columns=222 read_columns=223 real_mysql=not_run
+--- PASS: TestABusinessRestoreMySQLSeed (0.46s)
+    --- PASS: TestABusinessRestoreMySQLSeed/generated-username-column (0.00s)
+PASS
+ok  	clawreef/internal/systembackupbusinessa	2.922s
+=== RUN   TestABusinessRestoreMySQLSeed
+=== RUN   TestABusinessRestoreMySQLSeed/generated-username-column
+=== NAME  TestABusinessRestoreMySQLSeed
+    restore_rows_mysql_test.go:776: PASS A business fifteen-table offline seed writable_columns=222 read_columns=223 real_mysql=not_run
+--- PASS: TestABusinessRestoreMySQLSeed (0.53s)
+    --- PASS: TestABusinessRestoreMySQLSeed/generated-username-column (0.00s)
+PASS
+LOCAL_PASS a-business-standalone-seed=yes checkout-fixtures=absent real_mysql=not_run
+LOCAL_PASS a-business-restore-tagged-compile=yes real_mysql=not_run
+LOCAL_PASS a-business-restore-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=9d19d84a2e8ac08657d2db6ab94c71609cd3b1961633c44b85526f6835998a84 ddl_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab
+CLEANED local-registration-build-cache=True
+A_BUSINESS_RESTORE_LOCAL_R3_EXIT=0

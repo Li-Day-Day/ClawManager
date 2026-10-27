@@ -1,0 +1,265 @@
+{
+  "kind": "a_cost_snapshot_concurrent_independent_review",
+  "status": "accepted_local_test_preparation_only_actual_mysql_pending",
+  "preparation": {
+    "path": "docs/evidence/d-cost-snapshot-concurrent-preparation-20261022.json",
+    "sha256": "7a9b0c8d520cf863785988d37d88564edcdbca1960f81a3890c80152d0345842",
+    "bytes": 123814
+  },
+  "source_sha256": "5d43fb6dc511d21ff25287b25ef12d4f43bcc37ed534902d7a573e52e0316523",
+  "frozen_source_files": 1524,
+  "actual_project_inputs": 208,
+  "production_files_changed": 0,
+  "test_files_changed": [
+    "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+    "backend/internal/systembackupbusinessa/cost_snapshot_hook_test.go",
+    "backend/internal/systembackupbusinessa/cost_snapshot_concurrent_mysql_test.go"
+  ],
+  "isolated": {
+    "roots": 88,
+    "checks": 396
+  },
+  "published": {
+    "roots": 88,
+    "checks": 396
+  },
+  "prior": {
+    "roots": 86,
+    "checks": 387,
+    "retained": 387,
+    "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-full.jsonl",
+    "pin": {
+      "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-full.jsonl",
+      "sha256": "8e401e8a2769aec6f4c74bc8e3d9bcef0418351b7547badd8c25177d02230c92",
+      "bytes": 2358529
+    }
+  },
+  "added_checks": [
+    "TestCostSnapshotHookDelegatesOriginalTransaction",
+    "TestCostSnapshotHookDelegatesOriginalTransaction/hook_error",
+    "TestCostSnapshotHookDelegatesOriginalTransaction/matched",
+    "TestCostSnapshotHookDelegatesOriginalTransaction/non_matching",
+    "TestCostSnapshotHookDelegatesOriginalTransaction/query_error",
+    "TestCostSnapshotHookRunsOnceAfterSuccessfulClose",
+    "TestCostSnapshotHookRunsOnceAfterSuccessfulClose/canceled",
+    "TestCostSnapshotHookRunsOnceAfterSuccessfulClose/close_error",
+    "TestCostSnapshotHookRunsOnceAfterSuccessfulClose/closed"
+  ],
+  "tagged_seed_checks": 3,
+  "detached_seed_checks": 3,
+  "default_vet": true,
+  "source_postcheck": true,
+  "platform_probe_builds": [
+    "windows/amd64",
+    "linux/amd64"
+  ],
+  "linux_migration_cli_build": true,
+  "exact_cleanup": {
+    "path": "docs/evidence/d-cost-snapshot-concurrent-cleanup-20261022.json",
+    "sha256": "a920e6b8cf1f5b500d89667295084b7ca80df43f392ce675ea747cd69898aa96",
+    "bytes": 548
+  },
+  "owner_independently_absent": true,
+  "binaries_reported_then_deleted": [
+    {
+      "name": "a-cost-snapshot.exe",
+      "sha256": "1da1968a6a0c1c331f18216487ae447382befa72d36ff535f12e48b27624f70b",
+      "size": 23824384
+    },
+    {
+      "name": "a-cost-snapshot.test",
+      "sha256": "e9d1d00b7e757fea31822f58cb5ea368659fcb99f29dfb62e929ef79c815238b",
+      "size": 23417771
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "72b0bfbfdd0c5b9d8e367c6cf00451115a675a83084d62db1277eeb0aeaf6630",
+      "size": 9100667
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-base-20261022.json",
+      "sha256": "da05e4eae833cf2e7dab263f3c0df81f51b74aa78503dda03de37c10065776a9",
+      "bytes": 299088
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-scope-20261022.json",
+      "sha256": "e108a6983737a320e61503e2c6b2a9125ceac0938ce0d1e1db546136a0dfb0e0",
+      "bytes": 50718
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-source.json",
+      "sha256": "400fc8701799f8c7f48caeb2f12b627ee09135c8e8f1cb72b0d54030a804289a",
+      "bytes": 299411
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-native.json",
+      "sha256": "381595eaf8bdc1370f647c68af8d6686344a98ef6bcb638553a0135930ffccab",
+      "bytes": 1946
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-validation-20261022.ps1",
+      "sha256": "1028413ca79929dd32fe140105aa402814537308071bdb7172436f36550b2050",
+      "bytes": 5175
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022.ps1",
+      "sha256": "a06beb57f08f3ad679f2986d4d24c8c97c4a756bd64e89f9b1b280e01f2dd415",
+      "bytes": 3100
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-full-business.stdout",
+      "sha256": "1a62662b31500d2a9ab82e72f2c4c5bd447de91517cd44412f59a00cb30d63f8",
+      "bytes": 377831
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-full-business.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-tagged-seed.stdout",
+      "sha256": "93657969bb3b884adfd69a0d4b6fe6b6d4083cd2f6efe03dd564bd049fe5a5ce",
+      "bytes": 3444
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-tagged-seed.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-windows-probe.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-windows-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-detached-seed.stdout",
+      "sha256": "14fe0f7a2199cb468793a09699e439c98eb5be2b015cfafb38fa78817424da3d",
+      "bytes": 571
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-detached-seed.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-linux-probe.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-isolated-linux-probe.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-native.json",
+      "sha256": "145c701a4027ff869a646a6c31400d433d6358c515f50521c92acb1964c00683",
+      "bytes": 582
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-windows.txt",
+      "sha256": "a0f2c48d3a4ade240e3f403841cb4cbe337e775394e0f998fb428bbdb7dc51b9",
+      "bytes": 60897
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-windows.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-linux.txt",
+      "sha256": "a4d433350ef76c19ec51863209653dc31207da194dd0968833d4886c7e9d5715",
+      "bytes": 63548
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-linux.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-migration.txt",
+      "sha256": "bc1582bc7ef9878e186498e9cb45e00aeb98ce1c89753c6a8c3d5c194b050b25",
+      "bytes": 32435
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-migration.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-migration-build.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-dependencies-20261022-migration-build.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-cleanup-20261022.json",
+      "sha256": "a920e6b8cf1f5b500d89667295084b7ca80df43f392ce675ea747cd69898aa96",
+      "bytes": 548
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-publish-20261022.ps1",
+      "sha256": "6453f6d46123141c296809eeaa6c491329c6a7d3a6a16939ff0e7c3951d7bfa2",
+      "bytes": 3055
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-finalize-20261022.ps1",
+      "sha256": "d0ce8117943bfc45c03b5fc01ac020c32acd694d9b1c23adbf9e36955177b15d",
+      "bytes": 3368
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-review-20261022.mjs",
+      "sha256": "2cfbee59922531e407b26adb43c563822142521e45c36146ecc3328ef620953f",
+      "bytes": 10917
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-published-source.json",
+      "sha256": "400fc8701799f8c7f48caeb2f12b627ee09135c8e8f1cb72b0d54030a804289a",
+      "bytes": 299411
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-published-native.json",
+      "sha256": "6d0a2a136baa7f9583a0e52b11eb5fd5f234d905d7b59ee1bd294c668438b677",
+      "bytes": 663
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-published-full-business.stdout",
+      "sha256": "dc05fe84ec059bf567ce81600377c050d05025f7a6e73573f563857dc5c03ab9",
+      "bytes": 377779
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-20261022-published-full-business.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/d-cost-snapshot-concurrent-preparation-20261022.json",
+      "sha256": "7a9b0c8d520cf863785988d37d88564edcdbca1960f81a3890c80152d0345842",
+      "bytes": 123814
+    }
+  ],
+  "actual_mysql": false,
+  "remote_executed_by_A": false,
+  "dependencies_installed_by_A": false,
+  "test_or_build_artifacts_created_by_A": false,
+  "current_whole_tree_approved": false,
+  "new_owner_source_baseline_registered": false,
+  "production_dump_proof": false,
+  "production_account_approval": false,
+  "production_approved": false,
+  "full_gc": false,
+  "freeze_adapter_approved": false,
+  "operator_handoff": "docs/system-backup-d-cost-snapshot-concurrent-20261022.md",
+  "required_actual_child": "TestABusinessRestoreRowsMySQL/cost_snapshot_concurrent_commit"
+}

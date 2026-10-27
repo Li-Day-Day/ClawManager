@@ -1,0 +1,142 @@
+{
+  "kind": "d_gc_owner_lifecycle_local_validation",
+  "mode": "isolated",
+  "exit": 0,
+  "source_postcheck": true,
+  "source_sha256": "5e4044ad6ffc8a818d7ce8b96d29fe0de5fd802a8ba657786153ce798d76cf17",
+  "stages": [
+    {
+      "stage": "dispatch",
+      "exit": 0
+    },
+    {
+      "stage": "dependencies-default",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-deps",
+        "-test",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "full",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=2700s",
+        "-json",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "tagged-seed",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=120s",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(DDownloadGCFreezeMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-json",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "dependencies-windows",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-deps",
+        "-test",
+        "-tags",
+        "systembackup_mysql",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "windows-probe",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3d426c330a554ab298d97639612abb42\\d-gc-owner-lifecycle.exe",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "detached-seed",
+      "exit": 0
+    },
+    {
+      "stage": "dependencies-linux",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-deps",
+        "-test",
+        "-tags",
+        "systembackup_mysql",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "linux-probe",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3d426c330a554ab298d97639612abb42\\d-gc-owner-lifecycle.test",
+        "./internal/systembackupevidence"
+      ]
+    },
+    {
+      "stage": "migration-build",
+      "exit": 0,
+      "arguments": [
+        "build",
+        "-mod=readonly",
+        "-p=1",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3d426c330a554ab298d97639612abb42\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ]
+    }
+  ],
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false,
+  "freeze_adapter_wired": false,
+  "production_approved": false
+}

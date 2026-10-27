@@ -1,0 +1,121 @@
+{
+  "schema_version": "a-external-evidence-local-validation.v1",
+  "observed_at_utc": "2026-09-28T08:45:40.1255232Z",
+  "scope": "A external evidence components; synthetic provider/KMS/policy; local tests and cross-compilation only",
+  "command": "scripts/system-backup-a-evidence-validation.ps1 -BuildParallelism 1",
+  "exit_code": 0,
+  "unit_tests": {
+    "passed": true,
+    "top_level_count": 6,
+    "download_subtest_count": 9,
+    "package_seconds": 1.76,
+    "names": [
+      "TestEnvelopeChunkRangesAndTampering",
+      "TestPrepareRejectsDriftSizeAndRedaction",
+      "TestPublishUnknownAndRetentionGC",
+      "TestDownloadAuthAuditRangeAndNoPartialBody",
+      "TestRetentionSnapshotAndLogSeparation",
+      "TestRangeAndKeyBoundaries"
+    ]
+  },
+  "linux_mysql_probe": {
+    "compiled": true,
+    "executed": false,
+    "sha256": "e8c1f5717a269baab23437d68178ed7f94a73a52ae15d9a025e766a2bbe6e3ec",
+    "proposed_ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199"
+  },
+  "migration_runner": {
+    "compiled": true,
+    "executed": false,
+    "sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88"
+  },
+  "static_checks": {
+    "powershell_parse": "passed",
+    "bash_syntax": "passed outside sandbox after signal-pipe denial",
+    "gofmt": "passed"
+  },
+  "attempts": [
+    {
+      "result": "failed",
+      "exit_code": 1,
+      "reason": "Source file added during compilation; vet reported undefined: Retention. This attempt is not acceptance evidence.",
+      "local_build_cache_cleaned": true
+    },
+    {
+      "result": "passed",
+      "exit_code": 0,
+      "reason": "Full rerun after source was fixed",
+      "local_build_cache_cleaned": true
+    }
+  ],
+  "cleanup": {
+    "runner_report": "CLEANED local-registration-build-cache=True",
+    "owned_scratch_absence_verified": true,
+    "binary_and_cache_retained": false,
+    "other_task_scratch_modified": false
+  },
+  "dependencies_installed": false,
+  "network_used_for_validation": false,
+  "real_mysql_validated": false,
+  "production_provider_or_kms_validated": false,
+  "http_route_deployed": false,
+  "official_migration_added": false,
+  "provider_capability_approved": false,
+  "remaining": [
+    "Operator-run isolated real MySQL probe",
+    "Review framing and integrate production provider/KMS/redaction adapters",
+    "Implement authoritative SQLPolicy, session authentication, reference locking and failure/health handling",
+    "D formal GC constraint migration, schema/inventory/catalog synchronization and upgrade checks",
+    "Mount HTTP route and controller reconciliation/GC scanner; validate live scoped grants"
+  ],
+  "source_bindings": [
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "1df72df3a77f63358a71825b60f1668cfef9f90259c6229b04abe3df1824a2cf"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "e8e9523934d0613224100ff403aec098257325ff2a0aaeba53df603cc9f28319"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-phase.sh",
+      "sha256": "a7e57658d18f993b67218dad6af675793fec49cf4c8e4e5561d2b777847e0c93"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-evidence-gc-migration-proposal.sql",
+      "sha256": "3f65e0c05a61746968655e069e3e883f3074ece1184743f9c18a7c46561c0fca"
+    },
+    {
+      "path": "docs/system-backup-a-external-evidence-20260928.md",
+      "sha256": "88ec4443de61b0d3bbd5621f0c0b12598b91100e447d312d69df4ca66d3371e2"
+    }
+  ]
+}

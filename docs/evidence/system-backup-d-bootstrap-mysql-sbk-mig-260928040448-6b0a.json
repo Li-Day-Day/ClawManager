@@ -1,0 +1,83 @@
+{
+  "kind": "d_bootstrap_and_https_mysql_acceptance_v1",
+  "recorded_at": "2026-09-28T04:08:35.036Z",
+  "provenance": {
+    "source": "operator-provided console transcript in this task",
+    "independent_remote_requery": false,
+    "explicit_process_exit_code": null,
+    "interpretation": "Reported PASS and cleanup markers verified against the local build receipt; no standalone process exit code was supplied."
+  },
+  "run": {
+    "namespace": "sbk-mig-260928040448-6b0a",
+    "namespace_uid": "6773f835-6de1-4d63-bee5-c57815e32f04",
+    "mysql_version": "8.4.8",
+    "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+    "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977"
+  },
+  "binary_sha256": "51e618ceca9abefc8e75901cffa5d7508d691932530e0e39648b6cdc57d319fb",
+  "ddl_sha256": "2661503d821ae4a5346609a6dfba93db5483b6538e71de46c2e686d9a050ceba",
+  "source_verification": {
+    "local_receipt": "docs/evidence/system-backup-d-bootstrap-local-20260928.json",
+    "local_receipt_sha256": "976589001278269fbb320856aa2684737dd9ea32fe814779c2fe116a0c92ff4b",
+    "source_bindings_checked": 53,
+    "mismatches": []
+  },
+  "validation": {
+    "operator_local_security_test_seconds": 1.365,
+    "remote_suite_seconds": 1.19,
+    "fresh_migration_replay": "001..079",
+    "migrations_applied": 92,
+    "exact_filenames": true,
+    "d_columns": "blob/blob/blob/char",
+    "top_level_subtests": {
+      "concurrent_same_request_has_one_atomic_result": "PASS",
+      "body_conflict": "PASS",
+      "nonce_replay_with_new_idempotency_key": "PASS",
+      "result_audit_failure_rolls_back_every_table": "PASS",
+      "permission_revocation_blocks_committed_retry": "PASS",
+      "https_registration_replay_conflict_and_revocation": "PASS",
+      "totp_persistence_replay_throttle_and_session_revocation": "PASS",
+      "first_config_bootstrap_atomicity": "PASS"
+    },
+    "bootstrap_nested_subtests": {
+      "result_audit_failure_rolls_back_config_state_and_reservation": "PASS",
+      "concurrent_first_requests_commit_once": "PASS",
+      "wrong_database_conflict_reinitialization_and_revocation": "PASS"
+    },
+    "result": "PASS"
+  },
+  "cleanup": {
+    "bootstrap_run_owned_database_reported": true,
+    "registration_run_owned_database_reported": true,
+    "namespace_uid_matched_in_transcript": true,
+    "namespace_reported": true,
+    "remote_scratch_reported": true,
+    "local_cache_reported": true,
+    "local_registration_scratch_remaining": []
+  },
+  "coverage": {
+    "real_mysql_transactions": true,
+    "real_config_state_operation_ddl": true,
+    "test_tls_listener": true,
+    "synthetic_http_actor": true,
+    "synthetic_bootstrap_admission": true,
+    "synthetic_registry_reference_inputs": true,
+    "real_application_jwt": false,
+    "deployed_registration_service": false,
+    "human_mfa": false,
+    "live_application_config_activation": false
+  },
+  "status": {
+    "test_phase_passed": true,
+    "active_config_updated": false,
+    "full_d_acceptance_complete": false
+  },
+  "remaining": [
+    "real registry profiles and typed reference mappings",
+    "production bootstrap admission and invocation",
+    "complete configuration update transaction",
+    "runtime schema/deployment and signing identities",
+    "real application HTTP, human MFA and configuration activation acceptance"
+  ],
+  "note": "The local receipt retains NOT_RUN as its historical state. This run supplies later MySQL/TLS/first-config transaction evidence only. It does not promote test fixtures, expired lab credentials, or the three public candidate registries into active production configuration."
+}

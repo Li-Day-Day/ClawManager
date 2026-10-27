@@ -1,0 +1,18 @@
+PASS session-profile
+PASS default-profile-unchanged
+PASS login-state-profile
+PASS login-state-seed-failure
+PASS login-state-probe-failure
+PASS login-state-migration-failure
+PASS login-state-reject-sessions
+PASS login-state-reject-security
+PASS login-state-reject-auth
+PASS login-state-reject-auth-source
+PASS seed-failure-stops-before-build
+PASS probe-failure-stops-before-migration
+PASS migration-failure-cleans-probe
+PASS reject-include-security
+PASS reject-include-auth
+PASS reject-auth-source-only
+PASS login session/state runner: 16 cases; tools mocked, no builds or remote calls
+CLEANED login-session-runner-fixture=True

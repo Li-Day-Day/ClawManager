@@ -1,0 +1,32 @@
+{
+  "kind": "d_current_static_gates.v1",
+  "recorded_at": "2026-10-16T06:38:51.229Z",
+  "reports": [
+    {
+      "name": "inventory",
+      "script": "scripts/system-backup-schema-inventory.mjs",
+      "arguments": [
+        "--check"
+      ],
+      "exit_code": 0,
+      "error": null,
+      "raw_log": "docs/evidence/system-backup-d-inventory-current-20261016-r53.txt",
+      "raw_sha256": "a57ed9e967be90d1ef403dba7feb7e353d48a90769b96efbc424866b9ef4ef12"
+    },
+    {
+      "name": "contract",
+      "script": "scripts/system-backup-contract-check.mjs",
+      "arguments": [
+        "--check",
+        "--strict"
+      ],
+      "exit_code": 1,
+      "error": null,
+      "raw_log": "docs/evidence/system-backup-d-contract-current-20261016-r53.txt",
+      "raw_sha256": "25fde4ca687aa51b28f8a92af4138be48e7714473e99840250ce6e7e4be731a9"
+    }
+  ],
+  "dependencies_installed": false,
+  "remote_run": false,
+  "formal_approval_added": false
+}

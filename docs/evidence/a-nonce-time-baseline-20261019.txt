@@ -1,0 +1,100 @@
+**********************
+PowerShell transcript start
+Start time: 20261019084149
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\scripts\system-backup-a-nonce-time-validation.ps1 -Phase Baseline -SourceManifestPath (Join-Path $PWD.Path 'docs/evidence/a-nonce-time-baseline-source-20261019.json') -LogPath (Join-Path $PWD.Path 'docs/evidence/a-nonce-time-baseline-20261019.txt')
+Process ID: 23076
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+NONCE_OWNER source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-071f5ad54c8f4ef5b908578f5164c085 scratch=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-52d56eae551241dc831d1bfa14a3c101 phase=Baseline
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+NONCE_SOURCE files=1342 sha256=c2cda5f8679cd9c779575baad738e2542975f939d39dd11468404c2f8bd578a3
+LOCAL_PASS isolated-go-telemetry=off
+NONCE_STAGE phase=Baseline full-security-package=False default-vet=yes dependency-installation=no remote=no
+{"Time":"2026-10-19T08:45:15.5266519+08:00","Action":"start","Package":"clawreef/internal/systembackupsecurity"}
+{"Time":"2026-10-19T08:45:18.3985654+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime"}
+{"Time":"2026-10-19T08:45:18.3985654+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime\n"}
+{"Time":"2026-10-19T08:45:18.3985654+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/past_auth"}
+{"Time":"2026-10-19T08:45:18.3991578+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/past_auth","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/past_auth\n"}
+{"Time":"2026-10-19T08:45:18.4247777+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/past_auth","Output":"    nonce_acceptance_time_a_test.go:138: server acceptance time lost: err=\u003cnil\u003e authenticated=2026-09-20 01:01:00 +0000 UTC accepted=2026-09-20 01:02:00 +0000 UTC\n"}
+{"Time":"2026-10-19T08:45:18.4247777+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/past_auth","Output":"--- FAIL: TestAProviderNonceUsesSQLAcceptanceTime/past_auth (0.03s)\n"}
+{"Time":"2026-10-19T08:45:18.4247777+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/past_auth","Elapsed":0.03}
+{"Time":"2026-10-19T08:45:18.4247777+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew"}
+{"Time":"2026-10-19T08:45:18.4247777+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew\n"}
+{"Time":"2026-10-19T08:45:18.4394075+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew","Output":"    nonce_acceptance_time_a_test.go:138: server acceptance time lost: err=strong_auth_expired: strong-auth validity ended before consumption authenticated=2026-09-20 01:02:03 +0000 UTC accepted=2026-09-20 01:02:00 +0000 UTC\n"}
+{"Time":"2026-10-19T08:45:18.4399176+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew","Output":"--- FAIL: TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew (0.01s)\n"}
+{"Time":"2026-10-19T08:45:18.4399176+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew","Elapsed":0.01}
+{"Time":"2026-10-19T08:45:18.4399176+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew"}
+{"Time":"2026-10-19T08:45:18.4399176+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew\n"}
+{"Time":"2026-10-19T08:45:18.4438896+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew","Output":"--- PASS: TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew (0.00s)\n"}
+{"Time":"2026-10-19T08:45:18.4438896+08:00","Action":"pass","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew","Elapsed":0}
+{"Time":"2026-10-19T08:45:18.4438896+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/clock_regression"}
+{"Time":"2026-10-19T08:45:18.4438896+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/clock_regression","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/clock_regression\n"}
+{"Time":"2026-10-19T08:45:18.4627015+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/clock_regression","Output":"    nonce_acceptance_time_a_test.go:141: invalid final clock/proof committed effects \u003cnil\u003e\n"}
+{"Time":"2026-10-19T08:45:18.4627015+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/clock_regression","Output":"--- FAIL: TestAProviderNonceUsesSQLAcceptanceTime/clock_regression (0.02s)\n"}
+{"Time":"2026-10-19T08:45:18.4633078+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/clock_regression","Elapsed":0.02}
+{"Time":"2026-10-19T08:45:18.4655542+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert"}
+{"Time":"2026-10-19T08:45:18.4655542+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert\n"}
+{"Time":"2026-10-19T08:45:18.4950924+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert","Output":"--- PASS: TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert (0.03s)\n"}
+{"Time":"2026-10-19T08:45:18.4950924+08:00","Action":"pass","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert","Elapsed":0.03}
+{"Time":"2026-10-19T08:45:18.4950924+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert"}
+{"Time":"2026-10-19T08:45:18.4950924+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert","Output":"=== RUN   TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert\n"}
+{"Time":"2026-10-19T08:45:18.4995236+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert","Output":"--- PASS: TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert (0.00s)\n"}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"pass","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert","Elapsed":0}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime","Output":"--- FAIL: TestAProviderNonceUsesSQLAcceptanceTime (0.10s)\n"}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAProviderNonceUsesSQLAcceptanceTime","Elapsed":0.1}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime"}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime\n"}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/past_auth"}
+{"Time":"2026-10-19T08:45:18.5005233+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/past_auth","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/past_auth\n"}
+{"Time":"2026-10-19T08:45:18.6123875+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/past_auth","Output":"    nonce_acceptance_time_a_test.go:191: server acceptance time lost: err=\u003cnil\u003e authenticated=2026-01-02 03:03:05 +0000 UTC accepted=2026-01-02 03:04:05 +0000 UTC\n"}
+{"Time":"2026-10-19T08:45:18.6123875+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/past_auth","Output":"--- FAIL: TestAConfigNonceUsesSQLAcceptanceTime/past_auth (0.11s)\n"}
+{"Time":"2026-10-19T08:45:18.6123875+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/past_auth","Elapsed":0.11}
+{"Time":"2026-10-19T08:45:18.6123875+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew"}
+{"Time":"2026-10-19T08:45:18.6123875+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew\n"}
+{"Time":"2026-10-19T08:45:18.7047112+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew","Output":"    nonce_acceptance_time_a_test.go:191: server acceptance time lost: err=provider_registration_unavailable authenticated=2026-01-02 03:04:35 +0000 UTC accepted=2026-01-02 03:04:05 +0000 UTC\n"}
+{"Time":"2026-10-19T08:45:18.7047112+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew","Output":"--- FAIL: TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew (0.09s)\n"}
+{"Time":"2026-10-19T08:45:18.7047112+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew","Elapsed":0.09}
+{"Time":"2026-10-19T08:45:18.7047112+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew"}
+{"Time":"2026-10-19T08:45:18.7047112+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew\n"}
+{"Time":"2026-10-19T08:45:18.7777144+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew","Output":"--- PASS: TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew (0.07s)\n"}
+{"Time":"2026-10-19T08:45:18.7777144+08:00","Action":"pass","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew","Elapsed":0.07}
+{"Time":"2026-10-19T08:45:18.7777144+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/clock_regression"}
+{"Time":"2026-10-19T08:45:18.7777144+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/clock_regression","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/clock_regression\n"}
+{"Time":"2026-10-19T08:45:18.8398178+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/clock_regression","Output":"    nonce_acceptance_time_a_test.go:194: rejected final facts committed configuration/nonce/audit: err=\u003cnil\u003e status=200 rows=2 writes=[audit audit config cas evidence operation nonce audit]\n"}
+{"Time":"2026-10-19T08:45:18.8398178+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/clock_regression","Output":"--- FAIL: TestAConfigNonceUsesSQLAcceptanceTime/clock_regression (0.06s)\n"}
+{"Time":"2026-10-19T08:45:18.8398178+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/clock_regression","Elapsed":0.06}
+{"Time":"2026-10-19T08:45:18.8398178+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert"}
+{"Time":"2026-10-19T08:45:18.8398178+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert\n"}
+{"Time":"2026-10-19T08:45:18.9726319+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert","Output":"--- PASS: TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert (0.13s)\n"}
+{"Time":"2026-10-19T08:45:18.9726319+08:00","Action":"pass","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert","Elapsed":0.13}
+{"Time":"2026-10-19T08:45:18.9726319+08:00","Action":"run","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert"}
+{"Time":"2026-10-19T08:45:18.9726319+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert","Output":"=== RUN   TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert\n"}
+{"Time":"2026-10-19T08:45:19.0224325+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert","Output":"--- PASS: TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert (0.05s)\n"}
+{"Time":"2026-10-19T08:45:19.0224325+08:00","Action":"pass","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert","Elapsed":0.05}
+{"Time":"2026-10-19T08:45:19.0224325+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime","Output":"--- FAIL: TestAConfigNonceUsesSQLAcceptanceTime (0.52s)\n"}
+{"Time":"2026-10-19T08:45:19.0224325+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Test":"TestAConfigNonceUsesSQLAcceptanceTime","Elapsed":0.52}
+{"Time":"2026-10-19T08:45:19.0224325+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Output":"FAIL\n"}
+{"Time":"2026-10-19T08:45:19.0746571+08:00","Action":"output","Package":"clawreef/internal/systembackupsecurity","Output":"FAIL\tclawreef/internal/systembackupsecurity\t3.544s\n"}
+{"Time":"2026-10-19T08:45:19.0785479+08:00","Action":"fail","Package":"clawreef/internal/systembackupsecurity","Elapsed":3.552}
+NONCE_GO_EXIT=1
+NONCE_POSTCHECK frozen-source=yes
+NONCE_CLEANUP owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-52d56eae551241dc831d1bfa14a3c101 removed=True
+NONCE_CLEANUP owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-071f5ad54c8f4ef5b908578f5164c085 removed=True
+nonce_time_exit=1
+**********************
+PowerShell transcript end
+End time: 20261019084536
+**********************

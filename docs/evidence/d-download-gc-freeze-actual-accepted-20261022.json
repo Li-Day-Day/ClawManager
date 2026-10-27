@@ -1,0 +1,293 @@
+{
+  "kind": "d_download_gc_freeze_actual_acceptance",
+  "status": "actual_mysql_34_of_34_accepted_prerequisites_only",
+  "log": "docs/evidence/d-download-gc-freeze-remote-20261022-084739-1604f031.txt",
+  "log_sha256": "76071f8c77782f8eecbba2745061fc639ff0c563295dafc2bc6b57a2a8b70309",
+  "source_manifest": "docs/evidence/d-download-gc-freeze-remote-20261022-084739-1604f031-source.json",
+  "source_manifest_sha256": "257cece1802b1275041e96a49fd463977577d37d3b0cb82d2b8fadc4de729135",
+  "source_sha256": "b2557fd28e16cbb419be616164d33123cfc473dfdc0c317d098311c0f85f8b8d",
+  "source_files": 1519,
+  "preparation": {
+    "path": "docs/evidence/d-gc-freeze-probe-preparation-20261021.json",
+    "sha256": "6361d6f257b45e7d189ec6fcf8ee10a4a4aa2be2946b45e6284ea6bbba3f3210",
+    "six_prepared_files_match": true
+  },
+  "relevant_files": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_freeze_mysql_test.go",
+      "sha256": "a8aa5e0062144f85018a5e1321077d281536ab206c2a0db0fda618eb25e24126"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "e043992c6d318b09e5ea413253752df50db897c0913459ee83fcb52b9941a57c"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "sha256": "8c469c6fedf4a0a30e0491a47b22cde1ebdbb8ce9319950647cdc7be1f4737f3"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-freeze-dispatch.test.ps1",
+      "sha256": "592caa47b2433989adcff8aedcaeaba9234eaeb1e247a9906f0341734e78fa64"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-freeze-phase.sh",
+      "sha256": "059465a1ebf955ff92a8cb5435c4879df5aa9eb1ac3556b2e2987a022c011edc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_output_deadline_a_test.go",
+      "sha256": "9113286f35c975bd5cda61ea42bb6a169fba0867b9d49741412c969e005a9e0a"
+    }
+  ],
+  "actual": {
+    "root": "TestDDownloadGCFreezeMySQL",
+    "mysql": "8.4.8",
+    "migration_replay": "001..081",
+    "migrations": 96,
+    "catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+    "binary_sha256": "6fe2bdf93660958dbea2506844ea2859bfbda5575928995a0873befc06d35852",
+    "inputs_sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0",
+    "cases": 34,
+    "passed": 34,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": 0.6,
+    "outer_exit": 0,
+    "case_names": [
+      "table_create",
+      "table_alter",
+      "table_drop",
+      "table_rename",
+      "incoming_foreign_key",
+      "procedure_create",
+      "procedure_alter",
+      "procedure_drop",
+      "function_create",
+      "function_alter",
+      "function_drop",
+      "trigger_create",
+      "trigger_drop",
+      "event_create",
+      "event_alter",
+      "event_drop",
+      "view_create",
+      "view_alter",
+      "view_algorithm",
+      "view_drop",
+      "account_create",
+      "account_alter",
+      "account_drop",
+      "account_grant",
+      "account_revoke",
+      "privilege_deny",
+      "transaction_commit",
+      "transaction_rollback",
+      "unlock_no_commit",
+      "legal_dml",
+      "multiple_holders",
+      "killed_holder",
+      "pool_reuse",
+      "temporary_shadow_and_fresh_session"
+    ],
+    "ddl_wait_witnesses": [
+      {
+        "case": "table_create",
+        "holder_connection": 18,
+        "waiter_connection": 17,
+        "holder_thread": 364,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_alter",
+        "holder_connection": 20,
+        "waiter_connection": 17,
+        "holder_thread": 366,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_drop",
+        "holder_connection": 21,
+        "waiter_connection": 17,
+        "holder_thread": 370,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_rename",
+        "holder_connection": 22,
+        "waiter_connection": 17,
+        "holder_thread": 371,
+        "waiter_thread": 363
+      },
+      {
+        "case": "incoming_foreign_key",
+        "holder_connection": 23,
+        "waiter_connection": 17,
+        "holder_thread": 372,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_create",
+        "holder_connection": 24,
+        "waiter_connection": 17,
+        "holder_thread": 373,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_alter",
+        "holder_connection": 25,
+        "waiter_connection": 17,
+        "holder_thread": 374,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_drop",
+        "holder_connection": 26,
+        "waiter_connection": 17,
+        "holder_thread": 375,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_create",
+        "holder_connection": 27,
+        "waiter_connection": 17,
+        "holder_thread": 376,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_alter",
+        "holder_connection": 28,
+        "waiter_connection": 17,
+        "holder_thread": 377,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_drop",
+        "holder_connection": 29,
+        "waiter_connection": 17,
+        "holder_thread": 378,
+        "waiter_thread": 363
+      },
+      {
+        "case": "trigger_create",
+        "holder_connection": 30,
+        "waiter_connection": 17,
+        "holder_thread": 379,
+        "waiter_thread": 363
+      },
+      {
+        "case": "trigger_drop",
+        "holder_connection": 31,
+        "waiter_connection": 17,
+        "holder_thread": 380,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_create",
+        "holder_connection": 32,
+        "waiter_connection": 17,
+        "holder_thread": 381,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_alter",
+        "holder_connection": 33,
+        "waiter_connection": 17,
+        "holder_thread": 382,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_drop",
+        "holder_connection": 34,
+        "waiter_connection": 17,
+        "holder_thread": 383,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_create",
+        "holder_connection": 35,
+        "waiter_connection": 17,
+        "holder_thread": 384,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_alter",
+        "holder_connection": 36,
+        "waiter_connection": 17,
+        "holder_thread": 385,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_algorithm",
+        "holder_connection": 37,
+        "waiter_connection": 17,
+        "holder_thread": 386,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_drop",
+        "holder_connection": 38,
+        "waiter_connection": 17,
+        "holder_thread": 387,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_create",
+        "holder_connection": 39,
+        "waiter_connection": 17,
+        "holder_thread": 388,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_alter",
+        "holder_connection": 40,
+        "waiter_connection": 17,
+        "holder_thread": 389,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_drop",
+        "holder_connection": 41,
+        "waiter_connection": 17,
+        "holder_thread": 390,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_grant",
+        "holder_connection": 42,
+        "waiter_connection": 17,
+        "holder_thread": 391,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_revoke",
+        "holder_connection": 43,
+        "waiter_connection": 17,
+        "holder_thread": 392,
+        "waiter_thread": 363
+      }
+    ]
+  },
+  "cleanup": {
+    "namespace": "sbk-mig-261022013337-65ef",
+    "uid": "081b70f6-ce4a-42e8-a672-49847e31324e",
+    "namespace_cleanup_reported": true,
+    "remote_scratch_cleanup_reported": true,
+    "local_cache_cleanup_reported": true,
+    "exact_local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-08a0e70a4b674d02818199ad97cbbf39",
+    "local_owner_independently_absent": true,
+    "remote_cleanup_independently_checked": false
+  },
+  "boundaries": {
+    "real_sql": true,
+    "fixture_scope": "synthetic run-owned schemas and accounts",
+    "freeze_adapter_wired": false,
+    "full_gc": false,
+    "role_approval": false,
+    "human_mfa": false,
+    "provider_read": false,
+    "production_approval": false,
+    "dependencies_installed": false,
+    "reviewer_remote_run": false,
+    "current_whole_tree_tested": false,
+    "twelve_protocol_groups_complete": false
+  }
+}

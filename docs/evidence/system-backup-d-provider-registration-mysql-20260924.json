@@ -1,0 +1,57 @@
+{
+  "schema_version": "d-provider-registration-mysql.operator-report.v1",
+  "reported_date": "2026-09-24",
+  "status": "passed_within_isolated_mysql_scope",
+  "source": "operator-provided console output in this task",
+  "independently_requeried": false,
+  "remote_exit_code": null,
+  "exit_code_note": "A separate process exit code was not supplied; PASS and CLEANED markers were supplied.",
+  "ssh_target": "root@10.130.14.23",
+  "namespace": "sbk-mig-260924071052-5204",
+  "namespace_uid": "439e6cf3-ad8f-40a8-ab59-3ff49d5ed7cf",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "binary_sha256": "b25e06755f26456c967d271f81263e61d40e42bd14b2dcba82e7a3f1820dff37",
+  "ddl_sha256": "1c1698e71f781d4f6e66589cc29565625a5e28d683e42da0da9a26c36ba0245e",
+  "local": {
+    "registration_unit_tests": "PASS",
+    "linux_mysql_probe_compiled": true,
+    "real_mysql_at_local_phase": "not_run"
+  },
+  "bundle_checksum": "OK",
+  "migration": {
+    "status": "PASS",
+    "range": "001..079",
+    "applied": 92,
+    "exact_filenames": true,
+    "d_columns": "blob/blob/blob/char"
+  },
+  "mysql_test": {
+    "name": "TestDProviderRegistrationMySQL",
+    "status": "PASS",
+    "duration_seconds": 0.40,
+    "cases": {
+      "concurrent_same_request_has_one_atomic_result": "PASS",
+      "body_conflict": "PASS",
+      "nonce_replay_with_new_idempotency_key": "PASS",
+      "result_audit_failure_rolls_back_every_table": "PASS",
+      "permission_revocation_blocks_committed_retry": "PASS"
+    },
+    "final_marker": "PASS d-provider-registration-mysql"
+  },
+  "cleanup_reported": {
+    "run_owned_database": true,
+    "namespace_with_matching_uid": true,
+    "remote_registration_scratch": true,
+    "local_registration_build_cache": true
+  },
+  "transport_note": "OpenSSH close/IO-pending warnings appeared; subsequent PASS and CLEANED markers were supplied.",
+  "scope_limits": [
+    "Unsigned operator report, not an independently captured remote transcript.",
+    "Actual isolated MySQL with synthetic config, target, session/visibility and capacity dependencies.",
+    "Does not establish production HTTP/session authorization or target/capacity integration.",
+    "Does not establish real provider-proof issuer readiness or formal registry/config activation.",
+    "Does not cover actual MySQL commit-disconnect faults or concurrent cross-installation HMAC rotation."
+  ]
+}

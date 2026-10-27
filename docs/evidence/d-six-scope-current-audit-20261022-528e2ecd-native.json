@@ -1,0 +1,29 @@
+{
+  "node": "C:/Program Files/nodejs/node.exe",
+  "gates": [
+    {
+      "name": "inventory",
+      "stdout": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-inventory.stdout.json",
+      "native_exit": 0,
+      "stderr": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-inventory.stderr.txt",
+      "arguments": [
+        "scripts/system-backup-schema-inventory.mjs",
+        "--check"
+      ]
+    },
+    {
+      "name": "contract",
+      "stdout": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-contract.stdout.json",
+      "native_exit": 1,
+      "stderr": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-contract.stderr.txt",
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--check",
+        "--strict"
+      ]
+    }
+  ],
+  "dependencies_installed": false,
+  "remote": false,
+  "recorded_utc": "2026-10-22T06:23:50.6367738Z"
+}

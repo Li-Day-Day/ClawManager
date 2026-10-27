@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-15",
+  "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-config-review-final-3e28a1c734bc42838c24d3c071ca5587",
+  "runs": [
+    {
+      "stage": "targeted",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 -run ^TestConfigMutationA ./internal/systembackupsecurity"
+    },
+    {
+      "stage": "full",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 ./internal/systembackupsecurity ./internal/systembackupread"
+    }
+  ],
+  "source_snapshot": "docs/evidence/a-config-mutation-final-guard-source-snapshot-20261015.json",
+  "log": "docs/evidence/a-config-mutation-final-guard-local-20261015.txt",
+  "scratch_absent": true
+}

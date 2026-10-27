@@ -14984,7 +14984,7 @@ func defaultTeamRedisServiceURL() (string, bool) {
 		if client := k8s.GetClient(); client != nil {
 			systemNamespace = client.GetSystemNamespace()
 		} else if baseNamespace := strings.TrimSpace(os.Getenv("K8S_NAMESPACE")); baseNamespace != "" {
-			systemNamespace = fmt.Sprintf("%s-system", baseNamespace)
+			systemNamespace = resolveSystemNamespace(baseNamespace)
 		}
 	}
 	if systemNamespace == "" {

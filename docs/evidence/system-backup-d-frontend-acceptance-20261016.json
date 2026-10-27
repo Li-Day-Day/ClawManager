@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-16",
+  "scope": "D system backup frontend acceptance; local isolated component UI, not production API/end-to-end acceptance",
+  "dependencyInstall": {
+    "command": "npm.cmd ci --offline=false --prefer-offline=false --cache .qa-npm-cache --no-audit --no-fund",
+    "exitCode": 0,
+    "packages": 364,
+    "lockfileChanged": false
+  },
+  "build": {
+    "command": "npm.cmd run build",
+    "exitCode": 0,
+    "typescript": "passed",
+    "vite": "8.0.11",
+    "modules": 2278,
+    "warning": "Main JavaScript chunk about 3014.52 kB (gzip 797.81 kB); code splitting recommended"
+  },
+  "logicTests": {
+    "command": "node --test --test-isolation=none --experimental-strip-types scripts/system-backups*.test.mjs",
+    "tests": 194,
+    "passed": 194,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browser": {
+    "evidence": "system-backup-d-frontend-browser-acceptance-20261016.json",
+    "cases": 53,
+    "failed": 0,
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 1000
+      },
+      {
+        "width": 375,
+        "height": 812
+      }
+    ],
+    "locales": [
+      "en",
+      "zh",
+      "ja",
+      "ko",
+      "de"
+    ],
+    "screenshots": [
+      "system-backup-d-frontend-acceptance-desktop-20261016.png",
+      "system-backup-d-frontend-acceptance-mobile-20261016.png"
+    ]
+  },
+  "fix": {
+    "cause": "On Windows extensionless TSX component imports resolved to case-insensitive same-stem .ts helper files, causing TS1149/TS1192 and browser missing default export / blank page.",
+    "files": [
+      {
+        "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+        "sha256": "5e786b6dea1bbb59533311074b80f963ac47137035d76afc2928586b3206f701"
+      },
+      {
+        "path": "frontend/src/pages/admin/backups/BackupLiveDetail.tsx",
+        "sha256": "60f5cd51e46a20adf51bc62f10d0d1dd0188936af0d97821e0537dc080cab8b2"
+      }
+    ],
+    "sourcesUnchangedAfterValidation": true
+  },
+  "attemptNotes": [
+    "Initial default npm ci could not use missing offline cache; succeeded after explicit online installation.",
+    "Initial Node test subprocess isolation failed with spawn EPERM; same-process runner passed without changing assertions.",
+    "A compiler attempt during dependency extraction reported missing lucide-react declarations; final complete installation and full build passed.",
+    "Temporary pagination fixtures initially violated full-page continuation rules and were correctly rejected; corrected fixtures passed.",
+    "Temporary non-backup log fixtures initially used backup publish phase and were correctly rejected; task-specific phases passed.",
+    "Temporary Vite restarts caused browser navigation timeouts; final rendered states were verified."
+  ],
+  "limitations": [
+    "No real authentication or backend API / production operation acceptance.",
+    "Catalog, prune and promotion production UI integration and mutations remain pending as previously recorded."
+  ],
+  "cleanup": {
+    "pending": false,
+    "verified": true,
+    "serverStopped": true,
+    "temporaryBrowserTabClosed": true,
+    "paths": [
+      {
+        "path": "frontend/dist",
+        "exists": false
+      },
+      {
+        "path": "frontend/.qa-npm-cache",
+        "exists": false
+      },
+      {
+        "path": "frontend/.qa-backups-acceptance.tsx",
+        "exists": false
+      },
+      {
+        "path": "frontend/.qa-backups-vite.mjs",
+        "exists": false
+      },
+      {
+        "path": "frontend/qa-backups-acceptance.html",
+        "exists": false
+      },
+      {
+        "path": "frontend/node_modules/.tmp/tsconfig.app.tsbuildinfo",
+        "exists": false
+      },
+      {
+        "path": "frontend/node_modules/.tmp/tsconfig.node.tsbuildinfo",
+        "exists": false
+      },
+      {
+        "path": "frontend/node_modules/.vite",
+        "exists": false
+      },
+      {
+        "path": "frontend/node_modules/.vite-temp",
+        "exists": false
+      }
+    ],
+    "dependenciesRetained": true,
+    "evidenceRetained": true
+  }
+}

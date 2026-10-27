@@ -1,0 +1,78 @@
+{
+  "kind": "d_cost_snapshot_concurrent_local_run",
+  "mode": "isolated",
+  "stages": [
+    {
+      "stage": "full-business",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=900s",
+        "-json",
+        "./internal/systembackupbusinessa"
+      ]
+    },
+    {
+      "stage": "tagged-seed",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-count=1",
+        "-timeout=120s",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestABusinessRestoreMySQLSeed$",
+        "-json",
+        "./internal/systembackupbusinessa"
+      ]
+    },
+    {
+      "stage": "windows-probe",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8155571ac24945128752f25b204346f0\\a-cost-snapshot.exe",
+        "./internal/systembackupbusinessa"
+      ]
+    },
+    {
+      "stage": "detached-seed",
+      "exit": 0
+    },
+    {
+      "stage": "linux-probe",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=1",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8155571ac24945128752f25b204346f0\\a-cost-snapshot.test",
+        "./internal/systembackupbusinessa"
+      ]
+    }
+  ],
+  "exit": 0,
+  "source_postcheck": true,
+  "source_sha256": "5d43fb6dc511d21ff25287b25ef12d4f43bcc37ed534902d7a573e52e0316523",
+  "default_vet": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_mysql": false,
+  "finished_utc": "2026-10-22T01:53:56.0247063Z"
+}

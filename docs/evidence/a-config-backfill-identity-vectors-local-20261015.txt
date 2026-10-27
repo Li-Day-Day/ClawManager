@@ -1,0 +1,41 @@
+**********************
+PowerShell transcript start
+Start time: 20261015131815
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+Start-Transcript -LiteralPath 'docs/evidence/a-config-backfill-identity-vectors-local-20261015.txt' -NoClobber
+try {
+    & node '.\scripts\system-backup-a-config-backfill-identity.test.mjs' --write-vectors 2>&1 | ForEach-Object {Write-Host $_}
+    if($LASTEXITCODE -ne 0){throw 'Independent backfill identity vector gate failed'}
+} finally {Stop-Transcript}
+Process ID: 42972
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-backfill-identity-vectors-local-20261015.txt
+file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-a-config-backfill-identity.test.mjs:27
+  for (const [name, value] of Object.entries(config[group])) {
+                                     ^
+
+TypeError: Cannot convert undefined or null to object
+    at Object.entries (<anonymous>)
+    at file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-a-config-backfill-identity.test.mjs:27:38
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.15.0
+**********************
+PowerShell transcript end
+End time: 20261015131815
+**********************

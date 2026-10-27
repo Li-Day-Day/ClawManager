@@ -1,0 +1,75 @@
+{
+  "kind": "d_gc_freeze_prerequisite_final_validation",
+  "exit": -1,
+  "source_postcheck": false,
+  "source_sha256": "ecc45ee2788b6cf5f27056b78a5bc3cdd11b0f1ed2975700defecd915b240c3f",
+  "parent_source_sha256": "5b6aa6a28595781ec670857eaa1a95a550fe32e5b3dd8f2b85ff92c6c7939f99",
+  "counterfactual_restored": false,
+  "stages": [
+    {
+      "stage": "ps7-d-download-gc-freeze",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps7-d-download-gc-task",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps7-d-download-producer",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps7-a-download-gc-role",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps7-a-evidence",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps5-d-download-gc-freeze",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps5-d-download-gc-task",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps5-d-download-producer",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps5-a-download-gc-role",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "ps5-a-evidence",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "deadline-focused",
+      "exit": 1,
+      "expected_exit": 0
+    }
+  ],
+  "evidence_framework_timeout_seconds": 2700,
+  "all_evidence_tests": true,
+  "security_pass_reused_from_unchanged_r4": true,
+  "default_vet": true,
+  "dependencies_installed": false,
+  "remote": false,
+  "actual_mysql": false,
+  "full_gc": false,
+  "freeze_adapter_wired": false,
+  "production_approved": false
+}

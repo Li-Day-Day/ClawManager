@@ -1,0 +1,81 @@
+{
+  "kind": "d_web_runtime_integration.v1",
+  "generated_at": "2026-10-21T09:27:11.096Z",
+  "status": "CONTAINER_INTEGRATION_PREPARED_LIVE_RUNTIME_BLOCKED",
+  "target": {
+    "namespace": "clawmanager-zhanghui08-system",
+    "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "frontend_node_port": 32643
+  },
+  "operator_observation": {
+    "source": "user-supplied kubectl output in current chat",
+    "live_read": false,
+    "session_recorder": false,
+    "read_pins_readable": false,
+    "cursor_key_present": false,
+    "download_service_observed": false
+  },
+  "sources": [
+    {
+      "path": "Dockerfile",
+      "sha256": "77028c7a5e1c0f088261823495aa4f9df620e9231828031bd76981ea7e9346bd"
+    },
+    {
+      "path": "deployments/container/start.sh",
+      "sha256": "49295ce76b9d11b8972c6b4be681eb0f1e0e60ef733f71d9f9d865b512b21bf3"
+    },
+    {
+      "path": "deployments/container/system-backup-download-proxy.sh",
+      "sha256": "5c237627950297daa2532f2add40a4be0d8811158687a02849bd380dac77a513"
+    },
+    {
+      "path": "deployments/nginx/nginx.conf",
+      "sha256": "cf20eae56830c273c44cf1a6417e98a4fcbdfc45b15f7108b7bf05f011f415d6"
+    },
+    {
+      "path": "scripts/system-backup-download-proxy.test.mjs",
+      "sha256": "69436aacbffc451e934eceb0ac28e3968dfe02ab14183d8fd9b6d690f0e81357"
+    },
+    {
+      "path": "docs/system-backup-d-web-runtime-integration-20261021.md",
+      "sha256": "00a0c7f4163c90a2f12f8156df5e18ae627421bc37da38dada9190287df0f396"
+    }
+  ],
+  "checks": {
+    "proxy_configuration_tests": {
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "native_exit": 0
+    },
+    "existing_frontend_download_tests": {
+      "passed": 37,
+      "failed": 0,
+      "skipped": 0,
+      "native_exit": 0
+    },
+    "posix_shell_syntax_exit": 0,
+    "git_diff_check_exit": 0,
+    "test_temporary_directories_remaining": []
+  },
+  "execution_notes": [
+    "Initial sandbox EPERM prevented child shell startup",
+    "Interrupted Git Bash launcher run stopped; exact temporary directory removed",
+    "Git sh test environment needed its existing /usr/bin tools on child PATH",
+    "Final configuration tests and shell syntax checks passed"
+  ],
+  "limitations": {
+    "nginx_parse_executed": false,
+    "nginx_upstream_tls_tested": false,
+    "image_built": false,
+    "image_deployed": false,
+    "remote_login_after_user_prohibition": false,
+    "cluster_changed": false,
+    "database_changed": false,
+    "dependencies_installed": false,
+    "real_read_http_verified": false,
+    "real_download_audit_verified": false,
+    "complete_task_detail_added": false
+  },
+  "prerequisite": "Admitted installation and active config, session recorder/read pins/cursor key, independent download runtime and actual CA/TLS configuration"
+}

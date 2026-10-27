@@ -1,0 +1,14 @@
+LOCAL_PASS isolated-go-telemetry=off
+=== RUN   TestMySQLAuthoritySeed
+=== RUN   TestMySQLAuthoritySeed/confirmed_absence_publishes_ready
+=== RUN   TestMySQLAuthoritySeed/unknown_absence_blocks_put
+--- PASS: TestMySQLAuthoritySeed (0.04s)
+    --- PASS: TestMySQLAuthoritySeed/confirmed_absence_publishes_ready (0.04s)
+    --- PASS: TestMySQLAuthoritySeed/unknown_absence_blocks_put (0.00s)
+PASS
+ok  	clawreef/internal/systembackupevidence	1.979s
+encoding/binary: C:\Program Files\Go\pkg\tool\windows_amd64\vet.exe: exit status 0xc0000043
+FAIL
+Windows vet/asm/compile process exited 0xc0000043; retrying the SAME mysql-probe-build command (1/3 failed). Vet remains enabled; isolated cache is retained only until this run ends.
+LOCAL_PASS seed-regression=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=0984d84cb5f9b3984b49495623253668c5e4058bb10b79addd08cf7da23d20a7
+CLEANED seed-regression-build-cache=True

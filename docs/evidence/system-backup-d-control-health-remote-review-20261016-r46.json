@@ -1,0 +1,86 @@
+{
+  "kind": "d_control_health_remote_acceptance.v1",
+  "recorded_at": "2026-10-16T05:37:29.245Z",
+  "status": "actual_mysql_seven_cases_accepted_candidate_scope_only",
+  "raw_log": "docs/evidence/d-control-health-remote-20261016-133106.txt",
+  "raw_log_sha256": "3bd5bdb70254178fb238bc5ffe25eb200ea1d09a27807c63f8e6eec7bdbfe6f3",
+  "source_manifest": "docs/evidence/d-control-health-remote-20261016-133106-source.json",
+  "source_manifest_sha256": "7b8ef33c76f3196525ac030d0ca1336568baba7bed8ead23da1221283867b884",
+  "source_files": 1302,
+  "source_sha256": "0312d6e5664f3a0e69616cd1628e4ab0c9b39bbe160311d6782a98552a1eb9bf",
+  "focused_current_source_matches": 214,
+  "other_current_source_drift": [],
+  "payloads": [
+    {
+      "path": "d-control-health.test",
+      "sha256": "c9f376dcc1543203a56081bf14099fe0b96bfaefe78e8bb5db0b195c033db177",
+      "bytes": 11241345
+    },
+    {
+      "path": "system-backup-migrate",
+      "sha256": "cff6270bf1537de361d938a533f155f7f1193de2c4f116327e53ec8b1ee97482",
+      "bytes": 9095771
+    },
+    {
+      "path": "d-control-health-inputs.json",
+      "sha256": "3539aaddd35c8f739155fd64c742b10b467693b3f484d15820278802bd71b597",
+      "bytes": 12472
+    }
+  ],
+  "migration_catalog_sha256": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237",
+  "migration_count": 95,
+  "go_groups": [
+    {
+      "package": "clawreef/internal/systembackupread",
+      "top_level": 55,
+      "including_subtests": 312
+    },
+    {
+      "package": "clawreef/internal/systembackupcontroller",
+      "top_level": 143,
+      "including_subtests": 191
+    },
+    {
+      "package": "clawreef/internal/systembackupcontroller",
+      "top_level": 1,
+      "including_subtests": 8
+    }
+  ],
+  "remote_cases": [
+    "initial_observe_takeover_read",
+    "concurrent_epoch_cas",
+    "concurrent_observation_cas",
+    "expiry_timezone_and_current_config",
+    "actual_constraints_and_fk",
+    "committed_reply_loss_poisoned_observer",
+    "completed_control_loop_and_fenced_stop"
+  ],
+  "actual_sql_root_pass": true,
+  "mysql_version": "8.4.8",
+  "run_namespace": "sbk-mig-261016053446-47a2",
+  "namespace_uid": "71f8d2a7-aef8-488a-9d74-a644d5bab4e0",
+  "cleaned_installations": [
+    "installation_dhealth_21a414dd3f4dfc0ca384",
+    "installation_dhealth_82231431c9583901bc68",
+    "installation_dhealth_a00a957a61000b70fafe",
+    "installation_dhealth_ad8ff378013a6608d19d",
+    "installation_dhealth_5d9d0bad5d8538991848",
+    "installation_dhealth_1512bfa096ebb37ffb8a",
+    "installation_dhealth_54d0979b8d2a60597ca6"
+  ],
+  "candidate_table_cleaned": true,
+  "namespace_uid_cleanup_recorded": true,
+  "remote_scratch_cleanup_recorded": true,
+  "local_owner_checked_absent": ".tmp-d-index-cache-a2e2dcd7611649ee8be1d6bd671d88d8",
+  "container_name": "codex-d-control-health-a2e2dcd7611649ee8be1d6bd671d88d8",
+  "socket_close_diagnostics_retained": 4,
+  "exit_code": 0,
+  "synthetic_read_scope": true,
+  "fixture_root_grants": true,
+  "dependencies_installed": false,
+  "tests_or_remote_commands_repeated_by_reviewer": false,
+  "main_controller_enabled": false,
+  "formal_schema_or_grants_approved": false,
+  "production_approval": false,
+  "full_six_scope_goal_complete": false
+}

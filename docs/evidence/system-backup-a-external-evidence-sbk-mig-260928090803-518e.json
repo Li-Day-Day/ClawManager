@@ -1,0 +1,147 @@
+{
+  "schema_version": "a-external-evidence-mysql-operator-receipt.v1",
+  "recorded_at_utc": "2026-09-28T09:11:16.4349068Z",
+  "source": "operator-provided console transcript attachment; remote state not independently queried",
+  "transcript": "docs/evidence/system-backup-a-external-evidence-sbk-mig-260928090803-518e.txt",
+  "transcript_sha256": "7064a1f074d0ea1f06f1dc3bbd6e3ab537d4ba9fb8fccd3a947f58ec01555371",
+  "result": "PASS_LIMITED_SCOPE",
+  "namespace": "sbk-mig-260928090803-518e",
+  "namespace_uid": "277799f2-d47e-4dcb-9de9-b49b9ecd0c06",
+  "mysql_version": "8.4.8",
+  "operator_wrapper_exit_code": 0,
+  "standalone_remote_exit_code": null,
+  "local_tests": {
+    "top_level_pass": 6,
+    "download_subtests_pass": 9,
+    "package_seconds": 1.235
+  },
+  "mysql_tests": {
+    "passed_subtest_count": 5,
+    "seconds": 0.36,
+    "subtests": [
+      {
+        "name": "pending_intent_chunks_atomic_and_duplicate_rejected",
+        "seconds": 0.01
+      },
+      {
+        "name": "publish_and_exact_version_read",
+        "seconds": 0.07
+      },
+      {
+        "name": "retention_and_references_block_gc",
+        "seconds": 0.02
+      },
+      {
+        "name": "audit_failure_rolls_back_claim_before_delete",
+        "seconds": 0.01
+      },
+      {
+        "name": "unknown_delete_retains_ref_then_confirmed_gc_clears_payload",
+        "seconds": 0.04
+      }
+    ]
+  },
+  "build": {
+    "probe_sha256": "e8c1f5717a269baab23437d68178ed7f94a73a52ae15d9a025e766a2bbe6e3ec",
+    "ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "migration_count": 93,
+    "migration_range": "001..080",
+    "exact_filenames": true
+  },
+  "local_review": {
+    "component_and_runner_bindings_matched": 13,
+    "migration_source_bindings_matched": 93,
+    "ddl_hash_recomputed": true,
+    "binary_hashes_match_prior_local_build": true,
+    "source_of_binary_bytes": "prior local build receipt and operator-reported hashes; binaries were cleaned, not rebuilt during receipt review"
+  },
+  "cleanup_reported": {
+    "probe_database": true,
+    "namespace_and_uid": true,
+    "remote_scratch": true,
+    "local_build_cache": true,
+    "cleanup_pending": false
+  },
+  "transport_diagnostics": {
+    "pending_socket_close_messages": 4,
+    "later_steps_completed": true,
+    "root_cause_determined": false
+  },
+  "acceptance_scope": [
+    "Isolated real MySQL evidence/chunk registration and duplicate refusal",
+    "Publication and exact-version read with synthetic object store and KEK",
+    "Retention/reference blocking via synthetic owner policy",
+    "Audit failure transaction rollback before delete",
+    "Unknown deletion retains refs; confirmed deletion clears chunks and leaves tombstone using proposed DDL"
+  ],
+  "production_provider_kms_verified": false,
+  "production_scoped_grants_verified": false,
+  "deployed_http_download_verified": false,
+  "formal_gc_migration_deployed": false,
+  "human_mfa_verified": false,
+  "config_activated": false,
+  "provider_capability_approved": false,
+  "agent_remote_actions_performed": false,
+  "source_bindings": [
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "1df72df3a77f63358a71825b60f1668cfef9f90259c6229b04abe3df1824a2cf"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "75eec37366536d526ce09a0144a382a9efe4efff0f3d4d844bff0204f9d788c6"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "322b2721628a33d09e503b44587899587b770ea6a1953895b68023203e324d7e"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1",
+      "sha256": "397b91da98e186fe0cc82721cc70ae4ae378e9466afba60529fbecf25ebf446b"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-phase.sh",
+      "sha256": "a7e57658d18f993b67218dad6af675793fec49cf4c8e4e5561d2b777847e0c93"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-evidence-gc-migration-proposal.sql",
+      "sha256": "3f65e0c05a61746968655e069e3e883f3074ece1184743f9c18a7c46561c0fca"
+    }
+  ],
+  "migration_source_receipt": "docs/evidence/system-backup-d-runtime-migration-local-20260928.json",
+  "next_steps": [
+    "D assign formal GC migration and update schema/inventory/catalog with upgrade checks",
+    "A complete production provider/KEK/redaction integration and coordinate C provider proof semantics",
+    "D connect authoritative SQLPolicy, session auth, HTTP and reconcile/GC scheduling; then run a scoped end-to-end validation"
+  ]
+}

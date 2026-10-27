@@ -1,0 +1,573 @@
+**********************
+PowerShell transcript start
+Start time: 20261014115747
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$dPromotionRoot=(Get-Location).Path
+$dPromotionScratch=Join-Path $dPromotionRoot ('.tmp-a-evidence-'+[guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $dPromotionScratch | Out-Null
+Start-Transcript -Path (Join-Path $dPromotionRoot 'docs/evidence/system-backup-d-promotion-control-local-20261014.txt')
+try {
+  Write-Output ('D_PROMOTION_CONTROL_SCRATCH='+$dPromotionScratch)
+  $env:GOPROXY='off';$env:GOSUMDB='off';$env:GOTOOLCHAIN='local';$env:GOFLAGS='-mod=readonly -p=1';$env:GOMAXPROCS='1';$env:CGO_ENABLED='0';$env:GOWORK='off';$env:GO111MODULE='on';$env:GOOS='windows';$env:GOARCH='amd64'
+  $env:GOCACHE=Join-Path $dPromotionScratch 'cache';$env:GOTMPDIR=Join-Path $dPromotionScratch 'tmp'
+  New-Item -ItemType Directory -Path $env:GOCACHE,$env:GOTMPDIR | Out-Null
+  . (Join-Path $dPromotionRoot 'scripts/system-backup-a-evidence-go-step.ps1')
+  Initialize-AEvidenceTelemetry -Scratch $dPromotionScratch
+  Set-Location (Join-Path $dPromotionRoot 'backend')
+  Invoke-AEvidenceGoStep -Arguments @('test','-count=1','-v','./internal/systembackupread') -Stage 'test-vet'
+  Write-Output 'PASS D_PROMOTION_CONTROL_READ_PACKAGE_AND_VET'
+  $env:GOOS='linux'
+  $dPromotionBin=Join-Path $dPromotionScratch 'd-promotion-control-mysql.test'
+  Invoke-AEvidenceGoStep -Arguments @('test','-c','-tags','systembackup_mysql','-o',$dPromotionBin,'./internal/systembackupsecurity') -Stage 'mysql-probe-build'
+  Write-Output ('D_PROMOTION_CONTROL_MYSQL_BINARY_SHA256='+(Get-FileHash -Algorithm SHA256 -LiteralPath $dPromotionBin).Hash.ToLowerInvariant())
+  Write-Output 'D_PROMOTION_CONTROL_LOCAL_EXIT=0'
+} finally {
+  Set-Location $dPromotionRoot
+  $dPromotionResolved=[IO.Path]::GetFullPath($dPromotionScratch)
+  if ([IO.Path]::GetDirectoryName($dPromotionResolved) -ne $dPromotionRoot -or [IO.Path]::GetFileName($dPromotionResolved) -notmatch '^\.tmp-a-evidence-[a-f0-9]{32}$') { throw 'Refusing cleanup outside owned workspace directory' }
+  if ((Get-Item -Force -LiteralPath $dPromotionResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Refusing cleanup of a reparse point' }
+  Remove-Item -LiteralPath $dPromotionResolved -Recurse -Force
+  Write-Output ('CLEANED D_PROMOTION_CONTROL_LOCAL_CACHE='+(-not (Test-Path -LiteralPath $dPromotionResolved)))
+  Stop-Transcript
+}
+Process ID: 22996
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-promotion-control-local-20261014.txt
+D_PROMOTION_CONTROL_SCRATCH=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-34b2c0cc06c644478cbbb3652dff95df
+LOCAL_PASS isolated-go-telemetry=off
+=== RUN   TestVerifyConfigBackfillSourceMatchesExistingRowWithoutCandidateColumn
+--- PASS: TestVerifyConfigBackfillSourceMatchesExistingRowWithoutCandidateColumn (0.01s)
+=== RUN   TestVerifyConfigBackfillSourceDeniesRevocationAndMissingRows
+--- PASS: TestVerifyConfigBackfillSourceDeniesRevocationAndMissingRows (0.01s)
+=== RUN   TestConfigVersionListPagesUseSignedStableCutoff
+--- PASS: TestConfigVersionListPagesUseSignedStableCutoff (0.01s)
+=== RUN   TestConfigVersionListFailsClosedOnScopeAndCorruptRows
+--- PASS: TestConfigVersionListFailsClosedOnScopeAndCorruptRows (0.00s)
+=== RUN   TestConfigVersionListProjectionRejectsForgedPage
+--- PASS: TestConfigVersionListProjectionRejectsForgedPage (0.00s)
+=== RUN   TestConfigProjectionRulesMatchContract
+--- PASS: TestConfigProjectionRulesMatchContract (0.00s)
+=== RUN   TestProjectConfigResourceClosedShapeAndAuthorizedService
+--- PASS: TestProjectConfigResourceClosedShapeAndAuthorizedService (0.01s)
+=== RUN   TestHistoricalConfigResourceIsInactiveAndNeverEffective
+--- PASS: TestHistoricalConfigResourceIsInactiveAndNeverEffective (0.01s)
+=== RUN   TestProjectConfigResourceRejectsMalformedValues
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/unknown_root
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/unknown_ref_field
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/out_of_range
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/bad_heartbeat
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/missing_ref
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/duplicate_ref_purpose
+=== RUN   TestProjectConfigResourceRejectsMalformedValues/shared_signing_identity
+--- PASS: TestProjectConfigResourceRejectsMalformedValues (0.02s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/unknown_root (0.00s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/unknown_ref_field (0.00s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/out_of_range (0.00s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/bad_heartbeat (0.00s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/missing_ref (0.00s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/duplicate_ref_purpose (0.00s)
+    --- PASS: TestProjectConfigResourceRejectsMalformedValues/shared_signing_identity (0.00s)
+=== RUN   TestConfigMaterializedProjectionMatchesMigrationColumns
+--- PASS: TestConfigMaterializedProjectionMatchesMigrationColumns (0.03s)
+=== RUN   TestReadActiveConfigRequiresAuthorizedMatchingCanonicalRow
+--- PASS: TestReadActiveConfigRequiresAuthorizedMatchingCanonicalRow (0.01s)
+=== RUN   TestReadActiveConfigFailsClosedOnScopeAndDatabaseChanges
+--- PASS: TestReadActiveConfigFailsClosedOnScopeAndDatabaseChanges (0.00s)
+=== RUN   TestReadConfigVersionUsesExactVersionAndActiveState
+--- PASS: TestReadConfigVersionUsesExactVersionAndActiveState (0.00s)
+=== RUN   TestCursorBindsAuthorizedTaskPage
+=== RUN   TestCursorBindsAuthorizedTaskPage/different_task
+=== RUN   TestCursorBindsAuthorizedTaskPage/different_filter
+=== RUN   TestCursorBindsAuthorizedTaskPage/different_limit
+=== RUN   TestCursorBindsAuthorizedTaskPage/tampered_payload
+=== RUN   TestCursorBindsAuthorizedTaskPage/oversized
+--- PASS: TestCursorBindsAuthorizedTaskPage (0.00s)
+    --- PASS: TestCursorBindsAuthorizedTaskPage/different_task (0.00s)
+    --- PASS: TestCursorBindsAuthorizedTaskPage/different_filter (0.00s)
+    --- PASS: TestCursorBindsAuthorizedTaskPage/different_limit (0.00s)
+    --- PASS: TestCursorBindsAuthorizedTaskPage/tampered_payload (0.00s)
+    --- PASS: TestCursorBindsAuthorizedTaskPage/oversized (0.00s)
+=== RUN   TestCursorRequiresDedicatedKeyAndCanonicalPayload
+--- PASS: TestCursorRequiresDedicatedKeyAndCanonicalPayload (0.00s)
+=== RUN   TestOperationProjectionMatchesMigrationWithoutSensitiveColumns
+--- PASS: TestOperationProjectionMatchesMigrationWithoutSensitiveColumns (0.03s)
+=== RUN   TestGetOperationProjectsAuthorizedRedactedResource
+--- PASS: TestGetOperationProjectsAuthorizedRedactedResource (0.00s)
+=== RUN   TestGetOperationFailsClosedOnScopeMissingAndCorruptRows
+--- PASS: TestGetOperationFailsClosedOnScopeMissingAndCorruptRows (0.00s)
+=== RUN   TestGetOperationRejectsInvalidResultAndState
+=== RUN   TestGetOperationRejectsInvalidResultAndState/schema
+=== RUN   TestGetOperationRejectsInvalidResultAndState/result_version
+=== RUN   TestGetOperationRejectsInvalidResultAndState/target
+=== RUN   TestGetOperationRejectsInvalidResultAndState/status
+=== RUN   TestGetOperationRejectsInvalidResultAndState/category
+=== RUN   TestGetOperationRejectsInvalidResultAndState/time
+--- PASS: TestGetOperationRejectsInvalidResultAndState (0.00s)
+    --- PASS: TestGetOperationRejectsInvalidResultAndState/schema (0.00s)
+    --- PASS: TestGetOperationRejectsInvalidResultAndState/result_version (0.00s)
+    --- PASS: TestGetOperationRejectsInvalidResultAndState/target (0.00s)
+    --- PASS: TestGetOperationRejectsInvalidResultAndState/status (0.00s)
+    --- PASS: TestGetOperationRejectsInvalidResultAndState/category (0.00s)
+    --- PASS: TestGetOperationRejectsInvalidResultAndState/time (0.00s)
+=== RUN   TestOperationListPaginatesAuthorizedRedactedRows
+--- PASS: TestOperationListPaginatesAuthorizedRedactedRows (0.00s)
+=== RUN   TestOperationListFailsClosedBeforeReturningRows
+--- PASS: TestOperationListFailsClosedBeforeReturningRows (0.00s)
+=== RUN   TestOverviewControlCountsAllRowsWithoutCreatingPublicOverview
+--- PASS: TestOverviewControlCountsAllRowsWithoutCreatingPublicOverview (0.00s)
+=== RUN   TestOverviewControlEmptyTablesAreExplicitKnownZeros
+--- PASS: TestOverviewControlEmptyTablesAreExplicitKnownZeros (0.00s)
+=== RUN   TestOverviewControlRejectsBrokenState
+=== RUN   TestOverviewControlRejectsBrokenState/unknown_matrix
+=== RUN   TestOverviewControlRejectsBrokenState/non_UTC_database
+=== RUN   TestOverviewControlRejectsBrokenState/unarmed_after_first_enable
+=== RUN   TestOverviewControlRejectsBrokenState/previously_enabled_without_first_time
+=== RUN   TestOverviewControlRejectsBrokenState/first_time_in_future
+=== RUN   TestOverviewControlRejectsBrokenState/cross_installation
+=== RUN   TestOverviewControlRejectsBrokenState/config_installation
+=== RUN   TestOverviewControlRejectsBrokenState/config_version_drift
+=== RUN   TestOverviewControlRejectsBrokenState/zero_state_row_version
+=== RUN   TestOverviewControlRejectsBrokenState/effective_while_config_disabled
+=== RUN   TestOverviewControlRejectsBrokenState/armed_reason_missing
+=== RUN   TestOverviewControlRejectsBrokenState/state_schema
+=== RUN   TestOverviewControlRejectsBrokenState/unsafe_config_version
+--- PASS: TestOverviewControlRejectsBrokenState (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/unknown_matrix (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/non_UTC_database (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/unarmed_after_first_enable (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/previously_enabled_without_first_time (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/first_time_in_future (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/cross_installation (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/config_installation (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/config_version_drift (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/zero_state_row_version (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/effective_while_config_disabled (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/armed_reason_missing (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/state_schema (0.00s)
+    --- PASS: TestOverviewControlRejectsBrokenState/unsafe_config_version (0.00s)
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/negative_count
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/unknown_task
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/status_from_wrong_kind
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/zero_group
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/unsafe_individual_count
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/duplicate_operation_status
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/overflow_operation_sum
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/zero_operation_group
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/unknown_status
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/stream_failure
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/operation_status
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/negative_operation_count
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/future_task_schema
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/stored_task_kind_drift
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/future_operation_schema
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/duplicate_task_status
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/overflow_task_sum
+=== RUN   TestOverviewControlRejectsInvalidOrIncompleteCounts/operation_SQL_fails_after_task_success
+--- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/negative_count (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/unknown_task (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/status_from_wrong_kind (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/zero_group (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/unsafe_individual_count (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/duplicate_operation_status (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/overflow_operation_sum (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/zero_operation_group (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/unknown_status (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/stream_failure (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/operation_status (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/negative_operation_count (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/future_task_schema (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/stored_task_kind_drift (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/future_operation_schema (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/duplicate_task_status (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/overflow_task_sum (0.00s)
+    --- PASS: TestOverviewControlRejectsInvalidOrIncompleteCounts/operation_SQL_fails_after_task_success (0.00s)
+=== RUN   TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData
+=== RUN   TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/authorize_revoked
+=== RUN   TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/final_revoked
+=== RUN   TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/commit_unknown
+=== RUN   TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/missing_installation
+=== RUN   TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/missing_with_final_revocation
+--- PASS: TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData (0.00s)
+    --- PASS: TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/authorize_revoked (0.00s)
+    --- PASS: TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/final_revoked (0.00s)
+    --- PASS: TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/commit_unknown (0.00s)
+    --- PASS: TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/missing_installation (0.00s)
+    --- PASS: TestOverviewControlAuthorizationAndCommitFailuresReturnNoPartialData/missing_with_final_revocation (0.00s)
+=== RUN   TestOverviewOwnerBuilderSharesTransactionAndCannotCommit
+--- PASS: TestOverviewOwnerBuilderSharesTransactionAndCannotCommit (0.00s)
+=== RUN   TestOverviewPromotionBindsSourcesAndPreservesHistoricalVersions
+--- PASS: TestOverviewPromotionBindsSourcesAndPreservesHistoricalVersions (0.00s)
+=== RUN   TestOverviewPromotionAbsenceIsQueriedAndDoesNotLoadUnboundSources
+--- PASS: TestOverviewPromotionAbsenceIsQueriedAndDoesNotLoadUnboundSources (0.00s)
+=== RUN   TestOverviewPromotionAvailabilityLossDoesNotEraseRecord
+=== RUN   TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/committed
+=== RUN   TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/corrupt
+=== RUN   TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/deleted
+=== RUN   TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/deleting
+=== RUN   TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/delete_failed
+--- PASS: TestOverviewPromotionAvailabilityLossDoesNotEraseRecord (0.00s)
+    --- PASS: TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/committed (0.00s)
+    --- PASS: TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/corrupt (0.00s)
+    --- PASS: TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/deleted (0.00s)
+    --- PASS: TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/deleting (0.00s)
+    --- PASS: TestOverviewPromotionAvailabilityLossDoesNotEraseRecord/delete_failed (0.00s)
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_config_version
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/registration_hash_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_version_rollback
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/foreign_drill
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_schema
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/import_not_local_source
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_version_rollback
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/invalid_drill_evidence_type
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/zero_source_version
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/wrong_backup_type
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_manifest_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/artifact_availability_mismatch
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/promotion_schema
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/promotion_ID
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/inactive_row_returned
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/lifecycle_not_active-only
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/functional_backup
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_acceptance_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_evidence
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/evidence_hash_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_health_not_healthy
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/duplicate_active
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_backup
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/foreign_promotion
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_observation_after_create
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/bad_creation_actor
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/promotion_scan_error
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/wrong_backup_schema
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/artifact_staging_rollback
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_source_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_checksum_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/wrong_matrix
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/bad_evidence_ID
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/unsafe_version
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/registration_drift
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_not_eligible
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/evidence_target_substitution
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/empty_registration
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/foreign_backup
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_not_succeeded
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_not_eligible
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/prune_guard_rollback
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_drill
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_retained
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_cleanup_unsettled
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/bad_checksum
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/evidence_owner_substitution
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_creation_config
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_config_schema
+=== RUN   TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_config_foreign
+--- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings (0.02s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_config_version (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/registration_hash_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_version_rollback (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/foreign_drill (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_schema (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/import_not_local_source (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_version_rollback (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/invalid_drill_evidence_type (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/zero_source_version (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/wrong_backup_type (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_manifest_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/artifact_availability_mismatch (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/promotion_schema (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/promotion_ID (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/inactive_row_returned (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/lifecycle_not_active-only (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/functional_backup (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_acceptance_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_evidence (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/evidence_hash_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_health_not_healthy (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/duplicate_active (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_backup (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/foreign_promotion (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_observation_after_create (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/bad_creation_actor (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/promotion_scan_error (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/wrong_backup_schema (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/artifact_staging_rollback (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_source_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_checksum_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/wrong_matrix (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/bad_evidence_ID (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/unsafe_version (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/registration_drift (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_not_eligible (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/evidence_target_substitution (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/empty_registration (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/foreign_backup (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_not_succeeded (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/backup_not_eligible (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/prune_guard_rollback (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_drill (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_retained (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/drill_cleanup_unsettled (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/bad_checksum (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/evidence_owner_substitution (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/missing_creation_config (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_config_schema (0.00s)
+    --- PASS: TestOverviewPromotionRejectsDriftAndIncompleteBindings/creation_config_foreign (0.00s)
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/promotion_SQL
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/backup_SQL
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/drill_SQL
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/evidence_SQL
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/config_SQL
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/promotion_stream
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/authorize
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/recheck
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/commit
+=== RUN   TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/absent_revoked
+--- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/promotion_SQL (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/backup_SQL (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/drill_SQL (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/evidence_SQL (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/config_SQL (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/promotion_stream (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/authorize (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/recheck (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/commit (0.00s)
+    --- PASS: TestOverviewPromotionSQLStreamAndAuthorityFailuresReturnZero/absent_revoked (0.00s)
+=== RUN   TestOverviewPromotionBuilderRemainsInsideFinalGuard
+=== RUN   TestOverviewPromotionBuilderRemainsInsideFinalGuard/success
+=== RUN   TestOverviewPromotionBuilderRemainsInsideFinalGuard/owner_failure
+=== RUN   TestOverviewPromotionBuilderRemainsInsideFinalGuard/revoked
+=== RUN   TestOverviewPromotionBuilderRemainsInsideFinalGuard/canceled
+--- PASS: TestOverviewPromotionBuilderRemainsInsideFinalGuard (0.00s)
+    --- PASS: TestOverviewPromotionBuilderRemainsInsideFinalGuard/success (0.00s)
+    --- PASS: TestOverviewPromotionBuilderRemainsInsideFinalGuard/owner_failure (0.00s)
+    --- PASS: TestOverviewPromotionBuilderRemainsInsideFinalGuard/revoked (0.00s)
+    --- PASS: TestOverviewPromotionBuilderRemainsInsideFinalGuard/canceled (0.00s)
+=== RUN   TestGetTaskBaseScopesAndRedactsFourKinds
+=== RUN   TestGetTaskBaseScopesAndRedactsFourKinds/backup
+=== RUN   TestGetTaskBaseScopesAndRedactsFourKinds/drill
+=== RUN   TestGetTaskBaseScopesAndRedactsFourKinds/preflight
+=== RUN   TestGetTaskBaseScopesAndRedactsFourKinds/artifact_verify
+--- PASS: TestGetTaskBaseScopesAndRedactsFourKinds (0.00s)
+    --- PASS: TestGetTaskBaseScopesAndRedactsFourKinds/backup (0.00s)
+    --- PASS: TestGetTaskBaseScopesAndRedactsFourKinds/drill (0.00s)
+    --- PASS: TestGetTaskBaseScopesAndRedactsFourKinds/preflight (0.00s)
+    --- PASS: TestGetTaskBaseScopesAndRedactsFourKinds/artifact_verify (0.00s)
+=== RUN   TestGetTaskBaseFailsClosedOnInvalidMissingAndRevoked
+--- PASS: TestGetTaskBaseFailsClosedOnInvalidMissingAndRevoked (0.00s)
+=== RUN   TestDetailBuilderRunsWithinAuthorizedTransactionBeforeFinalRecheck
+--- PASS: TestDetailBuilderRunsWithinAuthorizedTransactionBeforeFinalRecheck (0.00s)
+=== RUN   TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns
+=== RUN   TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/backup
+=== RUN   TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/drill
+=== RUN   TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/preflight
+=== RUN   TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/artifact_verify
+--- PASS: TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns (0.00s)
+    --- PASS: TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/backup (0.00s)
+    --- PASS: TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/drill (0.00s)
+    --- PASS: TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/preflight (0.00s)
+    --- PASS: TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns/artifact_verify (0.00s)
+=== RUN   TestProjectTaskListFailsClosedOnMalformedOrMixedScope
+--- PASS: TestProjectTaskListFailsClosedOnMalformedOrMixedScope (0.00s)
+=== RUN   TestTaskExecutionFourKindsScopedCompleteAndPrivate
+=== RUN   TestTaskExecutionFourKindsScopedCompleteAndPrivate/backup
+=== RUN   TestTaskExecutionFourKindsScopedCompleteAndPrivate/drill
+=== RUN   TestTaskExecutionFourKindsScopedCompleteAndPrivate/preflight
+=== RUN   TestTaskExecutionFourKindsScopedCompleteAndPrivate/artifact_verify
+--- PASS: TestTaskExecutionFourKindsScopedCompleteAndPrivate (0.00s)
+    --- PASS: TestTaskExecutionFourKindsScopedCompleteAndPrivate/backup (0.00s)
+    --- PASS: TestTaskExecutionFourKindsScopedCompleteAndPrivate/drill (0.00s)
+    --- PASS: TestTaskExecutionFourKindsScopedCompleteAndPrivate/preflight (0.00s)
+    --- PASS: TestTaskExecutionFourKindsScopedCompleteAndPrivate/artifact_verify (0.00s)
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_foreign_ID
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/capture_succeeded_instead_of_sealed
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/failed_canceled_category
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/duplicate_attempt
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_schema
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_progress_beyond_accepted
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_progress_after_observation
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/duplicate_job_unit
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_zero
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_unsafe_version
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_observed_status
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/duplicate_job_UID
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_scan_error
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_unknown_failure
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_wrong_kind
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/zero_cursor_has_payload
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_outside_unsigned_int
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_unknown_status
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_unit_key
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_missing_observation_time
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_observation_before_binding
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_missing_progress_time
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_zero_version
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_zero_created
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/running_finished
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_backwards_update
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_zero_generation
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_progress_digest
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/zero_progress_has_payload
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_phase
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_unsafe_generation
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_wrong_kind
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/running_missing_start
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/failed_missing_category
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_foreign_installation
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_UID
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_unsafe_accepted_sequence
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_expired_before_bound
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_scan_error
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/canceled_wrong_category
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_foreign_ID
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_missing_attempt
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_wrong_phase
+=== RUN   TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_body_hash
+--- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations (0.01s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_foreign_ID (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/capture_succeeded_instead_of_sealed (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/failed_canceled_category (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/duplicate_attempt (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_schema (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_progress_beyond_accepted (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_progress_after_observation (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/duplicate_job_unit (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_zero (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_unsafe_version (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_observed_status (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/duplicate_job_UID (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_scan_error (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_unknown_failure (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_wrong_kind (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/zero_cursor_has_payload (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_outside_unsigned_int (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_unknown_status (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_unit_key (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_missing_observation_time (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_observation_before_binding (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_missing_progress_time (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_zero_version (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_zero_created (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/running_finished (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_backwards_update (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_zero_generation (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_progress_digest (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/zero_progress_has_payload (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_phase (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_unsafe_generation (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_wrong_kind (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/running_missing_start (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/failed_missing_category (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_foreign_installation (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_UID (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_unsafe_accepted_sequence (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_expired_before_bound (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/attempt_scan_error (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/canceled_wrong_category (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_foreign_ID (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_missing_attempt (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_wrong_phase (0.00s)
+    --- PASS: TestTaskExecutionRejectsCorruptAttemptsAndObservations/job_body_hash (0.00s)
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/empty
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/preparing
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/sealed
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/failed
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/canceled
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/no_progress
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/no_observation
+=== RUN   TestTaskExecutionKnownEmptyAndStatusVariants/succeeded
+--- PASS: TestTaskExecutionKnownEmptyAndStatusVariants (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/empty (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/preparing (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/sealed (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/failed (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/canceled (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/no_progress (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/no_observation (0.00s)
+    --- PASS: TestTaskExecutionKnownEmptyAndStatusVariants/succeeded (0.00s)
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/authorize
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/recheck
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/commit
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/attempt_SQL
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/job_SQL
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/attempt_stream
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/job_stream
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/missing
+=== RUN   TestTaskExecutionTransactionFailureAndAuthorityCauses/missing_revoked
+--- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/authorize (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/recheck (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/commit (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/attempt_SQL (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/job_SQL (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/attempt_stream (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/job_stream (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/missing (0.00s)
+    --- PASS: TestTaskExecutionTransactionFailureAndAuthorityCauses/missing_revoked (0.00s)
+=== RUN   TestTaskExecutionBuilderSharesSnapshotAndCannotCommit
+=== RUN   TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/success
+=== RUN   TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/owner_failure
+=== RUN   TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/revoked
+=== RUN   TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/canceled
+--- PASS: TestTaskExecutionBuilderSharesSnapshotAndCannotCommit (0.00s)
+    --- PASS: TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/success (0.00s)
+    --- PASS: TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/owner_failure (0.00s)
+    --- PASS: TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/revoked (0.00s)
+    --- PASS: TestTaskExecutionBuilderSharesSnapshotAndCannotCommit/canceled (0.00s)
+=== RUN   TestTaskPagesBindInstallationAndKeyset
+--- PASS: TestTaskPagesBindInstallationAndKeyset (0.00s)
+=== RUN   TestTaskPagesFailClosedOnAuthorityAndDatabase
+--- PASS: TestTaskPagesFailClosedOnAuthorityAndDatabase (0.00s)
+=== RUN   TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows
+=== RUN   TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows/ascending
+=== RUN   TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows/duplicate
+--- PASS: TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows (0.00s)
+    --- PASS: TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows/ascending (0.00s)
+    --- PASS: TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows/duplicate (0.00s)
+=== RUN   TestTaskPagesRejectUnknownStoredSchemaVersion
+--- PASS: TestTaskPagesRejectUnknownStoredSchemaVersion (0.00s)
+=== RUN   TestTaskPagesUseFourDistinctTables
+=== RUN   TestTaskPagesUseFourDistinctTables/backup
+=== RUN   TestTaskPagesUseFourDistinctTables/drill
+=== RUN   TestTaskPagesUseFourDistinctTables/preflight
+=== RUN   TestTaskPagesUseFourDistinctTables/artifact_verify
+--- PASS: TestTaskPagesUseFourDistinctTables (0.00s)
+    --- PASS: TestTaskPagesUseFourDistinctTables/backup (0.00s)
+    --- PASS: TestTaskPagesUseFourDistinctTables/drill (0.00s)
+    --- PASS: TestTaskPagesUseFourDistinctTables/preflight (0.00s)
+    --- PASS: TestTaskPagesUseFourDistinctTables/artifact_verify (0.00s)
+=== RUN   TestReadServiceContinuesOnlyAuthorizedInstallation
+--- PASS: TestReadServiceContinuesOnlyAuthorizedInstallation (0.00s)
+=== RUN   TestTaskProjectionExistsInAllMigratedTaskTables
+--- PASS: TestTaskProjectionExistsInAllMigratedTaskTables (0.01s)
+PASS
+ok  	clawreef/internal/systembackupread	1.261s
+PASS D_PROMOTION_CONTROL_READ_PACKAGE_AND_VET
+D_PROMOTION_CONTROL_MYSQL_BINARY_SHA256=c27e39152b0c7d9ff7b7cbadc39ecee46967d327a809eed91d3862bd25600932
+D_PROMOTION_CONTROL_LOCAL_EXIT=0
+CLEANED D_PROMOTION_CONTROL_LOCAL_CACHE=True
+**********************
+PowerShell transcript end
+End time: 20261014120621
+**********************

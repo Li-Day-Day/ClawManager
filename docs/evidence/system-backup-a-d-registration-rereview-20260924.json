@@ -1,0 +1,80 @@
+{
+  "schema_version": "system-backup-a-d-registration-review.v1",
+  "reviewed_at": "2026-09-24T07:37:41.400Z",
+  "reviewer": "A",
+  "status": "changes_requested",
+  "scope": "local component review and candidate-input receipt; no remote requery or activation",
+  "findings": [
+    {
+      "id": "A-D-REG-01",
+      "priority": 2,
+      "status": "open",
+      "file": "backend/internal/systembackupsecurity/providerproof_registry.go",
+      "line": 107,
+      "issue": "Case-insensitive struct field aliases override revocation and RBAC role",
+      "reproduced": [
+        "revoked=true plus Revoked=false resolves false",
+        "role=viewer plus Role=security_admin authorizes"
+      ]
+    },
+    {
+      "id": "A-D-REG-02",
+      "priority": 2,
+      "status": "open",
+      "file": "backend/internal/systembackupsecurity/providerproof_registry.go",
+      "line": 31,
+      "issue": "Missing or null revocation is silently accepted as false",
+      "reproduced": [
+        "omitted revoked accepted",
+        "revoked=null accepted"
+      ]
+    }
+  ],
+  "validation": {
+    "existing_go_top_level_tests": 41,
+    "existing_go_exit": 0,
+    "node_tests": 18,
+    "node_exit": 0,
+    "node_first_attempt": "multi-file node --test blocked by spawn EPERM; direct per-file runs passed",
+    "candidate_validator": "PASS",
+    "current_preparation_source_bindings": "PASS",
+    "exact_registry_bytes": "PASS",
+    "actual_candidate_go_decode": "PASS",
+    "independent_negative_top_level_tests": 2,
+    "negative_scenarios": 4,
+    "review_probe_exit": 1,
+    "probe_interpretation": "Four invalid-input acceptance cases reproduced; not acceptance PASS",
+    "current_mysql_ddl_hash_match": true
+  },
+  "candidate": {
+    "version": "d-issuer-d7f0a14ec84d78927620d25f",
+    "sha256": "c1b76a352d37cee763235c645cf82ded5e4193cb66fb12614a83c4cb950ed4a8",
+    "installation_id": "installation_sbk_provider_zh_7474d6e0b052",
+    "active_config_updated": false,
+    "attestation_service_ready": false,
+    "provider_capability_approved": false
+  },
+  "mysql": {
+    "evidence": "docs/evidence/system-backup-d-provider-registration-mysql-20260924.json",
+    "source": "unsigned operator report",
+    "reported_cases_passed": 5,
+    "independently_requeried": false,
+    "remote_exit_code": null,
+    "ddl_sha256": "1c1698e71f781d4f6e66589cc29565625a5e28d683e42da0da9a26c36ba0245e"
+  },
+  "cleanup": {
+    "local_scratch_absent": true,
+    "dependencies_installed": false,
+    "remote_resources_created": false
+  },
+  "source_sha256": {
+    "backend/internal/systembackupsecurity/providerproof_transaction.go": "1551c7f99f9cd7050e2b7d88600c1d11a41cda75f48cf57d677262f2a227226b",
+    "backend/internal/systembackupsecurity/providerproof_registry.go": "e1141a1d6c5b92e0f2a04c17d4933ab72533b6a89c2b55c283e157551d126a01",
+    "backend/internal/systembackupsecurity/providerproof_transaction_test.go": "0594df68e6ae74787e037e3469deaa14bc81b1b138f7e3681b6c0f849a9ae3db",
+    "backend/internal/systembackupsecurity/providerproof_mysql_test.go": "3fbd53b772a5bb628593d27b3fe2344da34384dd72ec7b80aee975227e727762",
+    "scripts/system-backup-d-provider-issuer.mjs": "2031244486e3242959073476c7b46c3a00a26febf3d93377f6cdcb411085330f",
+    "scripts/system-backup-d-provider-issuer.py": "b2dfa7938246e300130d20c2381b8f2a9da43e20bd9478a804a36d07542bdbbb",
+    "scripts/system-backup-a-d-registration-review/review_test.go": "a24dd3ea58cea12f87d10778a8e341d118d14d8cfc583f59ac03aaad20f3817c",
+    "scripts/system-backup-a-d-registration-review.ps1": "8e670b40bb7428e5446dac472af275f58ee85eb9fc5962596fa4796cfe5f85a1"
+  }
+}

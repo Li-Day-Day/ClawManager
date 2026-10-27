@@ -1,0 +1,122 @@
+{
+  "kind": "d_download_four_task_owner_frozen_review",
+  "source_files": 1388,
+  "source_sha256": "a4820738f81979034ab9118fc8b6e84b297b80aaa02bad72d43e6c991b014a93",
+  "capture_attempts": 1,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 253,
+      "all_pass": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 268,
+      "all_pass": 2043
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main_pass": 75,
+      "all_pass": 519
+    }
+  ],
+  "go_main_pass": 596,
+  "go_all_pass": 4547,
+  "new_roots": [
+    "TestSQLTaskDownloadPreviewActualRowsPermissionsAndNoLocks",
+    "TestSQLTaskDownloadPreviewClassifiesAllFourStoredClasses",
+    "TestSQLTaskDownloadCurrentRBACRejectsPrivateBeforeChunks",
+    "TestSQLTaskDownloadUnknownSchemaOwnerAndAuthorityFailBeforeChunks",
+    "TestSQLTaskDownloadLocksReferencesInOrderAndRejectsOverflow",
+    "TestSQLTaskDownloadPolicyRequiresAuthenticatedContextAndCannotWrite",
+    "TestSQLTaskDownloadRetainedEvidenceKeepsPastOriginalOwnerDeadline",
+    "TestSQLTaskDownloadRealPinnedAdmissionAndPostCommitPolicy",
+    "TestSQLTaskDownloadOtherOwnerTypesHaveNoTaskFallback",
+    "TestSQLTaskDownloadResultLocksActualOwnerAfterRevocation"
+  ],
+  "new_all_pass": 66,
+  "current_source_drift": [],
+  "current_sources_match": true,
+  "attempts": [
+    {
+      "prefix": "d-download-task-owner-focused-20261019-r28",
+      "native_exit": 1,
+      "accepted_only_for_its_frozen_sources": false,
+      "go_sha256": "9aa83613ebfd9fc878945bb812ff1da1f2c8103111df1ea4bcc3080cc93cd4a6",
+      "source_sha256": "cbf0c098704627e506c2c2b7f1ddc2fbe44b11368e54e95e15269923a716d228"
+    },
+    {
+      "prefix": "d-download-task-owner-focused-20261019-r29",
+      "native_exit": 1,
+      "accepted_only_for_its_frozen_sources": false,
+      "go_sha256": "fb32e2d757219391b68c02d138398175d5037995817a682231ee434bc9b8280f",
+      "source_sha256": "37877fbe33a36f91263334511ab549b587c4df7f13d41cf42155345a301e6aa0"
+    },
+    {
+      "prefix": "d-download-task-owner-focused-20261019-r30",
+      "native_exit": 1,
+      "accepted_only_for_its_frozen_sources": false,
+      "go_sha256": "28ec94ca4d890ebf205a10676fe0bc76bfe634c946ad6bbbf1cd35b9d9d5963b",
+      "source_sha256": "19e22c22fd36d47144982649c8ed44a61b27a807f2de440e3c1847a6f5bdcedf"
+    },
+    {
+      "prefix": "d-download-task-owner-focused-20261019-r31",
+      "native_exit": 0,
+      "accepted_only_for_its_frozen_sources": true,
+      "go_sha256": "8f7940523cc0330f019a2d2449bf1ab075be846c44de7462b8f5b1a96be4f776",
+      "source_sha256": "a4820738f81979034ab9118fc8b6e84b297b80aaa02bad72d43e6c991b014a93"
+    },
+    {
+      "prefix": "d-download-task-owner-packages-20261019-r32",
+      "native_exit": 0,
+      "accepted_only_for_its_frozen_sources": true,
+      "go_sha256": "c47df3081044f18c6be8f05c581be03b9f26dac2a740121d6528c81c70cc32c6",
+      "source_sha256": "a4820738f81979034ab9118fc8b6e84b297b80aaa02bad72d43e6c991b014a93"
+    }
+  ],
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c3a1410eca0e448690c4610e0850d852",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5c9eb6ecc3db4eb28cf0397c2eb28237",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a75a2c5e5d9740e58106de04f5d8942f",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a470992899d347e7a4721e0fac376dde",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-83525887f9964921a50195196e0a8549",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-task-owner-20261019-r28",
+      "exists": false
+    }
+  ],
+  "log_hashes": {
+    "go": "c47df3081044f18c6be8f05c581be03b9f26dac2a740121d6528c81c70cc32c6",
+    "source": "88903d3e053d8d5b36c935a19051ac7894ebdc2666d04bd498c979c6287fced4",
+    "native": "9f6a5202ca21411e04e5575a4f00cc9b32efcc2d65b12126ad394004cad8129d"
+  },
+  "actual_task_tables": [
+    "system_backups",
+    "system_restore_drills",
+    "system_backup_preflights",
+    "system_backup_artifact_verifications"
+  ],
+  "reference_columns_from_published_and_candidate_ddl": 23,
+  "installed_dependencies": false,
+  "actual_mysql": false,
+  "current_server_rerun": false,
+  "production_main_enabled": false,
+  "formal_schema_or_grants_installed": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Actual task/reference SQL adapter, session/RBAC/manifest policy, admission/post-commit and independent result code on scripted SQL. Row data, capacity and materials remain synthetic. No actual InnoDB locking/grants/physical capacity/GC or deployment evidence. Other owner types still require their own authoritative adapters; metadata visibility must be established by formal schema/grants review."
+}

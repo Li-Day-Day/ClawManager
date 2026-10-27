@@ -1,0 +1,208 @@
+{
+  "kind": "a_config_response_content_and_maintenance_digest_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T10:56:42.2570907+08:00",
+  "status": "accepted_frozen_content_profile_and_digest_go_parity",
+  "reviewer_kind": "Codex A-role local review; not human/deployment signature",
+  "scope": "Complete typed JCS ConfigResource policy, live content dispatcher and encrypted large-body validation; accepted maintenance digest representation only",
+  "source_snapshot": {
+    "path": "docs/evidence/a-config-response-content-source-20261015-r2.json",
+    "manifest_sha256": "66a95296bf29f5ef3d50f968e85804daa0aec87e66512a4f24c783cc04519fef",
+    "source_sha256": "f97f89bd352925af54a88cbd38425c34c2495e032fac2a12aa17cdf9b5f55a1c",
+    "files": 1183,
+    "post_test_frozen_check": "passed before LOCAL_PASS",
+    "in_progress_d_response_files_excluded": false,
+    "d_combination_inputs_present": [
+      "backend/internal/systembackupconfig/response_content_test.go",
+      "backend/internal/systembackupconfig/response_content.go",
+      "backend/internal/systembackupconfig/response_read.go",
+      "backend/internal/systembackupconfig/response_stage.go"
+    ],
+    "current_existing_input_drift": [
+      "backend/internal/systembackupconfig/response_content_test.go",
+      "backend/internal/systembackupconfig/response_content.go",
+      "backend/internal/systembackupconfig/response_read.go",
+      "backend/internal/systembackupconfig/response_stage.go",
+      "backend/internal/systembackupsecurity/config_mutation_response_preparation.go",
+      "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "scripts/system-backup-d-config-mutation-local-validation.ps1"
+    ],
+    "missing_inputs": [],
+    "current_scope_note": "13 A/helper/vector inputs still match. Parallel D transaction/preparation/storage and D validation-script edits are not accepted as current-tree regression by this frozen gate. Current canonical response helper field/JCS construction was inspected and remains the reviewed implementation."
+  },
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/config_response_content_test.go",
+      "size": 9958,
+      "sha256": "ba38d31be9d0b356b71942e1f1d79162efac2296a7b2dfe71b3c29a28994b68d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/config_response_content.go",
+      "size": 2996,
+      "sha256": "bb2e2d632c807a04716f104c6d39e0c1820aa98fcc123c320eb46bc00c9156db"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/content_dispatch.go",
+      "size": 3500,
+      "sha256": "757c450ee233ce7aa524ee982377814e04773db422fbd0308ede93b0b345d22f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash_a_test.go",
+      "size": 5516,
+      "sha256": "45961482d0f333fb16374102a9e78ded97f1ca3f296d567611ff898bfafa717c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash.go",
+      "size": 4367,
+      "sha256": "91a94ec9662117ca149675619cc5ff5d2ce6abadfbf31dbe71b9aca1f63114c5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+      "size": 9555,
+      "sha256": "634034b7a652a5293c12c0af9109bfbb70b5f0b4afcdb0b751ff3dc02e4a202b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_request.go",
+      "size": 6117,
+      "sha256": "a85430c0e1bbca2d75202ad4c383c9f53bddb43ce6d1da14181648fe10a395f0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_response_canonical_a_test.go",
+      "size": 2550,
+      "sha256": "9467b2343f720457ed8205e7f613bc1f32391e190cee608dda8a5aa3071cebe6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_response_canonical.go",
+      "size": 1916,
+      "sha256": "3881249a9ee2baf066cbe0ce870e8b28ce1a6823e63d15e74a95b1d10cd03250"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-vectors-20261015.json",
+      "size": 9770,
+      "sha256": "9a37c004f4ab13ad8b462418aca07dd4f544407a24e3fe9f49e6b42da6531acc"
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-request-vectors-20261014.json",
+      "size": 18710,
+      "sha256": "fbb7955e87987f6811c2b721de38087a4a80ba3a736be9b29ac2bc9f311178de"
+    },
+    {
+      "path": "scripts/system-backup-a-config-response-content-validation.ps1",
+      "size": 4480,
+      "sha256": "4a2e261b4393bfefd8827f4485d34a261f2c079e3f8db228b01d5de93b6f8b4d"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5541,
+      "sha256": "3eedf2cf37ae53ea20091bb213d8ee0d8ba7bbdd12ff159fee15e623d9699d21"
+    }
+  ],
+  "validation": {
+    "log": "docs/evidence/a-config-response-content-local-20261015-r2.txt",
+    "log_sha256": "e0bd7eacf5c06a41911151f631d370a6370f4701bf5e5cabe9d286f6c2110713",
+    "targeted_packages": [
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "seconds": 1.338,
+        "main_pass": 5,
+        "subtest_pass": 35
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "seconds": 2.776,
+        "main_pass": 4,
+        "subtest_pass": 23
+      }
+    ],
+    "targeted_main_pass": 9,
+    "targeted_subtest_pass": 58,
+    "full_packages": [
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "seconds": 51.975,
+        "main_pass": 140,
+        "subtest_pass": 686
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "seconds": 64.198,
+        "main_pass": 181,
+        "subtest_pass": 1131
+      },
+      {
+        "package": "clawreef/internal/systembackupproducer",
+        "seconds": 59.471,
+        "main_pass": 75,
+        "subtest_pass": 709
+      }
+    ],
+    "full_main_pass": 396,
+    "full_subtest_pass": 2526,
+    "full_unique_checks": 2922,
+    "targeted_repeats_not_added": true,
+    "exit": 0,
+    "vet_enabled": true,
+    "tool_crash_retries": 0
+  },
+  "snapshot_tools": {
+    "log": "docs/evidence/a-config-response-snapshot-tools-20261015.txt",
+    "log_sha256": "6c84c1bcc72848b5d31c1313d420c84d31603998126e7a272caead7cf67aa90f",
+    "pass": 5,
+    "exit": 0,
+    "fixture_cleanup_reported": true
+  },
+  "initial_failure": "docs/evidence/a-config-response-content-failed-20261015.json",
+  "content_profile": {
+    "type": "system-owned diagnostic",
+    "media": "application/json",
+    "classification": [
+      "internal",
+      "confidential",
+      "sensitive"
+    ],
+    "max_bytes": 270336,
+    "large_body_only": true,
+    "fixture_approx_bytes": 10500,
+    "fixture_uses_whitespace_padding": false,
+    "typed_facts_independent_from_body": true,
+    "read_before_after_current_authority": true,
+    "policy_deadline_immutable": true,
+    "reason_must_already_be_reviewed_and_redacted": true,
+    "free_text_sanitizer_implemented": false,
+    "production_content_authority_accepted": false
+  },
+  "maintenance_digests": {
+    "profile": "a-config-canonical-maintenance-digests.v1",
+    "contract": {
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-contract-20261015.json",
+      "sha256": "fdd8ecfa71201c36a9b88c5f4ab0987fe6e8722ae2a5bbfd2c72113fb418ca0d"
+    },
+    "vectors": "docs/evidence/a-config-canonical-maintenance-digest-vectors-20261015.json",
+    "vectors_sha256": "9a37c004f4ab13ad8b462418aca07dd4f544407a24e3fe9f49e6b42da6531acc",
+    "go_vector_parity": true,
+    "accepted_vector_count": 6,
+    "domain_and_exact_string_semantics_preserved": true,
+    "runtime_grant_or_provenance_accepted": false
+  },
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-4b52a8bf68614342a624aecc4947961c",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-cbb1b50302714ec18f454f2aabc76b08"
+  ],
+  "cleanup_independently_absent": true,
+  "dependencies_installed": false,
+  "ssh_run": false,
+  "mysql_run": false,
+  "ddl_executed": false,
+  "production_config_mutation_http_registered": false,
+  "runtime_grants_issued": 0,
+  "historical_canonical_originals_delivered": 0,
+  "production_approved": false,
+  "d_combination_layer_acceptance": "not independently accepted by this A three-package gate",
+  "remaining": [
+    "reviewed free-text reason redaction source",
+    "live production content/operation authorization, publication and SQL binding",
+    "actual owner resources and full mutation HTTP composition",
+    "real MySQL concurrency/rollback/commit-unknown gates",
+    "formal 081/082 migration, maintenance writer/grant and original canonical provenance"
+  ]
+}

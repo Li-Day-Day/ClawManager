@@ -1,0 +1,34 @@
+{
+  "kind": "system_backup_a_identity_transport_local_validation",
+  "recorded_at": "2026-09-23T08:22:07.505Z",
+  "status": "local_pass_remote_rerun_required",
+  "operator_attempt": "docs/evidence/system-backup-a-identity-preflight-20260923T081158Z.json",
+  "tests": {
+    "byte_transport_unit": {
+      "tests": 5,
+      "exit_code": 0
+    },
+    "bash_mock_regression": {
+      "tests": 3,
+      "exit_code": 0,
+      "windows_note": "Git Bash normalizes CR during parsing; ANSI-C word expansion materializes the CR command on Windows to test Linux observed semantics. Fixed byte input also tested with full CRLF source and trailing blank line."
+    },
+    "powershell_runbook_parse": {
+      "passed": true
+    },
+    "powershell_local_runner_parse": {
+      "passed": true
+    }
+  },
+  "remote_executed_by_agent": false,
+  "dependency_installation_performed": false,
+  "temporary_artifacts_created": false,
+  "registered_evidence": null,
+  "approved_reviewers": [],
+  "file_sha256": {
+    "scripts/system-backup-a-identity-ssh.mjs": "31b476a5bdf6d3857f50ca5f35bccb49fcc6867542049f1d6920df13330afb4b",
+    "scripts/system-backup-a-identity-ssh.test.mjs": "f7d3aa896c8c6e3a7fe4248897877959f0a128df1b7ef469cdcdef77631e3675",
+    "scripts/system-backup-a-identity-readonly-probe.sh": "167c51f5695255cbf16245ed3ce5b0c2c9e32cd580bca917a6a680983a1151b7",
+    "scripts/system-backup-a-identity-readonly-probe.test.mjs": "f2d4d9730820dc8716ecd4f438414b3dd5eaa4477b52988d9573b130d3a2267e"
+  }
+}

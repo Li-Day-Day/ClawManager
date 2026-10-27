@@ -1,0 +1,165 @@
+{
+  "kind": "d_producer_download_local_preparation_review",
+  "prefix": "d-download-producer-packages-20261020-r59",
+  "frozen_validation_passed": true,
+  "source_files": 1415,
+  "source_sha256": "c2bef333a0894fb0806070a70b47d276ad25aacf427c2650c390738bd4cd54c9",
+  "current_source_drift": [
+    {
+      "path": "backend/internal/systembackupevidence/download_failure_journal_test.go",
+      "current_sha256": "4270b0adf6ee3dee00d8b774036aa3486393fcd60e2b2aa1fa0b69c5f3a4408c",
+      "kind": "added_not_validated"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_failure_journal.go",
+      "current_sha256": "7de9dc14f2060b8288e8d3581482174f907d0af510b0986c2f936ffcfdab5d2b",
+      "kind": "added_not_validated"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_runtime_journal.go",
+      "current_sha256": "8f36ed700ff9d74133de68a92ae43008e7714d447a4ec5459d402ff6fa350a9a",
+      "kind": "added_not_validated"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_authority_sql.go",
+      "kind": "changed_not_validated",
+      "frozen_sha256": "ffc28d5e955fcef0aa1db4bcce8917eea49595f21c65d6996ecb2c5b1ba54f62",
+      "current_sha256": "d5d7d21e881d35bf4b38edd4823769497893033fe3541b15a422563c331a43c9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_authority.go",
+      "kind": "changed_not_validated",
+      "frozen_sha256": "0fcaec6455799eb1a272bb543997650687a65eb76f5062cf87468ee063c64556",
+      "current_sha256": "8570a4b852d0c595a7b189e7ab74eb55400d247cca9e579c9e97f7bbdee8126c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_runtime.go",
+      "kind": "changed_not_validated",
+      "frozen_sha256": "30930c79f5c24411abc2e14f42f3d4dd5aec73fa68c46e3afc55cb8769b6b84f",
+      "current_sha256": "ee151afff16a741b09f7f18455e0186dd4496386ca186d60322a99d3a5c57e53"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_recovery_audit_journal.go",
+      "kind": "changed_not_validated",
+      "frozen_sha256": "a086cad5e79b29fe75a4e4237f86ee1f8d5337c627baa2b8fbadffab1df3a7ff",
+      "current_sha256": "715828e35877e9c6e213d829a8a2d15cd8e14fba6f3dfaaae31747132bfaaeff"
+    }
+  ],
+  "current_sources_match": false,
+  "prepared_probe_payload_and_dispatch_pins_match": true,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 254,
+      "all": 2010
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 290,
+      "all": 2244
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main": 75,
+      "all": 519
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "main": 75,
+      "all": 784
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "main": 6,
+      "all": 12
+    }
+  ],
+  "main": 700,
+  "all": 5569,
+  "seed_main": 3,
+  "seed_all": 22,
+  "detached_seed_all": 22,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "1bd313330b16602f92996134f1267db72d0f786f8b8412e1ecd7756a48e12e83"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "f8294423407d3d08b9c56c5e8805da1926e8553e03d40c56630a5180339cd591"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "e5d6c8696c2d249ba0fa2067e7c4ca34d51ee81319430d3d5eb4a79a0e3526d3"
+    }
+  ],
+  "actual_sql_cases_prepared": [
+    "http_result",
+    "expired_owner_write_read",
+    "superseded_run",
+    "wrong_root",
+    "run_projection",
+    "history_manifest",
+    "receipt_manifest",
+    "receipt_version",
+    "foreign_reference",
+    "partial_schema",
+    "missing_history",
+    "original_run_lock",
+    "original_history_lock",
+    "empty_receipt_range",
+    "empty_hold_range",
+    "revoked_result",
+    "result_link_rollback",
+    "late_history_rollback"
+  ],
+  "actual_producer_mysql_executed": false,
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1aff4b5cd3a1403189571ab1cb87f56f",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f4b6f8de53914b5da06dd1e73d89f3bc",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8707b71419554ea38a4629e0a36dd21f",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-db7cbf7096e4444ab00dfadda09efe7c",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-b3d228114a7e4aa38c41dd85d4e37fc8",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-producer-owner-20261019-r55",
+      "exists": false
+    }
+  ],
+  "failed_seed_r55_preserved": true,
+  "interrupted_r56_preserved": true,
+  "r56_full_frozen_postcheck_not_claimed": true,
+  "failed_vet_r57_preserved": true,
+  "failed_detached_r58_preserved": true,
+  "changed_since_r58": [
+    "backend/internal/systembackupevidence/download_producer_owner_mysql_test.go",
+    "backend/internal/systembackupevidence/testdata/download_producer_probe_inputs.json",
+    "scripts/system-backup-d-download-admission-native-validation.ps1",
+    "scripts/system-backup-d-download-producer-dispatch.test.ps1",
+    "scripts/system-backup-d-download-producer-inputs.mjs"
+  ],
+  "producer_probe_capsule_kind": "d_download_producer_probe_inputs.v2",
+  "dependencies_installed": false,
+  "remote_executed_by_d": false,
+  "formal_catalog_files": 95,
+  "formal_migrations_or_grants_installed": false,
+  "production_enabled": false,
+  "provider_transport": "synthetic",
+  "physical_capacity_or_personal_mfa_proved": false,
+  "full_gc_or_tombstone_implemented": false,
+  "original_six_scopes_complete": false
+}

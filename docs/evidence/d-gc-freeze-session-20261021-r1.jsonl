@@ -1,0 +1,34 @@
+{"Time":"2026-10-21T11:48:25.9970669+08:00","Action":"start","Package":"freeze-session-experiment"}
+{"Time":"2026-10-21T11:48:26.6948807+08:00","Action":"run","Package":"freeze-session-experiment","Test":"TestTxOnlyCommitReturnsLockedSessionToPool"}
+{"Time":"2026-10-21T11:48:26.6948807+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestTxOnlyCommitReturnsLockedSessionToPool","Output":"=== RUN   TestTxOnlyCommitReturnsLockedSessionToPool\n"}
+{"Time":"2026-10-21T11:48:26.6970785+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestTxOnlyCommitReturnsLockedSessionToPool","Output":"    session_test.go:228: MODEL tx_only_pool_reused_locked_session=yes post_commit_tx_unlock=ErrTxDone\n"}
+{"Time":"2026-10-21T11:48:26.6970785+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestTxOnlyCommitReturnsLockedSessionToPool","Output":"--- PASS: TestTxOnlyCommitReturnsLockedSessionToPool (0.00s)\n"}
+{"Time":"2026-10-21T11:48:26.6970785+08:00","Action":"pass","Package":"freeze-session-experiment","Test":"TestTxOnlyCommitReturnsLockedSessionToPool","Elapsed":0}
+{"Time":"2026-10-21T11:48:26.6970785+08:00","Action":"run","Package":"freeze-session-experiment","Test":"TestDedicatedConnSpansCommitAndUnlock"}
+{"Time":"2026-10-21T11:48:26.6970785+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestDedicatedConnSpansCommitAndUnlock","Output":"=== RUN   TestDedicatedConnSpansCommitAndUnlock\n"}
+{"Time":"2026-10-21T11:48:26.7159731+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestDedicatedConnSpansCommitAndUnlock","Output":"    session_test.go:259: MODEL owned_conn_reserved_through_commit=yes unlock_before_pool_return=yes\n"}
+{"Time":"2026-10-21T11:48:26.7159731+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestDedicatedConnSpansCommitAndUnlock","Output":"--- PASS: TestDedicatedConnSpansCommitAndUnlock (0.02s)\n"}
+{"Time":"2026-10-21T11:48:26.7159731+08:00","Action":"pass","Package":"freeze-session-experiment","Test":"TestDedicatedConnSpansCommitAndUnlock","Elapsed":0.02}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"run","Package":"freeze-session-experiment","Test":"TestRollbackDoesNotReleaseSessionLock"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestRollbackDoesNotReleaseSessionLock","Output":"=== RUN   TestRollbackDoesNotReleaseSessionLock\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestRollbackDoesNotReleaseSessionLock","Output":"    session_test.go:274: MODEL rollback_retains_explicit_session_lock=yes\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestRollbackDoesNotReleaseSessionLock","Output":"--- PASS: TestRollbackDoesNotReleaseSessionLock (0.00s)\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"pass","Package":"freeze-session-experiment","Test":"TestRollbackDoesNotReleaseSessionLock","Elapsed":0}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"run","Package":"freeze-session-experiment","Test":"TestConnCloseAloneReturnsLockedSession"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestConnCloseAloneReturnsLockedSession","Output":"=== RUN   TestConnCloseAloneReturnsLockedSession\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestConnCloseAloneReturnsLockedSession","Output":"    session_test.go:294: MODEL conn_close_is_pool_return=yes raw_ErrBadConn_discards_session=yes\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestConnCloseAloneReturnsLockedSession","Output":"--- PASS: TestConnCloseAloneReturnsLockedSession (0.00s)\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"pass","Package":"freeze-session-experiment","Test":"TestConnCloseAloneReturnsLockedSession","Elapsed":0}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"run","Package":"freeze-session-experiment","Test":"TestUnknownCommitDiscardsWithoutClaimingRollback"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestUnknownCommitDiscardsWithoutClaimingRollback","Output":"=== RUN   TestUnknownCommitDiscardsWithoutClaimingRollback\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestUnknownCommitDiscardsWithoutClaimingRollback","Output":"    session_test.go:319: MODEL unknown_commit_may_have_committed=yes no_rollback_claim=yes physical_discard=yes\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestUnknownCommitDiscardsWithoutClaimingRollback","Output":"--- PASS: TestUnknownCommitDiscardsWithoutClaimingRollback (0.00s)\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"pass","Package":"freeze-session-experiment","Test":"TestUnknownCommitDiscardsWithoutClaimingRollback","Elapsed":0}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"run","Package":"freeze-session-experiment","Test":"TestCanceledTxCanRetainSessionUntilDiscard"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestCanceledTxCanRetainSessionUntilDiscard","Output":"=== RUN   TestCanceledTxCanRetainSessionUntilDiscard\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestCanceledTxCanRetainSessionUntilDiscard","Output":"    session_test.go:346: MODEL canceled_tx_rollback_does_not_unlock_session=yes physical_discard=yes\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Test":"TestCanceledTxCanRetainSessionUntilDiscard","Output":"--- PASS: TestCanceledTxCanRetainSessionUntilDiscard (0.00s)\n"}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"pass","Package":"freeze-session-experiment","Test":"TestCanceledTxCanRetainSessionUntilDiscard","Elapsed":0}
+{"Time":"2026-10-21T11:48:26.7164801+08:00","Action":"output","Package":"freeze-session-experiment","Output":"PASS\n"}
+{"Time":"2026-10-21T11:48:26.7323222+08:00","Action":"output","Package":"freeze-session-experiment","Output":"ok  \tfreeze-session-experiment\t0.735s\n"}
+{"Time":"2026-10-21T11:48:26.7323222+08:00","Action":"pass","Package":"freeze-session-experiment","Elapsed":0.735}

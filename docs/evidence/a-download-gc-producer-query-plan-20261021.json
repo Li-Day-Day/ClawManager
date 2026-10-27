@@ -1,0 +1,106 @@
+{
+  "kind": "a_gc_producer_exact_query_capture_spec",
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_producer_owner.go",
+      "size": 10770,
+      "sha256": "66dec4eb58430f557feaf5a2adcee36a77e9ea0c0ea0d4d59039efb16e7991ae"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_producer.go",
+      "size": 13286,
+      "sha256": "d6f7fee273dc34f198ed532d8bcdb45973499c454a464a95354bd7e2114a5647"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_task.go",
+      "size": 24358,
+      "sha256": "c60088caca6cd1e9c6a7404aa545126be78786c2af2d5ef50f6f73fbae868f33"
+    }
+  ],
+  "previous": "docs/evidence/a-download-gc-query-plan-20261021.json",
+  "previous_sha256": "edfe52b024bf092723256e0ebb69ffe0681486dc6db87870aa7d8fa61d44f380",
+  "previous_query_count": 12,
+  "additional_query_count": 7,
+  "combined_query_count": 19,
+  "sql_executed": false,
+  "actual_plan_verified": false,
+  "actual_gc_producer_lock_verified": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "instructions": "Bind parameters from the same guarded disposable fixture. Capture EXPLAIN FORMAT=JSON of each exact SELECT, SHOW CREATE TABLE/SHOW INDEX, RR transaction identity, data_locks/data_lock_waits with real competing sessions, and post-release outcomes. No FORCE INDEX, narrowed predicates, EXPLAIN ANALYZE, production writes or DDL are authorized by this file.",
+  "transaction_observations": [
+    "Use a guarded disposable fixture and both the actual restricted identity and privileged metadata observer.",
+    "Keep the existing L0/L1/L2 prefix. Lock receipts at L3, run and historical binding at L4, then references at L5. Record exact index/lock modes and held empty ranges.",
+    "Receipts are reread with the same L3 predicate after the original L4 owner lock; Recheck must use original locked keys and must not acquire new prefix keys.",
+    "Validate original manifest, evidence creation, owner-write/observation/retention deadlines, exact object version, complete typed C1 rows and rollback after late changes.",
+    "Retained producer C1 rows are read only. Complete current worker authority, metadata/DDL freeze, other dependencies, physical reservation and tombstone lifecycle still need their own approval and actual evidence."
+  ],
+  "queries": [
+    {
+      "id": "producer_database_identity",
+      "sql": "SELECT @@server_uuid,DATABASE()",
+      "parameters": [],
+      "locking": false
+    },
+    {
+      "id": "producer_required_tables",
+      "sql": "SELECT TABLE_NAME,TABLE_TYPE,COALESCE(ENGINE,'') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('system_backup_producer_evidence_bindings','system_backup_producer_evidence_refs','system_backup_producer_result_receipts','system_backup_producer_runs') ORDER BY BINARY TABLE_NAME",
+      "parameters": [],
+      "locking": false,
+      "observation": "Compare exact four BASE TABLE/InnoDB identities with the privileged observer. Complete columns/FKs/indexes/CHECKs/triggers/programs and current grants are separate prerequisites."
+    },
+    {
+      "id": "producer_history_hint",
+      "sql": "SELECT scope_key,scope_bytes,run_id,evidence_id,grant_id,grant_generation,owner_write_expires_at,observation_expires_at,retention_expires_at,IF(OCTET_LENGTH(record_bytes) BETWEEN 1 AND 32768,record_bytes,NULL),record_sha256 FROM system_backup_producer_evidence_bindings WHERE evidence_id=? ORDER BY scope_key,evidence_id LIMIT 10001",
+      "parameters": [
+        "evidence_public_id"
+      ],
+      "locking": false,
+      "observation": "Initial RR hint selects no mutation authority; compare every original binding with the independently locked L4 record."
+    },
+    {
+      "id": "producer_locked_system_backup_producer_result_receipts",
+      "table": "system_backup_producer_result_receipts",
+      "sql": "SELECT scope_key,scope_bytes,receipt_key_hash,request_hash,run_id,evidence_id,target_hash,result_version,committed_at,retention_expires_at,charged_bytes,IF(OCTET_LENGTH(record_bytes) BETWEEN 1 AND 98304,record_bytes,NULL),record_sha256 FROM system_backup_producer_result_receipts WHERE evidence_id=? ORDER BY scope_key,receipt_key_hash LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "evidence_public_id"
+      ],
+      "locking": true,
+      "prefix_stage": 3,
+      "observation": "Predicate intentionally covers all scopes for this evidence. Capture actual index choice, rows examined, unrelated-scope impact, and exact requesting/blocking connection IDs. LIMIT 10001 is a result/overflow guard, not a plan-cost or lock-span bound."
+    },
+    {
+      "id": "producer_locked_system_backup_producer_runs",
+      "table": "system_backup_producer_runs",
+      "sql": "SELECT scope_key,run_id,grant_id,grant_generation,target_hash,target_generation,evidence_id,owner_write_expires_at,observed_at,observation_expires_at,state,row_version,IF(OCTET_LENGTH(record_bytes) BETWEEN 1 AND 16384,record_bytes,NULL),record_sha256 FROM system_backup_producer_runs WHERE evidence_id=? ORDER BY scope_key,run_id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "evidence_public_id"
+      ],
+      "locking": true,
+      "prefix_stage": 4,
+      "observation": "Predicate intentionally covers all scopes for this evidence. Capture actual index choice, rows examined, unrelated-scope impact, and exact requesting/blocking connection IDs. LIMIT 10001 is a result/overflow guard, not a plan-cost or lock-span bound."
+    },
+    {
+      "id": "producer_locked_system_backup_producer_evidence_bindings",
+      "table": "system_backup_producer_evidence_bindings",
+      "sql": "SELECT scope_key,scope_bytes,run_id,evidence_id,grant_id,grant_generation,owner_write_expires_at,observation_expires_at,retention_expires_at,IF(OCTET_LENGTH(record_bytes) BETWEEN 1 AND 32768,record_bytes,NULL),record_sha256 FROM system_backup_producer_evidence_bindings WHERE evidence_id=? ORDER BY scope_key,evidence_id LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "evidence_public_id"
+      ],
+      "locking": true,
+      "prefix_stage": 4,
+      "observation": "Predicate intentionally covers all scopes for this evidence. Capture actual index choice, rows examined, unrelated-scope impact, and exact requesting/blocking connection IDs. LIMIT 10001 is a result/overflow guard, not a plan-cost or lock-span bound."
+    },
+    {
+      "id": "producer_locked_system_backup_producer_evidence_refs",
+      "table": "system_backup_producer_evidence_refs",
+      "sql": "SELECT scope_key,evidence_id,reference_kind,reference_key_hash,protected_until,IF(OCTET_LENGTH(record_bytes) BETWEEN 1 AND 8192,record_bytes,NULL),record_sha256 FROM system_backup_producer_evidence_refs WHERE evidence_id=? ORDER BY scope_key,reference_kind,reference_key_hash LIMIT 10001 FOR UPDATE",
+      "parameters": [
+        "evidence_public_id"
+      ],
+      "locking": true,
+      "prefix_stage": 5,
+      "observation": "Predicate intentionally covers all scopes for this evidence. Capture actual index choice, rows examined, unrelated-scope impact, and exact requesting/blocking connection IDs. LIMIT 10001 is a result/overflow guard, not a plan-cost or lock-span bound."
+    }
+  ]
+}

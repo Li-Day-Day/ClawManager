@@ -1,0 +1,86 @@
+{
+  "kind": "a_live_audit_collector_delivery_review.v1",
+  "reviewed_at": "2026-10-22T02:10:43.2032704Z",
+  "status": "local_implementation_verified_field_sql_pending",
+  "native_receipt": {
+    "path": "docs/evidence/a-live-audit-collector-local-20261022-095403-2f5c657f.json",
+    "sha256": "36f62bdfe7ebe7a5e327cfa0246a569ae21594b108bdf462561f41cf18f6d5ef"
+  },
+  "node_collector": {
+    "passed": 7,
+    "failed": 0,
+    "command": "node --test --test-isolation=none scripts/system-backup-a-live-audit.test.mjs"
+  },
+  "node_existing_live_chain": {
+    "passed": 11,
+    "failed": 0,
+    "command": "node --test --test-isolation=none scripts/system-backup-a-live-chain.test.mjs",
+    "execution": "approved host execution after sandbox child-process EPERM",
+    "initial_sandbox_run_passed": 6,
+    "initial_sandbox_run_failed": 5
+  },
+  "native_windows_invalid_request": {
+    "exit": 1,
+    "fixed_public_error_only": true,
+    "database_opened": false
+  },
+  "first_failed_go_attempt": "docs/evidence/a-live-audit-collector-first-attempt-20261022.json",
+  "sources": [
+    {
+      "path": "scripts/system-backup-a-live-audit.mjs",
+      "sha256": "16a6b039b7c8f2ad31e9e4a9c27fc8c29ff3cbd3bf5d3621f4c7b8c71292724a"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit.test.mjs",
+      "sha256": "807970fe797d12d1ef7feddfc2517c8b543eef805fbf4a765c323ffc89840e00"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.mjs",
+      "sha256": "ce722d575edbf6a1da94176cc642991015e9bf572ee3446ab9b61463ab90da0e"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.test.mjs",
+      "sha256": "fdcb3c2d9090091d723012cd852c6e8b0d2395ae58637320ba7bf5b4b276ff54"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-validation.ps1",
+      "sha256": "1904a7f4fbc6f02cc9971ccfe6a1113ac863f760d38dd517d4f83441ea202a96"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/audit.sql",
+      "sha256": "c15ffa67a921d76c798319226a318bc9657f2832cdb4e340e8966dc960746f01"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main.go",
+      "sha256": "6cd473f3151204bd22e1b479bcb568622158ff8745abf34d6e5f84ef06c32869"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/export.go",
+      "sha256": "c3724f1969547f2d6455c541084232ca1eb9a7c9523fc9585d8687b9ae690797"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main_test.go",
+      "sha256": "2fbd265364824489fa10ca0e5b9dda10b6cb0d0025946be2c2a06ddd21f6c842"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/testdata/audit.json",
+      "sha256": "09410f2dccef8ebf22502c505c433ee286c154e623a529369d2faf3444a24f41"
+    },
+    {
+      "path": "Dockerfile",
+      "sha256": "3d4d608933f27289865e4ce8cdc8b95752bc4a23429b842141c68f54c371cd80"
+    },
+    {
+      "path": "backend/deployments/docker/Dockerfile",
+      "sha256": "39059270ef278af263af3e4aba57868c094b509908c7321e4fb3d71f65127f8b"
+    }
+  ],
+  "source_pin_scope": "Go frozen inputs are verified by native receipt; other pins record delivery-time files, not a full-worktree frozen regression",
+  "own_native_scratch_absence_independently_checked": true,
+  "dependencies_installed": false,
+  "images_built_or_deployed": false,
+  "real_database_contacted": false,
+  "bootstrap_adapters_added": 0,
+  "other_A_registration_command_modified": false,
+  "full_live_chain_verified": false
+}

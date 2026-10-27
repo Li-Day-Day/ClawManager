@@ -1,0 +1,229 @@
+{
+  "date": "2026-10-16",
+  "scope": "D-owned persisted control contributions for four task detail kinds, not a public DetailResource or production API acceptance",
+  "implementation": {
+    "reader": "Reader.ReadTaskDetailControl",
+    "compositionBoundary": "readTaskDetailControlInTransaction",
+    "transaction": "Task + all attempts + Job observations + kind-specific fixed columns in one existing RepeatableRead authorization/final recheck/commit boundary",
+    "kinds": [
+      "backup",
+      "drill",
+      "preflight",
+      "artifact_verify"
+    ],
+    "publicRoutesChanged": false,
+    "schemaChanged": false,
+    "dependenciesInstalled": false
+  },
+  "validation": {
+    "command": "go test -mod=readonly -p=2 -count=1 -timeout=180s -json ./internal/systembackupread",
+    "exitCode": 0,
+    "topLevelTests": 62,
+    "testsIncludingSubtests": 413,
+    "newTopLevelTests": 7,
+    "newTestsIncludingSubtests": 101,
+    "skipped": 0,
+    "defaultVet": true,
+    "log": "docs/evidence/system-backup-d-detail-control-local-20261016.jsonl",
+    "sourcePins": [
+      {
+        "path": "backend/internal/systembackupread/config_backfill_source.go",
+        "sha256": "6cafc4a6cfe824895f6f577402a360f46874c624b0c72298a66d9950113cf8ad"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_backfill_source_boundary_a_test.go",
+        "sha256": "558e9ac8bfbf584fb0a9bd81b7a99a25d026837a628b317ef22eb366391b012c"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_backfill_source_test.go",
+        "sha256": "98f7d6aa95b375e97987d38c01c69fab05e2fb31f5c4ea010d4d1692fd5cd90d"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_list.go",
+        "sha256": "11e2642d476845eacac2bd8de3c51bf1ed63b280e115d58546e690e5c8c3b899"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_list_cursor.go",
+        "sha256": "0707447c95f18531ffcde8bd4b28c720d1f61ad5077b4e0afada93be07c61e86"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_list_dto.go",
+        "sha256": "0dce9cb08653e9418f014a3fd5498b9ac6f3e0665205296a08d0e319c7284f7f"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_list_test.go",
+        "sha256": "d75784f61630cbc8b75692510985cbf68fb3e4d3472d7c82b07fae43357ba41d"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_materialized.go",
+        "sha256": "347edd6571cd7aa6e7e015ed1e7a727c08c69b2f87e6ba3bd1e17df33ef01fe5"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_projection.go",
+        "sha256": "f1401f31e2dfec5b0fc67396f944ccec861c6eb78d44336203822fb0f3ef67e1"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_projection_rules.go",
+        "sha256": "3c9a13fafa6a24592aa472302489a13519e3033a585dbf6f3b722c28354f43ca"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_projection_test.go",
+        "sha256": "b6f97d057a88a2586eb252a0643ca7f18312124dde92a87ea5fca559e23a584f"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_snapshot.go",
+        "sha256": "d537cc6a93cef096f01581bfd42889c998399acffe5ab1f4e66875c7d43c4446"
+      },
+      {
+        "path": "backend/internal/systembackupread/config_snapshot_test.go",
+        "sha256": "f675f7d57c63e266051e26a43eb0094da0c640d7712f5c438de3a7d146c681e4"
+      },
+      {
+        "path": "backend/internal/systembackupread/control_health.go",
+        "sha256": "dcbe533dd21704c763be4bc974f5a715b3a73102442493d1ee81f4bf5c2fa2d7"
+      },
+      {
+        "path": "backend/internal/systembackupread/control_health_test.go",
+        "sha256": "f1d4a48eecc9ddb8870ea06da9384c89a1a9f918d1be26b124ecaf48112c0f4c"
+      },
+      {
+        "path": "backend/internal/systembackupread/cursor.go",
+        "sha256": "cff06a7a2b332354ce6cd6507cbed25ebeb84c545deffd6d22606d60b664a440"
+      },
+      {
+        "path": "backend/internal/systembackupread/cursor_test.go",
+        "sha256": "7b54db1e73df952f94e48453d45dc7f447cbbfc454ec7566f53fdd2b0671c87b"
+      },
+      {
+        "path": "backend/internal/systembackupread/operation_detail.go",
+        "sha256": "31a17c3b407052d95b9cf636968149bfe6a3681303ab9d94987cdd1fa9efb98e"
+      },
+      {
+        "path": "backend/internal/systembackupread/operation_detail_test.go",
+        "sha256": "73657802130ebecad4c58e776959561cfb93a736a1a04c1d155da4fa346bfae7"
+      },
+      {
+        "path": "backend/internal/systembackupread/operation_dto.go",
+        "sha256": "2d7b9595b9f66e30717ccb81bf4fbe3b31c668f2d0023eef96ccc0a1e576cc64"
+      },
+      {
+        "path": "backend/internal/systembackupread/operation_list.go",
+        "sha256": "14301f3cbaa16fbabcea971ae8b5fb6ada3d83624d8f3021b18f3a762bd304ab"
+      },
+      {
+        "path": "backend/internal/systembackupread/operation_list_test.go",
+        "sha256": "425aa9ba4bcd3b187df6ebdc9632c96eb3dead29b8d215bfad5b03d2f64c36ac"
+      },
+      {
+        "path": "backend/internal/systembackupread/overview_control.go",
+        "sha256": "d64086142607de632961d13fb5424b5a8ab4357974c86bed412588cb6355ec74"
+      },
+      {
+        "path": "backend/internal/systembackupread/overview_control_test.go",
+        "sha256": "d7ccd6029b35aaf8f5f5347d634291f2ed66f2bcf55edbc5c18a7fec025b06a7"
+      },
+      {
+        "path": "backend/internal/systembackupread/overview_promotion.go",
+        "sha256": "fd19c8e8873258e570734326cc4a6d7ae6a33757bc6ce1f2041e3673ae6f6d43"
+      },
+      {
+        "path": "backend/internal/systembackupread/overview_promotion_test.go",
+        "sha256": "281ec815617cc6dc6efbcc34db4ad42fc8ea98ce9cbc0fad6a1a98b7200a74f8"
+      },
+      {
+        "path": "backend/internal/systembackupread/page_index_mysql_test.go",
+        "sha256": "f81052e28b3e3878c3ad7d342768c2134027606d0f53900931e02123c9ee99ae"
+      },
+      {
+        "path": "backend/internal/systembackupread/page_sql.go",
+        "sha256": "f4ddd3f51b6d3bc3767b520c2b78f860503ec6937a67239b2b56db5a5c458a15"
+      },
+      {
+        "path": "backend/internal/systembackupread/service.go",
+        "sha256": "c9723beb064858657f08e4bbe9f3ed21f8dcf9e075f530dba80670b866e4e1ac"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_detail_base.go",
+        "sha256": "631e2292e9094ac52737049cd68f16aee4de3b23ad23d205a555cd88da4aa784"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_detail_base_test.go",
+        "sha256": "ec0efe5bd86fe841f7f8dc3c36bf3222eec6bea37d72757be5f4b2b56567b3c2"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_detail_control.go",
+        "sha256": "c985d5d0a8124639880ec3ca06e52c46ea3a80b78daa3735a829181b09bcfafb"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_detail_control_test.go",
+        "sha256": "7246d6b20df6566a8ec85dace0b7548365a199f4eba3869a3101c9a34ea8c34d"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_dto.go",
+        "sha256": "8e88f4a13169ad17e2ce9644dc4e17352621a4fb5d5193eeb47cdcfe6989912d"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_dto_test.go",
+        "sha256": "777de3d458cc19b7e3de2105e78c29a1180cd379799206d225437448afa9c4aa"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_execution.go",
+        "sha256": "0b2a3eacdddcf8246fe594bdc0ef094c5c59b998797e077c36d308d293e13c48"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_execution_test.go",
+        "sha256": "24bb8baa78b687d57b2f73686c4dec54c23df0cbe85959d173d9913873855a68"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_pages.go",
+        "sha256": "54d677011d3e6429e3d8c50e71759b55d437a00db0a6087d86438a7826b19907"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_pages_test.go",
+        "sha256": "17003201539ecceb575397955a573df1591b16d7707220af0367d4c46529c894"
+      },
+      {
+        "path": "backend/internal/systembackupread/task_projection_migration_test.go",
+        "sha256": "00da511c9ca4a06bbc1006c964abbf9b9de3f91ecf4a69b007f5292125fd1d18"
+      },
+      {
+        "path": "backend/internal/systembackupcontract/types.go",
+        "sha256": "7abb9e6441b03fbfd836810a40a0a745fb5ea956ba0fe9c83c23cc38ba85a3eb"
+      },
+      {
+        "path": "backend/go.mod",
+        "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+      },
+      {
+        "path": "backend/go.sum",
+        "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+      },
+      {
+        "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+        "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+      }
+    ],
+    "sourceChangesDuringValidation": [],
+    "logSha256": "b76593c52960bd8830a4e41ec514146b84b81a294173666719ae005a331c1e93",
+    "sourceChangesAtFinalReview": []
+  },
+  "initialAttempt": {
+    "exitCode": 1,
+    "reason": "The first single-row error fixture injected a stream error only after its first row, which QueryRow does not consume. The fixture now fails on its first Next call. Verification source/null-state handling and fixtures were also completed before the final whole-package run. The first run is not final-source evidence."
+  },
+  "limitations": [
+    "No actual MySQL execution in this run; SQL column existence checked against published migration 067.",
+    "No A report validity/redaction, B restoration/cleanup verification, C provider/catalog current-health provenance.",
+    "No public execution phase/generation selection from multiple Job units; all observations remain available.",
+    "No HTTP detail/overview/activity/manifest route enabled; unavailable responses remain.",
+    "Manual hold reason/actor text, provider locators, immutable versions, configuration snapshots, raw failures and Owner payloads are not selected.",
+    "Recorded null consistency and byte counts are preserved; historical eligibility is separate from recorded current availability."
+  ],
+  "cleanup": {
+    "pending": false,
+    "verified": true,
+    "path": ".tmp-d-detail-control-20261016",
+    "buildAndTestCacheRemoved": true,
+    "evidenceRetained": true
+  }
+}

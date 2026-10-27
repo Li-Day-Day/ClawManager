@@ -1,0 +1,42 @@
+{
+  "kind": "d_longhorn_fresh_baseline_local_validation",
+  "recorded_at": "2026-09-29T07:07:01.172043+00:00",
+  "status": "local_pass_remote_pending",
+  "tests": {
+    "longhorn_python": 12,
+    "baseline_python": 6,
+    "upgrade_review_python_regression": 4,
+    "baseline_receipt_node": 3,
+    "schema_hash_node_regression": 6,
+    "smoke_contract_bash_regression": 4
+  },
+  "local_check_only": [
+    "LonghornReview HostDiagnostics",
+    "fresh-baseline"
+  ],
+  "remote": {
+    "ssh_batch": "Permission denied (publickey,password)",
+    "operator_interactive_run_pending": true,
+    "longhorn_anomalies_cleared": false,
+    "report_volume_mount_accepted": false,
+    "fresh_schema_baseline_captured": false
+  },
+  "environment": {
+    "installed_dependencies": false,
+    "build_performed": false,
+    "test_artifacts_retained": false,
+    "node_tests_ran_directly_after_spawn_EPERM": true,
+    "bash_regression_passed_with_approved_execution_after_sandbox_signal_pipe_failure": true
+  },
+  "source_sha256": {
+    "scripts/system-backup-d-longhorn-review.py": "4dc8144c6285b36c3100b98552c5d49106cec1f55b3b8cce80b9686bcd1bbb73",
+    "scripts/system-backup-d-longhorn-review_test.py": "15d55203d2f6db9218e5eba9c39938ea1527c6c81aa55e2eaae3bed0530dc4de",
+    "scripts/system-backup-d-live-preflight-remote.ps1": "4fdf3f0a2449aa28c920d711713e016f69fd2f4f56d6d1475b59121e0c2067cc",
+    "scripts/system-backup-d-fresh-baseline.py": "a111cca0d22fa6e14532a8f04ebdb001ec11bbdc9c9b160f6a4b29b17f39042b",
+    "scripts/system-backup-d-fresh-baseline_test.py": "65aad72be1586c7e2c263cfa50b6ba16888098d613ccc3988635b7137204148d",
+    "scripts/system-backup-d-fresh-baseline-receipt.mjs": "2dd62b6d8e1300947170739cc7a957aecb70c15f9c4cbc4a6e7185d0bf2a63db",
+    "scripts/system-backup-d-fresh-baseline-receipt.test.mjs": "d63972e6bd2d7cc4d4e4b2326efe2692585a8397a2fa82f2d7017dbb21a2ec88",
+    "scripts/system-backup-d-fresh-baseline-remote.ps1": "5bed7d4abc26fa8aa6c4aa8f6d6d1b7f4c45060e2a10f33bf6fcb86e7871b873",
+    "scripts/system-backup-fresh-migration-smoke.sh": "9a01267b8fe2df838af042b8ae2ff30a89f76e088b6b059a7d2b76eaac22cb75"
+  }
+}

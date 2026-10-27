@@ -1,0 +1,156 @@
+FAIL remote_dispatch
+FAIL local_dispatch
+PASS child_failure
+FAIL freeze_only
+{
+  "kind": "d_verification_wrapper_dispatch_test",
+  "cases": [
+    {
+      "name": "remote_dispatch",
+      "passed": false,
+      "failure": "Successful child did not complete the wrapper",
+      "wrapper_error": "Cannot enumerate grouped build inputs",
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "failed",
+        "source_sha256": "aa9d2307dd1abef79975564a854b04ec11c7102228c721fd63ebbd559047953a",
+        "child_exit": 0,
+        "source_postcheck": false,
+        "freeze_only": false,
+        "remote_requested": true,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\remote_dispatch\\.tmp-d-index-cache-2dafd9f7e7f94533aa3a8a3bff07d6ca",
+          "removed": true,
+          "files_removed": 9,
+          "test_build_artifacts_removed": true
+        },
+        "error": "Cannot enumerate grouped build inputs"
+      },
+      "child_observation": {
+        "synthetic_child": true,
+        "actual_mysql": false,
+        "remote_executed": false,
+        "admin_read_only": true,
+        "remote_requested": true,
+        "build_parallelism": 2,
+        "ssh_target": "fixture@127.0.0.1",
+        "script": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\remote_dispatch\\.tmp-d-index-cache-2dafd9f7e7f94533aa3a8a3bff07d6ca\\source\\scripts\\system-backup-a-evidence-validation.ps1",
+        "cwd": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\remote_dispatch\\.tmp-d-index-cache-2dafd9f7e7f94533aa3a8a3bff07d6ca\\source",
+        "pshome": "C:\\Users\\zhanghui08\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell",
+        "pid": 35908
+      }
+    },
+    {
+      "name": "local_dispatch",
+      "passed": false,
+      "failure": "Successful child did not complete the wrapper",
+      "wrapper_error": "Cannot enumerate grouped build inputs",
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "failed",
+        "source_sha256": "aa9d2307dd1abef79975564a854b04ec11c7102228c721fd63ebbd559047953a",
+        "child_exit": 0,
+        "source_postcheck": false,
+        "freeze_only": false,
+        "remote_requested": false,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\local_dispatch\\.tmp-d-index-cache-28b1d55853a445889bc6b06fded57544",
+          "removed": true,
+          "files_removed": 9,
+          "test_build_artifacts_removed": true
+        },
+        "error": "Cannot enumerate grouped build inputs"
+      },
+      "child_observation": {
+        "synthetic_child": true,
+        "actual_mysql": false,
+        "remote_executed": false,
+        "admin_read_only": true,
+        "remote_requested": false,
+        "build_parallelism": 3,
+        "ssh_target": "fixture@127.0.0.1",
+        "script": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\local_dispatch\\.tmp-d-index-cache-28b1d55853a445889bc6b06fded57544\\source\\scripts\\system-backup-a-evidence-validation.ps1",
+        "cwd": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\local_dispatch\\.tmp-d-index-cache-28b1d55853a445889bc6b06fded57544\\source",
+        "pshome": "C:\\Users\\zhanghui08\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell",
+        "pid": 41760
+      }
+    },
+    {
+      "name": "child_failure",
+      "passed": true,
+      "failure": null,
+      "wrapper_error": "Admin read validation failed exit=37; preserve any CLEANUP_PENDING identity in the log",
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "failed",
+        "source_sha256": "aa9d2307dd1abef79975564a854b04ec11c7102228c721fd63ebbd559047953a",
+        "child_exit": 37,
+        "source_postcheck": false,
+        "freeze_only": false,
+        "remote_requested": true,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\child_failure\\.tmp-d-index-cache-535ce5cdf750499ea975b7132c5024c8",
+          "removed": true,
+          "files_removed": 9,
+          "test_build_artifacts_removed": true
+        },
+        "error": "Admin read validation failed exit=37; preserve any CLEANUP_PENDING identity in the log"
+      },
+      "child_observation": {
+        "synthetic_child": true,
+        "actual_mysql": false,
+        "remote_executed": false,
+        "admin_read_only": true,
+        "remote_requested": true,
+        "build_parallelism": 1,
+        "ssh_target": "fixture@127.0.0.1",
+        "script": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\child_failure\\.tmp-d-index-cache-535ce5cdf750499ea975b7132c5024c8\\source\\scripts\\system-backup-a-evidence-validation.ps1",
+        "cwd": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\child_failure\\.tmp-d-index-cache-535ce5cdf750499ea975b7132c5024c8\\source",
+        "pshome": "C:\\Users\\zhanghui08\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell",
+        "pid": 38284
+      }
+    },
+    {
+      "name": "freeze_only",
+      "passed": false,
+      "failure": "FreezeOnly behavior changed",
+      "wrapper_error": "Cannot enumerate grouped build inputs",
+      "result": {
+        "kind": "d_verification_detail_validation.v1",
+        "status": "failed",
+        "source_sha256": "aa9d2307dd1abef79975564a854b04ec11c7102228c721fd63ebbd559047953a",
+        "child_exit": null,
+        "source_postcheck": false,
+        "freeze_only": true,
+        "remote_requested": false,
+        "actual_mysql_results_accepted": false,
+        "dependencies_installed": false,
+        "cleanup": {
+          "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628\\freeze_only\\.tmp-d-index-cache-153eccee4ed14a5ca40677d8091fe36f",
+          "removed": true,
+          "files_removed": 9,
+          "test_build_artifacts_removed": true
+        },
+        "error": "Cannot enumerate grouped build inputs"
+      },
+      "child_observation": null
+    }
+  ],
+  "failed": 3,
+  "fatal": null,
+  "discovery_matches": 4,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628",
+    "removed": true,
+    "files_removed": 46
+  },
+  "actual_mysql": false,
+  "remote_executed": false,
+  "dependencies_installed": false
+}

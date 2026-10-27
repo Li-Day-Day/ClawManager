@@ -1,0 +1,82 @@
+**********************
+Windows PowerShell 脚本开始
+开始时间: 20261013154321
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称:
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 3420
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 docs/evidence/d-config-live-http-mysql-remote-20261013-r2.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+  & .\scripts\system-backup-a-evidence-validation.ps1 -AdminReadOnly -AdminReadConfigCandidate -Remote -BuildParallelism 1 -SshTarget 'root@10.130.14.23'
+  if (-not $?) { throw 'D config live HTTP MySQL validation failed' }
+  Write-Output 'D_CONFIG_LIVE_HTTP_REMOTE_EXIT=0'
+} finally {
+  Stop-Transcript
+}
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE admin-read-auth-local=yes full-task-query-local=no remote-full-schema-probe=yes real_mysql=not_run
+ok  	clawreef/internal/systembackupsecurity	1.787s
+ok  	clawreef/internal/systembackupread	2.168s
+ok  	command-line-arguments	1.194s
+=== RUN   TestAAdminReadMySQLSeed
+--- PASS: TestAAdminReadMySQLSeed (0.00s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	2.449s
+LOCAL_PASS admin-read-seed=yes real_mysql=not_run
+LOCAL_PASS a-admin-read-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=85bbd6d74362c2ec6777c291d3e0f1203b205c9fb605149f65a5971f1dda7c32 ddl_sha256=1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+LOCAL_PASS d-admin-read-http-probe-compiled=yes http_binary_sha256=295de0e0e8d0261194cd0ddd5447e6b06aa4b3d16042ec8d2089791a0fc59680 real_mysql=not_run
+VALIDATION_SCOPE config-canonical-candidate-local=compiled real_mysql=not_run production_migration=no
+
+close - IO is still pending on closed socket. read:1, write:0, io:000002225A80D130
+close - IO is still pending on closed socket. read:1, write:0, io:00000205CDB3E440
+bundle.tar: OK
+RUN namespace=sbk-mig-261013080755-10e4 uid=3f0200de-a8fd-4f0b-8463-3829f46f7798 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestAAdminReadAuthorityMySQL
+    read_scope_mysql_test.go:85: CLEANED admin-read run-owned database
+--- PASS: TestAAdminReadAuthorityMySQL (0.30s)
+PASS
+=== RUN   TestDAdminReadFullSchemaMySQL
+    read_scope_full_mysql_test.go:253: PASS full 066/067/080 schema, real rows, pagination, cross-install cursor, revocation lock
+--- PASS: TestDAdminReadFullSchemaMySQL (0.48s)
+PASS
+=== RUN   TestDAdminReadLiveHTTPMySQL
+    system_backup_read_live_mysql_test.go:297: PASS four task HTTP lists, stable continuation, operation read, 200/400/401/403/503, installation isolation, revocation, source marker
+--- PASS: TestDAdminReadLiveHTTPMySQL (0.18s)
+PASS
+=== RUN   TestDConfigCanonicalCandidateMySQL
+    read_config_candidate_mysql_test.go:174: PASS candidate canonical DDL, old-row fail closed, pin rotation, hash/materialized drift, A read revocation
+--- PASS: TestDConfigCanonicalCandidateMySQL (0.29s)
+PASS
+=== RUN   TestDAdminReadConfigHTTPMySQL
+    system_backup_read_config_http_mysql_test.go:224: PASS config HTTP active/history/pages, old-row fail closed, 200/400/401/403/503, revocation
+--- PASS: TestDAdminReadConfigHTTPMySQL (0.24s)
+PASS
+PASS d-admin-read-live-http-mysql binary_sha256=295de0e0e8d0261194cd0ddd5447e6b06aa4b3d16042ec8d2089791a0fc59680
+PASS d-config-canonical-candidate-mysql binary_sha256=85bbd6d74362c2ec6777c291d3e0f1203b205c9fb605149f65a5971f1dda7c32 ddl_sha256=2a4ee20f3a7f9ed50f5f402165345ec8e4cfc1cdeaa25d8eda3464e1e0567fe9
+PASS d-config-live-http-mysql binary_sha256=295de0e0e8d0261194cd0ddd5447e6b06aa4b3d16042ec8d2089791a0fc59680
+PASS a-admin-read-mysql binary_sha256=85bbd6d74362c2ec6777c291d3e0f1203b205c9fb605149f65a5971f1dda7c32 ddl_sha256=1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2
+CLEANED namespace=sbk-mig-261013080755-10e4 uid=3f0200de-a8fd-4f0b-8463-3829f46f7798
+close - IO is still pending on closed socket. read:1, write:0, io:0000014640CB0DB0
+close - IO is still pending on closed socket. read:1, write:0, io:000001F8DA851EA0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+D_CONFIG_LIVE_HTTP_REMOTE_EXIT=0
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261013160900
+**********************

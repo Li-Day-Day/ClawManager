@@ -1,0 +1,67 @@
+**********************
+PowerShell transcript start
+Start time: 20261019104552
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$publicViteRoot=[IO.Path]::GetFullPath((Get-Location).Path)
+$publicViteFrontend=Join-Path $publicViteRoot 'frontend'
+$publicViteID=[guid]::NewGuid().ToString('N')
+$publicViteOwner=Join-Path $publicViteFrontend ('.tmp-d-frontend-build-'+$publicViteID)
+$publicVitePrefix=Join-Path $publicViteRoot 'docs/evidence/d-download-public-vite-20261019-r18'
+foreach($publicViteSuffix in @('-native.txt','.txt','-stderr.txt','.json')){if(Test-Path -LiteralPath ($publicVitePrefix+$publicViteSuffix)){throw 'Refusing to replace Vite evidence'}}
+$publicViteSource='docs/evidence/d-download-public-node-20261019-r17-source.json'
+$publicVitePins=(Get-Content -Raw -Encoding UTF8 (Join-Path $publicViteRoot $publicViteSource)|ConvertFrom-Json).frontend
+. (Join-Path $publicViteRoot 'scripts/system-backup-d-index-source-snapshot.ps1')
+$publicVitePaths=@($publicVitePins.files | ForEach-Object {$_.path})
+if((Get-DIndexPinDigest -Pins (Get-DIndexInputPins -Root $publicViteRoot -Files $publicVitePaths)) -ne $publicVitePins.source_sha256){throw 'Vite sources no longer match frozen inputs'}
+$publicViteRecord=[ordered]@{kind='d_download_public_vite_native_loader';source_manifest=$publicViteSource;source_sha256=$publicVitePins.source_sha256;source_files=$publicVitePaths.Count;typescript_receipt='docs/evidence/d-download-public-frontend-20261019-r17.json';owned_directory=$publicViteOwner;config_loader='native';vite=$false;source_postcheck=$false;artifacts_cleaned=$false;installed_dependencies=$false;runtime_or_browser_verified=$false;status='incomplete'}
+Start-Transcript -LiteralPath ($publicVitePrefix+'-native.txt') -NoClobber|Out-Null
+try {
+    [IO.Directory]::CreateDirectory($publicViteOwner)|Out-Null
+    [IO.File]::WriteAllText((Join-Path $publicViteOwner 'owner.txt'),$publicViteOwner)
+    $env:CI='1';$env:FORCE_COLOR='0';$env:JITI_CACHE='false'
+    Write-Host ('VITE_SOURCE files='+$publicVitePaths.Count+' sha256='+$publicVitePins.source_sha256+' installed_dependencies=no owner='+$publicViteOwner)
+    $publicViteProcess=Start-Process -FilePath (Get-Command node).Source -ArgumentList @((Join-Path $publicViteFrontend 'node_modules/vite/bin/vite.js'),'build','--configLoader','native','--outDir',(Join-Path $publicViteOwner 'dist'),'--emptyOutDir','--clearScreen=false') -WorkingDirectory $publicViteFrontend -RedirectStandardOutput ($publicVitePrefix+'.txt') -RedirectStandardError ($publicVitePrefix+'-stderr.txt') -WindowStyle Hidden -PassThru -Wait
+    Write-Host ('NATIVE_EXIT vite='+$publicViteProcess.ExitCode)
+    if($publicViteProcess.ExitCode -ne 0 -or -not(Test-Path -LiteralPath (Join-Path $publicViteOwner 'dist/index.html'))){throw 'Native-loader Vite build failed'}
+    $publicViteRecord.vite=$true
+    if((Get-DIndexPinDigest -Pins (Get-DIndexInputPins -Root $publicViteRoot -Files $publicVitePaths)) -ne $publicVitePins.source_sha256){throw 'Vite input bytes drifted during build'}
+    $publicViteRecord.source_postcheck=$true
+    $publicViteRecord.output_files=@(Get-ChildItem -LiteralPath (Join-Path $publicViteOwner 'dist') -File -Recurse).Count
+    $publicViteRecord.status='vite_production_build_passed'
+    Write-Host 'VITE_POSTCHECK passed=yes'
+} catch {$publicViteRecord.status='failed';$publicViteRecord['error']=$_.Exception.Message;throw} finally {
+    try {
+        if(Test-Path -LiteralPath $publicViteOwner){
+            $publicViteResolved=(Resolve-Path -LiteralPath $publicViteOwner).Path
+            if([IO.Path]::GetDirectoryName($publicViteResolved) -ne $publicViteFrontend -or [IO.Path]::GetFileName($publicViteResolved) -ne ('.tmp-d-frontend-build-'+$publicViteID) -or ((Get-Item -LiteralPath $publicViteResolved -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) -or [IO.File]::ReadAllText((Join-Path $publicViteResolved 'owner.txt')) -ne $publicViteOwner){throw 'Refusing native Vite cleanup outside owned directory'}
+            if(@(Get-ChildItem -LiteralPath $publicViteResolved -Force -Recurse -Attributes ReparsePoint).Count -ne 0){throw 'Refusing redirected Vite artifacts'}
+            Remove-Item -LiteralPath $publicViteResolved -Recurse -Force
+        }
+        $publicViteRecord.artifacts_cleaned=-not(Test-Path -LiteralPath $publicViteOwner)
+        Write-Host ('CLEANED vite-build='+$publicViteRecord.artifacts_cleaned)
+    } finally {[IO.File]::WriteAllText(($publicVitePrefix+'.json'),($publicViteRecord|ConvertTo-Json -Depth 6));Stop-Transcript|Out-Null}
+}
+Process ID: 18312
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+VITE_SOURCE files=277 sha256=86886574c967e9b2673daf7dceb6fc8648a9f79cfb328c5c0b9d5306097ba372 installed_dependencies=no owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\frontend\.tmp-d-frontend-build-eb796c6a4c524397bf11fed14ff1f741
+NATIVE_EXIT vite=0
+VITE_POSTCHECK passed=yes
+CLEANED vite-build=True
+**********************
+PowerShell transcript end
+End time: 20261019104623
+**********************

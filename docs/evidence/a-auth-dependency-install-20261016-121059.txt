@@ -1,0 +1,38 @@
+**********************
+PowerShell transcript start
+Start time: 20261016121059
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'; $authInstallRoot=$PWD.Path; $authInstallScratch=Join-Path $authInstallRoot ('.tmp-a-evidence-'+[guid]::NewGuid().ToString('N')); $authInstallLog=Join-Path $authInstallRoot ('docs/evidence/a-auth-dependency-install-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'.txt'); $authInstallPrevious=@{}; foreach($authName in @('PATH','GOTOOLCHAIN','GOFLAGS','GOCACHE','GOTMPDIR','TEST_TELEMETRY_DIR')){$authInstallPrevious[$authName]=[Environment]::GetEnvironmentVariable($authName,'Process')}; $authInstallExit=1; Start-Transcript -Path $authInstallLog -NoClobber; try { $authModBefore=(Get-FileHash -LiteralPath 'backend/go.mod' -Algorithm SHA256).Hash; $authSumBefore=(Get-FileHash -LiteralPath 'backend/go.sum' -Algorithm SHA256).Hash; foreach($authDir in @('cache','tmp')){[IO.Directory]::CreateDirectory((Join-Path $authInstallScratch $authDir))|Out-Null}; $env:PATH='C:\Program Files\Go\bin;'+$env:PATH; $env:GOTOOLCHAIN='local'; $env:GOFLAGS='-mod=readonly -p=2'; $env:GOCACHE=Join-Path $authInstallScratch 'cache'; $env:GOTMPDIR=Join-Path $authInstallScratch 'tmp'; . ./scripts/system-backup-a-evidence-go-step.ps1; Initialize-AEvidenceTelemetry -Scratch $authInstallScratch; Write-Host 'INSTALL_AUTHORIZATION user=allowed pinned_module=github.com/klauspost/compress@v1.18.0'; Push-Location backend; try {$authInstallExit=Invoke-AEvidenceNative -FilePath 'C:\Program Files\Go\bin\go.exe' -Arguments @('mod','download','-json','github.com/klauspost/compress@v1.18.0')} finally {Pop-Location}; if($authModBefore -ne (Get-FileHash -LiteralPath 'backend/go.mod' -Algorithm SHA256).Hash -or $authSumBefore -ne (Get-FileHash -LiteralPath 'backend/go.sum' -Algorithm SHA256).Hash){throw 'Dependency download changed module lock files'}; Write-Host 'PASS dependency-module-lock-files-unchanged=yes' } finally {foreach($authName in $authInstallPrevious.Keys){[Environment]::SetEnvironmentVariable($authName,$authInstallPrevious[$authName],'Process')}; if(Test-Path -LiteralPath $authInstallScratch){$authInstallResolved=(Resolve-Path -LiteralPath $authInstallScratch).Path; if([IO.Path]::GetDirectoryName($authInstallResolved) -ne $authInstallRoot -or [IO.Path]::GetFileName($authInstallResolved) -notmatch '^\.tmp-a-evidence-[a-f0-9]{32}$' -or ((Get-Item -Force -LiteralPath $authInstallResolved).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Refusing dependency-install scratch cleanup outside workspace'}; Remove-Item -LiteralPath $authInstallResolved -Recurse -Force}; Write-Host ('CLEANED dependency-install-scratch='+(-not(Test-Path -LiteralPath $authInstallScratch))+' path='+$authInstallScratch); Write-Host ('AUTH_DEPENDENCY_INSTALL_EXIT='+$authInstallExit); Stop-Transcript}; exit $authInstallExit
+Process ID: 42800
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-auth-dependency-install-20261016-121059.txt
+LOCAL_PASS isolated-go-telemetry=off
+INSTALL_AUTHORIZATION user=allowed pinned_module=github.com/klauspost/compress@v1.18.0
+{
+	"Path": "github.com/klauspost/compress",
+	"Version": "v1.18.0",
+	"Error": "github.com/klauspost/compress@v1.18.0: Get \"https://proxy.golang.org/github.com/klauspost/compress/@v/v1.18.0.zip\": dial tcp 142.250.196.209:443: connectex: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.",
+	"Info": "C:\\Users\\zhanghui08\\go\\pkg\\mod\\cache\\download\\github.com\\klauspost\\compress\\@v\\v1.18.0.info",
+	"GoMod": "C:\\Users\\zhanghui08\\go\\pkg\\mod\\cache\\download\\github.com\\klauspost\\compress\\@v\\v1.18.0.mod",
+	"GoModSum": "h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ="
+}
+PASS dependency-module-lock-files-unchanged=yes
+CLEANED dependency-install-scratch=True path=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-e8662836593a4bb18d4fcab88de8a27f
+AUTH_DEPENDENCY_INSTALL_EXIT=1
+**********************
+PowerShell transcript end
+End time: 20261016121125
+**********************

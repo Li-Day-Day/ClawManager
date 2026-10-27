@@ -1,0 +1,40 @@
+**********************
+PowerShell transcript start
+Start time: 20261015131836
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+Start-Transcript -LiteralPath 'docs/evidence/a-config-backfill-identity-vectors-local-20261015-r2.txt' -NoClobber
+try {
+    & node '.\scripts\system-backup-a-config-backfill-identity.test.mjs' --write-vectors 2>&1 | ForEach-Object {Write-Host $_}
+    if($LASTEXITCODE -ne 0){throw 'Independent backfill identity vector gate failed'}
+} finally {Stop-Transcript}
+Process ID: 34536
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-backfill-identity-vectors-local-20261015-r2.txt
+✔ independent backfill identity vectors have exact JCS and SHA-256 (3.7092ms)
+✔ row fingerprint covers every formal 066 config column except the separately checked canonical field (1.1271ms)
+✔ row and provenance identities use separate domains and exact nullable/text facts (0.3219ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15.9772
+**********************
+PowerShell transcript end
+End time: 20261015131836
+**********************

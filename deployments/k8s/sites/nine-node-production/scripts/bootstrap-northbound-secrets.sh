@@ -104,6 +104,7 @@ EOF
     -out "$work_dir/private.pem"
 
   kubectl create secret tls clawmanager-northbound-gateway-tls -n "$NAMESPACE" \
+    --labels="app.kubernetes.io/managed-by=clawmanager,clawmanager.io/northbound-certificate=active" \
     --cert="$work_dir/gateway.crt" --key="$work_dir/gateway.key" \
     --dry-run=client -o yaml | kubectl apply -f -
   kubectl create secret tls clawmanager-northbound-gateway-client-tls -n "$NAMESPACE" \
@@ -119,12 +120,21 @@ EOF
     --from-file=ca.crt="$work_dir/internal-ca.crt" \
     --dry-run=client -o yaml | kubectl apply -f -
   kubectl create secret generic clawmanager-northbound-gateway-ca -n "$NAMESPACE" \
+    --labels="app.kubernetes.io/managed-by=clawmanager,clawmanager.io/northbound-certificate=active" \
     --from-file=ca.crt="$work_dir/gateway-ca.crt" \
     --dry-run=client -o yaml | kubectl apply -f -
   kubectl create secret generic clawmanager-northbound-jwe -n "$NAMESPACE" \
     --from-file=private.pem="$work_dir/private.pem" \
     --dry-run=client -o yaml | kubectl apply -f -
 fi
+
+# Existing installations created these two active broker-managed Secrets before
+# ownership enforcement was introduced. Normalize metadata without reading or
+# rewriting certificate data.
+kubectl label --overwrite secret -n "$NAMESPACE" \
+  clawmanager-northbound-gateway-tls clawmanager-northbound-gateway-ca \
+  app.kubernetes.io/managed-by=clawmanager \
+  clawmanager.io/northbound-certificate=active >/dev/null
 
 mkdir -p "$OUTPUT_DIR"
 kubectl get secret clawmanager-northbound-gateway-ca -n "$NAMESPACE" \

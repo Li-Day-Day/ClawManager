@@ -293,7 +293,7 @@ func defaultGatewayBaseURL() (string, bool) {
 		if client := k8s.GetClient(); client != nil {
 			systemNamespace = client.GetSystemNamespace()
 		} else if baseNamespace := strings.TrimSpace(os.Getenv("K8S_NAMESPACE")); baseNamespace != "" {
-			systemNamespace = fmt.Sprintf("%s-system", baseNamespace)
+			systemNamespace = resolveSystemNamespace(baseNamespace)
 		}
 	}
 	if systemNamespace == "" {
@@ -329,7 +329,7 @@ func defaultAgentControlBaseURL() (string, bool) {
 		if client := k8s.GetClient(); client != nil {
 			systemNamespace = client.GetSystemNamespace()
 		} else if baseNamespace := strings.TrimSpace(os.Getenv("K8S_NAMESPACE")); baseNamespace != "" {
-			systemNamespace = fmt.Sprintf("%s-system", baseNamespace)
+			systemNamespace = resolveSystemNamespace(baseNamespace)
 		}
 	}
 	if systemNamespace == "" {
@@ -367,9 +367,9 @@ func defaultNoProxyList() string {
 	systemNamespace := strings.TrimSpace(os.Getenv("CLAWMANAGER_SYSTEM_NAMESPACE"))
 	if systemNamespace == "" {
 		if client := k8s.GetClient(); client != nil {
-			systemNamespace = fmt.Sprintf("%s-system", client.Namespace)
+			systemNamespace = client.GetSystemNamespace()
 		} else if baseNamespace := strings.TrimSpace(os.Getenv("K8S_NAMESPACE")); baseNamespace != "" {
-			systemNamespace = fmt.Sprintf("%s-system", baseNamespace)
+			systemNamespace = resolveSystemNamespace(baseNamespace)
 		}
 	}
 
@@ -396,6 +396,14 @@ func defaultNoProxyList() string {
 	}
 
 	return strings.Join(serviceNames, ",")
+}
+
+func resolveSystemNamespace(namespace string) string {
+	namespace = strings.TrimSpace(namespace)
+	if namespace == "" || strings.HasSuffix(namespace, "-system") {
+		return namespace
+	}
+	return fmt.Sprintf("%s-system", namespace)
 }
 
 func normalizePortValue(values ...string) string {

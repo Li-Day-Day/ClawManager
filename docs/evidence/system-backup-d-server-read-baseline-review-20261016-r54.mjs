@@ -1,0 +1,30 @@
+// Frozen baseline inspection only; current source changes are not accepted.
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,existsSync,readdirSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+const root=new URL('../../',import.meta.url),read=p=>readFileSync(new URL(p,root));
+const sha=b=>createHash('sha256').update(b).digest('hex');
+const logPath='docs/evidence/system-backup-d-server-read-local-20261016-r54.txt',manifestPath='docs/evidence/system-backup-d-server-read-source-20261016-r54.json',reportPath=manifestPath.replace(/\.json$/,'.go-report.jsonl');
+const log=read(logPath).toString('utf8').replaceAll('\r\n','\n'),m=JSON.parse(read(manifestPath));
+const digest=sha(m.files.map(p=>`${p.path}\0${p.sha256}\0${p.size}`).join('\n')+'\n');
+assert.equal(m.source_sha256,digest);assert.equal(m.stable_copy_verified,true);
+for(const marker of ['LOCAL_PASS full-cmd-server-test-and-linux-build=yes release-deployment=no','LOCAL_PASS d-server-read-frozen-postcheck=yes dependency-installation=no remote=no','CLEANED server-read-local-source-cache=True','NATIVE_EXIT cmd-server-tests=0'])assert.ok(log.includes(marker),marker);
+assert.match(log,/^d_server_read_exit=0$/m);
+const events=read(reportPath).toString('utf8').trim().split('\n').map(l=>JSON.parse(l));
+assert.deepEqual(log.split('\n').filter(l=>l.startsWith('{"Time":')).map(l=>JSON.parse(l)),events);
+assert.ok(events.every(e=>!['fail','skip'].includes(e.Action)));
+assert.equal(events.filter(e=>e.Action==='pass'&&!e.Test&&e.Package==='clawreef/cmd/server').length,1);
+const passes=events.filter(e=>e.Action==='pass'&&e.Test).map(e=>e.Test);
+for(const name of ['TestLiveBackupReadRequiresPinnedAuthorityAndSessions','TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization'])assert.ok(passes.includes(name),name);
+assert.ok(log.includes(`bytes=${read(reportPath).length} sha256=${sha(read(reportPath))}`));
+const focused=m.files.filter(p=>/^backend\/go\.(mod|sum)$/.test(p.path)||p.path.startsWith('backend/')&&p.path.endsWith('.go')&&(!p.path.endsWith('_test.go')||p.path.startsWith('backend/cmd/server/'))||['scripts/system-backup-d-server-read-validation.ps1','scripts/system-backup-d-index-source-snapshot.ps1','scripts/system-backup-a-evidence-go-step.ps1'].includes(p.path));
+const drift=focused.filter(p=>!existsSync(new URL(p.path,root))||sha(read(p.path))!==p.sha256).map(p=>p.path);
+const old=new Set(m.files.map(p=>p.path)),added=[];
+function walk(path){for(const e of readdirSync(new URL(path+'/',root),{withFileTypes:true})){if(e.isSymbolicLink())continue;if(e.isDirectory()){if(!e.name.startsWith('.')&&!['vendor','uploads','cache','dist','build','node_modules','tmp'].includes(e.name))walk(path+'/'+e.name)}else if(e.name.endsWith('.go')&&!e.name.endsWith('_test.go')&&!old.has(path+'/'+e.name))added.push(path+'/'+e.name)}}
+walk('backend');
+const owner=log.match(/^LOCAL_OWNER server-read-source=.+[\\/](\.tmp-d-index-cache-([a-f0-9]{32})) container=(codex-d-server-read-[a-f0-9]{32})$/m);
+assert.ok(owner);assert.equal(owner[3],`codex-d-server-read-${owner[2]}`);assert.ok(!existsSync(new URL(owner[1],root)));
+assert.ok(drift.length+added.length>0,'This receipt intentionally describes a superseded frozen baseline');
+const report={kind:'d_full_server_frozen_baseline_inspection',recorded_at:new Date().toISOString(),status:'frozen_cmd_server_tests_and_linux_build_passed_current_sources_not_accepted',raw_log:logPath,raw_log_sha256:sha(read(logPath)),source_manifest:manifestPath,source_manifest_sha256:sha(read(manifestPath)),go_report:reportPath,go_report_sha256:sha(read(reportPath)),source_files:m.files.length,source_sha256:digest,main_tests:passes.filter(n=>!n.includes('/')).length,including_subtests:passes.length,tests:passes,default_vet:true,full_frozen_package_passed:true,linux_binary_built_and_removed:true,focused_original_pins:focused.length,current_focused_drift:drift,current_runtime_additions_not_covered:added,owner_independently_absent:owner[1],container:owner[3],process_exit:0,dependencies_installed:false,remote_executed:false,current_server_gate_accepted:false,actual_live_auth_or_SQL:false,production_deployment:false,overall_complete:false};
+if(process.argv.includes('--record'))writeFileSync(new URL('system-backup-d-server-read-baseline-review-20261016-r54.json',import.meta.url),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({status:report.status,tests:[report.main_tests,report.including_subtests],currentDrift:drift,uncoveredAdditions:added,ownerAbsent:true}));

@@ -42,6 +42,7 @@ var columns = map[string]string{
 	"backup_schedules":              "id instance_id schedule_name cron_expression retention_days is_active created_at updated_at",
 	"instance_usage":                "id instance_id cpu_usage_percent memory_usage_gb disk_usage_gb gpu_usage_percent uptime_seconds recorded_at",
 	"instance_desired_state":        "id instance_id desired_power_state desired_config_revision_id desired_runtime_action updated_by updated_at created_at",
+	"instance_browser_workers":      "instance_id enabled status resource_profile display_width display_height retain_profile browser_image cdp_proxy_image generation observed_generation last_error created_at updated_at",
 	"instance_commands":             "id instance_id agent_id command_type payload_json status idempotency_key issued_by issued_at dispatched_at started_at finished_at timeout_seconds result_json error_message created_at updated_at",
 	"instance_config_revisions":     "id instance_id source_snapshot_id source_bundle_id revision_no content_json checksum status published_by published_at activated_at created_at updated_at",
 	"instance_external_access":      "id instance_id enabled auth_mode public_slug public_token_hash short_code_hash api_key_hash password_value api_key_prefix expires_at created_by last_used_at created_at updated_at",
@@ -327,6 +328,12 @@ func normalizeRow(ctx context.Context, table string, r Row, p Policy) error {
 	case "instance_desired_state":
 		set(r, "desired_power_state", Text("stopped"))
 		clearFields(r, "desired_runtime_action")
+	case "instance_browser_workers":
+		set(r, "enabled", Text("0"))
+		set(r, "status", Text("disabled"))
+		set(r, "generation", Text("1"))
+		set(r, "observed_generation", Text("0"))
+		clearFields(r, "last_error")
 	case "instance_commands":
 		// History remains in the artifact. Target records are terminal even if
 		// a scheduler accidentally reads them after the drill.

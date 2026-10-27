@@ -1,0 +1,110 @@
+{
+  "kind": "d_task_owner_download_chain_local_review",
+  "prefix": "d-download-task-chain-packages-20261019-r53",
+  "source_sha256": "8b7ad66a15d7384e3362fc6178220974ea528842a5d5cd0087a450ebe5bc5ac7",
+  "source_files": 1406,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 253,
+      "all": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 290,
+      "all": 2244
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main": 75,
+      "all": 519
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "main": 75,
+      "all": 784
+    }
+  ],
+  "main": 693,
+  "all": 5532,
+  "seed_main": 4,
+  "seed_all": 19,
+  "detached_seed_all": 19,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "0af696b2aab6a28cfd51ec3db8430d2cdac60b3b05164560d8022120ed7708ba"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "0de14f34672ac050d3e6cfbb15083102d7b5de9540d5c83a25e9fca053ed13a1"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "807287accb8bc2ab00ff2a92efeb8c81f8690629b404a2aca101ffc7e488ad01"
+    }
+  ],
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-ea44b89204844cdd8bd63395dd7074b3",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-44aae7b2a0994ce2a02f387916c96099",
+      "exists": false
+    }
+  ],
+  "current_seed": {
+    "prefix": "docs/evidence/d-download-task-chain-current-seed-20261019-r54",
+    "source_sha256": "6124e387ccc0ef2479cdb5bc8c356051378e3632a8d0ed2d3f642505aa4d2e6a",
+    "source_files": 1408,
+    "main": 4,
+    "all": 19,
+    "detached_all": 19,
+    "current_source_drift": [],
+    "binary_sha256": "76e15574af52087559adfe49f6f652c74e4a110359e5b5ff72d71ce086084bfb"
+  },
+  "current_added_sources": [
+    "scripts/system-backup-d-download-task-chain-dispatch.test.ps1",
+    "scripts/system-backup-d-download-task-chain-phase.sh"
+  ],
+  "current_changed_sources": [
+    "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go",
+    "scripts/system-backup-a-evidence-validation.ps1",
+    "scripts/system-backup-d-download-admission-native-validation.ps1"
+  ],
+  "all_existing_source_changes_exactly_reconstructed": true,
+  "production_pins_match": true,
+  "original_linux_probe_has_older_tagged_fixture": true,
+  "current_script_pins": [
+    {
+      "path": "scripts/system-backup-d-download-task-chain-dispatch.test.ps1",
+      "sha256": "c2aa97e827f783e9db817567f4c5ca4f4d15ba6e9fe4c60b073a3ccd29fd652f"
+    },
+    {
+      "path": "scripts/system-backup-d-download-task-chain-phase.sh",
+      "sha256": "8ffd9bb4eca5d21fc86042f52628699f3c6666021d135eeea97c78959ea4ca27"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go",
+      "sha256": "e65f7209f6e0b6dade5269c742b7b87e8fb5f7d0352e66bf15d7574b33c4dbff"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "412ca07fc8c62ffb61e1c12a75fd2ca3e33059edf5222ceeae0bdcbed79c50fe"
+    },
+    {
+      "path": "scripts/system-backup-d-download-admission-native-validation.ps1",
+      "sha256": "8460f9e89ed1f5adde6f9310cbce3a5ee8e7eb0980cfcd287e339374f7088799"
+    }
+  ],
+  "actual_task_chain_mysql_cases_prepared": 12,
+  "actual_task_chain_mysql_executed": false,
+  "dependencies_installed": false,
+  "remote_executed_by_d": false,
+  "provider_transport": "synthetic",
+  "formal_schema_or_grants_installed": false,
+  "producer_owner_innodb_covered": false,
+  "production_enabled": false,
+  "original_six_scopes_complete": false
+}

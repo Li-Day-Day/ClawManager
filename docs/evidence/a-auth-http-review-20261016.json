@@ -1,0 +1,326 @@
+{
+  "kind": "a_auth_http_full_package_local_review",
+  "recorded_at": "2026-10-16T04:51:51.889Z",
+  "status": "accepted_local_frozen_five_package_gate_only",
+  "checks": {
+    "frozen_manifest_digest": true,
+    "no_go_failure": true,
+    "five_full_packages_pass": true,
+    "unique_test_events": true,
+    "new_http_5_main_25_subchecks": true,
+    "credential_logging_regression": true,
+    "browser_worker_fixture_regression": true,
+    "offline_default_vet_no_retry": true,
+    "final_exit_zero": true,
+    "two_owned_paths_absent": true,
+    "two_install_scratch_paths_absent": true,
+    "pinned_dependency_installed": true,
+    "official_proxy_failure_preserved": true,
+    "focused_auth_sources_match": true
+  },
+  "raw_log": "docs/evidence/a-auth-http-local-20261016-124641.txt",
+  "raw_sha256": "641fa4b6182f5eed293c15f0cbb42a3a28b233e276bec426385a2adbff1a2797",
+  "source_manifest": "docs/evidence/a-auth-http-source-20261016-124641.json",
+  "source_manifest_sha256": "b83f33de2cf5f70c23a8651c09929cb6af402b07c7a40f636fea4739d912b164",
+  "source_sha256": "982a21978375f5e44b32fe94b3092c7b8ac11b043ab7e027f1d81faff57dedf5",
+  "source_files": 1295,
+  "packages": [
+    "clawreef/internal/repository",
+    "clawreef/internal/services",
+    "clawreef/internal/middleware",
+    "clawreef/internal/handlers",
+    "clawreef/cmd/server"
+  ],
+  "package_results": [
+    "clawreef/internal/repository",
+    "clawreef/internal/middleware",
+    "clawreef/internal/handlers",
+    "clawreef/internal/services",
+    "clawreef/cmd/server"
+  ],
+  "unique_main_tests": 1010,
+  "unique_subtests": 364,
+  "unique_checks": 1374,
+  "new_http_main_tests": 5,
+  "new_http_subtests": 25,
+  "skipped_tests": [
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestBrowserWorkerPatchedCredentialsAreOwnerOnly"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestEnsureOpenClawPluginLayoutCompatibilityLeavesLegacyLayoutUntouched"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestEnsureOpenClawPluginLayoutCompatibilityLinksProjectPackages"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestPrepareHermesLitePromptRootsRejectsSymlinkedWorkerRoot"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestWorkspaceFileServiceUploadRejectsEscapingSymlinkParent"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestResolveWorkspacePathRejectsExistingSymlinkEscape"
+    },
+    {
+      "package": "clawreef/internal/services",
+      "test": "TestResolveWorkspacePathRejectsMissingTargetUnderEscapingSymlinkParent"
+    }
+  ],
+  "default_vet": true,
+  "tool_retries": 0,
+  "process_exit": 0,
+  "focused_auth_pins": [
+    {
+      "path": "backend/cmd/server/backup_sessions.go",
+      "size": 733,
+      "sha256": "17792d91b8c53224ef88d23db3b74e016e722eadb5d6569b33c1c21993dbdd97",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/handlers/auth_handler.go",
+      "size": 4985,
+      "sha256": "667e53eb015e8e526d80fab60267a81467490a088c33b05e207882134be5bd73",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/handlers/auth_sessions_a_test.go",
+      "size": 12617,
+      "sha256": "c2a3cffbb2fe7dd535d4d67e218df6375c53610d9f75b87dbfec49483fbb14e1",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/middleware/auth_middleware.go",
+      "size": 4536,
+      "sha256": "980d476909fd04599dba3ab1569117d0a2db85ba669168e8e10e99d3d7cfded3",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/repository/user_login_failure_test.go",
+      "size": 3699,
+      "sha256": "402ed6442e25be63d1aaf8e6c989391fbaa2cf4a39301ebe0eb9cfd8ea302f1f",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/repository/user_login_logging_a_test.go",
+      "size": 2132,
+      "sha256": "58d4aca33fb58d26d2dca9043bcc526f58ae9d8387817703e0efdffcea7d6324",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/repository/user_login_mysql_test.go",
+      "size": 16549,
+      "sha256": "495390578523b664b895f6afb235fad6751d552b31ba76bd56a6dfef69bedb7f",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/repository/user_login.go",
+      "size": 2724,
+      "sha256": "26f4b7b2a7abe17fc6797df6a8e3e1c0f9290eb2b46f362713f03536a49f18a6",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/repository/user_repository_test.go",
+      "size": 671,
+      "sha256": "282d3c4c28b740145872db9e19eda671010e2e2224d8005b572e370f4dc1e059",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/repository/user_repository.go",
+      "size": 6384,
+      "sha256": "5987650070c2ec0e3077416c46a4d6c49e6a5734849dfce44ff9a05bd3c8654d",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/auth_registration_quota_test.go",
+      "size": 665,
+      "sha256": "b59b122f1bf605fa643d0a5c8e6f682982aecbd63fe89631dd56b1271a442c0a",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/auth_service_test.go",
+      "size": 17099,
+      "sha256": "525eb7e5bd32b560c78692210312ebf2c4017e95e54957d286fd04239c903cd3",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/auth_service.go",
+      "size": 11293,
+      "sha256": "2d3e36fd5af2734580e921a74cd8b65795689504cb59906b36b5a73a0d110129",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/auth_sessions_test.go",
+      "size": 20590,
+      "sha256": "37c4bee2f48f4d17083da8fdd89cea79f8f064f500fefaf61a703f5150b8e805",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/auth_sessions.go",
+      "size": 2551,
+      "sha256": "7025960efcd7348e1c5449d2c6bf530f26183bd30f3078d0706e06a41572f018",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/browser_worker_service_test.go",
+      "size": 19346,
+      "sha256": "bbf46833de2cc8a42f6d6b158c82ab4d47f760212f95e6a99d436452eba91a8b",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/enterprise_auth_manager_test.go",
+      "size": 11345,
+      "sha256": "1e6a41072d2ca1bf151b1a74ba54032cc9317992a077b13c456995bd5c8a33b4",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/enterprise_auth_manager.go",
+      "size": 21912,
+      "sha256": "e52027dc8c731c2b8e1d6fd273de158e392d05191320ee7273bb5a71d8ef85bc",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/enterprise_auth.go",
+      "size": 1932,
+      "sha256": "c4a987ceb538f1ba197f1af48577a58d7d5caf0fef529ee17ef274ff58784027",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/ldap_auth_test.go",
+      "size": 6727,
+      "sha256": "6c7440bd6501b4e8904aec1a092939652115da0c19701e5128e52f42c43f0e9a",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/services/ldap_auth.go",
+      "size": 15264,
+      "sha256": "3496c1d62e099cd3c0ecbc4939b24f55cf5a67b68167e300715cdc89d40f59f1",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions_mysql_test.go",
+      "size": 18833,
+      "sha256": "84a285a83af84e29186644f3842eaa020adf10c7ea7b6770bb5247939f87d7a6",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions_test.go",
+      "size": 13814,
+      "sha256": "9e048a7ec05f86ed3b0ab6bb19f7ede31c468c0a07250b5c3e7cef5476104902",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions.go",
+      "size": 8279,
+      "sha256": "bddd0ac6750e6114c736404b55d64507d038f6ccfb3074c27ab44687de40b405",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/hub_errors.go",
+      "size": 1369,
+      "sha256": "b40fc9ef4294bae5ea85a97935be06a0f03037d41a4b2a194c5c8adc049f4d40",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/jwt_test.go",
+      "size": 1065,
+      "sha256": "3c76f162d04f958ee0d5de514a60183c33a654e82215973c9a55837f0537b3de",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/jwt.go",
+      "size": 1493,
+      "sha256": "c32b4096800382b4f3348d9fac0ac8c6927ba27dc87aef34cb70e6ebea15a9d9",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/password.go",
+      "size": 521,
+      "sha256": "cf8c05658ed134fe3d5d3fc1a8fce6e6f37f02a0c4fec420c9754a13fce3b172",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/response.go",
+      "size": 8335,
+      "sha256": "421c36a58fdebe98b115ae563a3c598eabfb306c2d456ffc6d645168ff9516a9",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/session_format_test.go",
+      "size": 1663,
+      "sha256": "151ad5d6521f21debeea760bb5033148a567bf2e1bdf780153089bfd1ffc8e67",
+      "current_status": "matched"
+    },
+    {
+      "path": "backend/internal/utils/session_format.go",
+      "size": 1620,
+      "sha256": "66a8d2a7642ccfab07e86a9450eb3b71829a74fd87252cc2b9b8f402d7954684",
+      "current_status": "matched"
+    },
+    {
+      "path": "scripts/system-backup-a-auth-http-validation.ps1",
+      "size": 5590,
+      "sha256": "5b5f5a4abb2ce8a2442224ee622003578bf131f5a6db524117695e69dd43875d",
+      "current_status": "matched"
+    }
+  ],
+  "current_manifest_drift": [],
+  "current_additions_not_enumerated_or_accepted": true,
+  "owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-66085bddfcfb4db3a2575c2d56122531",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5858d46d74d54829a6dc8fd7af6f5758",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-c0535fb1e9a04f1989c1f2e8c4dce2f2",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-e8662836593a4bb18d4fcab88de8a27f"
+  ],
+  "dependencies": {
+    "user_authorized_install": true,
+    "module": "github.com/klauspost/compress",
+    "version": "v1.18.0",
+    "sum": "h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=",
+    "success_log": "docs/evidence/a-auth-dependency-install-mirror-20261016-121154.txt",
+    "success_log_sha256": "d8826a6b611e5edfc5f9840d4c40ab82a9fbced10c2bf3ed82b547860ce8222b",
+    "prior_failed_log": "docs/evidence/a-auth-dependency-install-20261016-121059.txt",
+    "prior_failed_log_sha256": "452f58eba13890d1681fa254816e2ecfec9c2290221d7dc03d5310a1be163b1e",
+    "source": "goproxy.cn; repository go.sum verified; no version or lock-file change",
+    "retained_module_cache": true,
+    "network_downloads_during_test_gate": false
+  },
+  "prior_full_gate_failure": "docs/evidence/a-auth-http-initial-failure-review-20261016.json",
+  "corrective_changes": [
+    "Avoid credential argument logging using the same database/sql DB/Tx and session context",
+    "Correct browser-worker deletion fixture root and instance path; retain production deletion guards and assert filesystem cleanup"
+  ],
+  "scope": {
+    "real_gin_handlers": true,
+    "real_auth_service": true,
+    "real_bcrypt_and_jwt": true,
+    "real_logout_jwt_middleware": true,
+    "http_transport": "in-process httptest; no deployed HTTP or TLS-handshake evidence",
+    "user_repository_and_session_persistence": "models",
+    "directory_transport": "model",
+    "real_mysql": false,
+    "real_ldap_tls_bind_or_directory_revocation": false,
+    "human_mfa": false,
+    "production_grant": false,
+    "formal_schema_approval": false,
+    "overall_goal_complete": false
+  }
+}

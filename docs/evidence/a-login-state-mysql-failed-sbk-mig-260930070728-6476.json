@@ -1,0 +1,74 @@
+{
+  "kind": "a_login_state_mysql_failed_run_review",
+  "run": "sbk-mig-260930070728-6476",
+  "namespace_uid": "de3370d1-365a-4708-8bfe-c0d13bfb3e45",
+  "status": "failed_probe_fixture_panic_requires_fixed_rerun",
+  "mysql_version": "8.4.8",
+  "passed_cases": [
+    "local_changed_and_zero_changed_rows",
+    "ldap_changed_and_zero_changed_rows",
+    "ldap_role_to_admin",
+    "ldap_role_to_user",
+    "stale_password",
+    "stale_password_case",
+    "stale_password_trailing_space",
+    "stale_disabled",
+    "stale_role",
+    "stale_provider",
+    "stale_external_id",
+    "stale_external_id_case",
+    "stale_external_id_null",
+    "null_external_is_not_empty",
+    "missing_user",
+    "waiting_for_password",
+    "waiting_for_disabled",
+    "waiting_for_role",
+    "waiting_for_provider",
+    "waiting_for_external_id",
+    "waiting_for_external_id_null"
+  ],
+  "failed_cases": [
+    "database_failure_is_redacted"
+  ],
+  "observed_exact_lock_waits": 6,
+  "observed_zero_changed_fallbacks": 2,
+  "fresh_migration_files": 94,
+  "catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+  "users_schema_sha256": "cc460b67cbea1e13ce2c21b0a799d643e1b5d7b7c5847dd89d87b7fb4c69ebb9",
+  "probe_sha256": "b4b2ffd883ceaa82c29d8ec42c24ea4e7053182c53455c266154396227a1cf5f",
+  "migration_sha256": "0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea",
+  "inputs_sha256": "087a1da9e1cd0e1be328cfe51a57ab20260a0b944e5b087d97f48121f625e49a",
+  "inputs_digest_review": "Reproduced exact bytes with Windows PowerShell 5.1.26100.6899; PowerShell 7.6.5 produces original local 5eb3f79a... for the same 94-file descriptor",
+  "binary_binding_matches_original_preparation": true,
+  "source_snapshot_comparison": {
+    "compared": 677,
+    "differences": [
+      {
+        "path": "backend/internal/repository/user_login_mysql_test.go",
+        "prepared_sha256": "a3f913fffadb82c2f106d98f2fd411108e3f132d648c37c4e88a74d8e2070b01",
+        "current_sha256": "495390578523b664b895f6afb235fad6751d552b31ba76bd56a6dfef69bedb7f"
+      }
+    ],
+    "note": "Compared after fixture repair; does not expand remote acceptance to subsequent changes"
+  },
+  "root_cause": "Probe closed upper/db Session, which clears its sqlDB pointer; subsequent Exec panicked before UpdateLoginState could map a database error",
+  "cleanup": {
+    "probe_database_drop_marker_present": false,
+    "namespace_deleted": true,
+    "remote_scratch_deleted": true,
+    "local_build_cache_deleted": true,
+    "storage": "Disposable MySQL emptyDir in deleted test namespace; no independent DROP DATABASE success attested"
+  },
+  "probe_exit_code": 2,
+  "wrapper_exit_code": 1,
+  "overall_accepted": false,
+  "live_cluster_rechecked": false,
+  "source_log": {
+    "path": "docs/evidence/a-login-state-remote-sbk-mig-260930070728-6476.txt",
+    "sha256": "983eb83817cbc62466aa3657835b180e154ab0aef05064a3a26ee709c60fd926"
+  },
+  "transcript": {
+    "path": "docs/evidence/a-login-state-remote-20260930-145608.txt",
+    "sha256": "7787cd6991a50d55e852b2df52fcab6697190f13d1d224c74f5d5924388bf354"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "d_migration_capture_exclusion_isolated_mysql_observation",
+  "date": "2026-10-09",
+  "source": "user_supplied_remote_command_output",
+  "independently_requeried_cluster": false,
+  "test_namespace": "sbk-mig-261009085934-4366",
+  "test_namespace_uid": "a4c541de-7d73-44ef-8b6f-48497cd508b3",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:7130636d8afa36527768c0ba2f2e12889e5c1b87f176533a6598f9e8db573a77",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "migration_catalog_hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+  "probe_binary_sha256": "0a7fa15a7f408ac0852341f29494c7e1d8325057c67ea746a09965c5dc225688",
+  "fresh_migration_replay": {
+    "range": "001..080",
+    "applied_files": 94,
+    "exact_filenames": true
+  },
+  "suite": "TestDDatabaseInvariants",
+  "suite_result": "pass",
+  "suite_elapsed_seconds": 17.45,
+  "mutual_exclusion_tests": [
+    {"name": "capture_waits_for_migration_DDL_lock", "result": "pass", "elapsed_seconds": 0.23},
+    {"name": "migration_and_gate_mutually_exclude", "result": "pass", "elapsed_seconds": 1.03}
+  ],
+  "other_invariant_subtests_passed": 5,
+  "local_checks": "unit_tests_vet_and_linux_probe_compile_passed",
+  "cleanup_reported": {
+    "namespace": "cleaned_with_matching_run_uid",
+    "remote_probe_scratch": "cleaned",
+    "local_probe_build_cache": "cleaned"
+  },
+  "wrapper_exit_code_explicitly_reported": false,
+  "result": "pass_within_isolated_mysql_probe_scope",
+  "limits": [
+    "The observation is user-supplied output, not an independent cluster query or signed evidence registration.",
+    "The capture-wait test uses the production SQL advisory locker with real DDL; the migration-rejection test calls the actual embedded migration runner after gate acquisition.",
+    "This does not validate B rollout preflight, participant acknowledgements, production backup capture or all MySQL versions."
+  ]
+}

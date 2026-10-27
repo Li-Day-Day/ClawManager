@@ -1,0 +1,202 @@
+{
+  "kind": "d_operator_receipt_archive",
+  "source_attachment_sha256": "d6f88cfbd0a20d6dc7212faca5245be165d2903b902966861977032e29130c78",
+  "received_at": "2026-09-29T07:37:36.391392+00:00",
+  "cleanup_markers": [
+    "CLEANED remote-d-live-preflight=yes",
+    "CLEANED local-d-live-preflight=yes"
+  ],
+  "remote_independently_rechecked": false,
+  "observation": {
+    "kind": "d_isolated_rwx_mount_probe",
+    "status": "BLOCKED",
+    "production_report_volume_accepted": false,
+    "actual_capacity_admission_tested": false,
+    "host_changed": false,
+    "database_mutated": false,
+    "cluster_mutated": false,
+    "cleanup_verified": true,
+    "checks": [],
+    "preflight_observation": {
+      "blockers": [
+        "dedicated_rwx_mount_permissions_and_freshness_not_tested",
+        "longhorn_dependency_Multipathd_requires_review",
+        "longhorn_dependency_KernelModulesLoaded_requires_review"
+      ],
+      "settings": {
+        "default-replica-count": "{\"v1\":\"3\",\"v2\":\"3\"}",
+        "storage-minimal-available-percentage": "25",
+        "storage-over-provisioning-percentage": "100",
+        "v1-data-engine": "true",
+        "v2-data-engine": "false"
+      },
+      "dependency_details": [
+        {
+          "type": "RequiredPackages",
+          "status": "True",
+          "reason": "",
+          "lastTransitionTime": "2026-06-25T07:38:58Z"
+        },
+        {
+          "type": "Multipathd",
+          "status": "False",
+          "reason": "MultipathdIsRunning",
+          "lastTransitionTime": "2026-06-25T07:38:58Z"
+        },
+        {
+          "type": "NFSClientInstalled",
+          "status": "True",
+          "reason": "",
+          "lastTransitionTime": "2026-06-25T07:38:58Z"
+        },
+        {
+          "type": "KernelModulesLoaded",
+          "status": "False",
+          "reason": "KernelModulesNotLoaded",
+          "lastTransitionTime": "2026-06-25T07:38:58Z",
+          "missing_modules": [
+            "dm_crypt"
+          ],
+          "module_message_recognized": true
+        },
+        {
+          "type": "MountPropagation",
+          "status": "True",
+          "reason": "",
+          "lastTransitionTime": "2026-06-25T07:39:28Z"
+        }
+      ],
+      "ssh_host_storage_details": {
+        "mutated": false,
+        "module_loaded_by_probe": false,
+        "service_changed": false,
+        "dm_crypt_module_file_available": true,
+        "active_multipath_map_count": 0,
+        "longhorn_block_devices": [
+          {
+            "volume_name_sha256": "cdd2caefbf3d292af2deab99b27eb7a090a081db6da47fcab9e292d1349abe7c",
+            "block_device": "sdam",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "99d0afbcec8c1578c396138f42bde9e4987aef473f092d8a2ade1e91da64414b",
+            "block_device": "sdal",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "45e1c5b4d56ec0e2ff2c4c27a6badba3bc1036606088a687eaf05adcb3ffeefb",
+            "block_device": "sdaj",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "65d7894351934f9aa9e67c3b34fc22b2568f2718a08135cafa3ac6c24d7ccab2",
+            "block_device": "sdak",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "8a91a86734207515f5ef4d5e57922008fb541966641a97e6f72ea5cae8eb9d68",
+            "block_device": "sdaa",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "2ce5ca0dbe363579b4473d4490b64deb899cb4d1ebbfba3c451e5208c10c1174",
+            "block_device": "sdai",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "38880b7e9cb9cf122cef2b356e571bb174e533cea41cd4d3cf677bde0d8d1a31",
+            "block_device": "sdk",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "25c286790994c0253e8ef0c8620b0f2926cb89ddea61c4d290f36973bcea84db",
+            "block_device": "sdg",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "a930c81a739aca318c78164a062e0d4350100d0a9f104aca180ffef480155897",
+            "block_device": "sdac",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "4104889a4fe9e88fb7210c571c31abc1eddeb7d1283b569b7866bc01796bf50e",
+            "block_device": "sdj",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "78065fd88526fc28acff2616b513120032e6a658c4d882b7015cef434e8f4845",
+            "block_device": "sdf",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "fce594f9284786d5bd4a8f209a31d9b8952362d8e0ea3dd7557a0103481d54f4",
+            "block_device": "sdc",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "db80ced880f88109be3d2012e3a892bfa1ba87269fb1b93a5d3cb6cf97aa1385",
+            "block_device": "sdah",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "a96a028114d7a049a529b072cb95e06590a9b2f880d95e99607b0d13d3be6f8c",
+            "block_device": "sdaf",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "6275e8be5dba772dcfccabaf6da9ae3c7adc1a80a46c0c96e46a1af739eaab47",
+            "block_device": "sdae",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "6733596665e75386fc4318b5f6b27a1cf1d2f53c9d40c17c0b3808185c4b57f1",
+            "block_device": "sdt",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "c06bfd6fd1fce1179aa4b787833c20043d107b712ba495fd94d4f6c692956b4e",
+            "block_device": "sdo",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "c89e5c070f38fe1e3f61fd6716585772ccd2e7ff182f202e1b06c10d5a76c22a",
+            "block_device": "sdm",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "9541bdf0242716bba66b71ed940b8a9798f77b1be7c3edd684315e909e285246",
+            "block_device": "sdi",
+            "multipath_holders": []
+          },
+          {
+            "volume_name_sha256": "cfb30d0f1662c4b0be9f5ce1568b210fa728bb98b33c85ee0a1971ec43a2dc2f",
+            "block_device": "sdh",
+            "multipath_holders": []
+          }
+        ],
+        "existing_longhorn_multipath_conflict_observed": false,
+        "block_topology_read_complete": true,
+        "effective_multipath_filters": {
+          "config_sha256": "b26c91f7a02e74a9aa36f4771bd85fec840e2c8a31442b6716fefb6bb9d2585e",
+          "sections": {
+            "blacklist": {
+              "devnode": [
+                "^sd[a-z0-9]+",
+                "!^(sd[a-z]|dasd[a-z]|nvme[0-9])"
+              ],
+              "other_rule_count": 14
+            },
+            "blacklist_exceptions": {
+              "devnode": [],
+              "other_rule_count": 1
+            }
+          },
+          "future_longhorn_exclusion_verified": false
+        },
+        "safe_to_stop_multipathd": false
+      }
+    },
+    "failed_phase": "preflight",
+    "failure": "unreviewed_storageclass_parameters"
+  }
+}

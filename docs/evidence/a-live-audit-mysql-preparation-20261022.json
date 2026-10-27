@@ -1,0 +1,173 @@
+{
+  "kind": "a_live_audit_mysql_preparation.v1",
+  "status": "ready_for_operator_remote_validation",
+  "verified_at": "2026-10-22T02:51:00.0801160Z",
+  "compile_receipt": "docs/evidence/a-live-audit-mysql-aaudit-20261022104030-f37b63c6.json",
+  "compile_receipt_sha256": "989fbd5c50dc0fa109fe3be49fac5119bda3481f617782e8708e5f08c941ee13",
+  "compiled_go_inputs_match_current": true,
+  "linux_test_sha256": "a6da8f1cfa18cc28a348e52d073d773d201401817128d4a9bb19ed2701888486",
+  "post_compile_script_changes": [
+    "scripts/system-backup-a-live-audit-mysql-review.mjs",
+    "scripts/system-backup-a-live-audit-mysql.ps1",
+    "scripts/system-backup-a-live-audit-mysql.sh"
+  ],
+  "post_compile_script_changes_reason": "Strengthen MySQL startup readiness, scheduler selection, interrupted namespace creation cleanup, upload cleanup verification, exact case count and incomplete remote status. Go build inputs unchanged.",
+  "node_unit_and_review_tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "offline_shell_tests": {
+    "failed": 0,
+    "initial_attempt": "Two Windows Bash lifecycle tests exceeded the original 20s process deadline; raised it to 120s, verified no residual processes/upload directories, then all three passed.",
+    "passed": 3,
+    "duration_ms": 60670.2938,
+    "cluster_contacted": false
+  },
+  "powershell_syntax_passed": true,
+  "local_cleanup_verified": true,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "real_mysql_verified": false,
+  "real_http_verified": false,
+  "application_migrations_verified": false,
+  "tls_verified": false,
+  "production_approved": false,
+  "files": [
+    {
+      "path": "backend/cmd/system-backup-audit-collect/audit.sql",
+      "size": 2097,
+      "sha256": "c15ffa67a921d76c798319226a318bc9657f2832cdb4e340e8966dc960746f01"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/export.go",
+      "size": 5321,
+      "sha256": "c3724f1969547f2d6455c541084232ca1eb9a7c9523fc9585d8687b9ae690797"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main_test.go",
+      "size": 9716,
+      "sha256": "2fbd265364824489fa10ca0e5b9dda10b6cb0d0025946be2c2a06ddd21f6c842"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main.go",
+      "size": 11224,
+      "sha256": "6cd473f3151204bd22e1b479bcb568622158ff8745abf34d6e5f84ef06c32869"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/mysql_test.go",
+      "size": 10722,
+      "sha256": "f05d4893fa8b98b7736c50cdc810e8ac4af7d8fef0db7e9e4cef34ef98b95897"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/testdata/audit.json",
+      "size": 4140,
+      "sha256": "09410f2dccef8ebf22502c505c433ee286c154e623a529369d2faf3444a24f41"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/testdata/mysql.sql",
+      "size": 1348,
+      "sha256": "73b41d8765ad706c419a162e9e0023fe9240a2c14739e4a7ec2524f8d8445b6c"
+    },
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "docs/system-backup-a-live-audit-collector-20261022.md",
+      "size": 7641,
+      "sha256": "f20dc53dac97e5f5accd0a2ca8268ed9834b295d9c7efdaa0e086158d0d1a488"
+    },
+    {
+      "path": "docs/system-backup-a-live-audit-mysql-20261022.md",
+      "size": 4070,
+      "sha256": "48f241ec008bf6183c7f4b451d2471b7c87309bd5f12b719ea33f36187c6a9a8"
+    },
+    {
+      "path": "scripts/system-backup-a-capacity-material-review.mjs",
+      "size": 6418,
+      "sha256": "de6170fde30bc16059326618776611d34e06e1af24e914030d0f54ef3f7b4b82"
+    },
+    {
+      "path": "scripts/system-backup-a-download-deployment.mjs",
+      "size": 16730,
+      "sha256": "3458e6b6e00b2472c1935da59674c556be8ca492e432d017450995669d0f5b47"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-review.mjs",
+      "size": 3239,
+      "sha256": "c38e642e039c8296409eae8e65afe12cd59ac093acace5987955a1dda74d7250"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-review.test.mjs",
+      "size": 4767,
+      "sha256": "2826ac54d834d707a36458e8d62ccdaab3eada1c75fd6fce68d13dfd543e71de"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-shell.test.mjs",
+      "size": 4342,
+      "sha256": "54b5cf57e6619b2bf1e2e7441f86c8d5d9cc846e9b5641db54cdec55d8ffdc1a"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.ps1",
+      "size": 10294,
+      "sha256": "abf33e1b5ac5f9cc8f37f5171c95727923af0bbf25b31b5933eaa0b33a0f11ce"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.sh",
+      "size": 5719,
+      "sha256": "863be12e9897e2c62f6b0d7d90394167558347e13f4038d5151f19b0b98f725a"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit.mjs",
+      "size": 5632,
+      "sha256": "16a6b039b7c8f2ad31e9e4a9c27fc8c29ff3cbd3bf5d3621f4c7b8c71292724a"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.mjs",
+      "size": 21672,
+      "sha256": "1116950f55c8323a53d4ae2d4ff479e39ad40f0ec703d0537f03026f048f2a07"
+    },
+    {
+      "path": "scripts/system-backup-contract-check.mjs",
+      "size": 15317,
+      "sha256": "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-deployment.mjs",
+      "size": 8192,
+      "sha256": "277a4b7c19493d382ff4238e6ff65727931df5f02825f48135b53fe88f9b2ee3"
+    },
+    {
+      "path": "scripts/system-backup-d-deployment.mjs",
+      "size": 16314,
+      "sha256": "89221bf1cc69bc38d405fdfa2480406d92a6e77bd45cd13afcf21b01e47896b1"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5615,
+      "sha256": "34ea566ef0bd646aa93c2e530a0d1c6a8a059db760f425696c0f8129c0de3081"
+    },
+    {
+      "path": "scripts/system-backup-schema-hash-evidence.mjs",
+      "size": 15748,
+      "sha256": "a2b91281186148dfde8b69c4e1ea9ad6b1af960d37b8dfebdcc62c61940c935c"
+    },
+    {
+      "path": "scripts/system-backup-schema-hash.mjs",
+      "size": 19762,
+      "sha256": "dc92d1d324b9d17184de004363f0a0d1e7b6f95a9ab3c7572b5ebef320570758"
+    }
+  ],
+  "source_sha256": "9691f9b6fadbdf5118bced14dde0a999a1969edddadfa09c907c06e93dd644d4"
+}

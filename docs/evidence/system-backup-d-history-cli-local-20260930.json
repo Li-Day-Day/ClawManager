@@ -1,0 +1,54 @@
+{
+  "kind": "d_reviewed_history_cli_local_validation",
+  "recorded_at": "2026-09-30T09:07:32.2696941+08:00",
+  "command": "scripts/system-backup-d-history-validation.ps1",
+  "exit_code": 0,
+  "tests": {
+    "db_package": "PASS",
+    "migration_cli_package": "PASS",
+    "cli_rejection_cases": 16,
+    "vet": "PASS",
+    "catalog_exact_match": "PASS",
+    "history_flags_in_help": "PASS"
+  },
+  "first_attempt": {
+    "reason": "Windows vet.exe exit 0xc0000043",
+    "cli_tests": "PASS",
+    "cleanup": true,
+    "result": "FAIL",
+    "db_tests": "PASS"
+  },
+  "change": "Run tests with vet disabled, then require a separate serial go vet; no static check removed",
+  "linux_runner_sha256": "9989e7db7f408ad483663e32ca1767366693eaa2825a7aa745979057f9bf0e25",
+  "linux_probe_sha256": "58e0afd66d07cb7533ec8dc320ec16e0c1712f8c043b2900108c67cca8f89480",
+  "source_hash_scope": "selected CLI/history entry files, not a complete reproducible source attestation",
+  "selected_source_files": [
+    {
+      "path": "backend/cmd/system-backup-migrate/main.go",
+      "sha256": "dd53786fc237b2906e0eb159d24b9e44daf149e9875bbfcfe20df9abc1da8d1d"
+    },
+    {
+      "path": "backend/cmd/system-backup-migrate/main_test.go",
+      "sha256": "f7d984a9e2696de0104c3cd36a09718356407c349dfeafc72c79407935d44954"
+    },
+    {
+      "path": "backend/internal/db/migration_history.go",
+      "sha256": "4f23684e84c231895c557ab851f0f37d3b9b836c8af232b98ecb44a3f98d27f8"
+    },
+    {
+      "path": "backend/internal/db/migration_target.go",
+      "sha256": "65c8d6e722abc5eb03b313ed41e9933a610da2c760c2dcc55aab1ac0d1d2ea06"
+    },
+    {
+      "path": "scripts/system-backup-d-history-validation.ps1",
+      "sha256": "8c8afcb25fd3716279bd845361a57ebf03af1b3275890a3b176dc1a6c86f048e"
+    }
+  ],
+  "dependencies_installed": false,
+  "downloads_disabled": true,
+  "build_artifacts_cleaned": true,
+  "linux_execution_verified": false,
+  "image_built": false,
+  "production_upgrade_executed": false,
+  "history_source_recovered": false
+}

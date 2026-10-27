@@ -1,0 +1,355 @@
+{
+  "kind": "d_a_cost_aggregate_preparation",
+  "version": 1,
+  "status": "locally_validated_published_cleaned_actual_mysql_pending",
+  "base_source_sha256": "1758d99037b5325d3e00da3e5e8f30297f2a32d0cf5ed480833f0dea012d082a",
+  "original_base_source_sha256": "5383dd6b3967edf9966896b7b298a0d05df04ab23b10db42df18f354c33a5f5b",
+  "source_sha256": "ff1f5c2c0a271dcecb24cd3b6205ecb56528b24e7c8ff36b7e56e6ff11321447",
+  "source_files": 1486,
+  "changes": [
+    {
+      "path": "backend/internal/systembackupbusinessa/business_restore.go",
+      "before_sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a",
+      "after_sha256": "bf28f09571b537f67c23db7e82a0ba5e9f9817a419cff310d4695c6eedb1021d",
+      "bytes": 15320
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/business_restore_test.go",
+      "before_sha256": "a5e4e4e627a48f0fbe21724a86536cbc48bb76e71017bdd18f4d77087f9d4610",
+      "after_sha256": "b0ce3f69b9e1cdc2d0ca5d089c47c32f44b15d1ac252f485b3340f38d6ad7416",
+      "bytes": 18946
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/capture.go",
+      "before_sha256": "a59f1f5432229364d8a2fe57b338d8c265c391cba827630741fb131a855cacf4",
+      "after_sha256": "485c91bbf20afde55d2b0f61aacb2f55e048ced032375d2c6578e4e296222405",
+      "bytes": 11616
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/capture_test.go",
+      "before_sha256": "fe7e301a5a7fa5eef462ca83fa0a6e26e32a854720d91ec4699b7cbbe82ebc57",
+      "after_sha256": "c10d91a0d42b30b13c7e4fa21b2720279647acb7bde57339e8fb2fc3267ebb2f",
+      "bytes": 11580
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/cost_aggregate.go",
+      "before_sha256": null,
+      "after_sha256": "f80b83d270f8d124f3f3b4f211e2bd81e832eac069458e70ce397cbd30bfe30b",
+      "bytes": 8435
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/cost_aggregate_test.go",
+      "before_sha256": null,
+      "after_sha256": "4f916c9bbcfc619f1c75048113bd4358720e33d6c3ac2736f79f4d0c5c372953",
+      "bytes": 18140
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/d_review_commit_context_test.go",
+      "before_sha256": "f934e90b4dd5ffe4a08d47815f9f644f90ba2f65f3999c7f82798632d86a5567",
+      "after_sha256": "bc592ba3cf4f2cfe0b81da4d4acf6506be1bd6f4fd16b8758369cef9b27f6dc9",
+      "bytes": 4677
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+      "before_sha256": "ed1d72558419cacb696001099596548e37b85d659e7d964fcbbb48ebb5683723",
+      "after_sha256": "3c065504728585b46a3c0e30c09e11d536a47cf6c6b98d5fef64c6c5a69aae16",
+      "bytes": 35325
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_verify.go",
+      "before_sha256": "61815bb6d4dbff3b81793660df73909cb3556766181f51c69c15be7096b76005",
+      "after_sha256": "765d6c0e4573ba8c5f0992ab390e4e999d9e64cc0a4c5eca4968e9fcde4be39c",
+      "bytes": 7995
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_verify_test.go",
+      "before_sha256": "537424cc98bc7e48f2483c5aa1aceff522970bbb07b14217bdaee863b9755f18",
+      "after_sha256": "5155cf8daec4893ac27c2b6850c40ca4283aa6f1e9bcca4ba88fb317a024e402",
+      "bytes": 9051
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/verifier.go",
+      "before_sha256": "67dce0a4361e3fcfcabd4fcd342fa0342e9ca4dbb73b30b319500cd42dfdc480",
+      "after_sha256": "b7216bd6a2fd3a89e16764ae455d42ccbb1063b302cfe553b1eebac4068ff6c8",
+      "bytes": 10098
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/verifier_test.go",
+      "before_sha256": "ea3f9c9c56d315c954c7c361ed92977ae0d2845490fb0dfbf0f7a99db69b8176",
+      "after_sha256": "1ce21de2d8760724ad26fbb4595a199070621ba2d6e5f26a432419c502a1551d",
+      "bytes": 12017
+    },
+    {
+      "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+      "before_sha256": "7db7ae98af52a95a9d70ce32ebb360d177eaa665b72869b8be1e45f293ecdd32",
+      "after_sha256": "aa50547948ebf333fb46f872474e7e5c8da9696486b3e26b1005ff238eb450c6",
+      "bytes": 18526
+    },
+    {
+      "path": "scripts/system-backup-contract-artifacts.test.mjs",
+      "before_sha256": "2831e8bd9916adb3fdece2eeb9ab5231fab2742aac61c643759d5302647539ed",
+      "after_sha256": "a0197bd22525c12095c387015907483dd2e4923bb2f385a88e5fa9fdffbc0adb",
+      "bytes": 214718
+    }
+  ],
+  "validation": {
+    "stages": [
+      {
+        "stage": "full",
+        "attempt": 2,
+        "native": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-full-native.json",
+          "sha256": "d69a6eeef65c691cf918ed8db0a400da09115d2988426cfbfb6f99fc14f87e2c",
+          "bytes": 412
+        },
+        "source": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-full-source.json",
+          "sha256": "f06fba2b59fbcd7da00d896b36e9919304e71f132897f0426c8a8bfe49111a87",
+          "bytes": 292106
+        },
+        "stderr": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-full-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "main_tests": 341,
+        "all_tests": 2398,
+        "packages": [
+          "clawreef/internal/systembackupbusinessa",
+          "clawreef/internal/systembackupsecurity"
+        ],
+        "log": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-full.jsonl",
+          "sha256": "8e401e8a2769aec6f4c74bc8e3d9bcef0418351b7547badd8c25177d02230c92",
+          "bytes": 2358529
+        }
+      },
+      {
+        "stage": "node",
+        "attempt": 2,
+        "native": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-node-native.json",
+          "sha256": "892feece198d2c28f6cb174ab842db4b22c65554d31f16b3464d9214fe816204",
+          "bytes": 413
+        },
+        "source": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-node-source.json",
+          "sha256": "f06fba2b59fbcd7da00d896b36e9919304e71f132897f0426c8a8bfe49111a87",
+          "bytes": 292106
+        },
+        "stderr": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-node-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "tests": 79,
+        "log": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-node.tap",
+          "sha256": "1d42cd762ee2e62135e07486befe3fae4a24ec8b4c74f2bbc6aecd891de019ad",
+          "bytes": 18069
+        }
+      },
+      {
+        "stage": "tagged",
+        "attempt": 2,
+        "native": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-tagged-native.json",
+          "sha256": "a482e286437f7a7ff90295bc1454ad3e2eeb9c8cdee8fcb32a6ed89f5cd5161a",
+          "bytes": 414
+        },
+        "source": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-tagged-source.json",
+          "sha256": "f06fba2b59fbcd7da00d896b36e9919304e71f132897f0426c8a8bfe49111a87",
+          "bytes": 292106
+        },
+        "stderr": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-tagged-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "main_tests": 1,
+        "all_tests": 3,
+        "packages": [
+          "clawreef/internal/systembackupbusinessa"
+        ],
+        "log": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-tagged.jsonl",
+          "sha256": "8e7d7efa5a9a107ebf0251c8326bf324a47322e262393b4af127c7edb6b568fb",
+          "bytes": 3428
+        },
+        "dependencies": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-tagged-deps.txt",
+          "sha256": "5ec6dc2e0e4d4f0da372e67064aa0a65928bcb5fb5281845c234c965c416fc57",
+          "bytes": 15806
+        },
+        "dependencies_stderr": {
+          "path": "docs/evidence/d-a-cost-aggregate-v2-20261021-r2-tagged-deps-stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        "local_dependency_directories": [
+          "backend/internal/config",
+          "backend/internal/db",
+          "backend/internal/migrationcatalog",
+          "backend/internal/migrationcoord",
+          "backend/internal/models",
+          "backend/internal/systembackupbusinessa",
+          "backend/internal/systembackupcontract",
+          "backend/internal/systembackupcontroller",
+          "backend/internal/systembackupread",
+          "backend/internal/systembackupsecurity",
+          "backend/internal/utils"
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2.json",
+        "sha256": "b971b168594a31232e15f710abdc44821e2922829d2ea87ee61297671624da32",
+        "bytes": 1092
+      },
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2-inventory.stdout",
+        "sha256": "a57ed9e967be90d1ef403dba7feb7e353d48a90769b96efbc424866b9ef4ef12",
+        "bytes": 722
+      },
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2-inventory.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2-contract.stdout",
+        "sha256": "4565e572dc68135fe59ea722fb1f7d64697ca8a1315a6793da3fb1f741112ec4",
+        "bytes": 5683
+      },
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2-contract.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2-strict.stdout",
+        "sha256": "4565e572dc68135fe59ea722fb1f7d64697ca8a1315a6793da3fb1f741112ec4",
+        "bytes": 5683
+      },
+      {
+        "path": "docs/evidence/d-a-cost-aggregate-v2-controls-20261021-r2-strict.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "tagged_probe_compiled_and_offline_seed_executed": true,
+    "linux_probe_build": false
+  },
+  "original_unverified_draft": {
+    "path": "docs/evidence/d-a-cost-aggregate-unverified-draft-20261021.json",
+    "sha256": "fbc4768c4b1118d07af1ae70c0c23e308e4fb2299ea426ba706c79d85653f413",
+    "bytes": 187892
+  },
+  "before_bytes": {
+    "path": "docs/evidence/d-a-cost-aggregate-v2-before-20261021.json",
+    "sha256": "b9e2eddbe0a5e2948f3c383d6c2b822fef78c0b4ee91150c9795cc571e3c2c41",
+    "bytes": 488759
+  },
+  "node_extra_inputs": {
+    "path": "docs/evidence/d-a-cost-aggregate-v3-extra-inputs-20261021.json",
+    "sha256": "c6a177d95794380399e846cf8bb37aa82c1b62851233234b2b065e80a61e0e41",
+    "bytes": 64135
+  },
+  "concurrent_refresh": {
+    "path": "docs/evidence/d-a-cost-aggregate-v2-concurrent-refresh-20261021.json",
+    "sha256": "03f78dc4e4702e64dee17ea96220cf411aebb5f4d89f7022a608e53185445ef4",
+    "bytes": 4237
+  },
+  "actual_mysql": "not_executed",
+  "dependencies_installed": false,
+  "remote": false,
+  "production_approval": false,
+  "pending": [
+    "B authenticates new complete source/dump snapshot and target proof",
+    "actual MySQL cost-drift and NULL probes",
+    "representative workload query plan and duration",
+    "registry cross-review and global freeze",
+    "original six D scopes"
+  ],
+  "publication": {
+    "exact_frozen_context": false,
+    "module_and_compiled_dependency_scope_checked": true,
+    "published_source_sha256": "5f0d33c8fd33df6cece9ebb1a9310a3f1eced91bdc1a3b8545db1c9506d2bde2",
+    "context_sha256": "8143c7597052954e0f3f145635224d3e55626a849432f6c2c0c29502671f23f2",
+    "unowned_differences": [
+      {
+        "published_sha256": "52622cdef3be6f4de9cd4b82b25f9ab790d347f32fe032dadc4e3b9da630971d",
+        "path": "scripts/system-backup-a-live-chain-db-inventory.sh",
+        "frozen_sha256": null
+      },
+      {
+        "published_sha256": "1b8376b416203624271fe05f269ee6c63cf631ced4b45fc51c0e549cde4415a3",
+        "path": "scripts/system-backup-a-live-chain-inventory.ps1",
+        "frozen_sha256": "6a90e0222750dfdf95c5a215b17298d213984e3aa92b07ed24515f1f7112e506"
+      },
+      {
+        "published_sha256": "9e6ee07598c1253c159874933745058907a0d0661e9c80007f052995737a5ec0",
+        "path": "scripts/system-backup-a-live-chain-inventory.sh",
+        "frozen_sha256": "5d1ad4066b807213f9012ed27f842f49a9258711fdf54179f8ca737eb3439a51"
+      },
+      {
+        "published_sha256": "9b74e65b7f5f66e25310659baa5852bfa700c09e2347364706d8aab65c65e478",
+        "path": "scripts/system-backup-a-live-chain-inventory.test.ps1",
+        "frozen_sha256": "54949bbaaee0db405e901ada1c4f74211649d26a7ff435b6169fc8cef807b187"
+      },
+      {
+        "published_sha256": "d0eec9a31a39aa32499dd2c72eed9cc7f99416cf2f5e75f0a03bb804f2320e0b",
+        "path": "scripts/system-backup-a-live-chain.mjs",
+        "frozen_sha256": "7139831857b84eed2c2b973f920a52ffbddda206132f32f6ff002729f02bc927"
+      },
+      {
+        "published_sha256": "9d8add69b9394de43ab7db6de309f56900c56013fa5799e6209cf2ba6389541d",
+        "path": "scripts/system-backup-a-live-chain.ps1",
+        "frozen_sha256": "622967a0062f31479f1ed3ae1eb255aeb66902828055b417287b1311629a09ff"
+      },
+      {
+        "published_sha256": "ecdf83a10e7a31e7439f7ffe1d97b55ed8a404ebceca3b3f4cb2d0ef4b59e5cf",
+        "path": "scripts/system-backup-a-live-chain.test.mjs",
+        "frozen_sha256": "57daaf55ef479642018472d7ba30c4e23ea61da5625e48ee1949c77c7fe6b71a"
+      }
+    ],
+    "context": "docs/evidence/d-a-cost-aggregate-v2-published-context-20261021.json",
+    "concurrent_review_sha256": "b4935945846976e0411497bfca73fea21a8c0a30cd5b14a673d286768286fc65",
+    "unowned_extra_differences": [
+      {
+        "path": "frontend/scripts/system-backups-i18n.test.mjs",
+        "frozen_sha256": "5e050dd1318579bcc2cea174bb2ac02ecc617384abf2f5ba11802d368595812e",
+        "observed_sha256": "7a17babd416bd16b4d3872ebbc591b758e94400ed7413313ed943dfcd96af818"
+      },
+      {
+        "path": "frontend/src/lib/systemBackupI18n.ts",
+        "frozen_sha256": "213a63180b2eb7f2e54274099aefcf2775f998e4a190c77a6a624141a3772db7",
+        "observed_sha256": "fb1a5ce24368655bf2aae730bf0ea82ec349482c37db60dc5bebd59ac1d50e8b"
+      },
+      {
+        "path": "frontend/src/pages/admin/backups/BackupLiveActivity.tsx",
+        "frozen_sha256": "f106d6b45d5a79fcf0f8ae4d11e9f5988774512019d0dd893f63abdd86500bbb",
+        "observed_sha256": "7209bdacb756f95143aec3fd286459676a65b8b30f1896a9b1bb350bcdd63803"
+      },
+      {
+        "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+        "frozen_sha256": "c27a9a48c6d70c3351bd15a66c2b591db057c88389147d1d14da81f2b716d438",
+        "observed_sha256": "ed637c251401a81ef0f5ee91b0942e945f94733977b45610e9815b0418b6ec63"
+      },
+      {
+        "path": "frontend/src/pages/admin/backups/SystemBackupsPage.tsx",
+        "frozen_sha256": "86a0c35208ae07af890b715c33b897ef9fc5c29ae0bfadf0a6a25cdf741d0904",
+        "observed_sha256": "13a9aecaf17946addcc732f7f23275d0199edc807f1cf3724f7ab166bb07160a"
+      }
+    ],
+    "owned_files": 14,
+    "concurrent_review_path": "docs/evidence/d-a-cost-aggregate-v2-concurrent-publish-review-v3-20261021.json"
+  },
+  "cleanup": {
+    "removed": true,
+    "path": "docs/evidence/d-a-cost-aggregate-v2-cleanup-20261021.json",
+    "sha256": "c80dc3fb37f4f046d9af111085ca39f05164a15aadb0ec8b97283b4a33c39c19"
+  }
+}

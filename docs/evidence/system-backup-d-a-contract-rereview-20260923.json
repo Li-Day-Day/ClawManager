@@ -1,0 +1,252 @@
+{
+  "kind": "system_backup_d_cross_owner_rereview_record",
+  "contract_version": "system-backup-plan.v12",
+  "review_date": "2026-09-23",
+  "recorded_at": "2026-09-23T08:54:36.645Z",
+  "reviewer": "D",
+  "implementation_owner": "A",
+  "status": "changes_requested",
+  "report": "docs/system-backup-d-a-contract-rereview-2026-09-23.md",
+  "prior_review": "docs/evidence/system-backup-d-a-contract-review-20260923.json",
+  "scope": [
+    "strong_auth_proof_nonce",
+    "provider_proof_registration",
+    "secret_ref",
+    "capability_evidence",
+    "A_owned_projected_row_fixtures"
+  ],
+  "closed_original_findings": [
+    "D-A-01",
+    "D-A-02",
+    "D-A-03",
+    "D-A-04",
+    "D-A-05",
+    "D-A-06"
+  ],
+  "closure_scope": "Local contract and validation boundaries only; no remote provider, registry/ledger transaction, full-table restore or freeze approval.",
+  "findings": [
+    {
+      "id": "D-A-R1",
+      "priority": "P2",
+      "status": "reproduced",
+      "owner": "A",
+      "file": "backend/internal/systembackupsecurity/strongauth.go",
+      "line": 357,
+      "summary": "Schema character limits disagree with Go byte limits for signing key_id/key_version; valid Ed25519 signatures with 100/50 Unicode characters are rejected.",
+      "probe": "TestDRevisionUnicodeSigningMetadata",
+      "positive_crypto_control_passed": true
+    },
+    {
+      "id": "D-A-R2",
+      "priority": "P2",
+      "status": "reproduced",
+      "owners": [
+        "A",
+        "C",
+        "D"
+      ],
+      "file": "backend/internal/systembackupsecurity/capability.go",
+      "line": 97,
+      "related_files": [
+        "contracts/system-backup/v12/capability-evidence.schema.json",
+        "contracts/system-backup/v12/dependency-provider-capability.schema.json"
+      ],
+      "summary": "Temporary provider/credential/permission/response failures accepted with unsupported instead of degraded; schema and Go need aligned status/reason constraints per plan 9.1.",
+      "probe": "TestDRevisionTemporaryCapabilityFailureIsNotUnsupported",
+      "positive_degraded_controls_passed": true
+    }
+  ],
+  "validation": [
+    {
+      "command": "powershell -NoProfile -File scripts/system-backup-a-local-validation.ps1",
+      "exit_code": 0,
+      "go_top_level_passed": 21,
+      "go_a_tests": 16,
+      "go_original_d_tests": 5,
+      "node_passed": {
+        "security": 4,
+        "object_fixtures": 3,
+        "identity_ssh": 5,
+        "contract_artifacts": 70,
+        "contract_check": 6
+      },
+      "inventory_check": "passed",
+      "non_strict_contract_check": "passed",
+      "scratch_removed": true
+    },
+    {
+      "command": "powershell -NoProfile -File scripts/system-backup-d-a-revision-review.ps1",
+      "exit_code": 1,
+      "note": "Full revised run completed and scratch removed. Focused run below preserves untruncated finding output."
+    },
+    {
+      "command": "powershell -NoProfile -File scripts/system-backup-d-a-revision-review.ps1 -TestPattern '^TestDRevision'",
+      "exit_code": 1,
+      "top_level_failed": 2,
+      "leaf_failed": 6,
+      "scratch_removed": true,
+      "output_excerpt": "=== RUN   TestDRevisionUnicodeSigningMetadata\n=== RUN   TestDRevisionUnicodeSigningMetadata/key_id\n    revision_test.go:39: D-A-R1: schema-valid Unicode signing metadata rejected despite valid signature: strong_auth_invalid: strong-auth signature metadata is invalid\n=== RUN   TestDRevisionUnicodeSigningMetadata/key_version\n    revision_test.go:39: D-A-R1: schema-valid Unicode signing metadata rejected despite valid signature: strong_auth_invalid: strong-auth signature metadata is invalid\n--- FAIL: TestDRevisionUnicodeSigningMetadata (0.00s)\n    --- FAIL: TestDRevisionUnicodeSigningMetadata/key_id (0.00s)\n    --- FAIL: TestDRevisionUnicodeSigningMetadata/key_version (0.00s)\n=== RUN   TestDRevisionTemporaryCapabilityFailureIsNotUnsupported\n=== RUN   TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/provider_unavailable\n    revision_test.go:56: D-A-R2: temporary capability failure accepted as deterministic unsupported\n=== RUN   TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/credential_unavailable\n    revision_test.go:56: D-A-R2: temporary capability failure accepted as deterministic unsupported\n=== RUN   TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/permission_denied\n    revision_test.go:56: D-A-R2: temporary capability failure accepted as deterministic unsupported\n=== RUN   TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/response_invalid\n    revision_test.go:56: D-A-R2: temporary capability failure accepted as deterministic unsupported\n--- FAIL: TestDRevisionTemporaryCapabilityFailureIsNotUnsupported (0.01s)\n    --- FAIL: TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/provider_unavailable (0.01s)\n    --- FAIL: TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/credential_unavailable (0.00s)\n    --- FAIL: TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/permission_denied (0.00s)\n    --- FAIL: TestDRevisionTemporaryCapabilityFailureIsNotUnsupported/response_invalid (0.00s)\nFAIL\nFAIL\t_/C_/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-d-a-review-a28f9456f47a470b91eca51e7cf6d802/source\t2.338s\nFAIL\nD review scratch removed: True\r\n"
+    },
+    {
+      "command": "node scripts/system-backup-d-a-revision-schema.test.mjs",
+      "exit_code": 1,
+      "passed": 1,
+      "failed": 1,
+      "note": "R1 schema allows Unicode metadata. R2 schema incorrectly accepts unsupported/provider_unavailable."
+    },
+    {
+      "command": "node scripts/system-backup-contract-check.mjs --check --strict",
+      "exit_code": 1,
+      "contract_status": "draft",
+      "missing_contracts": 4,
+      "plan_control_without_inventory": 3,
+      "policy_pending": 39,
+      "cross_review_pending": 56,
+      "schema_hash_pending": true
+    }
+  ],
+  "harness_note": "Initial R1 probe inherited ES256 from a fixture and failed its positive control; that run is not R1 evidence. The D-only probe was corrected to EdDSA before the full rerun and final focused run above. A implementation was unchanged.",
+  "synthetic_vector_counts": {
+    "provider_proof": 50,
+    "owned_objects": 15,
+    "projected_row_cases": 45,
+    "secret_refs": 29
+  },
+  "remote_access_performed": false,
+  "dependencies_installed": false,
+  "cleanup": {
+    "a_validation_scratch_removed": true,
+    "d_review_scratch_removed": true,
+    "build_cache_and_test_binaries_retained": false,
+    "retained_files": "Review source probes, documentation and redacted evidence snapshot only."
+  },
+  "approvals_changed": false,
+  "freeze_gate_changed": false,
+  "fingerprint_algorithm": "sha256-raw-file-bytes",
+  "reviewed_files": [
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "sha256": "78c7c009f10d9d9d2d6ef721874d19e2dc656300440d32f9aa2743795c77d28b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability_test.go",
+      "sha256": "1eea76f73b0d0a97c15d5ba0dfcbfe3359a4b7d36a2f2d04899c215e4f822a51"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof.go",
+      "sha256": "dd2dfc776920e4daf6fa8f2ae6ec8a8ec31745fe21a66dd75061a093156ece87"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_test.go",
+      "sha256": "b6b95847c393a1a6359a78da316334537f42d482431c104d9a23fdc6a3499648"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "sha256": "dc41d177926acc964e7b620ca29eb54fefe22437201a658be2d3180806fbb898"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth_test.go",
+      "sha256": "e3551247663902c4c974ab1387ac52ca9255ade2a30215284f75a26afa6ccd95"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "cd5abea79c093751a1684acf448a96179a1e814cca8676fc19b1949dbc4bf53f"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixture-policies.json",
+      "sha256": "9bed84f18fcbfb97729ca91ca526a6d7768c1704e26b9db7e446f998e45b4e0b"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-object-fixtures.json",
+      "sha256": "7b2c73be6fcf1b5bf475a3ad4b1994d300aba7a4e4d5a5783340c3b7b883921a"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "sha256": "eff9e7ebf5a14992cfbe8562aa869dfcbacee4481914db1e708249c6f341dbf0"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-provider-proof-parity-vectors.json",
+      "sha256": "b89eeedbb3d217892f506d0cad734d11897892ed68ca14164414c2317e7da2f3"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-secret-ref-vectors.json",
+      "sha256": "90eeca215129fb792221b4b5661a077045265bb30c1009d38a855833380f1f65"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-strong-auth-signature-vectors.json",
+      "sha256": "10d4ff8d3bbfdcb81416bb48ca0f7cd456bcd227d4986f69744ebdc14dc1cf07"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "d8971a34f31a0d186936e38359ee9a0a8f2d0e827d2aa9499bec5111cb913b4e"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "f1499939a39551fbe5d0845c403f75a491b9e49d45c6b481d17e98917f59aca8"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+      "sha256": "0284e9a0a348a1eef3a7cf58c96954c8ab64a1dc886a9a68f49a265d2fb6c41d"
+    },
+    {
+      "path": "contracts/system-backup/v12/provider-proof-registration.schema.json",
+      "sha256": "618754245abc64cb2c9ca88a0099bfddae98bbe46caa5580f95d26b354542626"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry-decisions.json",
+      "sha256": "b98d865a89e89e300bf1e6ba4345fb7e234adb25e9c308f244c5aa4f2fc07e6a"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "sha256": "1888d6dd8741dd67eba03853603c1e39b33d5a38507071bb84cd234e6bb8cd07"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json",
+      "sha256": "ff3aaf4780f207cec5b7a864fc8c36b958ad750bdb2b6c9c26d017fc02005805"
+    },
+    {
+      "path": "docs/system-backup-a-contract-revision-2026-09-23.md",
+      "sha256": "c9db4d017dd404bc27a662a7909924e8ef7db999849e81a0d512b1ac93e21aff"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "add5996d159efc185df07a0c8173bc31da4dcfdf462e4f7dadab3e1f7b85fca4"
+    },
+    {
+      "path": "scripts/system-backup-a-local-validation.ps1",
+      "sha256": "4616f061a6a15c172071766c466f6265e30458a269babf794e9b2a290095ac25"
+    },
+    {
+      "path": "scripts/system-backup-a-object-fixture-model.mjs",
+      "sha256": "a62220b55634df1c48bc8789854344a636ca52fd9765080fa200610b2dcc5113"
+    },
+    {
+      "path": "scripts/system-backup-a-object-fixtures.test.mjs",
+      "sha256": "bd80a34f04e34a92101b662a583886b6f51279ca5d0a263731ff54dc9576d134"
+    },
+    {
+      "path": "scripts/system-backup-a-schema-validation.mjs",
+      "sha256": "6ed33bd899736b6e4231e111f7a86c1ba472d5ff105089d0a88dd26d1b7b8e50"
+    },
+    {
+      "path": "scripts/system-backup-a-security.test.mjs",
+      "sha256": "0f1a68d649fe27067eb18dd4a9d99e3423a4b842d56cd3603df372052e41e4a0"
+    },
+    {
+      "path": "scripts/system-backup-d-a-review/review_test.go",
+      "sha256": "771e1de3a95361f899ace0f580f6f97e6693255a482b23340d3c6d03bdfe4b32"
+    },
+    {
+      "path": "scripts/system-backup-d-a-review/revision_test.go",
+      "sha256": "36ba2f8f3527ac02961c9b47d302a12ab680d79d22537e215acfb41245a02c4c"
+    },
+    {
+      "path": "scripts/system-backup-d-a-revision-review.ps1",
+      "sha256": "b81b23941da0c08d1297ec9728e5eef5360558bfa3474ea1fc2eadc88fe218cc"
+    },
+    {
+      "path": "scripts/system-backup-d-a-revision-schema.test.mjs",
+      "sha256": "c52001377628e619e069470f4ab1056b847d38d09a3858add35cca00362c48e4"
+    }
+  ]
+}

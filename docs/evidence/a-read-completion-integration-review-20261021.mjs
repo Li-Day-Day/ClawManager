@@ -1,0 +1,85 @@
+// Independent A review of the eight read guards and one fresh merged five-package run.
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {workspace, raw, json, decode, sha256, events, manifest, inventory, native, changed, exact} from './a-frozen-validation-utils-20261021.mjs';
+const full = 'docs/evidence/a-read-completion-integration-20261021-r1';
+const dPath = 'docs/evidence/d-read-late-commit-preparation-20261021.json', d = json(dPath);
+assert.equal(d.status, 'local_authorized_read_completion_boundary');
+const existing = ['config_list.go', 'config_snapshot.go', 'operation_detail.go', 'operation_list.go', 'overview_control.go', 'task_detail_base.go', 'task_pages.go'].map(n => 'backend/internal/systembackupread/' + n);
+const testPath = 'backend/internal/systembackupread/read_commit_context_test.go', own = [...existing, testPath];
+exact(d.changes, own);
+const base = manifest('docs/evidence/d-read-late-commit-base-20261021.json');
+assert.equal(sha256(raw('docs/evidence/d-read-late-commit-base-20261021.json')), d.base_manifest_sha256);
+const records = {};
+for (const run of d.runs) {
+  const prefix = `docs/evidence/d-read-late-commit-20261021-r2-${run.stage}`;
+  for (const [file, pin] of [[prefix + '-source.json', run.source_manifest_sha256], [prefix + '.jsonl', run.events_sha256], [prefix + '-native.json', run.native_sha256]]) assert.equal(sha256(raw(file)), pin, file);
+  const s = json(prefix + '-source.json'), n = json(prefix + '-native.json');
+  assert.equal(sha256(s.files.map(f => `${f.path}\0${f.sha256}\0${f.size}`).join('\n') + '\n'), s.source_sha256);
+  assert.equal(s.base_source_sha256, base.source_sha256); assert.equal(s.files.length, base.files.length + 1); assert.equal(new Set(s.files.map(f => f.path)).size, s.files.length);
+  assert.equal(n.source_sha256, s.source_sha256); assert.equal(n.exit, run.stage === 'counterfactual' ? 1 : 0);
+  for (const flag of ['source_postcheck', 'default_vet']) assert.equal(n[flag], true);
+  for (const flag of ['dependencies_installed', 'remote']) assert.equal(n[flag], false);
+  assert.equal(raw(prefix + '-stderr.txt').length, 0);
+  records[run.stage] = {source: s, events: events(prefix + '.jsonl')};
+}
+const target = inventory('docs/evidence/d-read-late-commit-20261021-r2-target.jsonl', ['clawreef/internal/systembackupread']);
+assert.equal(target.length, 161);
+const root = 'TestReadCommitContextBoundary';
+const cases = target.filter(e => e.Test.startsWith(root + '/') && e.Test.split('/').length === 2).map(e => e.Test);
+assert.equal(cases.length, 40);
+for (const mode of ['healthy', 'canceled_in_commit', 'commit_error']) exact(target.filter(e => e.Test.endsWith('/' + mode)).map(e => e.Test), cases.map(n => n + '/' + mode));
+const failures = records.counterfactual.events.filter(e => e.Test && e.Action === 'fail').map(e => e.Test);
+const vulnerable = cases.filter(n => n !== root + '/config_backfill_control');
+exact(failures, [root, ...vulnerable, ...vulnerable.map(n => n + '/canceled_in_commit')]);
+assert.equal(vulnerable.length, 39);
+for (const mode of ['healthy', 'commit_error']) assert.equal(records.counterfactual.events.filter(e => e.Action === 'pass' && e.Test?.endsWith('/' + mode)).length, 40);
+assert.equal(records.counterfactual.events.filter(e => e.Test === root + '/config_backfill_control/canceled_in_commit' && e.Action === 'pass').length, 1);
+const before = records.counterfactual.source, after = records.full.source;
+exact(changed(after, before), existing);
+assert.equal(after.files.find(f => f.path === testPath).sha256, before.files.find(f => f.path === testPath).sha256);
+let guards = 0;
+for (const file of existing) {
+  const bytes = raw(file), pin = after.files.find(f => f.path === file); assert.equal(bytes.length, pin.size); assert.equal(sha256(bytes), pin.sha256);
+  let count = 0;
+  const original = decode(bytes).replace(/if err (:=|=) tx\.Commit\(\); err != nil \|\| ctx\.Err\(\) != nil/g, (_, op) => {count++; return `if err ${op} tx.Commit(); err != nil`;});
+  assert.equal(count, file.endsWith('/task_pages.go') ? 2 : 1); guards += count;
+  assert.equal(sha256(original), base.files.find(f => f.path === file).sha256, file);
+}
+assert.equal(guards, 8); assert.equal(sha256(raw(testPath)), after.files.find(f => f.path === testPath).sha256);
+const source = manifest(full + '-source.json');
+assert.equal(source.files.length, 1468);
+exact(changed(source, after).filter(f => /^(backend|contracts)\//.test(f)), []);
+const previousSource = json('docs/evidence/d-download-failure-budget-20261021-full-source.json');
+exact(changed(source, previousSource).filter(f => /^(backend|contracts)\//.test(f)), own);
+assert.ok(previousSource.files.every(f => source.files.some(q => q.path === f.path)));
+const packages = ['systembackupsecurity', 'systembackupevidence', 'systembackupread', 'systembackupproducer', 'systembackupgcmetadata'].map(n => 'clawreef/internal/' + n);
+const passed = inventory(full + '.jsonl', packages), previous = inventory('docs/evidence/d-download-failure-budget-20261021-full.jsonl', packages);
+const key = e => `${e.Package}\0${e.Test}`, previousNames = new Set(previous.map(key));
+assert.equal(previousNames.size, 6598); assert.equal(passed.length, 6759); assert.equal(passed.filter(e => !e.Test.includes('/')).length, 783);
+const allNames = new Set(passed.map(key)); assert.ok([...previousNames].every(n => allNames.has(n)));
+exact(passed.filter(e => !previousNames.has(key(e))).map(key), target.map(key));
+const expected = [[255, 2011], [365, 3008], [76, 680], [75, 784], [12, 276]];
+const totals = packages.map((p, i) => {const es = passed.filter(e => e.Package === p), main = es.filter(e => !e.Test.includes('/')).length; assert.deepEqual([main, es.length], expected[i]); return {package: p, main, all: es.length};});
+const current = native(full + '-native.txt', source, 'CLEANED snapshot=True');
+assert.ok(current.text.includes('FROZEN_UNIT_POSTCHECK pass=yes'));
+assert.ok(current.text.includes('NATIVE_EXIT full_packages=0 packages=./internal/systembackupsecurity,./internal/systembackupevidence,./internal/systembackupread,./internal/systembackupproducer,./internal/systembackupgcmetadata default_vet=yes'));
+assert.equal(raw(full + '-stderr.txt').length, 0);
+const stages = ['tagged-seed', 'windows-probe', 'detached-seed', 'linux-probe', 'linux-migration'];
+for (const stage of stages) {assert.ok(current.text.includes(`NATIVE_PROBE stage=${stage} exit=0 actual_mysql=no`)); assert.equal(raw(full + '-' + stage + '-stderr.txt').length, 0);}
+const seeds = inventory(full + '-tagged-seed.txt', [packages[1]]).map(e => e.Test), detached = decode(raw(full + '-detached-seed.txt'));
+assert.equal(seeds.length, 22); exact(seeds, inventory('docs/evidence/a-gc-connection-integration-20261021-r1-tagged-seed.txt', [packages[1]]).map(e => e.Test));
+exact([...detached.matchAll(/^=== RUN\s+(\S+)\s*$/gm)].map(m => m[1]), seeds); exact([...detached.matchAll(/^\s*--- PASS: (\S+) /gm)].map(m => m[1]), seeds); assert.match(detached, /\nPASS\s*$/);
+const cleanup = json(d.cleanup.receipt); assert.equal(sha256(raw(d.cleanup.receipt)), d.cleanup.sha256);
+assert.equal(cleanup.removed, true); assert.equal(cleanup.process_terminal, true); assert.equal(cleanup.source_postcheck, true);
+assert.equal(path.dirname(cleanup.absolute_owner).toLowerCase(), workspace.toLowerCase()); assert.match(path.basename(cleanup.absolute_owner), /^\.tmp-d-index-cache-[a-f0-9]{32}$/); assert.equal(fs.existsSync(cleanup.absolute_owner), false);
+const initial = d.initial_fixture_probe, initialPrefix = 'docs/evidence/d-read-late-commit-20261021-counterfactual';
+for (const [suffix, pin] of [['-native.json', initial.native_sha256], ['-source.json', initial.source_manifest_sha256], ['.jsonl', initial.events_sha256]]) assert.equal(sha256(raw(initialPrefix + suffix)), pin);
+assert.equal(initial.status, 'partial_owned_process_terminated_not_acceptance'); assert.equal(sha256(raw(initial.termination)), initial.termination_sha256);
+const termination = json(initial.termination); assert.equal(termination.terminated_owned_process, true); assert.equal(termination.owner, cleanup.absolute_owner); assert.equal(termination.remote, false);
+const record = {kind: 'a_independent_read_completion_and_merged_five_package_acceptance', status: 'accepted_frozen_post_commit_read_context_boundary', source: full + '-source.json', source_manifest_sha256: sha256(raw(full + '-source.json')), source_sha256: source.source_sha256, source_files: source.files.length, events: full + '.jsonl', events_sha256: sha256(raw(full + '.jsonl')), native: full + '-native.txt', native_sha256: current.sha256, full: {main: 783, all: 6759, packages: totals}, owner_baseline: {main: 620, all: 5019}, previous_tests_retained: 6598, new_cases: 40, new_checks: 161, old_code_late_returns_reproduced: 39, post_commit_guards: 8, commit_retry_added: false, rollback_after_commit_claimed: false, authority_queries_or_isolation_changed: false, new_partial_fixture_probe_not_accepted: true, d_receipt: dPath, d_receipt_sha256: sha256(raw(dPath)), d_cleanup: d.cleanup, owned_directories_independently_absent: [current.owner, cleanup.absolute_owner], seed_checks_each_location: 22, default_vet: true, final_postcheck: true, validation_exit: 0, dependencies_installed: false, actual_sql: false, current_whole_worktree_verified: false, complete_detail_owner_sources_approved: false, production_approved: false, reviewer_sha256: sha256(raw('docs/evidence/a-read-completion-integration-review-20261021.mjs'))};
+const output = 'docs/evidence/a-read-completion-integration-accepted-20261021-r1.json';
+if (process.argv[2] === '--check') assert.deepEqual(json(output), record);
+else {assert.deepEqual(process.argv.slice(2), ['--write']); fs.writeFileSync(path.join(workspace, output), JSON.stringify(record, null, 2) + '\n', {flag: 'wx'});}
+console.log(JSON.stringify({status: record.status, full: record.full, old_code_late_returns: 39, owner_checks: 5019, actual_sql: false}));

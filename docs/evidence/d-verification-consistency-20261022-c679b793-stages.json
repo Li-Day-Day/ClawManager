@@ -1,0 +1,56 @@
+[
+  {
+    "stage": "dependencies",
+    "exit": 0,
+    "arguments": [
+      "list",
+      "-mod=readonly",
+      "-deps",
+      "-test",
+      "-f",
+      "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+      "./internal/systembackupread"
+    ]
+  },
+  {
+    "stage": "counterfactual",
+    "exit": 1,
+    "arguments": [
+      "test",
+      "-mod=readonly",
+      "-p=1",
+      "-count=1",
+      "-timeout=900s",
+      "-run",
+      "^TestVerificationDetail(RejectsUsableNonCommittedLifecycle|RestorationDecisionConsistency)$",
+      "-json",
+      "./internal/systembackupread"
+    ]
+  },
+  {
+    "stage": "isolated",
+    "exit": 0,
+    "arguments": [
+      "test",
+      "-mod=readonly",
+      "-p=1",
+      "-count=1",
+      "-timeout=900s",
+      "-json",
+      "./internal/systembackupread"
+    ]
+  },
+  {
+    "stage": "published",
+    "exit": 0,
+    "arguments": [
+      "test",
+      "-mod=readonly",
+      "-p=1",
+      "-count=1",
+      "-timeout=900s",
+      "-json",
+      "./internal/systembackupread"
+    ]
+  }
+]

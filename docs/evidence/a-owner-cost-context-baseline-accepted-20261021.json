@@ -1,0 +1,68 @@
+{
+  "kind": "a_owner_cost_context_composed_baseline",
+  "status": "accepted_frozen_cost_context_owner_inventory_only",
+  "source": "docs/evidence/a-download-gc-role-mysql-remote-source-20261021-164523-7cba478a.json",
+  "source_manifest_sha256": "82d99363dcf0dd7be2a31576fb601089b02df9799903f198224de6e80fa65098",
+  "source_sha256": "b347ced2d6eb55fa62cb26dda8b29baa3b927568b469abd926931f944761d657",
+  "source_files": 1488,
+  "events": "docs/evidence/a-prune-identity-owner-baseline-20261021.jsonl",
+  "events_sha256": "990aae2b00cf723d7c520d28843d667909f414f6872f196104faafc6db2f9c67",
+  "owner_baseline": {
+    "main": 620,
+    "all": 5019
+  },
+  "previous": "docs/evidence/a-owner-dependency-baseline-accepted-20261021.json",
+  "previous_sha256": "0d9225989f15bc5b99f5c65302cb876f7f0b85d6dd21e022916d94fbf112f779",
+  "d_preparation": "docs/evidence/d-a-cost-aggregate-v2-preparation-20261021.json",
+  "d_preparation_sha256": "adb50e3a3dc4d54e75f57714e91a9c87b2076486378cd25ac8146c91c7bb0dac",
+  "changed_inputs": [
+    "backend/internal/systembackupbusinessa/business_restore.go",
+    "backend/internal/systembackupbusinessa/business_restore_test.go",
+    "backend/internal/systembackupbusinessa/capture.go",
+    "backend/internal/systembackupbusinessa/capture_test.go",
+    "backend/internal/systembackupbusinessa/cost_aggregate.go",
+    "backend/internal/systembackupbusinessa/cost_aggregate_test.go",
+    "backend/internal/systembackupbusinessa/d_review_commit_context_test.go",
+    "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+    "backend/internal/systembackupbusinessa/restore_verify.go",
+    "backend/internal/systembackupbusinessa/restore_verify_test.go",
+    "backend/internal/systembackupbusinessa/verifier.go",
+    "backend/internal/systembackupbusinessa/verifier_test.go",
+    "contracts/system-backup/v12/verifier-contract.schema.json"
+  ],
+  "d_stages": [
+    {
+      "stage": "full",
+      "main": 341,
+      "all": 2398
+    },
+    {
+      "stage": "node",
+      "tests": 79
+    },
+    {
+      "stage": "tagged",
+      "main": 1,
+      "all": 3
+    }
+  ],
+  "prior_business_security_checks_retained": 2346,
+  "new_business_security_checks": 52,
+  "strict_exit_one_retained": true,
+  "resource_full_package_failures_remain_unapproved": true,
+  "d_owned_directory_independently_absent": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-16ddf637115c4eaaa2771a7ea355e096",
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 96,
+    "hash": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"
+  },
+  "actual_role_acceptance": "separate_validation_required",
+  "actual_cost_mysql_verified": false,
+  "formal_contract_approved": false,
+  "current_whole_worktree_verified": false,
+  "tests_repeated": false,
+  "actual_sql": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "reviewer_sha256": "e09bb08624315f8fc95e04309efd74a2cc55e5f3609c131dadc2a17da59f32d6"
+}

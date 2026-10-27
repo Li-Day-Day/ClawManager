@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+const root=path.resolve(import.meta.dirname,'../..'),owner=path.join(root,'.tmp-d-index-cache-d8d857ee52dc4f56868c0b79a75f1d0e');
+const rel='backend/internal/systembackupevidence/download_output_deadline_a_test.go',file=path.join(owner,'source',rel);
+const native=JSON.parse(fs.readFileSync(path.join(root,'docs/evidence/d-gc-freeze-probe-20261021-r7-native.json'),'utf8'));
+assert.equal(native.stages.find(x=>x.stage==='deadline-focused')?.exit,1);
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'docs/evidence/d-gc-freeze-probe-20261021-r7-source.json'),'utf8'));
+assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),manifest.files.find(x=>x.path===rel).sha256);
+let text=fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
+const before='len(x.f.db.queries) >= 2 && x.f.db.queries[len(x.f.db.queries)-2] == downloadRetentionAuditSQL';
+assert.equal(text.split(before).length,2);
+text=text.replace(before,()=> 'len(x.f.db.queries) >= 3 && x.f.db.queries[len(x.f.db.queries)-2] == "SELECT @@server_uuid,DATABASE()" && x.f.db.queries[len(x.f.db.queries)-3] == downloadRetentionAuditSQL');
+text=text.replace('The last group audit read immediately precedes the final\n\t\t\t\t\t// clock; earlier config clocks do not meet this boundary.', 'The last group audit read and its identity check precede the\n\t\t\t\t\t// final clock; earlier config clocks do not meet this boundary.');
+fs.chmodSync(file,0o666);fs.writeFileSync(file,text);
+console.log('DEADLINE_CLOCK_BOUNDARY audit read -> identity check -> original final clock; all delegated unchanged');

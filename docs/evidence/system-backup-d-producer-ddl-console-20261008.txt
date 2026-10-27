@@ -1,0 +1,51 @@
+D_PRODUCER_DDL_PLAN target=root@10.130.14.23 context=kubernetes-admin@kubernetes node=node1 ddl_sha256=26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c probe_sha256=89827bd2473830d39fd0bfd4c19b0b9ef1333797711e317f900dd76b0204feb9 image_pull=Never production_mutation=false
+PASS local-input-check=true remote-contacted=false
+D_PRODUCER_DDL_PLAN target=root@10.130.14.23 context=kubernetes-admin@kubernetes node=node1 ddl_sha256=26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c probe_sha256=89827bd2473830d39fd0bfd4c19b0b9ef1333797711e317f900dd76b0204feb9 image_pull=Never production_mutation=false
+root@10.130.14.23's password:
+
+close - IO is still pending on closed socket. read:1, write:0, io:000001DABF66B030
+root@10.130.14.23's password:
+candidate.sql                                                                                      100%   10KB 847.7KB/s   00:00
+probe.py                                                                                           100%   16KB 922.2KB/s   00:00
+close - IO is still pending on closed socket. read:1, write:0, io:0000014DAE9DC8B0
+root@10.130.14.23's password:
+candidate.sql: OK
+probe.py: OK
+{"check": "test_node_ready", "passed": true}
+{"check": "namespace_owned", "passed": true}
+D_PRODUCER_DDL_STARTED={"namespace": "sbk-prod-ddl-53df88906278bd6cb5f408cf", "uid": "6e8e62df-9dab-45b5-bcb2-2ae49d990ef5", "owner": "53df88906278bd6cb5f408cf"}
+
+{"check": "mysql_8_4", "passed": true}
+{"check": "loopback_only", "passed": true}
+{"check": "eight_innodb_tables", "passed": true}
+{"check": "four_foreign_keys", "passed": true}
+{"check": "all_candidate_checks", "passed": true}
+{"check": "domain_duplicate", "passed": true}
+{"check": "domain_zero_epoch", "passed": true}
+{"check": "domain_empty_record", "passed": true}
+{"check": "domain_oversize_record", "passed": true}
+{"check": "grant_domain_fk", "passed": true}
+{"check": "grant_lease_bound", "passed": true}
+{"check": "one_run_per_grant_generation", "passed": true}
+{"check": "pending_requires_observation", "passed": true}
+{"check": "observation_pair_required", "passed": true}
+{"check": "run_generation_fk", "passed": true}
+{"check": "target_initial_zero_result_allowed", "passed": true}
+{"check": "history_run_evidence_fk", "passed": true}
+{"check": "unique_target_result_version", "passed": true}
+{"check": "reference_composite_primary_key", "passed": true}
+{"check": "domain_delete_restricted", "passed": true}
+{"check": "rollback_restores_version", "passed": true}
+{"check": "grant_primary_key_plan", "passed": true}
+{"check": "existing_row_lock", "passed": true}
+{"check": "missing_receipt_gap_lock", "passed": true}
+{"check": "insert_succeeds_after_gap_release", "passed": true}
+
+D_PRODUCER_DDL_RESULT={"checks": [{"name": "test_node_ready", "passed": true}, {"name": "namespace_owned", "passed": true}, {"name": "mysql_8_4", "passed": true}, {"name": "loopback_only", "passed": true}, {"name": "eight_innodb_tables", "passed": true}, {"name": "four_foreign_keys", "passed": true}, {"name": "all_candidate_checks", "passed": true}, {"name": "domain_duplicate", "passed": true}, {"name": "domain_zero_epoch", "passed": true}, {"name": "domain_empty_record", "passed": true}, {"name": "domain_oversize_record", "passed": true}, {"name": "grant_domain_fk", "passed": true}, {"name": "grant_lease_bound", "passed": true}, {"name": "one_run_per_grant_generation", "passed": true}, {"name": "pending_requires_observation", "passed": true}, {"name": "observation_pair_required", "passed": true}, {"name": "run_generation_fk", "passed": true}, {"name": "target_initial_zero_result_allowed", "passed": true}, {"name": "history_run_evidence_fk", "passed": true}, {"name": "unique_target_result_version", "passed": true}, {"name": "reference_composite_primary_key", "passed": true}, {"name": "domain_delete_restricted", "passed": true}, {"name": "rollback_restores_version", "passed": true}, {"name": "grant_primary_key_plan", "passed": true}, {"name": "existing_row_lock", "passed": true}, {"name": "missing_receipt_gap_lock", "passed": true}, {"name": "insert_succeeds_after_gap_release", "passed": true}], "cleanup": true, "ddl_sha256": "26e64e491ca677fbd0e53e1d619cb905733adcfb8f0567b7ad47a22ae0a84d1c", "dependency_installation": false, "finished_utc": "2026-10-08T02:26:07.717244+00:00", "grant_explain": {"query_block": {"cost_info": {"query_cost": "1.00"}, "select_id": 1, "table": {"access_type": "const", "cost_info": {"data_read_per_join": "280", "eval_cost": "0.10", "prefix_cost": "0.00", "read_cost": "0.00"}, "filtered": "100.00", "key": "PRIMARY", "key_length": "162", "possible_keys": ["PRIMARY", "uq_prod_1_0", "ix_prod_1_0"], "ref": ["const", "const"], "rows_examined_per_scan": 1, "rows_produced_per_join": 1, "table_name": "system_backup_producer_grants", "used_columns": ["scope_key", "grant_id", "generation", "domain_epoch", "row_version", "state", "subject_identity_hash", "lease_expires_at", "authorization_expires_at", "record_bytes", "record_sha256"], "used_key_parts": ["scope_key", "grant_id"]}}}, "image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977", "image_pull_policy": "Never", "kind": "d_producer_candidate_ddl_mysql", "lock_waits": [{"name": "existing_row_lock", "seconds": 1.241}, {"name": "missing_receipt_gap_lock", "seconds": 1.215}], "mysql_version": "8.4.8", "namespace": "sbk-prod-ddl-53df88906278bd6cb5f408cf", "namespace_uid": "6e8e62df-9dab-45b5-bcb2-2ae49d990ef5", "owner": "53df88906278bd6cb5f408cf", "producer_runtime_validated": false, "production_mutated": false, "status": "PASS"}
+close - IO is still pending on closed socket. read:1, write:0, io:0000022E1D2B2860
+D_PRODUCER_DDL_EXIT=0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:00000260510DCF80
+CLEANED producer-ddl-local=True remote-transfer=True
+已停止脚本，输出文件为 C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-producer-ddl-remote-20261008-102446.log
+结果日志：C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\system-backup-d-producer-ddl-remote-20261008-102446.log

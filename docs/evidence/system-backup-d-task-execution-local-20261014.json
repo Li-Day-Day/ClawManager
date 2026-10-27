@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "scope": "Four task kinds: D execution records and guarded RepeatableRead detail builder",
+  "production_detail_enabled": false,
+  "real_mysql_run": false,
+  "dependency_installation": false,
+  "transcript": {
+    "path": "docs/evidence/system-backup-d-task-execution-local-20261014.txt",
+    "sha256": "e35ac53a2a6b4914063cf7157f28af66d0e775ba9bc8188e70df4579b0560cee"
+  },
+  "checks": {
+    "read_package_test_and_default_vet": "PASS",
+    "package_top_level_tests": 44,
+    "package_named_checks_including_subtests": 181,
+    "task_execution_top_level_tests": 5,
+    "task_execution_named_checks_including_subtests": 74,
+    "linux_read_test_binary_compile": "PASS",
+    "linux_tagged_security_mysql_probe_compile": "PASS",
+    "static_projection_columns_match_migrations": "PASS (11 attempt / 21 job columns)",
+    "diff_whitespace": "PASS",
+    "exit": 0
+  },
+  "binary_sha256": {
+    "read_package": "baa4890e79f3cc9debc56ab925ac199a0cf3534fbbf5c2a0833527d730366ed5",
+    "authority_mysql_probe": "2be0508d2eddfc71d6a081ae77ef5c6fafa62f5bac836c84ba9fd2aa82999b9e"
+  },
+  "remote_pending": [
+    "TestDAdminReadFullSchemaMySQL/task_execution_scoped_attempts_and_progress",
+    "four-kind real SQL and cross-installation isolation",
+    "heartbeat does not advance business progress",
+    "two-connection consistent snapshot after competing progress commit",
+    "revoked real A session returns zero execution result"
+  ],
+  "cleanup": {
+    "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-b7a93645588e4711abc43f91a25d7dd1",
+    "reported": true,
+    "directory_absent": true,
+    "retained_test_build_products": false
+  },
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupread/task_detail_base.go",
+      "sha256": "631e2292e9094ac52737049cd68f16aee4de3b23ad23d205a555cd88da4aa784"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_execution.go",
+      "sha256": "0b2a3eacdddcf8246fe594bdc0ef094c5c59b998797e077c36d308d293e13c48"
+    },
+    {
+      "path": "backend/internal/systembackupread/task_execution_test.go",
+      "sha256": "24bb8baa78b687d57b2f73686c4dec54c23df0cbe85959d173d9913873855a68"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+      "sha256": "062aa36a451cbdefa056d43d90fb4087835acf9fbb3f10dc2db62ace8bbd9b14"
+    }
+  ],
+  "limitations": [
+    "Internal execution contribution; full detail Owner sources and single current phase/generation rules are incomplete",
+    "Tagged compile is not MySQL execution",
+    "No production grants, migrations, HTTP detail enablement, or external remote operation",
+    "Input manifest covers four D changed source files, not a frozen complete dependency graph"
+  ]
+}

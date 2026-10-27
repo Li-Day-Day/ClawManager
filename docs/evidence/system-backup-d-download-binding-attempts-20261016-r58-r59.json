@@ -1,0 +1,52 @@
+{
+  "kind": "d_download_admission_binding_failed_and_superseded_attempts",
+  "recorded_at": "2026-10-16T08:32:30.513Z",
+  "entries": [
+    {
+      "round": "r58",
+      "status": "failed_invalid_manifest_counterexamples",
+      "raw_log": "docs/evidence/d-download-binding-local-20261016-r58.txt",
+      "raw_log_sha256": "e1888fceadc4fb301abf0f6182a58a148cd0ef8acfa617a43d53bde6b7b8cd41",
+      "source_manifest": "docs/evidence/d-download-binding-source-20261016-r58.json",
+      "source_manifest_sha256": "dbbe137af9289550aa4fd2c322259ffc2ab3e4de48a5abfe6021863fe6cb08c7",
+      "go_report": "docs/evidence/d-download-binding-source-20261016-r58.go-report.jsonl",
+      "go_report_sha256": "f6040a92b0de581fbb5ed9748490ac621e8215cb6a85b9e75d3921bcaeb84007",
+      "test_events": 758,
+      "failed_tests": [
+        "TestDownloadAdmissionBindingRejectsSubstitution/manifest",
+        "TestDownloadAdmissionBindingRejectsSubstitution",
+        "TestDownloadAdmissionBindingRechecksOriginalFacts/manifest",
+        "TestDownloadAdmissionBindingRechecksOriginalFacts"
+      ],
+      "binding_passes": 40,
+      "native_exit": 1,
+      "owned_directory_independently_absent": ".tmp-d-index-cache-b253657116ae4e39bdfd343bbe55a16f"
+    },
+    {
+      "round": "r59",
+      "status": "intentionally_stopped_superseded_invalid_counterexamples",
+      "raw_log": "docs/evidence/d-download-binding-local-20261016-r59.txt",
+      "raw_log_sha256": "c3ee187ae8c36ee82f2e16f955ab93a6b0ff72e7792ce45424694fbb4384959b",
+      "source_manifest": "docs/evidence/d-download-binding-source-20261016-r59.json",
+      "source_manifest_sha256": "9cb4961a5e2dcfe2f1e26652747f00c65db7493058a9b170dfa9c03cb841588f",
+      "go_report": "docs/evidence/d-download-binding-source-20261016-r59.go-report.jsonl",
+      "go_report_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_events": 0,
+      "failed_tests": [],
+      "binding_passes": 0,
+      "native_exit": 137,
+      "owned_directory_independently_absent": ".tmp-d-index-cache-55aaa8f95da4407bb68521a9bf6dcb27"
+    }
+  ],
+  "cause": "Both manifest counterexamples set ObjectHash to the original vector value: 64 lowercase e characters. No mutation occurred; accepting unchanged content was correct. Fixed counterexamples use 64 lowercase f characters.",
+  "production_binding_checks_not_relaxed": true,
+  "proof_auth_age_limit_added_between_r58_and_r59": true,
+  "r59_stop_identity_check_tool_chunk": "0138a2",
+  "r59_stop_completed_tool_chunk": "3bc924",
+  "r59_stop_reason": "Known invalid frozen test counterexamples, not a polling timeout or slow execution",
+  "replacement_round": "r60",
+  "new_features_after_pause_request": false,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "overall_complete": false
+}

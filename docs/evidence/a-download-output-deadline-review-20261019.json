@@ -1,0 +1,262 @@
+{
+  "kind": "a_download_output_deadline_independent_review",
+  "version": 1,
+  "date": "2026-10-19",
+  "status": "accepted_with_explicit_scope",
+  "defects": [
+    "Handler cleared native response write deadline before independent result audit and server final buffered flush; original TLS HTTP/1 reproduced plaintext after the original deadline.",
+    "Strict Body pointer comparison rejected normal native HTTP/2 empty GETs before SQL; both original HTTP/2 leaves show validation_failed, not an HTTP/2 expiry reproduction."
+  ],
+  "changes": [
+    "Keep original response deadline through result recording and native server flush; HTTP server owns connection/stream final cleanup.",
+    "Verify empty request-body EOF with one-byte read under a bounded native read deadline, rejecting late EOF/trailers/cancellation/errors before SQL; normalize only the clone passed to admission."
+  ],
+  "baseline": {
+    "round": "r1",
+    "passing_tests": 0,
+    "per_package": {},
+    "failed_tests": [
+      "TestADownloadNativeBufferedOutputKeepsOriginalDeadline/http1/before_deadline",
+      "TestADownloadNativeBufferedOutputKeepsOriginalDeadline/http1/result_crosses_deadline",
+      "TestADownloadNativeBufferedOutputKeepsOriginalDeadline/http2/before_deadline",
+      "TestADownloadNativeBufferedOutputKeepsOriginalDeadline/http2/result_crosses_deadline",
+      "TestADownloadNativeBufferedOutputKeepsOriginalDeadline"
+    ],
+    "packages": [
+      {
+        "name": "clawreef/internal/systembackupevidence",
+        "action": "fail"
+      }
+    ],
+    "completed": true
+  },
+  "focused": {
+    "round": "r2",
+    "passing_tests": 9,
+    "per_package": {
+      "clawreef/internal/systembackupevidence": {
+        "main": 2,
+        "total": 9
+      }
+    },
+    "failed_tests": [],
+    "packages": [
+      {
+        "name": "clawreef/internal/systembackupevidence",
+        "action": "pass"
+      }
+    ],
+    "completed": true
+  },
+  "final": {
+    "round": "r3",
+    "passing_tests": 3962,
+    "per_package": {
+      "clawreef/internal/systembackupevidence": {
+        "main": 258,
+        "total": 1977
+      },
+      "clawreef/internal/systembackupsecurity": {
+        "main": 253,
+        "total": 1985
+      }
+    },
+    "failed_tests": [],
+    "packages": [
+      {
+        "name": "clawreef/internal/systembackupsecurity",
+        "action": "pass"
+      },
+      {
+        "name": "clawreef/internal/systembackupevidence",
+        "action": "pass"
+      }
+    ],
+    "completed": true
+  },
+  "source": {
+    "files": 1380,
+    "sha256": "eba7fcb21aa7afb00062f8e9b81d7822d85a6cb2cd4dcc73ffca5fb2f29e58fb"
+  },
+  "checks": [
+    "original five root/leaf failures preserved without selective removal",
+    "original HTTP/1 control reached successful body then rejected premature deadline clear",
+    "original HTTP/1 failure reached plaintext after original expiry",
+    "original HTTP/2 leaves rejected empty native bodies before admission, not claimed as expiry repro",
+    "original failure exited one without retry",
+    "intermediate focused real TLS/buffer-wipe tests passed with native and outer exit zero",
+    "final packages have no failed/skipped assertions or build failures",
+    "each final package/test has one passing terminal event",
+    "complete security and evidence packages passed once",
+    "new native tests plus both protocols and expiry controls passed",
+    "original plaintext buffer wiped after complete, short and panic writes",
+    "both new test roots passed",
+    "all thirteen pre-admission body/framing/deadline/error cases and root passed",
+    "final actual native and wrapper exits zero with default vet",
+    "r1: bounded stable capture without dependency install",
+    "r1: unique source paths",
+    "r1: independently recomputed source digest",
+    "r1: frozen postcheck and reported cleanup",
+    "r1: exact enclosing source/cache owner independently absent",
+    "r2: bounded stable capture without dependency install",
+    "r2: unique source paths",
+    "r2: independently recomputed source digest",
+    "r2: frozen postcheck and reported cleanup",
+    "r2: exact enclosing source/cache owner independently absent",
+    "r3: bounded stable capture without dependency install",
+    "r3: unique source paths",
+    "r3: independently recomputed source digest",
+    "r3: frozen postcheck and reported cleanup",
+    "r3: exact enclosing source/cache owner independently absent",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_admitted_http.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_output_deadline_a_test.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_committed.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_authority.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_authority_sql.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_result.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_runtime.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/download_admission_transaction.go",
+    "reviewed final source still matches: backend/internal/systembackupevidence/sql.go",
+    "handler does not clear deadline before server final flush",
+    "native empty body verified under bounded read before SQL admission",
+    "baseline and final handler bytes differ",
+    "shared cache belongs only to this A review and was removed",
+    "shared cache guarded by exact workspace child and original marker"
+  ],
+  "check_count": 43,
+  "focus_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admitted_http.go",
+      "size": 8771,
+      "sha256": "0e137d6ea767ebd2c8fbb564b4db8e5e569906b9d2f495ade67d094246584e59"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_output_deadline_a_test.go",
+      "size": 9547,
+      "sha256": "f56cd17d38cf4f2363900e816b86cafd819ec6fc7acccebb7b13beb18b48c484"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_committed.go",
+      "size": 10244,
+      "sha256": "95172b4d61e2eff693770639823aa79ce677ca7398dfb6f050988491827e99dd"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_authority.go",
+      "size": 8090,
+      "sha256": "172b4a6453aa5e9bcaa5dc8ab5d4225d70a91c4e8baa7cd192af4c4390337074"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_authority_sql.go",
+      "size": 7034,
+      "sha256": "ffc28d5e955fcef0aa1db4bcce8917eea49595f21c65d6996ecb2c5b1ba54f62"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_result.go",
+      "size": 9618,
+      "sha256": "13bb5598fe28cedcbb606c439c14b2977886f32aaae6572a56d3f5ce088cbf19"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_runtime.go",
+      "size": 3586,
+      "sha256": "30930c79f5c24411abc2e14f42f3d4dd5aec73fa68c46e3afc55cb8769b6b84f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction.go",
+      "size": 14748,
+      "sha256": "71aac40a47db9172d5200a1bb627800cae332118c735415c39759263855a6218"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "size": 16621,
+      "sha256": "a33a53aae4e062d8ebac6dd984755a80f6a8414e55a409acde50b770fcf2af13"
+    }
+  ],
+  "post_capture_changes_excluded": [],
+  "cleanup": [
+    {
+      "round": "r1",
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-269bd1678d47452f8c43e3bb2e0a4e1d",
+      "independently_absent": true
+    },
+    {
+      "round": "r2",
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-605ca582aeb14266a591048d6a9d819d",
+      "independently_absent": true
+    },
+    {
+      "round": "r3",
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f15c3e7aa4644b85a805f1441884051b",
+      "independently_absent": true
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r1.jsonl",
+      "sha256": "6cccd9b9f0b47346451af2fbccd7ff95e00dcf99b16d57effd8cdedc4b6c114a"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r1-source.json",
+      "sha256": "19061dd6b60163c985bcce80ee9ace4e83c399b24ae468f4dd8875efa3db8a28"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r1-native.txt",
+      "sha256": "3a715a21dc0de9d2fa8b353e2bbda1dac27a02bf14718234ef8e2e71cbff8f4c"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r1-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r2.jsonl",
+      "sha256": "a48556f4dd27b16a25bdb4f1c7885cdf6e4992e86617c1cddbe0301ebacee611"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r2-source.json",
+      "sha256": "85bc4da78bfd516cadb447b67d570f85fe78edfe74a248f38cb0bb30f69ed108"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r2-native.txt",
+      "sha256": "7d317bbcd134ef32b7d5e017a2d15af6583100a522a2d368e79c8f99a1f5cd53"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r2-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r3.jsonl",
+      "sha256": "9ed886a53535afce0b014796e6d1f3136e39cbb5f5c569b8c5248632529928d1"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r3-source.json",
+      "sha256": "5c0ddadcd40986c10f0d6344365a37bd8481c6441b5a55727829f1dbf34ce44b"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r3-native.txt",
+      "sha256": "94d56fcf208e8087bb356507ac0d6f17432a1fddc2fdb760b6032c8cdf192845"
+    },
+    {
+      "path": "docs/evidence/a-download-output-deadline-20261019-r3-stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a-download-output-cache-owner-20261019.json",
+      "sha256": "d77c59e0c6ccc5cfb4753e816c2af959ed45bef27cf2a2aa67855c12702ea509"
+    },
+    {
+      "path": "docs/evidence/a-download-output-cache-cleanup-20261019.json",
+      "sha256": "6fbcdbb956336943cb0510180e6c66703ba07bf9ebd8058400581e35a33bda2c"
+    }
+  ],
+  "scope": {
+    "native_tls_http1_http2": true,
+    "actual_jwt_ed25519_envelope_and_http": true,
+    "synthetic_sql_owner_capacity_and_provider": true,
+    "actual_mysql": false,
+    "actual_sts_kms": false,
+    "human_mfa": false,
+    "production_enabled": false,
+    "formal_schema_approved": false,
+    "whole_objective_complete": false,
+    "note": "local_write_complete records the local Write return; it never proves client delivery. Earlier remote suites retain their own scope."
+  }
+}

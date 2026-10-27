@@ -1,0 +1,144 @@
+{
+  "kind": "a_evidence_preparation_boundary_local_validation",
+  "date": "2026-10-14",
+  "status": "local_pass_frozen_sources",
+  "scope": "A synchronous encrypted-staging preparation and existing evidence/producer local integration, tested against exact 973-file source copy; no D new config mutation or production integration acceptance",
+  "platform": "windows/amd64",
+  "go_version": "go1.26.1",
+  "default_vet": true,
+  "stages": [
+    {
+      "stage": "targeted",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 -run ^(TestPrepare|TestSystemCapabilityRejectsInvalidPreparationBeforeAuthority|TestTaskAndSystemPreparersRejectInvalidInputs) ./internal/systembackupevidence"
+    },
+    {
+      "stage": "full",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 ./internal/systembackupevidence ./internal/systembackupproducer"
+    }
+  ],
+  "targeted": {
+    "main_tests": 9,
+    "subtests": 37,
+    "total_checks": 46
+  },
+  "full": {
+    "packages": [
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "duration": "93.553s",
+        "main_tests": 177,
+        "subtests": 1108
+      },
+      {
+        "package": "clawreef/internal/systembackupproducer",
+        "duration": "44.892s",
+        "main_tests": 75,
+        "subtests": 709
+      }
+    ],
+    "main_tests": 252,
+    "subtests": 1817,
+    "total_checks": 2069
+  },
+  "reproduction": {
+    "path": "docs/evidence/a-evidence-prepare-boundary-repro-20261014.txt",
+    "sha256": "0408b614b35e39393b26da9a989462ce999e0d8ea5cc0e61e8e46f4ad630ab4b",
+    "expected_go_exit": 1,
+    "scope": "Three fault-test entry points against pre-fix live worktree; not a frozen dependency graph",
+    "cancellation_cases": 13,
+    "cancellation_cases_failed": 12,
+    "second_source_cancellation_already_rejected": true,
+    "second_close_error_failed": true,
+    "wrap_dek_mutation_failed": true
+  },
+  "stdout": {
+    "path": "docs/evidence/a-evidence-prepare-boundary-local-20261014.txt",
+    "sha256": "33622b012790913d3ba0bf905451d9b44bd58d1e464b01dc8ea9a7f9f9f86c9e",
+    "kind": "complete captured local native Go stdout/stderr; not a remote transcript"
+  },
+  "source_snapshot": {
+    "path": "docs/evidence/a-evidence-prepare-boundary-source-snapshot-20261014.json",
+    "sha256": "ad994274a8af8ac3f428a307f053740ebed3619cf49f8b05cb0dd572638f169e",
+    "file_count": 973,
+    "copied_input_checks_after_targeted": 0,
+    "current_existing_input_drift": [],
+    "added_current_input_not_in_gate": [
+      "backend/internal/systembackupsecurity/config_mutation_transaction.go"
+    ],
+    "whole_current_tree_freeze": false
+  },
+  "current_a_inputs": [
+    {
+      "file": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "396af55a31e8b32d6b55e0b0b65b88e7e555d97afa22f9222f1beb6c35cc7943"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/system_prepare.go",
+      "sha256": "68e4d893233ac4d9e25de5ff0963c32f6bd00ae0eb24a28509928d7449e91c95"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/system_transit.go",
+      "sha256": "bc8b391f5880549544c492a651c37ddbf8be6d3e557d3cbe9336b664972623d1"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/task_prepare.go",
+      "sha256": "ac656731320d4b91c4fe62b41b61bfe53a1d24d32bad9663cf65af9427773d9d"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/types.go",
+      "sha256": "397d1e4eb14002add780dd7ce64fed80144d29725a215b079c1f463abd21ad70"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/prepare_boundary_test.go",
+      "sha256": "ee8b413b803cd8e8c51e8ace270792cd5060cc42f417dbcc364b4917860d17ec"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/detached_verify.go",
+      "sha256": "9c2184e78d7a6f72194d27b13afe1f87d4047b03db8cd205dbf3b6d6378ee41d"
+    },
+    {
+      "file": "backend/internal/systembackupevidence/read_snapshot_test.go",
+      "sha256": "18271a509d4d3fe0f57a7a6bb3c6850546ddd7da49544f4e4e1a72b40075dad0"
+    }
+  ],
+  "checks": [
+    "13 synchronous cancellation boundaries stop subsequent adapters and return empty Prepared",
+    "Both source Close failures reject and each opened reader closes once",
+    "Both passes reject nil/typed nil source readers and close reader returned with error",
+    "Typed nil adapters and nil contexts rejected before source/authority/SQL/JWT/Wrap",
+    "Wrap input mutation rejected before staging",
+    "Borrowed Wrap DEK erased before second source callback and on success/error return; private AES key survives later borrowed-copy mutation",
+    "Canceled second-pass plaintext buffer erased",
+    "Existing task/system TLS preparation and evidence/producer local integration pass"
+  ],
+  "cleanup": {
+    "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-prepare-gate-5f5f88fa3918419499a7c98bd8afd65c",
+    "reported": true,
+    "directory_independently_absent": true,
+    "retained_build_products": false
+  },
+  "offline": {
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOTOOLCHAIN": "local",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOWORK": "off",
+    "telemetry": "owned scratch directory"
+  },
+  "tool_crash_retries": 0,
+  "dependencies_installed": false,
+  "ssh": false,
+  "real_mysql": false,
+  "linux_cross_compile": false,
+  "production_approved": false,
+  "limits": [
+    "Source/Keys/writer remain trusted synchronous adapters; blocking calls cannot be forcibly interrupted.",
+    "Wrap must not retain/return an alias of its borrowed read-only DEK, and must erase its own copies.",
+    "Failed Prepare may leave ciphertext in dst; caller must discard it.",
+    "No new config mutation source, public contract freeze, B/C runtime authority, provider capability, D production publication or committed artifact admission is accepted by this gate."
+  ]
+}

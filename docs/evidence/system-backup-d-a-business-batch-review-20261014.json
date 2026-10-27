@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-14",
+  "reviewer": "D",
+  "scope": "NormalizeBusinessForRestore combination and B initial/final proof interfaces",
+  "result": "candidate_interface_and_control_flow_accepted",
+  "production_approved": false,
+  "registry_cross_review_approved": false,
+  "new_a_tests_run_by_d": false,
+  "source_matches_a_local_receipt": true,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupbusinessa/business_restore.go",
+      "sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/business_restore_test.go",
+      "sha256": "a5e4e4e627a48f0fbe21724a86536cbc48bb76e71017bdd18f4d77087f9d4610"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore.go",
+      "sha256": "793bd0fdc8b7c2a68b36172aa618f6138c2f67a0a1bbd3b24da2f6081d493a7a"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/ai_gateway_history_restore.go",
+      "sha256": "238ee8324f5fb868c4cf7501ad2c4d549cfa223058baff4d54214d7c940f09ce"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/users_restore.go",
+      "sha256": "bbe2c0c31d4ffbca0d11149698bb665b99ffc45621b51d5751ffa0bcd426694b"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/quota_restore.go",
+      "sha256": "64276002b936c6afabebf68e34e084f0321dcdab496a188eeb2586d7dcc5a374"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/verifier.go",
+      "sha256": "67dce0a4361e3fcfcabd4fcd342fa0342e9ca4dbb73b30b319500cd42dfdc480"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/capture.go",
+      "sha256": "ffb9e2e31c82a79cdd9bab722ec1892eddbb7ace51aae40f7f06eb529dada8c0"
+    }
+  ],
+  "required_external_evidence": [
+    "B independently authenticated sealed dump and exact source projections",
+    "B target identity/time/mapping/occupancy/startup fence and write authority",
+    "B SQL transaction with current proof recheck and all-or-nothing writes",
+    "real fifteen-table MySQL/FK/SELECT-only verification and large-data receipts",
+    "D orchestration and startup/traffic release implementation"
+  ]
+}

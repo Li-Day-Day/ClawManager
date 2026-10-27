@@ -1,0 +1,62 @@
+{
+  "kind": "d_http_mfa_mysql_operator_receipt_v1",
+  "recorded_at": "2026-09-28T06:17:07.1096019Z",
+  "source": "operator-provided console transcript",
+  "independently_queried_remote": false,
+  "result": "FAIL",
+  "remote_test_exit_code": 1,
+  "namespace": "sbk-mig-260928061146-2742",
+  "namespace_uid": "1befd988-d9c7-4689-a1ed-a22dd0b64ba6",
+  "mysql_version": "8.4.8",
+  "binary_sha256": "dc7eda72dd21898bda24301446fe864c0ee7bf7157df52473eaee2c4fd3c0e56",
+  "ddl_sha256": "2661503d821ae4a5346609a6dfba93db5483b6538e71de46c2e686d9a050ceba",
+  "source_binding_check": {
+    "local_receipt": "system-backup-d-http-mfa-local-20260928.json",
+    "matched_before_fix": 55,
+    "mismatches": 0
+  },
+  "fresh_migrations": {
+    "range": "001..079",
+    "applied": 92,
+    "exact_filenames": true,
+    "result": "PASS"
+  },
+  "top_level_pass": 8,
+  "top_level_fail": 1,
+  "bootstrap_nested_pass": 3,
+  "test_seconds": 1.49,
+  "failure": {
+    "subtest": "https_jwt_mfa_registration_and_config_revocation",
+    "source_file": "backend/internal/systembackupsecurity/registration_http_mysql_test.go",
+    "line": 204,
+    "raw_driver_error": "withheld",
+    "mysql_error_number": null,
+    "diagnosis": "Test applies origin_installation_id predicate to system_backup_evidence, but migration 065 has no such column.",
+    "diagnosis_basis": "Matching source fingerprint, failing line and exact migration DDL; not a captured server diagnostic.",
+    "completed_before_failure": [
+      "JWT refresh and wrong-signature rejection",
+      "unbound admin denial",
+      "MFA enrollment/confirmation/proof issuance",
+      "TOTP replay rejection",
+      "provider observation",
+      "first HTTP registration 201",
+      "identical committed HTTP replay 201"
+    ],
+    "not_reached": [
+      "logout revocation",
+      "configuration rotation locking",
+      "stale runtime and reloaded RBAC rejection",
+      "audit credential leakage assertions"
+    ]
+  },
+  "cleanup": {
+    "bootstrap_database_reported": true,
+    "registration_database_reported": true,
+    "namespace_matching_uid_reported": true,
+    "remote_scratch_reported": true,
+    "local_build_cache_reported": true
+  },
+  "production_active_config_updated": false,
+  "human_mfa_verified": false,
+  "note": "This failed run must not be reported as full HTTP/MFA acceptance. Fix test receipt counting, then rerun the isolated probe."
+}

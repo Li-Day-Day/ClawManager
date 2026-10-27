@@ -1,0 +1,116 @@
+{
+  "kind": "a_system_pending_sql_local_validation",
+  "date": "2026-10-08",
+  "status": "passed_exact_snapshot_after_fix",
+  "exit_code": 0,
+  "production_authorization": false,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-pending-local-20261008-r2.txt",
+    "sha256": "2134518a88cd6ab3b165f2ecfdda858d38093880ef037a5f26294dede76c3de7"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-004148-b2f48557.json",
+    "sha256": "3878839d2f1b1fa023fe783fbbdc30cf5fcc84eac75d7ea3b7285d7bdef721dc",
+    "files": 219,
+    "live_drift_after_validation": [
+      "backend/internal/systembackupproducer/finish_test.go",
+      "backend/internal/systembackupproducer/finish.go"
+    ],
+    "all_a_evidence_sources_still_match": true
+  },
+  "validation": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 150,
+    "named_passes_including_subtests": 1489,
+    "new_system_pending_top_level_passes": 6,
+    "new_system_pending_named_passes": 46,
+    "assertion_failures": 0,
+    "windows_compiler_process_faults": 0,
+    "same_snapshot_tool_fault_retries": 0,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "gofmt_clean": true,
+    "real_d_transaction_executor": true,
+    "actual_a_registry_and_chunk_sql": true,
+    "database_driver": "standard-library synthetic transactional driver",
+    "d_audit_participant": "synthetic marker in same transaction",
+    "real_lifecycle_to_pending_production_environment_integration": false
+  },
+  "previous_attempt": {
+    "exit_code": 1,
+    "status": "failed",
+    "log": {
+      "path": "docs/evidence/system-backup-a-system-pending-local-20261008.txt",
+      "sha256": "ec457998929926b4f36ae460f1563fefde2766cf0e3aae5675c36f75062218ad"
+    },
+    "snapshot": {
+      "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-003309-c8b8002f.json",
+      "sha256": "df29bbdd25787e49fe43a9afb332eab75fe56ceb891058dc59910931f050d561"
+    },
+    "failed_top_level_tests": 1,
+    "failed_named_records": 2,
+    "failing_case": "TestSystemPendingRollbackAndFinalGuard/audit",
+    "cause": "Synthetic audit participant returned private driver error directly; rollback assertions passed but error-redaction assertion failed",
+    "fix": "Map synthetic audit SQL failure to ErrUnavailable; additionally preserve A loader availability errors and require final Existing fact, with assertions for both",
+    "scratch": ".tmp-a-evidence-d94bf4a068494fa684e437fe05af7d2b",
+    "scratch_removed": true,
+    "automatic_assertion_retry": false
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-ada03a8356c34c5a84024acdb0738d3e",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Mandatory SystemPendingAuthority and original Prepared/channel/history binding",
+    "D-owned single transaction with exact locked registry/chunk comparison",
+    "CAS insert of actual evidence and each chunk; no nested BEGIN or Commit",
+    "Final current reads of all immutable fields, chunks and expected mutable state",
+    "Read-only exact pending/write_unknown replay preserving original claim and metadata",
+    "Failure latch, rollback on result audit/final guard errors, fixed capacity sample and error redaction"
+  ],
+  "excluded_scope": [
+    "Production identity/revocation/host/ref/retention/capacity/audit authority",
+    "Success integration through real production Lifecycle, Execution and AdmitPending",
+    "Real MySQL FK/gap locks, cross-process concurrency and remote provider V01-V10",
+    "New D finish.go and finish_test.go listed in drift",
+    "A claim adapter, system STS/publication/result/historical recovery and C independent channel",
+    "Formal eight-table DDL deployment and production activation",
+    "Full HTTP authentication and real LDAP/directory revocation"
+  ],
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_pending.go",
+      "sha256": "22c87f8bd3a3949b3a232e65f37d409b417728c7ae40c916d1bc3dec846286e5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_pending_sql.go",
+      "sha256": "a37a6fee40d7783b7bb4769ac5f79f3fdfaab3550f54afa1eac6b534d266d5b7"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_pending_test.go",
+      "sha256": "09d9277c498a955359eadae838ee67fef92474b7e2e5ec85f3c5bc3628d02a8d"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "4afb96c7845559e5e80acb6c32c8eb322a6184f651efa6ac4edebe089e7f12bd"
+    },
+    {
+      "path": "docs/system-backup-a-system-pending-20261008.md",
+      "sha256": "668475303083c98ebb5fdcc5f67b8278177f177315a6d2b2bd755b7a1a2cf59d"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "6b829eb0c34b03db7f1a3391ef58c47bbf2f289348a652fdf76ac6a6e48fc070"
+    }
+  ]
+}

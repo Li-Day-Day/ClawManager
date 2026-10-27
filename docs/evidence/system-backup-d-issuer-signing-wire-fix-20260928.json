@@ -1,0 +1,32 @@
+{
+  "schema_version": "d-issuer-signing-wire-fix.v1",
+  "recorded_date": "2026-09-28",
+  "failed_remote_run": "d-sig-1cc37da4b37ca37297b8b10b",
+  "change": "Use handoff-pinned string key_version in probe, ACL and Go TransitSigner; preserve sanitized diagnostics and explicit cleanup outcome on failure.",
+  "remote_root_cause_confirmed": false,
+  "validation": {
+    "security_package": "PASS",
+    "security_package_seconds": 2.032,
+    "node_tests_passed": 19,
+    "python_tests_passed": 9,
+    "remote_signing_after_fix": "NOT_RUN",
+    "mysql_rerun": "NOT_RUN",
+    "http_acceptance": "NOT_RUN",
+    "config_activation": "NOT_IMPLEMENTED_OR_EXECUTED"
+  },
+  "cleanup": {
+    "dedicated_go_cache_and_tmp_removed": true,
+    "dependencies_installed": false,
+    "python_bytecode_created": false
+  },
+  "source_hash_encoding": "UTF-8 normalized LF with one trailing newline",
+  "source_sha256": {
+    "scripts/system-backup-d-issuer-signing.mjs": "e058dee1f00c19ead5e740cd54269e8abc71ecd5a62619bb88ada86c377fd7f3",
+    "scripts/system-backup-d-issuer-signing.py": "b44a73ac923eae0fc934ea6d6d84217d9a79a25d8fcedfb3e68fbd48af39042c",
+    "scripts/system-backup-d-issuer-signing-client.py": "47eb1b010657f4abf90cd0d644cb8642bb154ff1dbe81ea2bab19cb5798a490b",
+    "scripts/system-backup-d-issuer-signing.test.mjs": "1098ccdbdf6b5f611abf446960bc823cfcf79a318b9346cfe4ee55e157a0f904",
+    "scripts/system-backup-d-issuer-signing_test.py": "b20e22ff61056a0d6e9ef629649c901f3d0271d5e314445f6658565a1221de49",
+    "backend/internal/systembackupsecurity/transit_signer.go": "04bf4ccfc3f891888dbbb48b78a05afc7039705d64cd85542c6ef4440902f62b",
+    "backend/internal/systembackupsecurity/transit_signer_test.go": "ee3662571cbf06cf2cfeb97957253369ab8fddb1e2c6ccf758e071abf2aa8a2d"
+  }
+}

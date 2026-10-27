@@ -1,0 +1,53 @@
+{
+  "kind": "system_backup_a_provider_handoff_preparation",
+  "recorded_at": "2026-09-24T01:35:29.862Z",
+  "status": "local_preparation_passed_remote_execution_pending",
+  "remote_access_performed": false,
+  "dependencies_installed": false,
+  "test_artifacts_created": false,
+  "provider_capability_approved": false,
+  "evidence_registered": false,
+  "validation": [
+    {
+      "command": "py -3.10 -B scripts/system-backup-a-provider-handoff-preflight.test.py",
+      "exit_code": 0,
+      "tests": 3,
+      "negative_scenarios": 8
+    },
+    {
+      "command": "node scripts/system-backup-a-provider-handoff-preflight.test.mjs",
+      "exit_code": 0,
+      "tests": 3
+    }
+  ],
+  "limitations": [
+    "Mocks only; no live namespace, identity, TLS or token validity was independently verified.",
+    "Remote preflight does not validate credentials, provider data-plane capability or disaster recovery."
+  ],
+  "files": [
+    {
+      "path": "docs/evidence/system-backup-d-provider-lab-handoff-20260924.json",
+      "sha256": "c6d15516cc4b9f32dd1f4cffaa767c050ff2f2315df4509ad086c7aa51eccf4b"
+    },
+    {
+      "path": "docs/system-backup-a-provider-handoff-receipt-20260924.md",
+      "sha256": "f2a33a7d0f20c27781e41a0eccb0ed6225db7b34d5cf8eafd06e27fc64811a94"
+    },
+    {
+      "path": "scripts/system-backup-a-provider-handoff-preflight.py",
+      "sha256": "1666dbbf76a981e1cb90c398de7f14bda6a4e4180854acc0d8a9a3eaee3404db"
+    },
+    {
+      "path": "scripts/system-backup-a-provider-handoff-preflight.mjs",
+      "sha256": "a105d1f21fc228b66bd5a924a4c6fb82803ef6355fc205e24eaf8937b9298462"
+    },
+    {
+      "path": "scripts/system-backup-a-provider-handoff-preflight.test.py",
+      "sha256": "46faa2577cb2c52d1b22cbfa9d742f525f5cbbd7127d6a121139b33e29c512a8"
+    },
+    {
+      "path": "scripts/system-backup-a-provider-handoff-preflight.test.mjs",
+      "sha256": "477da759e3f68442d1191c08ce0967a5c2eb76a2444eec3d7de3d6396d44e2d0"
+    }
+  ]
+}

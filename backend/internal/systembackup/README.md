@@ -2,7 +2,7 @@
 
 依据 `system-backup-plan.v12`，本目录实现 users/instances 的领域数据平面。此前按当时尚无公共 Controller 的信息补齐了 `control`。2026-10-26 合并前检查发现本地 `origin/backup` 已有另一套公共控制器；用户已指定合入 `backup`，两套任务协议、停写锁和资源账本仍需整合，不能直接同时启用。当前协议为内部 `v1alpha1`，不代表六域 `system-backup.v1` 合同冻结，也没有生产恢复 execute API。默认不连接控制数据库或真实 Kubernetes。
 
-最新进度见[开发清单第 24、25 节](../../../docs/users-instances-backup-development-plan.zh-CN.md)、[合并前审查报告](../../../docs/users-instances-backup-premerge-review.zh-CN.md)和[控制器接入说明](../../../examples/backup-controller/README.md)。WorkBuddy Lite 固定身份版本、历史 UID 占用、分配器、实例根及 Wine 文件适配已通过隔离 Linux/MySQL 演练；恢复预检已补充源数据与目标 schema、冻结恢复策略的只读验证。WorkBuddy Pro 身份适配按用户要求不纳入，仍拒绝未知身份合同。
+最新进度见[开发清单](../../../docs/users-instances-backup-development-plan.zh-CN.md)、[合并前审查报告](../../../docs/users-instances-backup-premerge-review.zh-CN.md)、[backup 分支本地冲突处理](../../../docs/users-instances-backup-branch-integration.zh-CN.md)和[控制器接入说明](../../../examples/backup-controller/README.md)。WorkBuddy Lite 固定身份版本、历史 UID 占用、分配器、实例根及 Wine 文件适配已通过隔离 Linux/MySQL 演练；恢复预检已补充源数据与目标 schema、冻结恢复策略的只读验证。WorkBuddy Pro 身份适配按用户要求不纳入，仍拒绝未知身份合同。
 
 **以下是按开发批次保留的历史记录。** 其中“Docker 未运行”“身份表缺少资料”“尚无公共控制器”等是当时状态，当前结论以第 24、25 节和合并前审查报告为准。隔离测试通过不等于 `backup` 分支整合通过或真实 Kubernetes 验收通过。
 
@@ -10,7 +10,7 @@
 
 | 包 | 入口 | 行为 |
 | --- | --- | --- |
-| `scope` | `BuildInventory` / `TableRegistry` | 36 张领域表、跨域依赖、Linux 类型/存储规划；新增 WorkBuddy Lite、生命周期和身份记录分类 |
+| `scope` | `BuildInventory` / `TableRegistry` | 领域表、跨域依赖、Linux 类型/存储规划；包含 WorkBuddy Lite、生命周期、身份记录及浏览器组件配置分类 |
 | `domain` | `Catalog` / `Capture` | SELECT 元数据；在单个 MySQL REPEATABLE READ + READ ONLY 事务内枚举全部领域数据；不运行迁移；限额超出整次失败 |
 | `domain` | `CaptureSource` / `RestoreDrillWithEvidence` | 在采集事务的同一连接上核对源数据库/UUID 与 SELECT-only 权限；隔离恢复提交前保存精确归一化结果的加密依据，失败回滚 |
 | `domain` | `Encode` / `Decode` | 内部行数据 codec；保留 NULL、二进制、精确十进制和密码哈希；只允许接加密 staging |

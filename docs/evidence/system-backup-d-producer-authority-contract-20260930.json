@@ -1,0 +1,290 @@
+{
+  "kind": "system_backup_d_producer_authority_contract_delivery",
+  "recorded_at": "2026-09-30T07:09:16.166Z",
+  "contract_version": "system-backup-plan.v12",
+  "revision": "C1",
+  "status": "draft_delivered_pending_owner_review",
+  "scope": "Schema, transaction interface specification, persistence data dictionary, canonical hashing and acceptance vectors; no production implementation, migration or deployment",
+  "base_review": "a_design_accepted_pending_contract_and_runtime_validation",
+  "required_reviewers": [
+    "A",
+    "C"
+  ],
+  "conditional_reviewers": {
+    "job_host": [
+      "B"
+    ]
+  },
+  "approved_reviewers": [],
+  "production_approved": false,
+  "findings_finally_closed": [],
+  "environment": {
+    "node": "v24.15.0",
+    "platform": "win32",
+    "dependencies_installed": false
+  },
+  "deliverable_counts": {
+    "tables": 8,
+    "transaction_methods": 17,
+    "result_examples": 18,
+    "command_examples": 4,
+    "record_examples": 8,
+    "negative_vectors": 35
+  },
+  "input_fingerprints": [
+    {
+      "path": "docs/system-backup-d-producer-authority-revision-20260930.md",
+      "sha256": "d5f88c707ad1aaf55e73d4534cec8049d5989ddc5bae25cf856d2e68312c8a85"
+    },
+    {
+      "path": "docs/system-backup-a-d-producer-authority-rereview-20260930.md",
+      "sha256": "f94763e3244e2e8b8e32fc8299810dc4b7a4f7227e22403390b9306e8166ab59"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+      "sha256": "b1c596590f182577511e5e888786798d5c246d33e47b29e8f9bf068cf555ed12"
+    },
+    {
+      "path": "contracts/system-backup/v12/evidence-chunk-log.schema.json",
+      "sha256": "783be43e40eb5ede9ce06376bb62918c1c69ed3c37ef4a3dfcc2c2e79c833131"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-api-common.schema.json",
+      "sha256": "40a8cbafbfa4697835901eea4fad8b5e8fd4a6eb287fa4f866992e848b16a990"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "33a50664ee920481750766d508f4dda41ccbaccc9cd2aced052b9532e86d31ae"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "d75918d0dcda8b1489ef58bb2122a1de71fcf2d8caf1812724164f8c6a4d00e2"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/gc_registry.go",
+      "sha256": "23c3ab9841a13cd08a47a3ac6f6002f5a8aff4c76c2d00f991048ca5c15bb3ea"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/write_recovery.go",
+      "sha256": "105b9e0235638afd53597684bffe5800319ee415445ca879f1dba08ffb4d2ccb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity.go",
+      "sha256": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2"
+    },
+    {
+      "path": "scripts/system-backup-a-schema-validation.mjs",
+      "sha256": "6ed33bd899736b6e4231e111f7a86c1ba472d5ff105089d0a88dd26d1b7b8e50"
+    }
+  ],
+  "output_fingerprints": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "scripts/system-backup-producer-contract.mjs",
+      "sha256": "26933981e308f86ee2c2173f455c9de8869264f95dc0f5fd719be0b698f5d4fa"
+    },
+    {
+      "path": "scripts/system-backup-producer-contract.test.mjs",
+      "sha256": "9408874dcbadce76640e3063bcb025b7bd2f0da418eea7e8188834967673b4f5"
+    },
+    {
+      "path": "docs/system-backup-d-producer-authority-contract-20260930.md",
+      "sha256": "416a826f5edd9e7b70bcf957b275189c0b4e1aab69f41bdef6bb421dc3a2e159"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "sha256": "0df58467415015293f2cd4f5ca04db2182a2fb585b11c2e4a15128a3eb7114ba"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "sha256": "e116e29974872b9ebcf7d267748847a442cb1da2c10d2da268d223da60017c8e"
+    },
+    {
+      "path": "contracts/system-backup/v12/README.md",
+      "sha256": "a2aed89425243852cae2e2f828f65f0ca8e3d2ab27800a71de5f07ed3d83d385"
+    },
+    {
+      "path": "scripts/system-backup-contract-check.mjs",
+      "sha256": "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "86c6a1f1616900fe0ec226d43a11e3c3b86835e81cef9d2915982fdc8e58d306"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "acdee29ed93cafb08b8c2fc364c285b6c95a944a7a4118ac9e29893d47f0bd33"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "0091899ef6792d2b98b1d16daaf094f4b758a34276afb3d77dab10e542d0c542"
+    },
+    {
+      "path": ".github/workflows/build.yml",
+      "sha256": "b586fda61b0aad11236328e632d68b002aedd5d9a8843dd527628f1d0221e79d"
+    }
+  ],
+  "migration_catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 94,
+    "hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
+  },
+  "inventory": {
+    "object_count": 99,
+    "policy_pending": 39,
+    "cross_review_pending": 60,
+    "new_producer_tables_in_inventory": false
+  },
+  "validation": [
+    {
+      "command": "node scripts/system-backup-producer-contract.test.mjs",
+      "exit_code": 0,
+      "passed": 74,
+      "failed": 0,
+      "scope": "synthetic static schema/encoding/semantic/relational dictionary/capacity tests; no identity or SQL/provider execution"
+    },
+    {
+      "command": "node scripts/system-backup-contract-artifacts.test.mjs",
+      "exit_code": 0,
+      "passed": 70,
+      "failed": 0,
+      "scope": "existing static artifact/ref/DTO/owner contract regression"
+    },
+    {
+      "command": "node scripts/system-backup-contract-check.test.mjs",
+      "exit_code": 0,
+      "passed": 6,
+      "failed": 0,
+      "scope": "catalog/registry gate tests; test scratch cleaned in finally"
+    },
+    {
+      "command": "node scripts/system-backup-contract-check.mjs --check",
+      "exit_code": 0,
+      "strict": false,
+      "scope": "draft consistency only; freeze blockers remain"
+    },
+    {
+      "command": "git -c core.safecrlf=false diff --check -- <tracked_delivery_paths>",
+      "paths": [
+        ".github/workflows/build.yml",
+        "contracts/system-backup/v12/contract-manifest.json",
+        "contracts/system-backup/v12/cross-owner-review-requests.json",
+        "contracts/system-backup/v12/README.md",
+        "scripts/system-backup-contract-check.mjs",
+        "docs/system-backup-restore-division-plan.md",
+        "docs/system-backup-restore-d-role-steps.md",
+        "docs/system-backup-development-flow.md"
+      ],
+      "exit_code": 0,
+      "scope": "tracked delivery paths; preserve repository autocrlf normalization, suppress conversion warnings only"
+    }
+  ],
+  "initial_runner_failure": {
+    "command": "node --test scripts/system-backup-producer-contract.test.mjs",
+    "exit_code": 1,
+    "reason": "sandbox child process spawn EPERM before tests",
+    "resolution": "same test module run directly by Node in current process; no escalation or dependency install"
+  },
+  "runtime_acceptance": [
+    {
+      "id": "V01",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V02",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V03",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V04",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V05",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V06",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V07",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V08",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V09",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "V10",
+      "status": "not_run",
+      "evidence": null
+    }
+  ],
+  "outstanding": [
+    "A/C review of C1 additions; B only for Job choice",
+    "authenticated deployment domain provisioning/reissue and emergency revocation path",
+    "formal DDL/Go/SQL/FinalGuard and reference/slot integration",
+    "A system content/Wrap/STS/publication/recovery and <=8192-byte external evidence",
+    "C independent evidence channel, exact-object proofs, actual ACL/deadlines",
+    "V01-V10 real MySQL/provider/identity/host validation",
+    "separate current-catalog historical upgrade review; no producer objects in only-080 bundle"
+  ],
+  "cleanup": {
+    "temporary_fixture_script_removed": true,
+    "test_build_outputs_created": false,
+    "compiled_artifacts_created": false,
+    "dependencies_installed": false,
+    "remote_actions": false,
+    "retained_files": "intentional contract fixtures, source, documentation and fingerprint receipt only"
+  },
+  "initial_whitespace_check": {
+    "command": "git -c core.autocrlf=false diff --check -- <tracked_delivery_paths>",
+    "exit_code": 1,
+    "reason": "disabling repository CRLF normalization treats existing carriage returns as trailing whitespace; no files normalized or rewritten as workaround",
+    "resolution": "rerun with existing autocrlf behavior and core.safecrlf=false succeeded"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "kind": "a_historical_record_mysql_remote_acceptance",
+  "date": "2026-10-09",
+  "status": "accepted_for_frozen_historical_record_and_lock_scope",
+  "run": "sbk-mig-261009005351-5dea",
+  "namespace_uid": "84e4c2e0-7889-4892-a5ed-4c4fa68a8dea",
+  "operator_transcript": {
+    "path": "docs/evidence/a-historical-record-mysql-remote-20261009-083920.txt",
+    "sha256": "4fbb63f18e52c131350ca68f08ff9fb7f42abb79b782393e94db436d10841a59",
+    "complete": true
+  },
+  "expected_snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261009-002714-55ef44ab.json",
+  "run_snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261009-003945-5e7d2a66.json",
+  "snapshot_file_count": 867,
+  "snapshot_passed": true,
+  "live_drift_files": [
+    "backend/internal/systembackupevidence/evidence_mysql_test.go",
+    "backend/internal/systembackupevidence/recovery_scan.go"
+  ],
+  "mysql_subtest_count": 26,
+  "mysql_subtests_passed": 26,
+  "run_owned_databases_cleaned": 26,
+  "historical_record_locked_reconstruction_passed": true,
+  "binary_sha256": "6f081e25336bcc95d7f2842eb8a34e97ab9b23e228d55c607a2cfbbfec896dd0",
+  "ddl_sha256": "70d001e7cfc465f8098dc037fd932a6d76647629561e2e8be91decbdf75df016",
+  "cleanup": {
+    "namespace_deleted": true,
+    "remote_registration_scratch_deleted": true,
+    "local_registration_build_cache_deleted": true,
+    "producer_adapter_build_cache_deleted": true
+  },
+  "wrapper_exit_code": 0,
+  "ssh_socket_close_diagnostics": "Present after successful tests; no test or cleanup failure recorded",
+  "accepted_scope": [
+    "Frozen D producer MySQL suite, 26 of 26 subtests",
+    "A historical record reconstruction from locked registry and chunk bytes",
+    "Competing A row UPDATE waits while the historical D transaction holds its lock",
+    "Legacy write recovery denies system capability snapshots in local unit tests"
+  ],
+  "excluded_scope": [
+    "Two later live changes to recovery_scan.go and evidence_mysql_test.go",
+    "A evidence MySQL recovery scanner owner-type filter",
+    "Production D historical authority and C restricted Stat integration",
+    "Real provider and complete V01-V10 backup/restore acceptance"
+  ],
+  "agent_remote_actions": false,
+  "live_cluster_independently_rechecked": false
+}

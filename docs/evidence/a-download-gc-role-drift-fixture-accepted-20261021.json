@@ -1,0 +1,66 @@
+{
+  "kind": "a_role_metadata_drift_tagged_fixture_local_preparation",
+  "status": "accepted_seed_and_compile_only",
+  "source": "docs/evidence/a-download-gc-role-drift-fixture-20261021-r1-source.json",
+  "source_manifest_sha256": "bba57cb319b65bef029a405413c45ddad15ea6a3d54ffe3087ad19542aff5481",
+  "source_sha256": "1c9b4cfc2b5c69406f287fbf96111de56597ba924b693ea9693cf02b4aa69dc3",
+  "source_files": 1473,
+  "probe": "backend/internal/systembackupevidence/download_gc_role_a_mysql_test.go",
+  "probe_sha256": "a2dc90ec9b8e7b0b186b97f8608651ffabbd4de5c1f99143fae75425248ed442",
+  "role_seed_checks": [
+    9,
+    9,
+    9
+  ],
+  "combined_owner_seed_checks": {
+    "packaged": 13,
+    "detached": 13
+  },
+  "cross_seed_native_sha256": "e7642e215829c34c8ffae471acb62e59ddfb9ca0e18727d31286a2aa265058b7",
+  "cross_seed_windows_binary_sha256": "f4e7a61e9f038b29f9b81ce4d1ef9c75b25e9182ecc8fac6ccbefc023d8e27df",
+  "owner_preparation": "docs/evidence/a-download-owners-inplace-fixture-accepted-20261021.json",
+  "owner_preparation_sha256": "9c6d3d2df9aaaf5221228174e7b6b1bbad1942da4d784ad7103f32a58ae2bc94",
+  "native": "docs/evidence/a-download-gc-role-drift-fixture-20261021-r1-native.txt",
+  "native_sha256": "ebe422bbe0c2465b06ca1498b2bdb3a7b35e6526a2bc9250caf02a5c5089e895",
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "f4e7a61e9f038b29f9b81ce4d1ef9c75b25e9182ecc8fac6ccbefc023d8e27df"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "4b9e788716ff52217750e0b0043022b08580fa5d83b98853c20f224f192fa08f"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "bc2c3f6ef98725187fc53425dbf97b73129f7029e1686ef4f79d6dffa128485d"
+    }
+  ],
+  "attempts": [
+    {
+      "prefix": "a-download-gc-role-drift-fixture-20261021-r1",
+      "exit": 0,
+      "source_sha256": "1c9b4cfc2b5c69406f287fbf96111de56597ba924b693ea9693cf02b4aa69dc3",
+      "native_sha256": "ebe422bbe0c2465b06ca1498b2bdb3a7b35e6526a2bc9250caf02a5c5089e895",
+      "source_manifest_sha256": "bba57cb319b65bef029a405413c45ddad15ea6a3d54ffe3087ad19542aff5481"
+    }
+  ],
+  "cleanup": "docs/evidence/a-download-gc-role-drift-fixture-cleanup-20261021.json",
+  "cleanup_sha256": "d8a43d489676bd78f5e76b6df84d6c7490a8c7c5ce1c512f898a021f3702499f",
+  "owned_source_and_cache_independently_absent": true,
+  "fixture_drift_table": "system_backup_configs in disposable case only",
+  "original_pin_rejection_and_repin_positive_assertions_preserved": true,
+  "shared_schema_changed": false,
+  "production_policy_or_grants_changed": false,
+  "ordinary_packages_repeated": false,
+  "actual_sql_cases_executed": 0,
+  "actual_role_suite_accepted": false,
+  "role_approved": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "test_build_artifacts_remaining": false,
+  "original_failure": "docs/evidence/a-download-gc-role-drift-failure-reviewed-20261021.json",
+  "original_failure_sha256": "7a7bf8b797ba757afc3f3c42e7ffe209a0184a10f0d4c7494c574a12f7154f88",
+  "derived_runner_sha256": "edbc7e6f740b2663203b3b1a166ec705ad9c5794c318f2187c30dc3806bba6cd",
+  "reviewer_sha256": "025d8db0793b415b0b2617ab45860e2672e02f53e1c941757bd0c6d4c908228c"
+}

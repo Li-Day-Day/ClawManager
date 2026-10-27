@@ -1,0 +1,72 @@
+{
+  "kind": "a_independent_d_gc_producer_r2_failed_gate_review",
+  "recorded_at": "2026-10-21T02:12:28.216Z",
+  "status": "failed_not_accepted",
+  "source": "docs/evidence/d-download-gc-producer-20261021-r2-source.json",
+  "source_manifest_sha256": "9079094d0a28a409233fb15c43b26c54e4ec945b44c39b69df21a3cf31e9b1c5",
+  "source_sha256": "0efad0d123755a458c5960e9a1e55b564f5ddbea1f86304d06d6f89195690c45",
+  "source_files": 1457,
+  "events_sha256": "8990e09f5874ed3b6658f33bf14f4adf45b72ca5b14494e5123e59e39d6ce4c4",
+  "native_sha256": "4b72e5d54b4ebd48c8bcb572b49c956fe9b4b617be869f230581ba7b28e05f90",
+  "failed_test_names": [
+    "TestDownloadRetentionGCProducerReceiptFacts/null_version",
+    "TestDownloadRetentionGCProducerReceiptFacts/no_version",
+    "TestDownloadRetentionGCProducerReceiptFacts",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/complete",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/late_eligible_run",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/late_expired_reference",
+    "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback"
+  ],
+  "failed_leaf_count": 5,
+  "failure_observations": [
+    {
+      "test": "TestDownloadRetentionGCProducerReceiptFacts/null_version",
+      "output": [
+        "download_retention_gc_producer_test.go:291: invalid character 'o' looking for beginning of value"
+      ]
+    },
+    {
+      "test": "TestDownloadRetentionGCProducerReceiptFacts/no_version",
+      "output": [
+        "download_retention_gc_producer_test.go:291: invalid character 'o' looking for beginning of value"
+      ]
+    },
+    {
+      "test": "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/complete",
+      "output": [
+        "download_retention_gc_producer_test.go:594: concrete original producer guard not composed internal_error []"
+      ]
+    },
+    {
+      "test": "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/late_eligible_run",
+      "output": [
+        "download_retention_gc_producer_test.go:599: late C1 facts did not roll back whole group internal_error []"
+      ]
+    },
+    {
+      "test": "TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback/late_expired_reference",
+      "output": [
+        "download_retention_gc_producer_test.go:599: late C1 facts did not roll back whole group internal_error []"
+      ]
+    }
+  ],
+  "native_exit": 1,
+  "default_vet": true,
+  "frozen_postchecks": true,
+  "source_owner_independently_absent": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2c1a2a6e16a2460bb1876e7aaca7fe61",
+  "caller_external_cache_cleanup": "D-owned caller cache remains its callers responsibility; not removed or claimed absent by A",
+  "owner_round_source": "docs/evidence/a-download-owners-mysql-remote-source-20261021-100630-92ddbad0.json",
+  "owner_round_source_manifest_sha256": "d5b9a1c8952f26f0fc0d52468168dc17b833dc5efa7508acf4815e06f85e0e15",
+  "owner_round_source_sha256": "35c60b8d6eab12abee02d6949d6f9110c2952ef2c469895af533300ae4849390",
+  "exact_same_backend_and_contract_inputs": true,
+  "differing_logical_hashes_due_to_manifest_order": true,
+  "owner_round_terminal_status_verified": false,
+  "owner_round_actual_sql_verified": false,
+  "next_action": "Preserve the active owner round and its original gate. These ordinary test failures require a repaired source and complete reviewed ordinary-package baseline; do not skip tests or accept the unfinished owner round.",
+  "actual_sql_cases_executed_by_a": 0,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "tests_or_builds_repeated": false,
+  "test_build_artifacts_created": false,
+  "reviewer_sha256": "33ceb95aa6319e0fb5b69875da021298de6fdf86817eb544140d3da9d50e94f6"
+}

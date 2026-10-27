@@ -1,0 +1,136 @@
+{
+  "kind": "a_business_report_delivery.v1",
+  "reviewed_at": "2026-10-22T12:20:10.3378155+08:00",
+  "status": "implementation_and_local_validation_passed_real_environment_acceptance_pending",
+  "deliverables": [
+    {
+      "implementation": "SQLBackupReporter 分别读取源端和目标端；VerifyBackupReports / VerifyRestoreReports 输出每类别 v12 JSON envelope；完成的差异报告保留 expected/actual；SQL 或证明失败不返回有效报告",
+      "owner": "A",
+      "item": "users / AI Gateway 检查报告",
+      "actual_mysql_new_report_verified": false,
+      "checks": "15 表行数、成本按币种的精确金额/token 汇总摘要；恢复另含 9 项安全状态检查"
+    },
+    {
+      "live_http_auth_audit_verified": false,
+      "implementation": "复用既有 Prepare/Service/Handler，在真实临时文件上验证加密正文、授权下载、拒绝无权限、审计写入及失败关闭、篡改拒绝",
+      "owner": "A",
+      "item": "报告受控存储、授权下载和审计",
+      "validation_scope": "文件实际落盘；Registry、认证/MFA、KMS 和 provider authority 为测试适配器；没有声称真实部署已接线"
+    }
+  ],
+  "validation": {
+    "business_roots": 94,
+    "business_including_subtests": 417,
+    "business_failures": 0,
+    "business_skips": 0,
+    "encrypted_file_and_download_roots": 3,
+    "encrypted_file_and_download_including_subtests": 17,
+    "mysql_tagged_seed_including_subtests": 3,
+    "mysql_actual_executed": false,
+    "default_vet": true,
+    "node_reviewer_checks": 10,
+    "powershell_wrapper_fixtures": 5,
+    "offline_shell_cleanup_fixtures": 7,
+    "offline_shell_rerun_outside_sandbox": true,
+    "validation_entry_metadata_update": "通过后仅将 sql_report.go / sql_report_test.go 加入验证脚本摘要清单，并通过 PowerShell 语法检查；既有回执保持原字节，不把新脚本摘要回填为历史测试输入"
+  },
+  "receipts": [
+    "docs/evidence/a-business-report-local-3e0d8861eef3474f9c504d7f99de8cc4.json",
+    "docs/evidence/a-sql-report-local-dc78aea6ab8a4cd1b5c126abdeda0ac3.json"
+  ],
+  "prior_attempts": [
+    {
+      "path": "docs/evidence/a-business-report-local-8622471922e44116959fcf8eefcdf451.json",
+      "reason": "测试通过，但编译期间 report.go 修订，最终源码一致性守卫正确拒绝；已用最终源码重跑",
+      "status": "failed"
+    },
+    {
+      "path": "docs/evidence/a-live-audit-mysql-aaudit-20261022111714-2750e571.json",
+      "reason": "沙箱 SSH 替身没有实际远测输出，审阅拒绝；冻结副本同时漏五份导入时读取的 Go 文件，现已补清单并用脱离仓库的真实审阅器回归覆盖",
+      "status": "failed"
+    }
+  ],
+  "remote": {
+    "status": "pending_interactive_ssh_authentication",
+    "ssh_target": "root@10.130.14.23",
+    "preflight": "Permission denied (publickey,password), including an outside-sandbox read-only preflight",
+    "no_remote_mysql_success_claim": true,
+    "commands": [
+      ".\\scripts\\system-backup-a-evidence-validation.ps1 -BusinessRestoreOnly -Remote",
+      ".\\scripts\\system-backup-a-live-audit-mysql.ps1 -Remote"
+    ],
+    "business_acceptance_requires": [
+      "完整 TestABusinessRestoreRowsMySQL 通过",
+      "cost_aggregate_money / cost_aggregate_tokens / report_record_deleted 通过",
+      "日志包含 A_BUSINESS_REPORT_JSON，并准确记录 failed 与 expected/actual",
+      "准确库/账号/namespace UID 清理、最终退出 0"
+    ],
+    "collector_acceptance_requires": "17 项实际 SQL 子项、5 个原始 SQL 样本的 Node 审阅、完整清理、原始日志及回执绑定全部通过"
+  },
+  "limits": [
+    "记录比较当前覆盖行数，不声称同数量非成本字段改动均可检出。",
+    "成本检查显示汇总摘要差异，不输出业务行、密码或 token 原文。",
+    "合成驱动、认证或 provider 夹具通过不等同真实 MySQL、TLS、登录/MFA 或生产发布已通过。",
+    "源码摘要是本轮所列交付文件的核对，不是整棵共享工作树的历史冻结证明。"
+  ],
+  "dependencies_installed": false,
+  "cleanup": {
+    "cache_and_binaries_removed": true,
+    "temporary_test_files_removed": true,
+    "public_receipts_retained": true,
+    "verified_absent": [
+      ".tmp-a-evidence-a1d0af8e55a54323847f716559eff736",
+      ".tmp-a-evidence-8622471922e44116959fcf8eefcdf451",
+      ".tmp-a-evidence-3e0d8861eef3474f9c504d7f99de8cc4",
+      ".tmp-a-evidence-dc78aea6ab8a4cd1b5c126abdeda0ac3",
+      ".tmp-a-live-audit-mysql-1mxs4i",
+      ".tmp-a-sql-report-validation.ps1"
+    ]
+  },
+  "files": [
+    {
+      "path": "backend/internal/systembackupbusinessa/report.go",
+      "sha256": "57ccb5b5caee47afa0f612d48a7acc2d3434ec2d0f85e50c8c05d17816c3da4c"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/sql_report.go",
+      "sha256": "0e125b43919d85c3aff2c62f142c5300584432ebd78575e0d7a2e4043a18d0a7"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/report_test.go",
+      "sha256": "79fab4c9e1edd79060fa6d90de64aaa9374f58c96ea6051f10da892cbdb6879f"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/sql_report_test.go",
+      "sha256": "d12d3296ea27c3feb27433aabb99323441c3520376e8c3c356404f790c24a0c0"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/report_mysql_test.go",
+      "sha256": "c49bf39cc6768b27fb6a7afa67815c731be41bfbd23bf0a9d9a3c2fc97d57330"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_rows_mysql_test.go",
+      "sha256": "77ea3c03be4c077b40fbd8e1b458aa78572a58772821db89e163b3da83653ff2"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/business_report_delivery_test.go",
+      "sha256": "4492213cddbb938b8413a7c18bb11e83008c4086e51ef560c99f9626473e35d1"
+    },
+    {
+      "path": "scripts/system-backup-a-report-validation.ps1",
+      "sha256": "805d60db073b5632fcd4ee2aa0243c8aabe6264ba8013e0c7205c6ebbcea6cdc"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql.ps1",
+      "sha256": "5d8766139ba8712a896c7fc2ea41d190efb786088b4237ea45e04ac502b15929"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-bundle.mjs",
+      "sha256": "78066e263c82689ec0554556431616b9b25c7f9638e1fb7e23100b8dc6ed8994"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit-mysql-bundle.test.mjs",
+      "sha256": "2958b7de48b333c36e0aaf0aa72f78ecd314aed1458ae36fd07ad482f424166b"
+    }
+  ]
+}

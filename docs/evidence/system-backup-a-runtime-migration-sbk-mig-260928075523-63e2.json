@@ -1,0 +1,129 @@
+{
+  "kind": "a_runtime_migration_mysql_operator_receipt_v1",
+  "recorded_at": "2026-09-28T07:59:17.5310069Z",
+  "source": "operator-provided console transcript attachment",
+  "transcript": "docs/evidence/system-backup-a-runtime-migration-sbk-mig-260928075523-63e2.txt",
+  "transcript_sha256": "f18a8b9b9e34430246d0692656f4aceecf0cb61f82ca15bf00fa9f5465274b7c",
+  "independently_queried_remote": false,
+  "result": "PASS_LIMITED_SCOPE",
+  "operator_wrapper_exit_code": 0,
+  "standalone_remote_shell_exit_code": null,
+  "namespace": "sbk-mig-260928075523-63e2",
+  "namespace_uid": "f79546bb-6441-49c7-9cf8-bd624f77ccad",
+  "mysql_version": "8.4.8",
+  "build": {
+    "migration_files": 93,
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "probe_sha256": "d5d994bffb426a5be75073a8fb20457e7557e4485fed6f334c7efb3b4d9db877",
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "ddl_sha256": "3d5eeab6f1b4393bfb3f92c57b5ce18d910694ac186c186d06e79b6058141b52"
+  },
+  "source_binding_checks": [
+    {
+      "record": "docs/evidence/system-backup-a-d-activation-review-local-20260928.json",
+      "matched": 60,
+      "record_sha256": "678236b15d84904ac5fe2061b26196b1301d7e66cc75dfc6f2df28d5fb9b68fc",
+      "mismatches": []
+    },
+    {
+      "record": "docs/evidence/system-backup-d-runtime-migration-local-20260928.json",
+      "matched": 163,
+      "record_sha256": "c28e8ab2021c392121039e423d26167e5087cf976df1578b2e26ccd0497c3a6a",
+      "mismatches": []
+    }
+  ],
+  "fresh_migrations": {
+    "exact_filenames": true,
+    "pinned_runner_result": "PASS",
+    "range": "001..080",
+    "applied": 93
+  },
+  "test_seconds": 1.28,
+  "top_level_pass": 9,
+  "top_level_fail": 0,
+  "bootstrap_nested_pass": 3,
+  "passed_subtests": [
+    {
+      "name": "concurrent_same_request_has_one_atomic_result",
+      "seconds": 0.04
+    },
+    {
+      "name": "body_conflict",
+      "seconds": 0.04
+    },
+    {
+      "name": "nonce_replay_with_new_idempotency_key",
+      "seconds": 0.01
+    },
+    {
+      "name": "result_audit_failure_rolls_back_every_table",
+      "seconds": 0.02
+    },
+    {
+      "name": "permission_revocation_blocks_committed_retry",
+      "seconds": 0.01
+    },
+    {
+      "name": "https_registration_replay_conflict_and_revocation",
+      "seconds": 0.06
+    },
+    {
+      "name": "totp_persistence_replay_throttle_and_session_revocation",
+      "seconds": 0.13
+    },
+    {
+      "name": "https_jwt_mfa_registration_and_config_revocation",
+      "seconds": 0.31
+    },
+    {
+      "name": "first_config_bootstrap_atomicity",
+      "seconds": 0.46
+    },
+    {
+      "name": "first_config_bootstrap_atomicity/result_audit_failure_rolls_back_config_state_and_reservation",
+      "seconds": 0.02
+    },
+    {
+      "name": "first_config_bootstrap_atomicity/concurrent_first_requests_commit_once",
+      "seconds": 0.07
+    },
+    {
+      "name": "first_config_bootstrap_atomicity/wrong_database_conflict_reinitialization_and_revocation",
+      "seconds": 0.07
+    }
+  ],
+  "cleanup": {
+    "registration_database_reported": true,
+    "local_scratch_independently_checked": 0,
+    "bootstrap_database_reported": true,
+    "namespace_matching_uid_reported": true,
+    "local_build_cache_reported": true,
+    "remote_scratch_reported": true
+  },
+  "transport": {
+    "subsequent_test_and_cleanup_markers_present": true,
+    "root_cause": "not investigated; no failure reported by wrapper",
+    "socket_close_notices": 4
+  },
+  "scope": {
+    "production_service_deployed": false,
+    "controller_live_admission_verified": false,
+    "real_transit_in_this_test": false,
+    "fresh_catalog_replay": true,
+    "provider_capability_approved": false,
+    "real_mysql": true,
+    "production_database_upgraded": false,
+    "human_mfa_verified": false,
+    "isolated_https_jwt_mfa": true,
+    "production_config_activated": false,
+    "synthetic_user_keys_provider_facts_and_admission": true
+  },
+  "remaining": [
+    "Real bootstrap admission and registry/ref inputs",
+    "Production runtime deployment and database upgrade/controller admission",
+    "Human MFA and actual configuration activation",
+    "Real commit disconnect and cross-installation HMAC rotation concurrency",
+    "External evidence adapter/download/retention/GC and refreshed schema evidence"
+  ],
+  "note": "Separate run from D sbk-mig-260928072119-004e. Historical local NOT_RUN and prior receipts are preserved. No further repeat of the successful isolated suite is required."
+}

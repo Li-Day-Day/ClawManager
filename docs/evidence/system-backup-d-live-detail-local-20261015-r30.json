@@ -1,0 +1,92 @@
+{
+  "kind": "d_live_task_detail_local_candidate",
+  "recorded_at": "2026-10-15T08:20:51.6271769Z",
+  "status": "node_read_logic_and_i18n_pass_ui_build_pending",
+  "raw_log": "docs/evidence/system-backup-d-live-detail-local-20261015-r30.txt",
+  "raw_sha256": "8d9c501878aa871a22bd2d0428e1a80b46208ecf6900d98c3c597968423b9717",
+  "command": "node --test-isolation=none --test frontend/scripts/system-backups.test.mjs frontend/scripts/system-backups-live-detail.test.mjs frontend/scripts/system-backups-i18n.test.mjs",
+  "exit_code": 0,
+  "tests": 61,
+  "failed": 0,
+  "targeted_new_main_tests": 7,
+  "targeted_new_subtests": 11,
+  "source_pins_scope": "post-run current files; not a frozen build manifest",
+  "source_pins": [
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+      "sha256": "f5cd5f8a25f53bf87ab340d1bdc31ccf470d6d9042a6e2df31c75970516a16ae"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveDetail.tsx",
+      "sha256": "b45f93e3f77fab016172f12a5b9dda1999d89930e62ebcec809234f59107137c"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveDetail.ts",
+      "sha256": "c44592bb7eb7635ef4c687dc56932fe97f69559190c6077c1dfc7f1ce3bc772b"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupApiRead.ts",
+      "sha256": "cba2ce7bb4ffac69dca47c864a86c42b7b226ead6ce05db129c77d0af312d524"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupReadModel.ts",
+      "sha256": "c56658618488ae5a4ee0c146c0ebcec6868eb690ac9a521d48012bbec4a37d66"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupPreview.ts",
+      "sha256": "4dc6b7536071ba09642ffad2d078dc809fd11f689ca4300f8cfd085a4237e2ab"
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/useBackupText.ts",
+      "sha256": "90a90e149b2cf5aa71e524ef3727dc3a3951a11b32100c117cac2fa5c88522fd"
+    },
+    {
+      "path": "frontend/src/types/systemBackupContract.ts",
+      "sha256": "be8642700b263dd74798e014f1ae7d153c6dd8c4491b6323c35468f1b359c0f2"
+    },
+    {
+      "path": "frontend/src/services/systemBackupReadService.ts",
+      "sha256": "496931f4dde8b5203279dc0746f3c07c74179a2f84fae52b213c9290c935cd80"
+    },
+    {
+      "path": "frontend/src/lib/systemBackupI18n.ts",
+      "sha256": "1c1363080a5ea1d2da0729591fa7575d971c859ec911f3c62625c295d4d6f5da"
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-detail.test.mjs",
+      "sha256": "b09ba6bf384788bccf0cb6fe7ab9d996acd51ba7ea0fe375820d02d249a03156"
+    },
+    {
+      "path": "frontend/scripts/system-backups.test.mjs",
+      "sha256": "3e01f066790663db21a609daba7d8d5550599608a4ab4bcd5ae651367cf187cb"
+    },
+    {
+      "path": "frontend/scripts/system-backups-i18n.test.mjs",
+      "sha256": "cdf728cffbb2b60fbea58e5eac2b6384fe003703e5e1fe0a9f191ce624f349ac"
+    }
+  ],
+  "implementation": [
+    "four live task detail selectors use existing authenticated read client",
+    "exact selected task/installation and minimum list row version checked",
+    "cancellation checked before request and after late response",
+    "read failures display an error without preview fallback",
+    "execution/cleanup/eligibility/readability remain independent",
+    "five explicit language dictionaries"
+  ],
+  "dependencies_installed": false,
+  "tests_generated_build_artifacts": false,
+  "project_node_modules_present": false,
+  "full_typescript_vite_build_verified": false,
+  "react_browser_verified": false,
+  "events_and_logs_ui_added": false,
+  "production_enabled": false,
+  "bc_runtime_owner_facts_received": false,
+  "limits": [
+    "61 Node checks validate read logic and translations; TSX rendering is not executed",
+    "No installed frontend TypeScript/React/Vite or bundled equivalent was found; none installed",
+    "Existing build-time live-read opt-in and backend runtime gates remain required",
+    "Remote backfill service and all original six goal scopes retain their own pending gates"
+  ],
+  "normal_test_runs": 2,
+  "final_rerun_reason": "List polling now advances the selected detail minimum row version; both normal runs passed 61 checks, no failed assertion retry"
+}

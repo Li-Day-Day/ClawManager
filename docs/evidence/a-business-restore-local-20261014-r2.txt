@@ -1,0 +1,17 @@
+Captured local tool stdout; not a PowerShell transcript.
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE a-business-fifteen-table-restore=yes synthetic-proof=yes real_mysql=not_run
+ok  	clawreef/internal/systembackupbusinessa	6.132s
+=== RUN   TestABusinessRestoreMySQLSeed
+=== RUN   TestABusinessRestoreMySQLSeed/generated-username-column
+=== NAME  TestABusinessRestoreMySQLSeed
+    restore_rows_mysql_test.go:776: PASS A business fifteen-table offline seed writable_columns=222 read_columns=223 real_mysql=not_run
+--- PASS: TestABusinessRestoreMySQLSeed (0.16s)
+    --- PASS: TestABusinessRestoreMySQLSeed/generated-username-column (0.00s)
+PASS
+ok  	clawreef/internal/systembackupbusinessa	2.504s
+LOCAL_PASS a-business-restore-tagged-compile=yes real_mysql=not_run
+LOCAL_PASS a-business-restore-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=8d6dfbc41b491c05aaa1563e7b4e60a12f51f43192cb4009f544a26d4003306c ddl_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab
+CLEANED local-registration-build-cache=True
+A_BUSINESS_RESTORE_LOCAL_EXIT=0

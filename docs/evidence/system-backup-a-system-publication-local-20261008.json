@@ -1,0 +1,101 @@
+{
+  "kind": "a_system_publication_sql_local_validation",
+  "date": "2026-10-08",
+  "status": "passed_exact_snapshot",
+  "exit_code": 0,
+  "production_authorization": false,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-publication-local-20261008.txt",
+    "sha256": "ee0d2ba2ed71cdc32205cbe2de6c8ddcc1d9f9473198d775e6452ec0826a1df1"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-010338-3e5137f7.json",
+    "sha256": "718a39309a0138c9fc85111a1ad463d3089ddfe81ed73d4777ca5f14b9810b98",
+    "files": 223,
+    "live_drift_after_validation": [
+      "backend/internal/systembackupproducer/result_test.go",
+      "backend/internal/systembackupproducer/result.go"
+    ],
+    "all_a_evidence_sources_still_match": true
+  },
+  "validation": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 159,
+    "named_passes_including_subtests": 1594,
+    "new_system_publication_top_level_passes": 4,
+    "new_system_publication_named_passes": 37,
+    "assertion_failures": 0,
+    "windows_tool_process_faults": 1,
+    "same_snapshot_tool_fault_retries": 1,
+    "fault_stage": "Linux cross-compilation default vet, crypto/internal/fips140/tls13",
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "gofmt_clean": true,
+    "real_d_transaction_executor": true,
+    "actual_a_registry_and_chunk_sql": true,
+    "database_driver": "standard-library synthetic transactional driver",
+    "a_test_claim_finish_changes": "controlled same-transaction simulation; D private CAS tested separately in D package",
+    "real_lifecycle_to_publication_production_environment_integration": false
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-d5a7eb0b095f48749cdbf08a9ea7f616",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Mandatory separate claim/finish authority with original Prepared/channel/history binding",
+    "Actual registry/chunks locking and exact immutable-column comparison",
+    "Exact same-request claim readback without renewal",
+    "Final current read permits only claim or ready/write_unknown transition fields",
+    "Preserve health, retention, content, chunks and reconcile metadata",
+    "Rollback on changed evidence, revoked authority, expired capacity or read failure"
+  ],
+  "excluded_scope": [
+    "Production identity, C proof, host, references, capacity and audit authority",
+    "Real Lifecycle to ClaimPublication and FinishPublication success integration",
+    "Real MySQL concurrency, provider and V01-V10 validation",
+    "D result.go and result_test.go added after snapshot; A ready result loader",
+    "System STS/conditional PUT and independent historical recovery",
+    "Formal D migration and production activation",
+    "Full HTTP authentication and real LDAP revocation"
+  ],
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_publication.go",
+      "sha256": "2ce7105202650ac3166ee2aaaf1c68d432eb71bee0d82115081d409a26180b68"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_publication_test.go",
+      "sha256": "ae0591a48d66535a2f814d35ccb5b23e2bc126a6c78a3641196d96389ebb3f44"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_pending.go",
+      "sha256": "8758cb36a5f9cd5948c1dce956c46290763f665011c6cb2e92eb8b336da5178f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_pending_sql.go",
+      "sha256": "b481de0456b126e307e74d8e6453e49d625f3205d5246983155f115cc55ced16"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_pending_test.go",
+      "sha256": "4cf0930fec8f1b6576a2f666a024470eb0f8fd7418bee6a17fdf1383d614aafb"
+    },
+    {
+      "path": "docs/system-backup-a-system-publication-20261008.md",
+      "sha256": "63ab4efad22062a9c81f6e0b43707147b9adcab56bad6772b0a52418e8b7b609"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "d5661cb41af4a3488153a5985e59ad988ab381969eac26bb4271da181b26c8b6"
+    }
+  ]
+}

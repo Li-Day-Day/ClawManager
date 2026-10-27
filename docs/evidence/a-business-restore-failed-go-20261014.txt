@@ -1,0 +1,16 @@
+Captured tool stdout from the failed negative-test attempt; retained as failure history.
+
+LOCAL_PASS isolated-go-telemetry=off
+--- FAIL: TestBusinessRestoreNormalizerFailuresReturnNoPartialBatch (1.41s)
+    --- FAIL: TestBusinessRestoreNormalizerFailuresReturnNoPartialBatch/history (0.12s)
+        business_restore_test.go:307: normalizer failure returned partial business rows
+FAIL
+FAIL	clawreef/internal/systembackupbusinessa	16.184s
+FAIL
+CLEANED a-business-final-scratch=True
+Exception: C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\scripts\system-backup-a-evidence-go-step.ps1:42
+Line |
+  42 |              throw "Evidence $Stage gate failed (exit=$aEvidenceStepEx …
+     |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Evidence test-vet gate failed (exit=1, attempt=1); remote validation has not started; dependencies will not be
+     | installed

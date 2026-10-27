@@ -1,0 +1,77 @@
+{
+  "kind": "d_download_gc_task_actual_acceptance",
+  "status": "actual_mysql_18_of_18_accepted_component_only",
+  "log": "docs/evidence/d-download-gc-task-remote-20261021-154631-7f8bf868.txt",
+  "log_sha256": "6cb2880d7de2eb8906eadda8d94bc220746f11c2a6eb4ca9adb06e3647771e4c",
+  "source_manifest": "docs/evidence/d-download-gc-task-remote-20261021-154631-7f8bf868-source.json",
+  "source_manifest_sha256": "50f1056ca41e12f344b176234d7965219e901eb7ac855ad659652501ddb62627",
+  "source_sha256": "5383dd6b3967edf9966896b7b298a0d05df04ab23b10db42df18f354c33a5f5b",
+  "source_files": 1475,
+  "actual": {
+    "root": "TestDDownloadGCTaskMySQL",
+    "mysql": "8.4.8",
+    "migration_replay": "001..081",
+    "migrations": 96,
+    "catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+    "binary_sha256": "e279fc30232dbc73e6000d4be8caa4d2c61530082e8c57ee4f03dc99ad7e81f2",
+    "inputs_sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0",
+    "cases": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "elapsed_seconds": 77.18,
+    "outer_exit": 0,
+    "case_names": [
+      "backup",
+      "drill",
+      "preflight",
+      "artifact_verify",
+      "active_drill",
+      "active_preflight",
+      "active_artifact_verify",
+      "prune_reference",
+      "owner_deadline_not_expired",
+      "backup_row_lock",
+      "dependent_row_lock",
+      "empty_drill_range",
+      "empty_preflight_range",
+      "empty_artifact_verify_range",
+      "empty_prune_range",
+      "late_owner_fact",
+      "late_dependent_fact",
+      "late_prune_reference"
+    ],
+    "previous_prune_failures_now_passed": [
+      "prune_reference",
+      "empty_prune_range",
+      "late_prune_reference"
+    ]
+  },
+  "cleanup": {
+    "namespace": "sbk-mig-261021083028-23bd",
+    "uid": "ab140148-6c3b-4fc5-8d20-7b918aa97b5d",
+    "namespace_cleanup_reported": true,
+    "remote_scratch_cleanup_reported": true,
+    "local_cache_cleanup_reported": true,
+    "exact_local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-0b153d82adc04cddb5567bce61286f09",
+    "local_owner_independently_absent": true
+  },
+  "previous_failure": {
+    "path": "docs/evidence/d-prune-identity-operator-failure-20261021.json",
+    "sha256": "69e9d7efe34f39c1e428bcd33725893d39346a9dc61d90f9e09d7059bd6ef24e",
+    "retained": true
+  },
+  "boundaries": {
+    "real_sql": true,
+    "fixture_scope": "synthetic run-owned database",
+    "full_gc": false,
+    "role_approval": false,
+    "human_mfa": false,
+    "provider_read": false,
+    "production_approval": false,
+    "existing_installation_upgrade_not_proven": true,
+    "dependencies_installed": false,
+    "reviewer_remote_run": false,
+    "socket_close_messages_did_not_override_complete_pass_and_exit_zero": true
+  }
+}

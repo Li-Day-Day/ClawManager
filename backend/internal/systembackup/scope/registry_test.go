@@ -22,6 +22,7 @@ func TestRegistryCoversCurrentUserAndInstanceModels(t *testing.T) {
 		models.User{}, models.UserQuota{}, models.EnterpriseAuthSetting{}, models.Instance{},
 		models.PersistentVolume{}, models.Backup{}, models.BackupSchedule{}, models.InstanceUsage{},
 		models.InstanceAgent{}, models.InstanceRuntimeStatus{}, models.InstanceDesiredState{}, models.InstanceCommand{},
+		models.InstanceBrowserWorker{},
 		models.InstanceConfigRevision{}, models.InstanceRuntimeBinding{}, models.InstanceExternalAccess{},
 		models.RuntimePod{}, models.RuntimeRollout{}, models.RuntimeUpgradeItem{}, models.RuntimeUpgradeAudit{},
 		models.WorkspaceFileAudit{}, models.OpenClawConfigResource{}, models.OpenClawConfigBundle{},
@@ -31,7 +32,7 @@ func TestRegistryCoversCurrentUserAndInstanceModels(t *testing.T) {
 			t.Errorf("missing scope rule for current model: %s", model.TableName())
 		}
 	}
-	if known["users"].RestoreAction != "preserve" || known["instance_runtime_bindings"].RestoreAction != "drop" || known["backup_schedules"].RestoreAction != "disable" {
+	if known["users"].RestoreAction != "preserve" || known["instance_runtime_bindings"].RestoreAction != "drop" || known["backup_schedules"].RestoreAction != "disable" || known["instance_browser_workers"].RestoreAction != "disable" {
 		t.Fatal("credentials/business identity and replayable state need different restore rules")
 	}
 }

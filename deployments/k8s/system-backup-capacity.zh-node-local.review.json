@@ -1,0 +1,63 @@
+{
+  "kind": "d_capacity_node_local_storage_review_plan",
+  "status": "FALLBACK_DEFERRED_PENDING_EXISTING_RWX_EVALUATION",
+  "kubectl_applyable": false,
+  "target_namespace": "clawmanager-zhanghui08-system",
+  "target_node": "k8s-master",
+  "target_node_uid": "bc1fb478-0388-4f53-96b4-8d186301f6af",
+  "verified_hostname_label": "k8s-master",
+  "latest_observation": "docs/evidence/system-backup-d-upgrade-review-live-20260929.json",
+  "reason_deferred": "Existing longhorn-rwx StorageClass observed; evaluate dedicated RWX storage before implementing a new node-local profile. Presence alone does not prove mount capability.",
+  "proposed_storage_class": {
+    "name": "clawmanager-zhanghui08-capacity-local",
+    "provisioner": "kubernetes.io/no-provisioner",
+    "volumeBindingMode": "WaitForFirstConsumer"
+  },
+  "proposed_volume": {
+    "name": "clawmanager-zhanghui08-capacity-local-pv",
+    "type": "local",
+    "directory": "/var/lib/clawmanager/system-backup-capacity/zhanghui08",
+    "path_verified_distinct": false,
+    "volumeMode": "Filesystem",
+    "accessModes": ["ReadWriteOnce"],
+    "persistentVolumeReclaimPolicy": "Retain",
+    "declared_capacity": "16Mi",
+    "capacity_is_not_enforced_filesystem_quota": true,
+    "nodeAffinity": "required kubernetes.io/hostname=k8s-master; recheck node UID before execution"
+  },
+  "proposed_claim": {
+    "name": "system-backup-capacity-report",
+    "namespace": "clawmanager-zhanghui08-system",
+    "storageClassName": "clawmanager-zhanghui08-capacity-local",
+    "accessModes": ["ReadWriteOnce"],
+    "requested_storage": "16Mi"
+  },
+  "permissions": {
+    "directory_group": 65532,
+    "directory_mode": "2770",
+    "report_mode": "0640",
+    "collector_uid_candidate_from_owner": 999,
+    "collector_uid_access_verified": false,
+    "no_fsGroup_or_recursive_chown_on_mysql": true
+  },
+  "consumers": [
+    {"role": "collector", "mount": "read-write", "initial_replicas": 0, "eventual_replicas": 1, "strategy": "Recreate"},
+    {"role": "registration HTTPS", "mount": "read-only", "initial_replicas": 0},
+    {"role": "bootstrap Job", "mount": "read-only", "initial_suspend": true}
+  ],
+  "scheduling": "All report consumers require verified same-node affinity. Inspect taints; allow only specifically reviewed tolerations. Do not set spec.nodeName with WaitForFirstConsumer.",
+  "required_work": [
+    "Inspect existing cluster StorageClasses first; namespace hostPath observations do not prove absence of CSI/NFS",
+    "Verify node UID/hostname label/readiness/taints/resources and actual MySQL PV path",
+    "Verify proposed directory realpath is distinct from data/workspace trees and has no symlink/alias or unrelated existing content",
+    "Provision dedicated directory/storage/identity through reviewed deployment; this plan creates none",
+    "Implement explicit node-local profile in deployment composition AND runtime preflight; keep existing RWX gate intact until then",
+    "Verify same-PVC group readability and <=5s freshness in collector, HTTPS and bootstrap; reject RWOP and additional writers"
+  ],
+  "failure_mode": "Single-node dependency: node loss or stale report blocks admission; never automatically relocate/copy the report or MySQL data.",
+  "references": [
+    "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+    "https://kubernetes.io/docs/concepts/storage/volumes/#local",
+    "https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode"
+  ]
+}

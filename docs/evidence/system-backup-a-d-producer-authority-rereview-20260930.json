@@ -1,0 +1,412 @@
+{
+  "schema_version": "a-d-producer-authority-rereview.v1",
+  "date": "2026-09-30",
+  "reviewer": "A",
+  "reviewed_revision": "R1",
+  "status": "a_design_accepted_pending_contract_and_runtime_validation",
+  "scope": "Static review of R1 design responses and existing integration points; no runtime acceptance.",
+  "findings": [
+    {
+      "id": "A-D-PROD-01",
+      "priority": "P1",
+      "design_response": "accepted",
+      "status": "design_response_accepted_pending_implementation",
+      "runtime_acceptance": "not_executed",
+      "closed": false
+    },
+    {
+      "id": "A-D-PROD-02",
+      "priority": "P1",
+      "design_response": "accepted",
+      "status": "design_response_accepted_pending_implementation",
+      "runtime_acceptance": "not_executed",
+      "closed": false
+    },
+    {
+      "id": "A-D-PROD-03",
+      "priority": "P1",
+      "design_response": "accepted",
+      "status": "design_response_accepted_pending_implementation",
+      "runtime_acceptance": "not_executed",
+      "closed": false
+    },
+    {
+      "id": "A-D-PROD-04",
+      "priority": "P1",
+      "design_response": "accepted",
+      "status": "design_response_accepted_pending_implementation",
+      "runtime_acceptance": "not_executed",
+      "closed": false
+    },
+    {
+      "id": "A-D-PROD-05",
+      "priority": "P1",
+      "design_response": "accepted",
+      "status": "design_response_accepted_pending_implementation",
+      "runtime_acceptance": "not_executed",
+      "closed": false
+    },
+    {
+      "id": "A-D-PROD-06",
+      "priority": "P2",
+      "design_response": "accepted",
+      "status": "design_response_accepted_pending_implementation",
+      "runtime_acceptance": "not_executed",
+      "closed": false
+    }
+  ],
+  "new_design_blockers": [],
+  "a_design_accepted": true,
+  "findings_closed": [],
+  "pending_deliverables": [
+    "D: concrete schema, lock/transaction interfaces, canonical idempotency encoding and acceptance vectors",
+    "A: system preparation, Wrap, STS, publication, final transaction guard integration and independent historical recovery",
+    "C: independently admitted evidence channel, exact-object provider profile and real ACL verification",
+    "B if Jobs are selected: host identity, UID/generation, cancellation/takeover and projected credential invalidation"
+  ],
+  "revision_fingerprint_verification": {
+    "input_count": 29,
+    "deliverable_count": 2,
+    "passed_count": 31,
+    "entries": [
+      {
+        "path": "docs/system-backup-d-producer-authority-design-20260930.md",
+        "expected_sha256": "580df5d3760de9293c5fe403f0df9eaff9fc3b2348e94ee483da7a4c7036ac2a",
+        "actual_sha256": "580df5d3760de9293c5fe403f0df9eaff9fc3b2348e94ee483da7a4c7036ac2a",
+        "matches": true
+      },
+      {
+        "path": "docs/system-backup-a-capability-producer-admission-request-20260929.md",
+        "expected_sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d",
+        "actual_sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/content_dispatch.go",
+        "expected_sha256": "b96285ff0ac32c817bcbb8a1b6273a66334c9c879f7d2a2f0a37dbf1d8cafa74",
+        "actual_sha256": "b96285ff0ac32c817bcbb8a1b6273a66334c9c879f7d2a2f0a37dbf1d8cafa74",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/capability_content.go",
+        "expected_sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d",
+        "actual_sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/task_authority.go",
+        "expected_sha256": "58320e994f195d86e330a5687b4b860c435a835fe30f68eb74f6d6c034b76729",
+        "actual_sha256": "58320e994f195d86e330a5687b4b860c435a835fe30f68eb74f6d6c034b76729",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/task_authority_sql.go",
+        "expected_sha256": "c72265abfdbd7a2fe039ff01c62d80fd34b38ba688c82e7f10f3752899c8953d",
+        "actual_sha256": "c72265abfdbd7a2fe039ff01c62d80fd34b38ba688c82e7f10f3752899c8953d",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/task_prepare.go",
+        "expected_sha256": "da2cdb16337a5aed2c5fe234aa195303333d26fe9db861a24e6cd4773d8266b3",
+        "actual_sha256": "da2cdb16337a5aed2c5fe234aa195303333d26fe9db861a24e6cd4773d8266b3",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/task_runtime.go",
+        "expected_sha256": "5872f3b21b32832c8955fcfe61fb323bf5eda413e95f6f227d34d11cef990477",
+        "actual_sha256": "5872f3b21b32832c8955fcfe61fb323bf5eda413e95f6f227d34d11cef990477",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/lifecycle.go",
+        "expected_sha256": "b1ce179d278e80cd62c62bd7f7dd46f749891a75bc990fc969e876f40611c996",
+        "actual_sha256": "b1ce179d278e80cd62c62bd7f7dd46f749891a75bc990fc969e876f40611c996",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/access_claim.go",
+        "expected_sha256": "b7024b4de7933c8ab1eeb0ebe12a2afc918f72176a0fe2d4818bbb404145052c",
+        "actual_sha256": "b7024b4de7933c8ab1eeb0ebe12a2afc918f72176a0fe2d4818bbb404145052c",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/sql.go",
+        "expected_sha256": "d75918d0dcda8b1489ef58bb2122a1de71fcf2d8caf1812724164f8c6a4d00e2",
+        "actual_sha256": "d75918d0dcda8b1489ef58bb2122a1de71fcf2d8caf1812724164f8c6a4d00e2",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/s3_sts.go",
+        "expected_sha256": "3aeab071b5f273d79226532684f19213111b131f1ab26e781b52a64d12ea6e6f",
+        "actual_sha256": "3aeab071b5f273d79226532684f19213111b131f1ab26e781b52a64d12ea6e6f",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/write_recovery.go",
+        "expected_sha256": "105b9e0235638afd53597684bffe5800319ee415445ca879f1dba08ffb4d2ccb",
+        "actual_sha256": "105b9e0235638afd53597684bffe5800319ee415445ca879f1dba08ffb4d2ccb",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/recovery_scan.go",
+        "expected_sha256": "583ec592622206551f2e977955393212881d99ac3b565610c74e6f0b779f4b6c",
+        "actual_sha256": "583ec592622206551f2e977955393212881d99ac3b565610c74e6f0b779f4b6c",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+        "expected_sha256": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe",
+        "actual_sha256": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+        "expected_sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1",
+        "actual_sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/registration_capacity.go",
+        "expected_sha256": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2",
+        "actual_sha256": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+        "expected_sha256": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978",
+        "actual_sha256": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+        "expected_sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b",
+        "actual_sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+        "expected_sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+        "actual_sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+        "matches": true
+      },
+      {
+        "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+        "expected_sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf",
+        "actual_sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf",
+        "matches": true
+      },
+      {
+        "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+        "expected_sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3",
+        "actual_sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3",
+        "matches": true
+      },
+      {
+        "path": "contracts/system-backup/v12/contract-manifest.json",
+        "expected_sha256": "758b8da3593308051ccd360a97c62e2234fca391eaae41b8bdc0fb7fe9ca31b3",
+        "actual_sha256": "758b8da3593308051ccd360a97c62e2234fca391eaae41b8bdc0fb7fe9ca31b3",
+        "matches": true
+      },
+      {
+        "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+        "expected_sha256": "c5ad6bfc2d7e2d5ce343aa30ab085de5b82b27cf7b77cfc05b2f4d475b8f727c",
+        "actual_sha256": "c5ad6bfc2d7e2d5ce343aa30ab085de5b82b27cf7b77cfc05b2f4d475b8f727c",
+        "matches": true
+      },
+      {
+        "path": "docs/evidence/system-backup-a-d-producer-authority-review-20260930.json",
+        "expected_sha256": "aa7ddddbbaa4b76c1ade6e62eab8183003152228116140409bcdbb46a5673e5b",
+        "actual_sha256": "aa7ddddbbaa4b76c1ade6e62eab8183003152228116140409bcdbb46a5673e5b",
+        "matches": true
+      },
+      {
+        "path": "docs/system-backup-a-d-producer-authority-review-20260930.md",
+        "expected_sha256": "3035321bfcc0692d9398740ee5e7449db64e51b58a53e813642ea789da186a56",
+        "actual_sha256": "3035321bfcc0692d9398740ee5e7449db64e51b58a53e813642ea789da186a56",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/gc_registry.go",
+        "expected_sha256": "23c3ab9841a13cd08a47a3ac6f6002f5a8aff4c76c2d00f991048ca5c15bb3ea",
+        "actual_sha256": "23c3ab9841a13cd08a47a3ac6f6002f5a8aff4c76c2d00f991048ca5c15bb3ea",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupevidence/gc_authority_sql.go",
+        "expected_sha256": "c55b61e800f65e96c53d2d4256dd2f3f478f886fb5d5077f2d933ed95bc2b39e",
+        "actual_sha256": "c55b61e800f65e96c53d2d4256dd2f3f478f886fb5d5077f2d933ed95bc2b39e",
+        "matches": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/registration_runtime.go",
+        "expected_sha256": "89122a1363a43020b7df775cc7e2cb69381156989082ae48516eaa1ad6321e5e",
+        "actual_sha256": "89122a1363a43020b7df775cc7e2cb69381156989082ae48516eaa1ad6321e5e",
+        "matches": true
+      },
+      {
+        "path": "docs/system-backup-d-producer-authority-revision-20260930.md",
+        "expected_sha256": "d5f88c707ad1aaf55e73d4534cec8049d5989ddc5bae25cf856d2e68312c8a85",
+        "actual_sha256": "d5f88c707ad1aaf55e73d4534cec8049d5989ddc5bae25cf856d2e68312c8a85",
+        "matches": true
+      },
+      {
+        "path": "docs/system-backup-restore-d-role-steps.md",
+        "expected_sha256": "aef3d497897687bc171cbb74a51dbf4cc9b1a68c4c034fe839d5e5c5aa6f4d3a",
+        "actual_sha256": "aef3d497897687bc171cbb74a51dbf4cc9b1a68c4c034fe839d5e5c5aa6f4d3a",
+        "matches": true
+      }
+    ]
+  },
+  "inspected_inputs": [
+    {
+      "path": "docs/system-backup-d-producer-authority-revision-20260930.md",
+      "sha256": "d5f88c707ad1aaf55e73d4534cec8049d5989ddc5bae25cf856d2e68312c8a85"
+    },
+    {
+      "path": "docs/system-backup-a-d-producer-authority-review-20260930.md",
+      "sha256": "3035321bfcc0692d9398740ee5e7449db64e51b58a53e813642ea789da186a56"
+    },
+    {
+      "path": "docs/system-backup-a-capability-producer-admission-request-20260929.md",
+      "sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "d75918d0dcda8b1489ef58bb2122a1de71fcf2d8caf1812724164f8c6a4d00e2"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "b1ce179d278e80cd62c62bd7f7dd46f749891a75bc990fc969e876f40611c996"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/content_dispatch.go",
+      "sha256": "b96285ff0ac32c817bcbb8a1b6273a66334c9c879f7d2a2f0a37dbf1d8cafa74"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content.go",
+      "sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_sts.go",
+      "sha256": "3aeab071b5f273d79226532684f19213111b131f1ab26e781b52a64d12ea6e6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_prepare.go",
+      "sha256": "da2cdb16337a5aed2c5fe234aa195303333d26fe9db861a24e6cd4773d8266b3"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/access_claim.go",
+      "sha256": "b7024b4de7933c8ab1eeb0ebe12a2afc918f72176a0fe2d4818bbb404145052c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/write_recovery.go",
+      "sha256": "105b9e0235638afd53597684bffe5800319ee415445ca879f1dba08ffb4d2ccb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/gc_registry.go",
+      "sha256": "23c3ab9841a13cd08a47a3ac6f6002f5a8aff4c76c2d00f991048ca5c15bb3ea"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/gc_authority_sql.go",
+      "sha256": "c55b61e800f65e96c53d2d4256dd2f3f478f886fb5d5077f2d933ed95bc2b39e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority_sql.go",
+      "sha256": "c72265abfdbd7a2fe039ff01c62d80fd34b38ba688c82e7f10f3752899c8953d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "sha256": "dd5a3e4f22682fa4f04f0edf7fcfa08e3f0638eeecd37b4067a42868dc92befe"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "sha256": "e5044fc6cb5d2daed45981cebdf5f2202cb37f025703e073663c0d4ac0705978"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity.go",
+      "sha256": "b6279233848171074f8a47c6f7d30a68ba51cf0a3f61f6fcc2216b11654194b2"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "scripts/system-backup-contract-check.mjs",
+      "sha256": "c802b0495a04cf2f5d7ca5c5f0d9fb1feee0c6ec5219f13a9d30fe3b1de41022"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-producer-authority-revision-20260930.json",
+      "sha256": "ea44a6e9333dca9e8fb0966f248d7960e7fcee81cbef73e7b6d03a23ebd696ee"
+    }
+  ],
+  "deliverables": [
+    {
+      "path": "docs/system-backup-a-d-producer-authority-rereview-20260930.md",
+      "sha256": "f94763e3244e2e8b8e32fc8299810dc4b7a4f7227e22403390b9306e8166ab59"
+    }
+  ],
+  "navigation_update": {
+    "path": "docs/system-backup-restore-a-role-steps.md",
+    "scope": "Only the system producer review status paragraph was replaced; shared navigation may be edited by other active tasks."
+  },
+  "validation": {
+    "contract_check": {
+      "command": "node scripts/system-backup-contract-check.mjs --check",
+      "exit_code": 0,
+      "strict": false,
+      "contract_status": "draft",
+      "migration_catalog": {
+        "file_count": 93,
+        "hash": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564"
+      },
+      "object_count": 99,
+      "policy_pending": 39,
+      "cross_review_pending": 60,
+      "missing_artifacts": [
+        "recovery_catalog_records",
+        "restore_target",
+        "status_relay",
+        "catalog_scan_record"
+      ],
+      "schema_hash_pending": true
+    },
+    "runtime_acceptance_executed": 0,
+    "runtime_acceptance_required": [
+      "V01",
+      "V02",
+      "V03",
+      "V04",
+      "V05",
+      "V06",
+      "V07",
+      "V08",
+      "V09",
+      "V10"
+    ],
+    "report_integrity": {
+      "source_and_report_fingerprints": "pass",
+      "local_links_checked": 13,
+      "finding_coverage": "6/6",
+      "trailing_whitespace": "none"
+    }
+  },
+  "approval": {
+    "a_r1_design_response_accepted": true,
+    "other_owner_approval_not_inferred": true,
+    "contract_frozen": false,
+    "production_approved": false,
+    "contract_approved_reviewers_modified": false
+  },
+  "execution": {
+    "remote_actions": false,
+    "dependencies_installed": false,
+    "builds": false,
+    "go_tests": false,
+    "mysql_tests": false,
+    "test_build_artifacts_created": false,
+    "runtime_code_changed": false,
+    "contracts_changed": false,
+    "original_review_changed": false,
+    "d_revision_changed": false
+  }
+}

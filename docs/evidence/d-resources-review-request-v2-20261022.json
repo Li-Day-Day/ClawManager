@@ -1,0 +1,499 @@
+{
+  "kind": "d_resources_normalization_review_request.v2",
+  "date": "2026-10-22",
+  "status": "revised_proposal_and_offline_helpers_pending_cross_review",
+  "policy_version": "d.resources.restore.v2",
+  "supersedes_proposal_only": "docs/evidence/d-resources-review-request-20261022.json",
+  "a_rules_received": "a.resources.restore-security.v1",
+  "document": "docs/system-backup-d-resources-revision-v2-20261022.md",
+  "source_digest": "c43853257ab865b7620b5cc31ff2e9ced28b5fbc751c4a94ae700818ac4c7e3f",
+  "source_files": [
+    {
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "size": 6518,
+      "sha256": "292e0f7b5c02d24e5cc2b49c2b9ff9c8db0ceb5671b72d08c6c03ddf2778455d"
+    },
+    {
+      "path": "backend/internal/db/migrations/003_add_system_image_settings.sql",
+      "size": 556,
+      "sha256": "8d95e0d89e2fe775ebbfa3a16eb31ba7ba7705bb01b7e86259561b5d421fa9dd"
+    },
+    {
+      "path": "backend/internal/db/migrations/044_add_egress_private_exceptions.sql",
+      "size": 625,
+      "sha256": "e8c24e9b81d61c4faf93d146a9e35c4c67b7439400a2195e471a0a5a0d92b7d7"
+    },
+    {
+      "path": "backend/internal/db/migrations/057_add_northbound_admin_settings.sql",
+      "size": 3208,
+      "sha256": "5a7ce8c21b80d102addfda84d4aacd19ddf9883d6c6417694e4580119a76668e"
+    },
+    {
+      "path": "backend/internal/db/migrations/063_add_security_scan_tables.sql",
+      "size": 2878,
+      "sha256": "d42b4478cb2f0c2b603b24da85062c30c566e075ee954224d104738e3110068a"
+    },
+    {
+      "path": "backend/internal/db/migrations/064_reconcile_system_image_settings_schema.sql",
+      "size": 4156,
+      "sha256": "5b4dcb9d59a5ccda9863edeeeb60f751966c21706e0b389e29fb78c86b71bc86"
+    },
+    {
+      "path": "backend/internal/egresspolicy/private_exception.go",
+      "size": 4400,
+      "sha256": "b7601fd1c56825bc98ec8f4a6058dbb66950f19d90c86e1204f99e7079804a27"
+    },
+    {
+      "path": "backend/internal/models/audit_log.go",
+      "size": 764,
+      "sha256": "d440fc4acdfce94154c0978f39da3bec5db90480868a7da6378ebfa511c75184"
+    },
+    {
+      "path": "backend/internal/models/egress_private_exception.go",
+      "size": 1024,
+      "sha256": "f7569cd2827c4cd7101a924d0e2e4198473689577ebb96b54ac8559ed21dbd13"
+    },
+    {
+      "path": "backend/internal/models/northbound_admin.go",
+      "size": 4592,
+      "sha256": "5d33cf2b2fc207ab065d99aae4d684f0e52d4441aee0ce84fcda835017e8922a"
+    },
+    {
+      "path": "backend/internal/models/security_scan.go",
+      "size": 3611,
+      "sha256": "6f9f10ca0e9fe49372f0318c8a660cfaa0313076c3b0aea70e1f9dcea7c7c751"
+    },
+    {
+      "path": "backend/internal/models/system_image_setting.go",
+      "size": 919,
+      "sha256": "42c4f4dfe3f2e5b545a1b86bc335580b97fcf94f7eb86fcd417b832c0d01043a"
+    },
+    {
+      "path": "backend/internal/northbound/auth_service.go",
+      "size": 13473,
+      "sha256": "56fafcfe0d0bc8f6ce69ae96ff0f017cd932b91f2818155be504242d2cfcce70"
+    },
+    {
+      "path": "backend/internal/northbound/runtime_settings.go",
+      "size": 3219,
+      "sha256": "256fb455458f6486558effc2b7acbb5333d2326e8f5a197fc6e6b946e8afefd7"
+    },
+    {
+      "path": "backend/internal/repository/egress_private_exception_repository.go",
+      "size": 3456,
+      "sha256": "971d2055509ad8704fbedb1db7755bbad965b09c2cc8e4aae503f97a8d690980"
+    },
+    {
+      "path": "backend/internal/repository/northbound_repository.go",
+      "size": 21378,
+      "sha256": "66ef54dcda772082ccba6ebcb874517c6b8eada84ab3ecf6416e91c67cb30d9a"
+    },
+    {
+      "path": "backend/internal/repository/security_scan_repository.go",
+      "size": 6097,
+      "sha256": "5f0a704514834ed27ae630358a615c09a8cf7107579799c4372caaf6895b10a0"
+    },
+    {
+      "path": "backend/internal/repository/system_image_setting_repository.go",
+      "size": 3833,
+      "sha256": "3248cbf12d768b0f84e6f970172588510f5d257ecbfa1758e287fff2fa26deff"
+    },
+    {
+      "path": "backend/internal/services/northbound_admin_service.go",
+      "size": 27688,
+      "sha256": "6805edd36a37f05ba0331c494880022b992f5ea62ffa244f5891dfbb5bfdbb3b"
+    },
+    {
+      "path": "backend/internal/services/security_scan_service.go",
+      "size": 34687,
+      "sha256": "58abf2949f016fab3b964233cd1514a20059ab28afcfb9ea53d0d864578664ad"
+    },
+    {
+      "path": "backend/internal/services/system_image_setting_service.go",
+      "size": 18448,
+      "sha256": "7a25ea88da2a850a9b3134859f825a68bdd586fc37b6bcee77358e38ebf26e66"
+    },
+    {
+      "path": "backend/internal/systembackupresources/capture_scope.go",
+      "size": 7231,
+      "sha256": "173ff582cc19bd8fe9b9a91a45183c4f16a5b5492422c6127f268f3cba36c867"
+    },
+    {
+      "path": "backend/internal/systembackupresources/capture_scope_test.go",
+      "size": 5578,
+      "sha256": "8b8c8c3b6c425ae12823e58861946384bd7676a4bd19a1d69bd3b58906edad81"
+    },
+    {
+      "path": "backend/internal/systembackupresources/completion_context_test.go",
+      "size": 5743,
+      "sha256": "c42fdf80e850caaffcf4f0afb78049728d3ea054ba45b4d9baca335f1568b15c"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion.go",
+      "size": 6484,
+      "sha256": "f98fb102dcfdf64321c077b8bf75b411b8b2a559e3c6a48f2716b3635b7cbf07"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion_runtime_test.go",
+      "size": 4973,
+      "sha256": "3649462a39098312109114baa518b52ce04f0b20f34d9e5a93af035ef2af3602"
+    },
+    {
+      "path": "backend/internal/systembackupresources/control_exclusion_test.go",
+      "size": 5809,
+      "sha256": "b670331a5889fc6b887c607858b64c4ffcb5fb7d1a2812a8ff70b4167e4b1b86"
+    },
+    {
+      "path": "backend/internal/systembackupresources/normalization_rules.go",
+      "size": 9532,
+      "sha256": "5be0fed405284506870ab3f4fd28501960293a09de592d56358fcf58b782c100"
+    },
+    {
+      "path": "backend/internal/systembackupresources/normalization_rules_test.go",
+      "size": 11047,
+      "sha256": "27a879e20125cf8144adc764488bafbe533a7f60c6a12ba6e9b091996f464a49"
+    },
+    {
+      "path": "backend/internal/systembackupresources/proof_presence.go",
+      "size": 554,
+      "sha256": "24d8f1f1a80bfe977bd9c51adb6702b3e141229675cfebad72483c3be16309c1"
+    },
+    {
+      "path": "backend/internal/systembackupresources/proof_presence_test.go",
+      "size": 5047,
+      "sha256": "5306ed70cf68282c6aa8a0c574352d8f01a0ae026a69a7f9a31336463a6c3bf6"
+    },
+    {
+      "path": "backend/internal/systembackupresources/sql_counts.go",
+      "size": 3737,
+      "sha256": "0701dd9ab92b089f84ce7aa15f70440c9717d22b3bf379544a4bb187e677d81e"
+    },
+    {
+      "path": "backend/internal/systembackupresources/sql_counts_test.go",
+      "size": 8311,
+      "sha256": "cd4680ce268b73244807e32c00ae056d16fb9157904971278a0878a427bfdc83"
+    },
+    {
+      "path": "backend/internal/systembackupresources/testdata/resources-backup-verify-draft.json",
+      "size": 1804,
+      "sha256": "85bbbd72fb655b345761b2809a28aeeec029d76385c4d529c545eb97440493ea"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier.go",
+      "size": 5725,
+      "sha256": "ccd414f865b66d47a4a4853dc3840c48228585904a0aa882a8b5388108827573"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier_input_isolation_test.go",
+      "size": 7693,
+      "sha256": "684d5c0c2ddf66e35359792c547701285c0a97f596eb2d33484f4e8eab94fe62"
+    },
+    {
+      "path": "backend/internal/systembackupresources/verifier_test.go",
+      "size": 3931,
+      "sha256": "652f2d29493953274d296520030a0766af9d7570ae53f69e6646e78c03620057"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry-decisions.json",
+      "size": 45955,
+      "sha256": "1928dd48a4efe6842e2d7565f66381c65d7a922f6eba29b156254da936fff6ee"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "size": 98179,
+      "sha256": "8b72c233d83844e8d36e64b75d0bb690b27aa902ef99c28f38b61f5dedeae9f8"
+    },
+    {
+      "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+      "size": 18782,
+      "sha256": "32957c05eb59c70abcac99ddfc5f6eabf3be330c0489dc55494959522b69513c"
+    },
+    {
+      "path": "docs/evidence/a-resources-normalization-review-20261022.json",
+      "size": 8232,
+      "sha256": "aac15c9e86ffd4b108bfb00ef8e3f9201d0fbf8bed94698c3c90cdee979787b7"
+    },
+    {
+      "path": "docs/evidence/d-resources-review-request-20261022.json",
+      "size": 8807,
+      "sha256": "de28bc5bd7369d3df9f6382f42701f510b5c0b22c50fc030b7769887b137daf3"
+    },
+    {
+      "path": "docs/evidence/d-resources-review-request-v2-20261022.mjs",
+      "size": 6366,
+      "sha256": "0957d23356e63e22c76c140c67b754221e4d82238ab14b058408cebba88eae1d"
+    },
+    {
+      "path": "docs/system-backup-a-resources-normalization-review-20261022.md",
+      "size": 9868,
+      "sha256": "7d4d2f5c362a4ae77f0f34556b238186b79ce376889b6372182eff64488f2bc7"
+    },
+    {
+      "path": "docs/system-backup-d-resources-revision-v2-20261022.md",
+      "size": 12491,
+      "sha256": "1989e5a0bfcf77c225de37196c17f710a5a73e31be076d6d38ab1b99bb73d6d7"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "scripts/system-backup-d-resources-rules-validation.ps1",
+      "size": 6903,
+      "sha256": "7122a248f1217fcb4b62f30e7d47e305d38274e76a25ba8de0126075694edd09"
+    }
+  ],
+  "package_files": [
+    "backend/internal/systembackupresources/capture_scope.go",
+    "backend/internal/systembackupresources/capture_scope_test.go",
+    "backend/internal/systembackupresources/completion_context_test.go",
+    "backend/internal/systembackupresources/control_exclusion.go",
+    "backend/internal/systembackupresources/control_exclusion_runtime_test.go",
+    "backend/internal/systembackupresources/control_exclusion_test.go",
+    "backend/internal/systembackupresources/normalization_rules.go",
+    "backend/internal/systembackupresources/normalization_rules_test.go",
+    "backend/internal/systembackupresources/proof_presence.go",
+    "backend/internal/systembackupresources/proof_presence_test.go",
+    "backend/internal/systembackupresources/sql_counts.go",
+    "backend/internal/systembackupresources/sql_counts_test.go",
+    "backend/internal/systembackupresources/testdata/resources-backup-verify-draft.json",
+    "backend/internal/systembackupresources/verifier.go",
+    "backend/internal/systembackupresources/verifier_input_isolation_test.go",
+    "backend/internal/systembackupresources/verifier_test.go"
+  ],
+  "objects": [
+    {
+      "name": "audit_logs",
+      "normalizer_id": "resources.audit_logs.normalize.v1",
+      "verifier_id": "resources.audit_logs.verify.v1",
+      "required_cross_reviewers": [
+        "A"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "egress_private_exceptions",
+      "normalizer_id": "resources.egress_private_exceptions.normalize.v1",
+      "verifier_id": "resources.egress_private_exceptions.verify.v1",
+      "required_cross_reviewers": [
+        "A",
+        "B"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "northbound_admin_settings",
+      "normalizer_id": "resources.northbound_admin_settings.normalize.v1",
+      "verifier_id": "resources.northbound_admin_settings.verify.v1",
+      "required_cross_reviewers": [
+        "A",
+        "B"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "northbound_settings_audit",
+      "normalizer_id": "resources.northbound_settings_audit.normalize.v1",
+      "verifier_id": "resources.northbound_settings_audit.verify.v1",
+      "required_cross_reviewers": [
+        "A",
+        "B"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "security_scan_configs",
+      "normalizer_id": "resources.security_scan_configs.normalize.v1",
+      "verifier_id": "resources.security_scan_configs.verify.v1",
+      "required_cross_reviewers": [
+        "A",
+        "C"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "security_scan_job_items",
+      "normalizer_id": "resources.security_scan_job_items.normalize.v1",
+      "verifier_id": "resources.security_scan_job_items.verify.v1",
+      "required_cross_reviewers": [
+        "C"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "security_scan_jobs",
+      "normalizer_id": "resources.security_scan_jobs.normalize.v1",
+      "verifier_id": "resources.security_scan_jobs.verify.v1",
+      "required_cross_reviewers": [
+        "A",
+        "C"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "security_scan_reports",
+      "normalizer_id": "resources.security_scan_reports.normalize.v1",
+      "verifier_id": "resources.security_scan_reports.verify.v1",
+      "required_cross_reviewers": [
+        "C"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    },
+    {
+      "name": "system_image_settings",
+      "normalizer_id": "resources.system_image_settings.normalize.v1",
+      "verifier_id": "resources.system_image_settings.verify.v1",
+      "required_cross_reviewers": [
+        "B"
+      ],
+      "revision": "d.resources.restore.v2",
+      "conclusion": "pending_same_version_review",
+      "runtime_approved": false
+    }
+  ],
+  "rules": {
+    "mapping": {
+      "namespaces": [
+        "user",
+        "instance",
+        "scan_job",
+        "skill",
+        "skill_scan_result",
+        "audit_log",
+        "northbound_settings_audit"
+      ],
+      "reject_duplicate_source": true,
+      "reject_merged_target": true,
+      "null_actor": "preserve_sql_null",
+      "nonnull_missing": "reject_batch",
+      "target_existence": "B_C_authenticated_transaction_facts_required"
+    },
+    "audit_reference": {
+      "user": "user_mapping",
+      "instance": "instance_mapping",
+      "system_backup": "null_only",
+      "unknown": "reject_including_null"
+    },
+    "audit_id_conflict": "authenticated_free_target_id_mapping_or_reject_never_overwrite",
+    "json_body": {
+      "null": "sql_null",
+      "nonnull": "\"[REDACTED]\""
+    },
+    "optional_text": {
+      "null": "sql_null",
+      "nonnull": "[REDACTED]"
+    },
+    "egress": {
+      "enabled": false,
+      "scope_types": [
+        "user",
+        "instance"
+      ],
+      "complete_prefix_and_exact_port": true,
+      "link_local": "reject",
+      "target_allowances_and_exclusions": "B_authenticated_complete_policy_required"
+    },
+    "northbound": {
+      "api_enabled": false,
+      "require_explicit_callers": true,
+      "source_version": "historical_only",
+      "target_absent": "B_proven_insert_version_1",
+      "target_present": "locked_observed_positive_signed_bigint_increment_exact_cas_one_row",
+      "overflow": "reject",
+      "cpu": "exact_decimal_4_2_no_float",
+      "node_port": "B_target_fact_no_port_open"
+    },
+    "scan_config": {
+      "proposed_ids": [
+        1
+      ],
+      "maximum_rows": 1,
+      "empty": "only_C_approved_absence_with_no_jobs_items_reports_and_B_startup_gate",
+      "allow_fallback": false,
+      "analyzer_and_timeout_policy": "C_current_version_required"
+    },
+    "scan_scope": {
+      "required": [
+        "scan_scope"
+      ],
+      "optional": [
+        "asset_id"
+      ],
+      "scan_scope": [
+        "full",
+        "incremental"
+      ],
+      "asset_id": "positive_signed_INT_skill_mapping",
+      "reject_duplicates_unknown_null_trailing": true,
+      "max_bytes": 4096
+    },
+    "scan_interrupted_proposal": {
+      "job_states": [
+        "queued",
+        "running"
+      ],
+      "item_states": [
+        "pending",
+        "running"
+      ],
+      "parent_target": "failed_pending_C_review",
+      "nonterminal_items_target": "failed_progress_100_cached_false_authenticated_processing_time",
+      "existing_terminal_items": "validate_and_preserve",
+      "completed_items": "terminal_item_count_including_failures",
+      "unknown_states": "reject",
+      "approved": false
+    },
+    "scan_report": {
+      "raw_service_config": "never_copy",
+      "schema": "C_closed_redacted_historical_schema_required",
+      "current_eligibility": false
+    },
+    "image": {
+      "is_enabled": false,
+      "logical_key": [
+        "instance_type",
+        "runtime_type",
+        "runtime_variant"
+      ],
+      "target_mapping_and_startup_gate": "B_required"
+    }
+  },
+  "supplemental_review_requests": [
+    {
+      "table": "security_scan_reports",
+      "reviewer": "A",
+      "scope": "embedded_scanner_config_and_free_body_redaction"
+    }
+  ],
+  "remaining_deliveries": [
+    "A_same_version_review",
+    "B_four_table_review_and_capture_target_clock_fence_transaction_writer",
+    "C_four_table_review_asset_result_capability_and_report_schema",
+    "nine_table_candidates_and_field_verifier",
+    "actual_SQL_and_startup_gate_validation"
+  ],
+  "review_receipts": [],
+  "registry_approval_written": false,
+  "full_normalization_implemented": false,
+  "source_or_target_proof_accepted": false,
+  "actual_mysql_executed": false,
+  "production_wired": false,
+  "messages_sent": false
+}

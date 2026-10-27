@@ -1,0 +1,43 @@
+{
+  "kind": "d_recovery_authority_candidate_schema_isolated_mysql",
+  "date": "2026-10-10",
+  "source": "operator-pasted-console-output",
+  "command": ".\\scripts\\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -RecoveryTest Schema -Remote -SshTarget 'root@10.130.14.23'",
+  "powershell_exit_code": null,
+  "raw_success_log_in_repository": false,
+  "local": {
+    "isolated_go_telemetry": "off",
+    "seed": "PASS TestDProducerMySQLSeed/fixed_clock,advancing_clock",
+    "vet_and_linux_probe_compile": "reported PASS",
+    "real_mysql": "not_run_at_local_gate",
+    "binary_sha256": "ed3086519435c7e2c57e665173c3eedb808a76ddd7f4b5941057014a97d1ad41",
+    "ddl_sha256": "0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60",
+    "migration_binary_sha256": "70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f"
+  },
+  "remote": {
+    "namespace": "sbk-mig-261010013410-3690",
+    "namespace_uid": "a3ded9da-d90a-4812-bc26-a0f4c68f13fb",
+    "app_image_digest": "be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+    "mysql_image_digest": "5ea882b1859d3a61814e527215563d809a9f2ff6798f1977",
+    "mysql_version": "8.4.8",
+    "migration_catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "fresh_replay": "PASS 001..080, 94 exact filenames",
+    "test": "PASS TestDRecoveryAuthoritySchemaMySQL",
+    "pass_marker": "PASS d-recovery-authority-schema-mysql",
+    "binary_sha256": "ed3086519435c7e2c57e665173c3eedb808a76ddd7f4b5941057014a97d1ad41",
+    "ddl_sha256": "0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60"
+  },
+  "cleanup": {
+    "run_owned_database": "reported CLEANED",
+    "namespace": "reported CLEANED with matching UID",
+    "remote_scratch": "reported CLEANED",
+    "local_build_cache": "reported CLEANED",
+    "cleanup_pending_marker": false
+  },
+  "scope": "Candidate deployment and manager DDL physical constraints in isolated MySQL only; not production admission, management identity, shared lock order, C Stat proof, numbered migration, or inventory approval.",
+  "notes": [
+    "The operator output includes closed-socket messages around SSH password prompts; the subsequent pinned replay, test PASS, and cleanup markers are present.",
+    "The probe binary differs from the earlier local-only handoff checkpoint because the source snapshot changed. The binary digest printed in this remote command's local gate matches the remote PASS marker; its DDL and runner digests also match the handoff checkpoint.",
+    "No separate final PowerShell exit code or complete raw success log was supplied."
+  ]
+}

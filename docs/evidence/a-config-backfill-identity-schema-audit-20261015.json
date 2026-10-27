@@ -1,0 +1,31 @@
+{
+  "kind": "a_config_backfill_identity_formal_schema_correction",
+  "date": "2026-10-15",
+  "finding": "A-BACKFILL-SCHEMA-01",
+  "status": "resolved_in_frozen_revision",
+  "prior_contract": "docs/evidence/a-config-backfill-identity-contract-20261015.json",
+  "prior_contract_sha256": "712c8206d7408872c35ce882f5310530c10fc9e646203f389011fe05cb39f5d4",
+  "prior_review": "docs/evidence/a-config-backfill-identity-review-20261015.json",
+  "formal_schema": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+  "formal_schema_sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+  "actual_checks": [
+    "OCTET_LENGTH(created_by) BETWEEN 1 AND 128",
+    "change_reason IS NULL OR OCTET_LENGTH(change_reason) BETWEEN 1 AND 512"
+  ],
+  "incorrect_claim": "VARCHAR character capacities were treated as effective bounds, ignoring the tighter CHECK constraints; empty nonnull reason was also accepted",
+  "impact": "Pure row codec admitted facts impossible in the formal SQL schema; no runtime grant/maintenance writer or real backfill had been enabled",
+  "repair": "Validate UTF-8 byte budgets and reject empty nonnull reason; preserve exact canonical encoding/domain/hash for every valid existing SQL row",
+  "replacement_contract": "docs/evidence/a-config-backfill-identity-contract-20261015-r2.json",
+  "old_invalid_vector_saved": "docs/evidence/a-config-backfill-identity-vectors-superseded-20261015.json",
+  "new_node_evidence": "docs/evidence/a-config-backfill-identity-vectors-local-20261015-r3.txt",
+  "new_node_pass": 4,
+  "new_node_fail": 0,
+  "production_approved": false,
+  "sql_executed": false,
+  "decimal_issue": "ConfigValues sqlValues uses shortest decimal strings; actual DECIMAL(4,2) returns 1.00/1.50/2.00. Exact identity comparison must use validated scaled-integer fixed-scale text.",
+  "decimal_repair": "Format expected SQL decimal from scaled integer without float64; compare exact independently scanned SQL text unchanged.",
+  "final_node_evidence": "docs/evidence/a-config-backfill-identity-vectors-local-20261015-r4.txt",
+  "final_vector_count": 7,
+  "final_review": "docs/evidence/a-config-backfill-identity-review-20261015-r4.json",
+  "final_source_sha256": "4b260ea10349f623c795d7b19b812ed55ffdfb052300728d37b31bcf304fd63e"
+}

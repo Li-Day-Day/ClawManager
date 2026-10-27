@@ -1,0 +1,46 @@
+{
+  "kind": "a_capacity_measurement_local_acceptance",
+  "recorded_at": "2026-10-20T00:45:13.085Z",
+  "source_sha256": "535f11543b5da63dd1db265657acf548e3030a858de741b27b654de4243f02c0",
+  "source_count": 1415,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_tests": 254,
+      "tests_including_subtests": 2010
+    },
+    {
+      "package": "clawreef/cmd/system-backup-registration",
+      "main_tests": 0,
+      "tests_including_subtests": 0
+    }
+  ],
+  "new_measurement_cases": 24,
+  "node_suites": 3,
+  "windows_registration_command": "compiled_and_vetted_no_test_files",
+  "linux_binary_sha256": "aeee3e07acf75ecc948f4bed40aa67e7f9f0d5c7bb38cdde8ce311f8c7102f7b",
+  "templates": [
+    {
+      "path": "deployments/k8s/system-backup-capacity.template.json",
+      "size": 551,
+      "sha256": "1bc26d5a613924528d7c61ec1286b8dd2d21396d38d92fd22a41f0264707c288"
+    },
+    {
+      "path": "deployments/k8s/system-backup-registration.template.json",
+      "size": 2468,
+      "sha256": "d39f84dc5076570d7e4ca8be6d93d8382e02b9c35fb4d3481f914baa5d77fc64"
+    }
+  ],
+  "scoped_current_inputs_match": true,
+  "frozen_postcheck": true,
+  "owned_sources_caches_binaries_absent": true,
+  "first_stopped_template_gate_preserved": true,
+  "interrupted_vet_tool_failure_preserved": true,
+  "windows_compile_tool_failure_preserved": true,
+  "interrupted_run_owned_products_absent": true,
+  "dependencies_installed": false,
+  "remote_mysql": "not_run",
+  "linux_statfs_and_mount": "not_executed",
+  "production_deployed": false,
+  "production_approval": false
+}

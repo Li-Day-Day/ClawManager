@@ -1,0 +1,79 @@
+✔ D control exclusion schema and runtime cover all 35 registered source-control tables (1.9083ms)
+✔ D runtime control exclusions retain metadata-only reference-only owner policies (10.7603ms)
+✔ D control exclusion keeps redacted count payloads and generic wire DTOs (1.5334ms)
+✖ D control exclusion required count agrees with schema IDs, registry and runtime (1.4252ms)
+✖ finite verifier declarations cover all submitted A and D check registries (0.8352ms)
+✔ verifier cardinality rejects invalid or stale count 31 (1.1478ms)
+✔ verifier cardinality rejects invalid or stale count 34 (0.6389ms)
+✔ verifier cardinality rejects invalid or stale count 36 (0.7514ms)
+✔ verifier cardinality rejects invalid or stale count 0 (0.6044ms)
+✔ verifier cardinality rejects invalid or stale count -1 (1.657ms)
+✔ verifier cardinality rejects invalid or stale count 1.5 (0.793ms)
+✔ verifier cardinality rejects invalid or stale count "35" (0.6386ms)
+✔ verifier cardinality rejects invalid or stale count null (1.4214ms)
+✔ verifier cardinality rejects invalid or stale count 9007199254740992 (0.4588ms)
+✔ verifier declaration rejects missing owner registries (0.5113ms)
+✔ verifier declaration rejects invalid owner (0.4754ms)
+✔ verifier declaration rejects missing declaration count (0.4187ms)
+✔ verifier declaration rejects missing schema (0.3815ms)
+✔ verifier declaration rejects external schema reference (0.5665ms)
+✔ verifier declaration rejects missing schema reference (0.5366ms)
+✔ verifier declaration rejects open base schema (0.4798ms)
+✔ verifier declaration rejects duplicate ID (0.4588ms)
+✔ verifier declaration rejects empty ID list (0.484ms)
+✔ verifier declaration rejects missing ID constraint (0.4404ms)
+✔ verifier declaration rejects open ID pattern (0.8637ms)
+✔ verifier declaration rejects mixed ID constraint (1.0828ms)
+✔ verifier declaration rejects invalid ID type (0.9033ms)
+✔ verifier declaration rejects empty ID (0.6224ms)
+✔ verifier declaration rejects invalid ID syntax (1.4739ms)
+✔ verifier declaration rejects mixed branch (1.3109ms)
+✔ verifier declaration rejects mixed union (0.6395ms)
+✔ verifier declaration rejects empty branches (0.9761ms)
+✔ verifier declaration rejects duplicate across branches (0.5147ms)
+✔ verifier declaration rejects other owner count drift (0.449ms)
+✔ verifier declaration rejects new uncounted declaration (0.4509ms)
+✔ finite verifier declarations accept const-only schemas and pending owners (0.4576ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 34
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 56.61
+
+✖ failing tests:
+
+test at scripts\system-backup-d-control-exclusion.test.mjs:31:1
+✖ D control exclusion required count agrees with schema IDs, registry and runtime (1.4252ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  31 !== 35
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66/source/scripts/system-backup-d-control-exclusion.test.mjs:34:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 31,
+    expected: 35,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-verifier-registry.test.mjs:18:1
+✖ finite verifier declarations cover all submitted A and D check registries (0.8352ms)
+  Error: verifier registry D.control_plane_restore_validate required_check_count=31 differs from 35 declared check IDs
+      at validateVerifierCheckRegistries (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66/source/scripts/system-backup-contract-check.mjs:355:15)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66/source/scripts/system-backup-verifier-registry.test.mjs:20:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7)

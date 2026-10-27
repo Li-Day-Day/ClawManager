@@ -1,0 +1,44 @@
+{
+  "kind": "a_independent_download_http_failure_budget_review",
+  "status": "accepted_frozen_local_failure_callback_budget_only",
+  "source": "docs/evidence/d-download-failure-budget-20261021-full-source.json",
+  "source_manifest_sha256": "28c66f5f5b6d3147b2c6ba2dfc92cfa5dcc1627f292ca84774f8380f947922dd",
+  "source_sha256": "7596b93c31d519e2013941be75a89a7b92940bfdf283799d8c499cb73474fc47",
+  "source_files": 1467,
+  "events_sha256": "819b183d1de68684adcdb733f1a15a4fe14d95385d1829d849d7c7017362437b",
+  "native_sha256": "ffef57f2c2d8431eda14f3995aaf88cfaa3d3f5f9f958c7e3c89bfe74495487c",
+  "full": {
+    "main": 782,
+    "all": 6598
+  },
+  "previous_checks_retained": 6591,
+  "added_checks": [
+    "TestDownloadHTTPFailureIndependentBudget/live_request",
+    "TestDownloadHTTPFailureIndependentBudget/canceled_provider_request",
+    "TestDownloadHTTPFailureIndependentBudget",
+    "TestDownloadHTTPFailureJournalQueueDeadline",
+    "TestDownloadResultFailureIndependentBudget/expired_result_transaction",
+    "TestDownloadResultFailureIndependentBudget/public_result_failure",
+    "TestDownloadResultFailureIndependentBudget"
+  ],
+  "counterfactual_failures": 6,
+  "own_inputs_match_tested_bytes": [
+    "backend/internal/systembackupevidence/http.go",
+    "backend/internal/systembackupevidence/download_http_failure_budget_test.go"
+  ],
+  "independent_callback_seconds": 5,
+  "cleanup": {
+    "receipt": "docs/evidence/d-download-failure-budget-cleanup-20261021.json",
+    "sha256": "65eb3158b619311a91742137515337c76328ee798253931963f1976c7ccca409",
+    "removed": true
+  },
+  "d_receipt_sha256": "a22914861678d047578728c97dc8282c14d2b83e091ecec309402980cc837d75",
+  "reviewer_sha256": "75f3036ee1416b69311c2016259fbdc59f5bafc0fda1e2fef61800edb985e190",
+  "no_new_go_tests_or_builds_run_by_review": true,
+  "dependencies_installed": false,
+  "actual_sql": false,
+  "physical_write_sync_timeout_proved": false,
+  "current_whole_worktree_verified": false,
+  "owner_receipt_baseline_changed": false,
+  "production_approved": false
+}

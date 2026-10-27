@@ -1,0 +1,53 @@
+{
+  "kind": "a_sensitive_download_initial_fixture_failure_review",
+  "recorded_at": "2026-10-16T05:22:09.080Z",
+  "status": "failed_new_proof_fixture_missing_required_AMR;not_accepted",
+  "raw_log": "docs/evidence/a-sensitive-download-local-20261016-131329-ec0a0e3c.txt",
+  "raw_sha256": "eefaf802faf1ff91b1a4c2f2b3ed1d6b86d3a725cd9b267c3e542fe75ce18b65",
+  "source_manifest": "docs/evidence/a-sensitive-download-source-20261016-131329-ec0a0e3c.json",
+  "source_manifest_sha256": "30e99cd0b1e23aca4a1003b80763732f170809492a3224e5aa36b41da03f6af1",
+  "source_sha256": "ddeb0f3b49507ee12aea23c011938f63932e119d5af028e1f881a7ac49d5b5d3",
+  "package_results": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "result": "fail"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "result": "pass"
+    }
+  ],
+  "failed_tests": [
+    "TestSensitiveDownloadProofHistoricalCandidatesAndOriginalTime",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/installation",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/evidence",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/session",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/subject",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/manifest",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/range",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/range-presence",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/key",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/issuer",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution/signature",
+    "TestSensitiveDownloadProofRejectsScopeSubstitution",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/empty",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/duplicate",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/unresolved",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/extra",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/weak-key",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/missing-active",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/zero-clock",
+    "TestSensitiveDownloadProofRejectsMissingMaterial/missing-principal",
+    "TestSensitiveDownloadProofRejectsMissingMaterial",
+    "TestSensitiveDownloadProofFreezesMaterialBeforeVerifierCallback"
+  ],
+  "failure_cause": "Synthetic proof fixture used nil AMR; existing CanonicalPayload rejects it before signature creation. Corrected fixture uses pwd/otp and the matching trusted issuer allowlist; no relaxation of existing proof validation.",
+  "additional_review_fix": "Reject nil and typed-nil configured signature adapters as unavailable before invoking them",
+  "owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-1616a695e08a4b1cbf4a0567a8ab9d94",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-7955812659444cb3a56bd4ed830b1349"
+  ],
+  "frozen_postcheck_not_reached": true,
+  "process_exit": 1,
+  "test_retries": 0
+}

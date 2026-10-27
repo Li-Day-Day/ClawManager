@@ -1,0 +1,46 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20261020152912
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 8980
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    & .\scripts\system-backup-d-config-writer-validation.ps1 `
+        -DownloadOwnersOnly -Remote -BuildParallelism 1 `
+        -SourceManifestPath $ownerSource
+    $ownerExit = 0
+} finally {
+    Write-Host "a_download_owners_mysql_remote_exit=$ownerExit"
+    Write-Host "日志=$ownerLog"
+    Stop-Transcript | Out-Null
+}
+LOCAL_OWNER config-writer-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-0cce70fa9ded4c3da010b4c1c87d4d9a
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Source changed while snapshot was copied”
+警告: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Source changed while snapshot was copied”
+警告: Proof source changed during capture; discarded this partial copy before retry 3/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=3 max=3 build-started=no remote-started=no
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Source changed while snapshot was copied”
+>> TerminatingError():“Source changed while snapshot was copied”
+LOCAL_CLEANUP config-writer-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-0cce70fa9ded4c3da010b4c1c87d4d9a removed=True
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Source changed while snapshot was copied”
+a_download_owners_mysql_remote_exit=1
+日志=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-owners-mysql-remote-20261020-152911-f87d0e35.txt
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261020153213
+**********************

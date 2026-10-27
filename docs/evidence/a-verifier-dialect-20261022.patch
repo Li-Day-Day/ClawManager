@@ -1,0 +1,81 @@
+diff --git a/scripts/system-backup-contract-check.mjs b/scripts/system-backup-contract-check.mjs
+--- a/scripts/system-backup-contract-check.mjs
++++ b/scripts/system-backup-contract-check.mjs
+@@ -320,21 +320,32 @@
+         throw new Error(label + ' requires a positive check count and local check schema');
+       }
+       const definition = schema.$defs?.[entry.check_schema.slice('#/$defs/'.length)];
+-      if (!Array.isArray(definition?.allOf) || definition.allOf.length !== 2
+-        || definition.allOf[0]?.$ref !== '#/$defs/Check') {
+-        throw new Error(label + ' requires a finite owner ID schema over Check');
+-      }
+-      const constraint = definition.allOf[1];
+-      if (constraint?.oneOf && Object.keys(constraint).some(key => key !== 'oneOf')) {
+-        throw new Error(label + ' requires an unmixed finite ID union');
+-      }
+-      const branches = constraint?.oneOf ?? [constraint];
+-      if (!Array.isArray(branches) || branches.length === 0) {
+-        throw new Error(label + ' requires nonempty finite ID branches');
+-      }
+-      const ids = [];
+-      for (const branch of branches) {
+-        if (!branch || typeof branch !== 'object' || Object.keys(branch).some(key => key !== 'properties')) {
++      // A sibling applicator can exclude every enumerated ID. Only the
++      // supported wrapper and inert text annotations belong to this dialect.
++      const annotations = new Set(['title', 'description', '$comment']);
++      const base = definition?.allOf?.[0];
++      if (!definition || typeof definition !== 'object' || Array.isArray(definition)
++        || Object.entries(definition).some(([key, value]) => key !== 'allOf'
++          && (!annotations.has(key) || typeof value !== 'string'))
++        || !Array.isArray(definition.allOf) || definition.allOf.length !== 2
++        || !base || typeof base !== 'object' || Array.isArray(base)
++        || Object.keys(base).length !== 1 || base.$ref !== '#/$defs/Check') {
++        throw new Error(label + ' requires a finite owner ID schema over Check');
++      }
++      const constraint = definition.allOf[1];
++      if (constraint?.oneOf && Object.keys(constraint).some(key => key !== 'oneOf')) {
++        throw new Error(label + ' requires an unmixed finite ID union');
++      }
++      const branches = constraint?.oneOf ?? [constraint];
++      if (!Array.isArray(branches) || branches.length === 0) {
++        throw new Error(label + ' requires nonempty finite ID branches');
++      }
++      const ids = [];
++      for (const branch of branches) {
++        if (!branch || typeof branch !== 'object' || Array.isArray(branch)
++          || Object.keys(branch).some(key => key !== 'properties')
++          || !branch.properties || typeof branch.properties !== 'object' || Array.isArray(branch.properties)
++          || Object.keys(branch.properties).some(key => !['id', 'expected', 'actual'].includes(key))) {
+           throw new Error(label + ' requires an unmixed finite ID branch');
+         }
+         const id = branch?.properties?.id;
+diff --git a/scripts/system-backup-a-verifier-dialect.test.mjs b/scripts/system-backup-a-verifier-dialect.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/scripts/system-backup-a-verifier-dialect.test.mjs
+@@ -0,0 +1,25 @@
++import assert from 'node:assert/strict';
++import {readFileSync} from 'node:fs';
++import test from 'node:test';
++import {validateVerifierCheckRegistries} from './system-backup-contract-check.mjs';
++
++const original=JSON.parse(readFileSync(new URL('../contracts/system-backup/v12/verifier-contract.schema.json',import.meta.url)));
++for(const [name,change] of [
++  ['outer not',d=>d.not={}],
++  ['outer anyOf',d=>d.anyOf=[false]],
++  ['outer ref',d=>d.$ref='#/$defs/Check'],
++  ['mixed common ref',d=>d.allOf[0].not={}],
++  ['extra common ref type',d=>d.allOf[0].type='null'],
++  ['unhandled branch property',d=>d.allOf[1].properties.status={not:{}}],
++  ['nonobject properties',d=>d.allOf[1].properties=Object.assign([],d.allOf[1].properties)],
++])test('finite verifier dialect rejects '+name,()=>{
++  const schema=structuredClone(original);change(schema.$defs.ControlExclusionCheck);
++  assert.throws(()=>validateVerifierCheckRegistries(schema),/verifier registry D\.control_plane_restore_validate/);
++});
++
++test('supported annotations preserve all six A/D declarations without mutation',()=>{
++  const schema=structuredClone(original),definition=schema.$defs.ControlExclusionCheck;
++  definition.title='Control checks';definition.description='Public count annotation';definition.$comment='No validation change';
++  const before=JSON.stringify(schema);
++  assert.equal(validateVerifierCheckRegistries(schema).length,6);assert.equal(JSON.stringify(schema),before);
++});

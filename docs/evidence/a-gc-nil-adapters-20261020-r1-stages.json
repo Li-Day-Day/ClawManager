@@ -1,0 +1,37 @@
+[
+  {
+    "name": "old-guards",
+    "attempt": 1,
+    "exit": 1,
+    "counterfactual": true,
+    "main_pass": 0,
+    "all_pass": 3,
+    "failed": [
+      "TestAGCAbsenceRejectsNilVerifierBeforeSQL",
+      "TestAGCAbsenceRejectsNilVerifierBeforeSQL/function_nil",
+      "TestAGCAbsenceRejectsNilVerifierBeforeSQL/pointer_nil",
+      "TestAGCAuthorityRejectsNilPolicy",
+      "TestAGCAuthorityRejectsNilPolicy/pointer_nil",
+      "TestAGCRuntimeRejectsNilAbsence",
+      "TestAGCRuntimeRejectsNilAbsence/function_nil",
+      "TestAGCRuntimeRejectsNilAbsence/pointer_nil"
+    ],
+    "jsonl": "a-gc-nil-adapters-20261020-r1-old-guards-attempt1.jsonl",
+    "stderr": "a-gc-nil-adapters-20261020-r1-old-guards-attempt1-stderr.txt",
+    "default_vet": true,
+    "count": 1
+  },
+  {
+    "name": "fixed-full",
+    "attempt": 1,
+    "exit": 0,
+    "counterfactual": false,
+    "main_pass": 590,
+    "all_pass": 4822,
+    "failed": [],
+    "jsonl": "a-gc-nil-adapters-20261020-r1-fixed-full-attempt1.jsonl",
+    "stderr": "a-gc-nil-adapters-20261020-r1-fixed-full-attempt1-stderr.txt",
+    "default_vet": true,
+    "count": 1
+  }
+]

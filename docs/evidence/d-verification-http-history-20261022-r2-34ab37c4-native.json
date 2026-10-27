@@ -1,0 +1,120 @@
+{
+  "kind": "d_verification_http_history_native",
+  "exit": 0,
+  "published": true,
+  "source_postcheck": true,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-34ab37c4f552442bb455cec61599efd0",
+    "removed": true,
+    "files_removed": 14177,
+    "test_build_artifacts_removed": true,
+    "cleaned_utc": "2026-10-22T06:15:36.7767406Z"
+  },
+  "error": null,
+  "stages": [
+    {
+      "stage": "dependencies",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-tags=systembackup_mysql",
+        "-deps",
+        "-test",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./cmd/server"
+      ]
+    },
+    {
+      "stage": "isolated",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=4",
+        "-trimpath",
+        "-buildvcs=false",
+        "-count=1",
+        "-timeout=900s",
+        "-tags=systembackup_mysql",
+        "-run",
+        "^(TestBackupReadCursorKeyUsesExactlyOneTrustedSource|TestBackupReadFixtureDefaultClosed|TestBackupReadFixtureOverviewAndDetailErrors|TestBackupReadFixturePaginationAndCursorBinding|TestBackupSessionsRequireExplicitConfiguration|TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization|TestLiveBackupReadRequiresPinnedAuthorityAndSessions)$",
+        "-json",
+        "./cmd/server"
+      ]
+    },
+    {
+      "stage": "windows-build",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=4",
+        "-c",
+        "-trimpath",
+        "-buildvcs=false",
+        "-tags=systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-34ab37c4f552442bb455cec61599efd0\\binary\\server-http.test.exe",
+        "./cmd/server"
+      ]
+    },
+    {
+      "stage": "test-list",
+      "exit": 0
+    },
+    {
+      "stage": "linux-dependencies",
+      "exit": 0,
+      "arguments": [
+        "list",
+        "-mod=readonly",
+        "-tags=systembackup_mysql",
+        "-deps",
+        "-test",
+        "-f",
+        "{{.ImportPath}}\t{{.Dir}}\t{{join .GoFiles \"|\"}}\t{{join .CgoFiles \"|\"}}\t{{join .EmbedFiles \"|\"}}",
+        "./cmd/server"
+      ]
+    },
+    {
+      "stage": "linux-build",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=4",
+        "-c",
+        "-trimpath",
+        "-buildvcs=false",
+        "-tags=systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-34ab37c4f552442bb455cec61599efd0\\binary\\server-http.test",
+        "./cmd/server"
+      ]
+    },
+    {
+      "stage": "published",
+      "exit": 0,
+      "arguments": [
+        "test",
+        "-mod=readonly",
+        "-p=4",
+        "-trimpath",
+        "-buildvcs=false",
+        "-count=1",
+        "-timeout=900s",
+        "-tags=systembackup_mysql",
+        "-run",
+        "^(TestBackupReadCursorKeyUsesExactlyOneTrustedSource|TestBackupReadFixtureDefaultClosed|TestBackupReadFixtureOverviewAndDetailErrors|TestBackupReadFixturePaginationAndCursorBinding|TestBackupSessionsRequireExplicitConfiguration|TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization|TestLiveBackupReadRequiresPinnedAuthorityAndSessions)$",
+        "-json",
+        "./cmd/server"
+      ]
+    }
+  ],
+  "default_vet": true,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false
+}

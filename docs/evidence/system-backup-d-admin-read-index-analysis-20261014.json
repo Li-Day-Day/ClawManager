@@ -1,0 +1,513 @@
+{
+  "source_transcript": "docs/evidence/d-admin-read-index-mysql-remote-20261014.txt",
+  "source_transcript_sha256": "405cbe5cd4ef9cda2ee2ca0528c803590f632b2148b0bdc4a14d69011a94b998",
+  "source_report": "docs/evidence/system-backup-d-admin-read-index-report-20261014.json",
+  "production_approved": false,
+  "aggregation": "Median of paired after/before percentile ratios within each table and query kind; not a pooled latency percentile",
+  "candidate_plan_detection": "Explicit candidate index name only; MAX(id) optimized-before-execution plans do not expose an index name",
+  "run": "sbk-mig-261014021937-5c65",
+  "uid": "1313a1b6-8a80-4090-9a6f-14c06783bc7a",
+  "queries": 171,
+  "ddl": {
+    "concurrent_writes_measured": true,
+    "elapsed_us": 1933133,
+    "insert_delete_pair_us": {
+      "p50": 2982,
+      "p95": 55151
+    },
+    "kind": "ddl",
+    "overlapping_write_pairs": 109,
+    "write_pairs": 110,
+    "writer_loop_limit": 10000
+  },
+  "tables": {
+    "system_backups": {
+      "added_bytes": 2031616,
+      "before_bytes": 14106624,
+      "after_bytes": 16138240,
+      "insert_before_us": {
+        "p50": 1342,
+        "p95": 3730
+      },
+      "insert_after_us": {
+        "p50": 1091,
+        "p95": 5046
+      },
+      "status_update_before_us": {
+        "p50": 1535,
+        "p95": 2038
+      },
+      "status_update_after_us": {
+        "p50": 1243,
+        "p95": 1999
+      },
+      "insert_p50_ratio": 0.813,
+      "update_p50_ratio": 0.81,
+      "groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_after_before_p50": 0.176,
+          "median_after_before_p95": 0.198,
+          "p50_improved": 3,
+          "after_uses_candidate": 0,
+          "sort_before": 0,
+          "sort_after": 0
+        },
+        "page": {
+          "pairs": 12,
+          "median_after_before_p50": 0.941,
+          "median_after_before_p95": 1.239,
+          "p50_improved": 7,
+          "after_uses_candidate": 2,
+          "sort_before": 4,
+          "sort_after": 3
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_after_before_p50": 0.924,
+          "median_after_before_p95": 1.166,
+          "p50_improved": 14,
+          "after_uses_candidate": 10,
+          "sort_before": 14,
+          "sort_after": 7
+        }
+      }
+    },
+    "system_restore_drills": {
+      "added_bytes": 2031616,
+      "before_bytes": 14942208,
+      "after_bytes": 16973824,
+      "insert_before_us": {
+        "p50": 918,
+        "p95": 2185
+      },
+      "insert_after_us": {
+        "p50": 1107,
+        "p95": 3226
+      },
+      "status_update_before_us": {
+        "p50": 1073,
+        "p95": 5700
+      },
+      "status_update_after_us": {
+        "p50": 1108,
+        "p95": 2025
+      },
+      "insert_p50_ratio": 1.206,
+      "update_p50_ratio": 1.033,
+      "groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_after_before_p50": 0.253,
+          "median_after_before_p95": 0.209,
+          "p50_improved": 3,
+          "after_uses_candidate": 0,
+          "sort_before": 0,
+          "sort_after": 0
+        },
+        "page": {
+          "pairs": 12,
+          "median_after_before_p50": 1.042,
+          "median_after_before_p95": 1.073,
+          "p50_improved": 5,
+          "after_uses_candidate": 2,
+          "sort_before": 4,
+          "sort_after": 3
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_after_before_p50": 0.847,
+          "median_after_before_p95": 1.188,
+          "p50_improved": 17,
+          "after_uses_candidate": 10,
+          "sort_before": 14,
+          "sort_after": 7
+        }
+      }
+    },
+    "system_backup_preflights": {
+      "added_bytes": 1015808,
+      "before_bytes": 10715136,
+      "after_bytes": 11730944,
+      "insert_before_us": {
+        "p50": 1388,
+        "p95": 2114
+      },
+      "insert_after_us": {
+        "p50": 1441,
+        "p95": 8097
+      },
+      "status_update_before_us": {
+        "p50": 1563,
+        "p95": 4838
+      },
+      "status_update_after_us": {
+        "p50": 1519,
+        "p95": 2107
+      },
+      "insert_p50_ratio": 1.038,
+      "update_p50_ratio": 0.972,
+      "groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_after_before_p50": 0.23,
+          "median_after_before_p95": 0.233,
+          "p50_improved": 3,
+          "after_uses_candidate": 0,
+          "sort_before": 0,
+          "sort_after": 0
+        },
+        "page": {
+          "pairs": 12,
+          "median_after_before_p50": 1.046,
+          "median_after_before_p95": 1.029,
+          "p50_improved": 5,
+          "after_uses_candidate": 2,
+          "sort_before": 4,
+          "sort_after": 3
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_after_before_p50": 0.879,
+          "median_after_before_p95": 1.003,
+          "p50_improved": 15,
+          "after_uses_candidate": 10,
+          "sort_before": 14,
+          "sort_after": 7
+        }
+      }
+    },
+    "system_backup_artifact_verifications": {
+      "added_bytes": 1032192,
+      "before_bytes": 10715136,
+      "after_bytes": 11747328,
+      "insert_before_us": {
+        "p50": 668,
+        "p95": 1253
+      },
+      "insert_after_us": {
+        "p50": 1344,
+        "p95": 3761
+      },
+      "status_update_before_us": {
+        "p50": 665,
+        "p95": 1782
+      },
+      "status_update_after_us": {
+        "p50": 1398,
+        "p95": 2178
+      },
+      "insert_p50_ratio": 2.012,
+      "update_p50_ratio": 2.102,
+      "groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_after_before_p50": 0.198,
+          "median_after_before_p95": 0.191,
+          "p50_improved": 3,
+          "after_uses_candidate": 0,
+          "sort_before": 0,
+          "sort_after": 0
+        },
+        "page": {
+          "pairs": 12,
+          "median_after_before_p50": 1.013,
+          "median_after_before_p95": 0.984,
+          "p50_improved": 6,
+          "after_uses_candidate": 2,
+          "sort_before": 4,
+          "sort_after": 3
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_after_before_p50": 0.98,
+          "median_after_before_p95": 1.168,
+          "p50_improved": 15,
+          "after_uses_candidate": 10,
+          "sort_before": 14,
+          "sort_after": 7
+        }
+      }
+    },
+    "system_backup_operations": {
+      "added_bytes": 2539520,
+      "before_bytes": 10633216,
+      "after_bytes": 13172736,
+      "insert_before_us": {
+        "p50": 643,
+        "p95": 874
+      },
+      "insert_after_us": {
+        "p50": 1034,
+        "p95": 2005
+      },
+      "status_update_before_us": {
+        "p50": 763,
+        "p95": 1141
+      },
+      "status_update_after_us": {
+        "p50": 1068,
+        "p95": 1553
+      },
+      "insert_p50_ratio": 1.608,
+      "update_p50_ratio": 1.4,
+      "groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_after_before_p50": 0.26,
+          "median_after_before_p95": 0.238,
+          "p50_improved": 3,
+          "after_uses_candidate": 0,
+          "sort_before": 0,
+          "sort_after": 0
+        },
+        "page": {
+          "pairs": 12,
+          "median_after_before_p50": 1.062,
+          "median_after_before_p95": 0.963,
+          "p50_improved": 4,
+          "after_uses_candidate": 2,
+          "sort_before": 4,
+          "sort_after": 3
+        }
+      }
+    }
+  },
+  "total_added_secondary_index_bytes": 8650752,
+  "largest_p50_regressions": [
+    {
+      "table": "system_backup_artifact_verifications",
+      "kind": "status_page",
+      "args": [
+        "installation_index_sparse",
+        12001,
+        "failed",
+        51
+      ],
+      "ratio": 2.186,
+      "p95_ratio": 1.221,
+      "before_us": {
+        "p50": 960,
+        "p95": 2395
+      },
+      "after_us": {
+        "p50": 2099,
+        "p95": 2925
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backup_preflights",
+      "kind": "page",
+      "args": [
+        "installation_index_foreign",
+        6000,
+        51
+      ],
+      "ratio": 2.089,
+      "p95_ratio": 1.713,
+      "before_us": {
+        "p50": 551,
+        "p95": 922
+      },
+      "after_us": {
+        "p50": 1151,
+        "p95": 1579
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backups",
+      "kind": "page",
+      "args": [
+        "installation_index_foreign",
+        12001,
+        51
+      ],
+      "ratio": 1.834,
+      "p95_ratio": 10.057,
+      "before_us": {
+        "p50": 947,
+        "p95": 1207
+      },
+      "after_us": {
+        "p50": 1737,
+        "p95": 12139
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backups",
+      "kind": "status_page",
+      "args": [
+        "installation_index_foreign",
+        12001,
+        "pending",
+        51
+      ],
+      "ratio": 1.76,
+      "p95_ratio": 1.315,
+      "before_us": {
+        "p50": 1096,
+        "p95": 2069
+      },
+      "after_us": {
+        "p50": 1929,
+        "p95": 2721
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backups",
+      "kind": "status_page",
+      "args": [
+        "installation_index_foreign",
+        12001,
+        "failed",
+        51
+      ],
+      "ratio": 1.621,
+      "p95_ratio": 2.818,
+      "before_us": {
+        "p50": 1638,
+        "p95": 2790
+      },
+      "after_us": {
+        "p50": 2655,
+        "p95": 7861
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backup_artifact_verifications",
+      "kind": "status_page",
+      "args": [
+        "installation_index_sparse",
+        6000,
+        "failed",
+        51
+      ],
+      "ratio": 1.474,
+      "p95_ratio": 7.347,
+      "before_us": {
+        "p50": 1312,
+        "p95": 1575
+      },
+      "after_us": {
+        "p50": 1934,
+        "p95": 11572
+      },
+      "candidate": true
+    }
+  ],
+  "largest_p50_improvements": [
+    {
+      "table": "system_restore_drills",
+      "kind": "cutoff",
+      "args": [
+        "installation_index_foreign"
+      ],
+      "ratio": 0.087,
+      "p95_ratio": 0.064,
+      "before_us": {
+        "p50": 3216,
+        "p95": 6184
+      },
+      "after_us": {
+        "p50": 279,
+        "p95": 396
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backup_preflights",
+      "kind": "cutoff",
+      "args": [
+        "installation_index_foreign"
+      ],
+      "ratio": 0.098,
+      "p95_ratio": 0.056,
+      "before_us": {
+        "p50": 3233,
+        "p95": 6774
+      },
+      "after_us": {
+        "p50": 316,
+        "p95": 378
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backup_artifact_verifications",
+      "kind": "cutoff",
+      "args": [
+        "installation_index_foreign"
+      ],
+      "ratio": 0.099,
+      "p95_ratio": 0.066,
+      "before_us": {
+        "p50": 3235,
+        "p95": 8841
+      },
+      "after_us": {
+        "p50": 320,
+        "p95": 582
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backup_operations",
+      "kind": "cutoff",
+      "args": [
+        "installation_index_foreign"
+      ],
+      "ratio": 0.122,
+      "p95_ratio": 0.138,
+      "before_us": {
+        "p50": 2081,
+        "p95": 2270
+      },
+      "after_us": {
+        "p50": 254,
+        "p95": 313
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backups",
+      "kind": "cutoff",
+      "args": [
+        "installation_index_sparse"
+      ],
+      "ratio": 0.13,
+      "p95_ratio": 0.178,
+      "before_us": {
+        "p50": 1528,
+        "p95": 1748
+      },
+      "after_us": {
+        "p50": 198,
+        "p95": 311
+      },
+      "candidate": false
+    },
+    {
+      "table": "system_backups",
+      "kind": "cutoff",
+      "args": [
+        "installation_index_foreign"
+      ],
+      "ratio": 0.176,
+      "p95_ratio": 0.198,
+      "before_us": {
+        "p50": 2636,
+        "p95": 4389
+      },
+      "after_us": {
+        "p50": 464,
+        "p95": 871
+      },
+      "candidate": false
+    }
+  ]
+}

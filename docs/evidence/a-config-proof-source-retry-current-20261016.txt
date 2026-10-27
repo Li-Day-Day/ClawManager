@@ -1,0 +1,29 @@
+**********************
+PowerShell transcript start
+Start time: 20261016104605
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'; $retryRoot=$PWD.Path; $retryOwner=Join-Path $retryRoot ('.tmp-d-index-cache-'+[guid]::NewGuid().ToString('N')); $retryLog='docs/evidence/a-config-proof-source-retry-current-20261016.txt'; Start-Transcript -Path $retryLog -NoClobber; $retryExit=1; . ./scripts/system-backup-d-index-source-snapshot.ps1; . ./scripts/system-backup-a-config-proof-source.ps1; try { [IO.Directory]::CreateDirectory($retryOwner)|Out-Null; [IO.File]::WriteAllText((Join-Path $retryOwner 'owner.txt'),[IO.Path]::GetFileName($retryOwner)); $retrySnapshot=New-AConfigProofSourceSnapshot -Root $retryRoot -Owner $retryOwner; Test-DIndexSourceSnapshot -Root (Join-Path $retryOwner 'source') -Manifest $retrySnapshot; foreach($required in @('scripts/system-backup-a-config-proof-validation.ps1','scripts/system-backup-a-config-proof-source.ps1','scripts/system-backup-a-config-proof-source.test.ps1')){if($retrySnapshot.files.path -notcontains $required){throw "Required capture source missing: $required"}}; $retryManifest=Join-Path $retryRoot 'docs/evidence/a-config-proof-source-retry-current-20261016.json'; $retryStream=[IO.File]::Open($retryManifest,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write); try{$retryBytes=[Text.Encoding]::UTF8.GetBytes(($retrySnapshot|ConvertTo-Json -Depth 8));$retryStream.Write($retryBytes,0,$retryBytes.Length)}finally{$retryStream.Dispose()}; Write-Output ('PASS real current source snapshot files='+$retrySnapshot.files.Count+' attempts='+$retrySnapshot.capture_attempts+' source_sha256='+$retrySnapshot.source_sha256+' frozen-postcheck=yes no-go-or-ssh=yes'); $retryExit=0 } finally { if(Test-Path -LiteralPath $retryOwner){$retryResolved=(Resolve-Path -LiteralPath $retryOwner).Path;if([IO.Path]::GetDirectoryName($retryResolved) -ne $retryRoot -or [IO.Path]::GetFileName($retryResolved) -notmatch '^\.tmp-d-index-cache-[a-f0-9]{32}$' -or ((Get-Item -Force -LiteralPath $retryResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) -or [IO.File]::ReadAllText((Join-Path $retryResolved 'owner.txt')) -ne [IO.Path]::GetFileName($retryResolved)){throw 'Unsafe real capture cleanup'}; Remove-Item -LiteralPath $retryResolved -Recurse -Force}; Write-Output ('LOCAL_CLEANUP proof-source-current-owned='+$retryOwner+' removed='+(-not(Test-Path -LiteralPath $retryOwner))); Write-Output "a_config_proof_real_capture_exit=$retryExit"; Stop-Transcript};exit $retryExit
+Process ID: 22672
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-proof-source-retry-current-20261016.txt
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PASS real current source snapshot files=1286 attempts=1 source_sha256=fecb8cc62e6ece52c18063b8ab1455bd1aaf91d7c8d0e927ce0c7f35b49a93dd frozen-postcheck=yes no-go-or-ssh=yes
+LOCAL_CLEANUP proof-source-current-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-5125c33d45464d70add331678ea7ca07 removed=True
+a_config_proof_real_capture_exit=0
+**********************
+PowerShell transcript end
+End time: 20261016104640
+**********************

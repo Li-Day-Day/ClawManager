@@ -1,0 +1,130 @@
+{
+  "kind": "a_nonce_acceptance_time_independent_regression_review",
+  "recorded_at": "2026-10-19T00:48:03.510Z",
+  "status": "local_consumer_fix_accepted_real_SQL_incremental_validation_pending",
+  "inputs": {
+    "baseline": {
+      "path": "docs/evidence/a-nonce-time-baseline-20261019.txt",
+      "sha256": "9777cd71f0d2d0e085727a77c2e32ccd61f031afc1530f8f29a5d0518ca495d1"
+    },
+    "before": {
+      "path": "docs/evidence/a-nonce-time-baseline-source-20261019.json",
+      "sha256": "870b5bfc723be99e89407b06ebddbb34ed2c589a69d7d6c55a1c9e12ae3794cd"
+    },
+    "final": {
+      "path": "docs/evidence/a-nonce-time-final-20261019.txt",
+      "sha256": "1ad5b8822858991f33b81ff707629826503797ba3df22f2a9b7a9b512a904a1f"
+    },
+    "after": {
+      "path": "docs/evidence/a-nonce-time-final-source-20261019.json",
+      "sha256": "abc20d58708f7f4d60020573401d557024e1fd75cde31b729ee0cef6373a407a"
+    }
+  },
+  "baseline_source_files": 1342,
+  "baseline_source_sha256": "c2cda5f8679cd9c779575baad738e2542975f939d39dd11468404c2f8bd578a3",
+  "final_source_files": 1342,
+  "final_source_sha256": "0299074e4aeb018f678c1250b997a8c7b0e42f8f1e053a99fc6d818eec57f8e3",
+  "baseline_failing_child_cases": 6,
+  "checks_passed": 44,
+  "checks": [
+    "before source digest independently recomputed",
+    "before stable capture without installing dependencies",
+    "after source digest independently recomputed",
+    "after stable capture without installing dependencies",
+    "baseline actual Go and wrapper exit one",
+    "original counterexample reproduced: TestAProviderNonceUsesSQLAcceptanceTime/past_auth",
+    "original counterexample reproduced: TestAProviderNonceUsesSQLAcceptanceTime/future_within_skew",
+    "original counterexample reproduced: TestAProviderNonceUsesSQLAcceptanceTime/clock_regression",
+    "baseline rejection control passed: TestAProviderNonceUsesSQLAcceptanceTime/future_outside_skew",
+    "baseline rejection control passed: TestAProviderNonceUsesSQLAcceptanceTime/expiry_during_insert",
+    "baseline rejection control passed: TestAProviderNonceUsesSQLAcceptanceTime/age_during_insert",
+    "original counterexample reproduced: TestAConfigNonceUsesSQLAcceptanceTime/past_auth",
+    "original counterexample reproduced: TestAConfigNonceUsesSQLAcceptanceTime/future_within_skew",
+    "original counterexample reproduced: TestAConfigNonceUsesSQLAcceptanceTime/clock_regression",
+    "baseline rejection control passed: TestAConfigNonceUsesSQLAcceptanceTime/future_outside_skew",
+    "baseline rejection control passed: TestAConfigNonceUsesSQLAcceptanceTime/expiry_during_insert",
+    "baseline rejection control passed: TestAConfigNonceUsesSQLAcceptanceTime/age_during_insert",
+    "baseline has exactly six failing child cases",
+    "final full-security stage with default vet",
+    "final actual Go and wrapper exit zero",
+    "both frozen postchecks passed",
+    "isolated telemetry off in both phases",
+    "final package passed with no failures",
+    "passed test names unique",
+    "new regression all cases passed: TestAProviderNonceUsesSQLAcceptanceTime",
+    "new regression all cases passed: TestAConfigNonceUsesSQLAcceptanceTime",
+    "new regression all cases passed: TestASensitiveDownloadNonceAcceptanceTime",
+    "new regressions not skipped",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/providerproof_transaction.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/config_mutation_transaction.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/nonce_acceptance_time_a_test.go",
+    "current reviewed pin matches: scripts/system-backup-a-nonce-time-validation.ps1",
+    "counterexample ran original consumer: backend/internal/systembackupsecurity/providerproof_transaction.go",
+    "counterexample ran original consumer: backend/internal/systembackupsecurity/config_mutation_transaction.go",
+    "published DDL/contract approval unchanged: backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+    "published DDL/contract approval unchanged: contracts/system-backup/v12/strong-auth-nonce-ledger.schema.json",
+    "published DDL/contract approval unchanged: contracts/system-backup/v12/schema-registry-decisions.json",
+    "published DDL/contract approval unchanged: contracts/system-backup/v12/contract-manifest.json",
+    "four exact owned paths cleaned",
+    "owned directory absent: .tmp-a-evidence-52d56eae551241dc831d1bfa14a3c101",
+    "owned directory absent: .tmp-d-index-cache-071f5ad54c8f4ef5b908578f5164c085",
+    "owned directory absent: .tmp-a-evidence-dad84ad81ee446f48685f18920abb0b6",
+    "owned directory absent: .tmp-d-index-cache-a348201b6e504e7ba39d68acd37f50c9"
+  ],
+  "final_main": 246,
+  "final_subtests": 1657,
+  "final_including_subtests": 1903,
+  "final_skipped": [],
+  "new_main": 3,
+  "new_including_subtests": 17,
+  "reviewed_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 17772,
+      "sha256": "e330b691c644e635d800790cc47317733a08d4ac4e44b7ddf2dade81e52b9dbf"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 40162,
+      "sha256": "6179c547c49891739c5659b65c14c163f215d1358a0fc3a081358a74a703cd4c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_deadline.go",
+      "size": 1336,
+      "sha256": "43789c3f35c03673409a4ac650937d522145e09df8db5a436844ab17c995a37c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/nonce_acceptance_time_a_test.go",
+      "size": 9539,
+      "sha256": "16fb1a5044dc4099181e7fd4f09ffb510a48021f90fd4914bb22464fbada9dd9"
+    },
+    {
+      "path": "scripts/system-backup-a-nonce-time-validation.ps1",
+      "size": 4979,
+      "sha256": "1f2da61a7eeb303d3ba57e205b8a27203e0a0c98338c1275dc2825d597b822ee"
+    }
+  ],
+  "exact_owned_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-52d56eae551241dc831d1bfa14a3c101",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-071f5ad54c8f4ef5b908578f5164c085",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-dad84ad81ee446f48685f18920abb0b6",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a348201b6e504e7ba39d68acd37f50c9"
+  ],
+  "default_vet": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_MySQL": false,
+  "SQL_transport_and_clock_modeled": true,
+  "signatures_are_actual_Ed25519": true,
+  "old_successful_remote_suites_repeated": false,
+  "formal_migrations_changed": false,
+  "formal_schema_approval": false,
+  "production_download_route_enabled": false,
+  "remaining": [
+    "incremental real MySQL acceptance/consumption and skew/regression validation for changed consumers",
+    "download MFA needs same-transaction current target/authorization source; no arbitrary-hash issuer added",
+    "D complete prelocked authority, atomic storage/nonce/claim/capacity/final guard and reviewed runtime materials",
+    "formal schema and real deployment/E2E"
+  ]
+}

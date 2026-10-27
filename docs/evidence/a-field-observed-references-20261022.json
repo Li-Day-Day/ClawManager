@@ -1,0 +1,123 @@
+{
+  "kind": "a_field_observed_public_references.v1",
+  "status": "REFERENCES_ONLY_INCOMPLETE_NOT_A_FIELD_PLAN",
+  "source": {
+    "path": "docs/evidence/a-field-public-inventory-20261022-085642-cb639159.json",
+    "sha256": "07a599af6c63e4bd02105dae0f7592997580f811928127a83367a9253fba9e8d",
+    "bytes": 54326
+  },
+  "context": "kubernetes-admin@kubernetes",
+  "namespace": "clawmanager-zhanghui08-system",
+  "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+  "mysql": {
+    "pod": "mysql-66496b8965-d6tsl",
+    "pod_uid": "dab1cbf6-ca49-4e16-bd2d-27e70da52004",
+    "container": "mysql",
+    "node": "k8s-master",
+    "data_claim": {
+      "name": "mysql-data",
+      "uid": "e3c297bd-a00a-4a60-bce7-7368a69e8fd2",
+      "resource_version": "32955213",
+      "phase": "Bound",
+      "volume_name": "clawmanager-zhanghui08-mysql-pv",
+      "storage_class": "manual",
+      "access_modes": [
+        "ReadWriteOnce"
+      ],
+      "capacity": {
+        "storage": "5Gi"
+      },
+      "pv": {
+        "name": "clawmanager-zhanghui08-mysql-pv",
+        "uid": "2661bbff-e182-4189-9a09-3c23d5c71050",
+        "resource_version": "33885128",
+        "claim_namespace": "clawmanager-zhanghui08-system",
+        "claim_name": "mysql-data",
+        "claim_uid": "e3c297bd-a00a-4a60-bce7-7368a69e8fd2"
+      },
+      "observed_pod_mounts": [
+        {
+          "pod": "mysql-66496b8965-d6tsl",
+          "pod_uid": "dab1cbf6-ca49-4e16-bd2d-27e70da52004",
+          "container": "mysql",
+          "path": "/var/lib/mysql",
+          "sub_path": "",
+          "declared_read_only": false
+        }
+      ],
+      "declared_capacity_is_not_statfs_or_reservation": true
+    }
+  },
+  "capacity_report_claim": {
+    "name": "system-backup-capacity-report",
+    "uid": "d9452769-2406-4437-8dab-775f2de7bf13",
+    "resource_version": "93184146",
+    "phase": "Bound",
+    "volume_name": "pvc-d9452769-2406-4437-8dab-775f2de7bf13",
+    "storage_class": "longhorn-rwx",
+    "access_modes": [
+      "ReadWriteMany"
+    ],
+    "capacity": {
+      "storage": "16Mi"
+    },
+    "pv": {
+      "name": "pvc-d9452769-2406-4437-8dab-775f2de7bf13",
+      "uid": "85c6c189-a646-4031-8e59-de26f8a45ed6",
+      "resource_version": "93184164",
+      "claim_namespace": "clawmanager-zhanghui08-system",
+      "claim_name": "system-backup-capacity-report",
+      "claim_uid": "d9452769-2406-4437-8dab-775f2de7bf13"
+    },
+    "observed_pod_mounts": [],
+    "declared_capacity_is_not_statfs_or_reservation": true
+  },
+  "historical_database_identity": {
+    "server_uuid": "f1f5f76a-95f5-11f1-b08e-366835b4a029",
+    "database": "clawmanager",
+    "source": {
+      "path": "docs/evidence/a-live-chain-environment-review-20261021.json",
+      "sha256": "d0f21a03dfaa0ad5b006e2ae6f8ef32e24eebdda18ebc61fcbef7b44ac6109af",
+      "bytes": 2658
+    },
+    "fresh_sql_identity_verified": false
+  },
+  "profile_connections": {
+    "registration": null,
+    "download": null,
+    "collector": null,
+    "observer": null
+  },
+  "materials": [],
+  "minimum_available_byte_budgets": null,
+  "collector_image": null,
+  "journal_claim": null,
+  "gaps": [
+    {
+      "priority": 1,
+      "code": "reviewed_runtime_image_and_original_input_required",
+      "observed": "main image ID remains the prior fix18; no inspector capability was executed or approved",
+      "required": "reviewed target image/native inspector bytes and original runtime/bootstrap/material inputs; no fabrication of accounts, deadlines or installation"
+    },
+    {
+      "priority": 2,
+      "code": "runtime_connection_and_collector_mounts_unproven",
+      "observed": "zero explicit supported DSN env references in the nine observed Pod containers; capacity report PVC has zero observed Pod mounts",
+      "required": "actual registration/download/collector connections, independent non-root users, original DSNs and data-readonly/report mounts in reviewed runtime"
+    },
+    {
+      "priority": 3,
+      "code": "journal_volume_not_observed",
+      "observed": "no ReadWriteOncePod claim and no /run/system-backup/download-journal mount in this namespace receipt",
+      "required": "independent approved journal volume, actual owner/mode/budget and separately verified single-writer behavior"
+    },
+    {
+      "priority": 4,
+      "code": "actual_material_capacity_permission_evidence_missing",
+      "observed": "public inventory did not query SQL or read original materials/capacity reports or Unix mount permissions",
+      "required": "complete field plan plus original materials/validity, actual users/grants/metadata, five-second original capacity source/report/SQL time and real volume measurements"
+    }
+  ],
+  "production_approved": false,
+  "complete_field_acceptance": false
+}

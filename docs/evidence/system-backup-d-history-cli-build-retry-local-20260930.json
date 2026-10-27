@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T03:13:18.1503480Z",
+  "status": "local_build_pass_remote_pending",
+  "responds_to": "system-backup-d-history-cli-asm-failure-20260930.json",
+  "wrapper_mock_scenarios_passed": 10,
+  "native_go_negative_control": {
+    "result": "PASS",
+    "ordinary_error_attempts": 1,
+    "caller_native_error_preference_preserved": true
+  },
+  "actual_build": {
+    "command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -BuildOnly",
+    "exit_code": 0,
+    "go_version": "go1.26.1 windows/amd64",
+    "unit_tests": "skipped",
+    "vet": "skipped",
+    "linux_probe_attempts": 1,
+    "linux_cli_attempts": 1,
+    "sharing_failure_reproduced": false,
+    "retry_success_scope": "mock fault injection only; real builds passed on first attempt",
+    "runner_sha256": "99265645c6d27fe8c4245073ca5ce4f1b442396d2d8b2b30fddee4802b60efe4",
+    "probe_sha256": "f9bbbfa98bf0ff49e38f95a1d333b8e74791f0c0c8bf3470c175e77824d0bfe3",
+    "backend_source_sha256": "f1b8a139f1137dcf52af1f3f24e5e1878cc6ea7844b7b4ae252b4ee6cb5e38c8",
+    "pre_post_build_source_guard": "PASS",
+    "trimpath_both": true,
+    "remote_started": false
+  },
+  "cleanup": {
+    "local_build_scratch_removed": true,
+    "wrapper_mock_scratch_remaining": 0,
+    "dependencies_installed": false
+  },
+  "source_sha256_at_receipt": {
+    "scripts/system-backup-d-invariants.ps1": "24c80d7eb27f1dbecc1939a72841158dc08324c00c3a339d38cf9b53821c0a74",
+    "scripts/system-backup-d-history-cli-wrapper.test.ps1": "3074e86bb2a641128a3f9b7267d2958e22669fd63fb89f29996c2f9bd295f516"
+  }
+}

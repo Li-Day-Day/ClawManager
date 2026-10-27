@@ -1,0 +1,65 @@
+{
+  "kind": "a_owner_actual_mysql_inplace_fixture_failure_review",
+  "status": "failed_not_accepted",
+  "log": "docs/evidence/a-download-owners-mysql-remote-20261021-134326-f36b8b74.txt",
+  "log_sha256": "9898cf1d2454bccaf30bcd2c3b04586b5d0ea5a2ba4d5dccd3d99e2b591c2bf4",
+  "source": "docs/evidence/a-download-owners-mysql-remote-source-20261021-134326-f36b8b74.json",
+  "source_manifest_sha256": "8c84eb84dacfd0e9181363c1008f4d896473cce10cbb971750fe32c77c6f10d6",
+  "source_sha256": "d69a607aff65c907a2d2c405b26174b31122dfc411f7505a39e4480b17b090b8",
+  "source_files": 1471,
+  "local_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "all": 2011
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "all": 3008
+    }
+  ],
+  "packaged_seed_checks": 13,
+  "actual_sql_started": true,
+  "mysql_version": "8.4.8",
+  "namespace": "sbk-mig-261021062514-057d",
+  "namespace_uid": "43701276-d938-4610-b23e-be2a0b07fb81",
+  "passed_cases": [
+    "backup",
+    "drill",
+    "preflight",
+    "artifact_verify",
+    "wrong_installation",
+    "revoked_actor",
+    "changed_original_deadline",
+    "unknown_reference_column",
+    "original_owner_lock",
+    "empty_reference_range"
+  ],
+  "failed_cases": [
+    "missing_reference_column"
+  ],
+  "observed_error": 1846,
+  "failed_fixture_source_line": 229,
+  "diagnosis": "Missing-column fixture rename failed before production Preview; algorithm compatibility must be fixed and all eleven actual cases rerun",
+  "actual_lock_probes_passed": true,
+  "cleaned_databases": [
+    "amfa_e7af8c2d3021b58776f6a1e39ff89e14",
+    "amfa_293e852a83fb91d90005fcb9d902ed52",
+    "amfa_491db45fa66e1c06c400b08261b385c2",
+    "amfa_5bbdde640e78bd94a5a51b1f63ee7d8c",
+    "amfa_1fae68150da5d9ad9346f50582354d46",
+    "amfa_b25d01e8a1867e98a987bbd21e839002",
+    "amfa_df55bef69c083e0e34ccc6b73b8fbd0f",
+    "amfa_9664fab53b262ce6d7d1935961c4500b",
+    "amfa_8d1f5762e48b4723d6935dc38526e6d9",
+    "amfa_ba1a4a102f9e9a1dea7ae4d8e0ab1716",
+    "amfa_991bb234a2e7e71f85652270c085fc20"
+  ],
+  "remote_cleanup": "reported_in_original_log_not_independently_reconnected",
+  "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6ca838670f3b46358412df4c9595b71d",
+  "local_owner_independently_absent": true,
+  "final_exit": 1,
+  "actual_suite_accepted": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "reviewer_sha256": "5630c1180f26d7783ad9c8cdc0b63aaf50ee058916c52504681263b71327720d"
+}

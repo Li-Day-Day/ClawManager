@@ -1,0 +1,67 @@
+{
+  "kind": "d_download_gc_task_local_failure_review",
+  "recorded_at": "2026-10-21T02:42:01.082Z",
+  "status": "local_fixture_failure_fixed_and_full_packages_revalidated",
+  "log": "docs/evidence/d-download-gc-task-remote-20261021-100302.txt",
+  "log_sha256": "fdba0b45827097deac645279005beeea22a9d459d01d0117a1bc356840c97ad9",
+  "source_manifest": "docs/evidence/d-download-gc-task-remote-20261021-100302-source.json",
+  "source_manifest_sha256": "85e7fd739cca0898421c2d2008d53069ef543fbf1ed757ad4f75ed9e4e3f229e",
+  "source_sha256": "0df9ca928b7990db0046c6fc4d42ebfe5123af59f45f60b9aee8dccc180c5c8b",
+  "source_files": 1457,
+  "stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 255,
+      "all": 2011,
+      "passed": 2011,
+      "failed": 0,
+      "elapsed": "89.544s",
+      "status": "ok"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 348,
+      "all": 2924,
+      "passed": 2921,
+      "failed": 3,
+      "elapsed": "384.192s",
+      "status": "FAIL"
+    }
+  ],
+  "failed_tests": [
+    "TestDownloadRetentionGCProducerReceiptFacts",
+    "TestDownloadRetentionGCProducerReceiptFacts/null_version",
+    "TestDownloadRetentionGCProducerReceiptFacts/no_version"
+  ],
+  "failed_leaves": 2,
+  "outer_exit": 1,
+  "remote_started": false,
+  "actual_sql_cases": 0,
+  "reason": "D negative fixtures decoded C1 typed binary framing as JSON; both failed in fixture construction before entering the component",
+  "fixed": {
+    "receipt": "docs/evidence/d-download-gc-producer-preparation-20261021.json",
+    "receipt_sha256": "06f0075397ce340e6f032274c7404b339489f7c6ec930d80839b2b19c7d33375",
+    "source_sha256": "727348b948844c09a40390957f760d7f310a3f8d970b3d84e85740adae71042d",
+    "changed_files": [
+      "backend/internal/systembackupevidence/download_retention_gc_producer_test.go"
+    ],
+    "production_inputs_unchanged_from_failed_operator_run": true,
+    "full_main": 754,
+    "full_all": 6242,
+    "default_vet": true,
+    "exit": 0,
+    "dependencies_installed": false,
+    "test_gate_not_weakened": true
+  },
+  "cleanup": {
+    "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-28124ca884224e5696b86dd21cf8870e",
+    "local_source_independently_absent": true,
+    "local_build_cache_reported": true
+  },
+  "boundaries": {
+    "producer_eighteen_actual_acceptance_unchanged": true,
+    "gc_task_eighteen_actual_still_pending": true,
+    "production_approval": false,
+    "reviewer_remote_run": false
+  }
+}

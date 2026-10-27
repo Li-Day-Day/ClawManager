@@ -1,0 +1,112 @@
+{
+  "kind": "a_config_mutation_session_authority_composition_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T09:53:46.9953431+08:00",
+  "status": "accepted_local_session_composition_with_required_runtime_gates",
+  "reviewer_role": "A",
+  "reviewer_kind": "Codex local review; not human/deployment signature",
+  "source_snapshot": {
+    "path": "docs/evidence/a-config-session-composed-source-20261015.json",
+    "manifest_sha256": "46587238a4288fc1b496a353eb897c0a08d7e6aaf58ecd2752f6b96e7dc154c3",
+    "source_sha256": "7235a49730c38eec7740294416d11ebe7891ba65b0c2a036349e1d5f488dd6f1",
+    "files": 1165,
+    "post_test_snapshot_check": "passed before LOCAL_PASS",
+    "current_existing_input_drift": [
+      "backend/internal/systembackupsecurity/config_mutation_capacity_test.go",
+      "backend/internal/systembackupsecurity/config_mutation_strongauth.go"
+    ],
+    "missing_inputs": []
+  },
+  "reviewed_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_authority_test.go",
+      "size": 6385,
+      "sha256": "806bc759e23f41f6ac03afe646b9955dcd55f01f3037e5a39940736b4d498b2a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_authority.go",
+      "size": 5410,
+      "sha256": "2651bc04f9d01dd24886a9494e900b60a44bcdc59a28e3845831ff71672b4c2e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_rbac.go",
+      "size": 4960,
+      "sha256": "8a6b78f740fa10df7bcd46d60d3e1fdde0ba04c976529b398ce3673316dbc4b7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session_a_integration_test.go",
+      "size": 7652,
+      "sha256": "29cff40d67740285b366fee58a1b5fc75796bd554adcac580fdb03352558d0b0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session_test.go",
+      "size": 10054,
+      "sha256": "c8d0d761d1d44bdccf52fd498eed9645aeec251c35f1dafba9077a9aaea24c99"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session.go",
+      "size": 2761,
+      "sha256": "8ef1e2903fd7da0e52093eda5a379a5916e0356d5396769d124fd2b635c8e31d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 35966,
+      "sha256": "0e5e94fce5ff07f01c1ee886466ba172b6c7bc5cb011d601dac3eeeca986c800"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/login_sessions.go",
+      "size": 8279,
+      "sha256": "bddd0ac6750e6114c736404b55d64507d038f6ccfb3074c27ab44687de40b405"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_api.go",
+      "size": 7393,
+      "sha256": "6dfd6ad9c7ba32e958aafa77bc92d0f9289f6c1ac44579ea99b0372a9b39ad33"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_sql.go",
+      "size": 11959,
+      "sha256": "74fd8128bd3a734a2ab757ff44a17ce0c793c9273abc639b6ebe33b21e6f01f7"
+    }
+  ],
+  "validation": {
+    "log": "docs/evidence/a-config-session-composed-local-20261015.txt",
+    "log_sha256": "1e9824befdba84af7796d04ae51302f3e3549e8d0e4e37804064c248d01e23bb",
+    "command": "go test -count=1 -v -p=1 ./internal/systembackupsecurity",
+    "main_pass": 120,
+    "subtest_pass": 548,
+    "total_checks": 668,
+    "package_seconds": 29.855,
+    "exit": 0,
+    "vet_enabled": true,
+    "tool_crash_retries": 0,
+    "composed_main_pass": 2,
+    "composed_subtest_pass": 7
+  },
+  "composition": "Actual JWT access authenticator, SQLLoginSessions.CheckConfigMutationSession, PinnedConfigMutationAuthority and ConfigMutationService; synthetic JWT/registry; SQL transport, capacity, preparation and response remain models",
+  "covered": [
+    "ordinary write with live session",
+    "password change invalidates credential-bound session",
+    "session revoked",
+    "SQL expiry shortened by one microsecond",
+    "revocation at token issue",
+    "revocation during lock-free preparation",
+    "revocation at final callback rolls back writes",
+    "revoked committed observer cannot read original response"
+  ],
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-a563026fd6a943198f9af5f2535e4ac3",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-b1f26c7376bd4080826210c6d3451220"
+  ],
+  "cleanup_independently_absent": true,
+  "dependencies_installed": false,
+  "ssh_run": false,
+  "mysql_run": false,
+  "ddl_executed": false,
+  "http_registered": false,
+  "runtime_sources_complete": false,
+  "runtime_grants_issued": 0,
+  "historical_canonical_originals_delivered": 0,
+  "production_approved": false,
+  "scope_limit": "No InnoDB locking/concurrency guarantee, LDAP event integration, production MFA proof issuance, grant, historical backfill or acceptance of parallel materials/capacity changes"
+}

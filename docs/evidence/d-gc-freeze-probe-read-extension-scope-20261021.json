@@ -1,0 +1,20 @@
+{
+  "kind": "d_gc_freeze_added_read_entrypoints_scope_review",
+  "source": "backend/internal/systembackupread/verification_detail.go",
+  "sha256": "1b4cd2832a8d9dad1cab4941b883eb3e7c8fc7fa7a325038a084c94f9787207e",
+  "functions": [
+    "ReadVerificationDetail",
+    "ReadVerificationDetailDTO",
+    "buildVerificationDetail",
+    "verificationExecution",
+    "verificationString",
+    "verificationTime",
+    "verificationEvidence"
+  ],
+  "top_level_var_declaration": false,
+  "init_function": false,
+  "direct_name_references_in_parent_tested_go_files": [],
+  "review": "Added entry points and helper functions only; no package initializer or top-level mutable initialization. Read package receives a separate full test and probes are rebuilt. This name scan is a manual scope review, not a general call-graph proof.",
+  "actual_mysql": false,
+  "production_approved": false
+}

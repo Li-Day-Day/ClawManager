@@ -1,0 +1,57 @@
+{
+  "full_security_main": 230,
+  "full_security_sub": 1525,
+  "full_security_fail": 0,
+  "counterfactual_failed_leaves": [
+    "half-second",
+    "second-end",
+    "midnight-end"
+  ],
+  "cases": [
+    {
+      "name": "service_apply_replay_nochange",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_audit_failure_rollback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_receipt_failure_rollback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_final_revoke_rollback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_capacity_expiry_after_callback",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_lost_commit_observe_only",
+      "starts": 1,
+      "passes": 1
+    },
+    {
+      "name": "service_observed_lock_single_apply",
+      "starts": 1,
+      "passes": 1
+    }
+  ],
+  "owned_installation_cleanup": 7,
+  "owned_receipt_cleanup": 7,
+  "observed_config_lock_waits": 2,
+  "known_tool_retries": 1,
+  "preupload_password_denials": 2,
+  "local_cleanup_checked": 69,
+  "local_cleanup_remaining": [],
+  "mysql_version": "8.4.8",
+  "namespace": "sbk-mig-261016005638-22b8",
+  "namespace_uid": "df21e81b-ea71-4fd7-87a8-a33290d62c68"
+}

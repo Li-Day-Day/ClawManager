@@ -1,0 +1,46 @@
+{
+  "kind": "a_download_runtime_journal_local_acceptance",
+  "recorded_at": "2026-10-20T01:54:51.673Z",
+  "run": "20261020-r2",
+  "source_sha256": "b7a0c14718b6422d2411df095723bda2ba0a2218688e9666f5ec5354b6431b09",
+  "source_count": 1420,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_tests": 254,
+      "tests_including_subtests": 2010
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_tests": 299,
+      "tests_including_subtests": 2299
+    }
+  ],
+  "new_roots": [
+    "TestDownloadFailureJournalBoundedRecord",
+    "TestDownloadFailureJournalRequiresProvisionedFile",
+    "TestDownloadFailureJournalStickyDenial",
+    "TestDownloadFailureJournalTamperAndCapacity",
+    "TestDownloadFailureJournalBusyDoesNotBlockAuthority",
+    "TestJournaledDownloadRuntimeFailureGuard",
+    "TestDownloadApplicationConcreteBindingsAndClose",
+    "TestDownloadApplicationMissingProductionInputsReject",
+    "TestDownloadFailureJournalPrivateModes"
+  ],
+  "new_checks_including_roots": 55,
+  "linux_binary_sha256": "604c1dc7d1392756f904d51c10174e0afbebd52eeccfc5097f9bd1cd2ebc75ed",
+  "scoped_current_inputs_match": true,
+  "other_snapshot_input_drift_excluded": [
+    "backend/cmd/system-backup-registration/main.go",
+    "scripts/system-backup-d-config-writer-validation.ps1"
+  ],
+  "frozen_postcheck": true,
+  "owned_sources_caches_binary_absent": true,
+  "first_failed_windows_rename_fixture_preserved": true,
+  "first_owned_products_absent": true,
+  "dependencies_installed": false,
+  "actual_sql": "not_run",
+  "linux_file_permissions_and_shared_storage": "not_executed",
+  "main_listener_and_deployment": "not_connected",
+  "production_approval": false
+}

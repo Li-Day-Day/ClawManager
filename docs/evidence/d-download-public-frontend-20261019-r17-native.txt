@@ -1,0 +1,77 @@
+**********************
+PowerShell transcript start
+Start time: 20261019104029
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$publicBuildRoot=[IO.Path]::GetFullPath((Get-Location).Path)
+$publicFrontend=Join-Path $publicBuildRoot 'frontend'
+$publicBuildID=[guid]::NewGuid().ToString('N')
+$publicBuildOwner=Join-Path $publicFrontend ('.tmp-d-frontend-build-'+$publicBuildID)
+$publicBuildPrefix=Join-Path $publicBuildRoot 'docs/evidence/d-download-public-frontend-20261019-r17'
+$publicBuildSource=Join-Path $publicBuildRoot 'docs/evidence/d-download-public-node-20261019-r16-source.json'
+foreach($publicBuildSuffix in @('-native.txt','-tsc.txt','-tsc-stderr.txt','-vite.txt','-vite-stderr.txt','.json')){if(Test-Path -LiteralPath ($publicBuildPrefix+$publicBuildSuffix)){throw 'Refusing to replace frontend evidence'}}
+$publicFrontendSnapshot=(Get-Content -LiteralPath $publicBuildSource -Raw -Encoding UTF8 | ConvertFrom-Json).frontend
+. (Join-Path $publicBuildRoot 'scripts/system-backup-d-index-source-snapshot.ps1')
+$publicBuildPaths=@($publicFrontendSnapshot.files | ForEach-Object {$_.path})
+if((Get-DIndexPinDigest -Pins (Get-DIndexInputPins -Root $publicBuildRoot -Files $publicBuildPaths)) -ne $publicFrontendSnapshot.source_sha256){throw 'Frontend no longer matches frozen Node input'}
+foreach($publicBuildTool in @('typescript/bin/tsc','vite/bin/vite.js')){if(-not(Test-Path -LiteralPath (Join-Path $publicFrontend ('node_modules/'+$publicBuildTool)))){throw 'Existing frontend dependency required; no installation'}}
+$publicBuildRecord=[ordered]@{kind='d_download_public_frontend_build';source_manifest='docs/evidence/d-download-public-node-20261019-r16-source.json';source_sha256=$publicFrontendSnapshot.source_sha256;source_files=$publicBuildPaths.Count;owned_directory=$publicBuildOwner;typescript=$false;vite=$false;source_postcheck=$false;artifacts_cleaned=$false;installed_dependencies=$false;browser_or_runtime_verified=$false;status='incomplete'}
+Start-Transcript -LiteralPath ($publicBuildPrefix+'-native.txt') -NoClobber|Out-Null
+try {
+    [IO.Directory]::CreateDirectory($publicBuildOwner)|Out-Null
+    [IO.File]::WriteAllText((Join-Path $publicBuildOwner 'owner.txt'),$publicBuildOwner)
+    foreach($publicBuildName in @('app','node')){
+        $publicBuildConfig=[ordered]@{extends=(Join-Path $publicFrontend ('tsconfig.'+$publicBuildName+'.json'));compilerOptions=@{tsBuildInfoFile=(Join-Path $publicBuildOwner ($publicBuildName+'.tsbuildinfo'))}}
+        [IO.File]::WriteAllText((Join-Path $publicBuildOwner ($publicBuildName+'.json')),($publicBuildConfig|ConvertTo-Json -Depth 5))
+    }
+    [IO.File]::WriteAllText((Join-Path $publicBuildOwner 'tsconfig.json'),(@{files=@();references=@(@{path='./app.json'},@{path='./node.json'})}|ConvertTo-Json -Depth 5))
+    $env:CI='1';$env:FORCE_COLOR='0';$env:JITI_CACHE='false'
+    Write-Host ('FRONTEND_SOURCE files='+$publicBuildPaths.Count+' sha256='+$publicFrontendSnapshot.source_sha256+' installed_dependencies=no owner='+$publicBuildOwner)
+    $publicTSC=Start-Process -FilePath (Get-Command node).Source -ArgumentList @((Join-Path $publicFrontend 'node_modules/typescript/bin/tsc'),'-b',(Join-Path $publicBuildOwner 'tsconfig.json'),'--pretty','false') -WorkingDirectory $publicFrontend -RedirectStandardOutput ($publicBuildPrefix+'-tsc.txt') -RedirectStandardError ($publicBuildPrefix+'-tsc-stderr.txt') -WindowStyle Hidden -PassThru -Wait
+    Write-Host ('NATIVE_EXIT typescript='+$publicTSC.ExitCode)
+    if($publicTSC.ExitCode -ne 0){throw 'TypeScript build failed'}
+    $publicBuildRecord.typescript=$true
+    $publicVite=Start-Process -FilePath (Get-Command node).Source -ArgumentList @((Join-Path $publicFrontend 'node_modules/vite/bin/vite.js'),'build','--configLoader','runner','--outDir',(Join-Path $publicBuildOwner 'dist'),'--emptyOutDir','--clearScreen=false') -WorkingDirectory $publicFrontend -RedirectStandardOutput ($publicBuildPrefix+'-vite.txt') -RedirectStandardError ($publicBuildPrefix+'-vite-stderr.txt') -WindowStyle Hidden -PassThru -Wait
+    Write-Host ('NATIVE_EXIT vite='+$publicVite.ExitCode)
+    if($publicVite.ExitCode -ne 0 -or -not(Test-Path -LiteralPath (Join-Path $publicBuildOwner 'dist/index.html'))){throw 'Vite build failed'}
+    $publicBuildRecord.vite=$true
+    if((Get-DIndexPinDigest -Pins (Get-DIndexInputPins -Root $publicBuildRoot -Files $publicBuildPaths)) -ne $publicFrontendSnapshot.source_sha256){throw 'Frontend bytes changed during build'}
+    $publicBuildRecord.source_postcheck=$true
+    $publicBuildRecord.output_files=@(Get-ChildItem -LiteralPath (Join-Path $publicBuildOwner 'dist') -Recurse -File).Count
+    $publicBuildRecord.status='typescript_and_vite_passed'
+    Write-Host 'FRONTEND_POSTCHECK passed=yes'
+} catch {$publicBuildRecord.status='failed';$publicBuildRecord['error']=$_.Exception.Message;throw} finally {
+    try {
+        if(Test-Path -LiteralPath $publicBuildOwner){
+            $publicBuildResolved=(Resolve-Path -LiteralPath $publicBuildOwner).Path
+            if([IO.Path]::GetDirectoryName($publicBuildResolved) -ne $publicFrontend -or [IO.Path]::GetFileName($publicBuildResolved) -ne ('.tmp-d-frontend-build-'+$publicBuildID) -or ((Get-Item -LiteralPath $publicBuildResolved -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) -or [IO.File]::ReadAllText((Join-Path $publicBuildResolved 'owner.txt')) -ne $publicBuildOwner){throw 'Refusing frontend cleanup outside owned directory'}
+            if(@(Get-ChildItem -LiteralPath $publicBuildResolved -Recurse -Force -Attributes ReparsePoint).Count -ne 0){throw 'Refusing redirected frontend artifact cleanup'}
+            Remove-Item -LiteralPath $publicBuildResolved -Recurse -Force
+        }
+        $publicBuildRecord.artifacts_cleaned=-not(Test-Path -LiteralPath $publicBuildOwner)
+        Write-Host ('CLEANED frontend-build='+$publicBuildRecord.artifacts_cleaned)
+    } finally {[IO.File]::WriteAllText(($publicBuildPrefix+'.json'),($publicBuildRecord|ConvertTo-Json -Depth 6));Stop-Transcript|Out-Null}
+}
+Process ID: 41224
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+FRONTEND_SOURCE files=277 sha256=86886574c967e9b2673daf7dceb6fc8648a9f79cfb328c5c0b9d5306097ba372 installed_dependencies=no owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\frontend\.tmp-d-frontend-build-3372781106644ab6b8de998518f7c183
+NATIVE_EXIT typescript=0
+NATIVE_EXIT vite=1
+CLEANED frontend-build=True
+**********************
+PowerShell transcript end
+End time: 20261019104212
+**********************

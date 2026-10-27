@@ -1,0 +1,234 @@
+{
+  "kind": "d_independent_work_final_local_audit",
+  "recorded_at": "2026-10-16T02:38:36.038Z",
+  "result": "PASS_FOR_LISTED_LOCAL_SCOPE_ONLY",
+  "node_tests": 211,
+  "full_linux_go_before_final_autocommit_restriction": [
+    {
+      "package": "clawreef/internal/systembackupcontroller",
+      "package_pass": true,
+      "top_level_pass": 139,
+      "including_subtests_pass": 187,
+      "failed": 0
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "package_pass": true,
+      "top_level_pass": 55,
+      "including_subtests_pass": 292,
+      "failed": 0
+    }
+  ],
+  "final_autocommit_health_only": [
+    {
+      "package": "clawreef/internal/systembackupcontroller",
+      "package_pass": true,
+      "top_level_pass": 3,
+      "including_subtests_pass": 3,
+      "failed": 0
+    }
+  ],
+  "focused_http_source_tests": [
+    {
+      "package": "command-line-arguments",
+      "package_pass": true,
+      "top_level_pass": 2,
+      "including_subtests_pass": 2,
+      "failed": 0
+    }
+  ],
+  "focused_windows_wrapper_overall_pass": false,
+  "audit_preflight_cases": 42,
+  "linux_initializer": {
+    "observed_tool_exit": 0,
+    "tests": 8,
+    "skipped": 0,
+    "raw_transcript": "tool output only",
+    "image": "sha256:8d9d0b8bcf6506481eae4907c18f5e3e7902e629f5f6d684f9e7c32e85e3ddf0"
+  },
+  "go_image": "sha256:2389ebfa5b7f43eeafbd6be0c3700cc46690ef842ad962f6c5bd6be49ed82039",
+  "inventory_native_exit": 0,
+  "strict_contract_native_exit": 1,
+  "frontend_build_native_exit": 1,
+  "full_server_build_test_pass": false,
+  "dependency_installation": false,
+  "image_pull": false,
+  "tested_new_container_label_observed_empty": "codex.task=d-independent-20261016",
+  "checked_absent_directories": [
+    ".tmp-a-evidence-66065c2a47994b3caf1b08076b4253dc",
+    "frontend/dist",
+    "frontend/node_modules",
+    "scripts/__pycache__"
+  ],
+  "authority_eight_case_review": "docs/evidence/system-backup-d-a-authority-review-20261016-r40.json",
+  "current_source_hashes_recorded_after_tests": [
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "sha256": "332cd3189c37434133e5baff0329c7ba3974d432e967cc888ed22788ccbbfd41",
+      "bytes": 8441
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_test.go",
+      "sha256": "95921bc22a4855e3b699a08dd7f6e42bfffe2f26b322e5626ca10a98ad85d0fe",
+      "bytes": 5216
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health.go",
+      "sha256": "2eb933a813dd8b2c85836e3eb4ac591393ad50983a2d7c26480e1380419dae43",
+      "bytes": 7086
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health_test.go",
+      "sha256": "d66152210675b73d3a46f1ba75999a4d14e5ebbfcca9cb6f4a154e59cd9fcfc5",
+      "bytes": 6357
+    },
+    {
+      "path": "backend/internal/systembackupread/control_health.go",
+      "sha256": "dcbe533dd21704c763be4bc974f5a715b3a73102442493d1ee81f4bf5c2fa2d7",
+      "bytes": 3212
+    },
+    {
+      "path": "backend/internal/systembackupread/control_health_test.go",
+      "sha256": "6bc414efee7d976d2a823fd769ba64da33dbf76417c04111f19fa3df6f35a2a0",
+      "bytes": 3643
+    },
+    {
+      "path": "backend/internal/systembackupread/overview_control_test.go",
+      "sha256": "d7ccd6029b35aaf8f5f5347d634291f2ed66f2bcf55edbc5c18a7fec025b06a7",
+      "bytes": 16240
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveOperations.tsx",
+      "sha256": "592bb7d0d188b486943970ac4c46431fd7a9b64981addcac79a0afc6c7c104b5",
+      "bytes": 7329
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/backupLiveOperations.ts",
+      "sha256": "ba686beee5a89dd1cb38f003c59b61c17f0641bc41473c255b2832aafbdab8fd",
+      "bytes": 3258
+    },
+    {
+      "path": "frontend/src/pages/admin/backups/BackupLiveWorkspace.tsx",
+      "sha256": "01e8c380effe1825a6dcb05fc8a45f956f54df0f3dc823c90bb27ac0243d2ba6",
+      "bytes": 10833
+    },
+    {
+      "path": "frontend/src/lib/systemBackupI18n.ts",
+      "sha256": "2b75d8809e4e1b81ea95e6ea98b115a682813a2a24f84c264ebb2591f9804e12",
+      "bytes": 68399
+    },
+    {
+      "path": "frontend/scripts/system-backups-live-operations.test.mjs",
+      "sha256": "0ddf0778f22f9abbd4223bebc1ee1698d4c16535ff40a039a8fe06c2c8745994",
+      "bytes": 6106
+    },
+    {
+      "path": "frontend/scripts/system-backups-i18n.test.mjs",
+      "sha256": "5e050dd1318579bcc2cea174bb2ac02ecc617384abf2f5ba11802d368595812e",
+      "bytes": 7864
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-storage-preflight.ps1",
+      "sha256": "89529582a18299d5039d3c5e938e092acd3a64a35de26dfe43a0ca4878be5db0",
+      "bytes": 13239
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-storage-preflight.test.ps1",
+      "sha256": "087518bd4e29c6e7c430d55846d8948735332df2b83feab5e994a84b69bc55ad",
+      "bytes": 12235
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-init.py",
+      "sha256": "f883763026532482d0f4462202e3cce3aa025780109650be90511d179b14010e",
+      "bytes": 3581
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-init.test.py",
+      "sha256": "03e4923bbe6924860b084887eb535c648813601ca86c3aab3d4213f0983fa5cb",
+      "bytes": 4141
+    },
+    {
+      "path": "docs/system-backup-d-control-health-proposal-20261016.sql",
+      "sha256": "c30bb59f04cfc1f1ffecc632180aeb2476e6a948ba7c637e489b603c0d63468b",
+      "bytes": 2017
+    },
+    {
+      "path": "docs/system-backup-d-independent-work-20261016.md",
+      "sha256": "fb07f7ee479b1f4e3a111d55eb2ad15f4120fa54f889d8944eee308187a161ad",
+      "bytes": 8951
+    },
+    {
+      "path": "docs/system-backup-d-six-scope-readiness-20261015.md",
+      "sha256": "e5bbc97463bd135e520623b1047201d3601ca36b7a4ad61034e28800d8d23326",
+      "bytes": 8430
+    },
+    {
+      "path": "docs/system-backup-d-current-handoff-audit-20261014.md",
+      "sha256": "7b0b07dd3c4821bb2d398e4961609d7be30be819c32c559846776be978e10ce7",
+      "bytes": 37424
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "f28ba84de257fd80f7d38d52c3fe3bb3ce0e617a2de0ed225685addbca37b77e",
+      "bytes": 139566
+    },
+    {
+      "path": "docs/system-backup-d-a-authority-preparation-review-20261015.md",
+      "sha256": "5c4af34d392ec91de3a0ce057246f750ced8619a931c16dd494eff225ac47561",
+      "bytes": 4726
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-receipt-review-20261015.md",
+      "sha256": "4d5e943aed8a9899fd15f0e2561c79dca3ac0f90fcde5f92f1914f29398ef1ab",
+      "bytes": 18372
+    },
+    {
+      "path": "docs/system-backup-d-recovery-audit-deployment-preflight-20261012.md",
+      "sha256": "07a6e1f6251ce2bde00554c03ea6d3998fb0ba7ccbf2f3f8319615ca4a3329a4",
+      "bytes": 8296
+    }
+  ],
+  "evidence_logs": [
+    {
+      "path": "docs/evidence/system-backup-d-independent-node-20261016-r40-final.txt",
+      "sha256": "18faad5863d4df3ab8ac05a77aae9cd0986218a8d5b6fd7c297dd716d01cb28f",
+      "bytes": 14695
+    },
+    {
+      "path": "docs/evidence/system-backup-d-control-health-linux-20261016-r40-fix.txt",
+      "sha256": "cedbbcbf2fd122c32e1cc73c53255a175682126279d5168468cd0862663f3737",
+      "bytes": 445215
+    },
+    {
+      "path": "docs/evidence/system-backup-d-control-health-linux-20261016-r40-final.txt",
+      "sha256": "f25f565fdcba558d57d68364750c4e5b7281f05a84881d1aa195a5b5521f0f57",
+      "bytes": 3426
+    },
+    {
+      "path": "docs/evidence/system-backup-d-independent-go-focused-20261016-r40.txt",
+      "sha256": "a0a347fd9eb64762b36d0aa01704613e7a9296d622a23ea51c841ea784f257fd",
+      "bytes": 2165
+    },
+    {
+      "path": "docs/evidence/system-backup-d-audit-preflight-20261016-r40-final.txt",
+      "sha256": "1e750c3a88d31248e9456a58eb2bccbf995416093e069c947ade4bd2e763ce91",
+      "bytes": 1573
+    },
+    {
+      "path": "docs/evidence/system-backup-d-independent-inventory-20261016-r40.txt",
+      "sha256": "0ffec3fab6f53e9ef8bec56c0ae2a71d4450bec0a5e177902e921aee72067510",
+      "bytes": 749
+    },
+    {
+      "path": "docs/evidence/system-backup-d-independent-contract-20261016-r40.txt",
+      "sha256": "94a4f64683e3b3a8b2db005a6c673d0794620ee7c00e953bd33f230e6a5dff20",
+      "bytes": 5852
+    }
+  ],
+  "current_tree_frozen_or_approved": false,
+  "new_schema_installed": false,
+  "production_health_enabled": false,
+  "full_frontend_or_browser_verified": false,
+  "production_approval": false,
+  "original_goal_complete": false
+}

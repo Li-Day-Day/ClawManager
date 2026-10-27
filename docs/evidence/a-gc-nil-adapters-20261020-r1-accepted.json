@@ -1,0 +1,58 @@
+{
+  "kind": "a_gc_nil_dependency_fix_local_acceptance",
+  "recorded_at": "2026-10-20T09:29:31.695Z",
+  "source_manifest": "docs/evidence/a-gc-nil-adapters-20261020-r1-source.json",
+  "source_sha256": "b77311e720d6e77f7258276b797574a2dba6e724e2d906b6e6dcaa4c703ece0e",
+  "source_files": 1451,
+  "source_manifest_sha256": "1d6ce94938f8bdf822492b1132c60d7c11ddb27d0f7b4dddb12283ae23261798",
+  "native": "docs/evidence/a-gc-nil-adapters-20261020-r1-native.txt",
+  "native_sha256": "93dc61dda46f85cb8b559a7ddb70b269263d5e6b1ba1a35018c8f4c324a5d3c2",
+  "fixed_events": "docs/evidence/a-gc-nil-adapters-20261020-r1-fixed-full-attempt1.jsonl",
+  "fixed_events_sha256": "b280475eeb42553c06aed22fa3e8bafcf10eff9e081b4e58c257d57460a51f8f",
+  "counterfactual_events": "docs/evidence/a-gc-nil-adapters-20261020-r1-old-guards-attempt1.jsonl",
+  "counterfactual_events_sha256": "8717b7800ec6b0d1a91091e4b755c0297525b7dd56ef101c6de97de2ffa51c86",
+  "old_guards": {
+    "exit": 1,
+    "main": 3,
+    "all": 11,
+    "expected_failed_checks": 8
+  },
+  "fixed": {
+    "exit": 0,
+    "main": 590,
+    "all": 4822,
+    "new_main": 3,
+    "new_checks": 11,
+    "no_skip": true,
+    "default_vet": true,
+    "count": 1
+  },
+  "existing_test_inventory_preserved": true,
+  "core_current_matches_frozen": true,
+  "current_pinned_drift": [
+    "scripts/system-backup-mysql-startup-diagnostic.ps1"
+  ],
+  "existing_certificate_claim_revocation_checks": [
+    "TestGCAuthorityOperationAndConfigurationFailures/certificate_expired",
+    "TestGCAuthorityOperationAndConfigurationFailures/worker",
+    "TestGCAuthorityOperationAndConfigurationFailures/lease",
+    "TestGCAuthorityOperationAndConfigurationFailures/deadline",
+    "TestGCAuthorityOperationAndConfigurationFailures/expire_after_policy",
+    "TestGCAbsenceAuthorizationBeforeAndAfterProvider/before",
+    "TestGCAbsenceAuthorizationBeforeAndAfterProvider/during",
+    "TestGCAbsenceAuthorizationBeforeAndAfterProvider/changed_claim",
+    "TestGCRuntimeExactDeleteAndTransactionalResults/revoke_in_proof",
+    "TestGCRuntimeExactDeleteAndTransactionalResults/revoke_before_result",
+    "TestGCRuntimeExactDeleteAndTransactionalResults/claim_expiry",
+    "TestGCRuntimeExactDeleteAndTransactionalResults/result_expiry"
+  ],
+  "current_whole_worktree_verified": false,
+  "source_postcheck": true,
+  "owned_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-19acced438484b389bcb55400537f7c0",
+  "owned_directory_absent": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "scope": "Three evidence GC typed-nil dependency boundaries, existing peer/claim/revocation regressions and full local security/evidence packages. Not an actual SQL, role, material, lock or full metadata-GC approval."
+}

@@ -1,0 +1,244 @@
+{
+  "kind": "a_config_canonical_write_security_contract",
+  "contract_id": "a-config-canonical-write-security.v1",
+  "contract_version": "system-backup-plan.v12",
+  "date": "2026-10-14",
+  "owner": "A",
+  "review_status": "accepted_for_d_implementation",
+  "approval_scope": "A-owned authorization, strong-auth, idempotency, audit and exact-source requirements for D canonical config writers; not deployment authorization or whole-v12 freeze",
+  "public_contracts_remain": "draft",
+  "operations": {
+    "update": {
+      "operation_id": "updateSystemBackupConfig",
+      "method": "PUT",
+      "path": "/admin/system-backup-config",
+      "operation_type": "config_update",
+      "http_status": 200,
+      "body_schema": "admin-control-resources.schema.json#/$defs/ConfigUpdateRequest"
+    },
+    "rollback": {
+      "operation_id": "rollbackSystemBackupConfig",
+      "method": "POST",
+      "path": "/admin/system-backup-config/rollback",
+      "operation_type": "config_update",
+      "http_status": 200,
+      "body_schema": "admin-mutation-requests.schema.json#/$defs/ConfigRollbackRequest"
+    },
+    "backfill": {
+      "mode": "offline maintenance only; no new HTTP operation approved",
+      "purpose": "config_canonical_backfill",
+      "public_config_update_receipt_for_backfill": "forbidden",
+      "receipt_storage": "D must implement/review a typed durable maintenance receipt ledger; current 066 config_update success is not a backfill receipt"
+    }
+  },
+  "authorization": {
+    "base_permission": "system_backup.configure",
+    "server_derived_security_boundary": {
+      "additional_permissions": [
+        "system_backup.security_configure"
+      ],
+      "recent_strong_auth": true,
+      "changes": [
+        "rbac role bindings",
+        "strong-auth issuer or nonce-HMAC key",
+        "provider-proof issuer or public key",
+        "artifact signing keys",
+        "artifact delete ref",
+        "evidence read/write/delete refs",
+        "catalog append ref",
+        "disaster bootstrap mapping"
+      ]
+    },
+    "server_derived_protection_reduction": {
+      "additional_permissions": [
+        "system_backup.destructive"
+      ],
+      "recent_strong_auth": true,
+      "nonempty_request_reason": true,
+      "changes": [
+        "lower retention_seconds",
+        "lower evidence_retention_seconds",
+        "lower control_metadata_retention_seconds",
+        "lower minimum_recovery_points",
+        "failure-domain required true -> false",
+        "alert_profile production -> development",
+        "expand automatic deletion or alert suppression capability"
+      ]
+    },
+    "rules": [
+      "Compute classification from locked current/proposed effective config and independently resolved registry contents, never caller booleans or registry hashes alone.",
+      "Validate current authenticated actor/session, revocation and current RBAC inside the mutation transaction, including committed receipt reads.",
+      "Forbid granting caller new security/destructive permission, changing built-in role sets, or removing the last security_admin binding.",
+      "Resolve all exact typed refs and required registries against current environment; retain still-referenced historical identities/versions. Provider/network work completes before DB locks; transaction-time guards reject stale observations.",
+      "Use the frozen D lock order, capacity reservation and final authority recheck in the caller-owned transaction; A adapters cannot commit it.",
+      "BootstrapAdmission, read scope and VerifiedConfigBackfillSource do not authorize PUT/rollback/backfill."
+    ]
+  },
+  "new_versions": {
+    "expected_version": "must equal locked current active version for a new mutation; stale -> 409 version_conflict before key/nonce consumption",
+    "update": "full replacement; append a new monotonic version with canonical bytes and all materialized columns from the SAME validated ConfigValues object",
+    "rollback": "read exact rollback_from_version, re-resolve historical typed refs in current environment, apply identical security/reduction checks, append new version with copied_from_version; never activate or overwrite the historical row",
+    "canonical": "UTF-8 JCS ConfigValues, 2..262144 bytes, same SHA-256/size/materialized columns as persisted row; no request-only reason or proof in effective config",
+    "decoder_limit": "DecodeBootstrapConfig only accepts enabled=false; D needs a full ConfigValues decoder for mutation, not the bootstrap-only decoder",
+    "atomic_state": [
+      "new config row",
+      "active pointer CAS",
+      "capacity reservation",
+      "applicable nonce row",
+      "config_update terminal operation and immutable response",
+      "audit intent and result"
+    ],
+    "monitoring": "config mutation/rollback must not reset first-enabled or monitoring history"
+  },
+  "idempotency": {
+    "scope": [
+      "origin_installation_id",
+      "actor_type",
+      "actor_id",
+      "endpoint operation ID",
+      "idempotency_key"
+    ],
+    "request_hash_profile": "a-config-mutation-request-hash.v1",
+    "request_hash_input": {
+      "domain": "clawmanager.system-backup.config-mutation.v1",
+      "fields": [
+        "domain",
+        "origin_installation_id",
+        "actor_type",
+        "actor_id",
+        "endpoint",
+        "method",
+        "request"
+      ],
+      "request": "strict request body after ConfigValues canonical normalization; rollback uses only its strict selector/expected_version/reason body"
+    },
+    "request_hash_algorithm": "SHA-256 of UTF-8 JCS(input), lowercase hex; object keys sorted, no whitespace; arrays retain the validated canonical ConfigValues order",
+    "excluded_from_request_hash": [
+      "strong-auth proof/nonce",
+      "idempotency key (bound separately)",
+      "request ID",
+      "session/token",
+      "transport headers"
+    ],
+    "rules": [
+      "Authenticate/authorize current actor before receipt lookup.",
+      "Same scope/key/hash with complete committed receipt returns original HTTP status/resource/immutable response, without nonce re-consumption, activation or new audit/mutation side effects.",
+      "Same key with different hash -> 409 idempotency_conflict.",
+      "Receipt lookup precedes new-proof consumption and expected_version execution guard; successful replay does not re-execute a stale original expected_version.",
+      "Pre-transaction auth/validation/readiness/version/state failures occupy no key and consume no nonce.",
+      "Unknown commit requires independent same-target/key/hash observation under current authority; never blindly repeat a write.",
+      "Tombstone-only same hash -> 410 idempotency_expired, different hash -> 409; destructive key tombstones are permanent for installation lifetime, standard retention follows v12."
+    ]
+  },
+  "strong_auth": {
+    "verifier": "backend/internal/systembackupsecurity/strongauth.go Verify",
+    "proof_schema": "strong-auth-proof-nonce.schema.json",
+    "ledger_schema": "strong-auth-nonce-ledger.schema.json",
+    "rules": [
+      "Bind trusted issuer/key purpose/version, audience, actor subject/session, MFA method, endpoint/request_hash/idempotency_key and database-time age/expiry.",
+      "Check nonce HMAC under every retained historical key version before unique insertion.",
+      "Consume nonce with target mutation, real operation result anchor and returned audit intent ID in ONE transaction.",
+      "Required proof must remain valid through final guard/commit, not just parsing.",
+      "Do not store raw proof, nonce, credential or session token in audit/ledger. Nonce required only for applicable new public config mutation, not replay."
+    ]
+  },
+  "audit": {
+    "intent": "system_backup.config_update.intent",
+    "result": "system_backup.config_update.result",
+    "rollback_discriminator": "endpoint=rollbackSystemBackupConfig plus copied_from_version",
+    "details": [
+      "request_id",
+      "actor type/id and redacted session binding",
+      "origin installation/target",
+      "endpoint",
+      "operation or maintenance receipt ID",
+      "request_hash",
+      "old/new version/hash/size",
+      "copied_from_version when rollback",
+      "server-derived risk/reduction summary",
+      "change_reason",
+      "result",
+      "failure_category and redacted failure_message"
+    ],
+    "limits": "redacted audit details <=64KiB; no raw canonical body or proof/credential",
+    "rules": [
+      "Return actual audit_logs.id from intent insert for nonce FK, never SELECT MAX(id).",
+      "Audit intent/result, receipt and mutation commit or roll back together; failure/capacity shortage blocks success.",
+      "Do not record a speculative result after unknown commit or expose private DB/provider errors."
+    ]
+  },
+  "backfill": {
+    "authority": "independently authenticated, purpose-specific offline write grant; no allow-all/default or HTTP caller-supplied permission",
+    "grant_binding": [
+      "grant identity/version and revocation",
+      "subject/role and purpose config_canonical_backfill",
+      "server UUID",
+      "database",
+      "installation",
+      "exact config version",
+      "stored original canonical SHA-256 and byte size",
+      "expected row/materialized fingerprint",
+      "original source file/version/digest provenance",
+      "reviewed schema/catalog/migration pin",
+      "database-time validity and deadline",
+      "reason and idempotency key"
+    ],
+    "source_rules": [
+      "An original installation/version-bound canonical source is required; example, test fixture, candidate lab bundle, hash or materialized-column reconstruction is not original provenance.",
+      "Copy input bytes before callbacks; verify exact canonical form, stored hash/size and EVERY materialized column in the WRITE transaction against locked row.",
+      "Foreign installation, wrong version/hash/size, unknown source, missing grant or changed row rejects write.",
+      "Write only canonical_config_json NULL -> exact original bytes; do not change config_sha256/size, values/version/row_version, created_by/reason/time, active pointer or enablement.",
+      "Existing different bytes -> conflict; same bytes may receive an accurately labeled no-change receipt only after independent authorization and full recheck.",
+      "Missing original source leaves NULL and preserves read 503; do not synthesize or update old hash.",
+      "Final guard rechecks current grant/revocation/deadline, source pin, locked row and audit/capacity before caller-owned commit."
+    ],
+    "receipt": {
+      "action": "config_canonical_backfill",
+      "scope": [
+        "target server/database",
+        "installation",
+        "migration actor",
+        "action",
+        "idempotency_key"
+      ],
+      "request_hash_fields": [
+        "grant identity/version",
+        "installation/version",
+        "source SHA-256/size/provenance",
+        "expected row fingerprint",
+        "schema/catalog pin",
+        "reason"
+      ],
+      "result_fields": [
+        "receipt ID",
+        "target config version/hash/size",
+        "source provenance digest",
+        "wrote true/false",
+        "audit IDs",
+        "committed result/unknown status"
+      ]
+    },
+    "audit_actions": [
+      "system_backup.config_canonical_backfill.intent",
+      "system_backup.config_canonical_backfill.result"
+    ],
+    "storage_gap": "D must review and implement the maintenance receipt schema/unique guard before real backfill; do not borrow config_update, provider registration or a read receipt to bypass existing semantics."
+  },
+  "acceptance_tests": [
+    "ordinary PUT with configure; viewer/operator denied",
+    "security change requires configure+security_configure+valid fresh MFA",
+    "retention/minimum/required-domain/profile reduction requires destructive+fresh MFA+reason; rollback cannot bypass",
+    "stale expected_version, unavailable ref, bad canonical/materialized match leaves key/nonce/state untouched",
+    "same-key concurrent requests commit once; different hash conflicts; replay after fresh login remains same actor-scope result",
+    "cross-version nonce HMAC replay rejected; nonce/audit/operation failure rolls back all config state",
+    "rollback appends a new version and preserves history/first-enabled state",
+    "backfill read authorization alone denied; grant revoke/expiry/target/source drift denied",
+    "backfill changes only NULL canonical field; audit/receipt failure rolls back; competing backfills commit once",
+    "unknown commit observed independently without blind write retry"
+  ],
+  "availability": {
+    "production_write_grant": "not found in inspected checkout",
+    "original_historical_canonical_files": "not found in inspected checkout",
+    "old_rows": "not inferred from 2026-09-23 zero-row inventory; current live row count unverified"
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "kind": "a_bootstrap_resource_handoff_review.v1",
+  "reviewed_at": "2026-10-22T01:12:23.0193073Z",
+  "status": "owner_input_checklist_prepared_no_admission",
+  "review_method": "read_current_source_and_compare_each_checklist_row_to_closed_requirement_lists_and_explicit_composition",
+  "sources": [
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "size": 3609,
+      "sha256": "6309733321361c08ba45afb98811d4eee3b539c6b8c6f07c5cd82a65ee29f27d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+      "size": 7176,
+      "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "size": 7037,
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "size": 9116,
+      "sha256": "88b5a7c8e0e4c60d22da3e465dffd76cfa0e6acd2061086a5f943921e3d9a703"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+      "size": 9555,
+      "sha256": "634034b7a652a5293c12c0af9109bfbb70b5f0b4afcdb0b751ff3dc02e4a202b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "size": 6128,
+      "sha256": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/transit_signer.go",
+      "size": 6296,
+      "sha256": "04bf4ccfc3f891888dbbb48b78a05afc7039705d64cd85542c6ef4440902f62b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_keyring.go",
+      "size": 2543,
+      "sha256": "0f9766f6750d7e83cd719cf5b85135dfc366a870c04381c4f22107db6bca3208"
+    },
+    {
+      "path": "backend/internal/services/secret_ref_service.go",
+      "size": 3283,
+      "sha256": "131d62decf1282204a2d1968c924f1480ae93d77749b746b68c5355da837da1c"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "size": 23434,
+      "sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+      "size": 14436,
+      "sha256": "b1c596590f182577511e5e888786798d5c246d33e47b29e8f9bf068cf555ed12"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "docs/system-backup-d-bootstrap-entry-20260928.md",
+      "size": 7319,
+      "sha256": "97be7d5bebd5654f044df51661738a7cabb629fbae3689ebb28c047b909cf2f5"
+    },
+    {
+      "path": "docs/system-backup-a-capability-producer-admission-request-20260929.md",
+      "size": 5799,
+      "sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d"
+    },
+    {
+      "path": "docs/system-backup-a-field-evidence-handoff-20261021.md",
+      "size": 13593,
+      "sha256": "fbec4a0ef81c221013175114f51ff25ce6fe2f99d0e7cc6023dc8c51f498fa9d"
+    },
+    {
+      "path": "docs/evidence/a-live-chain-secret-admission-gaps-20261021.json",
+      "size": 2458,
+      "sha256": "f1223e1b1acc223ab426c9a1d51ba22bd48922470079694f47a21f06214bb91f"
+    },
+    {
+      "path": "scripts/system-backup-a-field-inventory.ps1",
+      "size": 3875,
+      "sha256": "32dca5216257529644e5bfbe51a3eccb9552ce127477c226fdb988eb4534ee4a"
+    },
+    {
+      "path": "docs/system-backup-a-bootstrap-resource-handoff-20261022.md",
+      "size": 15331,
+      "sha256": "6a6e81accd98b83a267d341393923bd936f8f67bb3c6cdb28cded324b69f4da5"
+    }
+  ],
+  "linked_adapters": [
+    "registry:rbac_bindings",
+    "registry:provider_proof_issuers",
+    "registry:strong_auth_issuers"
+  ],
+  "missing_adapters": [
+    "registry:parts",
+    "registry:redis_sources",
+    "registry:failure_domains",
+    "registry:disaster_identity_mapping",
+    "registry:source_writers",
+    "registry:secret_allowlist",
+    "reference:artifact_write",
+    "reference:artifact_read",
+    "reference:artifact_delete",
+    "reference:artifact_upload_issuer",
+    "reference:artifact_ca",
+    "reference:evidence_store",
+    "reference:evidence_write",
+    "reference:evidence_read",
+    "reference:evidence_delete",
+    "reference:evidence_ca",
+    "reference:evidence_kek",
+    "reference:kek",
+    "reference:capture_signing",
+    "reference:acceptance_signing",
+    "reference:catalog_signing",
+    "reference:catalog_read",
+    "reference:catalog_append",
+    "reference:catalog_snapshot",
+    "reference:nonce_hmac",
+    "reference:status_relay",
+    "cross_resources"
+  ],
+  "missing_count": 27,
+  "entries": [
+    {
+      "id": "registry:parts",
+      "coordination": "A/B/C 分项内容；D 合同/组合",
+      "required_materials": "完整备份 parts、各分项 owner、源资源与 collector/runner 对应关系，适用矩阵及必选项规则",
+      "acceptance": "拒绝未知/遗漏必选 part、错误源身份或无实现的 collector；不能拿 SQL schema registry 自动当 parts registry"
+    },
+    {
+      "id": "registry:redis_sources",
+      "coordination": "C；B 提供关联 workload",
+      "required_materials": "准确 Redis topology/源身份、受控连接引用、TTL/一致性策略及 collector 能力来源",
+      "acceptance": "拒绝错实例/版本、权限不足或不受支持的采集/TTL 策略；不能用一次连通代验"
+    },
+    {
+      "id": "registry:failure_domains",
+      "coordination": "A/B/C 依资源提供事实；D 合同",
+      "required_materials": "稳定故障域 ID、append-only 历史、源与目标关系、管理员 attestation 及全部绑定/期限",
+      "acceptance": "校验同源排斥；绑定变化或 attestation 过期即拒绝；不同显示名或不同 Kubernetes 引用不自动证明物理隔离"
+    },
+    {
+      "id": "registry:disaster_identity_mapping",
+      "coordination": "A 安全映射；B/C 资源恢复语义",
+      "required_materials": "原身份至灾难恢复身份的版本化 typed 映射、适用资源/安装、外部身份的可用性与权限来源",
+      "acceptance": "拒绝未覆盖、歧义、错安装/用途及依赖失效；不能从 Secret 名称猜测恢复身份"
+    },
+    {
+      "id": "registry:source_writers",
+      "coordination": "B；A/C 各自提供源 writer",
+      "required_materials": "MySQL/Redis/object/workspace/runtime 的完整 writer 清单、真实 inventory 和 quiesce/恢复策略",
+      "acceptance": "差集、未知 writer、身份或策略漂移不能判 clean；静态清单不能代替真实 writer 覆盖"
+    },
+    {
+      "id": "registry:secret_allowlist",
+      "coordination": "A；B/C 提供实际使用方",
+      "required_materials": "当前安装的 namespace/Secret 不可变身份/准确版本/用途/工作身份映射、broker 输入转换与最小权限",
+      "acceptance": "拒绝未列项、UID/版本变化、用途越界；零项 staging 或 functional-test 示例不是当前安装授权"
+    },
+    {
+      "id": "reference:artifact_write",
+      "coordination": "C provider；A 凭据安全",
+      "required_materials": "artifact provider/root 不可变身份、限定写 scope、写凭据版本、条件创建/校验和能力的原授权观察",
+      "acceptance": "仅能写受审 scope；错 checksum、越界、失效凭据或不支持条件创建均拒绝"
+    },
+    {
+      "id": "reference:artifact_read",
+      "coordination": "C；A 安全复审",
+      "required_materials": "精确目标/历史对象版本对应的只读凭据和读取范围",
+      "acceptance": "读取原版本/校验和，不能获写删权限或悄然读 latest"
+    },
+    {
+      "id": "reference:artifact_delete",
+      "coordination": "C；A 安全复审",
+      "required_materials": "精确删除 scope/版本、受限删除凭据、version/delete-marker 与缺失证明语义",
+      "acceptance": "不扩大到整桶/其他版本；provider 准入不替代 owner、hold、retention、lease 等删除业务门禁"
+    },
+    {
+      "id": "reference:artifact_upload_issuer",
+      "coordination": "C issuer；A 身份/短凭据策略",
+      "required_materials": "issuer 的真实身份、STS/OIDC 或采用机制、受众/subject/policy、凭据 scope/原期限及撤销路径",
+      "acceptance": "拒绝错 issuer/audience/scope、宽权限或过期 envelope；旧静态 lab 账号不自动等价"
+    },
+    {
+      "id": "reference:artifact_ca",
+      "coordination": "C 传输；A 信任复审",
+      "required_materials": "原始 CA bundle 摘要、链/有效期、准确主机名与目标 allowlist、版本映射",
+      "acceptance": "真实 TLS 校验；拒绝过期/不可信链、错主机名及未允许目标，不关闭验证"
+    },
+    {
+      "id": "reference:evidence_store",
+      "coordination": "A",
+      "required_materials": "独立 typed store/root、installation/provider 身份、对象版本/完整性与保留语义",
+      "acceptance": "拒绝错安装/root、可变 locator；独立命名不代替故障域/权限隔离证明"
+    },
+    {
+      "id": "reference:evidence_write",
+      "coordination": "A",
+      "required_materials": "限定 evidence 写 scope/凭据、条件创建和 checksum 语义、失败/unknown 处理",
+      "acceptance": "越界、无权限、内容不匹配均拒绝；不能以下载只读身份发布 evidence"
+    },
+    {
+      "id": "reference:evidence_read",
+      "coordination": "A",
+      "required_materials": "精确 evidence 对象/版本与只读身份、checksum 和历史读取策略",
+      "acceptance": "不用请求提供的任意 URI；撤权/错版本失败，不扩大写删权限"
+    },
+    {
+      "id": "reference:evidence_delete",
+      "coordination": "A",
+      "required_materials": "受限删除身份、精确版本、删除与缺失证明能力来源",
+      "acceptance": "精确对象删除且可追证；实际 GC 另须原 owner/引用/retention 等门禁，不在本清单重做"
+    },
+    {
+      "id": "reference:evidence_ca",
+      "coordination": "A",
+      "required_materials": "evidence endpoint 的受控解析、原 CA bundle/链/主机名/版本",
+      "acceptance": "不可信链、过期、主机名及允许目标不匹配均拒绝"
+    },
+    {
+      "id": "reference:evidence_kek",
+      "coordination": "A",
+      "required_materials": "installation 绑定的 evidence KEK ref/version、wrap/unwrap 身份及全部仍被保留 evidence 引用的历史映射",
+      "acceptance": "准确 key routing、历史可解封、撤销与新写策略；构造 keyring 成功不等于通过准入"
+    },
+    {
+      "id": "reference:kek",
+      "coordination": "A；B/C 提供使用路径",
+      "required_materials": "backup 数据密钥对应的 KEK variant/provider/ref/version、生成/解封或包裹能力、精确权限与历史保留",
+      "acceptance": "variant 与调用权限一致；拒绝错 key/version/用途，历史读取所需材料不能提前撤除"
+    },
+    {
+      "id": "reference:capture_signing",
+      "coordination": "A；B capture 输入",
+      "required_materials": "capture 专用 signer/key/version/public key、签名 domain/payload 合同、调用身份与历史验证来源",
+      "acceptance": "密钥与 acceptance/catalog 及其他用途隔离；真实签名可验证，错 purpose/domain/payload 拒绝"
+    },
+    {
+      "id": "reference:acceptance_signing",
+      "coordination": "A；D acceptance 组合",
+      "required_materials": "acceptance 专用 signer/key/version、payload/domain、授权调用方与历史验证策略",
+      "acceptance": "不复用其他用途密钥；不以 signer 准入替代 acceptance 业务判定"
+    },
+    {
+      "id": "reference:catalog_signing",
+      "coordination": "A；C catalog 内容",
+      "required_materials": "catalog 专用 signer/key/version、record/domain/历史验证及调用范围",
+      "acceptance": "不复用 capture/acceptance 或 issuer key；错 record/用途/版本拒绝"
+    },
+    {
+      "id": "reference:catalog_read",
+      "coordination": "C；A 身份安全",
+      "required_materials": "catalog provider/root、精确 record/version 的只读身份、完整性和发现边界",
+      "acceptance": "只读及签名/校验和验证；错 scope/version 拒绝，不扩大 append 权限"
+    },
+    {
+      "id": "reference:catalog_append",
+      "coordination": "C；A 身份安全",
+      "required_materials": "append 身份/版本、不可覆盖 record key、条件创建与校验和能力",
+      "acceptance": "仅能追加受审记录；冲突不能覆盖、换身份或改 checksum 冒充成功"
+    },
+    {
+      "id": "reference:catalog_snapshot",
+      "coordination": "C；A 来源复审",
+      "required_materials": "选用的 snapshot/inventory discovery 模式、精确 manifest/version/checksum、覆盖范围与来源",
+      "acceptance": "不混用发现模式；缺失/过期/版本冲突不能推断对象不存在或扫描完整"
+    },
+    {
+      "id": "reference:nonce_hmac",
+      "coordination": "A",
+      "required_materials": "原受控解析路径、准确身份/版本、用途和安装绑定、所有 control retention 内历史 key 的可用性/撤销策略",
+      "acceptance": "当前材料长度恰为 32 只是必要条件；还须身份/用途/权限正确及历史查重，不把 secret hash 当身份"
+    },
+    {
+      "id": "reference:status_relay",
+      "coordination": "B；A 工作身份安全",
+      "required_materials": "真实 relay 服务身份/版本、mTLS 信任/客户端身份、Job UID/generation/task/attempt 绑定与撤销",
+      "acceptance": "错 Job/attempt/身份、重放或过期拒绝；relay 自报不能替代 Kubernetes/源 checkpoint 权威核对"
+    },
+    {
+      "id": "cross_resources",
+      "coordination": "A 安全策略；B/C 分项事实；D 组合接入",
+      "required_materials": "同一 installation/config/grant 下全部 registry/ref 的可信观察、故障域/灾难身份映射、Secret allowlist、凭据/签名用途隔离和保留关系",
+      "acceptance": "拒绝单项各自合法但组合错安装/版本/用途、源依赖、隔离不成立或历史材料过早失效；不得用单项结果的布尔 AND 代替关系校验"
+    }
+  ],
+  "approved_reviewers": [],
+  "handoff_dispatched": false,
+  "adapters_added": 0,
+  "remote_contacted": false,
+  "credentials_read": false,
+  "cluster_or_database_mutated": false,
+  "dependencies_installed": false,
+  "tests_or_builds_run": false,
+  "live_http_audit_verified": false,
+  "field_command_reused": "scripts/system-backup-a-field-inventory.ps1",
+  "other_A_field_collectors_modified": false
+}

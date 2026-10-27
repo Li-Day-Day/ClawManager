@@ -1,0 +1,62 @@
+{
+  "kind": "system_backup_a_evidence_spike_diagnostic_revision",
+  "recorded_at": "2026-09-24T02:06:00.445Z",
+  "status": "local_tests_passed_remote_rerun_pending",
+  "responds_to": "a-ev-94791c5de83fadbfdd2a02de",
+  "historical_run_status": "failed",
+  "historical_run_actual_http_response": "not_recorded",
+  "changes": [
+    "Accept only HTTP 400 plus BadDigest or XAmzContentChecksumMismatch for the intentionally incorrect checksum probe.",
+    "Preserve completed matrix checks on failure.",
+    "Emit v2 closed HTTP/client diagnostics without raw response, exception message, headers or credentials.",
+    "Nonzero client exit remains failure even if stdout claims success."
+  ],
+  "source_reference": "https://github.com/minio/minio/blob/master/cmd/api-errors.go",
+  "validation": [
+    {
+      "command": "py -3.10 -B scripts/system-backup-a-evidence-spike.test.py",
+      "exit_code": 0,
+      "tests": 14
+    },
+    {
+      "command": "node scripts/system-backup-a-evidence-spike.test.mjs",
+      "exit_code": 0,
+      "tests": 4
+    }
+  ],
+  "remote_access_performed": false,
+  "dependencies_installed": false,
+  "test_artifacts_created": false,
+  "provider_capability_approved": false,
+  "evidence_registered": false,
+  "files": [
+    {
+      "path": "scripts/system-backup-a-evidence-client.py",
+      "sha256": "aa205521ab3dc1cc9d0762854ecbcd9bcf0cb604b14d75ea416c69b9bfcadddd"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.py",
+      "sha256": "24e09f6376a67ecfcdac8142bb2181b257ec84e07f821e9666d8a26f61c2faf5"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.mjs",
+      "sha256": "68bf0b952514caddfe552c586323c052ff02f688d7afacc062103a0644e31328"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.test.py",
+      "sha256": "0272d1b69725fab01546db308b526ceaa559a3274d7ac1876f393badb9f16ed6"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.test.mjs",
+      "sha256": "2c022fa5ccb79b7a799c905eeb3e4a27bd40dee2fe14a43774cd7cce92641f8f"
+    },
+    {
+      "path": "docs/evidence/system-backup-a-evidence-spike-94791c5de83fadbfdd2a02de.json",
+      "sha256": "84591980417d6903524d3dfe2a6449a6772fb979c1e96f22c5c860312d385101"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-spike-20260924.md",
+      "sha256": "d1cbc19aa14ed85914341e25269062c336511b78ea87e455bd72769ac54a55a9"
+    }
+  ]
+}

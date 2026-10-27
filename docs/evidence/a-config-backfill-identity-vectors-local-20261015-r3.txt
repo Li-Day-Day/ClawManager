@@ -1,0 +1,63 @@
+**********************
+PowerShell transcript start
+Start time: 20261015135742
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$byteWrapperPath=Join-Path $PWD 'scripts/system-backup-a-config-backfill-identity-validation.ps1'
+$byteWrapperText=[IO.File]::ReadAllText($byteWrapperPath)
+$byteBlockStart=$byteWrapperText.IndexOf('        $identityOriginalFile=')
+$byteBlockEnd=$byteWrapperText.IndexOf("        Write-Output 'LOCAL_STAGE config-backfill-identity-full'",$byteBlockStart)
+if($byteBlockStart -lt 0 -or $byteBlockEnd -lt $byteBlockStart){throw 'Cannot isolate historical character-budget control'}
+$byteWrapperText=$byteWrapperText.Substring(0,$byteBlockStart)+"        . (Join-Path `$PSScriptRoot 'system-backup-a-config-backfill-byte-control.ps1')`n        Invoke-AConfigBackfillByteBudgetControl -Root `$identityFrozen -Scratch `$identityScratch -BuildParallelism `$BuildParallelism`n"+$byteWrapperText.Substring($byteBlockEnd)
+[IO.File]::WriteAllText($byteWrapperPath,$byteWrapperText,[Text.UTF8Encoding]::new($false))
+$byteContractOld='docs/evidence/a-config-backfill-identity-contract-20261015.json'
+$byteContractNew='docs/evidence/a-config-backfill-identity-contract-20261015-r2.json'
+if(Test-Path -LiteralPath $byteContractNew){throw 'Refuse overwriting contract revision'}
+$byteContract=Get-Content -LiteralPath $byteContractOld -Raw|ConvertFrom-Json
+$byteContract|Add-Member revision 2
+$byteContract|Add-Member supersedes_sha256 (Get-FileHash -LiteralPath $byteContractOld -Algorithm SHA256).Hash.ToLowerInvariant()
+$byteContract|Add-Member correction 'Formal 066 CHECK constraints, not VARCHAR character capacities, govern metadata admission. Old claims of 128/512 Unicode characters and empty nonnull reason were wrong. Tighten validation only; canonical bytes for every valid formal SQL row remain unchanged.'
+$byteContract.row.created_by='Exact valid UTF-8 text, 1..128 BYTES as required by chk_sb_config_created_by OCTET_LENGTH; do not count Unicode characters or truncate.'
+$byteContract.row.change_reason='Explicit JSON null or exact valid UTF-8 text, 1..512 BYTES as required by chk_sb_config_reason OCTET_LENGTH. Empty nonnull string rejects.'
+$byteContract.row|Add-Member created_by_max_utf8_bytes 128
+$byteContract.row|Add-Member change_reason_max_utf8_bytes 512
+$byteContract.row|Add-Member empty_nonnull_reason_allowed $false
+[IO.File]::WriteAllText((Join-Path $PWD $byteContractNew),($byteContract|ConvertTo-Json -Depth 9),[Text.UTF8Encoding]::new($false))
+Copy-Item -LiteralPath 'backend/internal/systembackupsecurity/testdata/config_backfill_identity_vectors.json' -Destination 'docs/evidence/a-config-backfill-identity-vectors-superseded-20261015.json' -ErrorAction Stop
+Start-Transcript -LiteralPath 'docs/evidence/a-config-backfill-identity-vectors-local-20261015-r3.txt' -NoClobber
+try {
+    & node '.\scripts\system-backup-a-config-backfill-identity.test.mjs' --replace-vectors 2>&1|ForEach-Object {Write-Host $_}
+    if($LASTEXITCODE -ne 0){throw 'Corrected exact-DDL identity vectors failed'}
+} finally {Stop-Transcript}
+& 'C:\Program Files\Go\bin\gofmt.exe' -w 'backend/internal/systembackupsecurity/config_backfill_identity.go' 'backend/internal/systembackupsecurity/config_backfill_identity_a_test.go'
+Process ID: 9368
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-config-backfill-identity-vectors-local-20261015-r3.txt
+✔ independent backfill identity vectors have exact JCS and SHA-256 (12.0118ms)
+✔ row fingerprint covers every formal 066 config column except the separately checked canonical field (3.0881ms)
+✔ row and provenance identities use separate domains and exact nullable/text facts (0.7193ms)
+✔ formal 066 CHECK constraints use UTF-8 byte limits and forbid empty nonnull reasons (7.7433ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48.842
+**********************
+PowerShell transcript end
+End time: 20261015135743
+**********************

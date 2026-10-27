@@ -1,0 +1,53 @@
+=== RUN   TestPrepareCancellationBoundaries
+=== RUN   TestPrepareCancellationBoundaries/before-call
+    prepare_boundary_test.go:143: already canceled call reached an adapter
+=== RUN   TestPrepareCancellationBoundaries/first-source
+    prepare_boundary_test.go:146: canceled source callback proceeded to validation
+=== RUN   TestPrepareCancellationBoundaries/first-read
+    prepare_boundary_test.go:149: canceled validation proceeded to Wrap or staging
+=== RUN   TestPrepareCancellationBoundaries/redactor
+    prepare_boundary_test.go:149: canceled validation proceeded to Wrap or staging
+=== RUN   TestPrepareCancellationBoundaries/first-close
+    prepare_boundary_test.go:149: canceled validation proceeded to Wrap or staging
+=== RUN   TestPrepareCancellationBoundaries/wrap
+    prepare_boundary_test.go:152: canceled Wrap proceeded to staging or second source
+=== RUN   TestPrepareCancellationBoundaries/prefix-write
+    prepare_boundary_test.go:155: canceled header staging continued
+=== RUN   TestPrepareCancellationBoundaries/header-write
+    prepare_boundary_test.go:155: canceled header staging continued
+=== RUN   TestPrepareCancellationBoundaries/second-source
+=== RUN   TestPrepareCancellationBoundaries/second-read
+    prepare_boundary_test.go:135: canceled preparation err=<nil> chunks=1
+=== RUN   TestPrepareCancellationBoundaries/frame-write
+    prepare_boundary_test.go:135: canceled preparation err=<nil> chunks=1
+=== RUN   TestPrepareCancellationBoundaries/final-eof
+    prepare_boundary_test.go:135: canceled preparation err=<nil> chunks=1
+=== RUN   TestPrepareCancellationBoundaries/second-close
+    prepare_boundary_test.go:135: canceled preparation err=<nil> chunks=1
+--- FAIL: TestPrepareCancellationBoundaries (0.02s)
+    --- FAIL: TestPrepareCancellationBoundaries/before-call (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/first-source (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/first-read (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/redactor (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/first-close (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/wrap (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/prefix-write (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/header-write (0.00s)
+    --- PASS: TestPrepareCancellationBoundaries/second-source (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/second-read (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/frame-write (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/final-eof (0.00s)
+    --- FAIL: TestPrepareCancellationBoundaries/second-close (0.00s)
+=== RUN   TestPrepareRequiresBothSourceClosesSuccess
+=== RUN   TestPrepareRequiresBothSourceClosesSuccess/1
+=== RUN   TestPrepareRequiresBothSourceClosesSuccess/2
+    prepare_boundary_test.go:183: source close failure produced evidence <nil>
+--- FAIL: TestPrepareRequiresBothSourceClosesSuccess (0.00s)
+    --- PASS: TestPrepareRequiresBothSourceClosesSuccess/1 (0.00s)
+    --- FAIL: TestPrepareRequiresBothSourceClosesSuccess/2 (0.00s)
+=== RUN   TestPrepareRejectsDEKMutation
+    prepare_boundary_test.go:200: Wrap erased DEK after wrapping but preparation continued <nil>
+--- FAIL: TestPrepareRejectsDEKMutation (0.00s)
+FAIL
+FAIL	clawreef/internal/systembackupevidence	3.136s
+FAIL

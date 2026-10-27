@@ -1,0 +1,48 @@
+{
+  "kind": "d_longhorn_history_handoff_local_validation",
+  "recorded_at": "2026-09-29T04:18:46.037287+00:00",
+  "checks": {
+    "longhorn_mock_tests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "upgrade_review_regression_tests": {
+      "passed": 4,
+      "failed": 0
+    },
+    "longhorn_and_upgrade_wrapper_check_only": "PASS",
+    "powershell_parse": "PASS",
+    "bash_phase_syntax": "PASS",
+    "bash_dispatch_and_isolation_tests": {
+      "passed": 3,
+      "failed": 0,
+      "final_execution": "local unsandboxed after sandbox denied Git Bash process support; no network"
+    },
+    "go_db_tests": "PASS",
+    "go_migration_command_compile": "PASS_NO_TEST_FILES",
+    "linux_migration_build": "PASS",
+    "linux_history_integration_probe_compile": "PASS",
+    "gofmt": "PASS",
+    "diff_check": "PASS"
+  },
+  "remote": {
+    "longhorn_review": "NOT_RUN",
+    "reviewed_history_mysql_six_subtests": "NOT_RUN",
+    "live_migration_applied": false,
+    "report_volume_created": false,
+    "http_mfa_activation_completed": false
+  },
+  "test_historical_sources": "SYNTHETIC_NOT_PRODUCTION_PROVENANCE",
+  "dependencies_installed": false,
+  "owned_build_and_transfer_scratch_remaining": 0,
+  "source_sha256": {
+    "scripts/system-backup-d-longhorn-review.py": "97ec0d874c89aa5cc2a57e44254c81efac8bdcfdbbca230ab72e3207b755f5f9",
+    "scripts/system-backup-d-longhorn-review_test.py": "11cc6e183f7e2e6e832169af8d4eb1d9ed8269fedf5d67e3d46478b6107cd3ac",
+    "scripts/system-backup-d-live-preflight-remote.ps1": "33179f4cfd9e8d6b2b51ccecf81187046fc46dc628da75146e39065e550eb218",
+    "backend/internal/db/migration_history_integration_test.go": "8bf20aea297d7661e7227212872a7b8d4b5f95f54d2b76b6e06337df013353df",
+    "scripts/system-backup-d-invariants.ps1": "d7740861461b373517e8c6d2771c7c497ad22ab425cc33259dbee907be14ae31",
+    "scripts/system-backup-d-invariants-phase.sh": "c822b2cf3d9022d50bcdf9906132276fb7bbb667a0bb4715777409ac3baa6b34",
+    "scripts/system-backup-d-invariants-phase.test.mjs": "c91ca164f9a9444ec5393b38a2ae6edceccd491e5498ffe774104fe9026ba4f3",
+    "scripts/system-backup-d-history-validation.ps1": "88b361c454a532e87d2762e492480efd7025ed381d82404a92599714c0014934"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "kind": "system_backup_a_local_revision_validation",
+  "contract_version": "system-backup-plan.v12",
+  "status": "local_pass_pending_independent_review_and_remote_validation",
+  "recorded_at": "2026-09-23T08:03:10.210Z",
+  "implementation_owner": "A",
+  "approved_reviewers": [],
+  "remote_executed": false,
+  "dependency_installation_performed": false,
+  "tests": {
+    "go_security_and_original_d_probes": {
+      "top_level_tests": 21,
+      "exit_code": 0
+    },
+    "node_security": {
+      "tests": 4,
+      "exit_code": 0
+    },
+    "node_object_fixtures": {
+      "tests": 3,
+      "exit_code": 0
+    },
+    "contract_artifacts": {
+      "tests": 70,
+      "exit_code": 0
+    },
+    "contract_gates": {
+      "tests": 6,
+      "exit_code": 0
+    },
+    "inventory_check": {
+      "exit_code": 0
+    },
+    "contract_check": {
+      "exit_code": 0
+    },
+    "strict_freeze": {
+      "exit_code": 1,
+      "interpretation": "expected genuine blockers; not frozen"
+    },
+    "readonly_identity_probe_mocks": {
+      "tests": 2,
+      "scenarios": 7,
+      "exit_code": 0,
+      "execution": "local only; kubectl replaced by shell function; elevated local execution after sandbox EPERM"
+    },
+    "powershell_command_parse": {
+      "passed": true
+    }
+  },
+  "cleanup": {
+    "a_validation_scratch_removed": true,
+    "d_review_scratch_removed": true,
+    "build_outputs_present": false
+  },
+  "schema_candidate": {
+    "file_sha256": "b6b39e4ccb8c94b76e3316ef6674532153f406fa665fa150c7f7aa13b3aa8779",
+    "repository_bindings_match": true,
+    "identity_hash_correlates_with_known_namespace": true,
+    "installation_identity_authenticated": false,
+    "registered_evidence": null
+  },
+  "file_sha256": {
+    "backend/internal/systembackupsecurity/capability.go": "78c7c009f10d9d9d2d6ef721874d19e2dc656300440d32f9aa2743795c77d28b",
+    "backend/internal/systembackupsecurity/capability_test.go": "1eea76f73b0d0a97c15d5ba0dfcbfe3359a4b7d36a2f2d04899c215e4f822a51",
+    "backend/internal/systembackupsecurity/providerproof.go": "dd2dfc776920e4daf6fa8f2ae6ec8a8ec31745fe21a66dd75061a093156ece87",
+    "backend/internal/systembackupsecurity/providerproof_test.go": "b6b95847c393a1a6359a78da316334537f42d482431c104d9a23fdc6a3499648",
+    "backend/internal/systembackupsecurity/strongauth.go": "dc41d177926acc964e7b620ca29eb54fefe22437201a658be2d3180806fbb898",
+    "backend/internal/systembackupsecurity/strongauth_test.go": "e3551247663902c4c974ab1387ac52ca9255ade2a30215284f75a26afa6ccd95",
+    "contracts/system-backup/v12/strong-auth-proof-nonce.schema.json": "ff3aaf4780f207cec5b7a864fc8c36b958ad750bdb2b6c9c26d017fc02005805",
+    "contracts/system-backup/v12/provider-proof-registration.schema.json": "618754245abc64cb2c9ca88a0099bfddae98bbe46caa5580f95d26b354542626",
+    "contracts/system-backup/v12/secret-ref.schema.json": "1888d6dd8741dd67eba03853603c1e39b33d5a38507071bb84cd234e6bb8cd07",
+    "contracts/system-backup/v12/capability-evidence.schema.json": "d8971a34f31a0d186936e38359ee9a0a8f2d0e827d2aa9499bec5111cb913b4e",
+    "contracts/system-backup/v12/a-strong-auth-signature-vectors.json": "10d4ff8d3bbfdcb81416bb48ca0f7cd456bcd227d4986f69744ebdc14dc1cf07",
+    "contracts/system-backup/v12/a-provider-proof-parity-vectors.json": "b89eeedbb3d217892f506d0cad734d11897892ed68ca14164414c2317e7da2f3",
+    "contracts/system-backup/v12/a-secret-ref-vectors.json": "90eeca215129fb792221b4b5661a077045265bb30c1009d38a855833380f1f65",
+    "contracts/system-backup/v12/a-capability-role-mapping.json": "cd5abea79c093751a1684acf448a96179a1e814cca8676fc19b1949dbc4bf53f",
+    "contracts/system-backup/v12/a-owned-object-fixtures.json": "7b2c73be6fcf1b5bf475a3ad4b1994d300aba7a4e4d5a5783340c3b7b883921a",
+    "contracts/system-backup/v12/a-owned-object-fixture-policies.json": "9bed84f18fcbfb97729ca91ca526a6d7768c1704e26b9db7e446f998e45b4e0b",
+    "scripts/system-backup-a-local-validation.ps1": "3ec28799bcd30726900dbfa4d29ad6841cef7ae041cb206061c9564067401f4c",
+    "scripts/system-backup-a-security.test.mjs": "0f1a68d649fe27067eb18dd4a9d99e3423a4b842d56cd3603df372052e41e4a0",
+    "scripts/system-backup-a-object-fixtures.test.mjs": "bd80a34f04e34a92101b662a583886b6f51279ca5d0a263731ff54dc9576d134",
+    "scripts/system-backup-a-object-fixture-model.mjs": "a62220b55634df1c48bc8789854344a636ca52fd9765080fa200610b2dcc5113",
+    "scripts/system-backup-a-schema-validation.mjs": "6ed33bd899736b6e4231e111f7a86c1ba472d5ff105089d0a88dd26d1b7b8e50",
+    "scripts/system-backup-a-identity-readonly-probe.sh": "167c51f5695255cbf16245ed3ce5b0c2c9e32cd580bca917a6a680983a1151b7",
+    "scripts/system-backup-a-identity-readonly-probe.test.mjs": "bdebe8038388125b47c3a3b654ba1e637c13da9909ac2f69c36e5e2ceb250a3b",
+    "scripts/system-backup-d-a-review/review_test.go": "771e1de3a95361f899ace0f580f6f97e6693255a482b23340d3c6d03bdfe4b32"
+  }
+}

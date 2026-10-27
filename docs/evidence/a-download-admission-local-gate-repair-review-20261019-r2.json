@@ -1,0 +1,86 @@
+{
+  "kind": "a_download_admission_local_gate_repair_review",
+  "recorded_at": "2026-10-19T08:15:09.367Z",
+  "checks_passed": 32,
+  "checks": [
+    "frozen logical source hash recomputed",
+    "stable copy without dependencies or production approval",
+    "exact frozen input bound to transcript",
+    "ordinary packages has no failed/skipped action",
+    "ordinary packages unique RUN/PASS paired",
+    "both full packages passed",
+    "original failing expired authority leaf passed once",
+    "all six historical reconstruction leaves passed",
+    "default vet, frozen postcheck and package exit zero",
+    "tagged seeds has no failed/skipped action",
+    "tagged seeds unique RUN/PASS paired",
+    "two in-package seed roots and twelve checks pass",
+    "detached seeds have twelve checks without FAIL/SKIP",
+    "tagged-seed exited zero",
+    "tagged-seed stderr empty",
+    "windows-probe exited zero",
+    "windows-probe stderr empty",
+    "detached-seed exited zero",
+    "detached-seed stderr empty",
+    "linux-probe exited zero",
+    "linux-probe stderr empty",
+    "linux-migration exited zero",
+    "linux-migration stderr empty",
+    "three exact Windows/Linux probe and runner hashes",
+    "owned source path recorded",
+    "source/cache owner is direct workspace child",
+    "source and all temporary build products removed",
+    "final wrapper exit zero",
+    "corrected historical fixture matches actual frozen test bytes",
+    "expired authority test advances valid SQL time",
+    "current 13+11 SQL dispatch was in the same frozen build inputs",
+    "failed operator source/cache owner independently absent"
+  ],
+  "source_files": 1402,
+  "source_sha256": "f8b279bbe42889b3594349d975a701db55c6b818c975060be020b9217d85b11e",
+  "source_manifest_sha256": "32a01ed0ca3cbe346953c3d525446b88f52fbffa476c15edf60e9eb9f40a61f0",
+  "prefix": "a-download-admission-local-gate-repair-20261019-155958-7f3d61e7",
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 290,
+      "all_pass": 2244
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 253,
+      "all_pass": 1985
+    }
+  ],
+  "ordinary_main": 543,
+  "ordinary_all": 4229,
+  "retention_group_checks": 109,
+  "seed_checks": 12,
+  "detached_seed_checks": 12,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "12ac5f6f65e2fdc3e4fe3e6a9789edb60b8ce076d16b0970b775c7f7d441898b"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "28f6dec88c391cb587b14d438238f161a2e52f595a51e3d116cde915d00d199f"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "c602f82b4aa80991bbb22c0330e024f5f09ddc59e8ddb616bad2e579bd51f061"
+    }
+  ],
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-42b58a94ffda41c0adb1dfee66f1d185",
+  "owner_exists": false,
+  "current_pinned_drift": [],
+  "new_inputs_not_covered": true,
+  "failed_operator_round": "a-download-admission-mysql-remote-20261019-154821-6f3b8aaf.txt",
+  "failed_operator_exit": 1,
+  "actual_sql_expected_cases": 24,
+  "actual_mysql": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "scope": "Current frozen security/evidence packages, historical reconstruction fixture fix, tagged/detached seeds and Windows/Linux payload compilation only. Actual 13+11 admission/result SQL and later working-tree changes remain unaccepted.",
+  "supersedes_scope_label": "a-download-admission-local-gate-repair-review-20261019.json used the earlier 13+8 handoff label; these same frozen bytes already include the three added cold-group SQL cases. No tests were rerun for this metadata correction."
+}

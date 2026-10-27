@@ -1,0 +1,185 @@
+{
+  "kind": "d_download_journal_windows_fix_review.v1",
+  "reviewed_at": "2026-10-20T01:54:23.228Z",
+  "original_local_failure": {
+    "path": "docs/evidence/d-download-task-chain-remote-20261020-085907.txt",
+    "bytes": 1425836,
+    "sha256": "73894c854c21724495fd1a7583f59cc1db6e9c5094b1bc6b5bc5c5b0f92bf8ee"
+  },
+  "original_failed_tests": [
+    "TestDownloadFailureJournalTamperAndCapacity",
+    "TestDownloadFailureJournalTamperAndCapacity/replace"
+  ],
+  "original_remote_started": false,
+  "producer_local_source_race": {
+    "path": "docs/evidence/d-download-producer-remote-20261020-090845.txt",
+    "bytes": 736378,
+    "sha256": "6148b6cd509c4a947262c87800c608315b01cb17cb55880e1b599e3bb259cc16"
+  },
+  "producer_failure_caused_by_D_draft_removal": true,
+  "original_operator_local_scratch_absent": [
+    ".tmp-a-evidence-4fde9fa2967741bb9fa244b62b4b20c1",
+    ".tmp-a-evidence-5fbb6720892e4b0b92dceed79e3c8b35"
+  ],
+  "focused": {
+    "source_sha256": "59ab377fe426c725a64bfc432fa2fefbf29961193b9f0447c5b1e72cb2c87182",
+    "files": 1420,
+    "main": 5,
+    "all": 32,
+    "packages": [
+      "clawreef/internal/systembackupevidence"
+    ]
+  },
+  "full": {
+    "source_sha256": "b7a0c14718b6422d2411df095723bda2ba0a2218688e9666f5ec5354b6431b09",
+    "files": 1420,
+    "main": 709,
+    "all": 5624,
+    "packages": [
+      "clawreef/internal/systembackupsecurity",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupevidence",
+      "clawreef/cmd/server"
+    ],
+    "tagged_seed": 19,
+    "detached_seed": 19,
+    "windows_probe": true,
+    "linux_probe": true,
+    "linux_runner": true,
+    "default_vet": true,
+    "binary_pins": [
+      {
+        "name": "download-admission.test.exe",
+        "sha256": "58cd8f36ee072b6720a34421094d2c197b2dab1c8bb1bfce31a8fc00bb12866c",
+        "deleted": true
+      },
+      {
+        "name": "download-admission.test",
+        "sha256": "3fbd50dd6ce133684bbb04315cfe8dad8da83ad5ca9fd3332c71b5a8f24ad617",
+        "deleted": true
+      },
+      {
+        "name": "system-backup-migrate",
+        "sha256": "04b0ffdfefba09066a996f2dc1e154a2c487b2b406170c29eeb1f52ff2fa4608",
+        "deleted": true
+      }
+    ]
+  },
+  "concurrent_A_permission_change_between_scopes": [
+    "backend/internal/systembackupevidence/download_failure_journal.go",
+    "backend/internal/systembackupevidence/download_failure_journal_test.go"
+  ],
+  "frozen_wrapper": {
+    "source_sha256": "6cc7f2ee71f5336e6ab03b6adf1b8efcd5ec02d43e6520da4398f10383ef9f8e",
+    "files": 1420,
+    "changed_inputs": [
+      "scripts/system-backup-d-config-writer-validation.ps1"
+    ],
+    "ordinary_main": 553,
+    "ordinary_all": 4309,
+    "tagged_seed": 19,
+    "detached_seed": 19,
+    "actual_local_validation": true,
+    "actual_remote": false,
+    "ps7_dispatch": true,
+    "ps5_dispatch": true,
+    "linux_probe_sha256": "3494dd742d78744ccaa1809257e79168dab1de3c61959d30453ff3c81155a547",
+    "linux_runner_sha256": "857ee1c30b9c40075a78e8582d971fd4b952a29e83658451a2cde2cf09d77f43",
+    "capsule_sha256": "c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f"
+  },
+  "current_sources_match": false,
+  "current_source_drift": [
+    "backend/cmd/system-backup-registration/http_lifecycle_test.go",
+    "backend/cmd/system-backup-registration/http_lifecycle.go",
+    "backend/cmd/system-backup-registration/main.go"
+  ],
+  "fixed_test": {
+    "path": "backend/internal/systembackupevidence/download_failure_journal_test.go",
+    "bytes": 10894,
+    "sha256": "e25c747fc5e005d4decd94802b63bc78ed272db870b434ab3ff02edcd6e6d22f"
+  },
+  "cleanup": {
+    "path": "docs/evidence/d-download-journal-fix-cleanup-20261020.json",
+    "bytes": 926,
+    "sha256": "2c2583ca84b6c53cd90081ebfc8b61bc7fdda8e76dfd306612653dbcca3aa616"
+  },
+  "actual_mysql": false,
+  "remote_executed_by_D": false,
+  "installed_dependencies": false,
+  "production_enabled": false,
+  "gc_implemented": false,
+  "original_six_scopes_complete": false,
+  "reviewer": {
+    "path": "docs/evidence/d-download-journal-fix-review-20261020.mjs",
+    "bytes": 12852,
+    "sha256": "66410368949410a55fffd1c996f6e3952d906886807524bb3a2f699fdd685740"
+  },
+  "verified_evidence_inputs": [
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r60-source.json",
+      "bytes": 278875,
+      "sha256": "1ee040add540b764951362c30bc3c5f5030aa1777f4dcd881590c5e1238c67bb"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r60-native.txt",
+      "bytes": 1827,
+      "sha256": "8f20954b65fc3e96dc27ff1e3cad62e7c1168c116a6114db41139ac13638a3fa"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r60.jsonl",
+      "bytes": 28640,
+      "sha256": "e255490e6e1c695ed40f087febf23199e5277fbaf2ff7b5ba07c135de651b0e3"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r61-source.json",
+      "bytes": 278875,
+      "sha256": "44250a8b7038c5dd01b1f9c115e198ee0ab9f13843260c77324c5a53504a1d93"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r61-native.txt",
+      "bytes": 2604,
+      "sha256": "5a60662cc13e42e78e0ae44461fdc760a993c9b534a9d973cbf5ccbf338a0e2c"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r61.jsonl",
+      "bytes": 5265347,
+      "sha256": "65198be6afbdfca593a66bd09fd064059239b383c9829259516e4e4a8177201d"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r61-tagged-seed.txt",
+      "bytes": 17252,
+      "sha256": "8655980722b0f8889b17ebb8f12c74e536f444f9ef016da2d9e7cb36132562df"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-20261020-r61-detached-seed.txt",
+      "bytes": 2813,
+      "sha256": "5c463e9239e57a45fd2b7c5d4b1307b154c63fe3c6b775005b1f40bf004c7146"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-frozen-20261020-r62-source.json",
+      "bytes": 278875,
+      "sha256": "7e6369da5431252295a09d39e92da54c0f8bfb97e41ffc37a4ea92e7bc1cacc0"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-frozen-20261020-r62-native.txt",
+      "bytes": 725912,
+      "sha256": "e0189b8e8269b13919008573100fa90613fb7299ea56e80c7f1c981959072bfd"
+    },
+    {
+      "path": "docs/evidence/d-download-frozen-dispatch-20261020-ps7-r2.txt",
+      "bytes": 316,
+      "sha256": "2747b9e5732499a6ed08a171439ea2d4bc49160d20372fec13ba6afac31f8b56"
+    },
+    {
+      "path": "docs/evidence/d-download-frozen-dispatch-20261020-ps5.txt",
+      "bytes": 316,
+      "sha256": "2747b9e5732499a6ed08a171439ea2d4bc49160d20372fec13ba6afac31f8b56"
+    },
+    {
+      "path": "docs/evidence/d-download-journal-fix-native-cleanup-20261020.json",
+      "bytes": 780,
+      "sha256": "fc6d7c2158f6266c8dda50036a23f29eb62f1a68dac8db30734014dc381de311"
+    }
+  ]
+}

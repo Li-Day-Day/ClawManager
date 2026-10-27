@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T03:58:03.5722906Z",
+  "status": "ssh_preflight_pass_mysql_pending",
+  "evidence_origin": "operator supplied verbose SSH transcript",
+  "attachment_sha256": "3f9cbd6332e7d6852850920b2b858805e5cbb092cb3fa2916f5c54cc639d1f6f",
+  "ssh": {
+    "target": "root@10.130.14.23",
+    "host_key_matched": true,
+    "authentication": "password",
+    "authenticated": true,
+    "command_exit_code": 0,
+    "preflight_marker_verified_by_wrapper": true,
+    "run_id": "53f5ea51828c4accbe77b3d33b9578ae",
+    "socket_close_diagnostic": "IO is still pending on closed socket",
+    "diagnostic_effect": "preflight still passed; previous disconnect root cause not established"
+  },
+  "scope": {
+    "build_started": false,
+    "upload_started": false,
+    "real_mysql_run": false,
+    "previous_failed_run_remote_scratch": "unknown; not checked by printf preflight",
+    "local_cleanup": "operator reported True"
+  },
+  "source_check": {
+    "previous_backend_source_sha256": "f1b8a139f1137dcf52af1f3f24e5e1878cc6ea7844b7b4ae252b4ee6cb5e38c8",
+    "current_backend_source_sha256": "e333a14366a0ce1e98e72e35140a714cbdb536fb59df58b62b43bcc5357c4d54",
+    "matches": false,
+    "action": "omit BuildOnly; rerun local tests and vet before compiling and remote acceptance"
+  },
+  "next_operator_command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -Remote",
+  "dependencies_installed": false
+}

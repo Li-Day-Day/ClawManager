@@ -1,0 +1,50 @@
+{
+  "kind": "d_resources_proof_presence_acceptance",
+  "stages": {
+    "baseline": {
+      "exit": 1,
+      "roots": 0,
+      "passed": 12,
+      "failed": [
+        "TestResourcesCaptureProofPresence/pointer_nil",
+        "TestResourcesCaptureProofPresence/function_nil",
+        "TestResourcesCaptureProofPresence/map_nil",
+        "TestResourcesCaptureProofPresence/slice_nil",
+        "TestResourcesCaptureProofPresence/channel_nil",
+        "TestResourcesCaptureProofPresence",
+        "TestResourcesTargetProofPresence/pointer_nil",
+        "TestResourcesTargetProofPresence/function_nil",
+        "TestResourcesTargetProofPresence/map_nil",
+        "TestResourcesTargetProofPresence/slice_nil",
+        "TestResourcesTargetProofPresence/channel_nil",
+        "TestResourcesTargetProofPresence"
+      ],
+      "source_sha256": "a7c98f933a28bfb5cce470a710baf30a855c64a64451b835772ec4d4074f7153",
+      "input_count": 17,
+      "stdout_sha256": "9cfc3d0ed682d4cafa27961d46352c6d3706403572aca7010665ab059a1c240e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "candidate": {
+      "exit": 0,
+      "roots": 27,
+      "passed": 139,
+      "failed": [],
+      "source_sha256": "355c1b52df374ef743ef3c2a218bff73e831f567eff68ca1690533d8ea0671d6",
+      "input_count": 18,
+      "stdout_sha256": "0ebb43ed167e4d0f4886d14673849bfe1b20387145028107b97912f9abeef3cb",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "changed": [
+    "backend/internal/systembackupresources/control_exclusion.go",
+    "backend/internal/systembackupresources/proof_presence.go",
+    "backend/internal/systembackupresources/verifier.go"
+  ],
+  "selected_current_inputs_match": true,
+  "cleaned": true,
+  "files_removed": 1125,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "actual_mysql": false,
+  "production_approved": false
+}

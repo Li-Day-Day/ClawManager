@@ -1,0 +1,155 @@
+{
+  "kind": "a_d_verifier_security_published_cross_review.v1",
+  "status": "resources_original_fix_accepted_cardinality_gate_published_revalidated",
+  "resources": {
+    "original_source_sha256": "2ea77b6a30fac14aa5d2b9bc410c70d296d0b439b5789a917d16b61ea71defa4",
+    "original_source_files": 1561,
+    "original_scoped_inputs": 224,
+    "isolated": {
+      "roots": 25,
+      "passed": 115
+    },
+    "published": {
+      "roots": 25,
+      "passed": 115
+    },
+    "original_code_failed_leaves": 16,
+    "original_control_passes": 2,
+    "current_runtime_and_test_bytes_match": true,
+    "current_scoped_files_matching": 223,
+    "current_scope_drift": [
+      {
+        "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+        "archived_sha256": "a629ab1d43601a02297a3d2bdc1fca31c32c771b97b599fe8b7e2fa18ec85ca7",
+        "current_sha256": "32957c05eb59c70abcac99ddfc5f6eabf3be330c0489dc55494959522b69513c"
+      }
+    ],
+    "drift_semantics": "Only D required_check_count changed from 31 to 35; original proof test scope is not repinned.",
+    "original_owner_independently_absent": true,
+    "source_copies_and_build_artifacts_reported_removed": 2806,
+    "go_tests_rerun_by_A": false,
+    "real_B_proof_accepted": false,
+    "current_whole_tree_tested": false
+  },
+  "cardinality": {
+    "original_checker_sha256": "10964221e0f0f001ab267f6e93fe8dcdc3e957d33c5af1730e0cd74a48acd004",
+    "finding": "Additional schema/common-ref constraints and unhandled branch properties were counted as supported finite-ID declarations.",
+    "old_checker_new_negative_checks": {
+      "failed": 7,
+      "passed": 0
+    },
+    "candidate_sha256": "7acbbbebf00bf845929373b39a060e26745122f0df908757666eaa98f258a59c",
+    "isolated_candidate_tests": 120,
+    "cli_rejection_cases": 6,
+    "registry_unchanged_on_rejected_write": true,
+    "strict_still_blocked": true,
+    "live_checker_preserved_during_operator_run": true,
+    "candidate_published": true,
+    "published_tests": 120,
+    "published_source_inputs": 346,
+    "published_source_postcheck": true,
+    "patch": "docs/evidence/a-verifier-dialect-20261022.patch",
+    "patch_applied_after_operator_receipt_acceptance": true,
+    "does_not_claim_arbitrary_schema_satisfiability": true,
+    "initial_CRLF_publication_check_failure_preserved": true
+  },
+  "evidence": [
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-preparation.json",
+      "size": 29552,
+      "sha256": "0b88a751015997dbbed61b79a75cf71b927badb17d7a3c077d11b3f044e60623"
+    },
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-native.json",
+      "size": 1864,
+      "sha256": "e662a79056a4974c222a2eee72d74e5973ab725b2a7a62ca3b41f827642a5528"
+    },
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-scope.json",
+      "size": 57624,
+      "sha256": "1d520ae3b4dd768778f3719b758eef36b86e489274be0c25ef4163e651174f56"
+    },
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-source.json",
+      "size": 306510,
+      "sha256": "84793aec38ae1aa78306342854674e6f6a50a8af89f908c26fbd2999d1c37d50"
+    },
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-counterfactual.stdout",
+      "size": 25357,
+      "sha256": "4df73d5878879a27b604df2c1c09c68c8b8fd5a908776b56117bc881bf249ee5"
+    },
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-isolated.stdout",
+      "size": 103615,
+      "sha256": "a5d57c0bf6f71bf7b51a4dd101486648330434b384a6374a23c54df206fb6beb"
+    },
+    {
+      "path": "docs/evidence/d-resources-proof-isolation-20261022-fc8cb8e5-published.stdout",
+      "size": 103733,
+      "sha256": "f242c763506a83d45ef1a5ac0762ecf7470f69c7d1514855b98c115797e8052d"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-original-checker-20261022.json",
+      "size": 25721,
+      "sha256": "0243bdd75faab8e21d5d3ce509b7b9459fb5aaa1ca5401468813cdc94513f5db"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-candidate-20261022.json",
+      "size": 26920,
+      "sha256": "b3905784b98fe4ffc5a50f3742da73b3b52a3f27dc8cbe44e708dcd9493a0b27"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-candidate-tests-20261022.json",
+      "size": 2169,
+      "sha256": "e566b6483f82014b9a517ebf8908875492f23554907d5eaa24a8cb6d383bd81a"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-counter-before-20261022.txt",
+      "size": 7114,
+      "sha256": "44769a5bdaa310ed7ab0539344bf8636a7f357619e6c2320b8465d35cc837932"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-20261022-31fe481b-result.json",
+      "size": 145400,
+      "sha256": "21568c5f39e25db93e2473bff316083e0971e45f6b833a1ac15b3d2bec152110"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-20261022-743dc606-result.json",
+      "size": 145573,
+      "sha256": "489efcbfb6869995857e777eac830819b30e89abe99af23dc255376f7fa79a52"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-20261022-c3aa6d7a-result.json",
+      "size": 133665,
+      "sha256": "da4987dd494965c7034d36b85146f384a92df63dd8f9937cbc095b8cea3016aa"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-20261022-5d521ab8-result.json",
+      "size": 1162,
+      "sha256": "a6abfffceebc51a27ffae501927ec97746358d986a24ff2d1909a6d824fb2b2e"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-isolated-runner-original-20261022.json",
+      "size": 10189,
+      "sha256": "4f42414c0ec7a4c00a23b4daed8e0c11fd2a326d1a45cca9fa3f3d3d1bcddcab"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-validation-20261022.mjs",
+      "size": 7830,
+      "sha256": "ad7962fc204125d182d33188f4f0032cbf557684d57c05eb632943319fc9f199"
+    },
+    {
+      "path": "docs/evidence/a-verifier-dialect-20261022.patch",
+      "size": 4724,
+      "sha256": "5beb2f4e5ee9575646e7c110e662ed0f33e01a436d048ebf3a1990c5e849e360"
+    }
+  ],
+  "remote_run_by_A": false,
+  "dependencies_installed_by_A": false,
+  "production_approved": false,
+  "cleanup": {
+    "isolated_and_published_source_fixture_directories_absent": true,
+    "new_test_file_is_repository_source": true
+  }
+}

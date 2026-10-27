@@ -39,6 +39,7 @@ func TableRegistry() []TableRule {
 		{"instance_agents", Instances, "reset", []string{"instances"}, []string{"session_token", "host_info_json"}, "Discard source sessions and require fresh target registration."},
 		{"instance_runtime_status", Instances, "reset", []string{"instances"}, []string{"summary_json", "system_info_json", "health_json"}, "Source PID, endpoint and health are not target runtime state."},
 		{"instance_desired_state", Instances, "reset", []string{"instances", "instance_config_revisions"}, nil, "Set desired power to stopped and clear queued runtime actions."},
+		{"instance_browser_workers", Instances, "disable", []string{"instances"}, []string{"last_error"}, "Preserve browser settings; disable the component, reset generations and clear source diagnostics. Never replay ready/provisioning state."},
 		{"instance_commands", Instances, "disable", []string{"instances"}, []string{"payload_json", "result_json"}, "Retain command history without replaying unfinished commands."},
 		{"instance_config_revisions", Instances, "preserve", []string{"instances", "openclaw_injection_snapshots", "openclaw_config_bundles"}, []string{"content_json"}, "Retain versioned configuration; secret-bearing content still requires the normalization registry."},
 		{"instance_runtime_bindings", Instances, "drop", []string{"instances", "runtime_pods"}, nil, "Do not restore live gateway bindings to source pools or ports."},

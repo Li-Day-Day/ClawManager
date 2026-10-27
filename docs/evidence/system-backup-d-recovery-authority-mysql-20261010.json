@@ -1,0 +1,46 @@
+{
+  "kind": "d_recovery_authority_candidate_atomic_isolated_mysql",
+  "date": "2026-10-10",
+  "source": "operator-pasted-console-output",
+  "command": ".\\scripts\\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -RecoveryTest Authority -Remote -SshTarget 'root@10.130.14.23'",
+  "powershell_exit_code": 0,
+  "raw_success_log_in_repository": false,
+  "local": {
+    "isolated_go_telemetry": "off",
+    "focused_tests_and_vet": "reported PASS",
+    "seed": "PASS TestDProducerMySQLSeed/fixed_clock,advancing_clock; PASS TestDRecoveryAuthorityFixtureSeed",
+    "linux_probe_compiled": true,
+    "real_mysql": "not_run_at_local_gate",
+    "binary_sha256": "145580aa116c662d811bb7b4b41ef9987a079c9a05333720afd0d9d940fc7978",
+    "ddl_sha256": "0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60",
+    "migration_binary_sha256": "70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f"
+  },
+  "remote": {
+    "namespace": "sbk-mig-261010041324-6d97",
+    "namespace_uid": "cf1a6a11-eeda-4dcf-bed1-2d3b6f6fa6da",
+    "app_image_digest": "be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+    "mysql_image_digest": "5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+    "mysql_version": "8.4.8",
+    "migration_catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "fresh_replay": "PASS 001..080, 94 exact filenames",
+    "test": "PASS TestDRecoveryAuthorityMySQL",
+    "pass_marker": "PASS d-recovery-authority-mysql",
+    "binary_sha256": "145580aa116c662d811bb7b4b41ef9987a079c9a05333720afd0d9d940fc7978",
+    "ddl_sha256": "0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60",
+    "config_activated": false,
+    "historical_equivalence_verified": false,
+    "human_mfa_verified": false
+  },
+  "cleanup": {
+    "run_owned_database": "reported CLEANED",
+    "namespace": "reported CLEANED with matching UID",
+    "remote_scratch": "reported CLEANED",
+    "local_build_cache": "reported CLEANED",
+    "cleanup_pending_marker": false
+  },
+  "scope": "Candidate D L0/L1a/L2 atomic transition with A L1b row guard under fixture manager facts and fixture audit in isolated MySQL. Not production management mTLS admission, first manager authorization, independent audit capacity, C Stat proof, numbered migration, inventory approval, or recovery activation.",
+  "notes": [
+    "The local and remote probe SHA-256 values match each other. The probe differs from the earlier local-only checkpoint because the worktree snapshot changed; the DDL and runner digests remain the same.",
+    "Closed-socket text appears near SSH password prompts; pinned replay, the target test, cleanup markers, and EXIT_CODE=0 follow."
+  ]
+}

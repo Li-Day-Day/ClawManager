@@ -1,0 +1,73 @@
+**********************
+PowerShell transcript start
+Start time: 20261019083334
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$admissionRoot=(Get-Location).Path
+$admissionID=[guid]::NewGuid().ToString('N')
+$admissionOwner=Join-Path $admissionRoot ('.tmp-d-index-cache-'+$admissionID)
+$admissionExit=1
+$admissionLog=Join-Path $admissionRoot 'docs/evidence/d-download-admission-evidence-20261019-r2.jsonl'
+$admissionErr=Join-Path $admissionRoot 'docs/evidence/d-download-admission-evidence-20261019-r2-stderr.txt'
+$admissionManifest=Join-Path $admissionRoot 'docs/evidence/d-download-admission-source-20261019-r2.json'
+$admissionTranscript=Join-Path $admissionRoot 'docs/evidence/d-download-admission-native-20261019-r2.txt'
+foreach ($admissionOutput in @($admissionLog,$admissionErr,$admissionManifest,$admissionTranscript)) { if (Test-Path -LiteralPath $admissionOutput) {throw 'Evidence already exists'} }
+Start-Transcript -LiteralPath $admissionTranscript -NoClobber | Out-Null
+try {
+ New-Item -ItemType Directory -Path $admissionOwner | Out-Null
+ [IO.File]::WriteAllText((Join-Path $admissionOwner 'owner.txt'),[IO.Path]::GetFileName($admissionOwner))
+ . (Join-Path $admissionRoot 'scripts/system-backup-d-index-source-snapshot.ps1')
+ . (Join-Path $admissionRoot 'scripts/system-backup-a-config-proof-source.ps1')
+ $admissionSnapshot=New-AConfigProofSourceSnapshot -Root $admissionRoot -Owner $admissionOwner -MaxAttempts 3
+ [IO.File]::WriteAllText($admissionManifest,($admissionSnapshot|ConvertTo-Json -Depth 8))
+ Write-Output ('FROZEN files='+$admissionSnapshot.files.Count+' sha256='+$admissionSnapshot.source_sha256+' owner='+$admissionOwner)
+ $env:GOPROXY='off'; $env:GOSUMDB='off'; $env:GOTOOLCHAIN='local'; $env:GOENV='off'
+ $env:GOCACHE=Join-Path $admissionRoot '.tmp-d-admission-20261019-nonce/cache'; $env:GOTMPDIR=$admissionOwner
+ $env:TEST_TELEMETRY_DIR=Join-Path $admissionOwner 'telemetry'
+ New-Item -ItemType Directory -Path $env:TEST_TELEMETRY_DIR | Out-Null
+ Set-Content -LiteralPath (Join-Path $env:TEST_TELEMETRY_DIR 'mode') -Value 'off 2026-10-19'
+ $admissionProcess=Start-Process -FilePath (Get-Command go).Source -ArgumentList @('test','-mod=readonly','-p=2','-count=1','-timeout=300s','-json','./internal/systembackupevidence') -WorkingDirectory (Join-Path $admissionOwner 'source/backend') -RedirectStandardOutput $admissionLog -RedirectStandardError $admissionErr -WindowStyle Hidden -PassThru -Wait
+ $admissionExit=$admissionProcess.ExitCode
+ Write-Output ('NATIVE_EXIT full_evidence_package='+$admissionExit)
+ Test-DIndexSourceSnapshot -Root (Join-Path $admissionOwner 'source') -Manifest $admissionSnapshot
+ Write-Output 'FROZEN_POSTCHECK pass=yes installed_dependencies=no actual_mysql=no'
+ Get-Content -Encoding UTF8 -LiteralPath $admissionLog | Select-Object -Last 5
+} finally {
+ if (Test-Path -LiteralPath $admissionOwner) {
+  $admissionResolved=(Resolve-Path -LiteralPath $admissionOwner).Path
+  if ([IO.Path]::GetDirectoryName($admissionResolved) -ne $admissionRoot -or [IO.Path]::GetFileName($admissionResolved) -ne ('.tmp-d-index-cache-'+$admissionID) -or ((Get-Item -Force -LiteralPath $admissionResolved).Attributes -band [IO.FileAttributes]::ReparsePoint) -or [IO.File]::ReadAllText((Join-Path $admissionResolved 'owner.txt')) -ne [IO.Path]::GetFileName($admissionResolved)) {throw 'Unsafe cleanup path'}
+  Remove-Item -LiteralPath $admissionResolved -Recurse -Force
+ }
+ Write-Output ('CLEANED snapshot='+(-not(Test-Path -LiteralPath $admissionOwner)))
+ Stop-Transcript | Out-Null
+}
+exit $admissionExit
+Process ID: 16028
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+FROZEN files=1337 sha256=d5b40f836072c0155b6f47cadca5f5c14b3b5e7f0873f67ed1b3280771c78533 owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-5bed89e750984e85803af1b4e83e3f05
+NATIVE_EXIT full_evidence_package=0
+FROZEN_POSTCHECK pass=yes installed_dependencies=no actual_mysql=no
+{"Time":"2026-10-19T08:35:57.0630144+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestWriteRecoveryRequiresBoundedDatabaseRetryPolicy","Output":"--- PASS: TestWriteRecoveryRequiresBoundedDatabaseRetryPolicy (1.03s)\n"}
+{"Time":"2026-10-19T08:35:57.0630144+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestWriteRecoveryRequiresBoundedDatabaseRetryPolicy","Elapsed":1.03}
+{"Time":"2026-10-19T08:35:57.065478+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"PASS\n"}
+{"Time":"2026-10-19T08:35:57.1586885+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"ok  \tclawreef/internal/systembackupevidence\t109.055s\n"}
+{"Time":"2026-10-19T08:35:57.1597501+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Elapsed":109.06}
+CLEANED snapshot=True
+**********************
+PowerShell transcript end
+End time: 20261019083608
+**********************

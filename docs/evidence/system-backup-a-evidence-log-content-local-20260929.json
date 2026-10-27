@@ -1,0 +1,202 @@
+{
+  "schema_version": "a-evidence-log-content-local-validation.v1",
+  "recorded_at_utc": "2026-09-29T02:55:34.1380521Z",
+  "result": "PASS_LOCAL_ONLY",
+  "command": "pwsh -NoProfile -File scripts/system-backup-a-evidence-validation.ps1 -BuildParallelism 1",
+  "runner_exit_code": 0,
+  "transcript": "docs/evidence/system-backup-a-evidence-log-content-local-20260929.txt",
+  "transcript_sha256": "3d321b2a1ca44d7117e088ba4273a0e36d0faf3e5d26f6bd53a6f98a85fa9b73",
+  "transcript_format": "Captured process output; line endings normalized to LF",
+  "validation": {
+    "go_top_level_tests_passed": 29,
+    "go_subtests_passed": 153,
+    "new_top_level_tests_passed": 6,
+    "new_subtests_passed": 39,
+    "package_seconds": 2.745,
+    "vet_enabled": true,
+    "gofmt_completed": true,
+    "unchanged_prior_backend_script_bindings": 23,
+    "isolated_telemetry_off_verified": true
+  },
+  "build": {
+    "linux_mysql_probe_compiled": true,
+    "migration_runner_compiled": true,
+    "probe_sha256": "0ff3118641d35100ec2a49dc492d5f7a01278fa80353da12ece1063a153a5f06",
+    "ddl_sha256": "c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199",
+    "migration_binary_sha256": "4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88",
+    "module_mode": "readonly",
+    "dependency_proxy": "off"
+  },
+  "cleanup": {
+    "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-fb3926408a214e8db3c861ac6e0b628b",
+    "scratch_absent_verified": true,
+    "reported": true,
+    "dependencies_installed": false
+  },
+  "acceptance_scope": [
+    "Closed schema log sanitization, sensitive field removal and safe per-line diagnostics",
+    "Bounded chunks, cumulative budget, stop on truncation and policy snapshots",
+    "Authenticated-authority interface binding and reauthorization before encryption",
+    "Capability/log-only dispatch, denial of unsupported content and raw log bypass",
+    "Prepare/OpenRange roundtrip with simulated authority and keys"
+  ],
+  "limitations": [
+    "No production producer authenticator or ContentAuthority implementation",
+    "No real JobObserver, durable diagnostic/index/budget transaction or sequence retry integration",
+    "Log wire profile requires B/D review; other body validators remain unsupported",
+    "External Prepare still requires content larger than 8 KiB; inline path not added",
+    "No real STS/KEK/absence proof or HTTP/GC wiring"
+  ],
+  "agent_remote_actions_performed": false,
+  "real_mysql_run_performed": false,
+  "production_provider_verified": false,
+  "provider_capability_approved": false,
+  "config_activated": false,
+  "historical_receipts_modified": false,
+  "source_bindings": [
+    {
+      "path": "backend/go.mod",
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content_test.go",
+      "sha256": "938df2c745a62489a7f40176c85fc8d01deb3f1d20cbce30269e3b7ee589571a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/capability_content.go",
+      "sha256": "5079aed6bf604e47c5fb1c8903eb638643f7b3f40571eccf879853cd3e78582d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/content_dispatch.go",
+      "sha256": "084574694c1fa63ccec3ddb3abf858d4d268ed168430e9ff95d10fc589ec02f7"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/envelope.go",
+      "sha256": "93bd39ab5d7d5b88d390ccab4337ef4197f09336eaf608ccc7d53f42e462c258"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_mysql_test.go",
+      "sha256": "5224d88077a7749ba3463e583c53c41f9c0584ebf6513bb7fbe51dc3b1e399ec"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/evidence_test.go",
+      "sha256": "85bd6e7b3186e50ddaf1c4d415d0eb6c459000331b0d54beeb31a6c96463affe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/http.go",
+      "sha256": "6478e85aeaa14a1a9e2f5530a206574dcb127a40ae1be03a39d563240a6ac385"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/lifecycle.go",
+      "sha256": "147ebe4d606b5dad7d3a4c25b707e54577fc1dd763185bf016775934eb42f080"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/log_content_test.go",
+      "sha256": "49b410451ae5debd59f3fe33af1e0cd986c2692529e662d453dfac3d46052ea9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/log_content.go",
+      "sha256": "5041d59f9482022fa262a5f9e8d4bf77dd17ece2e5547f470f54ef41a50e2e46"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/retention.go",
+      "sha256": "7709d3eb4140d1b27b2e3aefee816a969ef8b23e91ca5929323105be8922a2a5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_test.go",
+      "sha256": "9370fb7057081fd2a92a22f7982a85a8692a4a31de5d1026f60a9e2406583617"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3.go",
+      "sha256": "3e3039b369e7e677186c79d92aff7227b6a0fb74e00ed2ab3cd093c123c1cffe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sql.go",
+      "sha256": "98a4abc13ee8aded8adf9c112cb89f6cbda090ca908f120e1b4184564adfd3bb"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_keyring_test.go",
+      "sha256": "c407d498bf848e3d111c23a7e50e250b010b031137c869626b83d4dee3bd8db1"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_keyring.go",
+      "sha256": "0f9766f6750d7e83cd719cf5b85135dfc366a870c04381c4f22107db6bca3208"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_test.go",
+      "sha256": "225a3a58365a9555e14a1cbe02dcb80863bfd95180b51d909ed5cb9737ac248b"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit.go",
+      "sha256": "80eafd8403608de6a106705144372938d3b2c6d0c71aef4c1543918f40f34a6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/types.go",
+      "sha256": "33a50664ee920481750766d508f4dda41ccbaccc9cd2aced052b9532e86d31ae"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/capability.go",
+      "sha256": "9bb87884f3ecdf740b6a0e6a4432e1f98d58af7ead66b16c86235330bc3139b8"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-evidence-gc-migration-proposal.sql",
+      "sha256": "3f65e0c05a61746968655e069e3e883f3074ece1184743f9c18a7c46561c0fca"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "sha256": "eff9e7ebf5a14992cfbe8562aa869dfcbacee4481914db1e708249c6f341dbf0"
+    },
+    {
+      "path": "contracts/system-backup/v12/capability-evidence.schema.json",
+      "sha256": "5c543950e718e4f158defd0b56c3921a7fc9ff4f916f66ff68a399ae1cb4d4c3"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-content-20260929.md",
+      "sha256": "83cade40da174f0bba1c081bc7fd0830538cd548fa4e34f53c37def8b6464265"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-log-content-20260929.md",
+      "sha256": "43f63e091a2db72e0c6c832c98e7a727f523b09d9a6c447a302cc4b7fc0a11a0"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-transit-20260928.md",
+      "sha256": "80bc19a05271c554af43488e1d3ef8e3a07817909d78fb7ee5a49ea7e10a2978"
+    },
+    {
+      "path": "docs/system-backup-a-external-evidence-20260928.md",
+      "sha256": "fbb8baabe17493654289aecd538bb2362f885d98fde413c67707be7aa6a8d615"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "e6cd7de2d13e16a26e63cf9b796fd4877e1a6b661f13c7a5a2165d57ebbdff68"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "sha256": "24922246940b7fa8ce9159182ab5f1f4182cce2706516e2b9259e6d5d37bad3e"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "7ebc45b01349af18bc9ccca42e2dfdb45efd1857bbb4ad62223ea37a2513909a"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1",
+      "sha256": "5f0f5a0ee727e4eb9a6bfde0b7f6f29ed251b48dc99c0692b0d7b17c60134b2a"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-phase.sh",
+      "sha256": "a7e57658d18f993b67218dad6af675793fec49cf4c8e4e5561d2b777847e0c93"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "df795d1e366d96a7ad28c463a0df0d9462b0b0353891ab7f63bcfd8200f39909"
+    }
+  ]
+}

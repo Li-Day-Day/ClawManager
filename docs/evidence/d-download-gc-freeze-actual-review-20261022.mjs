@@ -1,0 +1,55 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+const root=path.resolve(import.meta.dirname,'../..');
+const raw=p=>fs.readFileSync(path.join(root,p));
+const decode=b=>(b[0]===255&&b[1]===254?b.toString('utf16le'):b.toString('utf8')).replace(/^\uFEFF/,'');
+const json=p=>JSON.parse(decode(raw(p)));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const prefix='docs/evidence/d-download-gc-freeze-remote-20261022-084739-1604f031';
+const source=json(prefix+'-source.json'),text=decode(raw(prefix+'.txt'));
+assert.equal(sha(raw(prefix+'.txt')),'76071f8c77782f8eecbba2745061fc639ff0c563295dafc2bc6b57a2a8b70309');
+assert.equal(source.source_sha256,'b2557fd28e16cbb419be616164d33123cfc473dfdc0c317d098311c0f85f8b8d');
+assert.equal(source.files.length,1519);assert.equal(new Set(source.files.map(x=>x.path)).size,1519);
+assert.equal(sha(source.files.map(p=>p.path+'\0'+p.sha256+'\0'+p.size).join('\n')+'\n'),source.source_sha256);
+assert.equal(source.stable_copy_verified,true);assert.equal(source.dependencies_installed,false);assert.equal(source.production_approved,false);
+assert.ok(text.includes('LOCAL_SOURCE config-writer-frozen=yes source_sha256='+source.source_sha256+' files=1519'));
+const preparation='docs/evidence/d-gc-freeze-probe-preparation-20261021.json';
+const prepared=json(preparation),files=new Map(source.files.map(x=>[x.path,x]));
+const relevant=prepared.changed_files.map(x=>({path:x.path,sha256:x.after_sha256}));
+assert.equal(relevant.length,6);
+for(const x of relevant){assert.equal(files.get(x.path)?.sha256,x.sha256,'prepared source '+x.path);assert.equal(sha(raw(x.path)),x.sha256,'current relevant source '+x.path);}
+const ddl=['table_create','table_alter','table_drop','table_rename','incoming_foreign_key','procedure_create','procedure_alter','procedure_drop','function_create','function_alter','function_drop','trigger_create','trigger_drop','event_create','event_alter','event_drop','view_create','view_alter','view_algorithm','view_drop','account_create','account_alter','account_drop','account_grant','account_revoke'];
+const controls=['privilege_deny','transaction_commit','transaction_rollback','unlock_no_commit','legal_dml','multiple_holders','killed_holder','pool_reuse','temporary_shadow_and_fresh_session'];
+const expected=[...ddl,...controls];
+const start=/^=== RUN\s+TestDDownloadGCFreezeMySQL\r?$/m.exec(text);assert.ok(start);
+const end=text.indexOf('PASS d-download-gc-freeze-mysql ',start.index);assert.ok(end>start.index);
+const remote=text.slice(start.index,end);
+const ran=[...remote.matchAll(/^=== RUN\s+TestDDownloadGCFreezeMySQL\/(\S+)\r?$/gm)].map(x=>x[1]);
+const passed=[...remote.matchAll(/^\s+--- PASS: TestDDownloadGCFreezeMySQL\/(\S+) /gm)].map(x=>x[1]);
+assert.deepEqual(ran,expected);assert.deepEqual(passed,expected);assert.equal(new Set(ran).size,34);
+assert.doesNotMatch(remote,/^\s*--- (?:FAIL|SKIP):|^FAIL\r?$/m);
+assert.match(remote,/^--- PASS: TestDDownloadGCFreezeMySQL \(0\.60s\)\r?$/m);assert.match(remote,/^PASS\r?$/m);
+const waits=[...remote.matchAll(/FREEZE_WAIT holder_connection=(\d+) waiter_connection=(\d+) holder_thread=(\d+) waiter_thread=(\d+) holder=SHARED\/EXPLICIT\/GRANTED waiter=INTENTION_EXCLUSIVE\/PENDING case=(\w+)/g)].map(x=>({case:x[5],holder_connection:Number(x[1]),waiter_connection:Number(x[2]),holder_thread:Number(x[3]),waiter_thread:Number(x[4])}));
+assert.deepEqual(waits.map(x=>x.case),ddl);
+assert.equal((remote.match(/FREEZE_WAIT/g)||[]).length,25);
+for(const x of waits){for(const k of ['holder_connection','waiter_connection','holder_thread','waiter_thread'])assert.ok(x[k]>0);assert.notEqual(x.holder_connection,x.waiter_connection);assert.notEqual(x.holder_thread,x.waiter_thread);}
+assert.match(remote,/FREEZE_FIXTURE mysql=8\.4\.8 formal_migrations=96 synthetic_accounts=yes production_approval=no/);
+const binary='6fe2bdf93660958dbea2506844ea2859bfbda5575928995a0873befc06d35852';
+const inputs='d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0';
+const catalog='0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe';
+assert.equal(sha(raw('backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json')),inputs);
+assert.ok(text.includes('LOCAL_PASS d-download-gc-freeze-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256='+binary+' ddl_sha256='+inputs));
+assert.ok(text.includes('PASS d-download-gc-freeze-mysql binary_sha256='+binary+' inputs_sha256='+inputs+' new_cases=34 component=backup-lock-prerequisites freeze_adapter=not_wired scope=synthetic full_gc=not_run role_approval=no human_mfa=no provider_read=no production_approval=no'));
+assert.match(text,/^PASS fresh-migration-replay=001\.\.081 applied=96 exact_filenames=yes/m);assert.ok(text.includes('catalog_sha256='+catalog));
+assert.match(text.trimEnd(),/download_gc_freeze_exit=0$/);assert.doesNotMatch(text,/^CLEANUP_PENDING/m);
+const namespace='sbk-mig-261022013337-65ef',uid='081b70f6-ce4a-42e8-a672-49847e31324e';
+assert.ok(text.includes('CLEANED namespace='+namespace+' uid='+uid));
+for(const marker of ['CLEANED remote-registration-scratch=yes','CLEANED local-registration-build-cache=True','LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=True'])assert.ok(text.includes(marker));
+const owner=path.join(root,'.tmp-d-index-cache-08a0e70a4b674d02818199ad97cbbf39');
+assert.ok(text.includes('LOCAL_CLEANUP config-writer-source-owned='+owner+' removed=True'));assert.equal(fs.existsSync(owner),false);
+const report={kind:'d_download_gc_freeze_actual_acceptance',status:'actual_mysql_34_of_34_accepted_prerequisites_only',log:prefix+'.txt',log_sha256:sha(raw(prefix+'.txt')),source_manifest:prefix+'-source.json',source_manifest_sha256:sha(raw(prefix+'-source.json')),source_sha256:source.source_sha256,source_files:1519,preparation:{path:preparation,sha256:sha(raw(preparation)),six_prepared_files_match:true},relevant_files:relevant,actual:{root:'TestDDownloadGCFreezeMySQL',mysql:'8.4.8',migration_replay:'001..081',migrations:96,catalog_sha256:catalog,binary_sha256:binary,inputs_sha256:inputs,cases:34,passed:34,failed:0,skipped:0,elapsed_seconds:0.60,outer_exit:0,case_names:expected,ddl_wait_witnesses:waits},cleanup:{namespace,uid,namespace_cleanup_reported:true,remote_scratch_cleanup_reported:true,local_cache_cleanup_reported:true,exact_local_owner:owner,local_owner_independently_absent:true,remote_cleanup_independently_checked:false},boundaries:{real_sql:true,fixture_scope:'synthetic run-owned schemas and accounts',freeze_adapter_wired:false,full_gc:false,role_approval:false,human_mfa:false,provider_read:false,production_approval:false,dependencies_installed:false,reviewer_remote_run:false,current_whole_tree_tested:false,twelve_protocol_groups_complete:false}};
+const output='docs/evidence/d-download-gc-freeze-actual-accepted-20261022.json';
+if(process.argv.includes('--check')){assert.deepEqual(json(output),report);console.log('PASS freeze actual 34/34; 25 exact lock witnesses; prepared sources; migration 081/96; cleanup; prerequisites only');}
+else{fs.writeFileSync(path.join(root,output),JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(output);}

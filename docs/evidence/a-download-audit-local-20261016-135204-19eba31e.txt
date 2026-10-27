@@ -1,0 +1,34 @@
+**********************
+PowerShell transcript start
+Start time: 20261016135204
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$auditReviewTokens=$null; $auditReviewErrors=$null; [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD.Path 'docs/evidence/a-download-audit-review-20261016.ps1'),[ref]$auditReviewTokens,[ref]$auditReviewErrors)|Out-Null; if($auditReviewErrors.Count -gt 0){$auditReviewErrors|ForEach-Object{$_.Message};exit 1}; $auditReviewStamp=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8); $auditReviewLog=Join-Path $PWD.Path ('docs/evidence/a-download-audit-local-'+$auditReviewStamp+'.txt'); $auditReviewSource=Join-Path $PWD.Path ('docs/evidence/a-download-audit-source-'+$auditReviewStamp+'.json'); $auditReviewFinalExit=1; Start-Transcript -Path $auditReviewLog -NoClobber; try {& ./docs/evidence/a-download-audit-review-20261016.ps1 -SourceManifestPath $auditReviewSource; $auditReviewFinalExit=0} catch {Write-Host ('DOWNLOAD_AUDIT_ERROR='+$_.Exception.Message)} finally {Write-Host ('a_download_audit_exit='+$auditReviewFinalExit);Write-Host ('audit_review_log='+$auditReviewLog);Write-Host ('audit_review_source='+$auditReviewSource);Stop-Transcript};exit $auditReviewFinalExit
+Process ID: 1564
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-local-20261016-135204-19eba31e.txt
+OWNED download-audit-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-54564aa3fd474d9ca46ae1869eea7320 scratch=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-491577864a9e44d4965994a18bf2fae3
+PS>TerminatingError(): "Source file set changed while snapshot was copied: scripts/system-backup-d-download-audit-validation.ps1"
+LOCAL_CLEANUP download-audit-review-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-491577864a9e44d4965994a18bf2fae3 removed=True
+LOCAL_CLEANUP download-audit-review-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-54564aa3fd474d9ca46ae1869eea7320 removed=True
+PS>TerminatingError(): "Source file set changed while snapshot was copied: scripts/system-backup-d-download-audit-validation.ps1"
+DOWNLOAD_AUDIT_ERROR=Source file set changed while snapshot was copied: scripts/system-backup-d-download-audit-validation.ps1
+a_download_audit_exit=1
+audit_review_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-local-20261016-135204-19eba31e.txt
+audit_review_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-source-20261016-135204-19eba31e.json
+**********************
+PowerShell transcript end
+End time: 20261016135327
+**********************

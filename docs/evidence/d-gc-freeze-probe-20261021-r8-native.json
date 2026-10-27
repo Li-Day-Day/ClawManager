@@ -1,0 +1,65 @@
+{
+  "kind": "d_gc_freeze_prerequisite_final_validation",
+  "exit": 0,
+  "source_postcheck": true,
+  "source_sha256": "5511046168913f103348279747cf73c8fa09c497ef0ee6546a1edd38c2b61676",
+  "parent_source_sha256": "25b74fd4a8a4e099c68988442d374486e5e5985ff3e32ba5e6853022287b81ac",
+  "counterfactual_restored": true,
+  "stages": [
+    {
+      "stage": "deadline-focused",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "deadline-counterfactual",
+      "exit": 1,
+      "expected_exit": 1
+    },
+    {
+      "stage": "full-evidence",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "tagged-seed",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "windows-build",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "detached-seed",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "unowned-deny",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "linux-build",
+      "exit": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "linux-migration",
+      "exit": 0,
+      "expected_exit": 0
+    }
+  ],
+  "evidence_framework_timeout_seconds": 2700,
+  "all_evidence_tests": true,
+  "security_pass_reused_from_unchanged_r4": true,
+  "default_vet": true,
+  "dependencies_installed": false,
+  "remote": false,
+  "actual_mysql": false,
+  "full_gc": false,
+  "freeze_adapter_wired": false,
+  "production_approved": false
+}

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-14",
+  "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-prepare-gate-5f5f88fa3918419499a7c98bd8afd65c",
+  "runs": [
+    {
+      "stage": "targeted",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 -run ^(TestPrepare|TestSystemCapabilityRejectsInvalidPreparationBeforeAuthority|TestTaskAndSystemPreparersRejectInvalidInputs) ./internal/systembackupevidence"
+    },
+    {
+      "stage": "full",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 ./internal/systembackupevidence ./internal/systembackupproducer"
+    }
+  ],
+  "source_snapshot": "docs/evidence/a-evidence-prepare-boundary-source-snapshot-20261014.json",
+  "log": "docs/evidence/a-evidence-prepare-boundary-local-20261014.txt",
+  "scratch_absent": true
+}

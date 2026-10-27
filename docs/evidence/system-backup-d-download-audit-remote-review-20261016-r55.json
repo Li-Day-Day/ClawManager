@@ -1,0 +1,70 @@
+{
+  "kind": "d_download_admission_audit_remote_acceptance",
+  "recorded_at": "2026-10-16T07:25:51.503Z",
+  "status": "accepted_four_actual_audit_SQL_cases_only",
+  "review_basis": "docs/evidence/a-download-audit-mysql-accepted-sbk-mig-261016070211-49af.json",
+  "review_basis_sha256": "33e13b4162b3a17c6f4eda938832befc52c525c434a65ade0fd0c79c2dce51c6",
+  "raw_log": "docs/evidence/d-download-audit-remote-20261016-145206-9924db6e.txt",
+  "raw_log_sha256": "b3c17be34beb55ded5ba09123017f7e6bd65e5bcb97589089f020812dfa7462a",
+  "source_manifest": "docs/evidence/d-download-audit-remote-20261016-145206-9924db6e-source.json",
+  "source_manifest_sha256": "c7c5e4248386c4e0becd4ba62b126fe63699fa98939705d857890d83702ea04c",
+  "source_files": 1314,
+  "checks_rerun": 17,
+  "reviewer": "docs/evidence/a-download-audit-mysql-review-20261016.mjs",
+  "reviewer_sha256": "b6699511e830896ab8809e85f6f1f60ab72a66194d7c45c4ad01f77564f5df06",
+  "actual_cases": [
+    "actual_insert_id_and_timestamp",
+    "rollback_visibility",
+    "same_transaction_mutation",
+    "cross_transaction_anchor"
+  ],
+  "catalog_sha256": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237",
+  "migration_count": 95,
+  "payloads": [
+    {
+      "path": "d-download-audit.test",
+      "sha256": "ea0b7ae6bec7f68ba021efdaa82fd9c4e437629af76deca026502fa5b5a505dd",
+      "bytes": 18222504
+    },
+    {
+      "path": "system-backup-migrate",
+      "sha256": "cff6270bf1537de361d938a533f155f7f1193de2c4f116327e53ec8b1ee97482",
+      "bytes": 9095771
+    },
+    {
+      "path": "d-download-audit-inputs.json",
+      "sha256": "a8c353102a7fbde8886314abfa0d62ad56635c51fcef5f37c6e7ba0418eda20e",
+      "bytes": 3916
+    }
+  ],
+  "namespace": "sbk-mig-261016070211-49af",
+  "namespace_uid": "ab61fbf0-3245-4b52-b9f1-d2f3964278de",
+  "process_exit": 0,
+  "cleanup": {
+    "four_owned_user_audit_fixtures": [
+      "d_audit_582e1d6434f6f2df6734",
+      "d_audit_4611f78da687dc10b3cb",
+      "d_audit_289640bbaeb7456ad7be",
+      "d_audit_3b590cd7479c93073fc7"
+    ],
+    "namespace_and_remote_scratch_reported": true,
+    "local_owner_independently_absent": true,
+    "exact_container_independently_absent": {
+      "name": "codex-d-download-audit-7470db5a1d874685ad68dcee247cc2df",
+      "tool_chunk": "e72e29",
+      "exit_code": 0,
+      "stdout_empty": true
+    }
+  },
+  "excluded_current_tagged_probe": "backend/internal/systembackupsecurity/d_detail_control_mysql_test.go",
+  "current_focused_pins": 389,
+  "current_focused_matching_pins": 388,
+  "agent_ran_remote": false,
+  "tests_or_builds_rerun": false,
+  "dependencies_installed": false,
+  "full_prelocked_admission": false,
+  "nonce_consumed": false,
+  "production_grants_proved": false,
+  "formal_approval": false,
+  "overall_complete": false
+}

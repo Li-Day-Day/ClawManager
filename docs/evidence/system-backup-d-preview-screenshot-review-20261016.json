@@ -1,0 +1,62 @@
+{
+  "kind": "d_preview_desktop_screenshot_review_and_spacing_fix",
+  "recorded_at": "2026-10-16T01:03:07.9666314Z",
+  "screenshots": [
+    {
+      "path": "docs/evidence/system-backup-d-preview-desktop-top-20261016.png",
+      "sha256": "27a7d23a97b358458ba7acc4e0984d7683e154e6602c362fbc51915a55ecd629",
+      "size": 144455,
+      "source": "user supplied screenshot; original PNG bytes preserved"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-preview-desktop-lower-20261016.png",
+      "sha256": "b1ddd41ab6fe993f053480ea1f74802e4b6f1355b3dc5008806ca3f79777e92d",
+      "size": 179247,
+      "source": "user supplied screenshot; original PNG bytes preserved"
+    }
+  ],
+  "source_url_provided_by_user": "https://10.130.14.23:32643/admin/backups",
+  "source_url_or_deployed_build_hash_independently_verified": false,
+  "review_scope": "Chinese desktop explicit preview, 有数据 scenario, user screenshots only; screenshots precede spacing fix",
+  "observed_counts": [
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "observed": [
+    "Explicit preview warning and exit-preview control visible",
+    "Feature enabled and recovery readiness not-ready displayed independently",
+    "Five counters visible with ownership backlog zero",
+    "Four healthy dependencies, degraded catalog and clean source-writer visible",
+    "Shortage shows preview-external-zone available 1 / minimum 2",
+    "Monitoring enabled and previously-enabled reason visible",
+    "No obvious desktop text clipping in supplied views"
+  ],
+  "issue": "Two attention action buttons touch horizontally; parent only supplies vertical spacing",
+  "change": "Wrap conditional attention actions in flex flex-wrap gap-2; preserve navigation and conditions",
+  "changed_file": "frontend/src/pages/admin/backups/BackupOverviewReadout.tsx",
+  "post_change_sha256": "49923fdc6db97df42bb691bcf636e2c171d5a27318011f838b6d3846c31105bb",
+  "verification": {
+    "command": "node --test-isolation=none --test frontend/scripts/system-backups-i18n.test.mjs",
+    "raw_log": "docs/evidence/system-backup-d-preview-spacing-local-20261016.txt",
+    "raw_sha256": "d586700fd38b7b55349ec72bb87d200dceedaf872f58c1268eaa54db23e80141",
+    "native_exit": 0,
+    "tests": 5,
+    "pass": 5,
+    "fail": 0,
+    "diff_check": "pass",
+    "new_tests_added": false
+  },
+  "limits": [
+    "No post-fix rendered screenshot; user rebuild required",
+    "No full TypeScript/Vite build log or proof of exact deployed source",
+    "Disabled/empty preview, mobile width and other languages not visually reviewed",
+    "No live authenticated read or B/A/C/D integration acceptance"
+  ],
+  "dependencies_installed": false,
+  "build_artifacts_created": false,
+  "retained_pngs_and_test_log": "intentional review evidence; not build products",
+  "production_approval": false
+}

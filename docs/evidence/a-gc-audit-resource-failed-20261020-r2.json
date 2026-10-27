@@ -1,0 +1,31 @@
+{
+  "status": "failed",
+  "source_sha256": "4c7d1c7664dc8c84498883f315b470310b7c979b8451c0560e1b54a7773309d6",
+  "source_files": 1445,
+  "frozen_source_only": true,
+  "default_vet": true,
+  "stage": "targeted",
+  "exit": 1,
+  "test_roots": 1,
+  "checks": 4,
+  "passed": [
+    "TestAGCDirectAuditResourcePublishedInteger/unexpected_fk",
+    "TestAGCDirectAuditResourcePublishedInteger/wrong_type"
+  ],
+  "failed": [
+    "TestAGCDirectAuditResourcePublishedInteger",
+    "TestAGCDirectAuditResourcePublishedInteger/published_int"
+  ],
+  "diagnostic": "published INT positive case returned permission_denied; cause not localized",
+  "counterfactual_stages_run": false,
+  "evidence_full_run": false,
+  "source_postcheck_pass": false,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "owned_source_cache_overlay_removed": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-d74a2c242f4849d69cd175e6f9bc8274",
+  "raw_sha256": "0ecf3bcc596f10ed3cb75aa2ee8bc5c8fd935985e88502e4de1436571e8636c8",
+  "native_sha256": "1f115fe575130dc8de0c9127fc45caed1a5c5d23139ea21e9ad9ddecc3c527b1",
+  "next_action": "paused at user request; investigate positive fixture and collector interaction when resumed"
+}

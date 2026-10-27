@@ -556,3 +556,16 @@ SQL 新增七张控制表和协调锁初始行，初装 schema 与 upgrade-recov
 - [ ] 完成目标分支整合后，在其完整 migration schema 上重跑隔离演练与构建，再到独立 Linux/K8s 集群验收 Runtime Agent、真实存储、Job/快照、暂停和源恢复。当前通过不代表这些项通过。
 
 完整依据、修复位置、检查范围及合入条件见[审查报告](users-instances-backup-premerge-review.zh-CN.md)。此次比较未 fetch，不代表远端缓存之后的更新；没有切换分支或修改 index，HEAD 仍为 `576e4bb5440d453fd25300586e57ce81cb616f31`。
+
+## 26. 与 backup 分支的本地冲突处理（2026-10-27）
+
+用户在关闭 Draft PR 后要求先处理冲突。本轮在 `codex/users-instances-backup` 上执行不创建提交的本地整合，目标 `origin/backup@52117dee`；HEAD 仍为 `b95eab59`，保留 MERGE_HEAD 和已暂存结果，不提交、不推送、不重新打开 PR。
+
+- [x] 解决 `server/main.go` import 冲突，保留公共安全/session/退出撤销及内部控制模块。
+- [x] 解决 Skill materialize worker 生命周期冲突，保留新取消/等待/清理逻辑并接回停写许可；许可覆盖子任务和取消清理，释放失败传入停止结果。新增 5 项回归，原生命周期测试保留。
+- [x] 修复合入后新发现的 `instance_browser_workers` 表覆盖缺口；依据 migration/model 保留配置，恢复禁用并清除源状态，未知字段和孤儿引用写前拒绝。新增预检/恢复/校验和失败用例。
+- [x] 修复 Windows CRLF 导致的合同摘要不匹配；固定 4 类精确字节文件的 LF，内容与目标 Git blob 一致，未修改预期摘要或放宽验证。
+- [x] 整合后的 backend 全量测试、vet、Linux amd64 构建通过；前端构建、变更文件 ESLint、版本/OpenCode/instance-access 测试通过。未运行真实迁移或实际 K8s 资源操作。
+- [ ] 公共任务、权威 gate/fence、资源与证据账本、API/安全入口、成品/catalog/provider 仍需业务整合；两套入口尚未统一。本文仅更新冲突及编译/测试兼容结论，不放开两套控制器同时运行。
+
+处理方案、检查证据和本地待提交状态见[分支整合记录](users-instances-backup-branch-integration.zh-CN.md)。原完整改动清单保留首次提交时的 295 文件快照，不把目标分支数千个已有文件算作本轮新增功能。

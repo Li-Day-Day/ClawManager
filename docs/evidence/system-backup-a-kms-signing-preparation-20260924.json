@@ -1,0 +1,35 @@
+{
+  "kind": "system_backup_a_kms_signing_local_preparation",
+  "recorded_at": "2026-09-24T02:30:27.198Z",
+  "remote_executed": false,
+  "tests": [
+    {
+      "command": "py -3.10 -B scripts/system-backup-a-kms-signing-spike.test.py",
+      "passed": 6
+    },
+    {
+      "command": "node scripts/system-backup-a-kms-signing-spike.test.mjs",
+      "passed": 3
+    },
+    {
+      "command": "py -3.10 -B scripts/system-backup-a-evidence-spike.test.py",
+      "passed": 14
+    },
+    {
+      "command": "node scripts/system-backup-a-evidence-spike.test.mjs",
+      "passed": 4
+    }
+  ],
+  "dependencies_installed": false,
+  "test_artifacts_created": false,
+  "provider_capability_approved": false,
+  "evidence_registered": false,
+  "sha256": {
+    "scripts/system-backup-a-kms-signing-client.py": "97a5bdaf427d696e9485681780dbc44b2387747ba36ccb6c1ecb081e66f869ec",
+    "scripts/system-backup-a-kms-signing-spike.py": "2a9a250e83ac095997f0794cce35fccf009220409c21793310fcafbedb948cc3",
+    "scripts/system-backup-a-kms-signing-spike.mjs": "3b7a410282e63b68934215d9b9a61333c3615212216883aff85e864fd35856b6",
+    "scripts/system-backup-a-kms-signing-spike.test.py": "b8041148fd2690e2e52e9abbdc9fd5b59417429d82dd7a7d8b0aba213d76b7ea",
+    "scripts/system-backup-a-kms-signing-spike.test.mjs": "94361e01a7c17f986d9a6991d4810f2e4af3b9c82e79ae76b15cfef7ba0426c7",
+    "scripts/system-backup-a-evidence-spike.py": "24e09f6376a67ecfcdac8142bb2181b257ec84e07f821e9666d8a26f61c2faf5"
+  }
+}

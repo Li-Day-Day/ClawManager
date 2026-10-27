@@ -1,0 +1,101 @@
+{
+  "kind": "a_live_chain_http_failure_validation.v1",
+  "status": "local_https_failure_paths_passed_real_environment_pending",
+  "recorded_at": "2026-10-22T02:23:01.7460662Z",
+  "tests": {
+    "live_chain": {
+      "command": "node --test --test-isolation=none scripts/system-backup-a-live-chain.test.mjs",
+      "exit": 0,
+      "total": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "duration_ms": 64352.7811,
+      "execution": "approved host execution for existing OpenSSL/Bash/Node subprocesses and local HTTPS"
+    },
+    "audit_collector": {
+      "command": "node --test --test-isolation=none scripts/system-backup-a-live-audit.test.mjs",
+      "exit": 0,
+      "total": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "real_local_https_fault_cases": [
+    "download/no_headers",
+    "download/reset_body",
+    "download/short_body",
+    "download/chunked_short",
+    "download/wrong_hash",
+    "download/overflow",
+    "download/timeout_headers",
+    "download/timeout_body",
+    "download/invalid_operation",
+    "readiness/timeout_no_headers",
+    "login/timeout_no_headers",
+    "proof/timeout_no_headers",
+    "login/invalid_json"
+  ],
+  "actual_cli": {
+    "default_deadline_ms": 20000,
+    "observed_test_duration_ms": 21812.6365,
+    "exit": 2,
+    "status": "BLOCKED",
+    "failure_code": "timeout",
+    "blocked_stage": "plaintext_download",
+    "operation_preserved": true,
+    "partial_bytes": 4,
+    "credential_prompts": 1,
+    "totp_prompts": 1,
+    "automatic_retries_observed": 0,
+    "old_receipt_overwrite_rejected": true,
+    "password_jwt_proof_refresh_plaintext_absent_from_output": true
+  },
+  "receipt_changes": [
+    "closed failure_code; no original network error text",
+    "partial_received_bytes only for bounded numeric progress",
+    "legal Operation ID retained from download headers on incomplete transport",
+    "received_bytes retained for completed responses that fail content validation"
+  ],
+  "source_pins": [
+    {
+      "path": "scripts/system-backup-a-live-chain.mjs",
+      "sha256": "1116950f55c8323a53d4ae2d4ff479e39ad40f0ec703d0537f03026f048f2a07"
+    },
+    {
+      "path": "scripts/system-backup-a-live-chain.test.mjs",
+      "sha256": "bf61f0d41ed61ea0fa05b7409c3ce686e85ff75ee101d0c569105a149495a516"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit.mjs",
+      "sha256": "16a6b039b7c8f2ad31e9e4a9c27fc8c29ff3cbd3bf5d3621f4c7b8c71292724a"
+    },
+    {
+      "path": "scripts/system-backup-a-live-audit.test.mjs",
+      "sha256": "807970fe797d12d1ef7feddfc2517c8b543eef805fbf4a765c323ffc89840e00"
+    },
+    {
+      "path": "scripts/system-backup-a-download-deployment.mjs",
+      "sha256": "3458e6b6e00b2472c1935da59674c556be8ca492e432d017450995669d0f5b47"
+    },
+    {
+      "path": "scripts/system-backup-a-capacity-material-review.mjs",
+      "sha256": "de6170fde30bc16059326618776611d34e06e1af24e914030d0f54ef3f7b4b82"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/audit.sql",
+      "sha256": "c15ffa67a921d76c798319226a318bc9657f2832cdb4e340e8966dc960746f01"
+    }
+  ],
+  "source_scope": "relevant delivery file hashes observed and rechecked; not a full shared-worktree regression",
+  "temporary_certificates_private_keys_plans_receipts_sql_removed": true,
+  "cleanup_independently_checked": true,
+  "dependencies_installed": false,
+  "go_tests_or_builds_run": false,
+  "remote_cluster_or_provider_contacted": false,
+  "real_database_queried": false,
+  "runtime_deployed": false,
+  "bootstrap_adapters_added": 0,
+  "full_live_chain_verified": false
+}

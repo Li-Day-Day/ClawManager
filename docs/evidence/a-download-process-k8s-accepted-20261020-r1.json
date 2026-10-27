@@ -1,0 +1,65 @@
+{
+  "kind": "a_download_separate_sql_and_live_readiness_k8s_local_acceptance",
+  "recorded_at": "2026-10-20T04:12:15.407Z",
+  "go_source_sha256": "bbacafe4c886ad01a6862101780b5a3018ce07af4cd742152fe0e633236e10b7",
+  "go_source_count": 1433,
+  "node_source_sha256": "8bab0c41906a653a7e243e5dbdfdd71e5f9048ef9b26bd51543997acbf9dc5dc",
+  "node_source_count": 1437,
+  "main_package_roots": 14,
+  "main_package_checks_including_subtests": 49,
+  "new_roots": [
+    "TestDownloadDatabaseIsSeparateLazyPool",
+    "TestDownloadDatabaseRejectsAliasingAndUnsafeAccounts",
+    "TestDownloadDeploymentRejectsBorrowingRegistrationPool",
+    "TestDownloadReadinessUsesRunningJournalWithoutSQL",
+    "TestDownloadLiveReadinessRequiresTLSIdentityAndExactDigest",
+    "TestDownloadModeAndLoopbackBoundary"
+  ],
+  "new_checks_including_roots": 28,
+  "node_download_checks": 11,
+  "node_base_regression_checks": 4,
+  "actual_tls_client_and_server": true,
+  "separate_sql_pool_fixture": true,
+  "readiness_journal_opened_once_fixture": true,
+  "linux_binary_sha256": "1cbdabf0f10407514f4758b9852ed829748d880a7b0fb49621ebe0ecaa6d5a57",
+  "main_source_set_identical_across_go_and_node": true,
+  "scoped_current_inputs_match": true,
+  "other_snapshot_input_drift_excluded": [],
+  "extra_template_inputs": [
+    {
+      "path": "deployments/k8s/system-backup-registration.template.json",
+      "size": 2468,
+      "sha256": "d39f84dc5076570d7e4ca8be6d93d8382e02b9c35fb4d3481f914baa5d77fc64"
+    },
+    {
+      "path": "deployments/k8s/system-backup-download.template.json",
+      "size": 1401,
+      "sha256": "5ad004078c9fa824f9858cd30e250946b8c55d9385d5b39fe37de4d5c8c5e1b2"
+    },
+    {
+      "path": "deployments/k8s/system-backup-download-sql-pins.template.json",
+      "size": 145,
+      "sha256": "17d680300ffb3b0e110f7b62d60746ae4756a9356a8cc9ab2f456a6876edfcaf"
+    }
+  ],
+  "generated_empty_template": {
+    "path": "deployments/k8s/system-backup-download-k8s.template.json",
+    "sha256": "ba65a365c565564d4ce75ab1ff90ae4df150bce723342b49b624d2ff66badef0",
+    "matches_validated_generator": true,
+    "contains_real_material": false
+  },
+  "frozen_postcheck": true,
+  "owned_products_absent": [
+    ".tmp-d-index-cache-2bd902aeb4c44c45b29e8449aa303455",
+    ".tmp-d-index-cache-78fe707b7a7f45f1a1d9018ce017d138"
+  ],
+  "unfrozen_exploratory_cli_spawn_eperm": "excluded; temporary directory independently absent",
+  "node_capture_source_only_retry": true,
+  "dependencies_installed": false,
+  "kubernetes_contacted": false,
+  "actual_sql": "not_run",
+  "sql_roles_approved_or_applied": false,
+  "actual_ca_oidc_and_storage_verified": false,
+  "human_mfa_and_provider_e2e": false,
+  "production_approval": false
+}

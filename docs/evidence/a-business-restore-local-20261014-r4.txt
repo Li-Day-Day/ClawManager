@@ -1,0 +1,32 @@
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE a-business-fifteen-table-restore=yes synthetic-proof=yes real_mysql=not_run
+ok  	clawreef/internal/systembackupbusinessa	9.164s
+=== RUN   TestABusinessRestoreMySQLSeed
+=== RUN   TestABusinessRestoreMySQLSeed/caller-policy-table-columns-only
+=== RUN   TestABusinessRestoreMySQLSeed/generated-username-column
+=== NAME  TestABusinessRestoreMySQLSeed
+    restore_rows_mysql_test.go:822: PASS A business fifteen-table offline seed writable_columns=220 read_columns=221 real_mysql=not_run
+--- PASS: TestABusinessRestoreMySQLSeed (0.84s)
+    --- PASS: TestABusinessRestoreMySQLSeed/caller-policy-table-columns-only (0.00s)
+    --- PASS: TestABusinessRestoreMySQLSeed/generated-username-column (0.00s)
+PASS
+ok  	clawreef/internal/systembackupbusinessa	4.045s
+=== RUN   TestABusinessRestoreMySQLSeed
+=== RUN   TestABusinessRestoreMySQLSeed/caller-policy-table-columns-only
+=== RUN   TestABusinessRestoreMySQLSeed/generated-username-column
+=== NAME  TestABusinessRestoreMySQLSeed
+    restore_rows_mysql_test.go:822: PASS A business fifteen-table offline seed writable_columns=220 read_columns=221 real_mysql=not_run
+--- PASS: TestABusinessRestoreMySQLSeed (0.09s)
+    --- PASS: TestABusinessRestoreMySQLSeed/caller-policy-table-columns-only (0.00s)
+    --- PASS: TestABusinessRestoreMySQLSeed/generated-username-column (0.00s)
+PASS
+LOCAL_PASS a-business-standalone-seed=yes checkout-fixtures=absent real_mysql=not_run
+LOCAL_PASS a-business-restore-tagged-compile=yes real_mysql=not_run
+internal/runtime/gc: C:\Program Files\Go\pkg\tool\windows_amd64\vet.exe: exit status 0xc0000043
+FAIL
+WARNING: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME mysql-probe-build command 
+(1/3 failed). Vet remains enabled; isolated cache is retained only until this run ends.
+LOCAL_PASS a-business-restore-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=c992cb570395a3b865c26ab1ef6646e3b641739fdbf56fda8e4c988ce45dc7ef ddl_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab
+CLEANED local-registration-build-cache=True
+A_BUSINESS_RESTORE_LOCAL_R4_EXIT=0

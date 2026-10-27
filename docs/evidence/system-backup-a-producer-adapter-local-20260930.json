@@ -1,0 +1,105 @@
+{
+  "kind": "a_producer_c1_local_adapter_validation",
+  "date": "2026-09-30",
+  "status": "passed_for_recorded_inputs_concurrent_addition_not_validated",
+  "production_authorization": false,
+  "runner": "scripts/system-backup-a-producer-adapter-validation.ps1",
+  "exit_code": 0,
+  "transcript": {
+    "path": "docs/evidence/system-backup-a-producer-adapter-local-20260930.txt",
+    "sha256": "c066ad3a9ada760c01bdbbc836a840be474ac3ca9469c4969f864b0e64c3777d"
+  },
+  "source_snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-adapter-inputs-20260930.json",
+    "files": 122,
+    "unchanged": 122,
+    "differences": [],
+    "scope": "Go source files in evidence, producer and security packages; remaining hashes below captured after validation",
+    "concurrent_additions": [
+      {
+        "path": "backend/internal/systembackupproducer/lifecycle.go",
+        "sha256_at_review": "43f6ee4ac36bd272f07bd7d3c1d87e321560866dec776511848dadc8dacce2bc",
+        "validated_by_this_run": false
+      }
+    ],
+    "complete_current_worktree_validated": false
+  },
+  "tests": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 114,
+    "named_passes_including_subtests": 1073,
+    "new_named_passes_including_subtests": 59,
+    "failures": 0,
+    "default_go_test_vet": true,
+    "linux_evidence_test_compiled": true,
+    "linux_binary_executed": false
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-0ef2170e33c24511859e99deec688e72",
+    "absent": true,
+    "build_cache_tmp_telemetry_and_binary_removed": true
+  },
+  "dependencies_installed": false,
+  "remote_actions": false,
+  "accepted_scope": [
+    "Unpadded small capability body encryption and verified full/range read",
+    "Fixed producer/policy/deadline comparison before and after body validation and after encryption",
+    "A manifest and all C1 EvidenceBinding fields compared against trusted record/channel input",
+    "Actual A binding accepted in strict C1 HistoricalBindingRecord decoder",
+    "Legacy small-body Prepare and PersistPending rejection"
+  ],
+  "excluded_scope": [
+    "Production principal/ContentAuthority or encrypt-only Transit resolver",
+    "Wrap/STS provider authorization and credential separation",
+    "Producer SQL Policy, pending/claim/result/GC final Guard integration",
+    "Historical system recovery services",
+    "Real MySQL, provider ACLs and V01-V10",
+    "HTTP login/refresh/logout, real LDAP/directory revocation",
+    "Concurrent D lifecycle.go added during compilation; not in the initial source snapshot"
+  ],
+  "reviewed_artifacts_at_completion": [
+    {
+      "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+      "sha256": "f6f9a8dd6ac67bc5c0833b417d7c0883609028e364c2f63d0d3638b6eac9f9b2"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "4afb96c7845559e5e80acb6c32c8eb322a6184f651efa6ac4edebe089e7f12bd"
+    },
+    {
+      "path": "backend/go.mod",
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-owned-redacted-examples.json",
+      "sha256": "eff9e7ebf5a14992cfbe8562aa869dfcbacee4481914db1e708249c6f341dbf0"
+    },
+    {
+      "path": "docs/system-backup-a-producer-c1-adapter-20260930.md",
+      "sha256": "6e2831f19ff5ab3f88bc1ff83d89cd11d62aabdeb04e0d0dd419ced3f80bb4f3"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "kind": "a_download_deployment_local_acceptance",
+  "recorded_at": "2026-10-20T03:36:59.962Z",
+  "run": "20261020-r5",
+  "source_sha256": "bb502ba3c5d588510e8d79f233db50901b9b55b9517d0ec2c001ed49a43a1e7a",
+  "source_count": 1429,
+  "extra_inputs": [
+    {
+      "path": "deployments/k8s/system-backup-capacity.template.json",
+      "size": 551,
+      "sha256": "1bc26d5a613924528d7c61ec1286b8dd2d21396d38d92fd22a41f0264707c288"
+    },
+    {
+      "path": "deployments/k8s/system-backup-registration.template.json",
+      "size": 2468,
+      "sha256": "d39f84dc5076570d7e4ca8be6d93d8382e02b9c35fb4d3481f914baa5d77fc64"
+    },
+    {
+      "path": "deployments/k8s/system-backup-download.template.json",
+      "size": 1401,
+      "sha256": "5ad004078c9fa824f9858cd30e250946b8c55d9385d5b39fe37de4d5c8c5e1b2"
+    },
+    {
+      "path": "deployments/k8s/system-backup-download-sql-pins.template.json",
+      "size": 145,
+      "sha256": "17d680300ffb3b0e110f7b62d60746ae4756a9356a8cc9ab2f456a6876edfcaf"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-account.py",
+      "size": 5498,
+      "sha256": "3b5976777390d1247bf9d0978316a7ac91dfc23f54e04f3bd134f2833c770c07"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-account_test.py",
+      "size": 2998,
+      "sha256": "18cb30dfe2abbd17b59dc71fcd10d696b199e8c9def1267e1ce2d7c1fe99ea55"
+    }
+  ],
+  "retained_passing_source_sha256": "23d31811cc484e61ea3ccbb61f7f9305f17cbae8f9645ad25aec59f65fa09544",
+  "retained_passing_packages": [
+    "clawreef/cmd/system-backup-registration",
+    "clawreef/internal/systembackupsecurity"
+  ],
+  "repair_source_changes": [
+    "backend/internal/systembackupevidence/download_output_deadline_a_test.go",
+    "backend/internal/systembackupevidence/system_publication_test.go"
+  ],
+  "retained_source_final_postcheck": "not_reached_on_failed_full_run",
+  "retained_source_basis": "stable_readonly_copy_verified_before_tests; all_unchanged_inputs_rechecked_in_repair_snapshot",
+  "packages": [
+    {
+      "package": "clawreef/cmd/system-backup-registration",
+      "main_tests": 8,
+      "tests_including_subtests": 21
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_tests": 255,
+      "tests_including_subtests": 2011
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_tests": 306,
+      "tests_including_subtests": 2370
+    }
+  ],
+  "new_roots": [
+    "TestDownloadDeploymentLoadsConcreteRuntimeAndMountsTLS",
+    "TestDownloadDeploymentRejectsWrongPinsAndSources",
+    "TestDownloadDeploymentStrictJSON",
+    "TestDownloadGrantShapeRejectsEscalation",
+    "TestLoginSessionsCloseErasesOwnedKeyAndRejectsReuse"
+  ],
+  "new_checks_including_roots": 18,
+  "publication_claim_guard_checks": 13,
+  "native_buffered_output_checks": 4,
+  "node_checks": 16,
+  "python_mocked_checks": 4,
+  "linux_binary_sha256": "c63098f182e079fe51de3b0a81f778671fe16d0e71c84d8e68bcdbe7069219b9",
+  "scoped_current_inputs_match": true,
+  "other_snapshot_input_drift_excluded": [
+    "backend/internal/systembackupevidence/download_retention_gc_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc.go",
+    "backend/internal/systembackupevidence/download_task_owner_test.go"
+  ],
+  "frozen_postcheck": true,
+  "owned_products_absent": [
+    ".tmp-d-index-cache-6fc70a0fca2b4969ba56bbc46d2c7bd5",
+    ".tmp-d-index-cache-9eeec30df165459089064f9e3c35438f",
+    ".tmp-d-index-cache-dd88e538016f437e853ebca246b4c667",
+    ".tmp-d-index-cache-e9fc3f59ded0413cb5beaa7a72fc273c",
+    ".tmp-d-index-cache-36383be04cbb466abe4e2f8dfa7b99d7"
+  ],
+  "first_pre_go_python_snapshot_omission_preserved": true,
+  "pre_go_concurrent_test_drift_stop_preserved": true,
+  "pre_test_native_single_package_argument_failure_preserved": true,
+  "failed_full_evidence_package_preserved": true,
+  "fixture_seed_known_commit_is_not_execution_permission": true,
+  "dependencies_installed": false,
+  "actual_sql": "not_run",
+  "sql_role_profile": "candidate_not_approved_or_applied",
+  "providers_and_human_mfa": "not_verified",
+  "linux_permissions_and_shared_storage": "not_executed",
+  "production_deployment": "not_applied",
+  "production_approval": false
+}

@@ -1,0 +1,128 @@
+{
+  "kind": "a_config_canonical_maintenance_digest_contract",
+  "id": "a-config-canonical-maintenance-digests.v1",
+  "date": "2026-10-15",
+  "owner": "A",
+  "status": "accepted_format_for_d_implementation",
+  "approval_scope": "A digest representation and idempotency binding supplement only; not runtime grant/issuer acceptance, provenance/fingerprint algorithm approval or SQL promotion",
+  "public_contracts_remain": "draft",
+  "algorithm": "lowercase SHA-256 of exact UTF-8 JCS; closed ASCII property names; safe integer numbers; preserve Unicode/case/whitespace and array order; reject invalid UTF-8/unpaired surrogates",
+  "actor": {
+    "domain": "clawmanager.system-backup.config-canonical-maintenance-actor.v1",
+    "fields": [
+      "domain",
+      "issuer",
+      "subject"
+    ],
+    "issuer": "1..2048 UTF-8 bytes, non-whitespace; independently authenticated stable logical issuer ID",
+    "subject": "1..256 UTF-8 bytes, non-whitespace; independently authenticated stable principal ID, not display name/shared role",
+    "excluded": [
+      "session/token",
+      "certificate/key thumbprint or version",
+      "issuer registry version",
+      "role/permissions",
+      "grant identity/version",
+      "target/action/key"
+    ],
+    "rules": [
+      "Issuer and subject are exact trusted identities; no lowercasing, URI rewriting, trimming or Unicode normalization in this profile.",
+      "Authentication must map rotated keys/certificates to the same stable logical issuer/principal; raw rotating key identities must not reopen actor scope.",
+      "A digest is a locator, not authentication or permission. Never accept client-supplied issuer/subject/digest as proof.",
+      "The v1 actor derivation is fixed for installation-lifetime idempotency records. A future identity/profile migration must preserve old scopes and keys; silent rehashing into a fresh actor namespace is forbidden."
+    ]
+  },
+  "grant": {
+    "domain": "clawmanager.system-backup.config-canonical-maintenance-grant.v1",
+    "fields": [
+      "domain",
+      "issuer",
+      "grant_id"
+    ],
+    "issuer": "same stable logical issuer ID rule as actor, authenticated from reviewed grant profile",
+    "grant_id": "1..128 ASCII characters matching ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$, stable issuer-assigned logical grant identity",
+    "version": "separate immutable reviewed grant-version identity, included in request hash, not grant identity hash",
+    "rules": [
+      "A logical grant identity plus version must identify one immutable fully authenticated grant, including purpose/target/actor/key/validity constraints.",
+      "Changing grant content/validity requires a new version; same identity/version with different bytes is unavailable. This supplement does not define or approve a grant signature/wire profile."
+    ]
+  },
+  "request": {
+    "domain": "clawmanager.system-backup.config-canonical-backfill-request.v1",
+    "required_fields": [
+      "domain",
+      "target_server_uuid",
+      "target_database",
+      "origin_installation_id",
+      "maintenance_actor_sha256",
+      "action",
+      "grant_identity_sha256",
+      "grant_version",
+      "config_version",
+      "original_config_sha256",
+      "original_config_size_bytes",
+      "expected_row_sha256",
+      "source_provenance_sha256",
+      "schema_sha256",
+      "catalog_sha256",
+      "migration_sha256",
+      "reason"
+    ],
+    "target_server_uuid": "lowercase canonical 36-character UUID from trusted target identity; no case normalization of an untrusted claim",
+    "target_database": "exact case-sensitive trusted database name, ^[A-Za-z0-9_]{1,64}$",
+    "origin_installation_id": "^installation_[A-Za-z0-9._:-]{1,115}$",
+    "action": "config_canonical_backfill",
+    "grant_version": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+    "digests": "all *_sha256 fields exactly 64 lowercase hex characters, derived/verified independently before write",
+    "config_version": "integer 1..9007199254740991",
+    "original_config_size_bytes": "integer 2..262144",
+    "reason": "exact nonempty, non-whitespace approved/redacted reason, <=512 UTF-8 bytes; no trim/normalization for hashing",
+    "unknown_or_missing_fields": "reject; transport/proof/context are separate arguments, never silently ignored request members",
+    "excluded": [
+      "idempotency key (bound separately by authorization and unique scope)",
+      "request ID",
+      "session/token",
+      "grant signature/transport proof",
+      "observation time"
+    ],
+    "not_proven_by_hash": [
+      "authentication/permission",
+      "grant signature/current revocation/validity",
+      "original canonical provenance",
+      "full locked row fingerprint correctness",
+      "schema/catalog/migration approval"
+    ]
+  },
+  "idempotency": {
+    "scope": [
+      "target_server_uuid",
+      "target_database",
+      "origin_installation_id",
+      "maintenance_actor_sha256",
+      "action",
+      "idempotency_key"
+    ],
+    "rules": [
+      "Grant renewal/key or session rotation cannot create a new actor/key scope.",
+      "Same scope/key with different request hash, including changed grant identity/version, conflicts; no write or nonce/key reopening.",
+      "Replay/unknown-commit observation retains original immutable request facts/hash and requires independent current observation authorization; authentication refresh must not rewrite saved request identity.",
+      "No observation grant or result-read wire profile is approved by this digest supplement.",
+      "A mere digest, read receipt or SQL row does not confer write authority.",
+      "Receipt schema_version v1 must select this exact v1 digest profile. Future profile changes require explicit version/migration handling and cannot reinterpret existing hashes."
+    ]
+  },
+  "ddl_082_review": {
+    "status": "compatible_digest_field_shape_only",
+    "candidate_path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+    "not_promoted": true,
+    "required_before_promotion": [
+      "runtime grant and observation authorization profiles",
+      "full source provenance and row fingerprint profiles",
+      "D ownership/schema-only inventory/catalog and migration review",
+      "audit anchor retention/capacity and GC compatibility",
+      "real MySQL constraints/concurrency/rollback/unknown-commit acceptance"
+    ]
+  },
+  "runtime_grants_issued": 0,
+  "original_canonical_files_delivered": 0,
+  "production_approved": false
+}

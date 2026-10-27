@@ -1,0 +1,135 @@
+{
+  "kind": "d_activation_input_audit_v1",
+  "status": "BLOCKED",
+  "target": {
+    "installation_id": "installation_sbk_provider_zh_7474d6e0b052",
+    "namespace": "clawmanager-zhanghui08-system",
+    "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "database": {
+      "name": "clawmanager",
+      "server_uuid": "f1f5f76a-95f5-11f1-b08e-366835b4a029"
+    },
+    "user": {
+      "auth_provider": "local",
+      "id": 1,
+      "is_active": 1,
+      "role": "admin",
+      "username": "admin"
+    }
+  },
+  "integrity_checked_registry_kinds": [
+    "provider_proof_issuers",
+    "strong_auth_issuers",
+    "rbac_bindings"
+  ],
+  "required_registry_count": 9,
+  "missing_registry_kinds": [
+    "parts",
+    "redis_sources",
+    "failure_domains",
+    "disaster_identity_mapping",
+    "source_writers",
+    "secret_allowlist"
+  ],
+  "declared_config_reference_purposes": [],
+  "required_reference_count": 20,
+  "missing_config_reference_purposes": [
+    "artifact_write",
+    "artifact_read",
+    "artifact_delete",
+    "artifact_upload_issuer",
+    "artifact_ca",
+    "evidence_store",
+    "evidence_write",
+    "evidence_read",
+    "evidence_delete",
+    "evidence_ca",
+    "evidence_kek",
+    "kek",
+    "capture_signing",
+    "acceptance_signing",
+    "catalog_signing",
+    "catalog_read",
+    "catalog_append",
+    "catalog_snapshot",
+    "nonce_hmac",
+    "status_relay"
+  ],
+  "unresolved_live_reference_purposes": [
+    "artifact_write",
+    "artifact_read",
+    "artifact_delete",
+    "artifact_upload_issuer",
+    "artifact_ca",
+    "evidence_store",
+    "evidence_write",
+    "evidence_read",
+    "evidence_delete",
+    "evidence_ca",
+    "evidence_kek",
+    "kek",
+    "capture_signing",
+    "acceptance_signing",
+    "catalog_signing",
+    "catalog_read",
+    "catalog_append",
+    "catalog_snapshot",
+    "nonce_hmac",
+    "status_relay"
+  ],
+  "full_config_file_present": false,
+  "runtime_file_present": false,
+  "missing_contracts": [
+    "recovery_catalog_records",
+    "restore_target",
+    "status_relay",
+    "catalog_scan_record"
+  ],
+  "public_handoff_search": {
+    "json_files_scanned": 59,
+    "versioned_registry_profiles": {
+      "system-backup-provider-issuers.draft.v1": [
+        "docs/evidence/system-backup-provider-issuer-d-issuer-d7f0a14ec84d78927620d25f.registry.json"
+      ],
+      "system-backup-registration-rbac.draft.v1": [
+        "docs/evidence/system-backup-registration-rbac-d-admin-7d01a0782656f2af361b56e5.candidate.json"
+      ],
+      "system-backup-strong-auth-issuers.draft.v1": [
+        "docs/evidence/system-backup-strong-auth-issuer-d-mfa-605b0a987c4d17bb3f642e72.registry.json"
+      ]
+    }
+  },
+  "source_bindings": [
+    {
+      "path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "sha256": "0f6224f3c5f499102ad9148f40bf4e2a3997cd144fe82e898c6740f85c7532bc"
+    },
+    {
+      "path": "deployments/k8s/system-backup-provider-lab/registration-bootstrap-d-admin-7d01a0782656f2af361b56e5/bootstrap-admission.json",
+      "sha256": "72445d92d1790ea171c61c01e3651270b1a7b1c0bb95f3bfe647bebd79a9672f"
+    },
+    {
+      "path": "deployments/k8s/system-backup-provider-lab/registration-bootstrap-d-admin-7d01a0782656f2af361b56e5/public-registries.configmap.json",
+      "sha256": "9e599e3748ad761ab1626f173cb63f1f7a0db530af32e4f4bb5fb01e47498fc9"
+    },
+    {
+      "path": "deployments/k8s/system-backup-provider-lab/registration-bootstrap-d-admin-7d01a0782656f2af361b56e5/registry-volume.json",
+      "sha256": "f724dc6f57d93aba05bf640ddaedc6c7376c100e235af3fa1f7f58fcaabe6a09"
+    }
+  ],
+  "blockers": [
+    "real_registry_and_typed_ref_adapters_required",
+    "cross_resource_policy_admission_required",
+    "live_database_and_admin_recheck_required",
+    "runtime_identity_tls_capacity_logout_deployment_required",
+    "human_mfa_required",
+    "config_mutation_activation_required"
+  ],
+  "state": {
+    "remote_mutations": false,
+    "http_service_deployed": false,
+    "human_mfa_verified": false,
+    "active_config_updated": false
+  },
+  "note": "Historical public input integrity only. Candidate flags and lab receipts cannot authorize deployment or activation."
+}

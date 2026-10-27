@@ -1,0 +1,547 @@
+=== RUN   TestSQLRecordReturnedDataCannotChangeCAS
+--- PASS: TestSQLRecordReturnedDataCannotChangeCAS (0.01s)
+=== RUN   TestResultCommitCandidateConfiguredAndHistoricalReplay
+=== RUN   TestResultCommitCandidateConfiguredAndHistoricalReplay/unconfigured_candidate
+=== RUN   TestResultCommitCandidateConfiguredAndHistoricalReplay/disabled_configured
+=== RUN   TestResultCommitCandidateConfiguredAndHistoricalReplay/enabled_configured
+=== RUN   TestResultCommitCandidateConfiguredAndHistoricalReplay/enabled_candidate
+--- PASS: TestResultCommitCandidateConfiguredAndHistoricalReplay (1.11s)
+    --- PASS: TestResultCommitCandidateConfiguredAndHistoricalReplay/unconfigured_candidate (0.15s)
+    --- PASS: TestResultCommitCandidateConfiguredAndHistoricalReplay/disabled_configured (0.35s)
+    --- PASS: TestResultCommitCandidateConfiguredAndHistoricalReplay/enabled_configured (0.24s)
+    --- PASS: TestResultCommitCandidateConfiguredAndHistoricalReplay/enabled_candidate (0.35s)
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/prepare
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/installation
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/authenticate
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/host
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/projection_locks
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/reserve
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/audit:intent
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/apply
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/after_apply
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/audit:result
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/recheck
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/no_report
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/stale_report
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_wait
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/binding
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/identity
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/attestation
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/identity_expired
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/dependency_expired
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/short_retention
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/cost_overflow
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/projection_target
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/projection_mode
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_state
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_version
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_hash
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_claim
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_retention
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/evidence_protection
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/target_cas
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/run_cas
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/receipt_insert
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/revoked
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/renewed
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/target_version
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/run_committed
+=== RUN   TestResultFailuresRollbackProjectionAndReceipt/missing_hold
+--- PASS: TestResultFailuresRollbackProjectionAndReceipt (10.37s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/prepare (0.18s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/installation (0.16s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/authenticate (0.12s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/host (0.15s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/projection_locks (0.41s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/reserve (0.28s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/audit:intent (0.36s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence (0.29s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/apply (0.17s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/after_apply (0.19s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/audit:result (0.15s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/recheck (0.17s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/no_report (0.27s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/stale_report (0.23s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_wait (0.50s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/binding (0.47s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/identity (0.28s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/attestation (0.45s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/identity_expired (0.32s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/dependency_expired (0.17s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/short_retention (0.17s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/cost_overflow (0.30s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/projection_target (0.23s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/projection_mode (0.20s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_state (0.57s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_version (0.66s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_hash (0.24s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_claim (0.37s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_retention (0.48s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/evidence_protection (0.17s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/target_cas (0.24s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/run_cas (0.20s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/receipt_insert (0.23s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/revoked (0.23s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/renewed (0.25s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/target_version (0.20s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/run_committed (0.16s)
+    --- PASS: TestResultFailuresRollbackProjectionAndReceipt/missing_hold (0.14s)
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/scope
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/grant
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/run
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/domain_epoch
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/input
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/target_generation
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/observed
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/observation_expiry
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/object_hash
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/object_version
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/missing_slot
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/changed_slot
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/unconfigured_live
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/new_key_after_commit
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/changed_result_replay
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/no_receipt_authority
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/unknown_commit
+=== RUN   TestResultRequestBindingReplayAndCommitOutcomes/late_commit
+--- PASS: TestResultRequestBindingReplayAndCommitOutcomes (5.02s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/scope (0.33s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/grant (0.31s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/run (0.19s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/domain_epoch (1.02s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/input (0.33s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/target_generation (0.22s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/observed (0.18s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/observation_expiry (0.17s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/object_hash (0.29s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/object_version (0.22s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/missing_slot (0.36s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/changed_slot (0.46s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/unconfigured_live (0.18s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/new_key_after_commit (0.20s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/changed_result_replay (0.16s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/no_receipt_authority (0.16s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/unknown_commit (0.14s)
+    --- PASS: TestResultRequestBindingReplayAndCommitOutcomes/late_commit (0.11s)
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_scope_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_epoch
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_row_version
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_state
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_admission_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_generation
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_row_version
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_state
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_subject_identity_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_lease_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_domain_epoch
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_authorization_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_grant_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_grant_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_grant_generation
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_target_generation
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_observation_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_state
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_row_version
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_run_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_target_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_evidence_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_owner_write_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_observed_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_target_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_generation
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_current_run_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_result_version
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_row_version
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_scope_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_run_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_retention_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_evidence_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_grant_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_grant_generation
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_owner_write_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_observation_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_charged_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_request_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_evidence_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_target_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_result_version
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_committed_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_scope_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_receipt_key_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_run_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_retention_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_request_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_retention_expires_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_receipt_key_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_committed_at
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_charged_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_scope_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_record_bytes
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_record_sha256
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_scope_key
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_evidence_id
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_reference_kind
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_reference_key_hash
+=== RUN   TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_protected_until
+--- PASS: TestStoredRecordRoundtripAndColumnIntegrity (0.18s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord (0.01s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_scope_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_epoch (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_row_version (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_state (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_admission_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/DomainRecord/tamper_record_sha256 (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord (0.01s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_generation (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_row_version (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_state (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_subject_identity_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_lease_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_domain_epoch (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_authorization_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/GrantRecord/tamper_grant_id (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord (0.01s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_grant_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_grant_generation (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_target_generation (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_observation_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_state (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_row_version (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_run_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_target_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_evidence_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_owner_write_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/RunRecord/tamper_observed_at (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord (0.01s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_target_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_generation (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_current_run_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_result_version (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_row_version (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/TargetRecord/tamper_record_bytes (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord (0.01s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_scope_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_run_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_retention_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_evidence_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_grant_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_grant_generation (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_owner_write_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_observation_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/HistoricalBindingRecord/tamper_scope_key (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord (0.09s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_charged_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_request_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_evidence_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_target_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_result_version (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_committed_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_scope_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_receipt_key_hash (0.01s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_run_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReceiptRecord/tamper_retention_expires_at (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord (0.03s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_request_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_retention_expires_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_receipt_key_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_committed_at (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_charged_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/CommandReceiptRecord/tamper_scope_bytes (0.00s)
+    --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_record_bytes (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_record_sha256 (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_scope_key (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_evidence_id (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_reference_kind (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_reference_key_hash (0.00s)
+        --- PASS: TestStoredRecordRoundtripAndColumnIntegrity/ReferenceRecord/tamper_protected_until (0.00s)
+=== RUN   TestStoredSQLScalarConversion
+--- PASS: TestStoredSQLScalarConversion (0.00s)
+=== RUN   TestStoredFrameHostileInput
+=== RUN   TestStoredFrameHostileInput/huge
+=== RUN   TestStoredFrameHostileInput/utf8
+=== RUN   TestStoredFrameHostileInput/depth
+=== RUN   TestStoredFrameHostileInput/number
+=== RUN   TestStoredFrameHostileInput/array_huge
+=== RUN   TestStoredFrameHostileInput/truncated
+=== RUN   TestStoredFrameHostileInput/duplicate
+=== RUN   TestStoredFrameHostileInput/unsorted
+=== RUN   TestStoredFrameHostileInput/nonstringkey
+=== RUN   TestStoredFrameHostileInput/empty
+=== RUN   TestStoredFrameHostileInput/tag
+=== RUN   TestStoredFrameHostileInput/trailing
+=== RUN   TestStoredFrameHostileInput/shortlen
+--- PASS: TestStoredFrameHostileInput (0.02s)
+    --- PASS: TestStoredFrameHostileInput/huge (0.00s)
+    --- PASS: TestStoredFrameHostileInput/utf8 (0.00s)
+    --- PASS: TestStoredFrameHostileInput/depth (0.00s)
+    --- PASS: TestStoredFrameHostileInput/number (0.00s)
+    --- PASS: TestStoredFrameHostileInput/array_huge (0.00s)
+    --- PASS: TestStoredFrameHostileInput/truncated (0.00s)
+    --- PASS: TestStoredFrameHostileInput/duplicate (0.00s)
+    --- PASS: TestStoredFrameHostileInput/unsorted (0.00s)
+    --- PASS: TestStoredFrameHostileInput/nonstringkey (0.00s)
+    --- PASS: TestStoredFrameHostileInput/empty (0.00s)
+    --- PASS: TestStoredFrameHostileInput/tag (0.00s)
+    --- PASS: TestStoredFrameHostileInput/trailing (0.00s)
+    --- PASS: TestStoredFrameHostileInput/shortlen (0.00s)
+=== RUN   TestPersistenceDictionaryAndDDLCoverage
+--- PASS: TestPersistenceDictionaryAndDDLCoverage (0.00s)
+=== RUN   TestTransactionOrderAndSealedReceipt
+--- PASS: TestTransactionOrderAndSealedReceipt (0.00s)
+=== RUN   TestGuardedTransactionFailures
+=== RUN   TestGuardedTransactionFailures/identity
+=== RUN   TestGuardedTransactionFailures/timezone
+=== RUN   TestGuardedTransactionFailures/precision
+=== RUN   TestGuardedTransactionFailures/missing_deadline
+=== RUN   TestGuardedTransactionFailures/missing_binding
+=== RUN   TestGuardedTransactionFailures/lock_denied
+=== RUN   TestGuardedTransactionFailures/expired_at_start
+=== RUN   TestGuardedTransactionFailures/work_error
+=== RUN   TestGuardedTransactionFailures/cas_zero
+=== RUN   TestGuardedTransactionFailures/cas_many
+=== RUN   TestGuardedTransactionFailures/exec_error_ignored
+=== RUN   TestGuardedTransactionFailures/capacity_future
+=== RUN   TestGuardedTransactionFailures/capacity_stale
+=== RUN   TestGuardedTransactionFailures/work_wait_expiry
+=== RUN   TestGuardedTransactionFailures/audit_wait_capacity
+=== RUN   TestGuardedTransactionFailures/recheck_denied
+=== RUN   TestGuardedTransactionFailures/recheck_wait_expiry
+=== RUN   TestGuardedTransactionFailures/recheck_wait_capacity
+=== RUN   TestGuardedTransactionFailures/mutate_plan_after_lock
+=== RUN   TestGuardedTransactionFailures/mutate_recheck_plan
+=== RUN   TestGuardedTransactionFailures/cancel_during_work
+=== RUN   TestGuardedTransactionFailures/commit_unknown
+=== RUN   TestGuardedTransactionFailures/commit_expired
+--- PASS: TestGuardedTransactionFailures (0.10s)
+    --- PASS: TestGuardedTransactionFailures/identity (0.00s)
+    --- PASS: TestGuardedTransactionFailures/timezone (0.01s)
+    --- PASS: TestGuardedTransactionFailures/precision (0.00s)
+    --- PASS: TestGuardedTransactionFailures/missing_deadline (0.00s)
+    --- PASS: TestGuardedTransactionFailures/missing_binding (0.00s)
+    --- PASS: TestGuardedTransactionFailures/lock_denied (0.00s)
+    --- PASS: TestGuardedTransactionFailures/expired_at_start (0.00s)
+    --- PASS: TestGuardedTransactionFailures/work_error (0.00s)
+    --- PASS: TestGuardedTransactionFailures/cas_zero (0.00s)
+    --- PASS: TestGuardedTransactionFailures/cas_many (0.00s)
+    --- PASS: TestGuardedTransactionFailures/exec_error_ignored (0.00s)
+    --- PASS: TestGuardedTransactionFailures/capacity_future (0.00s)
+    --- PASS: TestGuardedTransactionFailures/capacity_stale (0.00s)
+    --- PASS: TestGuardedTransactionFailures/work_wait_expiry (0.01s)
+    --- PASS: TestGuardedTransactionFailures/audit_wait_capacity (0.01s)
+    --- PASS: TestGuardedTransactionFailures/recheck_denied (0.00s)
+    --- PASS: TestGuardedTransactionFailures/recheck_wait_expiry (0.01s)
+    --- PASS: TestGuardedTransactionFailures/recheck_wait_capacity (0.01s)
+    --- PASS: TestGuardedTransactionFailures/mutate_plan_after_lock (0.00s)
+    --- PASS: TestGuardedTransactionFailures/mutate_recheck_plan (0.01s)
+    --- PASS: TestGuardedTransactionFailures/cancel_during_work (0.00s)
+    --- PASS: TestGuardedTransactionFailures/commit_unknown (0.00s)
+    --- PASS: TestGuardedTransactionFailures/commit_expired (0.00s)
+=== RUN   TestMissingGuardNeverStartsWork
+--- PASS: TestMissingGuardNeverStartsWork (0.00s)
+=== RUN   TestCapacityFiveSecondBoundary
+--- PASS: TestCapacityFiveSecondBoundary (0.00s)
+=== RUN   TestWorkCannotCommitBeforeGuard
+=== RUN   TestWorkCannotCommitBeforeGuard/COMMIT
+=== RUN   TestWorkCannotCommitBeforeGuard/ROLLBACK
+=== RUN   TestWorkCannotCommitBeforeGuard/SET_autocommit=1
+=== RUN   TestWorkCannotCommitBeforeGuard/CREATE_TABLE_x(id_INT)
+=== RUN   TestWorkCannotCommitBeforeGuard/UPDATE_synthetic_SET_value=1;_COMMIT
+=== RUN   TestWorkCannotCommitBeforeGuard//*_bypass_*/_COMMIT
+=== RUN   TestWorkCannotCommitBeforeGuard/CALL_commit_work()
+--- PASS: TestWorkCannotCommitBeforeGuard (0.03s)
+    --- PASS: TestWorkCannotCommitBeforeGuard/COMMIT (0.01s)
+    --- PASS: TestWorkCannotCommitBeforeGuard/ROLLBACK (0.00s)
+    --- PASS: TestWorkCannotCommitBeforeGuard/SET_autocommit=1 (0.00s)
+    --- PASS: TestWorkCannotCommitBeforeGuard/CREATE_TABLE_x(id_INT) (0.00s)
+    --- PASS: TestWorkCannotCommitBeforeGuard/UPDATE_synthetic_SET_value=1;_COMMIT (0.00s)
+    --- PASS: TestWorkCannotCommitBeforeGuard//*_bypass_*/_COMMIT (0.00s)
+    --- PASS: TestWorkCannotCommitBeforeGuard/CALL_commit_work() (0.00s)
+PASS
+ok      clawreef/internal/systembackupproducer  48.805s
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.16s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.09s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.07s)
+PASS
+ok      clawreef/internal/systembackupevidence  2.321s
+LOCAL_PASS d-producer-service-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=dc16a147178a76aea2b4a7b420d61a692b0484cd6616fb1247103c21c5423d66 ddl_sha256=70d001e7cfc465f8098dc037fd932a6d76647629561e2e8be91decbdf75df016
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=516a224f4bc6a11ebbf68b2b70c71097ddec2dec2e5c28bcb6e5eac8b242de5a
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000023D9677DA80
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001E25963F9B0
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-261008040523-2a2d uid=a0582c64-d26b-4753-bf45-bf184bfd8225 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=516a224f4bc6a11ebbf68b2b70c71097ddec2dec2e5c28bcb6e5eac8b242de5a catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestDProducerMySQL
+=== RUN   TestDProducerMySQL/lifecycle_and_exact_replay
+    d_producer_mysql_test.go:274: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/expired_pending
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/expired_claim
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/expired_finish
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/expired_result
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/revoked_pending
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/revoked_claim
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/revoked_finish
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/revoked_result
+    d_producer_mysql_test.go:309: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/pending_sql_failure
+    d_producer_mysql_test.go:332: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/result_sql_failure
+    d_producer_mysql_test.go:332: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/pending_rollback_audit
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/pending_rollback_guard
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/claim_rollback_audit
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/claim_rollback_guard
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/finish_rollback_audit
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/finish_rollback_guard
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/result_rollback_audit
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/result_rollback_guard
+    d_producer_mysql_test.go:352: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/competing_claims
+    d_producer_mysql_test.go:373: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/commit_ack_lost
+    d_producer_mysql_test.go:402: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+=== RUN   TestDProducerMySQL/competing_result_commits
+    d_producer_mysql_test.go:428: acquire producer_unavailable
+    d_producer_mysql_test.go:89: CLEANED evidence run-owned database
+--- FAIL: TestDProducerMySQL (11.06s)
+    --- FAIL: TestDProducerMySQL/lifecycle_and_exact_replay (0.26s)
+    --- FAIL: TestDProducerMySQL/expired_pending (0.52s)
+    --- FAIL: TestDProducerMySQL/expired_claim (0.58s)
+    --- FAIL: TestDProducerMySQL/expired_finish (0.52s)
+    --- FAIL: TestDProducerMySQL/expired_result (0.49s)
+    --- FAIL: TestDProducerMySQL/revoked_pending (0.52s)
+    --- FAIL: TestDProducerMySQL/revoked_claim (0.46s)
+    --- FAIL: TestDProducerMySQL/revoked_finish (0.47s)
+    --- FAIL: TestDProducerMySQL/revoked_result (0.50s)
+    --- FAIL: TestDProducerMySQL/pending_sql_failure (0.54s)
+    --- FAIL: TestDProducerMySQL/result_sql_failure (0.63s)
+    --- FAIL: TestDProducerMySQL/pending_rollback_audit (0.62s)
+    --- FAIL: TestDProducerMySQL/pending_rollback_guard (0.58s)
+    --- FAIL: TestDProducerMySQL/claim_rollback_audit (0.49s)
+    --- FAIL: TestDProducerMySQL/claim_rollback_guard (0.45s)
+    --- FAIL: TestDProducerMySQL/finish_rollback_audit (0.60s)
+    --- FAIL: TestDProducerMySQL/finish_rollback_guard (0.45s)
+    --- FAIL: TestDProducerMySQL/result_rollback_audit (0.50s)
+    --- FAIL: TestDProducerMySQL/result_rollback_guard (0.50s)
+    --- FAIL: TestDProducerMySQL/competing_claims (0.39s)
+    --- FAIL: TestDProducerMySQL/commit_ack_lost (0.54s)
+    --- FAIL: TestDProducerMySQL/competing_result_commits (0.46s)
+FAIL
+command terminated with exit code 1
+CLEANED namespace=sbk-mig-261008040523-2a2d uid=a0582c64-d26b-4753-bf45-bf184bfd8225
+close - IO is still pending on closed socket. read:1, write:0, io:0000024DA2A01450
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000017090FF3320
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+SNAPSHOT live-drift-files=0 snapshot-passed=False
+CLEANED producer-adapter-build-cache=True
+Exception: C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-fd47c63bda864bf2bf2a3a88f527d587\source\scripts\system-backup-a-evidence-validation.ps1:155
+Line |
+ 155 |  … it -ne 0) { throw 'MySQL validation failed; retain any CLEANUP_PENDIN …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | MySQL validation failed; retain any CLEANUP_PENDING identity
+a_d_producer_service_remote_exit=1
+日志文件：C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-d-producer-service-remote-20261008-115821.txt
+已停止脚本，输出文件为 C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-d-producer-service-remote-20261008-115821.txt
+MySQL 验证未通过，退出码：1
+所在位置 行:8 字符: 33
++ ...  if ($aProducerExit -ne 0) { throw "MySQL 验证未通过，退出码：$aProducerExit" }
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (MySQL 验证未通过，退出码：1:String) [], RuntimeException
+    + FullyQualifiedErrorId : MySQL 验证未通过，退出码：1

@@ -1,0 +1,130 @@
+{
+  "kind": "d_download_result_retention_frozen_review",
+  "prefix": "d-download-result-retention-packages-20261019-r47",
+  "source_files": 1397,
+  "source_sha256": "bfabe2cf58b2c2011187be91c4893a806a1730591e226abf06e02fd6e3976f1a",
+  "frozen_validation_passed": true,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 253,
+      "all": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 283,
+      "all": 2135
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main": 75,
+      "all": 519
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "main": 75,
+      "all": 784
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "main": 6,
+      "all": 12
+    }
+  ],
+  "main": 692,
+  "all": 5435,
+  "new_roots": [
+    "TestDownloadResultRetentionOriginalGroupAndLockOrder",
+    "TestDownloadResultRetentionFailuresRollbackWholeResult",
+    "TestDownloadResultRetentionDDLAndClosedReferences",
+    "TestDownloadResultRetentionMissingMetadataRejectsBeforeChunks"
+  ],
+  "new_all": 36,
+  "tagged_seed_main": 2,
+  "tagged_seed_all": 12,
+  "detached_seed_all": 12,
+  "probe_binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "5f5ad56fad550b0a8d50600143492773f9f142a22f788215a1a296255607e2a8"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "9e90cbe06abc27beab3d85d0d1781b2f92c79db3c3abe2295d55d0a49b1d171e"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "23832b2c12997cba883085385480d96f6fadf24643cf410d6e97a70d47f93dc7"
+    }
+  ],
+  "actual_mysql_result_retention_cases_prepared": [
+    "result_audit_delete_restrict",
+    "admission_delete_restrict",
+    "parent_retention_update_restrict",
+    "retention_group_fk",
+    "intent_group_fk",
+    "installation_group_fk",
+    "link_insert_rollback",
+    "duplicate_result_rejected"
+  ],
+  "actual_mysql_admission_cases_prepared": 13,
+  "ownership_sha256": "dc0687839ce07646688b7a53d3c7ddda20ea5b269999d499a0730e2d2e0f50a9",
+  "catalog_sha256": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237",
+  "current_source_drift": [
+    {
+      "path": "scripts/system-backup-mysql-startup.test.mjs",
+      "reason": "new"
+    },
+    {
+      "path": "scripts/system-backup-mysql-startup-diagnostic.ps1",
+      "reason": "new"
+    },
+    {
+      "path": "scripts/system-backup-fresh-migration-smoke.sh",
+      "reason": "changed",
+      "frozen_sha256": "a218ec2bffa89ce3bab6f51606149594fbf6eab3b88fcfda751267567be903be",
+      "current_sha256": "26b4826f69580680faaf0287e309101ba50df730085d20e774c58bea34ec93f9",
+      "frozen_size": 25919,
+      "current_size": 29625
+    }
+  ],
+  "current_sources_match": false,
+  "current_inputs_except_remote_driver_match": false,
+  "current_file_list_sha256": "2bf9987e936a371ac408ad9a1de54ccbf467f878b6e340f4130a31b9a45a7922",
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e60a9d1f7f5a43d99e9c924d5a0882fd",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-cee42f25e0384575b16090bcc5e7c9fa",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-result-retention-20261019-r46",
+      "exists": false
+    }
+  ],
+  "attempts": [
+    {
+      "prefix": "d-download-result-retention-focused-20261019-r46",
+      "exit": 0,
+      "source_sha256": "e206068031cf43b3cd2b30f4239e129a6ed1eed3107024bd57c38966a1422a58",
+      "log_sha256": "0798ba49929b649a479de019891a1b33182a03f2699b8c7a12f13226e06efdee"
+    },
+    {
+      "prefix": "d-download-result-retention-packages-20261019-r47",
+      "exit": 0,
+      "source_sha256": "bfabe2cf58b2c2011187be91c4893a806a1730591e226abf06e02fd6e3976f1a",
+      "log_sha256": "b1a10f61d001f616905d623b1328dad897d0aa69c0ec57a5608a74189321caef"
+    }
+  ],
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "formal_schema_or_grants_installed": false,
+  "production_main_enabled": false,
+  "retention_group_gc_implemented": false,
+  "current_server_rerun": true,
+  "original_six_scopes_complete": false,
+  "limitations": "Scripted SQL/rows/material/capacity plus real local HTTP/encryption code. Eight actual InnoDB result-retention leaves compiled, not executed. No deployed provider/physical capacity, reviewed grants/group GC, other owner bindings, production assembly, historical activation or original six-scope completion."
+}

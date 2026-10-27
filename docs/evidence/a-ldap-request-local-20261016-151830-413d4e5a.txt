@@ -1,0 +1,49 @@
+**********************
+PowerShell transcript start
+Start time: 20261016151830
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ldapStamp=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8); $ldapLog=Join-Path $PWD.Path ('docs/evidence/a-ldap-request-local-'+$ldapStamp+'.txt'); $ldapSource=Join-Path $PWD.Path ('docs/evidence/a-ldap-request-source-'+$ldapStamp+'.json'); Start-Transcript -LiteralPath $ldapLog -NoClobber|Out-Null; $ldapExit=1; try { & './scripts/system-backup-a-ldap-request-validation.ps1' -SourceManifestPath $ldapSource; $ldapExit=0 } catch { Write-Output ('LDAP_REQUEST_ERROR='+$_.Exception.Message) } finally { Write-Output ('a_ldap_request_exit='+$ldapExit); Write-Output ('ldap_request_log='+$ldapLog); Write-Output ('ldap_request_source='+$ldapSource); Stop-Transcript|Out-Null }; exit $ldapExit
+Process ID: 40732
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER ldap-request-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-b60c12b55e514f29861ac9784827c4a8 container=codex-a-ldap-request-b60c12b55e514f29861ac9784827c4a8
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 3/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=3 max=3 build-started=no remote-started=no
+LOCAL_SOURCE ldap-request=yes files=1323 source_sha256=f0ed3fd46b45ec79a4f3e31513afa9213551ff311b2c269dd6936fdecd12961d baseline_sha256=2c45d8640704ff7bea1a5afa3fa5761a3e4152b581329a1fe9e7d1915aee18d8
+go version go1.26.1 linux/amd64
+LOCAL_STAGE ldap-old-source-negative-control exact-cancel-case=yes default-vet=yes retry=no
+{"ImportPath":"command-line-arguments [command-line-arguments.test]","Action":"build-output","Output":"# command-line-arguments [command-line-arguments.test]\n"}
+{"ImportPath":"command-line-arguments [command-line-arguments.test]","Action":"build-output","Output":"./ldap_auth.go:464:26: undefined: firstNonEmpty\n"}
+{"ImportPath":"command-line-arguments [command-line-arguments.test]","Action":"build-output","Output":"./ldap_auth.go:467:26: undefined: firstNonEmpty\n"}
+{"ImportPath":"command-line-arguments [command-line-arguments.test]","Action":"build-fail"}
+{"Time":"2026-10-16T07:34:21.872821911Z","Action":"start","Package":"command-line-arguments"}
+{"Time":"2026-10-16T07:34:21.872938622Z","Action":"output","Package":"command-line-arguments","Output":"FAIL\tcommand-line-arguments [build failed]\n"}
+{"Time":"2026-10-16T07:34:21.872952673Z","Action":"fail","Package":"command-line-arguments","Elapsed":0,"FailedBuild":"command-line-arguments [command-line-arguments.test]"}
+LDAP_REQUEST_GO_CONTAINER_EXIT=1
+LOCAL_CLEANUP ldap-request-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-b60c12b55e514f29861ac9784827c4a8 removed=True
+PS>TerminatingError(): "LDAP request validation failed exit=1; no automatic retry"
+LDAP_REQUEST_ERROR=LDAP request validation failed exit=1; no automatic retry
+a_ldap_request_exit=1
+ldap_request_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ldap-request-local-20261016-151830-413d4e5a.txt
+ldap_request_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ldap-request-source-20261016-151830-413d4e5a.json
+**********************
+PowerShell transcript end
+End time: 20261016153438
+**********************

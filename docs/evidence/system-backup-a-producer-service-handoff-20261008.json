@@ -1,0 +1,75 @@
+{
+  "kind": "a_acceptance_of_d_producer_service_local_gate",
+  "checked_at": "2026-10-08T03:28:40.9532495Z",
+  "status": "local_accepted_remote_required",
+  "remote_executed": false,
+  "snapshot": {
+    "path": "docs/evidence/system-backup-d-producer-service-snapshot-20261008.json",
+    "sha256": "2199aec8a75ae3bf1c9cf14f436617996354f4ede937c962370082da286638db"
+  },
+  "upstream_receipt": {
+    "path": "docs/evidence/system-backup-d-producer-service-mysql-20261008.json",
+    "sha256": "1e2eb56c0b7061986b1ef3726c6b1ad6c2d957725f6eb4101a86537dcd38decd"
+  },
+  "final_log": {
+    "path": "docs/evidence/system-backup-d-producer-service-advancing-local-20261008.txt",
+    "sha256": "e57ad7de754f9a183f1477c7736f3c8ee9dce6f9a540fd0e1b247e9a5f097e1a"
+  },
+  "source_files": 853,
+  "file_set_diff_count": 0,
+  "content_mismatch_count": 0,
+  "validation": {
+    "top_level_passes": 181,
+    "named_passes_including_subtests": 1829,
+    "assertion_failures": 0,
+    "tool_process_faults": 0,
+    "default_vet": true,
+    "fixed_and_advancing_clock_seed": true,
+    "linux_mysql_probe_compiled": true,
+    "migration_runner_compiled": true,
+    "linux_binaries_executed": false,
+    "command_syntax_checked_without_execution": true
+  },
+  "cleanup": {
+    "final_log_cleaned": true,
+    "owned_build_artifacts_removed": true,
+    "new_scratch_observed_after_validation": [
+      ".tmp-a-evidence-0ff862e3995047f9820198045d73418a"
+    ],
+    "new_scratch_not_touched": true
+  },
+  "prior_a_run": {
+    "log": {
+      "path": "docs/evidence/system-backup-a-producer-service-preflight-20261008.txt",
+      "sha256": "2a1b43ad6dd76e291d9ee9a226b8b0016cdbdfe25c956a60cdf539e6381d49ed"
+    },
+    "snapshot": {
+      "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-025946-fd107148.json",
+      "sha256": "d905c06e3be064024ae93638948d071d8df0cfc4203ac9cd31f736b3f7e61702"
+    },
+    "exit_code": 0,
+    "superseded": true,
+    "reason": "Clock-chain/advancing-clock tests and rendered remote script changed after its snapshot; final D snapshot above supersedes this run."
+  },
+  "remote_scope": {
+    "target": "root@10.130.14.23",
+    "kube_context": "kubernetes-admin@kubernetes",
+    "node": "node1",
+    "mysql_subtests_expected": 22,
+    "production_authority": false,
+    "real_provider": false,
+    "formal_migrations": false
+  },
+  "dependencies_installed": false,
+  "remote_test_policy": "User requested goal pause at remote gate and a complete command; remote execution remains with user.",
+  "artifacts": [
+    {
+      "path": "docs/system-backup-a-producer-service-handoff-20261008.md",
+      "sha256": "d1fcab7d7457111dca097d821b63d5626e44b360594ce9e03c736bdfc1230995"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "cd98066b90f7828f2a9de184bdb7e60efcce58aecf1cfac1a2caa204d0e01741"
+    }
+  ]
+}

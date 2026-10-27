@@ -1,0 +1,85 @@
+{
+  "kind": "d_only_fix16_controller_isolated_smoke_observation",
+  "date": "2026-09-29",
+  "source": "user_supplied_remote_console_output",
+  "independently_requeried_cluster": false,
+  "result": "pass_within_reported_isolated_migration_controller_scope",
+  "test_namespace": "sbk-mig-260929022805-0758",
+  "test_namespace_uid": "c95e3256-469b-4113-bd84-54112b8324be",
+  "source_namespace": "clawmanager-zhanghui08-system",
+  "test_node": "node1",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "migration_catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+  "script_archive_checksum_verification_reported": "OK",
+  "archive_sha256_value_supplied": false,
+  "fresh_migration_replay": {
+    "range": "001..080",
+    "applied_files": 93,
+    "exact_filenames": true,
+    "d_key_column_types": ["blob", "blob", "blob", "char"]
+  },
+  "dedicated_db_user": {
+    "positive": ["registered_migrations_read", "current_user", "no_role"],
+    "negative": ["users_select_denied", "schema_migrations_delete_denied"],
+    "result": "pass"
+  },
+  "controller": {
+    "replicas": 2,
+    "leaders": 1,
+    "standbys": 1,
+    "grant_probe": "accepted",
+    "initial_effective_state": "disabled",
+    "initial_first_enabled_at": "unset",
+    "leader_lease_holder": "pod",
+    "transition": {
+      "first_enable_once": "pass",
+      "leader_failover": "leader_transferred",
+      "same_digest_rolling_restart": "both_pods_replaced",
+      "installation_projection": "stable",
+      "final_kill_switch": "disabled",
+      "monitoring_armed_after_disable": true
+    },
+    "grant_recovery": [
+      {
+        "privilege": "SELECT",
+        "table": "system_backup_configs",
+        "restored_without_restart": true,
+        "pod_uids_and_container_ids": "unchanged",
+        "restart_counts": "unchanged",
+        "leaders": 1,
+        "standbys": 1,
+        "installation_projection": "unchanged"
+      },
+      {
+        "privilege": "UPDATE",
+        "table": "system_backups",
+        "restored_without_restart": true,
+        "pod_uids_and_container_ids": "unchanged",
+        "restart_counts": "unchanged",
+        "leaders": 1,
+        "standbys": 1,
+        "installation_projection": "unchanged"
+      }
+    ]
+  },
+  "cleanup_reported": {
+    "namespace": "cleaned_with_matching_run_uid",
+    "remote_script_directory": "cleaned",
+    "local_script_directory": "cleaned"
+  },
+  "local_followup_check": {"fix16_scratch_directories_remaining": 0},
+  "ssh_close_warning_observed": true,
+  "exit_code": null,
+  "exit_code_note": "No separate process exit code was supplied; all expected PASS/CLEANED markers are present and no terminating failure is shown in the supplied transcript.",
+  "limits": [
+    "Operator console evidence only; no independent remote query or raw per-replica fingerprints retained.",
+    "No-restart recovery applies to the two grant-drift rounds after the transition baseline; the preceding transition phase deliberately included failover and rolling restart.",
+    "Only fresh isolated MySQL and controller resources were tested; this is not an upgrade or rollout of the actual application installation.",
+    "Empty task/operation fixtures do not establish real backup/restore Jobs, owner adapters or provider admission.",
+    "Capacity collector deployment, RWX freshness, actual database schema preflight, HTTP deployment, personal administrator MFA and configuration activation were not performed by this run.",
+    "The SSH close warning alone is not a reason to repeat this successful reported run; future failures, nonzero exits or missing cleanup must still be investigated.",
+    "No contract freeze, cross-owner approval or overall P0 completion is implied; fix15 evidence remains historical."
+  ]
+}

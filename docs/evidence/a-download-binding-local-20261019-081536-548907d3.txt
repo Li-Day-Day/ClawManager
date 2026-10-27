@@ -1,0 +1,47 @@
+**********************
+PowerShell transcript start
+Start time: 20261019081536
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$aBindingStamp=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8)
+$aBindingLog=Join-Path $PWD.Path ('docs/evidence/a-download-binding-local-'+$aBindingStamp+'.txt')
+$aBindingManifest=Join-Path $PWD.Path ('docs/evidence/a-download-binding-source-'+$aBindingStamp+'.json')
+$aBindingExit=1
+Start-Transcript -LiteralPath $aBindingLog -NoClobber | Out-Null
+try {
+    & .\scripts\system-backup-a-sensitive-download-validation.ps1 -BuildParallelism 2 -SourceManifestPath $aBindingManifest
+    $aBindingExit=0
+} finally {
+    Write-Host ('a_download_binding_exit='+$aBindingExit)
+    Write-Host ('a_binding_log='+$aBindingLog)
+    Write-Host ('a_binding_manifest='+$aBindingManifest)
+    Stop-Transcript | Out-Null
+}
+if($aBindingExit -ne 0){exit $aBindingExit}
+Process ID: 21712
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+OWNED sensitive-download-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-6ea06cdbdcf84c5aa9bc6b26920d0c81 scratch=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-5e8596f6e1ab4dcc9dd88055a34e61c1
+PS>TerminatingError(): "Source changed while snapshot was copied"
+LOCAL_CLEANUP sensitive-download-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-5e8596f6e1ab4dcc9dd88055a34e61c1 removed=True
+LOCAL_CLEANUP sensitive-download-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-6ea06cdbdcf84c5aa9bc6b26920d0c81 removed=True
+PS>TerminatingError(): "Source changed while snapshot was copied"
+a_download_binding_exit=1
+a_binding_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-binding-local-20261019-081536-548907d3.txt
+a_binding_manifest=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-binding-source-20261019-081536-548907d3.json
+**********************
+PowerShell transcript end
+End time: 20261019081600
+**********************

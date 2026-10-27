@@ -1,0 +1,77 @@
+{
+  "kind": "a_config_proof_mysql_probe_frozen_local",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T11:35:53.9075401+08:00",
+  "status": "local_gate_pass_remote_not_run",
+  "source_manifest": "docs/evidence/a-config-proof-mysql-source-20261015.json",
+  "source_sha256": "3c4b7ff525cc9784fbf05c2433de14c05c7e1aa1fb5aebd5ac42bf9ee41095e4",
+  "source_files": 1196,
+  "manifest_sha256": "bc7c98bc82135a7a857c6d5c737b0ab355ac0b1cd160198d13f5d723ba9919bf",
+  "log": "docs/evidence/a-config-proof-mysql-local-20261015.txt",
+  "log_sha256": "ea6e5dd9572c188d62e0ba2374147d606bafb6759b7294b451d55fd54e986fe4",
+  "exit": 0,
+  "vet_enabled": true,
+  "tool_crash_retries": 0,
+  "proof_unit_main": 6,
+  "proof_unit_sub": 30,
+  "seed_unique_main": 1,
+  "seed_unique_sub": 6,
+  "compiled_seed_repeated_from_empty_directory": true,
+  "unique_go_checks": 43,
+  "dispatch_checks": 11,
+  "shell_syntax_checks": 3,
+  "shell_syntax_tool": "installed Git Bash, bash -n only; read-only elevated check after sandbox signal-pipe error",
+  "linux_probe_sha256": "81103fe9a96bf16afb24a1abd38b9cb37fe4782aed35334ce6d79219ccf4cb92",
+  "input_capsule_sha256": "92e50348689afc87ba35edb8b8caca3c9ece060b75ebcac7732396c2f39e0854",
+  "migration_binary_sha256": "d7713a41078fadcbe20d151b4a2e8e7340148abf8f7c44133a21bcff0cc42e36",
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_mysql_seed_test.go",
+      "size": 3751,
+      "sha256": "9178403d5cea1e91cea4cd92dfff61a82e301896123c204bd962c8bf1183a355"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_proof_mysql_test.go",
+      "size": 26227,
+      "sha256": "99f32440aa4ae88dba39b21977db321c84ba82d2b5ccd073befee862d9b8a752"
+    },
+    {
+      "path": "scripts/system-backup-a-config-proof-phase.sh",
+      "size": 2827,
+      "sha256": "9cdb5aaaf8d6638755567c5ed6ee83453b63d5e34de0f1a4c5cc772526eec542"
+    },
+    {
+      "path": "scripts/system-backup-a-config-proof-validation.ps1",
+      "size": 2955,
+      "sha256": "7b5b1091eac18b299f59ba2cebb94bafe32d68f8cdd47d63b0b20cd0fb702643"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-dispatch.test.ps1",
+      "size": 8048,
+      "sha256": "b310f15313bb7baea0bac17a11d8f5d786c293e73ec8c7e944a9a374f6d90477"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 36949,
+      "sha256": "1f27a98a3dd4195825f182e8d2ee0e5f9aa5c2e3e8e29d40cf21f3c1b221037d"
+    }
+  ],
+  "current_other_existing_input_drift": [],
+  "scope_note": "Frozen-source targeted proof tests and tagged probe compilation; no whole-current-tree or D writer acceptance. Compiled seed is repeated coverage, not added twice.",
+  "remote_expected_child_cases": 15,
+  "mysql_run": false,
+  "remote_run": false,
+  "human_mfa": false,
+  "production_grant": false,
+  "config_write_run": false,
+  "backfill_run": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "frozen_postcheck": true,
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1450e30bb2a04913a08f6609a3fc5e81\\source\\.tmp-a-evidence-e50aa85a92774bd49eda39f9b0eda177",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1450e30bb2a04913a08f6609a3fc5e81"
+  ],
+  "cleanup_independently_confirmed": true,
+  "handoff": "docs/system-backup-a-config-proof-mysql-handoff-20261015.md"
+}

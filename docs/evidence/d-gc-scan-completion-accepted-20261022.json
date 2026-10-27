@@ -1,0 +1,58 @@
+{
+  "kind": "d_gc_scan_completion_acceptance",
+  "stages": {
+    "baseline": {
+      "exit": 1,
+      "passed": 12,
+      "roots": 0,
+      "failed": [
+        "TestDownloadRetentionGCScanCompletion/empty_epoch/lost_reply",
+        "TestDownloadRetentionGCScanCompletion/empty_epoch/tx_done",
+        "TestDownloadRetentionGCScanCompletion/empty_epoch/canceled",
+        "TestDownloadRetentionGCScanCompletion/closed_cursor/lost_reply",
+        "TestDownloadRetentionGCScanCompletion/closed_cursor/tx_done",
+        "TestDownloadRetentionGCScanCompletion/closed_cursor/canceled",
+        "TestDownloadRetentionGCScanCompletion/empty_tail/tx_done",
+        "TestDownloadRetentionGCScanCompletion/empty_tail/canceled",
+        "TestDownloadRetentionGCScanCompletion/page/tx_done",
+        "TestDownloadRetentionGCScanCompletion/page/canceled",
+        "TestDownloadRetentionGCScanCompletion",
+        "TestDownloadRetentionGCBatchScanRollbackFailure/empty_epoch",
+        "TestDownloadRetentionGCBatchScanRollbackFailure/closed_cursor",
+        "TestDownloadRetentionGCBatchScanRollbackFailure"
+      ],
+      "source_sha256": "f4c67e2866b8ad64136e3ee8390dc2e8e39be4f9aeae36d6815eca29855a6829",
+      "input_count": 1568,
+      "stdout_sha256": "ef155d8ffece997955bc42a2bcef37383baf47698a679af51d4de5c1a98689db",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused": {
+      "exit": 0,
+      "passed": 26,
+      "roots": 2,
+      "failed": [],
+      "source_sha256": "689e3ecba56d097526f70f4a1d13716bcc375f9b5602dc88f1daf32579823bd1",
+      "input_count": 1568,
+      "stdout_sha256": "f7621c03f9551e4564087568e4572b5d951f4ad3ba923cc62f298bd1aac6b342",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "published": {
+      "exit": 0,
+      "passed": 3080,
+      "roots": 374,
+      "failed": [],
+      "source_sha256": "689e3ecba56d097526f70f4a1d13716bcc375f9b5602dc88f1daf32579823bd1",
+      "input_count": 1569,
+      "stdout_sha256": "d9fea09def38886fab9358e03228ad9a861859316fcf2f508d35d586da1ed3c7",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "changed": [
+    "backend/internal/systembackupevidence/download_retention_gc_batch.go"
+  ],
+  "cleaned": true,
+  "actual_mysql": false,
+  "remote_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

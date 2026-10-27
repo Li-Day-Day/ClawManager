@@ -1,0 +1,116 @@
+**********************
+PowerShell transcript start
+Start time: 20261014164702
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$auditLocalLog=Join-Path (Get-Location) 'docs/evidence/system-backup-d-recovery-audit-local-20261014.txt'; if(Test-Path -LiteralPath $auditLocalLog){throw 'Refusing overwrite'};Start-Transcript -Path $auditLocalLog | Out-Null;try{node --test --test-isolation=none scripts/system-backup-d-recovery-audit-plan.test.mjs;if($LASTEXITCODE -ne 0){throw 'Audit plan tests failed'};& .\scripts\system-backup-d-recovery-audit-storage-preflight.test.ps1;if(-not $?){throw 'Preflight tests failed'};& 'C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' -B -c "import ast,pathlib; p=pathlib.Path('scripts/system-backup-d-recovery-audit-init.py'); ast.parse(p.read_text(encoding='utf-8')); print('PASS Python initializer syntax; Linux filesystem execution not run')";if($LASTEXITCODE -ne 0){throw 'Python initializer syntax failed'};Write-Output 'D_RECOVERY_AUDIT_LOCAL_EXIT=0'}finally{Stop-Transcript | Out-Null}; Get-Command docker -ErrorAction SilentlyContinue | Select-Object Source
+Process ID: 30792
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+
+PASS exact manager chain, mounted claim, Retain and single writer
+PASS storage-only scope stays explicit
+PS>TerminatingError(): "Audit PVC is not an exact Bound single-pod writer claim"
+>> TerminatingError(): "Audit PVC is not an exact Bound single-pod writer claim"
+PASS rejects PVC block mode
+PS>TerminatingError(): "Audit PVC UID is invalid"
+>> TerminatingError(): "Audit PVC UID is invalid"
+PASS rejects malformed UID
+PS>TerminatingError(): "Audit PVC is not an exact Bound single-pod writer claim"
+>> TerminatingError(): "Audit PVC is not an exact Bound single-pod writer claim"
+PASS rejects mixed access modes
+PS>TerminatingError(): "Audit StorageClass driver or Retain policy is not reviewed"
+>> TerminatingError(): "Audit StorageClass driver or Retain policy is not reviewed"
+PASS rejects wrong CSI
+PS>TerminatingError(): "Audit StorageClass driver or Retain policy is not reviewed"
+>> TerminatingError(): "Audit StorageClass driver or Retain policy is not reviewed"
+PASS rejects StorageClass Delete
+PS>TerminatingError(): "Audit PV binding or CSI single-pod writer identity is invalid"
+>> TerminatingError(): "Audit PV binding or CSI single-pod writer identity is invalid"
+PASS rejects PV Delete
+PS>TerminatingError(): "Audit PVC capacity is below the requested minimum or its own request"
+>> TerminatingError(): "Audit PVC capacity is below the requested minimum or its own request"
+PASS rejects capacity insufficient
+PS>TerminatingError(): "Audit PVC capacity is below the requested minimum or its own request"
+>> TerminatingError(): "Audit PVC capacity is below the requested minimum or its own request"
+PASS rejects request above capacity
+PS>TerminatingError(): "Another PVC is bound to the audit PV"
+>> TerminatingError(): "Another PVC is bound to the audit PV"
+PASS rejects cross-namespace PVC alias
+PS>TerminatingError(): "Another PV aliases the audit CSI volume"
+>> TerminatingError(): "Another PV aliases the audit CSI volume"
+PASS rejects PV CSI alias
+PS>TerminatingError(): "Complete all-namespace PVC inventory is required"
+>> TerminatingError(): "Complete all-namespace PVC inventory is required"
+PASS rejects partial PVC inventory
+PS>TerminatingError(): "Audit PV missing or duplicated in inventory"
+>> TerminatingError(): "Audit PV missing or duplicated in inventory"
+PASS rejects missing PV inventory
+PS>TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+>> TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+PASS rejects two replicas
+PS>TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+>> TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+PASS rejects RollingUpdate
+PS>TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+>> TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+PASS rejects stale generation
+PS>TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+>> TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+PASS rejects missing generation
+PS>TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+>> TerminatingError(): "Manager deployment is not the reviewed single-writer Recreate generation"
+PASS rejects terminating deployment
+PS>TerminatingError(): "Manager image or container identity differs"
+>> TerminatingError(): "Manager image or container identity differs"
+>> TerminatingError(): "Manager image or container identity differs"
+PASS rejects wrong template image
+PS>TerminatingError(): "Manager image or container identity differs"
+>> TerminatingError(): "Manager image or container identity differs"
+>> TerminatingError(): "Manager image or container identity differs"
+PASS rejects wrong actual image
+PS>TerminatingError(): "Manager audit mount path or writable identity differs"
+>> TerminatingError(): "Manager audit mount path or writable identity differs"
+>> TerminatingError(): "Manager audit mount path or writable identity differs"
+PASS rejects mount path drift
+PS>TerminatingError(): "Manager audit mount path or writable identity differs"
+>> TerminatingError(): "Manager audit mount path or writable identity differs"
+>> TerminatingError(): "Manager audit mount path or writable identity differs"
+PASS rejects subPath alias
+PS>TerminatingError(): "Another container can write the management journal"
+>> TerminatingError(): "Another container can write the management journal"
+>> TerminatingError(): "Another container can write the management journal"
+PASS rejects sidecar writer
+PS>TerminatingError(): "Audit claim has no unique running non-terminating writer; old/unknown writers must be fenced"
+>> TerminatingError(): "Audit claim has no unique running non-terminating writer; old/unknown writers must be fenced"
+PASS rejects second live Pod
+PS>TerminatingError(): "Audit claim has no unique running non-terminating writer; old/unknown writers must be fenced"
+>> TerminatingError(): "Audit claim has no unique running non-terminating writer; old/unknown writers must be fenced"
+PASS rejects unknown old writer
+PS>TerminatingError(): "Audit claim has no unique running non-terminating writer; old/unknown writers must be fenced"
+>> TerminatingError(): "Audit claim has no unique running non-terminating writer; old/unknown writers must be fenced"
+PASS rejects terminating writer
+PS>TerminatingError(): "Manager Pod controller chain differs from deployment"
+>> TerminatingError(): "Manager Pod controller chain differs from deployment"
+PASS rejects wrong controller
+PS>TerminatingError(): "Manager Pod controller chain differs from deployment"
+>> TerminatingError(): "Manager Pod controller chain differs from deployment"
+PASS rejects wrong ReplicaSet name
+PASS audit preflight fixtures cases=29 cluster_actions=none products=none
+
+D_RECOVERY_AUDIT_LOCAL_EXIT=0
+**********************
+PowerShell transcript end
+End time: 20261014164712
+**********************

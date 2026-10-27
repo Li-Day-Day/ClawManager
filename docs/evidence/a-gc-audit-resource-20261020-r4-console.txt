@@ -1,0 +1,25 @@
+LOCAL_OWNER audit-resource=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-5a276c9a66774dc698c5f2f17e8ba4a6 process_id=42120
+WARM_CACHE source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-gc-cache-42d58c53e41a4220b89a20b67d142422\cache target=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-5a276c9a66774dc698c5f2f17e8ba4a6\cache tests-count=1 default-vet=yes dependencies-installed=no
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE sha256=04c9f4e42ba2df4bef2192eed1e70b84d66fd5a64cc8d21723199176d1e939df files=1446
+STAGE_START name=targeted attempt=1 default_vet=yes
+STAGE name=targeted attempt=1 exit=0 default_vet=yes
+STAGE_ACCEPTED name=targeted attempt=1 expected_counterfactual=False
+COUNTERFACTUAL name=wrong-type overlay_sha256=2124c7a3ac6a727aeafa2fbad18c318c01efd13c6db826a23729ecd432e8897d source_sha256=c7544199da2aa49d1d88568e4563e665475500756643d016b9555fdb46425bbd
+STAGE_START name=wrong-type attempt=1 default_vet=yes
+STAGE name=wrong-type attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=wrong-type attempt=1 expected_counterfactual=True
+COUNTERFACTUAL name=public-string overlay_sha256=772e61e1d889f12e4343eb6984baff890bd8b8c073f78781f4603e0ad3321f09 source_sha256=58146740d31d03f85543dee93396ba48f8048b611ca6d656b255109a4d338f03
+STAGE_START name=public-string attempt=1 default_vet=yes
+STAGE name=public-string attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=public-string attempt=1 expected_counterfactual=True
+COUNTERFACTUAL name=unpublished-fk overlay_sha256=de4f10edc9f00adf5d448e2e5b259b1cddbafbd51455e847f6a67f8ac3cac643 source_sha256=aefa75c3964019f8abd4eb49b85087baec603dfff4d0ca78776b8c6980c3d93f
+STAGE_START name=unpublished-fk attempt=1 default_vet=yes
+STAGE name=unpublished-fk attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=unpublished-fk attempt=1 expected_counterfactual=True
+STAGE_START name=evidence-full attempt=1 default_vet=yes
+STAGE name=evidence-full attempt=1 exit=0 default_vet=yes
+STAGE_ACCEPTED name=evidence-full attempt=1 expected_counterfactual=False
+LOCAL_PASS audit-resource-postcheck=yes default-vet=yes dependencies-installed=no remote=not-run actual_mysql=not-run
+CLEANED audit-resource-source-cache-overlay=True
+a_gc_audit_resource_local_exit=0

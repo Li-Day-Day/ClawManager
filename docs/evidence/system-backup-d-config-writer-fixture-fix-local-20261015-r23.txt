@@ -1,0 +1,27 @@
+**********************
+PowerShell transcript start
+Start time: 20261015135737
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& 'C:\Program Files\Go\bin\gofmt.exe' -w backend/internal/systembackupsecurity/config_proof_fixture_schema_test.go; $writerFixLog=Join-Path (Get-Location) 'docs/evidence/system-backup-d-config-writer-fixture-fix-local-20261015-r23.txt';Start-Transcript -LiteralPath $writerFixLog -NoClobber|Out-Null;try{& scripts/system-backup-d-config-writer-validation.ps1 -BuildParallelism 3 -BackfillRowGuards -SourceManifestPath (Join-Path (Get-Location) 'docs/evidence/system-backup-d-config-writer-fixture-fix-source-20261015-r23.json')}finally{Stop-Transcript|Out-Null}
+Process ID: 41996
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PS>TerminatingError(): "Source changed while snapshot was copied"
+LOCAL_CLEANUP config-writer-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-dfd608d6ab8b4b59b53db38f5b5aa138 removed=True
+PS>TerminatingError(): "Source changed while snapshot was copied"
+**********************
+PowerShell transcript end
+End time: 20261015135802
+**********************

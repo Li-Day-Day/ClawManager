@@ -1,0 +1,108 @@
+{
+  "kind": "d_verification_http_history_static_sql_arity",
+  "candidate_sha256": "5ed532534641330757377424bc04800f30e5ec85e4b6bc7e0a045e0fb038a295",
+  "calls": [
+    {
+      "sql": "INSERT INTO system_backup_artifact_verifications",
+      "placeholders": 16,
+      "args": 16
+    },
+    {
+      "sql": "INSERT INTO system_backup_attempts",
+      "placeholders": 5,
+      "args": 5
+    },
+    {
+      "sql": "INSERT INTO system_backup_evidence",
+      "placeholders": 8,
+      "args": 8
+    },
+    {
+      "sql": "INSERT INTO system_backup_check_results",
+      "placeholders": 19,
+      "args": 19
+    },
+    {
+      "sql": "INSERT INTO system_backup_job_observations",
+      "placeholders": 14,
+      "args": 14
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET source_artifact_type='catalog_import',source_public_id='sci_00000000-0000-4000-8000-000000000501',artifact_state_before=NULL,artifact_state_after=NULL,unusable_reason_before='verification_pending',unusable_reason_after='verification_pending' WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "DELETE FROM system_backup_check_results WHERE target_public_id=? AND attempt_no=2",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET verifier_aggregate_status='skipped',verifier_warning=0,verifier_skipped=0 WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET verifier_warning=2 WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET health_report_evidence_sha256=REPEAT('e',64) WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_evidence SET owner_target_public_id='sav_00000000-0000-4000-8000-000000000099' WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_evidence SET created_at=? WHERE public_id=?",
+      "placeholders": 2,
+      "args": 2
+    },
+    {
+      "sql": "UPDATE system_backup_check_results SET evidence_sha256=REPEAT('e',64) WHERE target_public_id=? AND attempt_no=2",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_check_results SET attempt_no=99 WHERE target_public_id=? AND attempt_no=2",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET verification_scope='health',usable_after=TRUE,unusable_reason_after='none' WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_check_results SET mode='artifact_health' WHERE target_public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET artifact_state_after='deleted',usable_after=TRUE,unusable_reason_after='none' WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET usable_after=TRUE,unusable_reason_after='none',decision_reason='restored_usable' WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_artifact_verifications SET health_report_evidence_public_id=verifier_report_evidence_public_id,health_report_evidence_sha256=verifier_report_evidence_sha256 WHERE public_id=?",
+      "placeholders": 1,
+      "args": 1
+    },
+    {
+      "sql": "UPDATE system_backup_evidence SET expires_at=?,observed_health='degraded' WHERE owner_target_public_id=?",
+      "placeholders": 2,
+      "args": 2
+    }
+  ],
+  "actual_mysql": false,
+  "scope": "Literal parameter arity only; does not validate SQL syntax, constraints or runtime behavior"
+}

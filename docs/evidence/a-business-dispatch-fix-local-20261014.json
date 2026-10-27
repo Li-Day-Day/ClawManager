@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-14",
+  "kind": "a_business_remote_dispatch_failure_and_local_fix",
+  "result": "local_dispatch_regression_pass_remote_mysql_not_run",
+  "remote_execution_this_turn": false,
+  "operator_remote_window": "User plans to be available around 14:00 Asia/Shanghai; no scheduled or automatic run created.",
+  "failures": [
+    {
+      "profile": "BusinessHistoryOnly",
+      "transcript": "docs/evidence/a-business-history-mysql-remote-20261014-102734.txt",
+      "sha256": "ed2d7e89a4dfc1d13b4c4e6b3297fbeb57bafe538694130f70188cea0facdbd8",
+      "exit": 1
+    },
+    {
+      "profile": "BusinessRestoreOnly",
+      "transcript": "docs/evidence/a-business-restore-mysql-remote-20261014-102704.txt",
+      "sha256": "3eccc9c69551ef1b97cdf3e7a55b28eb3e4482b4923b40253c769a8a55596009",
+      "exit": 1
+    }
+  ],
+  "failure_stage": "After bundle extraction, before migration/MySQL harness invocation",
+  "error": "bash: line 1: =kubernetes-admin@kubernetes: command not found",
+  "root_cause": "PowerShell consumed $evidenceBashPreflightKUBE_CONTEXT as one undefined variable, removing both preflight and KUBE_CONTEXT.",
+  "fix": "Use ${evidenceBashPreflight}KUBE_CONTEXT; execute a separate bash -n for each of three shell scripts.",
+  "cleanup_from_each_original_transcript": {
+    "remote_scratch": true,
+    "local_build_cache": true
+  },
+  "scope_limit": "Original transcripts omit parts of child stdout. User console message supplies local pass/build and bundle checksum lines; these are not remote SQL pass evidence. No new remote inventory was queried.",
+  "local_checks": [
+    {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/system-backup-a-evidence-dispatch.test.ps1",
+      "cases": 5,
+      "exit": 0,
+      "scope": "Actual production profile assignments and command interpolation; default/history/restore plus rejection of original defect in both business profiles; no shell command execution."
+    },
+    {
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/system-backup-a-evidence-go-step.test.ps1",
+      "cases": 21,
+      "exit": 0,
+      "scope": "Bounded same-command Windows tool-crash retry, no retry of assertions/ordinary failures; actual child stdout/stderr, spaced arguments, exit 0/37 and isolated telemetry. No Go build or SSH."
+    },
+    {
+      "check": "PowerShell parser",
+      "result": "pass",
+      "files": [
+        "scripts/system-backup-a-evidence-validation.ps1",
+        "scripts/system-backup-a-evidence-dispatch.test.ps1"
+      ],
+      "operator_restore_command_parsed_not_executed": true
+    }
+  ],
+  "candidate_reviews_checked": [
+    {
+      "receipt": "docs/evidence/system-backup-d-a-business-batch-review-20261014.json",
+      "fingerprints": 8,
+      "all_match": true,
+      "scope": "Candidate combination and initial/final proof interfaces accepted; production and registry approvals false."
+    },
+    {
+      "receipt": "docs/evidence/system-backup-d-a-normalization-boundary-review-20261014.json",
+      "fingerprints": 12,
+      "all_match": true
+    }
+  ],
+  "additional_probe_fix": "Pinned users.local_username_key STORED GENERATED must be read/verified and excluded from INSERT. Tagged offline seed regression covers generated/null/default-generated/unknown-column cases. Its completed Go validation is recorded separately.",
+  "go_validation_receipt": "docs/evidence/a-business-restore-local-20261014-r2.json",
+  "bash_syntax_check": "not_run_locally_Git_Bash_startup_previously_denied",
+  "dependency_installation": false,
+  "production_restore_approved": false,
+  "script_inputs": [
+    {
+      "sha256": "d4e55352169044bf12ef05dbea718d2383b49f333775dcb9eca9e709481cc47b",
+      "path": "scripts/system-backup-a-evidence-validation.ps1"
+    },
+    {
+      "sha256": "180c5655f0fabf79cee88f54100cd1803e14ce812e1206428e00d7fb73d67c09",
+      "path": "scripts/system-backup-a-evidence-dispatch.test.ps1"
+    },
+    {
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc",
+      "path": "scripts/system-backup-a-evidence-go-step.ps1"
+    },
+    {
+      "sha256": "496389e8cf132dc9028814ed71365379783fc208647f808cbe64d1a46272d55e",
+      "path": "scripts/system-backup-a-evidence-go-step.test.ps1"
+    },
+    {
+      "sha256": "277a695a118840266415de2ce4750db9c9017189449e2e2767287cfa7cf52fba",
+      "path": "scripts/system-backup-a-business-history-phase.sh"
+    },
+    {
+      "sha256": "a218ec2bffa89ce3bab6f51606149594fbf6eab3b88fcfda751267567be903be",
+      "path": "scripts/system-backup-fresh-migration-smoke.sh"
+    },
+    {
+      "sha256": "ab175230161acef49ed39b157d4ec1c080f55b65f312e6b821702ed37692438e",
+      "path": "scripts/system-backup-d-migration-phase.sh"
+    }
+  ]
+}

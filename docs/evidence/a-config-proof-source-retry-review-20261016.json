@@ -1,0 +1,111 @@
+{
+  "kind": "a_proof_source_capture_drift_fix_review",
+  "recorded_at": "2026-10-16T02:54:59.609Z",
+  "status": "source_capture_fix_accepted_remote_mysql_still_not_run",
+  "prior_user_attempts": [
+    {
+      "raw_log": "docs/evidence/a-config-proof-mysql-remote-20261016-102630-2be3b2af.txt",
+      "raw_sha256": "6bda52aac7cedafcdaca56c4c65191f587d8903c47065971b7839a4d7687af35",
+      "status": "failed_source_capture_before_build_and_remote",
+      "exit": 1,
+      "source_owner_independently_absent": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-be9d2127744940eda9f76360c7684184",
+      "manifest_not_published": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-config-proof-mysql-remote-source-20261016-102630-2be3b2af.json",
+      "real_mysql_executed": false
+    },
+    {
+      "raw_log": "docs/evidence/a-config-proof-mysql-remote-20261016-103036-61621cef.txt",
+      "raw_sha256": "f64a10d12e58c691b1a0d07886b850ca4922a4cd3a097d423258666d69bbf45a",
+      "status": "failed_source_capture_before_build_and_remote",
+      "exit": 1,
+      "source_owner_independently_absent": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1e1fbc494ede475ba2b371abc2c97b14",
+      "manifest_not_published": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-config-proof-mysql-remote-source-20261016-103036-61621cef.json",
+      "real_mysql_executed": false
+    }
+  ],
+  "source_only_regression": {
+    "powershell_7_log": "docs/evidence/a-config-proof-source-retry-local-20261016-r2.txt",
+    "powershell_7_sha256": "ce6bc71c024d89fcf3b7c6c2dcac2de87740d00206616b3399023557d839434b",
+    "windows_powershell_51_log": "docs/evidence/a-config-proof-source-retry-win51-20261016.txt",
+    "windows_powershell_51_sha256": "272a78b300d9c543a2efb7f217fef52c0cc0c64cd38f0b88e4ef10aeabd22ab0",
+    "logical_cases": [
+      "stable",
+      "one-drift",
+      "file-set-drift",
+      "persistent-drift",
+      "unrelated-error",
+      "unsafe-owner",
+      "wrapper-recover-once",
+      "wrapper-always-changing"
+    ],
+    "windows_powershell_51": "8/8",
+    "powershell_7": "8/8",
+    "repeated_host_executions_not_new_logical_cases": true,
+    "existing_snapshot_guard_checks": 5,
+    "dispatch_checks": 11,
+    "wrapper_downstream_is_stubbed": true,
+    "actual_go_or_ssh_performed": false,
+    "logging_note": "Native PowerShell output is explicitly forwarded to host for the separate Win51 transcript; earlier R2 native invocation exit 0 is retained but its unrecorded stdout is not used as evidence"
+  },
+  "real_current_capture": {
+    "raw_log": "docs/evidence/a-config-proof-source-retry-current-20261016-r2.txt",
+    "raw_sha256": "796a2af568b7ee08792d363350a12357a5376214d4b37a1fbf07a7fe94875678",
+    "manifest": "docs/evidence/a-config-proof-source-retry-current-20261016-r2.json",
+    "manifest_sha256": "b62842e99ea92eb3d172124562fedf04dbeb5b23c64055df6e1f482eb79bfad7",
+    "source_sha256": "0be73c408c92e5672404d8ca0f1614d8d0486517ea27c6c9555e5aca04b94ef8",
+    "files": 1288,
+    "attempts": 1,
+    "frozen_postcheck": true,
+    "actual_go_or_ssh_performed": false
+  },
+  "current_implementation_pins": [
+    {
+      "path": "scripts/system-backup-a-config-proof-validation.ps1",
+      "size": 3149,
+      "sha256": "c6af1fd847c68cabdc599de2e40216e607b8e0057d08a2ad9f7e79cf7c43f142"
+    },
+    {
+      "path": "scripts/system-backup-a-config-proof-source.ps1",
+      "size": 3176,
+      "sha256": "982c2942b5e7288f55bfeb59ed7d8bee58ac9a6cbbff9a0e449d9f7edf0b4e0e"
+    },
+    {
+      "path": "scripts/system-backup-a-config-proof-source.test.ps1",
+      "size": 9083,
+      "sha256": "660985a113027e6cd49b2be1c50af6736a11f44642791323e07b44031eb54675"
+    }
+  ],
+  "local_cleanup_paths_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3f585e52257747ad9087cc36322279f3\\fixture\\recover-once\\.tmp-d-index-cache-21eda7845d4f42f58519615ba16e564a",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3f585e52257747ad9087cc36322279f3\\fixture\\always-changing\\.tmp-d-index-cache-87b612887b2c418fba24b3cc82c5bc2a",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3f585e52257747ad9087cc36322279f3",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a2eb801206e74a1992a95988c60396bd\\fixture\\recover-once\\.tmp-d-index-cache-efa034df1ee541659f4d818a4e2d5983",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a2eb801206e74a1992a95988c60396bd\\fixture\\always-changing\\.tmp-d-index-cache-0504cbcf67e248c1bb544a94f001d5fc",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a2eb801206e74a1992a95988c60396bd",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-00be79eef73f44beb8adc3385192d139",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-9b91fb75f61342d096bce1cadc78079d",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-5125c33d45464d70add331678ea7ca07"
+  ],
+  "source_retry_limit": 3,
+  "retryable_errors": [
+    "source bytes changed during capture",
+    "selected source file set changed during capture"
+  ],
+  "no_retry_for": [
+    "unsafe owner or redirected path",
+    "other filesystem failures",
+    "Go build or test failure",
+    "SSH failure",
+    "MySQL assertion or cleanup failure"
+  ],
+  "manifest_published_only_after_successful_stable_capture": true,
+  "downstream_execution_outside_capture_loop": true,
+  "user_remote_command_parameters_unchanged": true,
+  "dependencies_installed": false,
+  "real_mysql_executed": false,
+  "production_approval": false,
+  "limits": [
+    "This fixes local pre-build preparation; no 15-case SQL acceptance",
+    "User retains execution of all remote validation",
+    "Original failed attempts and prior local proof build receipt remain historical evidence with their own pins"
+  ]
+}

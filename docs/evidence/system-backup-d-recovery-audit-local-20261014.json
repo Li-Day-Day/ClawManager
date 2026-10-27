@@ -1,0 +1,56 @@
+{
+  "kind": "d_recovery_audit_deployment_preparation_local",
+  "recorded_at": "2026-10-14T17:12:59.1831299+08:00",
+  "status": "local_preparation_verified_not_deployed",
+  "tests": {
+    "node_plan_pass": 17,
+    "powershell_preflight_pass": 29,
+    "python_platform_guard_pass": 1,
+    "linux_filesystem_tests_skipped": 7
+  },
+  "node_subprocess_attempt": "EPERM retained in local-20261014-r2.txt; same-process tests pass in r3",
+  "dependencies_installed": false,
+  "cluster_actions": false,
+  "containers_started": false,
+  "build_products_created": false,
+  "pycache_present": false,
+  "production_approved": false,
+  "source_and_output_pins": [
+    {
+      "path": "scripts/system-backup-d-recovery-audit-init.py",
+      "sha256": "f883763026532482d0f4462202e3cce3aa025780109650be90511d179b14010e"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-init.test.py",
+      "sha256": "03e4923bbe6924860b084887eb535c648813601ca86c3aab3d4213f0983fa5cb"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-plan.mjs",
+      "sha256": "fad06a5cf436234165aa07e3de042404f0b324873d9d16fb4bf7214cddf5ec95"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-plan.test.mjs",
+      "sha256": "a82ffc730657a692db75253fdaab86844a0c8176d99c0928f84d710d99718f85"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-storage-preflight.ps1",
+      "sha256": "4c55211d6b3bf9a9610756f50c46cd724af9dba5550c2c4753e6f7578c0a1dba"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-storage-preflight.test.ps1",
+      "sha256": "55e1eeaf90a3961541af1832b595e071f14931130e59b8917de9a3953a83b9e2"
+    },
+    {
+      "path": "deployments/k8s/system-backup-recovery-audit.input.example.json",
+      "sha256": "33fb5e38667ff667572f0c8d62c8ea49becbce25d229a7f28304c5bf2dba76a9"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-recovery-audit-local-20261014-r3.txt",
+      "sha256": "e759bc0ec6d74c4e24bf0ef9ca2db6d1c4ed151bb28597455fd7da2ca0500c47"
+    },
+    {
+      "path": "docs/evidence/system-backup-d-recovery-audit-local-20261014-r4.txt",
+      "sha256": "eff2aa88a26de551ffe0aefb947d22e8600b24ce54b9699fdc0a0df716c60f3e"
+    }
+  ]
+}

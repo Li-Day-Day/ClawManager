@@ -1,0 +1,37 @@
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PASS proof-source-stable capture-calls=1 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PASS proof-source-one-drift capture-calls=2 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source file set changed while snapshot was copied: backend/added.go
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PASS proof-source-file-set-drift capture-calls=2 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 3/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=3 max=3 build-started=no remote-started=no
+PASS proof-source-persistent-drift capture-calls=3 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PASS proof-source-unrelated-error capture-calls=1 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PASS proof-source-unsafe-owner capture-calls=1 no-build-or-remote=yes
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+LOCAL_SOURCE config-proof-frozen=yes source_sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb files=1
+LOCAL_SOURCE config-proof-capture-attempts=2 stable-copy-required=yes
+LOCAL_PASS config-proof-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=True
+LOCAL_CLEANUP config-proof-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-b8aae460e5c2402cbc18021ac185e67a\fixture\recover-once\.tmp-d-index-cache-597f7f19f27e49f785d0fc54eef865f1 removed=True
+PASS proof-source-wrapper-recover-once capture-calls=2 downstream-faked=yes actual-build-or-remote=no
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+Proof source changed during capture; discarded this partial copy before retry 3/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=3 max=3 build-started=no remote-started=no
+LOCAL_CLEANUP config-proof-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-b8aae460e5c2402cbc18021ac185e67a\fixture\always-changing\.tmp-d-index-cache-1eb5af75dfb340e1b3b9967e3fba8ca0 removed=True
+PASS proof-source-wrapper-always-changing capture-calls=3 downstream-faked=yes actual-build-or-remote=no
+PASS proof source capture: 8 cases; source-only fakes, no Go/SSH/database
+LOCAL_CLEANUP proof-source-test-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-b8aae460e5c2402cbc18021ac185e67a removed=True

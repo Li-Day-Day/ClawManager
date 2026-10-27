@@ -1,0 +1,43 @@
+PASS exact manager chain, mounted claim, Retain and single writer
+PASS storage-only scope stays explicit
+PASS absent optional capability additions do not invent privileges
+PASS rejects terminating PVC
+PASS rejects terminating PV
+PASS rejects terminating StorageClass
+PASS rejects missing writer identity
+PASS rejects wrong writer UID
+PASS rejects container overrides writer UID as root
+PASS rejects container overrides writer GID
+PASS rejects container disables nonroot
+PASS rejects privileged manager
+PASS rejects manager privilege escalation
+PASS rejects manager retains capabilities
+PASS rejects manager adds capabilities
+PASS rejects PVC block mode
+PASS rejects malformed UID
+PASS rejects mixed access modes
+PASS rejects wrong CSI
+PASS rejects StorageClass Delete
+PASS rejects PV Delete
+PASS rejects capacity insufficient
+PASS rejects request above capacity
+PASS rejects cross-namespace PVC alias
+PASS rejects PV CSI alias
+PASS rejects partial PVC inventory
+PASS rejects missing PV inventory
+PASS rejects two replicas
+PASS rejects RollingUpdate
+PASS rejects stale generation
+PASS rejects missing generation
+PASS rejects terminating deployment
+PASS rejects wrong template image
+PASS rejects wrong actual image
+PASS rejects mount path drift
+PASS rejects subPath alias
+PASS rejects sidecar writer
+PASS rejects second live Pod
+PASS rejects unknown old writer
+PASS rejects terminating writer
+PASS rejects wrong controller
+PASS rejects wrong ReplicaSet name
+PASS audit preflight fixtures cases=42 cluster_actions=none products=none

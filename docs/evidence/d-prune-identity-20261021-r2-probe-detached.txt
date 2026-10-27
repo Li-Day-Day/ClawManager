@@ -1,0 +1,67 @@
+=== RUN   TestDDownloadAdmissionAuditMySQLSeed
+=== RUN   TestDDownloadAdmissionAuditMySQLSeed/duplicate
+=== RUN   TestDDownloadAdmissionAuditMySQLSeed/unknown
+=== RUN   TestDDownloadAdmissionAuditMySQLSeed/trailing
+=== RUN   TestDDownloadAdmissionAuditMySQLSeed/catalog
+=== RUN   TestDDownloadAdmissionAuditMySQLSeed/budget
+=== NAME  TestDDownloadAdmissionAuditMySQLSeed
+    download_admission_audit_mysql_test.go:109: PASS download admission audit seed only; real_mysql=not_run
+--- PASS: TestDDownloadAdmissionAuditMySQLSeed (0.01s)
+    --- PASS: TestDDownloadAdmissionAuditMySQLSeed/duplicate (0.00s)
+    --- PASS: TestDDownloadAdmissionAuditMySQLSeed/unknown (0.00s)
+    --- PASS: TestDDownloadAdmissionAuditMySQLSeed/trailing (0.00s)
+    --- PASS: TestDDownloadAdmissionAuditMySQLSeed/catalog (0.00s)
+    --- PASS: TestDDownloadAdmissionAuditMySQLSeed/budget (0.00s)
+=== RUN   TestDDownloadGCTaskMySQLSeed
+=== RUN   TestDDownloadGCTaskMySQLSeed/case_catalog
+=== RUN   TestDDownloadGCTaskMySQLSeed/task_rows
+=== RUN   TestDDownloadGCTaskMySQLSeed/prune_rows
+=== RUN   TestDDownloadGCTaskMySQLSeed/query_shapes
+=== NAME  TestDDownloadGCTaskMySQLSeed
+    download_gc_task_mysql_test.go:77: PASS GC task seed cases=18 actual_mysql=not_run full_gc=not_run role_approval=no production_approval=no
+--- PASS: TestDDownloadGCTaskMySQLSeed (0.24s)
+    --- PASS: TestDDownloadGCTaskMySQLSeed/case_catalog (0.00s)
+    --- PASS: TestDDownloadGCTaskMySQLSeed/task_rows (0.24s)
+    --- PASS: TestDDownloadGCTaskMySQLSeed/prune_rows (0.00s)
+    --- PASS: TestDDownloadGCTaskMySQLSeed/query_shapes (0.00s)
+=== RUN   TestDProducerDownloadOwnersMySQLSeed
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/eight_exact_ddl_statements
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/actual_scope_projections_encrypted_object
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/unknown
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/duplicate
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/trailing
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/ddl
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/admission
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/records
+=== RUN   TestDProducerDownloadOwnersMySQLSeed/budget
+=== NAME  TestDProducerDownloadOwnersMySQLSeed
+    download_producer_owner_mysql_test.go:270: PASS producer download seed; actual_mysql=not_run production_approval=no
+--- PASS: TestDProducerDownloadOwnersMySQLSeed (0.31s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/eight_exact_ddl_statements (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/actual_scope_projections_encrypted_object (0.28s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/unknown (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/duplicate (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/trailing (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/ddl (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/admission (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/records (0.00s)
+    --- PASS: TestDProducerDownloadOwnersMySQLSeed/budget (0.00s)
+=== RUN   TestASensitiveDownloadMFAMySQLSeed
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/duplicate
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/unknown
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/trailing
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/catalog
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/ddl
+=== RUN   TestASensitiveDownloadMFAMySQLSeed/budget
+=== NAME  TestASensitiveDownloadMFAMySQLSeed
+    sensitive_download_mfa_mysql_test.go:148: PASS download MFA seed; real_mysql=not_run human_mfa=no production_approval=no
+--- PASS: TestASensitiveDownloadMFAMySQLSeed (0.16s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/actual_config_required_cells (0.15s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/duplicate (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/unknown (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/trailing (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/catalog (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/ddl (0.00s)
+    --- PASS: TestASensitiveDownloadMFAMySQLSeed/budget (0.00s)
+PASS

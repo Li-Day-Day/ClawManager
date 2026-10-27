@@ -1,0 +1,122 @@
+{
+  "kind": "d_independent_download_admission_and_retention_actual_mysql_acceptance",
+  "status": "accepted_frozen_thirteen_admission_plus_eleven_result_group_cases",
+  "recorded_at": "2026-10-19T08:38:24.166Z",
+  "log": "docs/evidence/a-download-admission-mysql-remote-20261019-161645-0ba9ed8f.txt",
+  "log_sha256": "07872a4feadf28aef19fc1b7c05c561a7eda5d1d4a42fa1beb5cf9eaa3619b87",
+  "source": "docs/evidence/a-download-admission-mysql-remote-source-20261019-161645-0ba9ed8f.json",
+  "source_manifest_sha256": "32a01ed0ca3cbe346953c3d525446b88f52fbffa476c15edf60e9eb9f40a61f0",
+  "source_files": 1402,
+  "source_sha256": "f8b279bbe42889b3594349d975a701db55c6b818c975060be020b9217d85b11e",
+  "local_stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 253,
+      "all": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 290,
+      "all": 2244
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 2,
+      "all": 12
+    }
+  ],
+  "ordinary_main": 543,
+  "ordinary_all": 4229,
+  "seed_all": 12,
+  "detached_seed_all": 12,
+  "namespace": "sbk-mig-261019082949-1133",
+  "namespace_uid": "9fccc9d1-07ec-40c3-9034-649a0ea9c8be",
+  "mysql_version": "8.4.8",
+  "probe_sha256": "d34eb09376fa55d5531539d7bee5f2e82d8b7f342ddd937bd5d769f222d8ecf4",
+  "inputs_sha256": "c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f",
+  "migration_runner_sha256": "20438986f09abcec3ea42c58a01937d2624c929d2c70d8d87f90982239e7faa6",
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 95,
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237"
+  },
+  "admission_case_names": [
+    "http_admit_provider_result",
+    "concurrent_key_once",
+    "retained_hmac_replay",
+    "final_owner_rollback",
+    "final_manifest_rollback",
+    "final_nonce_rollback",
+    "intent_insert_rollback",
+    "unknown_actual_commit",
+    "late_actual_commit",
+    "observed_L0_wait_original_expiry",
+    "result_after_revocation",
+    "result_insert_rollback",
+    "result_unknown_actual_commit"
+  ],
+  "result_group_case_names": [
+    "result_audit_delete_restrict",
+    "admission_delete_restrict",
+    "parent_retention_update_restrict",
+    "retention_group_fk",
+    "intent_group_fk",
+    "installation_group_fk",
+    "link_insert_rollback",
+    "duplicate_result_rejected",
+    "cold_group_after_revocation",
+    "cold_group_duplicate_nonce",
+    "cold_group_corrupt_intent"
+  ],
+  "actual_case_count": 24,
+  "actual_root_count": 2,
+  "cleaned_databases": [
+    "amfa_2579d2d8707388455489f8aabff55ef2",
+    "amfa_e85b35a6d81423003a688f87eb6aa815",
+    "amfa_66e325c6523f6e6e34bc64709a4dca57",
+    "amfa_65d43bf9125babf529b5dbc26ef02665",
+    "amfa_2b2bf438eb67ce71398ac48a38d918af",
+    "amfa_618233ee1da787ea030e6a64bde7cf41",
+    "amfa_a4703726f890f887580e87d8b0ccbfbf",
+    "amfa_d2c45b984646a297c692842ef97b8342",
+    "amfa_06b48e2e42a3ef925170c5bd8955df08",
+    "amfa_0c5c79be4969bdef98eb5ff042832b6d",
+    "amfa_aa95b7eb072c6a9e7d12858fc79ee6d7",
+    "amfa_8992db4e1c7803cfbf3a48f620a074c7",
+    "amfa_7e28b8b07ea71879ddb101d941b8dbbe",
+    "amfa_d04034d5baf57c6e758378256e59c52f",
+    "amfa_dedc097e6f4a357991a7eb3f9d292b0e",
+    "amfa_885238ae6777a258870177615721e980",
+    "amfa_6ffc3f4cbcdbe0a264abcc02fbf0665f",
+    "amfa_bbc6bd1281d77f47615ef090417adf24",
+    "amfa_b2556f0b461347db04c863c40f407c35",
+    "amfa_d5808c4ed12e2ed4e75f6d6e402e0299",
+    "amfa_fd6ade5d752870962a24bb062f9bb419",
+    "amfa_46d6c4186213d2f1ed11a7e151bfcf1a",
+    "amfa_a3e593eb8b8e17fd7703caebb16fbf33",
+    "amfa_7b227fb0779b84c345c172958c6ead7c"
+  ],
+  "local_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8ebb2b59022f42b491b379f7199f69b4",
+  "local_owner_absent": true,
+  "current_pinned_drift": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_group_test.go",
+      "reason": "changed",
+      "frozen_sha256": "065ab933455ac430f50ce75c73a627a1204a16d618be1553de65a5fcfd481ef7",
+      "current_sha256": "ca382db8117b48ccd7a4370e940b72f41c743cdaeaa14ccc01b3543bd8a45254"
+    }
+  ],
+  "current_production_and_sql_probe_pins_match": true,
+  "unit_test_error_branch_reversals": 3,
+  "current_local_validation_source_sha256": "64a5641c8e0eb9d0f788054e80685739e49dfa8b6a0596a78d92a5eab8552b3f",
+  "actual_mysql": true,
+  "human_mfa": false,
+  "provider_transport": "synthetic",
+  "owner_rows": "synthetic",
+  "capacity_materials": "synthetic",
+  "dependencies_installed_by_D": false,
+  "production_approved": false,
+  "group_gc_delete_implemented": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Actual isolated MySQL transactions, constraints, rollback/concurrency/unknown commit and cold persisted group checks. Does not accept four-task/producer real owner/ref InnoDB ranges, deployed STS/KMS/human MFA, physical capacity/grants, complete group GC/tombstones, production main, historical activation or original six scopes."
+}

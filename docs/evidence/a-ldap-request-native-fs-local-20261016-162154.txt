@@ -1,0 +1,42 @@
+**********************
+PowerShell transcript start
+Start time: 20261016162154
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ldapNativeStamp=Get-Date -Format 'yyyyMMdd-HHmmss'; $ldapNativeLog=Join-Path (Get-Location) ('docs/evidence/a-ldap-request-native-fs-local-'+$ldapNativeStamp+'.txt'); $ldapNativeSource=Join-Path (Get-Location) ('docs/evidence/a-ldap-request-native-fs-source-'+$ldapNativeStamp+'.json'); Start-Transcript -LiteralPath $ldapNativeLog | Out-Null; $ldapNativeExit=0; try { & './docs/evidence/a-ldap-native-fs-validation-20261016.ps1' -PreparedOwner (Join-Path (Get-Location) '.tmp-a-evidence-cd67638d6e494159b80d4d92915f45cf') -SourceManifestPath $ldapNativeSource } catch { $ldapNativeExit=1; Write-Output ('LDAP_NATIVE_ERROR='+$_.Exception.Message) } finally { Write-Output ('a_ldap_request_exit='+$ldapNativeExit); Write-Output ('ldap_request_log='+$ldapNativeLog); Write-Output ('ldap_request_source='+$ldapNativeSource); Stop-Transcript | Out-Null }; exit $ldapNativeExit
+Process ID: 37040
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER ldap-native-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-cd67638d6e494159b80d4d92915f45cf container=codex-a-ldap-nativefs-run-cd67638d6e494159b80d4d92915f45cf volume=codex-a-ldap-nativefs-cd67638d6e494159b80d4d92915f45cf
+LOCAL_SOURCE ldap-request=yes files=1325 source_sha256=ac2b47ff87cc92e85263d55489b9cee5b06fc977931d0c3e0e242fcfccd9aeee baseline_sha256=2c45d8640704ff7bea1a5afa3fa5761a3e4152b581329a1fe9e7d1915aee18d8
+codex-a-ldap-nativefs-cd67638d6e494159b80d4d92915f45cf
+LOCAL_STAGE ldap-native-filesystem same-snapshot=yes network=none dependencies-installed=no
+/inputs/source.tar: OK
+/inputs/modules.tar: OK
+/inputs/source-manifest.json: OK
+tar: can't make dir filippo.io/edwards25519@v1.1.0/.github: Permission denied
+tar: can't open 'filippo.io/edwards25519@v1.1.0/doc.go': Permission denied
+LDAP_REQUEST_GO_CONTAINER_EXIT=1
+codex-a-ldap-nativefs-cd67638d6e494159b80d4d92915f45cf
+LOCAL_CLEANUP ldap-native-volume=codex-a-ldap-nativefs-cd67638d6e494159b80d4d92915f45cf removed=True
+LOCAL_CLEANUP ldap-native-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-cd67638d6e494159b80d4d92915f45cf removed=True
+PS>TerminatingError(): "Native filesystem validation failed exit=1; no automatic retry"
+LDAP_NATIVE_ERROR=Native filesystem validation failed exit=1; no automatic retry
+a_ldap_request_exit=1
+ldap_request_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ldap-request-native-fs-local-20261016-162154.txt
+ldap_request_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-ldap-request-native-fs-source-20261016-162154.json
+**********************
+PowerShell transcript end
+End time: 20261016162753
+**********************

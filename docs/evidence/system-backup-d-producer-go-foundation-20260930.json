@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "date": "2026-09-30",
+  "role": "D",
+  "status": "go_foundation_validated_pending_authority_integration",
+  "scope": "Strict C1 transport/codec/validation plus mandatory-policy transaction execution foundation; not producer runtime authorization",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/decode.go",
+      "sha256": "e02ed710189fa1d71a4b1ab7fd607b6ff668ac2be1ac58c82c7fc940c6554672"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/codec.go",
+      "sha256": "9c7c8c793edb497f980da9bb05f4ec2e2e9956b379ca850ba3f0026998e9138e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "sha256": "07f97f04824c2c253f02f39ba44db59512e21d4f80b36ad9756d2da81073ea4f"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "sha256": "1a73d4b799754ab80d59d2baf0897639f047e632535d5d85013754c4ff98a7b6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/contract_test.go",
+      "sha256": "55fccda0e53180925691cc3b9549369ebf90483a22cc0ac3e6ae4af9515544d6"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction_test.go",
+      "sha256": "270dc638a8e0ce385d17fd2e8b09c9875211afd60cbbea6cb8c71a1a5c1444fd"
+    },
+    {
+      "path": "scripts/system-backup-d-producer-validation.ps1",
+      "sha256": "6648170da4f8acd688651882aaa5652246b33bf1ad9c06e8673b297da55c7069"
+    },
+    {
+      "path": "docs/system-backup-d-producer-go-foundation-20260930.md",
+      "sha256": "344c7c4840e5bd6d294ca00dd1f903a136f9b5eec934e2a01cfc65442c2b9d18"
+    },
+    {
+      "path": "docs/system-backup-development-flow.md",
+      "sha256": "8bfb857b62fcedabffb049b87caefaecb9650c5d384cc3d1be59391322254467"
+    },
+    {
+      "path": "docs/system-backup-restore-d-role-steps.md",
+      "sha256": "28bda27ab0887334063d3781c072b6ec3bae6c45aa3382d32c69cd2af7933961"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority.schema.json",
+      "sha256": "b1f92a3aa2f0181ec326edb9dba295cd3079ec4bbbf18bb4aa343466fba085b5"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+      "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+    },
+    {
+      "path": "docs/system-backup-a-system-producer-adaptation-20260930.md",
+      "sha256": "2b0e65c2effeeb506cce56a2399b00c50db40982ef0461c20626563ac90600d5"
+    },
+    {
+      "path": "docs/system-backup-d-producer-authority-contract-20260930.md",
+      "sha256": "416a826f5edd9e7b70bcf957b275189c0b4e1aab69f41bdef6bb421dc3a2e159"
+    }
+  ],
+  "validation": {
+    "runner": "scripts/system-backup-d-producer-validation.ps1",
+    "exitCode": 0,
+    "toolchain": "go1.26.1 windows/amd64",
+    "windows": {
+      "topLevelTestsPassed": 11,
+      "namedPassesIncludingSubtests": 126,
+      "defaultGoTestVetPassed": true
+    },
+    "linux": {
+      "testBinaryCrossCompilePassed": true,
+      "binaryExecuted": false
+    },
+    "fixtures": {
+      "resultExamples": 18,
+      "commandExamples": 4,
+      "recordExamples": 8,
+      "negativeVectors": 35
+    },
+    "realMySQLExecuted": false,
+    "V01ToV10RuntimeAccepted": false,
+    "productionFilesStandardLibraryOnly": 5,
+    "dependencyInstallation": false,
+    "remoteOperations": false,
+    "temporaryBuildArtifactsCleaned": true,
+    "ownedScratchRemaining": 0,
+    "telemetry": "Final runner uses isolated TEST_TELEMETRY_DIR with mode off; initial user telemetry token write was denied; no global Go settings changed"
+  },
+  "catalog": {
+    "migrationFiles": 94,
+    "sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "newProducerMigrationsAdded": 0,
+    "inventoryObjects": 99
+  },
+  "boundaries": [
+    "No production Policy or lifecycle authority issuance implementation",
+    "No controller/HTTP/worker runtime wiring",
+    "CommitReceipt is private local commit metadata, not a producer execution handle or persistent C1 receipt",
+    "SQL wrapper is an integration safeguard for trusted callbacks, not a malicious-SQL sandbox",
+    "Mock driver tests do not establish real InnoDB locks, FK behavior, authentication or provider behavior",
+    "Earlier C1 evidence describes its historical source snapshot and was not rewritten"
+  ],
+  "pending": [
+    "C1 A/C review and B review when Job is chosen",
+    "Reviewed eight-table DDL and concrete production Policy with L0-L6 locks and identity checks",
+    "Acquire/Renew/Revoke/Takeover, BindObservation, CommitResult and historical reads",
+    "A system producer prepare/Wrap/STS/publish/recovery adapters",
+    "Real MySQL and provider runtime acceptance"
+  ]
+}

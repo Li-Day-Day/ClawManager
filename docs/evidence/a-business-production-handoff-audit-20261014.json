@@ -1,0 +1,145 @@
+{
+  "kind": "a_business_restore_production_handoff_audit",
+  "date": "2026-10-14",
+  "scope": "A-owned fifteen-table business restore branch only; not a whole-P0 completion audit",
+  "result": "not_complete_external_inputs_required",
+  "previous_goal_turn_classification": "progress: command dispatch and generated-column defects fixed; local gate completed and outputs cleaned",
+  "current_source_review": {
+    "search_scope": "backend/**/*.go excluding *_test.go",
+    "search_terms": [
+      "NormalizeBusinessForRestore",
+      "VerifyBusinessRestoreSources",
+      "RecheckBusinessRestoreSources",
+      "clawreef/internal/systembackupbusinessa"
+    ],
+    "matches": [
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "line": 54,
+        "text": "\tVerifyBusinessRestoreSources(context.Context, BusinessRestoreBinding, BusinessRestoreInput) error"
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "line": 55,
+        "text": "\tRecheckBusinessRestoreSources(context.Context, BusinessRestoreBinding, BusinessRestoreInput) error"
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "line": 85,
+        "text": "// NormalizeBusinessForRestore freezes all caller input before consulting proof"
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "line": 88,
+        "text": "func NormalizeBusinessForRestore(ctx context.Context, scope *CaptureScope,"
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "line": 120,
+        "text": "\tif err := proofs.Batch.VerifyBusinessRestoreSources(ctx,"
+      },
+      {
+        "path": "backend/internal/systembackupbusinessa/business_restore.go",
+        "line": 192,
+        "text": "\tif err := proofs.Batch.RecheckBusinessRestoreSources(ctx,"
+      }
+    ],
+    "production_package_import_matches": 0,
+    "production_normalizer_call_sites": 0,
+    "concrete_batch_proof_method_definitions_in_production_sources": 0,
+    "limits": "Evidence covers this current checkout. External B implementation, generated future code and unreceived remote output are not proved absent outside it."
+  },
+  "requirements": [
+    {
+      "id": "a_candidate_normalization_and_read_verification",
+      "status": "locally_verified_candidate",
+      "evidence": "docs/evidence/a-business-restore-local-20261014-r2.json",
+      "current_a_source_files_checked": 44,
+      "source_drift": 0
+    },
+    {
+      "id": "d_candidate_combination_review",
+      "status": "accepted_candidate_only",
+      "evidence": "docs/evidence/system-backup-d-a-business-batch-review-20261014.json",
+      "production_approved": false
+    },
+    {
+      "id": "real_fifteen_table_mysql_probe",
+      "status": "not_proven",
+      "evidence": "docs/evidence/a-business-dispatch-fix-local-20261014.json",
+      "next_action": "Operator runs the corrected BusinessRestoreOnly command when available around 14:00. Preserve all stdout/stderr and cleanup evidence."
+    },
+    {
+      "id": "real_b_source_target_authority_and_transactional_writer",
+      "status": "no_production_implementation_found_in_current_checkout",
+      "owner": "B",
+      "next_action": "Supply independently authenticated dump/checkpoint/Secret-ref/mapping/target/time/fence proofs, transaction-local recheck, full write/rollback and uncertain-commit observation; test fixtures remain test-only."
+    },
+    {
+      "id": "d_production_restore_invocation",
+      "status": "no_production_call_site_found_in_current_checkout",
+      "owner": "D with B and A",
+      "next_action": "Connect approved source/target authority and writer to A normalization and SELECT-only verification, then combine resource and cleanup facts."
+    },
+    {
+      "id": "registry_and_live_schema_freeze",
+      "status": "incomplete",
+      "owner": "cross-owner registry gate",
+      "observed_contract_status": "draft",
+      "observed_schema_hash_status": "pending_live_evidence",
+      "next_action": "Obtain the required independent live evidence and cross-owner approvals; retain current draft rejection until then."
+    },
+    {
+      "id": "cross_owner_large_smoke_and_release",
+      "status": "not_proven_by_reviewed_a_receipts",
+      "next_action": "Run the required integrated volume and release gates after the real capture/restore chain is available."
+    }
+  ],
+  "actions_this_audit": {
+    "new_go_tests_or_builds": false,
+    "ssh": false,
+    "remote_inventory": false,
+    "dependency_installation": false,
+    "production_code_changes": false
+  },
+  "scope_constraints": {
+    "remote_tests_reserved_for_operator": true,
+    "user_availability": "around 14:00 Asia/Shanghai",
+    "no_automatic_remote_run": true
+  },
+  "inputs": [
+    {
+      "sha256": "6a7cbe2c3d267cd1877301d37fe2549c312a85c5e71b4a9dfe7a6b125a929ec3",
+      "path": "contracts/system-backup/v12/schema-registry.json"
+    },
+    {
+      "sha256": "86c6a1f1616900fe0ec226d43a11e3c3b86835e81cef9d2915982fdc8e58d306",
+      "path": "docs/system-backup-restore-division-plan.md"
+    },
+    {
+      "sha256": "8081a143ff3dd344ca4605451aca4300a19fc014de73f8d9d144cdd024ba744a",
+      "path": "backend/internal/systembackupbusinessa/business_restore.go"
+    },
+    {
+      "sha256": "ffb9e2e31c82a79cdd9bab722ec1892eddbb7ace51aae40f7f06eb529dada8c0",
+      "path": "backend/internal/systembackupbusinessa/capture.go"
+    },
+    {
+      "sha256": "2e00d5d2dda4d93f3007fe1e8e12fa837bcd7435befca52200c173d3804ee0b8",
+      "path": "backend/internal/systembackupbusinessa/restore_verify.go"
+    },
+    {
+      "sha256": "1b078f79a35ba2013b6285ee875faa86dcfa6c37189be8f940c73d701e524101",
+      "path": "docs/evidence/a-business-restore-local-20261014-r2.json"
+    },
+    {
+      "sha256": "8ffcba17a4968d1685eeaa09bfd9714e09ff13a63ea64a7efbef5c3650d1135a",
+      "path": "docs/evidence/a-business-dispatch-fix-local-20261014.json"
+    },
+    {
+      "sha256": "66047e9f5471b7f41dc4f05852026f78044d3f7b5142e92f890d5196f56f6c05",
+      "path": "docs/evidence/system-backup-d-a-business-batch-review-20261014.json"
+    }
+  ],
+  "completion_claim": false
+}

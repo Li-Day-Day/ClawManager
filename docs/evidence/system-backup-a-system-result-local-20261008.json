@@ -1,0 +1,89 @@
+{
+  "kind": "a_system_result_sql_local_validation",
+  "date": "2026-10-08",
+  "status": "passed_exact_snapshot",
+  "exit_code": 0,
+  "production_authorization": false,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-result-local-20261008.txt",
+    "sha256": "41fa22a1b7a59c70ac3e404cda6cc1e4d638a537da7c504510c94666630447a4"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-012312-b8a634db.json",
+    "sha256": "2541ddf328f3a06372090d795ffb9d71ba7b1b4f3d0b855cf386d4072e56f449",
+    "files": 227,
+    "live_drift_after_validation": [],
+    "all_snapshot_sources_still_match": true
+  },
+  "validation": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 168,
+    "named_passes_including_subtests": 1708,
+    "new_system_result_top_level_passes": 5,
+    "new_system_result_named_passes": 50,
+    "assertion_failures": 0,
+    "windows_tool_process_faults": 0,
+    "same_snapshot_tool_fault_retries": 0,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "gofmt_clean": true,
+    "real_d_transaction_executor": true,
+    "actual_a_registry_and_chunk_sql": true,
+    "database_driver": "standard-library synthetic transactional driver",
+    "a_test_result_participant": "synthetic same-transaction marker; D CommitResult tests run separately in D package",
+    "real_lifecycle_to_result_production_environment_integration": false
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-ee58984efb15466ea20f64546ca1fc76",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Mandatory independent SystemResultAuthority with original Prepared/channel/history",
+    "Full request digest, exact ready row version and original manifest/chunks/store/key matching",
+    "Final current read preserves every evidence field across result transaction",
+    "Independent receipt-read branch without evidence queries, writes or capacity renewal",
+    "Rollback on mutable/immutable evidence drift, authority revocation, capacity expiration, query or audit failure",
+    "Detached nested request, chunks and capacity sample across preparation authority boundary"
+  ],
+  "excluded_scope": [
+    "Production identity/evaluator/projection/reference/capacity/audit authority",
+    "A environment success integration through real Lifecycle/ExecutionHandle/CommitResult",
+    "Real MySQL concurrency, provider and V01-V10 validation",
+    "System STS/conditional PUT and independent historical recovery",
+    "Reference retirement and GC lifecycle",
+    "Formal D migration and production activation",
+    "Full HTTP authentication and real LDAP revocation"
+  ],
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_result.go",
+      "sha256": "b42f976b3b24288069a6df5e6fd4fa27944d25949b804ac826bee6f4099610b7"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_result_test.go",
+      "sha256": "8fe9c9a4efa00abce098332d790411b1d2aa488885be1594f240458213663313"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_pending_sql.go",
+      "sha256": "4d2fc03762e51a18955ec75ff23fea558cb64c33a5369ea600dbdbf9e3c7e576"
+    },
+    {
+      "path": "docs/system-backup-a-system-result-20261008.md",
+      "sha256": "8cc4927000cf11307f38ceac49f966c1965bfda3ff467b91ed5f5ff277c66fb5"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "33308883db43b6c7211500870b4345a7e6ff345180a7d4dc6fee424fe91cff69"
+    }
+  ]
+}

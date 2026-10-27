@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T05:37:26.6992499Z",
+  "status": "local_full_pass_ssh_create_failed_mysql_not_run",
+  "operator_report": {
+    "source_sha256": "e333a14366a0ce1e98e72e35140a714cbdb536fb59df58b62b43bcc5357c4d54",
+    "runner_sha256": "7ab37c3ac839a499e2ee19d066e3fba49abc34b334c951ebf456d503e2fc0fbb",
+    "probe_sha256": "028470fafe5c0dad7b7728914db8d420a65daa6a318121d60057b142588c1e54",
+    "unit_packages_passed": 4,
+    "vet": "pass",
+    "linux_builds": "both first attempt pass",
+    "ssh_preflight": "pass",
+    "failed_stage": "remote scratch creation",
+    "scratch_owner": "2ce41ce4aefb44e9bfd7495a2fcbee5d",
+    "error": "Connection closed by 10.130.14.23 port 22",
+    "remote_scratch_cleanup": "operator reported yes; exact wrapper marker verification passed",
+    "local_cleanup": "operator reported True",
+    "uploaded": false,
+    "mysql_started": false
+  },
+  "remediation": [
+    "prepare owned remote scratch before any local test/build",
+    "retry only explicit closed-connection exit 255 without known auth/host-key failure",
+    "max three attempts using same command/path/owner; 2 and 4 second delays",
+    "existing scratch must already have exact owner; never overwrite foreign/incomplete state",
+    "upload and remote MySQL execution are not retried"
+  ],
+  "validation": {
+    "wrapper_mock_scenarios": 25,
+    "bash_creation_states": 6,
+    "creation_attempts_per_state": 2,
+    "bash_cleanup_states": 6,
+    "native_process_stdout_stderr_exit_capture": "pass using local pwsh subprocess",
+    "real_ssh_invoked": false,
+    "real_mysql_run": false,
+    "go_rebuilt": false,
+    "current_source_still_matches_operator": true,
+    "test_scratch_remaining": 0,
+    "dependencies_installed": false
+  },
+  "limitations": [
+    "SSH root cause unknown",
+    "this run cleanup does not resolve older untracked scratch",
+    "retries are validated locally, not yet exercised on the real host"
+  ],
+  "next_operator_command": ".\\scripts\\system-backup-d-invariants.ps1 -HistoryCLI -BuildOnly -Remote -Verbose",
+  "source_sha256_at_receipt": {
+    "scripts/system-backup-d-invariants.ps1": "9db7ff4cf633b0c57ae56d9a952dc67461ca9526b55cdbc218d2676879808003",
+    "scripts/system-backup-d-history-cli-wrapper.test.ps1": "a1dbec29254fdd465c1bddb87aeea3d19b8f70c4500e3b80397cde08f499cd55",
+    "scripts/system-backup-d-ssh-cleanup.test.mjs": "754844af3de323d8eee1e6adfa18ca161e10b908804323dd2f02559b17cb39f8"
+  }
+}

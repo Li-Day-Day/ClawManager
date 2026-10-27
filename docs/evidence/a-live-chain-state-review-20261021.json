@@ -1,0 +1,44 @@
+{
+  "kind": "a_live_chain_state_observation.v1",
+  "status": "STATE_OBSERVED_BOOTSTRAP_CODE_BLOCKED",
+  "source": {
+    "path": "docs/evidence/a-live-chain-inventory-20261021-165643-8f7e94df.txt",
+    "sha256": "e97836518eaf9f30a0a3916cf93e036b593758391dce7e43ae3477f8f661bc63",
+    "reported_payload_sha256": "d03ba3a3f5b31e8e9060cbd4c3f31b653c3b12d322864486d304185263d11dce",
+    "reported_ssh_exit": 0,
+    "historical_payload_independently_reconstructed": false,
+    "provenance": "operator-executed receipt; reviewer did not connect remotely"
+  },
+  "config_rows": 0,
+  "installation_rows_observed": 0,
+  "evidence_group_rows_observed": 0,
+  "login_session_recorder_enabled": false,
+  "login_installation_configured": false,
+  "deployed_app_image": "10.130.14.23:5000/clawmanager@sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d",
+  "installed_bootstrap_requirements_exit": 2,
+  "installed_missing_adapter_count": 30,
+  "installed_registration_binary_present": true,
+  "installed_registration_download_flags_observed": false,
+  "migration_ledger": {
+    "observed_count": 97,
+    "current_source_count": 96,
+    "current_source_entries_not_in_observed_ledger": [
+      "064_add_instance_browser_workers.sql",
+      "081_fix_system_backup_prune_item_identity.sql"
+    ],
+    "observed_entries_not_in_current_source": [
+      "045_update_workbuddy_windows_runtime.sql",
+      "046_add_instance_pvc_name.sql",
+      "047_add_instance_runtime_variant.sql"
+    ],
+    "comparison_scope": "exact filenames only; no live DDL equivalence claim"
+  },
+  "local_followup": {
+    "scope": "concrete offline bootstrap RBAC validator and command composition",
+    "production_resources_created": false,
+    "existing_database_changed": false,
+    "runtime_accounts_or_personnel_mfa_created": false,
+    "other_owner_integrations_remain_required": true
+  },
+  "live_http_audit_verified": false
+}

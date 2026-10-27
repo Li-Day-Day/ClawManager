@@ -1,0 +1,54 @@
+**********************
+PowerShell transcript start
+Start time: 20261020153656
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ErrorActionPreference='Stop'
+$counterfactualRun='20261020-r3'
+$counterfactualConsole=Join-Path (Get-Location).Path ('docs/evidence/a-gc-audit-resource-'+$counterfactualRun+'-console.txt')
+if(Test-Path -LiteralPath $counterfactualConsole){throw 'Refusing existing counterfactual console evidence'}
+& .\docs\evidence\a-gc-audit-resource-validation-20261020.ps1 -Run $counterfactualRun *> $counterfactualConsole
+if(-not $?){exit 1}
+Write-Output ('AUDIT_RESOURCE_CONSOLE='+$counterfactualConsole)
+exit 0
+Process ID: 20932
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER audit-resource=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-1a0292b2a7b5462cb9cf484e2939da0c process_id=20932
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE sha256=019ccdc41fa9767b8edc3ac18fca96e32962b9bb0fdf96d345f5fe0f4143be6c files=1446
+STAGE_START name=targeted attempt=1 default_vet=yes
+STAGE name=targeted attempt=1 exit=0 default_vet=yes
+STAGE_ACCEPTED name=targeted attempt=1 expected_counterfactual=False
+COUNTERFACTUAL name=wrong-type overlay_sha256=b11532598e5b3bf15a3d829db1690cb4c82bf6e4b602c523537dd81343177a21 source_sha256=c7544199da2aa49d1d88568e4563e665475500756643d016b9555fdb46425bbd
+STAGE_START name=wrong-type attempt=1 default_vet=yes
+STAGE name=wrong-type attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=wrong-type attempt=1 expected_counterfactual=True
+COUNTERFACTUAL name=public-string overlay_sha256=a0e98d5e9b6b912f076ec3402e4fffd9ccf4e691506d32cd4556df677f283f23 source_sha256=58146740d31d03f85543dee93396ba48f8048b611ca6d656b255109a4d338f03
+STAGE_START name=public-string attempt=1 default_vet=yes
+STAGE name=public-string attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=public-string attempt=1 expected_counterfactual=True
+COUNTERFACTUAL name=unpublished-fk overlay_sha256=06b1ea875c12ac49bc6520f8ef9a504aa1b16f8571f95d6beb59549c2e53cbba source_sha256=aefa75c3964019f8abd4eb49b85087baec603dfff4d0ca78776b8c6980c3d93f
+STAGE_START name=unpublished-fk attempt=1 default_vet=yes
+STAGE name=unpublished-fk attempt=1 exit=1 default_vet=yes
+STAGE_ACCEPTED name=unpublished-fk attempt=1 expected_counterfactual=True
+STAGE_START name=evidence-full attempt=1 default_vet=yes
+STAGE name=evidence-full attempt=1 exit=1 default_vet=yes
+PS>TerminatingError(): "Audit-resource stage failed: evidence-full"
+CLEANED audit-resource-source-cache-overlay=True
+a_gc_audit_resource_local_exit=1
+**********************
+PowerShell transcript end
+End time: 20261020160919
+**********************

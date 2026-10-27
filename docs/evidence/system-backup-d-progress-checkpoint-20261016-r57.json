@@ -1,0 +1,57 @@
+{
+  "kind": "d_goal_progress_checkpoint.v1",
+  "recorded_at": "2026-10-16T08:00:47.403Z",
+  "objective": "接着做",
+  "goal_status": "active",
+  "overall_goal_complete": false,
+  "previous_goal_turn_classification": "progress: accepted the four actual audit SQL cases with exact cleanup and 17 checks",
+  "current_goal_turn_classification": "progress: added exact receipt and public Operation codecs; 4/80 new checks passed; full r56 gate failure diagnosed and fixture fix with six-second regression placed in fresh r57 full validation",
+  "completed_evidence": [
+    "docs/evidence/system-backup-d-download-audit-remote-review-20261016-r55.json"
+  ],
+  "failed_evidence": "docs/evidence/system-backup-d-download-content-failure-20261016-r56.json",
+  "active_validations": [
+    {
+      "session": 97937,
+      "container": "codex-d-download-audit-436d7e61061540af9683c6f490a460ca",
+      "owner": ".tmp-d-index-cache-436d7e61061540af9683c6f490a460ca",
+      "raw_log": "docs/evidence/d-download-admission-content-local-20261016-r57.txt",
+      "source_manifest": "docs/evidence/d-download-admission-content-source-20261016-r57.json",
+      "source_files": 1326,
+      "source_sha256": "18fbd333647ed5e6498d8257876f9d702443798aad06f5a3f24a61acea47e87f",
+      "expected_final_exit": "d_download_admission_content_local_exit=0",
+      "review_after_success": "node docs/evidence/system-backup-d-download-content-review-20261016.mjs r57 --record",
+      "status": "running full two-package gate; not yet accepted"
+    },
+    {
+      "session": 74690,
+      "container": "codex-d-server-read-b888cbe10d9d4a2f94c99992c6ba25a9",
+      "owner": ".tmp-d-index-cache-b888cbe10d9d4a2f94c99992c6ba25a9",
+      "raw_log": "docs/evidence/system-backup-d-server-read-local-20261016-r54.txt",
+      "source_manifest": "docs/evidence/system-backup-d-server-read-source-20261016-r54.json",
+      "expected_final_exit": "d_server_read_exit=0",
+      "status": "same original full-server process; no restart; frozen baseline differs from subsequent current HTTP/LDAP/codec changes"
+    }
+  ],
+  "cleanup": "Do not remove active owners. Each parent finally removes its exact owned source/cache/build outputs; independently inspect absence once terminal. r56 exited 1; exact owner and container independently absent.",
+  "implementation": [
+    "backend/internal/systembackupevidence/download_admission_content.go",
+    "backend/internal/systembackupevidence/download_admission_content_test.go",
+    "backend/internal/systembackupevidence/system_publication_call_integration_test.go"
+  ],
+  "handoff": "docs/system-backup-d-download-admission-content-20261016.md",
+  "remaining": [
+    "Finish exact r57 and r54 runs, inspect failures and source drift, accept only actual covered frozen scopes",
+    "Bind receipt/public Operation content to exact transaction, original audit anchor and A verified request/proof; complete prelocked operation/receipt/nonce and real current authority/capacity composition",
+    "Canonical original/deployment/write-observe grants, physical capacity/lifecycle, reviewed formal migrations and representative index decision",
+    "Complete overview/four detail Owner sources and public HTTP composition; keep unavailable data explicit",
+    "Real B dump/target/clock/fence/writer/proofs and D production restore integration",
+    "Real recovery-manager mTLS/superior authorization, physical audit volume/capacity/fencing and I/O failure evidence",
+    "Actual historical SQL/ledger upgrade, human MFA/activation and current catalog review",
+    "Real backend four-matrix/large-data end-to-end and formal A/B/C shared reviews"
+  ],
+  "original_six_scope_audit": "docs/system-backup-d-six-scope-readiness-20261015.md",
+  "dependencies_installed_by_this_agent": false,
+  "remote_commands_by_this_agent": false,
+  "formal_approval_changed": false
+}

@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "scope": "overview control-table contribution and guarded transaction builder",
+  "production_overview_enabled": false,
+  "real_mysql_run": false,
+  "dependency_installation": false,
+  "checks": [
+    "full systembackupread package test/vet PASS",
+    "final TestOverview six top-level and 42 named checks including subtests PASS with vet",
+    "Linux systembackupread test binary compilation PASS",
+    "Linux systembackupsecurity tagged MySQL probe compilation PASS"
+  ],
+  "binary_sha256": {
+    "read_package": "eb4266d933befe219398fecd98c3f60a6a134962a339485be879b68993c0eece",
+    "authority_mysql_probe": "c59a371d22d0437cd5d078ac18810d8aeb6d06162034ffb1892140ebef083658"
+  },
+  "cleanup": {
+    "local_reported": true,
+    "tagged_compile_reported": true,
+    "both_owned_directories_absent": true,
+    "retained_build_products": false
+  },
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupread/overview_control.go",
+      "sha256": "d64086142607de632961d13fb5424b5a8ab4357974c86bed412588cb6355ec74"
+    },
+    {
+      "path": "backend/internal/systembackupread/overview_control_test.go",
+      "sha256": "8c5a4fb8d97d1148608441035a2743860666f6d5d5e2bf9a30204efed7db883a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+      "sha256": "17e8645bddced867e8b4f921949abb6e12f842e9e753a4dceb471c3d7906e519"
+    }
+  ]
+}

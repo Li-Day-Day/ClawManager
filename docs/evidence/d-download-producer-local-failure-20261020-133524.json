@@ -1,0 +1,127 @@
+{
+  "kind": "d_producer_operator_local_gate_failure_and_repair_review",
+  "recorded_at": "2026-10-20T07:17:33.096Z",
+  "failed_run": {
+    "log": "docs/evidence/d-download-producer-remote-20261020-133524.txt",
+    "log_sha256": "61937bcad645d83363a8140e26c62120e6e3a786ab791927d5744979a85bb525",
+    "source": "docs/evidence/d-download-producer-remote-20261020-133524-source.json",
+    "manifest_sha256": "75c8fd553ebdba87559d6a7ab25a9d075c249c3fe81b6a1823c3208f6f18d0d7",
+    "source_sha256": "4c7d1c7664dc8c84498883f315b470310b7c979b8451c0560e1b54a7773309d6",
+    "source_files": 1445,
+    "failed_tests": [
+      "TestDownloadRetentionGCEarlyReferencesAreL1AndRechecked",
+      "TestDownloadRetentionGCEarlyReferencesAreL1AndRechecked/true",
+      "TestDownloadRetentionGCEarlyReferencesAreL1AndRechecked/false",
+      "TestAGCDirectAuditResourcePublishedInteger",
+      "TestAGCDirectAuditResourcePublishedInteger/published_int",
+      "TestDownloadRetentionGCDirectPublishedColumnTypesAndFKs",
+      "TestDownloadRetentionGCDirectPhasesAndOriginalOwnLinks",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/wrong_tx",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/wrong_stage",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/scope_change",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/late_valid_fk",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/late_query",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/backward_clock",
+      "TestDownloadRetentionGCDirectGuardStagesAndPoison/canceled",
+      "TestDownloadRetentionGCTaskCollectorRollbackAndFinalRecheck",
+      "TestDownloadRetentionGCTaskCollectorRollbackAndFinalRecheck/complete",
+      "TestDownloadRetentionGCOneTransactionAndPrivateFacts",
+      "TestDownloadRetentionGCUnknownCommitIsNotRetried",
+      "TestDownloadRetentionGCExpiryEquality",
+      "TestTaskAuthorityRejectsIdentityAndState",
+      "TestTaskAuthorityRejectsIdentityAndState/clock_drift"
+    ],
+    "failed_leaf_count": 17,
+    "exit": 1,
+    "remote_started": false,
+    "actual_producer_cases": 0,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-80d8046e654640edba8243c4d7add134",
+    "owner_absent": true,
+    "build_cache_cleaned": true,
+    "final_source_postcheck_reported": false
+  },
+  "reasons": [
+    "Old GC SQL model counted literal regexp question marks as bind placeholders, rejecting metadata before the intended assertions; current r87 also includes independently checked published column types and fresh GC fixture clocks.",
+    "Task clock-drift timestamp was sampled before all preceding subtests, so elapsed setup could move it into the allowed five-second window. Resolve each temporal mutation after its own fixture and require clock cases to reach the final SQL check."
+  ],
+  "changed_since_failed_run": [
+    "backend/internal/systembackupevidence/download_retention_gc_references_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc_references.go",
+    "backend/internal/systembackupevidence/download_retention_gc_test.go",
+    "backend/internal/systembackupevidence/task_authority_test.go",
+    "scripts/system-backup-a-evidence-validation.ps1"
+  ],
+  "changed_since_r87": [
+    "backend/internal/systembackupevidence/task_authority_test.go",
+    "scripts/system-backup-a-evidence-validation.ps1"
+  ],
+  "focused": {
+    "run": 1,
+    "source_files": 1445,
+    "source_sha256": "b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252",
+    "source_manifest_sha256": "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+    "jsonl_sha256": "f6811102405d7c7900ae9893fc76ab0914172edeeed9cd64338350ab23e161e6",
+    "main": 26,
+    "all": 350,
+    "packages": [
+      "clawreef/internal/systembackupevidence"
+    ],
+    "exit": 0,
+    "default_vet": true,
+    "unit_and_final_source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-310d249c62944597bb5d689883ea17e9",
+    "owner_absent": true
+  },
+  "full": {
+    "run": 2,
+    "source_files": 1445,
+    "source_sha256": "b9e29a7d5dc749665d391381ef349f7693d804abb7296b1ca05ee8932e763252",
+    "source_manifest_sha256": "7ad7dd105cc92efe92c383e31ab04e2f275d26bce10dab35cb4be4a632ed8499",
+    "jsonl_sha256": "6e002edf87afcf550530ad7e92292289671213ffede512b1687b60496ed38c24",
+    "main": 579,
+    "all": 4623,
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupsecurity"
+    ],
+    "exit": 0,
+    "default_vet": true,
+    "unit_and_final_source_postchecks": true,
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-44b42a310fe645748d34891e235c0cf2",
+    "owner_absent": true
+  },
+  "producer_seeds": 22,
+  "detached_producer_seeds": 22,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "29d4c442ab1a39c6b80d7d9a13f1367adaf2a4b4a1c87ac29509d06ba6dd512f"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "2c330d52416c84bc464e61ac418f4af109e656d4a1d33e60f2a21fd7b0a5bd0b"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "037ac2b4a7da72fc7122ecff6513d44f3c525dff9aebc2a020c43c0f9fb2133c"
+    }
+  ],
+  "cleanup": "docs/evidence/d-download-producer-local-repair-cleanup-20261020.json",
+  "current_pinned_sources_match": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "actual_producer_cases": 0,
+  "production_approved": false,
+  "scope": "Local repair and preparation only. Keep original exit 1; producer eighteen actual SQL cases still require their own operator receipt.",
+  "concurrent_validation_script_change": {
+    "path": "scripts/system-backup-a-evidence-validation.ps1",
+    "only_change": "Two-package Go test timeout explicitly set to 900s; no request/SQL/provider deadline change.",
+    "reverted_bytes_match_r87": true,
+    "same_timeout_used_in_full_native_run": true
+  },
+  "current_input_list": {
+    "path": "docs/evidence/d-download-producer-local-repair-current-files-20261020.txt",
+    "sha256": "850fff9d83a661423a0d6c5c853581bba651f1518f2167547c99413c9c9292c6"
+  }
+}

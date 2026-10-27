@@ -1,0 +1,168 @@
+{
+  "kind": "system_backup_d_independent_local_validation",
+  "date": "2026-09-29",
+  "status": "PASS_local_scope",
+  "scope": "User confirmed local results and scripts first; no new image build or remote acceptance",
+  "node_tests": {
+    "init": 4,
+    "dto": 4,
+    "deployment": 4,
+    "existing_contract_artifacts": 70,
+    "existing_rbac_manifests": 8,
+    "existing_contract_gate": 6,
+    "result": "PASS"
+  },
+  "shell_transport_test": {
+    "result": "PASS",
+    "stable_grant_rounds": 2,
+    "rejected_scenarios": [
+      "namespace_uid_changed",
+      "container_restarted",
+      "container_replaced"
+    ],
+    "network_used": false,
+    "files_created": false
+  },
+  "checks": {
+    "deployment_init_objects": 0,
+    "dto_types": 49,
+    "dto_fields": 435,
+    "catalog_files": 93,
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564",
+    "inventory_objects": 99,
+    "contract_frozen": false,
+    "deployment_requirements_exit": 2,
+    "empty_deployment_template_exit": 1,
+    "powershell_parse": "PASS",
+    "bash_syntax": "PASS",
+    "diff_whitespace": "PASS"
+  },
+  "go": {
+    "systembackupcontract": "compiled: no test files",
+    "systembackupcontroller": "PASS",
+    "db": "PASS",
+    "controller_command": "PASS (2.313s)",
+    "linux_controller_build": "PASS: separate serial BuildOnly retry, exit 0"
+  },
+  "real_cluster_tested": false,
+  "http_deployed": false,
+  "human_mfa_verified": false,
+  "configuration_activated": false,
+  "dependencies_installed": false,
+  "build_artifacts_cleanup": "PASS: owned binaries, temporary files, cache and local telemetry directory removed",
+  "superseded_failures": [
+    "Stale command health test expected an older catalog prefix; now references the current catalog constant",
+    "Inventory regeneration exposed old bootstrap count 22 assertion; changed to 0",
+    "Linux cross-build compiler launch failed with Windows status 0xc0000043; cache cleaned, isolated serial build retry running"
+  ],
+  "remaining_owned_scratch_directories": 0,
+  "completed_at_utc": "2026-09-29T01:39:08.6234342Z",
+  "completion_boundary": "User confirmed local results and scripts first. Live recovery, image publication, HTTP deployment, personal MFA and activation are not claimed.",
+  "source_snapshot": [
+    {
+      "path": ".github/workflows/build.yml",
+      "sha256": "7a21a752118c8e6e36d484e8ad4ebb6c3157542d1ce0e8488b831b71a5b3b623"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main_test.go",
+      "sha256": "9cce28081a54e15d97c645f011617960755ee0662f380b2cbc2f01e2883f46db"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap_supervisor.go",
+      "sha256": "9bd6ef18541e3e9033b722f025f8094cc5989d376aee46a4fc6325fea08339f0"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap_recovery_test.go",
+      "sha256": "badff36b76ede29b0bb7c7f038603beddf64886703cef824e1026d54f98414bb"
+    },
+    {
+      "path": "backend/internal/systembackupcontract/types.go",
+      "sha256": "7abb9e6441b03fbfd836810a40a0a745fb5ea956ba0fe9c83c23cc38ba85a3eb"
+    },
+    {
+      "path": "frontend/src/types/systemBackupContract.ts",
+      "sha256": "be8642700b263dd74798e014f1ae7d153c6dd8c4491b6323c35468f1b359c0f2"
+    },
+    {
+      "path": "contracts/system-backup/v12/dto-parity.json",
+      "sha256": "042bdb9fe8e67b8032a1e7fefb9a67b6ac511559c85ae12151c23f0043e73db3"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "sha256": "b8077985c1c73e0d44d0bf4ae32d40fd9b46eaa44ba09161ef4f3ef404a1752f"
+    },
+    {
+      "path": "deployments/mysql/000_database.sql",
+      "sha256": "39778bd5bf9c4319a855eb47cf6c6da7d8d3a2bb5137939fa902eeee155dd142"
+    },
+    {
+      "path": "deployments/k8s/single-node/clawmanager.yaml",
+      "sha256": "1a828693b6afaa5f79667ab2e373927aa539552bd32ea5467bd1fb33c2696c0b"
+    },
+    {
+      "path": "deployments/k8s/cluster/clawmanager.yaml",
+      "sha256": "11558a08e6dcc7eaa8ed59abf4bd8f06eae48402a66fc315702706403ad74a3c"
+    },
+    {
+      "path": "deployments/k3s/single-node/clawmanager.yaml",
+      "sha256": "38039185e7b5dae4cc9c3f5e4ea97683e326e894683bf81014ed8d456d5bd448"
+    },
+    {
+      "path": "deployments/k3s/cluster/clawmanager.yaml",
+      "sha256": "da6a9cfc4f1941f7000c44dcaed5702d71ca290fbf07a09dcdf53db6cfc17de7"
+    },
+    {
+      "path": "deployments/k8s/sites/nine-node-production/20-clawmanager-production.yaml",
+      "sha256": "703eb4e9bbe4e4c5f2a93f71edf87756c64701c2e8643336260c6079b90163f9"
+    },
+    {
+      "path": "deployments/k8s/system-backup-registration.template.json",
+      "sha256": "c34325371de48a9b0c8f9375a664ca14907c84fdfee991a96fee93c19d7b2546"
+    },
+    {
+      "path": "scripts/system-backup-d-init-check.mjs",
+      "sha256": "976cb9d19d2fda526b80957a0915bb707a0b371e8bffc710164412c73b7ab0a2"
+    },
+    {
+      "path": "scripts/system-backup-d-init-check.test.mjs",
+      "sha256": "a575d099b299e90f3a59658a2615910f32cc8cf96635485047936594e7ae7719"
+    },
+    {
+      "path": "scripts/system-backup-d-dto-check.mjs",
+      "sha256": "01f835d327b85cd4ec87311fc3e026c15b4214a53cb1ab32b8cd2075f31a41b8"
+    },
+    {
+      "path": "scripts/system-backup-d-dto-check.test.mjs",
+      "sha256": "94c0a4e18b6abe5113be7f552546c1d63e329f00543447c48eb481867cfd7f59"
+    },
+    {
+      "path": "scripts/system-backup-d-deployment.mjs",
+      "sha256": "89221bf1cc69bc38d405fdfa2480406d92a6e77bd45cd13afcf21b01e47896b1"
+    },
+    {
+      "path": "scripts/system-backup-d-deployment.test.mjs",
+      "sha256": "cef5574eaecaa65a2b154f9318ff64ec6edb0fc9bac324213d8dd1440af92c7d"
+    },
+    {
+      "path": "scripts/system-backup-d-independent-validation.ps1",
+      "sha256": "cf86872a6f6fb8225f58996620b85f9a05470117070674fb3a20773bd3bb4dcf"
+    },
+    {
+      "path": "scripts/system-backup-controller-grant-drift-phase.sh",
+      "sha256": "6bcf0daebd45dd386f9d869c4d7d436d2bce8e52ade65b3c48dc05a6d6570a89"
+    },
+    {
+      "path": "scripts/system-backup-controller-grant-drift-phase.test.sh",
+      "sha256": "71bf7cc7562a7619526406cfece3d5def9636b61ffbe0c407e1cf951bbad6d2d"
+    },
+    {
+      "path": "scripts/system-backup-contract-artifacts.test.mjs",
+      "sha256": "69f4b83731f37b2d425c6669b7a2202b558fed72be83bdf7eb7b575c960d3ea6"
+    },
+    {
+      "path": "docs/system-backup-restore-schema-inventory.json",
+      "sha256": "6148bc83e845a4e92fdce4742e1a91d1d6a51c40d89ca90f1c820a4c8071d671"
+    }
+  ],
+  "source_snapshot_note": "Hashes captured after verification in a shared worktree; not an immutable test-start snapshot or image attestation. Shared files include preexisting owner changes."
+}

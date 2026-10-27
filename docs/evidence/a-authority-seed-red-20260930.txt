@@ -1,0 +1,10 @@
+=== RUN   TestMySQLAuthoritySeed
+=== RUN   TestMySQLAuthoritySeed/confirmed_absence_publishes_ready
+    authority_mysql_test.go:352: GC seed must be ready after exactly one PUT: err=artifact_unavailable state=write_unknown puts=0
+=== RUN   TestMySQLAuthoritySeed/unknown_absence_blocks_put
+--- FAIL: TestMySQLAuthoritySeed (0.02s)
+    --- FAIL: TestMySQLAuthoritySeed/confirmed_absence_publishes_ready (0.00s)
+    --- PASS: TestMySQLAuthoritySeed/unknown_absence_blocks_put (0.01s)
+FAIL
+FAIL	clawreef/internal/systembackupevidence	2.754s
+FAIL

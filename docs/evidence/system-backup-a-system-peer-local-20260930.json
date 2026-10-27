@@ -1,0 +1,91 @@
+{
+  "kind": "a_system_peer_local_validation",
+  "date": "2026-09-30",
+  "status": "passed_exact_snapshot",
+  "production_authorization": false,
+  "exit_code": 0,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-peer-local-20260930.txt",
+    "sha256": "28dd1f6f247c539b7c45d71611b075d17db04fdff5c4991f2f54a0b071505d3e"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20260930-085655-bd94b34a.json",
+    "sha256": "3c0f07e40ca10290c1322c69de78a4422a6970cf5e91d2f5e309c4b224b4d252",
+    "files": 209,
+    "live_drift_after_validation": [
+      "backend/internal/systembackupproducer/execution_policy.go",
+      "backend/internal/systembackupproducer/execution.go",
+      "backend/internal/systembackupproducer/execution_test.go"
+    ],
+    "all_a_evidence_sources_still_match": true
+  },
+  "validation": {
+    "packages": [
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer"
+    ],
+    "top_level_passes": 126,
+    "named_passes_including_subtests": 1195,
+    "new_system_peer_top_level_passes": 4,
+    "new_system_peer_named_passes": 32,
+    "assertion_failures": 0,
+    "windows_compiler_process_faults": 0,
+    "same_snapshot_tool_fault_retries": 0,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "gofmt_clean": true
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-e943ab28226d4a6dbe578ad3d22e7acb",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Independent deployment mapping with exact scope, issuer, subject, CA and leaf pin",
+    "Real local mTLS verification; reject wrong leaf, missing certificate and proxy identity headers",
+    "Private proof bound to original HTTP request and authenticator instance",
+    "Local and DB-time revalidation without extending original admission",
+    "Credential rotation changes actor/admission digests; local Close invalidates this instance"
+  ],
+  "excluded_scope": [
+    "Full C1 AuthenticatedPrincipal and production deployment registry/revocation",
+    "D CommandEnvironment/ExecutionEnvironment and BeginCall/RecheckCall integration",
+    "Job host checks, evaluator roles, management, historical read and termination authorization",
+    "System STS, Guarded SQL publication/result and historical recovery",
+    "Real MySQL/provider V01-V10 and Linux runtime execution",
+    "Final versions of D execution.go, execution_policy.go and new execution_test.go listed as drift",
+    "Full HTTP authentication and real LDAP/directory revocation"
+  ],
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_peer.go",
+      "sha256": "a9061612b397c1f9010d2b4f21a792d584abe288d7a2fb58f14ad63aabadcb1f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_peer_test.go",
+      "sha256": "50dc4ce83082391b8e513409066d1a312f84f747d44817bc50d25fa23efc02e5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/task_authority.go",
+      "sha256": "bd325ec07167951f332989611b58d474c63b618315d548f73341923e4898bb30"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "4afb96c7845559e5e80acb6c32c8eb322a6184f651efa6ac4edebe089e7f12bd"
+    },
+    {
+      "path": "docs/system-backup-a-system-peer-20260930.md",
+      "sha256": "9324ca7061d24e7e7917b09b61d2956ae3f4415a5692f9629c5728179c3f19a0"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "85e15a1b971be73b2ad86a91311db9140ec1baabea2f25d986d781a91aa5171f"
+    }
+  ]
+}

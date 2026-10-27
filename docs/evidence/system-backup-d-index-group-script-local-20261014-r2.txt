@@ -1,0 +1,37 @@
+**********************
+PowerShell transcript start
+Start time: 20261014154725
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$groupCacheLog=Join-Path (Get-Location) 'docs/evidence/system-backup-d-index-group-script-local-20261014-r2.txt'; if(Test-Path -LiteralPath $groupCacheLog){throw 'Refusing to overwrite script evidence'}; Start-Transcript -Path $groupCacheLog | Out-Null; try { & .\scripts\system-backup-a-evidence-dispatch.test.ps1; $groupSource=[IO.File]::ReadAllText((Join-Path (Get-Location) 'scripts/system-backup-a-evidence-validation.ps1'));$groupGuardEnd=$groupSource.IndexOf('if ($Remote) {');if($groupGuardEnd -lt 0){throw 'Profile guard boundary missing'};$groupGuards=[scriptblock]::Create($groupSource.Substring(0,$groupGuardEnd));$groupTestRoot=[IO.Path]::GetFullPath((Join-Path (Get-Location) ('.tmp-d-index-cache-'+[guid]::NewGuid().ToString('N'))));$groupTestCache=Join-Path $groupTestRoot 'cache';try{[IO.Directory]::CreateDirectory($groupTestCache) | Out-Null;[IO.File]::WriteAllText((Join-Path $groupTestRoot 'owner.txt'),[IO.Path]::GetFileName($groupTestRoot));& $groupGuards -AdminReadOnly -AdminReadIndexCandidate -IndexSuiteCache $groupTestCache;Write-Output 'PASS valid run-owned shared cache input';[IO.File]::WriteAllText((Join-Path $groupTestRoot 'owner.txt'),'wrong-owner');$groupRejected=$false;try{& $groupGuards -AdminReadOnly -AdminReadIndexCandidate -IndexSuiteCache $groupTestCache}catch{$groupRejected=$true};if(-not $groupRejected){throw 'Wrong ownership marker accepted'};Write-Output 'PASS wrong ownership marker rejected';$groupRejected=$false;try{& $groupGuards -AdminReadOnly -AdminReadIndexCandidate -IndexSuiteCache 'C:\Windows\cache'}catch{$groupRejected=$true};if(-not $groupRejected){throw 'Unowned cache accepted'};Write-Output 'PASS cache outside workspace rejected';$groupRejected=$false;try{& $groupGuards -IndexSuiteCache $groupTestCache}catch{$groupRejected=$true};if(-not $groupRejected){throw 'Cache accepted without index profile'};Write-Output 'PASS shared cache requires index profile'}finally{if([IO.Path]::GetDirectoryName($groupTestRoot) -ne [IO.Path]::GetFullPath((Get-Location).Path) -or [IO.Path]::GetFileName($groupTestRoot) -notmatch '^\.tmp-d-index-cache-[a-f0-9]{32}$'){throw 'Unsafe test cleanup path'};Remove-Item -LiteralPath $groupTestRoot -Recurse -Force};Write-Output ('CLEANED grouped cache input fixture='+(-not(Test-Path -LiteralPath $groupTestRoot)));$groupTokens=$null;$groupErrors=$null;[void][Management.Automation.Language.Parser]::ParseFile((Join-Path (Get-Location) 'scripts/system-backup-d-index-group-validation.ps1'),[ref]$groupTokens,[ref]$groupErrors);if($groupErrors.Count){throw 'Wrapper syntax errors'};Write-Output 'PASS final grouped wrapper PowerShell syntax';Write-Output 'GROUP_SCRIPT_LOCAL_EXIT=0';Write-Output 'BASH_SYNTAX_LOCAL=not_verified Win32_error_5; remote preflight required'}finally{Stop-Transcript | Out-Null}
+Process ID: 3772
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 8 cases; no remote actions, dependencies or build artifacts
+PS>TerminatingError(Join-Path): "Cannot bind argument to parameter 'Path' because it is an empty string."
+>> TerminatingError(): "Cannot bind argument to parameter 'Path' because it is an empty string."
+**********************
+PowerShell transcript end
+End time: 20261014154726
+**********************

@@ -1,0 +1,174 @@
+{
+  "kind": "d_verification_pwsh_dispatch_fix_acceptance",
+  "status": "locally_verified_dispatch_fix_actual_mysql_pending",
+  "recorded_utc": "2026-10-22T06:59:45.308Z",
+  "operator_failure": {
+    "log": "docs/evidence/d-verification-detail-remote-20261022-143812-8bc93e64.txt",
+    "source_manifest": "docs/evidence/d-verification-detail-remote-20261022-143812-8bc93e64-source.json",
+    "result": "docs/evidence/d-verification-detail-remote-20261022-143812-8bc93e64-source.json.result.json",
+    "source_files": 1566,
+    "source_sha256": "013c180739fad335c2f4a261d3fddd6c4123974c9c653d663951d8b1a6794815",
+    "observed_exit": 1,
+    "child_exit": null,
+    "remote_requested": true,
+    "remote_validation_started": false,
+    "actual_mysql_cases_run": 0,
+    "cleanup": {
+      "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-76681d4451d343bc821ac10aa8239982",
+      "removed": true,
+      "files_removed": 1567,
+      "test_build_artifacts_removed": true
+    },
+    "owner_independently_absent": true
+  },
+  "fix": {
+    "path": "scripts/system-backup-d-verification-detail-validation.ps1",
+    "before_sha256": "c56079efd3c32fa6dc90b644bf30b0d8bc8f00619ebd336bab86d03320b08376",
+    "after_sha256": "1bf261ccfbb115db4789837ce2e04395587e1bd318d1367292198fc55ca6ad30",
+    "behavior": "Invoke the current PSHOME executable as one scalar path instead of concatenating application discovery results."
+  },
+  "verification": {
+    "historical_counter": {
+      "native_exit": 1,
+      "failed_dispatch_cases": 3,
+      "freeze_control_passed": true
+    },
+    "fixed": {
+      "native_exit": 0,
+      "cases_passed": 4,
+      "multiple_pwsh_matches": 4,
+      "real_child_processes": 3,
+      "child_profile": "synthetic parameter/exit observer; no production A validation"
+    },
+    "initial_fixture_failure": {
+      "preserved": true,
+      "reason": "Empty contracts/docs directories were not copied into the minimal frozen fixture; added explicit synthetic files.",
+      "counter_failed": 4,
+      "fixed_failed": 3
+    },
+    "cleanup_records": [
+      {
+        "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-76681d4451d343bc821ac10aa8239982",
+        "removed": true,
+        "files_removed": 1567,
+        "test_build_artifacts_removed": true
+      },
+      {
+        "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-76e52c5d208d4613b90b1a215411f065",
+        "removed": true,
+        "files_removed": 43
+      },
+      {
+        "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4b35c33e68354311ba881281720a7628",
+        "removed": true,
+        "files_removed": 46
+      },
+      {
+        "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f9b442c469c04a55b72340f967ec07c2",
+        "removed": true,
+        "files_removed": 51
+      },
+      {
+        "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-679277e528704701b553d20d9a9e3e14",
+        "removed": true,
+        "files_removed": 54
+      }
+    ],
+    "all_five_outer_or_operator_owners_independently_absent": true,
+    "actual_mysql_cases_run": 0,
+    "remote_executed": false,
+    "dependencies_installed": false
+  },
+  "evidence": [
+    {
+      "path": "scripts/system-backup-d-verification-detail-validation.ps1",
+      "size": 6855,
+      "sha256": "1bf261ccfbb115db4789837ce2e04395587e1bd318d1367292198fc55ca6ad30"
+    },
+    {
+      "path": "scripts/system-backup-d-verification-detail-validation.test.ps1",
+      "size": 9764,
+      "sha256": "57488b286a9a83934713f256928ac6defca9489000533ead627c6ea1cd2023b6"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5615,
+      "sha256": "34ea566ef0bd646aa93c2e530a0d1c6a8a059db760f425696c0f8129c0de3081"
+    },
+    {
+      "path": "docs/evidence/d-verification-http-history-20261022-9539e976-operator-wrapper-candidate.ps1",
+      "size": 6722,
+      "sha256": "c56079efd3c32fa6dc90b644bf30b0d8bc8f00619ebd336bab86d03320b08376"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-initial-test-source.ps1",
+      "size": 9590,
+      "sha256": "9967886c3a7f513057de08a849c3fe78fb5df16ea1f0032525d1feae9cb8e721"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-counter.stdout",
+      "size": 10366,
+      "sha256": "7f1f33d63dce30909ffbc9be042531ed3442b0c27d8ffd59545840f4f7752a0e"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-counter.stderr",
+      "size": 121,
+      "sha256": "86de3f4ed0508bba6b7bff1b62f4fe7f998bec743402c1959cc25c420fbe5a60"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-fixed.stdout",
+      "size": 7395,
+      "sha256": "878404926837ccd172cd75dcf1dbda8e40327327f3532e0c7ad26399511accaa"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-fixed.stderr",
+      "size": 363,
+      "sha256": "9c9918b73b2c7c1522b28bce0627e0dc993bb5868ef59482556315657fe2f36b"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-native.json",
+      "size": 370,
+      "sha256": "87440cea43b2966567c16d8ea6ca6256489c3f11f0e6239e5d5eedaf556c2f15"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-r2-counter.stdout",
+      "size": 10289,
+      "sha256": "847c217e9f97b008964866c6a70ac0f234a8781bb3f2cec4304b3391b27b73c9"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-r2-counter.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-r2-fixed.stdout",
+      "size": 7170,
+      "sha256": "24a96172b129713da31c6015e0ed95ab34707c44c57ec12a9cc5c7163fd65628"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-r2-fixed.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verification-pwsh-dispatch-fix-20261022-1488fbe3-r2-native.json",
+      "size": 370,
+      "sha256": "7de094e0fdcb2aa3442585a503741e47be1cfa04b2a0dda786c77dca943be588"
+    },
+    {
+      "path": "docs/evidence/d-verification-detail-remote-20261022-143812-8bc93e64.txt",
+      "size": 3468,
+      "sha256": "79f26422562c3c9bde107e1232af66b4f593b6f53747775aae3d0d2b63f01b8b"
+    },
+    {
+      "path": "docs/evidence/d-verification-detail-remote-20261022-143812-8bc93e64-source.json",
+      "size": 307756,
+      "sha256": "728968fd98d45ba2d5ea026795fdc1c2c1c550a1ce747f3c7874ab41cda7c83d"
+    },
+    {
+      "path": "docs/evidence/d-verification-detail-remote-20261022-143812-8bc93e64-source.json.result.json",
+      "size": 968,
+      "sha256": "600fac8cd918e4d29e96430a05e042a6da508f648a732bb557efe9769f67629b"
+    }
+  ]
+}

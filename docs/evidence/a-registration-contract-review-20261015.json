@@ -1,0 +1,144 @@
+{
+  "kind": "a_registration_public_error_contract_local_review",
+  "date": "2026-10-15",
+  "recorded_at": "2026-10-15T12:24:33.9987461+08:00",
+  "status": "accepted_local_error_status_and_missing_proof_alignment",
+  "scope": "Public error status/profile conformance and original idempotent replay; success-body contract remains open",
+  "source_manifest": "docs/evidence/a-registration-contract-source-20261015.json",
+  "source_sha256": "866a867325db2171830aadb589b998b74e6197d10532b969fe36fa0b681249fb",
+  "source_files": 1211,
+  "source_manifest_sha256": "87e7437cd2ab762a9a7c74189e9ee48a638a7fd5c47a62c42877fc168f1ca23c",
+  "log": "docs/evidence/a-registration-contract-local-20261015.txt",
+  "log_sha256": "f5dd1ec6dfca1a44bb6177943c8383118dfe51e7d282f4d496974dcad918ca95",
+  "reviewed_current_matching_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 38765,
+      "sha256": "3ff86691021df10288456573993404b82f9eef0d2effa0fe51eae00535142f80"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_http.go",
+      "size": 6155,
+      "sha256": "6c4cc53d6d0d723ec15f1da305ee46c10d3f011ff7ce19bb5d5255f55f41caf5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 17612,
+      "sha256": "55ce8cb9f9e27e963f7f4eff7d455662eba3530854b4091f29bf338fb37b346d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_api.go",
+      "size": 8498,
+      "sha256": "a93f2c801f3de6fcb7c39d704c1f5fe4364067d54590df18b7e4a11279dff41f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_contract_error_a_test.go",
+      "size": 8326,
+      "sha256": "bbfc59217c057df199b0d249450f0b3b10fb6a996d522f45c36df408d7a385ca"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_error_boundary_a_test.go",
+      "size": 5274,
+      "sha256": "442773899d67bc2b8ce3845e4b4965941ad8f2e25bf5236a9693e59d178ae9f7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_http_mysql_test.go",
+      "size": 17122,
+      "sha256": "10c1c3a218a097cfb9b71f2f3fec05e27e0665b2096a55fb54bd1a2500299c12"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/strongauth.go",
+      "size": 20858,
+      "sha256": "23c079dcdc24405731e1d04a7b996011f7e0e0ad77ef20ddf12c6c842a47f37e"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-operation-errors.json",
+      "size": 10656,
+      "sha256": "ca0877f799600cba34d7fef0966b8757ff7f6975539da98c0e9d19ca4df72b83"
+    },
+    {
+      "path": "scripts/system-backup-a-registration-contract-validation.ps1",
+      "size": 5038,
+      "sha256": "b5ff35d4b131580c0eb68630f6adc24c02c7469fcbe465f84c18a2adc0ee7bd2"
+    }
+  ],
+  "current_other_existing_input_drift": [
+    "backend/internal/systembackupsecurity/config_mutation_response_binding_test.go",
+    "backend/internal/systembackupsecurity/config_mutation_response_binding.go"
+  ],
+  "targeted": {
+    "main": 8,
+    "sub": 59
+  },
+  "full": {
+    "main": 177,
+    "sub": 911
+  },
+  "full_unique_checks": 1088,
+  "full_packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 18.674,
+      "main_pass": 157,
+      "subtest_pass": 798
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 3.616,
+      "main_pass": 20,
+      "subtest_pass": 113
+    }
+  ],
+  "tagged_seed": {
+    "main": 1,
+    "sub": 6
+  },
+  "tagged_mysql_sources_compiled": true,
+  "actual_mysql_probe_executed": false,
+  "targeted_repeats_not_added": true,
+  "exit": 0,
+  "default_vet": true,
+  "tool_crash_retries": 0,
+  "frozen_postcheck": true,
+  "node": {
+    "log": "docs/evidence/a-registration-contract-artifacts-20261015-r3.txt",
+    "log_sha256": "cfb965722698e62142261223a893e9d521958cf8a1cd9d2c3feebbaf8d9d3405",
+    "pass": 70,
+    "fail": 0,
+    "exit": 0,
+    "mode": "in-process direct node via host-forwarding helper",
+    "initial_attempt": "node --test: spawn EPERM before suite assertions; tool result observed",
+    "second_attempt": "70 passed in console, native stdout missing from transcript",
+    "final_attempt": "same tests rerun with host forwarding; complete result durably captured; counts not added across runs"
+  },
+  "original_policy_contract_and_066_unchanged": {
+    "contracts/system-backup/v12/admin-operation-policy.json": "fd259612635e5707dc98432f0a273de85d9d2b216e13fcfce58e9a4b3fbe4737",
+    "docs/evidence/a-config-canonical-write-contract-20261014.json": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+    "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+  },
+  "profile_delta": {
+    "provider_proof_added": [
+      "version_conflict",
+      "not_ready"
+    ],
+    "config_mutation_added": [
+      "payload_too_large",
+      "not_ready"
+    ],
+    "draft_status_retained": true,
+    "reviewer_or_freeze_flags_modified": false
+  },
+  "supersedes_previous_status_preservation": "docs/evidence/a-registration-error-boundary-review-20261015.json",
+  "open_success_wire_finding": "docs/evidence/a-config-success-wire-audit-20261015.json",
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-5d8ce7cdd39048b491b8ad131411d5b7",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-895be79a14ac4cf8aaa994d894303208"
+  ],
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_run": false,
+  "mysql_run": false,
+  "production_http_enabled": false,
+  "production_approved": false,
+  "handoff": "docs/system-backup-a-registration-contract-alignment-20261015.md"
+}

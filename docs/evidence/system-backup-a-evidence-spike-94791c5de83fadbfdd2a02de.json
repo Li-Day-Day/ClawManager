@@ -1,0 +1,27 @@
+{
+  "kind": "system_backup_a_operator_evidence_spike_receipt",
+  "source": "operator-provided console output; presentation escapes normalized; not signed evidence",
+  "recorded_at": "2026-09-24T01:59:05.869Z",
+  "remote_exit": 1,
+  "result": {
+    "kind": "a_evidence_spike_v1",
+    "status": "failed",
+    "run_id": "a-ev-94791c5de83fadbfdd2a02de",
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "action": "run",
+    "started_at": "2026-09-24T01:52:47.901944+00:00",
+    "finished_at": "2026-09-24T01:54:55.474752+00:00",
+    "failed_stage": "probe_write_put-bad-checksum",
+    "checks_passed": [],
+    "objects_removed": true,
+    "pods_removed": true,
+    "recovery_intent_retained": false,
+    "provider_capability_approved": false,
+    "evidence_registered": false,
+    "production_scoped_grant_verified": false
+  },
+  "diagnosis": "Failure at bad-checksum probe; actual HTTP response unavailable in original report. Empty checks_passed is a reporting limitation, not proof that preceding checks failed.",
+  "registered_evidence": null,
+  "approved_reviewers": []
+}

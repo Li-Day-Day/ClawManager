@@ -1,0 +1,19 @@
+Source: migration section of the operator's second, fuller console paste.
+Formatting: Markdown/HTML escaping normalized; not independently captured via SSH by A.
+The evidence test results and cleanup from the same run are retained in the console supplement.
+
+PASS
+ok      clawreef/internal/systembackupevidence  18.806s
+LOCAL_PASS evidence-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=ef3e52e1b8558c8207be3d77363094744f760c5789c3077e978e7502dd1b98be ddl_sha256=c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=9989e7db7f408ad483663e32ca1767366693eaa2825a7aa745979057f9bf0e25
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001DF114F4E40
+root@10.130.14.23's password:
+bundle.tar                                                                                         100%   23MB  42.4MB/s   00:00
+close - IO is still pending on closed socket. read:1, write:0, io:0000029F0EA1F5B0
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-260929090519-4483 uid=f0c08b85-c8d1-4029-a871-2d96ac681af6 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564","migration_count":93,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=9989e7db7f408ad483663e32ca1767366693eaa2825a7aa745979057f9bf0e25 catalog_sha256=68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564
+PASS fresh-migration-replay=001..080 applied=93 exact_filenames=yes d_columns=blob/blob/blob/char

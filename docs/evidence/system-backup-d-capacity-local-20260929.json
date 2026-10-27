@@ -1,0 +1,112 @@
+{
+  "kind": "system_backup_d_capacity_local_validation",
+  "status": "PASS_local_scope",
+  "recorded_at": "2026-09-29T02:13:44.815Z",
+  "scope": "D second item: capacity deployment composition and read-only runtime preflight",
+  "migration_catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 93,
+    "hash": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564"
+  },
+  "node": {
+    "passed": 15,
+    "files": [
+      "system-backup-d-capacity-deployment.test.mjs",
+      "system-backup-d-deployment.test.mjs",
+      "system-backup-schema-diff.test.mjs"
+    ],
+    "transport": "in-memory kubectl/MySQL fixtures; no cluster connection",
+    "final_preflight_revision_retested": true
+  },
+  "go": {
+    "test_and_default_vet": "PASS",
+    "packages": [
+      "./internal/systembackupsecurity",
+      "./cmd/system-backup-registration"
+    ],
+    "platform": "windows/amd64",
+    "linux_registration_collector_build": "PASS",
+    "runner_exit_code": 0
+  },
+  "checks": {
+    "powershell_parse": "PASS",
+    "gofmt": "PASS"
+  },
+  "superseded_attempts": [
+    {
+      "command": "node --test (three files)",
+      "result": "spawn EPERM from sandbox child-process launch",
+      "resolution": "ran each existing node:test file directly with node; all 15 passed; no installation or escalation"
+    }
+  ],
+  "limits": {
+    "dependencies_installed": false,
+    "remote_ssh_performed": false,
+    "cluster_mutated": false,
+    "database_mutated": false,
+    "live_grants_verified": false,
+    "live_shared_storage_verified": false,
+    "unix_file_mode_execution_verified": false,
+    "http_deployed": false,
+    "human_mfa_verified": false,
+    "configuration_activated": false,
+    "owner_admission": "not_run",
+    "fresh_reference_provenance": "operator receipt still required",
+    "image_built_or_published": false
+  },
+  "cleanup": {
+    "owned_build_directories_remaining": 0,
+    "binaries_and_cache_removed": true
+  },
+  "source_snapshot_note": "After-verification shared-worktree file hashes; not a published image attestation.",
+  "sources": [
+    {
+      "path": "backend/cmd/system-backup-registration/main.go",
+      "sha256": "45f9db3197907e582275e999320d6a314951593245fc0a3eac77369c80c3b693"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_linux.go",
+      "sha256": "8a734fecdcccdee856cb95e07cc342e9e23b7502fdb7cf1e3de2ac42e110ca5d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_other.go",
+      "sha256": "df8482332bf6787b56b73dd13e59ecb479c98d3947afe645b3353189356113ab"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_source.go",
+      "sha256": "1fdbef70d47a601b6ef55aa2165514c69b7ecb35f805c4078609c93573d7be3b"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_capacity_source_test.go",
+      "sha256": "a6665ada3515891e44110655e91900f511497b7b21b3bf447bf9a9039a7718bf"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-deployment.mjs",
+      "sha256": "1fb98e93bb98be00b97df1b922151ef245bf4b9e8eb9719b2bfc8361570b146d"
+    },
+    {
+      "path": "scripts/system-backup-d-runtime-preflight.mjs",
+      "sha256": "ddfde71488edde1e9f853861325cd835f69d9a6cf32113b5af957cbd9e139dd2"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-deployment.test.mjs",
+      "sha256": "da979c174bb826d6f51574c6525ceec825626c7fb8508385b1e0b40fe6da06c6"
+    },
+    {
+      "path": "scripts/system-backup-d-capacity-validation.ps1",
+      "sha256": "c7cfa9484ccdc86c9ed30cb9465600394c718cb927bbe83fdd8e50aa99673489"
+    },
+    {
+      "path": "deployments/k8s/system-backup-capacity.template.json",
+      "sha256": "57a5c0162c9c358fb747a5248124c90cd0411dc043803678888429f6edc9edfb"
+    },
+    {
+      "path": "docs/system-backup-d-capacity-deployment-20260929.md",
+      "sha256": "3432df66b5e19d49e0afcab6434f5c72cbfd1dd54686c0267726c351e60fe8cc"
+    },
+    {
+      "path": ".github/workflows/build.yml",
+      "sha256": "0bca77056fa490f25326bac39a8ac457cebac79e02cee6b7c9de386e94412b8a"
+    }
+  ]
+}

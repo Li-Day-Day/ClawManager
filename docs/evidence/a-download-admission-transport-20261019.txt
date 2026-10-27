@@ -1,0 +1,72 @@
+**********************
+PowerShell transcript start
+Start time: 20261019124040
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$aAdmissionTransportExit=1; Start-Transcript -LiteralPath docs/evidence/a-download-admission-transport-20261019.txt -NoClobber | Out-Null; try { & ./scripts/system-backup-a-download-admission-dispatch.test.ps1; & ./scripts/system-backup-a-download-mfa-dispatch.test.ps1; & ./scripts/system-backup-a-nonce-acceptance-dispatch.test.ps1; & ./scripts/system-backup-d-config-writer-dispatch.test.ps1; & ./scripts/system-backup-d-config-writer-dispatch.test.ps1 -SecurityOnly; & ./scripts/system-backup-d-config-writer-dispatch.test.ps1 -MaintenanceReceiptsOnly; & ./scripts/system-backup-d-config-writer-dispatch.test.ps1 -BackfillServiceOnly; & 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe' -NoProfile -ExecutionPolicy Bypass -File scripts/system-backup-a-download-admission-dispatch.test.ps1; if ($LASTEXITCODE -ne 0) { throw 'Native WinPS admission dispatch failed' }; $aAdmissionTransportExit=0 } finally { Write-Host ('a_download_admission_transport_exit='+$aAdmissionTransportExit); Stop-Transcript | Out-Null }; if ($aAdmissionTransportExit -ne 0) { exit $aAdmissionTransportExit }
+Process ID: 7240
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PS>TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadAdmissionOnly requires its exclusive config writer plumbing profile"
+PASS download-admission-dispatch: exact new root/seed/package/phase, binary/input/UID pins, full catalog, preflight, cleanup and exclusive profile; no build or remote
+PS>TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+>> TerminatingError(): "ConfigDownloadMFAOnly requires its exclusive config writer plumbing profile"
+PASS download-mfa-dispatch: exact new root/seed/package/phase, binary/input/UID pins, full catalog, preflight, cleanup and exclusive profile; no build or remote
+PS>TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+>> TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+>> TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+>> TerminatingError(): "ConfigNonceTimeOnly requires the exclusive config writer nonce-time profile"
+PASS nonce-acceptance-dispatch: exact new root/seed/phase, binary/input/UID pins, full-catalog, preflight, cleanup and exclusive profile; no build or remote
+PS>TerminatingError(): "Choose the config proof or writer profile separately"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigBackfillServiceOnly requires the maintenance validation profile"
+PASS config-writer-dispatch payload/seed/phase/exclusive-profile/hash/full-catalog/preflight; no remote actions or build artifacts
+PS>TerminatingError(): "Choose the config proof or writer profile separately"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigBackfillServiceOnly requires the maintenance validation profile"
+PASS config-writer-dispatch payload/seed/phase/exclusive-profile/hash/full-catalog/preflight; no remote actions or build artifacts
+PS>TerminatingError(): "Choose the config proof or writer profile separately"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigBackfillServiceOnly requires the maintenance validation profile"
+PASS config-writer-dispatch payload/seed/phase/exclusive-profile/hash/full-catalog/preflight; no remote actions or build artifacts
+PS>TerminatingError(): "Choose the config proof or writer profile separately"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigMaintenanceReceiptOnly requires the separate config writer validation profile"
+>> TerminatingError(): "ConfigBackfillServiceOnly requires the maintenance validation profile"
+PASS config-writer-dispatch payload/seed/phase/exclusive-profile/hash/full-catalog/preflight; no remote actions or build artifacts
+
+a_download_admission_transport_exit=0
+**********************
+PowerShell transcript end
+End time: 20261019124051
+**********************

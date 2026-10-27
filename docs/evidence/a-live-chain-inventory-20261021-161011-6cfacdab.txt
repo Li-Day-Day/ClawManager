@@ -1,0 +1,77 @@
+inventory_script_sha256=5d1ad4066b807213f9012ed27f842f49a9258711fdf54179f8ca737eb3439a51
+A_LIVE_CHAIN_INVENTORY version=1
+KUBE_CONTEXT kubernetes-admin@kubernetes
+NAMESPACES name uid phase
+calico-apiserver                       93de65cb-808f-4181-a073-34895ed4f37c   Active
+calico-system                          55905e29-d798-41da-a914-f05da74b1037   Active
+clawmanager-hsr-system                 6b3c7bab-9c2d-4e69-9268-a1a0ee61ddca   Active
+clawmanager-hsr-user-1                 00d5944f-e944-4b20-b438-0e48a7144cb3   Active
+clawmanager-hxc-peer-system            86a1d4a7-7063-427f-be74-d35a0f72454d   Active
+clawmanager-hxc-peer-user-1            31e8a965-1358-4dde-afdd-77dfafa40efc   Active
+clawmanager-hxc-system                 8a7e0eab-9360-450c-b459-d5b55cb2959d   Active
+clawmanager-hxc-user-1                 b96f9665-09e2-4709-8d10-c76e6c5cbb48   Active
+clawmanager-ltt-github-system          d9405c6d-2331-467c-a010-77500ae1f3cc   Active
+clawmanager-ltt-github-system-user-1   21e64461-30e1-47b2-a53c-586e01d2103a   Active
+clawmanager-ltt-sandbox                34dba251-2a33-4ceb-a3e5-44627bb8dc32   Active
+clawmanager-ltt-system                 6efd52c1-051e-41e8-bb0c-826d644c7787   Active
+clawmanager-ltt-user-1                 3218ee07-3c71-4d39-b2e5-1b6bf3122703   Active
+clawmanager-ltt-user-2                 928181b7-954e-4b66-955b-61fee52969b4   Active
+clawmanager-ltt-user-3                 1e97f8f7-0e39-4c00-b082-54439866a37b   Active
+clawmanager-ltt-user-4                 3821bf5e-f497-4e8c-85d1-052f2b559ae0   Active
+clawmanager-ltt-user-7                 dad9f7da-7c92-4282-b902-b3adf3d7e713   Active
+clawmanager-system                     85b1527b-6202-4345-b1c5-f528d61b732e   Active
+clawmanager-user-1                     8071cd50-64b1-4a22-94d9-4f351a9a294a   Active
+clawmanager-zhanghui08-system          337cfe30-2c17-4b8e-b32a-760778b8098e   Active
+clawmanager-zhanghui08-system-user-1   b49d2b4a-9a9a-43be-a0fb-e486649b9681   Active
+clawmanager-zhanghui08-user-1          5a51d5ce-19d4-4fe7-85af-c48ea3c930f5   Active
+clawmanager-zhanghui08-user-2          c95d2ebb-1dc5-4ec7-9eca-71ab8af6ec4d   Active
+default                                1a4a04c1-33e8-4b15-a04d-d527469f44f6   Active
+kube-node-lease                        b2d6f4f8-41c6-44e1-8a2c-836f28b83c39   Active
+kube-public                            798770b0-7714-48b9-bd5f-a7bcf02552a9   Active
+kube-system                            da7cffb4-d31f-4359-817c-48d57451ddf1   Active
+laya-system                            f5321352-072c-4e4b-ae9e-07fe51f12f3e   Active
+longhorn-system                        219c83f8-2f9d-4e12-94e2-00b5e750cba0   Active
+research-report                        a147cc37-e203-4504-b55f-2c35ebcff0ee   Active
+sbk-provider-zh-7474d6e0b052           a285351a-b52a-4b91-af78-1e5fa8e78387   Active
+tigera-operator                        6e8c9758-72ef-464a-b33c-7ce2a41b35ec   Active
+SCOPE namespace=clawmanager-zhanghui08-system
+DEPLOYMENTS name uid desired ready image download_runtime_flag download_dsn_env journal_claim
+clawmanager-app ed2c80de-9d24-4ca6-8f9c-877a990ac933 1 1 image=10.130.14.23:5000/clawmanager:backup-test-zh-fix18 download_runtime_flag= download_dsn_env=
+clawmanager-secret-broker 2e2a2959-8476-408d-af24-87ce3a69431a 1 1 image=10.130.14.23:5000/clawmanager@sha256:1ba8cc47f468610e6875117f75fe42ce9fdb15e1cd2e6f877ac8ff2f99e2baa0 download_runtime_flag= download_dsn_env=
+clawmanager-team-redis f517ddaa-cac6-4841-812d-9a426c233618 1 1 image=redis:7-alpine download_runtime_flag= download_dsn_env=
+hermes-runtime 1cb9ad8c-f269-4443-8310-90c649c4b299 1 1 image=10.130.14.23:5000/hermes-lite:2026.7.1 download_runtime_flag= download_dsn_env=
+minio 9cd91bdc-2a9d-4f78-9cd7-413d611b2667 1 1 image=10.130.14.23:5000/minio:2026.6.5 download_runtime_flag= download_dsn_env=
+mysql 27916932-fc61-432c-b515-081f18db34a8 1 1 image=10.130.14.23:5000/mysql:2026.6.5 download_runtime_flag= download_dsn_env=
+openclaw-runtime 0fd3bcb3-3388-4bba-a48c-13518af1ee9d 1 1 image=ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest download_runtime_flag= download_dsn_env=
+skill-scanner f9cfe50f-5d1b-475a-b116-4c267b64f161 1 1 image=10.130.14.23:5000/skill-scanner:2026.6.5 download_runtime_flag= download_dsn_env=
+workspace-store 6346ad6d-21d2-46e4-9e19-1689201e9431 1 1 image=10.130.14.23:5000/nfs-server-alpine:2026.6.9 download_runtime_flag= download_dsn_env=
+PODS name uid phase node ready restarts images
+clawmanager-app-788b97b78f-l8k5f            aabba383-5db9-48a7-a3b7-2b92624c2f3a   Running   node1        true   0     10.130.14.23:5000/clawmanager:backup-test-zh-fix18
+clawmanager-secret-broker-754797878-ncth6   5409179f-07a9-4acc-8fc9-eda31f259f47   Running   node1        true   0     10.130.14.23:5000/clawmanager@sha256:1ba8cc47f468610e6875117f75fe42ce9fdb15e1cd2e6f877ac8ff2f99e2baa0
+clawmanager-team-redis-6b99688494-m8fs6     d4bd6cf8-9799-4100-a3ce-7cda5dea20d5   Running   k8s-master   true   0     redis:7-alpine
+hermes-runtime-544c99ff7-7ghcw              39b187c9-dbb4-49c9-a305-e14503b82a2d   Running   node1        true   0     10.130.14.23:5000/hermes-lite:2026.7.1
+minio-788dfd959f-pgslj                      2b674b10-0360-4164-8055-022c46991d17   Running   k8s-master   true   0     10.130.14.23:5000/minio:2026.6.5
+mysql-66496b8965-d6tsl                      dab1cbf6-ca49-4e16-bd2d-27e70da52004   Running   k8s-master   true   0     10.130.14.23:5000/mysql:2026.6.5
+openclaw-runtime-59c5549fd5-75mtw           3c2b2f89-a10d-4bf9-a8d6-afca470c8ce2   Running   k8s-master   true   0     ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest
+skill-scanner-6cbf6887d4-2pv29              b4fc0585-c302-4fcc-97f6-66941e13cc06   Running   node1        true   0     10.130.14.23:5000/skill-scanner:2026.6.5
+workspace-store-5f6db46744-9z6g8            094b3f6f-5310-4a1c-9fc6-df254749cd39   Running   k8s-master   true   0     10.130.14.23:5000/nfs-server-alpine:2026.6.9
+SERVICES name type cluster_ip ports
+clawmanager-egress-proxy    ClusterIP   10.106.83.98     3128
+clawmanager-frontend        NodePort    10.97.10.72      443
+clawmanager-gateway         ClusterIP   10.111.183.220   9001
+clawmanager-redis           ClusterIP   10.97.197.235    6379
+clawmanager-secret-broker   ClusterIP   10.107.48.157    9444
+clawmanager-team-redis      ClusterIP   10.101.117.201   6379
+minio                       ClusterIP   10.101.248.14    9000,9001
+mysql                       ClusterIP   10.108.2.110     3306
+skill-scanner               ClusterIP   10.96.60.0       8000
+workspace-store             ClusterIP   10.111.9.69      2049
+INGRESSES name class hosts tls_secret_references
+PVCS name uid phase volume class access_modes capacity
+clawmanager-workspaces          12354b07-dd21-4d40-ac9b-da5c97699109   Bound   clawmanager-zhanghui08-workspaces-pv       manual         ReadWriteMany   50Gi
+minio-data                      e7bc8d73-e8fb-4010-8751-d9a0c8bb2467   Bound   clawmanager-zhanghui08-minio-pv            manual         ReadWriteOnce   10Gi
+mysql-data                      e3c297bd-a00a-4a60-bce7-7368a69e8fd2   Bound   clawmanager-zhanghui08-mysql-pv            manual         ReadWriteOnce   5Gi
+redis-data                      34941b96-4f87-4c08-a1c4-843c3d18fa2e   Bound   clawmanager-zhanghui08-redis-pv            manual         ReadWriteOnce   1Gi
+system-backup-capacity-report   d9452769-2406-4437-8dab-775f2de7bf13   Bound   pvc-d9452769-2406-4437-8dab-775f2de7bf13   longhorn-rwx   ReadWriteMany   16Mi
+INVENTORY_COMPLETE live_chain_verified=false
+inventory_ssh_exit=127

@@ -1,0 +1,27 @@
+{
+  "kind": "a_download_schema_candidate_static_review",
+  "recorded_at": "2026-10-19T00:26:02.296Z",
+  "path": "docs/system-backup-d-download-admission-schema-proposal-20261019.sql",
+  "before_receipt": "docs/evidence/a-download-schema-before-fix-20261019.json",
+  "before_sha256": "6c425e25797b9a6373afe813e4736299ae2b4734d1254e3b9fdb53b04d78c0ba",
+  "after_sha256": "e4d031f9ce28e22bc85744ff6a85d2de23a640347a004c507673955ad0c96793",
+  "corrected_line": 39,
+  "corrected_text": "    OR (target_type = 'evidence' AND target_public_id REGEXP '^sev_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')",
+  "exact_original_reconstructed": true,
+  "single_line_literals_closed": true,
+  "static_ASCII_ID_vectors": 6,
+  "same_installation_FK_candidates_present": true,
+  "actual_MySQL": false,
+  "full_SQL_parser": false,
+  "MySQL_REGEXP_runtime_tested": false,
+  "numbered_migration_changed": false,
+  "formal_schema_approved": false,
+  "status": "lexical_defect_fixed_candidate_only_runtime_and_cross_owner_review_pending",
+  "remaining": [
+    "actual fresh and historical DDL execution including legacy cross-installation rejection",
+    "ownership/inventory/schema policy and required A/B/C approvals",
+    "current runtime validates exact bytes/hash and original audit/operation/evidence/nonce facts",
+    "actual immutable INSERT/SELECT grants, retention/GC and physical capacity",
+    "owned evidence installation writer and NULL legacy rows fail closed"
+  ]
+}

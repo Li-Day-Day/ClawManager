@@ -1,0 +1,45 @@
+{
+  "kind": "a_round_pause_review.v1",
+  "user_requested_pause_after_current_round": true,
+  "ca": {
+    "receipt": "docs/evidence/a-ca-trust-candidate-20261022-161401-c7097458.json",
+    "receipt_sha256": "d55e7abe75d46ad24842a97ed0f6e3a0f1d2f94915430d3789d78f375b3123e3",
+    "log": "docs/evidence/a-ca-trust-candidate-20261022-161356-5a01d072.txt",
+    "log_sha256": "733ca25212d600181f8ee0dc30526d61820b51fae6f067aa6b3e57e146cfa7ec",
+    "package_test_passed": true,
+    "linux_compile_reported_passed": true,
+    "selected_inputs": 376,
+    "current_input_drift": [],
+    "non_implementer_review_pending": true,
+    "production_linked": false
+  },
+  "owner": {
+    "log": "docs/evidence/a-download-owners-budget-repair-20261022-161813-2f7f4fdb.txt",
+    "log_sha256": "ee11ebe2139dab2b852e6121df22e5a61afb886b885c05ed39431b1acae3840f",
+    "source": "docs/evidence/a-download-owners-budget-repair-20261022-161813-2f7f4fdb-source.json",
+    "status": "local_gate_real_assertion_failed",
+    "failed_leaves": [
+      "TestADownloadEmptyBodyCheckedBeforeAdmissionWithBoundedRead/eof"
+    ],
+    "evidence_package_seconds": 735.025,
+    "eof_case_seconds": 5.89,
+    "remote_started": false,
+    "new_baseline_accepted": false,
+    "hypothesis": "Fixed fixture SQL clock may exceed production five-second clock freshness bound during setup; not proven, not repaired.",
+    "next_step": "Diagnose with bounded test-only stage evidence and a deterministic regression; preserve production deadlines and all assertions."
+  },
+  "cleanup": [
+    {
+      "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-c685cab7c8a9414b96466f1fe3b4d358",
+      "independently_absent": true
+    },
+    {
+      "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-fe1f429b77574e2f872eb3821e8f3b9f",
+      "independently_absent": true
+    }
+  ],
+  "dependencies_installed": false,
+  "new_tests_or_remote_runs_started_during_closeout": false,
+  "production_approved": false,
+  "complete_field_acceptance": false
+}

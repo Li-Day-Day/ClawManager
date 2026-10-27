@@ -1,0 +1,119 @@
+{
+  "kind": "a_system_sts_local_validation",
+  "date": "2026-10-08",
+  "status": "passed_exact_snapshot_after_revision",
+  "exit_code": 0,
+  "production_authorization": false,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-sts-local-20261008-r2.txt",
+    "sha256": "b7a0e85562a3718b5b95885ff24fc6f1c43f3cca74010f71d7bd74f2e5400cea"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-020112-8e39e641.json",
+    "sha256": "e87b9d19cef8b2450759f798f9a361c7898633de32c09a13f78f86d177780393",
+    "files": 232,
+    "status": "passed_snapshot_only",
+    "live_drift_after_validation": [],
+    "all_snapshot_sources_still_match": true
+  },
+  "validation": {
+    "top_level_passes": 176,
+    "named_passes_including_subtests": 1779,
+    "new_system_sts_top_level_passes": 5,
+    "new_system_sts_named_passes": 54,
+    "d_actual_a_integration_top_level_passes": 3,
+    "d_actual_a_integration_named_passes": 17,
+    "assertion_failures": 0,
+    "windows_tool_process_faults": 2,
+    "same_snapshot_tool_fault_retries": 1,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "gofmt_clean": true,
+    "local_tls_sts_wire_exchange": true,
+    "actual_d_sts_claim_success_integration": false,
+    "actual_d_lifecycle_a_sql_publication_result_integration": true,
+    "database_driver": "standard-library synthetic transactional driver",
+    "production_authority": false,
+    "real_mysql": false,
+    "real_provider": false
+  },
+  "previous_attempt": {
+    "exit_code": 1,
+    "log": {
+      "path": "docs/evidence/system-backup-a-system-sts-local-20261008.txt",
+      "sha256": "38f313081e11d5a840f32a6e894cc04a19a098e3849fad05930ba1a157a657f6"
+    },
+    "snapshot": {
+      "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-014703-bebe2478.json",
+      "sha256": "e9069753ef5ecf3f4abbe89171cb5a8ceb7e2ec1311c50e69613bfd2e75a2be6"
+    },
+    "d_integration_failed_top_level": 3,
+    "d_integration_failed_named": 17,
+    "failure": "probe producer_invalid_record",
+    "sts_passed_top_level": 5,
+    "sts_passed_named": 52,
+    "linux_compiled": false,
+    "automatic_assertion_retry": false,
+    "revision": "A added explicit run/target historical TargetHash checks and two cases; D integration sources changed concurrently; initial probe error cause not established",
+    "scratch_removed": true
+  },
+  "diagnostic": {
+    "log": {
+      "path": "docs/evidence/system-backup-a-system-sts-diagnostic-20261008.txt",
+      "sha256": "80efc13afa92af936c692e5ef4732859f09806d9da6f23acdf57a3d2769196aa"
+    },
+    "exit_code": 0,
+    "scope": "separate live-workspace probe diagnostic; excluded from frozen-run counts",
+    "temporary_test_removed": true,
+    "cache": "shared current owned validation cache, removed after validation"
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-4e6894b2f6174b1799f6a93880d635c1",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Concrete D Execution/ExecutionHandle/PublicationClaim public entry with original Prepared",
+    "Two original sts/publish snapshots, fixed deadline, exact original object and mandatory independent profile verifier",
+    "Shared STS transport preserving legacy full authorization equality",
+    "Before/after exchange revocation checks and projected-token wiping"
+  ],
+  "excluded_scope": [
+    "Production identity and authorization environment",
+    "Independent C remote ACL and HEAD/body isolation proof",
+    "Actual remote conditional PUT and independent absence/result proof",
+    "Public STS constructor success with actual D claim lifecycle",
+    "Real MySQL concurrency and V01-V10",
+    "Historical recovery and formal migrations",
+    "Full HTTP authentication and LDAP revocation"
+  ],
+  "remote_test_policy": "Pause goal when remote testing becomes required; provide complete command, log path and acceptance criteria for user execution.",
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_sts.go",
+      "sha256": "293bfae0492a2a02358edb8a25bff0bd14f0d72882d7a3f6e80711443091fbc4"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_sts_test.go",
+      "sha256": "4c8a998b003c50b2b0441398a464c822bf516d2f70e3b75546f22c3dd36adf5a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_sts.go",
+      "sha256": "a527a97a8c666cb34c8d742ca28d7a60e2b054d81b6ed515c1513e5713f0ad13"
+    },
+    {
+      "path": "docs/system-backup-a-system-sts-20261008.md",
+      "sha256": "e99d1f6072909e4a21fa131618b64e33917d19bdda991bf287336bcf605830a9"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "3dd81c663a78a407ce3629fe87b2834d05f4c764376ec161dfad4cc3b5f7a1ca"
+    }
+  ]
+}

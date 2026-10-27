@@ -1,0 +1,12 @@
+# Operator-built, amd64-only provider capability lab. Not a production image.
+FROM ghcr.io/openbao/openbao:2.6.2 AS bao
+FROM quay.io/minio/mc:RELEASE.2025-08-13T08-35-41Z AS mc
+FROM python:3.13-slim
+COPY --from=bao /usr/bin/bao /usr/local/bin/bao
+COPY --from=mc /usr/bin/mc /usr/local/bin/mc
+COPY deployments/k8s/system-backup-provider-lab/client.py /opt/provider-lab/client.py
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HOME=/tmp
+RUN bao version && mc --version && python -c "import ast; ast.parse(open('/opt/provider-lab/client.py').read())"
+USER 65532:65532
+ENTRYPOINT ["python", "/opt/provider-lab/client.py"]
+CMD ["help"]

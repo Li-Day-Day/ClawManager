@@ -1,0 +1,126 @@
+{
+  "kind": "a_system_publisher_local_validation",
+  "date": "2026-10-08",
+  "status": "passed_exact_snapshot_after_absence_deadline_hardening",
+  "exit_code": 0,
+  "production_authorization": false,
+  "log": {
+    "path": "docs/evidence/system-backup-a-system-publisher-local-20261008-r2.txt",
+    "sha256": "fff96e2432ff19a3b80d0427cd7e88a18994cb023562cd7f98ff91cb89d9ab98"
+  },
+  "snapshot": {
+    "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-023155-4643bb3b.json",
+    "sha256": "8ee5e6c80f2514e799853af151b48aa4cb3be581284d57e33054c8a53aab0956",
+    "files": 234,
+    "live_drift_at_validation_end": [],
+    "receipt_checked_at": "2026-10-08T02:47:52.5458146Z",
+    "changed_after_validation": [
+      "backend/internal/systembackupevidence/d_producer_integration_authority_test.go",
+      "backend/internal/systembackupevidence/d_producer_integration_test.go"
+    ],
+    "added_after_validation": [
+      "backend/internal/systembackupevidence/d_producer_integration_sql_test.go",
+      "backend/internal/systembackupevidence/d_producer_mysql_test.go"
+    ],
+    "all_snapshot_sources_still_match": false,
+    "publisher_sources_still_match": true
+  },
+  "validation": {
+    "top_level_passes": 180,
+    "named_passes_including_subtests": 1826,
+    "new_publisher_top_level_passes": 4,
+    "new_publisher_named_passes": 47,
+    "system_sts_named_passes": 54,
+    "d_actual_a_integration_named_passes": 17,
+    "assertion_failures": 0,
+    "windows_tool_process_faults": 1,
+    "same_snapshot_tool_fault_retries": 1,
+    "vet_enabled": true,
+    "linux_test_binary_compiled": true,
+    "linux_binary_executed": false,
+    "local_tls_sts_and_s3_wire": true,
+    "original_ciphertext_hash_size_and_conditional_signed_put_checked": true,
+    "absence_expiry_limits_staging_and_wire_signature": true,
+    "runtime_d_snapshots_c_verifier_and_finalizer": "private test doubles",
+    "separate_actual_d_lifecycle_a_sql_tests": "standard-library synthetic transactional database",
+    "actual_d_claim_to_system_publisher_success_integration": false,
+    "production_authority": false,
+    "real_mysql": false,
+    "real_provider": false
+  },
+  "previous_snapshot": {
+    "exit_code": 0,
+    "log": {
+      "path": "docs/evidence/system-backup-a-system-publisher-local-20261008.txt",
+      "sha256": "1290b42df4f28e6d9659057b2bc72a0e2fca414576cba98ed45fd95bbad5cd58"
+    },
+    "snapshot": {
+      "path": "docs/evidence/system-backup-a-producer-snapshot-20261008-021955-706adf43.json",
+      "sha256": "873b9e38418ae976bf0b3be461a5f30034c9ac9c36d7ec9f140a8cadf1d64718"
+    },
+    "top_level_passes": 180,
+    "named_passes": 1825,
+    "publisher_named_passes": 46,
+    "linux_compiled": true,
+    "superseded_reason": "Added propagation of independent absence proof expiry through staging and signed PUT, with expiry rejection and wire checks",
+    "changed_files": [
+      "backend/internal/systembackupevidence/system_publish_runtime.go",
+      "backend/internal/systembackupevidence/system_publish_runtime_test.go"
+    ],
+    "scratch_removed": true
+  },
+  "runner": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08"
+  },
+  "cleanup": {
+    "directory": ".tmp-a-evidence-dbdeee1012e24a80ba2ec1b54fb0e859",
+    "source_copy_cache_tmp_telemetry_binary_removed": true
+  },
+  "installed_dependencies": false,
+  "remote_actions": false,
+  "implemented": [
+    "Concrete D claim and execution entry with mandatory independent finish authority",
+    "One publication attempt using original STS snapshots and original ciphertext",
+    "Fresh exact-key absence proof bounds staging and signed upload expiry",
+    "Hash and size validation before a single If-None-Match PUT",
+    "Post-PUT exact Stat for success, lost response or conflict",
+    "Fresh challenge-bound independent C result proof before D Finalizer",
+    "Revocation checks across storage, staging and proof boundaries; no legacy task transaction"
+  ],
+  "excluded_scope": [
+    "Actual D sts/publish evidence environment and full public constructor success integration",
+    "Production identity, revocation and authorization environments",
+    "Independent real C profile, ACL, absence and result proof implementations",
+    "Historical recovery and formal migrations",
+    "Real MySQL concurrency and V01-V10",
+    "Full HTTP authentication and real LDAP revocation"
+  ],
+  "remote_test_policy": "Pause goal when remote testing becomes required; provide complete command, log path and acceptance criteria for user execution.",
+  "artifacts": [
+    {
+      "path": "backend/internal/systembackupevidence/system_publish_runtime.go",
+      "sha256": "d72438277f5551e23bda2786c17ca40251ec80742d936ea4344f84618fb243c4"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_publish_runtime_test.go",
+      "sha256": "dae77f3a838e8e10e978b1f92efe930b5eb5c6e1246c80d8974a8e4c86ca28d4"
+    },
+    {
+      "path": "docs/system-backup-a-system-publisher-20261008.md",
+      "sha256": "2400cdb814017d6592ba00626092fbc8057de3f15508e4bd404f64174cdcdbb8"
+    },
+    {
+      "path": "docs/system-backup-restore-a-role-steps.md",
+      "sha256": "ba9561d8e7dae8f842493d21c8ded8b5f303f3847dc3ce218de2e727ced98ffd"
+    }
+  ],
+  "post_validation_runner_change": {
+    "path": "scripts/system-backup-a-producer-adapter-validation.ps1",
+    "tested_sha256": "dc0c052871c57699cd849410e2d6f4d5c3f875a0350bee6680bf98724ad2bb08",
+    "observed_sha256": "2d1fee33be028a90b02d3e9b35f454d2472f2341ca082bcdd21da3bc1fb207de",
+    "observed_at": "2026-10-08T02:49:42.738076Z",
+    "current_revision_validated": false,
+    "reason": "Runner was modified concurrently after this validation completed; recorded test results use the earlier runner hash."
+  }
+}

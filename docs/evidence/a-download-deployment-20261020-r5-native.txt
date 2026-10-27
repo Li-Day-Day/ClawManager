@@ -1,0 +1,33 @@
+**********************
+PowerShell transcript start
+Start time: 20261020110216
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\docs\evidence\a-download-deployment-validation-20261020.ps1 -Run '20261020-r5' -PublicationFixtureRepairOnly
+Process ID: 42392
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_OWNER download-deployment=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-6fc70a0fca2b4969ba56bbc46d2c7bd5
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+LOCAL_SOURCE sha256=bb502ba3c5d588510e8d79f233db50901b9b55b9517d0ec2c001ed49a43a1e7a files=1429
+BASELINE retained-passing-packages=registration,security node=16 python=4 source_sha256=23d31811cc484e61ea3ccbb61f7f9305f17cbae8f9645ad25aec59f65fa09544 only-changes=publication,download-output-deadline-tests
+START evidence-publication-fixture-repair default-vet=yes dependencies-installed=no
+PASS evidence-publication-fixture-repair
+PASS linux-download-deployment-build sha256=c63098f182e079fe51de3b0a81f778671fe16d0e71c84d8e68bcdbe7069219b9
+LOCAL_PASS download-deployment-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote=not-run
+CLEANED download-deployment-source-cache-binary=True
+**********************
+PowerShell transcript end
+End time: 20261020113555
+**********************

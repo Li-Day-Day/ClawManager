@@ -1,0 +1,120 @@
+BEGIN resumed profile=Authority
+LOCAL_PASS isolated-go-telemetry=off
+ok      clawreef/internal/systembackupproducer  1.497s
+crypto/rand: C:\Program Files\Go\pkg\tool\windows_amd64\compile.exe: exit status 0xc0000043
+FAIL    clawreef/internal/systembackupevidence [build failed]
+FAIL
+警告: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME test-vet command (1/3 failed). Vet remains
+enabled; isolated cache is retained only until this run ends.
+ok      clawreef/internal/systembackupevidence  1.211s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.18s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.09s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.09s)
+PASS
+ok      clawreef/internal/systembackupevidence  3.201s
+=== RUN   TestDRecoveryAuthorityFixtureSeed
+--- PASS: TestDRecoveryAuthorityFixtureSeed (0.00s)
+PASS
+ok      clawreef/internal/systembackupevidence  2.172s
+LOCAL_PASS d-recovery-authority-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000014A76CF7CA0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001DE1F17D4A0
+root@10.130.14.23's password:
+bundle.tar: OK
+RUN namespace=sbk-mig-261012071245-2d0d uid=e048748a-dbc5-4909-b5da-c7bb0bf35142 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestDRecoveryAuthorityMySQL
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestDRecoveryAuthorityMySQL (1.43s)
+=== RUN   TestDRecoveryAuthorityRaceMySQL
+=== RUN   TestDRecoveryAuthorityRaceMySQL/rotate
+
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+=== RUN   TestDRecoveryAuthorityRaceMySQL/revoke
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestDRecoveryAuthorityRaceMySQL (25.93s)
+    --- PASS: TestDRecoveryAuthorityRaceMySQL/rotate (12.80s)
+    --- PASS: TestDRecoveryAuthorityRaceMySQL/revoke (13.13s)
+PASS
+PASS d-recovery-authority-mysql binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60
+CLEANED namespace=sbk-mig-261012071245-2d0d uid=e048748a-dbc5-4909-b5da-c7bb0bf35142
+close - IO is still pending on closed socket. read:1, write:0, io:0000020957B769D0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:00000237769BBEB0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+PASS resumed profile=Authority
+BEGIN resumed profile=AManager
+LOCAL_PASS isolated-go-telemetry=off
+syscall: C:\Program Files\Go\pkg\tool\windows_amd64\compile.exe: exit status 0xc0000043
+FAIL    clawreef/internal/systembackupevidence [build failed]
+FAIL
+警告: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME test-vet command (1/3 failed). Vet remains
+enabled; isolated cache is retained only until this run ends.
+ok      clawreef/internal/systembackupevidence  1.554s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.37s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.21s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.17s)
+PASS
+ok      clawreef/internal/systembackupevidence  2.857s
+internal/runtime/gc/scan: C:\Program Files\Go\pkg\tool\windows_amd64\compile.exe: exit status 0xc0000043
+警告: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME mysql-probe-build command (1/3 failed). Vet
+remains enabled; isolated cache is retained only until this run ends.
+internal/singleflight: C:\Program Files\Go\pkg\tool\windows_amd64\vet.exe: exit status 0xc0000043
+FAIL
+警告: Windows vet/asm/compile process exited with a known tool crash; retrying the SAME mysql-probe-build command (2/3 failed). Vet
+remains enabled; isolated cache is retained only until this run ends.
+LOCAL_PASS a-recovery-manager-authority-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=0cb33ce18371f31e602c0435f07206f46f53cc7bac60dacf686034c14b2dae60
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001955E983150
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:00000253DD31F470
+root@10.130.14.23's password:
+bundle.tar: OK
+
+RUN namespace=sbk-mig-261012072246-29be uid=23210eb0-fed3-4d37-b05f-8c122b1db0c2 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+
+
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestSystemRecoveryAuthorityPinnedDecisionMySQL
+    a_recovery_authority_mysql_test.go:92: evidence probe failed artifact_unavailable
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- FAIL: TestSystemRecoveryAuthorityPinnedDecisionMySQL (0.31s)
+=== RUN   TestSystemRecoveryAuthorityMySQL
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestSystemRecoveryAuthorityMySQL (0.56s)
+=== RUN   TestSystemRecoveryAuthorityCombinedMySQL
+    a_recovery_authority_mysql_test.go:257: MySQL error number=1146
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- FAIL: TestSystemRecoveryAuthorityCombinedMySQL (0.68s)
+FAIL
+command terminated with exit code 1
+CLEANED namespace=sbk-mig-261012072246-29be uid=23210eb0-fed3-4d37-b05f-8c122b1db0c2
+close - IO is still pending on closed socket. read:1, write:0, io:0000021298342BA0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000023624C3FCD0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+MySQL validation failed; retain any CLEANUP_PENDING identity
+所在位置 C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\scripts\system-backup-a-evidence-validation.ps1:184 字符: 42
++ ... it -ne 0) { throw 'MySQL validation failed; retain any CLEANUP_PENDIN ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (MySQL validatio...ENDING identity:String) [], RuntimeException
+    + FullyQualifiedErrorId : MySQL validation failed; retain any CLEANUP_PENDING identity

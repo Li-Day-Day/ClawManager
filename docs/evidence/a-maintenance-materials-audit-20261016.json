@@ -1,0 +1,51 @@
+{
+  "recorded_at": "2026-10-16T02:14:01.3234216Z",
+  "kind": "a_repository_maintenance_materials_search",
+  "scope": "Repository source/contracts/deployments/docs and ignored filename inventory; excludes .git, active test scratch, dependency/cache/runtime upload directories; no remote storage inspected",
+  "user_instruction": "Inspect repository; if unavailable record missing without requesting the same paths again",
+  "queries": [
+    "rg --files --hidden for grant/canonical/archive/issuer/holder candidates",
+    "rg -l for config_canonical_backfill/maintenance_actor_sha256 in deployment/contracts/docs",
+    "rg --files --hidden --no-ignore excluding dependency/cache/runtime directories"
+  ],
+  "existing_audit": "docs/evidence/system-backup-d-canonical-materials-audit-20261014.json",
+  "known_candidates": [
+    {
+      "path": "deployments/k8s/system-backup-provider-lab/registration-bootstrap-d-admin-7d01a0782656f2af361b56e5/bootstrap-admission.json",
+      "classification": "public registration bootstrap candidate, not maintenance authorization",
+      "accepted_for_maintenance": false
+    },
+    {
+      "path": "docs/evidence/system-backup-strong-auth-issuer-d-mfa-605b0a987c4d17bb3f642e72.registry.json",
+      "classification": "draft strong-auth issuer registry; no maintenance purpose/grant/holder protocol",
+      "accepted_for_maintenance": false
+    },
+    {
+      "path": "docs/evidence/system-backup-provider-issuer-d-issuer-d7f0a14ec84d78927620d25f.registry.json",
+      "classification": "draft provider-proof issuer registry; not maintenance authorization",
+      "accepted_for_maintenance": false
+    },
+    {
+      "path": "docs/evidence/a-config-canonical-request-vectors-20261014.json",
+      "classification": "synthetic request vectors, not authenticated historical originals",
+      "accepted_for_maintenance": false
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/testdata/config_backfill_identity_vectors.json",
+      "classification": "synthetic row/provenance vectors",
+      "accepted_for_maintenance": false
+    }
+  ],
+  "result": "no_usable_reviewed_maintenance_runtime_materials_found",
+  "missing": [
+    "approved maintenance holder/grant authentication protocol and dedicated trusted issuer/pins",
+    "independent immutable purpose-specific write and observation grants with current revocation source",
+    "installation/version-bound original canonical bytes and independently authenticated archive record/manifest",
+    "current installed schema/catalog/ledger authentication adapter",
+    "physical metadata reservation and installation-lifetime receipt/audit retention adapter"
+  ],
+  "negative_claim_boundary": "No usable delivery was found in inspected repository; this does not attest external storage or all arbitrary binary contents",
+  "secrets_printed": false,
+  "production_approval": false,
+  "remote_operations_performed": false
+}

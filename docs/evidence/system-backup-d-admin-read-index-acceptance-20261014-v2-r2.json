@@ -1,0 +1,438 @@
+{
+  "kind": "d_admin_read_index_v2_r2_acceptance",
+  "date": "2026-10-14",
+  "source": {
+    "path": "docs/evidence/d-admin-read-index-mysql-remote-20261014-v2-r2.txt",
+    "sha256": "3af8edc2f8a6ed47b4368c71d106696eeba2e35804f7168c32cb324443205c27"
+  },
+  "run": "sbk-mig-261014071158-68a6",
+  "namespace_uid": "8d32d1ec-db06-4a0d-a82e-38c312b28a67",
+  "mysql": "8.4.8",
+  "checks": {
+    "measurement_version": 2,
+    "query_pairs": 171,
+    "full_schema_subtests": [
+      "TestAAdminReadAuthorityMySQL",
+      "TestDAdminReadFullSchemaMySQL",
+      "TestDAdminReadLiveHTTPMySQL",
+      "TestDAdminReadFullSchemaMySQL/task_execution_scoped_attempts_and_progress",
+      "TestDAdminReadFullSchemaMySQL/overview_control_complete_counts_and_installation_isolation",
+      "TestDAdminReadFullSchemaMySQL/overview_current_promotion_binding_and_availability_loss"
+    ],
+    "local_remote_authority_http_pins_match": true,
+    "final_exit": 0,
+    "cleanup": "reported_complete"
+  },
+  "pins": {
+    "authority": "c4ba30b52786f437e49b5ec21e8290c760361f6bcba1729e593f85cb89b48385",
+    "http": "2adc8f11dfef91f67584ecf22774f05238de2e19cceb38a856b19074f097b64c"
+  },
+  "source_review": [
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+      "expected_sha256": "bcdb1baed385b22fc23cf56d41694287a077b8c98fbd8c0c25a008629453116e",
+      "current_sha256": "bcdb1baed385b22fc23cf56d41694287a077b8c98fbd8c0c25a008629453116e",
+      "matches": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_mysql_test.go",
+      "expected_sha256": "0fb99298b661cd556b02f46a45af5d0bbfe45d9d29bb8884238177604e037def",
+      "current_sha256": "0fb99298b661cd556b02f46a45af5d0bbfe45d9d29bb8884238177604e037def",
+      "matches": true
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.mjs",
+      "expected_sha256": "d6d4e24059be4a8f713a6976292f9325d14ce9ef482b61ab068792bb40c3cd38",
+      "current_sha256": "d6d4e24059be4a8f713a6976292f9325d14ce9ef482b61ab068792bb40c3cd38",
+      "matches": true
+    }
+  ],
+  "ddl": {
+    "concurrent_writes_measured": true,
+    "elapsed_us": 2232940,
+    "insert_delete_pair_us": {
+      "p50": 2582,
+      "p95": 88088
+    },
+    "kind": "ddl",
+    "overlapping_insert_delete_pair_us": {
+      "p50": 2580,
+      "p95": 88088
+    },
+    "overlapping_table_write_pairs": {
+      "system_backup_artifact_verifications": 29,
+      "system_backup_operations": 29,
+      "system_backup_preflights": 29,
+      "system_backups": 28,
+      "system_restore_drills": 29
+    },
+    "overlapping_write_pairs": 144,
+    "table_write_pairs": {
+      "system_backup_artifact_verifications": 29,
+      "system_backup_operations": 29,
+      "system_backup_preflights": 29,
+      "system_backups": 29,
+      "system_restore_drills": 29
+    },
+    "write_pairs": 145,
+    "writer_loop_limit": 10000
+  },
+  "ddl_writer_baselines": {
+    "before": {
+      "autocommit": true,
+      "ddl_in_progress": false,
+      "elapsed_us": 144538,
+      "insert_delete_pair_us": {
+        "p50": 2227,
+        "p95": 11374
+      },
+      "kind": "ddl_writer_baseline",
+      "phase": "before",
+      "table_write_pairs": {
+        "system_backup_artifact_verifications": 6,
+        "system_backup_operations": 6,
+        "system_backup_preflights": 6,
+        "system_backups": 6,
+        "system_restore_drills": 6
+      },
+      "write_pairs": 30
+    },
+    "after": {
+      "autocommit": true,
+      "ddl_in_progress": false,
+      "elapsed_us": 226628,
+      "insert_delete_pair_us": {
+        "p50": 3396,
+        "p95": 48028
+      },
+      "kind": "ddl_writer_baseline",
+      "phase": "after",
+      "table_write_pairs": {
+        "system_backup_artifact_verifications": 6,
+        "system_backup_operations": 6,
+        "system_backup_preflights": 6,
+        "system_backups": 6,
+        "system_restore_drills": 6
+      },
+      "write_pairs": 30
+    }
+  },
+  "ddl_overlapping_pair_ratio_to_no_ddl": {
+    "before": {
+      "p50": 1.158509205208801,
+      "p95": 7.74468085106383
+    },
+    "after": {
+      "p50": 0.7597173144876325,
+      "p95": 1.8340967768801533
+    }
+  },
+  "analysis": {
+    "system_backups": {
+      "secondary_index_added_bytes": 2015232,
+      "query_groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_pair_ratio": {
+            "p50": 0.3188118811881188,
+            "p95": 0.056154214559386975
+          }
+        },
+        "page": {
+          "pairs": 12,
+          "median_pair_ratio": {
+            "p50": 1.117635643455693,
+            "p95": 1.0243924253237278
+          }
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_pair_ratio": {
+            "p50": 0.9624085337706151,
+            "p95": 1.2827140181501409
+          }
+        }
+      },
+      "writes": {
+        "before": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1227,
+            "p95": 4879
+          },
+          "kind": "write",
+          "phase": "before",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1510,
+            "p95": 1966
+          },
+          "table": "system_backups"
+        },
+        "after": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1779,
+            "p95": 7271
+          },
+          "kind": "write",
+          "phase": "after",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1782,
+            "p95": 2310
+          },
+          "table": "system_backups"
+        }
+      }
+    },
+    "system_restore_drills": {
+      "secondary_index_added_bytes": 2031616,
+      "query_groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_pair_ratio": {
+            "p50": 0.24147529575504523,
+            "p95": 0.09846266471449487
+          }
+        },
+        "page": {
+          "pairs": 12,
+          "median_pair_ratio": {
+            "p50": 1.055479733878847,
+            "p95": 1.1700219172551674
+          }
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_pair_ratio": {
+            "p50": 1.0376706584041417,
+            "p95": 1.4069654332255992
+          }
+        }
+      },
+      "writes": {
+        "before": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1125,
+            "p95": 4136
+          },
+          "kind": "write",
+          "phase": "before",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1363,
+            "p95": 1606
+          },
+          "table": "system_restore_drills"
+        },
+        "after": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1521,
+            "p95": 2758
+          },
+          "kind": "write",
+          "phase": "after",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1496,
+            "p95": 2673
+          },
+          "table": "system_restore_drills"
+        }
+      }
+    },
+    "system_backup_preflights": {
+      "secondary_index_added_bytes": 1032192,
+      "query_groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_pair_ratio": {
+            "p50": 0.3,
+            "p95": 0.08068725532840365
+          }
+        },
+        "page": {
+          "pairs": 12,
+          "median_pair_ratio": {
+            "p50": 1.1078141024656534,
+            "p95": 1.276122901425248
+          }
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_pair_ratio": {
+            "p50": 1.0249009951820414,
+            "p95": 1.1503830790871357
+          }
+        }
+      },
+      "writes": {
+        "before": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1382,
+            "p95": 1729
+          },
+          "kind": "write",
+          "phase": "before",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1571,
+            "p95": 2975
+          },
+          "table": "system_backup_preflights"
+        },
+        "after": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1212,
+            "p95": 2432
+          },
+          "kind": "write",
+          "phase": "after",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1251,
+            "p95": 1970
+          },
+          "table": "system_backup_preflights"
+        }
+      }
+    },
+    "system_backup_artifact_verifications": {
+      "secondary_index_added_bytes": 1032192,
+      "query_groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_pair_ratio": {
+            "p50": 0.1810344827586207,
+            "p95": 0.07003484320557492
+          }
+        },
+        "page": {
+          "pairs": 12,
+          "median_pair_ratio": {
+            "p50": 0.9615979161264134,
+            "p95": 0.9858364769769563
+          }
+        },
+        "status_page": {
+          "pairs": 24,
+          "median_pair_ratio": {
+            "p50": 0.9222944869372276,
+            "p95": 0.9054851498714035
+          }
+        }
+      },
+      "writes": {
+        "before": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1301,
+            "p95": 2221
+          },
+          "kind": "write",
+          "phase": "before",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1393,
+            "p95": 1864
+          },
+          "table": "system_backup_artifact_verifications"
+        },
+        "after": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1200,
+            "p95": 2820
+          },
+          "kind": "write",
+          "phase": "after",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1236,
+            "p95": 2142
+          },
+          "table": "system_backup_artifact_verifications"
+        }
+      }
+    },
+    "system_backup_operations": {
+      "secondary_index_added_bytes": 2539520,
+      "query_groups": {
+        "cutoff": {
+          "pairs": 3,
+          "median_pair_ratio": {
+            "p50": 0.2583955223880597,
+            "p95": 0.41402337228714525
+          }
+        },
+        "page": {
+          "pairs": 12,
+          "median_pair_ratio": {
+            "p50": 1.2635817494034596,
+            "p95": 1.069283578426723
+          }
+        },
+        "status_page": {
+          "pairs": 0,
+          "median_pair_ratio": null
+        }
+      },
+      "writes": {
+        "before": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1219,
+            "p95": 4227
+          },
+          "kind": "write",
+          "phase": "before",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1460,
+            "p95": 2093
+          },
+          "table": "system_backup_operations"
+        },
+        "after": {
+          "autocommit": true,
+          "insert_us": {
+            "p50": 1479,
+            "p95": 2330
+          },
+          "kind": "write",
+          "phase": "after",
+          "samples": 30,
+          "status_update_us": {
+            "p50": 1508,
+            "p95": 1676
+          },
+          "table": "system_backup_operations"
+        }
+      }
+    }
+  },
+  "remote_actions_by_this_review": false,
+  "dependency_installation": false,
+  "tests_or_builds_by_this_review": false,
+  "production_approved": false,
+  "formal_migration_assigned": false,
+  "limitations": [
+    "synthetic distribution",
+    "warm cache",
+    "authorization and HTTP excluded",
+    "foreign keys not cloned",
+    "DDL uses one synthetic insert/delete writer",
+    "No-DDL baselines and DDL are sequential on a synthetic host; ratios are observations, not causal blocking estimates",
+    "No-DDL baselines are balanced; the DDL-overlapping pairs may have a different per-table mix"
+  ],
+  "remaining": [
+    "grouped indexes and representative workload decision",
+    "formal migrations and production adapters",
+    "full overview/detail Owner sources and browser acceptance"
+  ]
+}

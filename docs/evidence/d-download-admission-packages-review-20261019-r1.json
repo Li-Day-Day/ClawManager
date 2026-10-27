@@ -1,0 +1,337 @@
+{
+  "kind": "d_download_admission_packages_r1_review",
+  "native_exit": 1,
+  "log_sha256": "bc6093dcfaa51b96c674b439c0eab575d465bd18061551c0497b8eba3b705ac1",
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "terminal": [
+        "pass"
+      ],
+      "main_pass": 242,
+      "all_pass": 1879,
+      "skips": 0
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "terminal": [
+        "fail"
+      ],
+      "main_pass": 210,
+      "all_pass": 1594,
+      "skips": 0
+    }
+  ],
+  "failures": [
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDProducerActualAAdaptersAtomicFailures/result/insert:system_backup_producer_result_receipts",
+      "elapsed": 6.33,
+      "diagnostics": [
+        "    d_producer_integration_test.go:352: pending producer_committed_but_execution_expired\n"
+      ]
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDProducerActualAAdaptersAtomicFailures",
+      "elapsed": 14.13,
+      "diagnostics": []
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": null,
+      "elapsed": 130.276,
+      "diagnostics": []
+    }
+  ],
+  "new_lock_tests": [
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysExactScopeAndPrivateCapability"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/same_hash"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/different_hash"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/expired_same_hash"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/expired_different_hash"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/operation_error"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/tombstone_error"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/receipt_error"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/receipt_collision"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/bad_operation_id"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/bad_operation_hash"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/bad_tombstone_hash"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/wait_expired"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable/wait_clock_backwards"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysConflictExpiredAndUnavailable"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/zero_proof"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/actor_id"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/subject"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/session"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/session_expired"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/proof_expired"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/operation_id"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/canceled"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger/ended_tx"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "test": "TestDownloadAdmissionKeysProofAndActorBeforeLedger"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeGlobalHistoryAndExactLookups"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/history_empty"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/active_path"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/foreign_database"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/installation_missing"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/history_bound"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/non_utc_driver"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/clock_backwards"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/invalid_installation"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/unordered_installations"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/history_duplicate"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/history_path"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/installation_bound"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/submicrosecond"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/empty_installations"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/zero_config"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/history_unordered"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/non_utc_session"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/duplicate_installations"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/unsafe_config"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/active_missing"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_1"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_2"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_3"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_4"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_5"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_6"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory/sql_failure_7"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsIncompletePersistentHistory"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/old_replay"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/active_replay"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/bad_ledger_id"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/lookup_failure"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/post_lookup_expiry"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/post_lookup_clock_backwards"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/foreign_tx"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/ended_tx"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/zero_proof"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/missing_candidate"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/extra_candidate"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/duplicate_candidate"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/changed_active"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/bad_hmac"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/foreign_installation"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution/canceled"
+    },
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "test": "TestSensitiveDownloadNonceScopeRejectsReplayAndProofSubstitution"
+    }
+  ],
+  "frozen_postcheck": true,
+  "snapshot_cleaned": true,
+  "actual_mysql": false,
+  "accepted_full_two_packages": false
+}

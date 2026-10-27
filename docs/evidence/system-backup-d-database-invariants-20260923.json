@@ -1,0 +1,51 @@
+{
+  "kind": "d_database_invariants_isolated_mysql_observation",
+  "date": "2026-09-23",
+  "source": "user_supplied_remote_command_output",
+  "independently_requeried_cluster": false,
+  "test_namespace": "sbk-mig-260923071854-23cf",
+  "test_namespace_uid": "6e42e57c-ec4e-482d-8de0-2a63d6950ef3",
+  "source_namespace": "clawmanager-zhanghui08-system",
+  "test_node": "node1",
+  "mysql_version": "8.4.8",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "migration_app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "probe_image": "10.130.14.23:5000/clawmanager@sha256:c7cd64007531be8c29948f1bcc3f9778faf4d185fab35367cfd3977a54cf4e94",
+  "probe_runtime_image_id": "10.130.14.23:5000/clawmanager@sha256:c7cd64007531be8c29948f1bcc3f9778faf4d185fab35367cfd3977a54cf4e94",
+  "migration_catalog_hash": "0dcb3f38ce14165504335c715bf03533e95c9d3992146769fc21dab6c59d00dd",
+  "fresh_migration_replay": {
+    "range": "001..079",
+    "applied_files": 92,
+    "exact_filenames": true,
+    "d_key_column_types": ["blob", "blob", "blob", "char"]
+  },
+  "suite": "TestDDatabaseInvariants",
+  "elapsed_seconds": 17.26,
+  "tests": [
+    {"name": "pooled_connections_are_UTC_with_non_UTC_server_default", "result": "pass", "elapsed_seconds": 0.0},
+    {"name": "migration_lock_survives_DDL_and_connection_death_releases_it", "result": "pass", "elapsed_seconds": 1.02},
+    {"name": "uncertain_release_discards_physical_connection", "result": "pass", "elapsed_seconds": 0.01},
+    {"name": "migration_and_gate_mutually_exclude", "result": "pass", "elapsed_seconds": 1.03},
+    {"name": "concurrent_claim_takeover_and_installation_isolation", "result": "pass", "elapsed_seconds": 15.10},
+    {"name": "protected_mutation_rejects_stale_owner_and_rolls_back", "result": "pass", "elapsed_seconds": 0.05}
+  ],
+  "warnings": {
+    "mysql_unexpected_eof": "Observed during the connection-death subtest, which injects KILL CONNECTION and subsequently passed lock reacquisition checks.",
+    "ssh_close_io_pending": "Observed with complete PASS output, reported cleanup and exit zero; no general exception for SSH failures is implied."
+  },
+  "cleanup_reported": {
+    "namespace": "cleaned_with_matching_run_uid",
+    "remote_script_directory": "cleaned",
+    "local_script_directory": "cleaned"
+  },
+  "exit_code": 0,
+  "result": "pass_within_six_d_database_primitive_probes",
+  "limits": [
+    "The observation is the operator-provided test output, not an independently authenticated or signed runtime evidence registration.",
+    "Only the selected MySQL 8.4.8 deployment was tested; this does not cover MySQL 8.0, MariaDB or all four deployment matrices.",
+    "The claim test uses a synthetic control_metadata_gc operation without running GC; it does not establish full backup/drill/preflight/artifact-verification workflow takeover.",
+    "Protected mutations write a synthetic probe table. Provider, participant, capture certificate and acquiring-to-held proof paths were not exercised.",
+    "This does not roll out fix15 to the production application, freeze contracts, approve schema-hash evidence or complete P0-0b/P0.",
+    "Cleanup evidence covers the run namespace and both script directories; removal of operator-built registry images or node image caches is not claimed."
+  ]
+}

@@ -1,0 +1,50 @@
+**********************
+PowerShell transcript start
+Start time: 20261014160040
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$groupScriptR4Log=Join-Path (Get-Location) 'docs/evidence/system-backup-d-index-group-script-local-20261014-r4.txt'; if(Test-Path -LiteralPath $groupScriptR4Log){throw 'Refusing to overwrite evidence'}; Start-Transcript -Path $groupScriptR4Log | Out-Null;try{& .\scripts\system-backup-a-evidence-dispatch.test.ps1; & .\scripts\system-backup-d-index-group-input.test.ps1; if(-not $?){throw 'Final grouped wrapper input checks failed'};Write-Output 'GROUP_SCRIPT_LOCAL_EXIT=0'}finally{Stop-Transcript | Out-Null}; Get-Content -Encoding UTF8 scripts/system-backup-d-index-group-report.mjs -Tail 24
+Process ID: 14872
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 8 cases; no remote actions, dependencies or build artifacts
+PASS valid run-owned shared cache input
+PS>TerminatingError(): "IndexSuiteCache ownership marker mismatch"
+PASS rejected input AdminReadIndexCandidate,IndexSuiteCache,AdminReadOnly
+PS>TerminatingError(): "IndexSuiteCache must be a run-owned grouped cache"
+PASS rejected input AdminReadIndexCandidate,IndexSuiteCache,AdminReadOnly
+PS>TerminatingError(): "IndexSuiteCache requires the index candidate profile"
+PASS rejected input IndexSuiteCache
+PS>TerminatingError(): "AdminReadIndexVariant requires AdminReadIndexCandidate"
+PASS rejected input AdminReadIndexVariant
+PS>TerminatingError(): "Cannot validate argument on parameter 'AdminReadIndexVariant'. The argument "unsafe" does not belong to the set "all,page,status" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again."
+PASS rejected input AdminReadIndexVariant,AdminReadIndexCandidate,AdminReadOnly
+CLEANED grouped cache input fixture=True
+PASS exact forward/reverse group plan and wrapper syntax
+PASS grouped inputs; no Go, SSH, dependency installation or retained build products
+GROUP_SCRIPT_LOCAL_EXIT=0
+**********************
+PowerShell transcript end
+End time: 20261014160043
+**********************

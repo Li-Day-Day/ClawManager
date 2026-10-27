@@ -1,0 +1,32 @@
+**********************
+PowerShell transcript start
+Start time: 20261019172256
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$ownerTransportPath=Join-Path $PWD.Path 'docs/evidence/a-download-owners-current-transport-20261019.txt'; Start-Transcript -LiteralPath $ownerTransportPath -NoClobber|Out-Null; try { $ownerTransportBefore=@{}; foreach($ownerTransportFile in @('scripts/system-backup-a-evidence-validation.ps1','scripts/system-backup-d-download-admission-native-validation.ps1')){ $ownerTransportBefore[$ownerTransportFile]=(Get-FileHash -LiteralPath $ownerTransportFile -Algorithm SHA256).Hash.ToLowerInvariant(); Write-Host ('CURRENT_TRANSPORT path='+$ownerTransportFile+' sha256='+$ownerTransportBefore[$ownerTransportFile]) }; & powershell.exe -NoProfile -File .\scripts\system-backup-a-download-owners-dispatch.test.ps1; if($LASTEXITCODE -ne 0){throw 'WinPS owner dispatch failed'}; & powershell.exe -NoProfile -File .\scripts\system-backup-a-download-admission-dispatch.test.ps1; if($LASTEXITCODE -ne 0){throw 'WinPS admission dispatch regression failed'}; & powershell.exe -NoProfile -File .\scripts\system-backup-a-download-mfa-dispatch.test.ps1; if($LASTEXITCODE -ne 0){throw 'WinPS MFA dispatch regression failed'}; & powershell.exe -NoProfile -File .\scripts\system-backup-a-evidence-dispatch.test.ps1; if($LASTEXITCODE -ne 0){throw 'WinPS general dispatch regression failed'}; & 'C:\Program Files\Git\bin\bash.exe' -n scripts/system-backup-a-download-owners-phase.sh; if($LASTEXITCODE -ne 0){throw 'Owner phase Bash parse failed'}; foreach($ownerTransportFile in $ownerTransportBefore.Keys){if((Get-FileHash -LiteralPath $ownerTransportFile -Algorithm SHA256).Hash.ToLowerInvariant() -cne $ownerTransportBefore[$ownerTransportFile]){throw 'Transport changed during validation'}}; Write-Host 'CURRENT_TRANSPORT_PASS windows_powershell=5.1 profile_regressions=4 bash_parse=yes source_postcheck=yes remote=no build=no' } finally {Stop-Transcript|Out-Null}
+Process ID: 39604
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+CURRENT_TRANSPORT path=scripts/system-backup-a-evidence-validation.ps1 sha256=412ca07fc8c62ffb61e1c12a75fd2ca3e33059edf5222ceeae0bdcbed79c50fe
+CURRENT_TRANSPORT path=scripts/system-backup-d-download-admission-native-validation.ps1 sha256=8460f9e89ed1f5adde6f9310cbce3a5ee8e7eb0980cfcd287e339374f7088799
+
+
+
+
+
+CURRENT_TRANSPORT_PASS windows_powershell=5.1 profile_regressions=4 bash_parse=yes source_postcheck=yes remote=no build=no
+**********************
+PowerShell transcript end
+End time: 20261019172332
+**********************

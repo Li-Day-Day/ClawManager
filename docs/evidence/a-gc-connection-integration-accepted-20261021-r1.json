@@ -1,0 +1,150 @@
+{
+  "kind": "a_gc_connection_independent_review_and_merged_five_package_acceptance",
+  "recorded_at": "2026-10-21T05:07:04.282Z",
+  "status": "accepted_merged_frozen_local_connection_and_journals_only",
+  "source": "docs/evidence/a-gc-connection-integration-20261021-r1-source.json",
+  "source_manifest_sha256": "7d496e23fd3356d3e123d0b24187e904e2af627c41e7ac5206429ff949deab8c",
+  "source_sha256": "675a0c86908bd2edfb36744b80a19b1ca1adb49ccab11990165b8c59e6443b2b",
+  "source_files": 1466,
+  "events": "docs/evidence/a-gc-connection-integration-20261021-r1.jsonl",
+  "events_sha256": "d74140de074bef58483bf3bc4314f4d4cdf76f204d243de3884044672ed4e749",
+  "native": "docs/evidence/a-gc-connection-integration-20261021-r1-native.txt",
+  "native_sha256": "d327bd1da1508088afce401f4eac5bf2c059d55f977523f408d1772d6bf1121c",
+  "full": {
+    "main": 779,
+    "all": 6591,
+    "packages": [
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "main": 255,
+        "all": 2011
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "main": 362,
+        "all": 3001
+      },
+      {
+        "package": "clawreef/internal/systembackupread",
+        "main": 75,
+        "all": 519
+      },
+      {
+        "package": "clawreef/internal/systembackupproducer",
+        "main": 75,
+        "all": 784
+      },
+      {
+        "package": "clawreef/internal/systembackupgcmetadata",
+        "main": 12,
+        "all": 276
+      }
+    ]
+  },
+  "owner_baseline": {
+    "main": 617,
+    "all": 5012
+  },
+  "a_previous_tests_retained": 6280,
+  "d_previous_tests_retained": 6581,
+  "inventory_is_exact_union_of_both_reviewed_scopes": true,
+  "d_preparation": "docs/evidence/d-gc-connection-preparation-20261021.json",
+  "d_preparation_sha256": "87248a114ba0ee65b266e47143fd5d948579419fff798ce6b6ab4d3af125472c",
+  "source_changes_from_a_scope": [
+    "backend/internal/systembackupevidence/download_retention_gc.go",
+    "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+    "backend/internal/systembackupevidence/download_retention_gc_connection_test.go",
+    "backend/internal/systembackupevidence/download_retention_gc_test.go",
+    "backend/internal/systembackupevidence/system_publish_runtime_test.go",
+    "scripts/system-backup-d-download-admission-native-validation.ps1"
+  ],
+  "source_changes_from_d_scope": [
+    "backend/internal/systembackupevidence/download_failure_journal.go",
+    "backend/internal/systembackupevidence/download_failure_journal_test.go",
+    "backend/internal/systembackupevidence/system_recovery_audit_journal.go",
+    "backend/internal/systembackupevidence/system_recovery_audit_journal_context_test.go",
+    "scripts/system-backup-d-download-admission-native-validation.ps1"
+  ],
+  "independently_checked_boundaries": [
+    "TestDownloadGCConnectionLifecycle/commit",
+    "TestDownloadGCConnectionLifecycle/unknown_commit",
+    "TestDownloadGCConnectionLifecycle/rollback_error",
+    "TestDownloadGCConnectionLifecycle/canceled",
+    "TestDownloadGCConnectionLifecycle/panic",
+    "TestDownloadGCConnectionLifecycle/close_error",
+    "TestDownloadRetentionGCConnectionDisposalAndOriginalOutcome/success",
+    "TestDownloadRetentionGCConnectionDisposalAndOriginalOutcome/late_write",
+    "TestDownloadRetentionGCConnectionDisposalAndOriginalOutcome/unknown_commit",
+    "TestDownloadRetentionGCConnectionDisposalAndOriginalOutcome/panic",
+    "TestSystemPublisherStagingAndRevocation/absence_expired_during_staging",
+    "TestSystemPublisherAbsenceExpiredBeforeStagingConvergesUnknown",
+    "TestRecoveryAuditJournalCanceledQueue/cancel",
+    "TestFailureJournalsPoisonWithoutWaiting/gc_cancel"
+  ],
+  "d_original_publisher_failure_retained": {
+    "events_sha256": "8cc62b7a479b1044c2fa8c878d714ba68e9443376cde9428ae955c1fb43977bd",
+    "native_sha256": "bd18617b91486cbef184aac9edd643e7ba2fdff93984e57131f1301250d352f0",
+    "exit": 1
+  },
+  "d_cleanup": "docs/evidence/d-gc-connection-cleanup-20261021.json",
+  "d_cleanup_sha256": "06c7f708c9f3b908e494b8692eaf2a3f43108155dd5152ccef3c5c82e871e859",
+  "probe_stages": [
+    {
+      "stage": "tagged-seed",
+      "output_sha256": "fcfada95a0a7efac345a850efca392238b0d1deabde2cc8c2183f0a6ddb799b6"
+    },
+    {
+      "stage": "windows-probe",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "detached-seed",
+      "output_sha256": "40c6d5c284cc5486560627a26e80d2cd9d768e4390748261e2df6985eb1880a1"
+    },
+    {
+      "stage": "linux-probe",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "linux-migration",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "3b1ab94186045b7ff3d514d940480e4499a090cae95cea040489cac01263c869"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "15efd85521e48c94d3993a29cf32f145566a64f79bca1b3c73998cb3bcb0a348"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "0f9706e5ed2af7aebe16058f4bb0165fa92498155ceba9c202f5213cda39f704"
+    }
+  ],
+  "default_vet": true,
+  "final_postcheck": true,
+  "validation_exit": 0,
+  "owned_directories_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-798d4ff405ea4e69b9147c8c4e84f297",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-83cd6bed3e644a098defa87b015f3b43"
+  ],
+  "connection_and_journal_inputs_currently_match": true,
+  "later_parallel_changes_not_accepted": [
+    "backend/internal/systembackupevidence/http.go"
+  ],
+  "later_parallel_new_test_not_accepted": "backend/internal/systembackupevidence/download_http_failure_budget_test.go",
+  "current_whole_worktree_verified": false,
+  "actual_sql": false,
+  "backup_lock_acquired": false,
+  "server_lock_release_proved": false,
+  "cleanup_deadline_proved": false,
+  "initial_pool_session_cleanliness_proved": false,
+  "full_gc_policy_approved": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "reviewer_sha256": "6a5545080ed549611f4960d9750b84b478a74f6532520a801c9f83336547ab0d",
+  "utility_sha256": "eeb6d205450aac5c22ea6333e73b367af281a3967e50de66f4dabd65741b97f3"
+}

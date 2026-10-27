@@ -1,0 +1,158 @@
+{
+  "kind": "d_review_a_maintenance_authority_composition",
+  "recorded_at": "2026-10-15T09:01:35.4239588Z",
+  "status": "accepted_for_frozen_private_composition_candidate_only",
+  "a_review": "docs/evidence/a-config-maintenance-authority-review-20261015.json",
+  "a_review_sha256": "7896d152c54c2635b4a1522da3e5aed06271430e5991ff1e9d72ad804adcf940",
+  "log": "docs/evidence/a-config-maintenance-authority-local-20261015-r2.txt",
+  "log_sha256": "23373862e307b037d2a28c3d2a28b4672e240ef59321100b29d41c8d3d823889",
+  "source_manifest": "docs/evidence/a-config-maintenance-authority-source-20261015-r2.json",
+  "source_manifest_sha256": "46404cc1f3ee139e80b68ccb55b503ecd19c9fb41842eae0d7529af43f1b9fdd",
+  "source_sha256": "4214e648d04bdf99d749b56de12940da38be3b874d38a84fd56c43c57843b0d1",
+  "source_files": 1261,
+  "manifest_and_current_file_set_verified": true,
+  "current_drift": 0,
+  "accepted_inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority.go",
+      "size": 13868,
+      "sha256": "ca29ecb65d2e8762bee8267f7acbea8807e24a1086041896115fd34077b5f90f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority_a_test.go",
+      "size": 25646,
+      "sha256": "b59ef0ab57b282b6dceb04ab4010818771e68f6cc19062835d15bc6c68126ced"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-validation.ps1",
+      "size": 11420,
+      "sha256": "2400866e82d990f737b13053033aa596058e754e04bed6c1644ceb717bc7fcec"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill.go",
+      "size": 14631,
+      "sha256": "7fe2a1eed2e484fe3cb29bfd0be29c4cc2a748170c8f43c4ed7a315c01a3f6eb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_a_test.go",
+      "size": 24573,
+      "sha256": "458aa4379e2e2a48f6625ebd8b8a7005501d92d14ae27480c93d8985d774e2d0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_precision_test.go",
+      "size": 2273,
+      "sha256": "a733888cd872e794e10ddd41889f284babffd4c92125b2184d02bfe2002f3d46"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt.go",
+      "size": 7127,
+      "sha256": "fd91500aede239e044f778467781a2a1d4d07aa3dfe04e5e65ec96e54903038d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_sql.go",
+      "size": 15522,
+      "sha256": "ccf50c06b7afcc47d4374b5c92ae4619056caf90a638f82145b0d6eec920c63a"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_row.go",
+      "size": 8829,
+      "sha256": "37210ff32bc09793b29c39661a010833f1ca58c687dd43055097948765898b62"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_backfill_identity.go",
+      "size": 7438,
+      "sha256": "270bc9df869a7679c50b6c63ac4397ec43e37af7a98ea7c13b3173c6412014d6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/canonical_maintenance_hash.go",
+      "size": 4367,
+      "sha256": "91a94ec9662117ca149675619cc5ff5d2ce6abadfbf31dbe71b9aca1f63114c5"
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    }
+  ],
+  "targeted": {
+    "main": 11,
+    "sub": 80
+  },
+  "full": {
+    "main": 250,
+    "sub": 1638
+  },
+  "counts_recomputed_from_native_log": true,
+  "targeted_overlaps_full": true,
+  "expected_controls": [
+    {
+      "kind": "original-authenticated-facts",
+      "leaf_failures": 4,
+      "exit": 1,
+      "control_source_sha256": "a53b30188f0f6d2659b4fb236e3338d044792eac3750f92edbb9c80fb141c584"
+    },
+    {
+      "kind": "independent-grant-full-target-bindings",
+      "leaf_failures": 4,
+      "exit": 1,
+      "control_source_sha256": "5fdc686b137bec4f34092e3fb67ccdc3155ec32638fad251019555e0d25b086d"
+    }
+  ],
+  "expected_failure_scope": "two deliberate overlays; four named leaf failures each; not positive test failures",
+  "normal_exit": 0,
+  "default_vet": true,
+  "known_tool_retries": 0,
+  "cleanup_roots": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-cccd34fc626b49f8906cf2c6a2777484",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e6fdedb60e1042cc9ac29205a965533a"
+  ],
+  "cleanup_recorded_paths_checked": 92,
+  "cleanup_remaining": 0,
+  "frontend_r33_pins_unchanged": true,
+  "dependencies_installed_by_d": false,
+  "build_or_tests_executed_by_d": false,
+  "generated_build_artifacts_by_d": false,
+  "ssh_by_d": false,
+  "code_changes_by_d": false,
+  "findings": [
+    "Mandatory independent CurrentTarget is distinct from grant bindings and cannot take scope pins from the request",
+    "Write and observation grant purposes are separate; observation can use another current grant for the original actor/key/request",
+    "Grant and original archive callbacks receive copies; same original facts and earliest admission deadline are pinned for final recheck",
+    "Read/observation callbacks must remain read-only; only ReserveMetadata may allocate, and observation does not invoke it",
+    "Same grant identity/version must enforce immutable bytes across separate calls in the future authenticating adapter; within-admission comparison alone is insufficient",
+    "Physical allocation, retention and authenticated actor/holder/grant/archive/target implementations are still absent"
+  ],
+  "production_grant_received": false,
+  "canonical_original_received": false,
+  "authority_real_mysql_verified": false,
+  "production_approval": false,
+  "original_six_scopes_complete": false,
+  "remaining": [
+    "real independently authenticated actor/holder and approved grant/issuer wire protocol with immutable cross-request grant pins",
+    "original canonical file and authenticated archive verification adapter",
+    "current installed target/schema/catalog/ledger adapter",
+    "physical capacity, lifetime receipt/audit retention and exact allocation/reservation adapter",
+    "full service and new authority real MySQL with their own frozen inputs",
+    "formal 081/082 promotion and production assembly"
+  ],
+  "formal_migration_catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 94,
+    "hash": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
+  },
+  "formal_001_sha256": "292e0f7b5c02d24e5cc2b49c2b9ff9c8db0ceb5671b72d08c6c03ddf2778455d",
+  "preserved_contract_and_schema": [
+    {
+      "sha256": "58b48404e34fea5d6c754ecf91297d70084417696dfd6397d2cee642858c0f1d",
+      "path": "docs/evidence/a-config-canonical-write-contract-20261014.json"
+    },
+    {
+      "sha256": "fdd8ecfa71201c36a9b88c5f4ab0987fe6e8722ae2a5bbfd2c72113fb418ca0d",
+      "path": "docs/evidence/a-config-canonical-maintenance-digest-contract-20261015.json"
+    },
+    {
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae",
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql"
+    }
+  ]
+}

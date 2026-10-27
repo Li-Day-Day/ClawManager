@@ -1,0 +1,145 @@
+{
+  "kind": "a_download_mfa_actual_mysql_independent_acceptance",
+  "status": "accepted_exact_nine_mfa_issuance_cases_only",
+  "recorded_at": "2026-10-19T07:46:45.647Z",
+  "checks_passed": 42,
+  "checks": [
+    "stable frozen snapshot without dependency installation or production approval",
+    "logical snapshot SHA recomputed",
+    "safe unique source paths",
+    "raw log bound to exact frozen snapshot",
+    "no failed or skipped Go tests, panic or pending cleanup",
+    "two full packages and one tagged seed package completed",
+    "stage 0 unique RUN/PASS paired",
+    "stage 1 unique RUN/PASS paired",
+    "stage 2 unique RUN/PASS paired",
+    "tagged MFA seed has eight checks",
+    "detached seed has eight RUN/PASS checks",
+    "LOCAL_PASS isolated-go-telemetry=off",
+    "LOCAL_PASS config-standalone-seed=yes checkout-fixtures=absent",
+    "PASS download-mfa-dispatch:",
+    "PASS evidence remote dispatch: 11 cases;",
+    "bundle.tar: OK",
+    "LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=True",
+    "CLEANED remote-registration-scratch=yes",
+    "CLEANED local-registration-build-cache=True",
+    "a_download_mfa_mysql_remote_exit=0",
+    "Windows PowerShell 脚本结束",
+    "exclusive MFA profile requested",
+    "one owned run with exact images",
+    "isolated expected MySQL 8.4.8 namespace",
+    "local Linux probe and inputs compiled",
+    "compiled inputs equal frozen capsule bytes",
+    "remote PASS equals local binary and input hashes",
+    "migration runner compiled",
+    "remote runner hash and complete catalog match",
+    "all 95 exact filenames migrated",
+    "runner did not activate config or verify human MFA",
+    "runner catalog and synthetic approval boundary",
+    "exact nine remote leaves and root each RUN once",
+    "exact nine remote leaves and root each PASS once",
+    "actual MFA synthetic boundary explicit",
+    "nine distinct owned databases cleaned by guarded DROP and absence check",
+    "original namespace UID cleaned",
+    "one local source owner",
+    "owned local source parent/name exact",
+    "exact source owner cleaned and independently absent",
+    "current drift limited to four explicitly excluded admission/result files",
+    "remaining current MFA/security/evidence/SQL/transport focus matches frozen bytes"
+  ],
+  "log": "docs/evidence/a-download-mfa-mysql-remote-20261019-153234-9c7cba5d.txt",
+  "log_sha256": "4791850e6e1af9f9d1ec62f69d0af0fe04c5aa929ab10bb2d22be900c51c470a",
+  "source": "docs/evidence/a-download-mfa-mysql-remote-source-20261019-153234-9c7cba5d.json",
+  "source_manifest_sha256": "17a543800b70e569c91e9b7a9e94d57dab14dd909b4828f3ab08d56a800c2b6c",
+  "source_files": 1399,
+  "source_sha256": "47a48cc3b11db4cebc3abbefbc17f3596c27a5dd378b3be91e5fa9289d103002",
+  "stages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "kind": "ordinary_full_package",
+      "main_pass": 253,
+      "all_pass": 1985,
+      "elapsed": "69.366s"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "kind": "ordinary_full_package",
+      "main_pass": 283,
+      "all_pass": 2135,
+      "elapsed": "92.828s"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "kind": "tagged_seed",
+      "main_pass": 1,
+      "all_pass": 8,
+      "elapsed": "4.561s"
+    }
+  ],
+  "ordinary_main": 536,
+  "ordinary_all": 4120,
+  "detached_seed_all": 8,
+  "namespace": "sbk-mig-261019074200-5d04",
+  "namespace_uid": "85af61d4-eec0-42c5-9627-0ca132621fdb",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "probe_sha256": "cec6de9e99641997bfa458e064a4bf6b0620c5a070d38120194cdb6cf9705895",
+  "inputs_sha256": "c76f218ff8e440707249ec829401514da1def8305a8778fe22a89ea499b54b0f",
+  "migration_runner_sha256": "01e90f585868e7b190605c6a32705a2741b5543f68fa951e418505b300568895",
+  "catalog": {
+    "hash": "2e8c5a26d09b69cd4007f86c99d25aa386bd00e7c0c54e422af59a711cade237",
+    "file_count": 95
+  },
+  "actual_case_count": 9,
+  "actual_case_names": [
+    "http_issue_step_replay",
+    "concurrent_step_once",
+    "final_owner_revocation_rollback",
+    "final_manifest_change_rollback",
+    "audit_failure_rollback",
+    "unknown_actual_commit_no_proof",
+    "late_actual_commit_no_proof",
+    "original_material_expiry",
+    "observed_L0_wait_original_expiry"
+  ],
+  "cleaned_databases": [
+    "amfa_16da6547f6d36a8c76d0f5c5930f0632",
+    "amfa_ed7a9cec4ab4f4cedf66c9e79df30bd0",
+    "amfa_ee218569eeaa3b8383655f74d4516d7a",
+    "amfa_4883c7b144392212b1e5e9123f8743e6",
+    "amfa_34fa67947fc7b1a81d4bbc86be74befa",
+    "amfa_7724030e872d75b175c0a6d26c5823cc",
+    "amfa_7dfdf739d6fc8946ebde7e3a9361d828",
+    "amfa_62f826d706112c2b6ea2b0aa56994230",
+    "amfa_eee78d16a4fa8fe956f94e6ce6d6a2fd"
+  ],
+  "local_source_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2611d64df6b54ba2a950b0563411a030",
+  "local_source_owner_exists": false,
+  "current_focus_files": 441,
+  "current_pinned_drift": [
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_records.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_result.go",
+      "reason": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_result_retention_test.go",
+      "reason": "changed"
+    }
+  ],
+  "current_new_inputs_not_covered": true,
+  "actual_mysql": true,
+  "human_mfa": false,
+  "provider_read": false,
+  "admission_nonce_consumed": false,
+  "production_approved": false,
+  "dependencies_installed": false
+}

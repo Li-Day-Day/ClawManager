@@ -1,0 +1,96 @@
+{
+  "kind": "d_verifier_registry_count_native",
+  "exit": -1,
+  "published": false,
+  "source_postcheck": false,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f44373d8c41f47e1ae9a82f8bb65e764",
+    "removed": true,
+    "files_removed": 1571,
+    "test_build_artifacts_removed": true,
+    "cleaned_utc": "2026-10-22T04:56:08.1187819Z"
+  },
+  "error": "Review failed --prepare",
+  "stages": [
+    {
+      "stage": "baseline-cli",
+      "exit": 0,
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--check"
+      ]
+    },
+    {
+      "stage": "baseline-tests",
+      "exit": 0,
+      "arguments": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-verifier-registry-counts-20261022-f44373d8-node-runner.mjs",
+        "scripts/system-backup-contract-artifacts.test.mjs",
+        "scripts/system-backup-d-control-exclusion.test.mjs",
+        "scripts/system-backup-contract-check.test.mjs"
+      ]
+    },
+    {
+      "stage": "isolated-tests",
+      "exit": 0,
+      "arguments": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-verifier-registry-counts-20261022-f44373d8-node-runner.mjs",
+        "scripts/system-backup-contract-artifacts.test.mjs",
+        "scripts/system-backup-d-control-exclusion.test.mjs",
+        "scripts/system-backup-contract-check.test.mjs",
+        "scripts/system-backup-verifier-registry.test.mjs"
+      ]
+    },
+    {
+      "stage": "isolated-cli",
+      "exit": 0,
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--check"
+      ]
+    },
+    {
+      "stage": "isolated-strict",
+      "exit": 1,
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--check",
+        "--strict"
+      ]
+    },
+    {
+      "stage": "isolated-dto",
+      "exit": 0,
+      "arguments": [
+        "scripts/system-backup-d-dto-check.mjs"
+      ]
+    },
+    {
+      "stage": "counter-cli",
+      "exit": 1,
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--check"
+      ]
+    },
+    {
+      "stage": "counter-write",
+      "exit": 1,
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--write"
+      ]
+    },
+    {
+      "stage": "counter-tests",
+      "exit": 1,
+      "arguments": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-verifier-registry-counts-20261022-f44373d8-node-runner.mjs scripts/system-backup-d-control-exclusion.test.mjs scripts/system-backup-verifier-registry.test.mjs"
+      ]
+    }
+  ],
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "go_tests_run": false,
+  "remote_executed": false
+}

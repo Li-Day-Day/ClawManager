@@ -1,0 +1,78 @@
+{
+  "kind": "a_download_admission_final_local_preparation_review",
+  "source_files": 1394,
+  "source_sha256": "19ae7f1811c323d8f6e72b4a86a75ff96fb830256093e4ff431a6bbbf617f88a",
+  "stages": [
+    {
+      "stage": "ordinary_full_package",
+      "package": "clawreef/internal/systembackupsecurity",
+      "elapsed": "41.596s",
+      "main_pass": 253,
+      "all_pass": 1985
+    },
+    {
+      "stage": "ordinary_full_package",
+      "package": "clawreef/internal/systembackupevidence",
+      "elapsed": "150.980s",
+      "main_pass": 279,
+      "all_pass": 2099
+    },
+    {
+      "stage": "tagged_seed",
+      "package": "clawreef/internal/systembackupevidence",
+      "elapsed": "4.884s",
+      "main_pass": 2,
+      "all_pass": 12
+    }
+  ],
+  "ordinary_main": 532,
+  "ordinary_all": 4084,
+  "detached_seed_all": 12,
+  "linux_probe_sha256": "9ba374cc0eae274647dea5c4e9c919fabfa6c15a4ec7e2c3bca26f115305d667",
+  "inputs_sha256": "01526eea6ba68a2484ad896c23bd619b4e6b6871dda158c4487ca80417de79f9",
+  "migration_runner_sha256": "c8a853411f309ee5da15014544b37e04a91f9eca4d2001220dd978b924f06540",
+  "current_pinned_drift": [
+    {
+      "path": "backend/internal/systembackupevidence/download_public_release_test.go",
+      "reason": "changed"
+    }
+  ],
+  "current_new_inputs_not_covered": true,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-15cc16c5cac84890927848f2525e43f0",
+    "exists": false,
+    "nested_build_cache_removed": true
+  },
+  "earlier_cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-07b151f7bd1940b68661dd92ddc2d981",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f768f25678594ef19f0a7bc96283ef3b",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-90335ce423bd4833a283f3aad04bbcbe",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-727a58dbce7f461e93a6681239be680b",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-a-owner-review-d101c056438f4bf6a3146e4907867c57",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-597d50af24b24752a21b0aab34bb21f4",
+      "exists": false
+    }
+  ],
+  "log_sha256": "3029d3f02521c7e42c00ec430fdeb046f82a6214b3197dfb533baccb97972ed2",
+  "source_file_sha256": "6a04c9b9e98f72574e1e1ded683c42dbbd68f5e83adb65b5dfbe70eea28e361a",
+  "actual_mysql": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "scope": "Current frozen ordinary security/evidence packages, both seed roots in-package and detached, Linux probe/runner builds, postcheck and exact owner cleanup only. No remote SQL or real deployment/authority/capacity approval."
+}

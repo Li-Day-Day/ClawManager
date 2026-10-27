@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	stdsql "database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -25,6 +26,7 @@ import (
 	"clawreef/internal/services/leader"
 	"clawreef/internal/systembackup/control"
 	"clawreef/internal/systembackup/mutation"
+	"clawreef/internal/systembackupsecurity"
 	"clawreef/internal/teamtemplate"
 
 	"github.com/gin-gonic/gin"
@@ -85,6 +87,7 @@ func main() {
 	userRepo := repository.NewUserRepository(database)
 	quotaRepo := repository.NewQuotaRepository(database)
 	instanceRepo := repository.NewInstanceRepository(database)
+	browserWorkerRepo := repository.NewBrowserWorkerRepository(database)
 	systemImageSettingRepo := repository.NewSystemImageSettingRepository(database)
 	enterpriseAuthSettingRepo := repository.NewEnterpriseAuthSettingRepository(database)
 	llmModelRepo := repository.NewLLMModelRepository(database)
@@ -135,7 +138,26 @@ func main() {
 	if enterpriseAuthManager.Status(context.Background()).Enabled {
 		log.Printf("Enterprise LDAP authentication enabled")
 	}
-	authService := services.NewAuthService(userRepo, cfg.JWT, enterpriseAuthManager, services.WithEnterpriseAuthPolicy(cfg.Auth.Enterprise), services.WithQuotaRepository(quotaRepo))
+	// Backup authentication checks SQL UTC timestamps. Use a separate pool so
+	// every physical connection is UTC without changing business DB sessions.
+	backupDatabase := database
+	if os.Getenv("SYSTEM_BACKUP_READ_SESSIONS_ENABLED") == "true" {
+		backupDatabase, err = db.OpenSystemBackupRead(cfg.Database)
+		if err != nil {
+			log.Fatal("system-backup UTC database pool unavailable")
+		}
+		defer backupDatabase.Close()
+	}
+	sessionDB, _ := backupDatabase.Driver().(*stdsql.DB)
+	backupSessions, err := backupSessionRecorder(sessionDB, cfg.Database.Database, cfg.JWT.Secret, os.Getenv)
+	if err != nil {
+		log.Fatal("system-backup read session configuration unavailable")
+	}
+	authOptions := []services.AuthServiceOption{services.WithEnterpriseAuthPolicy(cfg.Auth.Enterprise), services.WithQuotaRepository(quotaRepo)}
+	if backupSessions != nil {
+		authOptions = append(authOptions, services.WithSystemBackupSessions(backupSessions))
+	}
+	authService := services.NewAuthService(userRepo, cfg.JWT, enterpriseAuthManager, authOptions...)
 	quotaService := services.NewQuotaService(quotaRepo)
 	userService := services.NewUserService(userRepo, quotaRepo)
 	systemImageSettingService := services.NewSystemImageSettingService(systemImageSettingRepo)
@@ -161,6 +183,7 @@ func main() {
 	services.SetOpenClawTransferRuntimeRepositories(instanceRepo, bindingRepo, runtimePodRepo)
 	runtimeAgentClient := services.NewRuntimeAgentClient(cfg.Runtime.AgentControlToken)
 	runtimeUpgradeService := services.NewRuntimeUpgradeService(database, rolloutRepo, runtimePodRepo, bindingRepo, runtimeAgentClient, cfg.Runtime.WorkspaceRoot, cfg.Runtime.RedisURL)
+	browserWorkerService := services.NewBrowserWorkerService(browserWorkerRepo, instanceRepo, k8s.GetClient())
 	instanceService := services.NewInstanceService(
 		instanceRepo,
 		quotaRepo,
@@ -170,6 +193,7 @@ func main() {
 		services.WithV2RuntimeLifecycle(runtimePodRepo, bindingRepo, runtimeAgentClient, cfg.Runtime.WorkspaceRoot),
 		services.WithRuntimeUpgradeDeletionGuard(runtimeUpgradeService),
 		services.WithExpandedLLMModelCatalog(llmModelService),
+		services.WithInstanceResourceCleanup(browserWorkerService.DeleteForInstance),
 	)
 	externalAccessService := services.NewInstanceExternalAccessService(instanceExternalAccessRepo)
 	var northboundCoreServer *http.Server
@@ -256,6 +280,16 @@ func main() {
 	// Initialize handlers
 	versionHandler := handlers.NewVersionHandler()
 	authHandler := handlers.NewAuthHandler(authService)
+	if backupSessions != nil {
+		authHandler.SetSystemBackupLogoutHook(backupSessions.RevokeUserSessions)
+	} else if installation := os.Getenv("SYSTEM_BACKUP_REGISTRATION_INSTALLATION_ID"); installation != "" {
+		sqlDB, ok := database.Driver().(*stdsql.DB)
+		if !ok {
+			log.Fatal("system-backup registration requires SQL session revocation support")
+		}
+		revoker := systembackupsecurity.SQLTOTPService{DB: sqlDB, InstallationID: installation}
+		authHandler.SetSystemBackupLogoutHook(revoker.RevokeUserSessions)
+	}
 	enterpriseAuthHandler := handlers.NewEnterpriseAuthHandler(enterpriseAuthManager, enterpriseAuthManager)
 	userHandler := handlers.NewUserHandler(userService, quotaService, enterpriseAuthManager)
 	instanceHandler := handlers.NewInstanceHandler(
@@ -271,6 +305,7 @@ func main() {
 		services.NewInstanceShellService(),
 		services.WithInstanceProxyRuntimeRepositories(instanceRepo, runtimePodRepo, bindingRepo),
 	)
+	instanceHandler.SetBrowserWorkerService(browserWorkerService)
 	hermesDesktopService := services.NewHermesDesktopService(services.HermesDesktopConfig{
 		ControlUIOrigin: services.HermesControlUIOrigin(cfg.Runtime.Namespace, os.Getenv("CLAWMANAGER_CONTROL_UI_ORIGIN")),
 		Enabled:         services.HermesWebEnabled(os.Getenv("CLAWMANAGER_HERMES_DESKTOP_WEB_ENABLED")),
@@ -418,9 +453,12 @@ func main() {
 	defer leaderCancel()
 
 	startBackground := func(ctx context.Context) {
+		go browserWorkerService.Run(ctx, 30*time.Second)
 		log.Printf("Starting leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
 		syncService.Start()
-		materializeWorker.Start()
+		if err := materializeWorker.StartContext(ctx); err != nil {
+			log.Printf("skill package materialize worker start failed: %v", err)
+		}
 		teamService.StartBackground(ctx)
 		if reconciler, ok := instanceService.(interface {
 			RunPendingDeletionReconciler(context.Context, time.Duration)
@@ -444,7 +482,11 @@ func main() {
 	}
 	stopBackground := func() {
 		log.Printf("Stopping leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
-		materializeWorker.Stop()
+		materializeStopCtx, materializeStopCancel := context.WithTimeout(context.Background(), 30*time.Second)
+		if err := materializeWorker.StopAndWait(materializeStopCtx); err != nil {
+			log.Printf("skill package materialize worker drain NOT confirmed: %v", err)
+		}
+		materializeStopCancel()
 		if northboundOperationWorker != nil {
 			northboundOperationWorker.Stop()
 		}
@@ -630,6 +672,8 @@ func main() {
 			instances.POST("/:id/config/revisions/publish", instanceHandler.PublishConfigRevision)
 			instances.POST("/:id/access", instanceHandler.GenerateAccessToken)
 			instances.GET("/:id/access", instanceHandler.AccessInstance)
+			instances.GET("/:id/browser-worker", instanceHandler.GetBrowserWorker)
+			instances.POST("/:id/browser-worker/access", instanceHandler.GenerateBrowserWorkerAccess)
 			instances.GET("/:id/shell", instanceHandler.StreamShell)
 			instances.POST("/:id/sync", instanceHandler.ForceSync)
 			instances.GET("/:id/openclaw/export", instanceHandler.ExportOpenClaw)
@@ -920,6 +964,23 @@ func main() {
 			adminSecurity.GET("/scan-jobs/:id", securityHandler.GetJob)
 		}
 
+		// Real reads use A's request-bound installation/session/RBAC authority.
+		// The fixture keeps its separate explicit opt-in for contract previews.
+		adminBackupRead := api.Group("/admin")
+		liveBackupRead, readErr := loadLiveBackupRead(sessionDB, backupSessions, os.Getenv)
+		if readErr != nil {
+			if liveBackupRead == nil {
+				log.Fatalf("system-backup live read switch invalid: %v", readErr)
+			}
+			log.Printf("system-backup live read unavailable: %v", readErr)
+		}
+		if liveBackupRead != nil {
+			registerBackupReadLive(adminBackupRead, liveBackupRead)
+		} else {
+			adminBackupRead.Use(middleware.SystemBackupReadFixtureAuth(userRepo))
+			registerBackupReadFixture(adminBackupRead, cfg.JWT.Secret)
+		}
+
 		gatewayLLM := api.Group("/gateway/llm")
 		gatewayLLM.Use(middleware.GatewayAuth(instanceRepo, bindingRepo))
 		{
@@ -947,6 +1008,8 @@ func main() {
 		// These routes proxy requests to the actual instance pods
 		api.Any("/instances/:id/proxy", instanceHandler.ProxyInstance)
 		api.Any("/instances/:id/proxy/*path", instanceHandler.ProxyInstance)
+		api.Any("/instances/:id/browser-proxy", instanceHandler.ProxyBrowserWorker)
+		api.Any("/instances/:id/browser-proxy/*path", instanceHandler.ProxyBrowserWorker)
 
 		// WebSocket routes
 		ws := api.Group("/ws")

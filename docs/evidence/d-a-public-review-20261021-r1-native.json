@@ -1,0 +1,27 @@
+{
+  "kind": "d_a_public_contract_targeted_review",
+  "runs": [
+    {
+      "stage": "schemas",
+      "exit": 0,
+      "pattern": "^A-owned (secret ref union|strong-auth contract|provider-proof registration|capability evidence)",
+      "files": [
+        "scripts/system-backup-contract-artifacts.test.mjs"
+      ]
+    },
+    {
+      "stage": "signatures",
+      "exit": 0,
+      "pattern": "",
+      "files": [
+        "scripts/system-backup-a-provider-proof-signature.test.mjs",
+        "scripts/system-backup-d-strong-auth-issuer.test.mjs"
+      ]
+    }
+  ],
+  "source_sha256": "8d97434e997a58bd9decd3d3059b0afbaa350484cf07d07228b97d5cc84c7a8b",
+  "source_postcheck": true,
+  "dependencies_installed": false,
+  "remote": false,
+  "production_approved": false
+}

@@ -1,0 +1,18 @@
+[
+    {
+        "name":  "cancel",
+        "source":  "backend/internal/systembackupevidence/system_recovery_audit_journal.go",
+        "source_sha256":  "0fedcef5298a345dce42c3e2e1c1b60a9c93b8534d1c8637492243a9f8fc2053",
+        "injected_sha256":  "c79752d5f8a3324cf68b5c5a30cf36180a2911b6ac49565bce49486cb507c320",
+        "from":  "\tif !j.mu.LockContext(ctx) {\n\t\treturn ErrUnavailable\n\t}\n",
+        "to":  "\tj.mu.Lock()\n"
+    },
+    {
+        "name":  "poison",
+        "source":  "backend/internal/systembackupevidence/download_failure_journal.go",
+        "source_sha256":  "d94b2555c4d5fc16dca8205425f1a741558d4f77e5f8f72f455931dfc3fa0a8a",
+        "injected_sha256":  "36831fc8936225ee8caacc3b74ce5d5d6580fac71672d88787f3af39a18f602e",
+        "from":  "func (j *DownloadFailureJournal) poison() {\n\tif j != nil \u0026\u0026 j.journal != nil {\n\t\tj.journal.poisoned.Store(true)\n\t}\n}",
+        "to":  "func (j *DownloadFailureJournal) poison() {\n\tif j != nil \u0026\u0026 j.journal != nil {\n\t\tj.journal.mu.Lock()\n\t\tj.journal.poisoned.Store(true)\n\t\tj.journal.mu.Unlock()\n\t}\n}"
+    }
+]

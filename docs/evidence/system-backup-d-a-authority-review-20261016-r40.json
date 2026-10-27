@@ -1,0 +1,159 @@
+{
+  "kind": "d_independent_a_authority_frozen_mysql_review",
+  "recorded_at": "2026-10-16T02:16:17.125Z",
+  "status": "accepted_for_original_eight_case_frozen_authority_only",
+  "receipt": "docs/evidence/a-maintenance-authority-mysql-accepted-sbk-mig-261016011333-1fdd.json",
+  "receipt_sha256": "50c635a2ab0ebbb196469f8e620bb11a3f9831fd736795e12dab51485f051731",
+  "raw_log": "docs/evidence/a-maintenance-authority-remote-20261016-085802-222.txt",
+  "raw_log_sha256": "af21313cc6f063fdd6c8136a4276db2383ac72f1e0396a074865eedeaadfd327",
+  "source_manifest": "docs/evidence/a-maintenance-authority-remote-20261016-085802-222-source.json",
+  "source_manifest_sha256": "3d52e6a0e42c1623558868ec5e7d33692c413fd87e30641865d75d4786c9156e",
+  "frozen_files": 1265,
+  "frozen_logical_sha256": "cce6428a4579a26fbe0d95c2403131567fa942d35fe704e69b7a174845ee7835",
+  "cases": [
+    "grant_target_mismatch",
+    "independent_observation",
+    "grant_same_version_bytes_drift",
+    "archive_verifier_drift",
+    "installed_target_drift",
+    "grant_expires_after_staging",
+    "source_expires_after_staging",
+    "capacity_expires_after_staging"
+  ],
+  "root_pass": true,
+  "staged_rollback_cases": 6,
+  "namespace": "sbk-mig-261016011333-1fdd",
+  "namespace_uid": "f48845de-1f0a-4130-b347-c7e44927b7bc",
+  "exact_cleanup_markers": true,
+  "local_paths_checked_absent": 69,
+  "focused_current_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill.go",
+      "size": 14631,
+      "sha256": "7fe2a1eed2e484fe3cb29bfd0be29c4cc2a748170c8f43c4ed7a315c01a3f6eb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_canonical_backfill_mysql_test.go",
+      "size": 16530,
+      "sha256": "d7d33008afd919ada66849f2cc9873f4d6ee69248514df2e50a911d4e7faa9b6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority.go",
+      "size": 13868,
+      "sha256": "ca29ecb65d2e8762bee8267f7acbea8807e24a1086041896115fd34077b5f90f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_authority_a_mysql_test.go",
+      "size": 13283,
+      "sha256": "ca6eacb5cebb61ee8cd4a50aa1425aa9165b33aaef6e30e1f305e7c32d7b6526"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_maintenance_receipt_mysql_test.go",
+      "size": 26449,
+      "sha256": "d3ed1efad6da063ec2137fbd747aa807348e15c15cd8afb178dc3acbf5202028"
+    },
+    {
+      "path": "docs/system-backup-d-config-canonical-081-proposal-20261014.sql",
+      "size": 881,
+      "sha256": "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1"
+    },
+    {
+      "path": "docs/system-backup-d-config-maintenance-082-proposal-20261015.sql",
+      "size": 5259,
+      "sha256": "e1a95c7863065580819e28353fa984fa8a98701ca2eeae57aff7ba5159a43b87"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-dispatch.test.ps1",
+      "size": 4984,
+      "sha256": "00ecaf2835f1ad9fab72c0b6bfa1426fc5303524288ddbc0a73945af66927ac7"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-mysql-validation.ps1",
+      "size": 4035,
+      "sha256": "7724e4b9b4e11a72c570c8ab4feb84419b0eb8b4b22afcb895045a25a098082d"
+    },
+    {
+      "path": "scripts/system-backup-a-config-maintenance-authority-phase.sh",
+      "size": 3099,
+      "sha256": "18e42524402137a9ce2acdc713c078538decdbb2e00c3cebf2414e98bf064636"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "size": 44417,
+      "sha256": "c2f684ad2c85834bfd964b404b7f8747dfbdcc3829b6983d3ed089fbfd2bea8e"
+    },
+    {
+      "path": "scripts/system-backup-d-config-writer-dispatch.test.ps1",
+      "size": 6320,
+      "sha256": "44564ee1a7740cf7ccb7c9e244e64b441d3c7847de4f94980706c6a6b6e7a010"
+    }
+  ],
+  "current_frozen_file_drift": [
+    {
+      "path": "backend/cmd/server/main.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_test.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/db/runtime_manifest_test.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/handlers/instance_handler.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/migrationcatalog/catalog_test.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/services/instance_service.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/testdata/schema-registry.json",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap.go",
+      "state": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupread/overview_control_test.go",
+      "state": "changed"
+    },
+    {
+      "path": "contracts/system-backup/v12/cross-owner-review-requests.json",
+      "state": "changed"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "state": "changed"
+    },
+    {
+      "path": "docs/system-backup-restore-schema-inventory.json",
+      "state": "changed"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-storage-preflight.ps1",
+      "state": "changed"
+    },
+    {
+      "path": "scripts/system-backup-d-recovery-audit-storage-preflight.test.ps1",
+      "state": "changed"
+    }
+  ],
+  "current_tree_or_new_catalog_accepted": false,
+  "actual_authentication": false,
+  "synthetic_verified_facts": true,
+  "remote_rerun": false,
+  "dependencies_installed": false,
+  "production_approval": false
+}

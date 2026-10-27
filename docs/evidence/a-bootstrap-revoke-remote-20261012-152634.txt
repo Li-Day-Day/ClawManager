@@ -1,0 +1,51 @@
+**********************
+Windows PowerShell 脚本开始
+开始时间: 20261012152634
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称:
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 17948
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 docs/evidence/a-bootstrap-revoke-remote-20261012-152634.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    foreach ($profile in @('ABootstrap', 'ARevoke')) {
+        & powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\system-backup-a-evidence-validation.ps1 `
+            -ProducerRecoveryOnly -RecoveryTest $profile -Remote `
+            -SshTarget root@10.130.14.23 -BuildParallelism 1
+        if ($LASTEXITCODE -ne 0) { throw "$profile remote test failed: exit $LASTEXITCODE" }
+    }
+} finally {
+    Stop-Transcript
+}
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_ca
+talog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f catalog_sha256=0de7fd1267
+2eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestRecoveryManagerBootstrapMySQL
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- PASS: TestRecoveryManagerBootstrapMySQL (0.57s)
+PASS
+PASS a-recovery-manager-bootstrap-mysql binary_sha256=b5f0d2822c6aa0e426243dd914733a1bd48dc4aceec6f1b90c1b69f1120d0355 ddl_sha256=247
+4fbc894ada0607ec88e5a2a0d9056a249798d8e07e48d76f7e090aaec0f82
+CLEANED namespace=sbk-mig-261012073839-3121 uid=72c392b5-09b1-4000-85ce-20fff877e57b
+close - IO is still pending on closed socket. read:1, write:0, io:0000016F0AFA3880
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:000001A93B563560
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261012155050
+**********************

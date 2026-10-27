@@ -1,0 +1,294 @@
+{
+  "kind": "a_sensitive_download_mfa_local_review",
+  "status": "accepted_frozen_local_candidate_only",
+  "recorded_at": "2026-10-19T02:58:47.330Z",
+  "log": "docs/evidence/a-download-mfa-packages-20261019-r2.jsonl",
+  "log_sha256": "edb1d0291358db5a848d9562f396299b5949b46a394cf0e02bb1f7af4b92358d",
+  "native": "docs/evidence/a-download-mfa-packages-20261019-r2-native.txt",
+  "native_sha256": "eb2fdf2ad631a0cdf2fadb86b0aee499349e1f8fac2f9f0defc09fde88ea35ae",
+  "source": "docs/evidence/a-download-mfa-packages-20261019-r2-source.json",
+  "source_manifest_sha256": "05f71313a9d129bf26f01acca84b0cd4cda5996db96f47863737368ffe8458ed",
+  "source_files": 1365,
+  "source_sha256": "f6443142de48b93364fabec5ad89952f67179c96bba6527f4ed104d6791c6c01",
+  "executor": "A invocation of shared D frozen native gate",
+  "checks_passed": 48,
+  "checks": [
+    "original JSON stream complete",
+    "all test and package events green with no skips",
+    "all package tests unique",
+    "exact two final affected packages passed",
+    "default vet and Go exit zero for both final affected packages",
+    "outer exit zero and frozen postcheck",
+    "frozen capture stable without dependency installation",
+    "frozen input paths unique",
+    "logical source digest independently recomputed",
+    "native transcript binds exact manifest count and digest",
+    "native stderr empty",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/sensitive_download_totp.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/sensitive_download_totp_test.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/sensitive_download_request.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/totp_sql.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/totp.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/config_mutation_totp.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/config_mutation_totp_test.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/registration_api.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/providerproof_http.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/providerproof_transaction.go",
+    "current reviewed pin matches: backend/internal/systembackupevidence/sensitive_download_totp.go",
+    "current reviewed pin matches: backend/internal/systembackupevidence/sensitive_download_totp_test.go",
+    "current reviewed pin matches: backend/internal/systembackupevidence/sensitive_download_request.go",
+    "current reviewed pin matches: backend/internal/systembackupevidence/download_admission_environment.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/sensitive_download_config.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/sensitive_download_nonce_scope.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/config_mutation_session.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/config_mutation_strongauth.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/evidence_rbac.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/registration_files.go",
+    "current reviewed pin matches: backend/internal/systembackupsecurity/providerproof_registry.go",
+    "current reviewed pin matches: scripts/system-backup-d-download-admission-native-validation.ps1",
+    "runner offline with clear inherited Go flags and telemetry off",
+    "MFA TestSensitiveDownloadTOTPIssuesOriginalRequestOnce: 1 main/child results passed",
+    "MFA TestSensitiveDownloadTOTPRejectsAuthoritySessionAndCommitFailures: 24 main/child results passed",
+    "MFA TestSensitiveDownloadProofHTTPClosedSelectorsAndActualMFA: 14 main/child results passed",
+    "MFA TestSensitiveDownloadMFASelectorStrictWire: 24 main/child results passed",
+    "MFA TestSensitiveDownloadMFARejectsMissingRuntimeBeforeSQL: 9 main/child results passed",
+    "MFA TestPinnedDownloadMFAUsesIdenticalGETBindingWithoutAdmissionEffects: 6 main/child results passed",
+    "MFA TestPinnedDownloadMFARereadsOriginalAuthorityAndMaterial: 15 main/child results passed",
+    "new MFA group has exactly seven root tests",
+    "accurate snapshot and build/cache owner removed",
+    "earlier three packages retain passing test execution without a test fail or skip",
+    "earlier native gate remains failed with exact dependency vet failure",
+    "earlier actual Go/outer exits one and successful source postcheck retained",
+    "earlier integration manifest logical digest independently recomputed",
+    "earlier integration exact source/build/cache owner independently absent"
+  ],
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main": 253,
+      "children": 1732
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main": 232,
+      "children": 1539
+    }
+  ],
+  "passed_including_subtests": 3756,
+  "new_mfa_checks": [
+    {
+      "name": "TestPinnedDownloadMFAUsesIdenticalGETBindingWithoutAdmissionEffects",
+      "passed": 6
+    },
+    {
+      "name": "TestPinnedDownloadMFARereadsOriginalAuthorityAndMaterial",
+      "passed": 15
+    },
+    {
+      "name": "TestSensitiveDownloadTOTPIssuesOriginalRequestOnce",
+      "passed": 1
+    },
+    {
+      "name": "TestSensitiveDownloadTOTPRejectsAuthoritySessionAndCommitFailures",
+      "passed": 24
+    },
+    {
+      "name": "TestSensitiveDownloadProofHTTPClosedSelectorsAndActualMFA",
+      "passed": 14
+    },
+    {
+      "name": "TestSensitiveDownloadMFASelectorStrictWire",
+      "passed": 24
+    },
+    {
+      "name": "TestSensitiveDownloadMFARejectsMissingRuntimeBeforeSQL",
+      "passed": 9
+    }
+  ],
+  "new_mfa_including_subtests": 93,
+  "focus_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_totp.go",
+      "size": 6309,
+      "sha256": "378a5ac6fb4150bb441666d8d057b7ba09d283977315df6da825e80839f48408"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_totp_test.go",
+      "size": 15197,
+      "sha256": "e4e697635ceef7ed67a31d158039195d2ac22b3a40fc6474dd3b54de32e7e442"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_request.go",
+      "size": 12971,
+      "sha256": "280ecc49acbda8fe49606254f5b335c2a6899e293eea8d5a118bc976f7adff2e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp_sql.go",
+      "size": 13976,
+      "sha256": "c8cac3d4f853c056703d5b6d6ee9b7252451ab4520127fc27bd976b7af768a25"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/totp.go",
+      "size": 5778,
+      "sha256": "d0ce082d2298d58a03dc7cc9dc12a939cc6962db9cd0f21a991d6b193bc9ab10"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_totp.go",
+      "size": 3022,
+      "sha256": "3e27cc66ff5ae43a709fce9bad3f2d094329578521a693befe3f350c60a00096"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_totp_test.go",
+      "size": 18384,
+      "sha256": "1ddaecf4a4db8df70c93a98c7357da39ae2f033bf2c3e59d6c7b7114b256d8a2"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_api.go",
+      "size": 9070,
+      "sha256": "a93954c137891ee2587d26c17598f4c759fd89b0c92fad38ccab3833f928d040"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_http.go",
+      "size": 6231,
+      "sha256": "9b6c8c71f0df162300fe10fae11be049c0d1a0fdf6a7ca95f117a6a8b0307118"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 17853,
+      "sha256": "622a15d9ee7925253fefdb0d0c950221200e689b78febae2cbbea069cd94772a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_totp.go",
+      "size": 6773,
+      "sha256": "e809d2b63787d35c0184d7c64a13599c19272aa94af80079df6068ad9d865d47"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_totp_test.go",
+      "size": 5299,
+      "sha256": "8381ea6bdae66d8f86738915b1e3fdcf852c1afeb0ab10b854ce6eef3d5fa872"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/sensitive_download_request.go",
+      "size": 3847,
+      "sha256": "fc639bf104f3f6b8855550ae4f325caed93e2be683fb7d65505b6e14a951ae67"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_environment.go",
+      "size": 9661,
+      "sha256": "3c659f0e8b7e9f8e12246c7fa59117ebef22a303770bbc094e0dc1a723a78ed6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_config.go",
+      "size": 5009,
+      "sha256": "5742cd67ece863f30b66dc57466f2fe5c1fc106f73015b24132abb6413b9aedb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/sensitive_download_nonce_scope.go",
+      "size": 11428,
+      "sha256": "6833fc55d1b8b0c2b6bfa28b75baad2ac366941ecbaca7ba19fd46e820104753"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_session.go",
+      "size": 2761,
+      "sha256": "8ef1e2903fd7da0e52093eda5a379a5916e0356d5396769d124fd2b635c8e31d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_strongauth.go",
+      "size": 5966,
+      "sha256": "f8aff72825226af8edd6aa3a6e498f1e8740ecf9258ed4e00bdfe84781425d7e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/evidence_rbac.go",
+      "size": 1793,
+      "sha256": "ee5a637ca52b11e0ed715845427f544301c801bbf12747f4addff6240529a121"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_files.go",
+      "size": 2842,
+      "sha256": "6597f252283569df33a5e1738a43088f2342881e8c469c0d7fadb15b4efb23f5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_registry.go",
+      "size": 12788,
+      "sha256": "63cbb271116ad7a193a69074b19a1bbd2f6eaddb2f2138562216378ea96ed6f8"
+    },
+    {
+      "path": "scripts/system-backup-d-download-admission-native-validation.ps1",
+      "size": 5170,
+      "sha256": "d3055853efbbec89b042307dfd81779391f85bd5228da516e553a91b3c72ab04"
+    }
+  ],
+  "current_unrelated_drifts_excluded": [],
+  "entire_current_tree_accepted": false,
+  "newly_added_files_accepted": false,
+  "earlier_failed_native_gate": {
+    "status": "failed_original_not_reclassified",
+    "actual_exit": 1,
+    "reason": "vendor/golang.org/x/net/http/httpproxy vet.exe exited 0xc0000043; no further operating-system cause inferred",
+    "log": "docs/evidence/a-download-mfa-packages-20261019-r1.jsonl",
+    "log_sha256": "1001d602aa8c93c3b4182c8a432a8ac2ce1d2d01d52d5d901341a8fb21e7b2a7",
+    "native": "docs/evidence/a-download-mfa-packages-20261019-r1-native.txt",
+    "native_sha256": "6401bf9d0f56a81aab19771666a199e42a1abe618d18cc0eca7e8aefdf17635f",
+    "source": "docs/evidence/a-download-mfa-packages-20261019-r1-source.json",
+    "source_manifest_sha256": "0affd4f7a700a538b1b6d6930087715cb38d7c92d471d54b506e8ea3c06298d6",
+    "source_sha256": "94552d325511cebb5c9c14a26fd4d30a2a644b77f00407b9dfa19c340785517b",
+    "source_files": 1361,
+    "passing_test_events_including_subtests": 3732,
+    "build_failures": [
+      {
+        "ImportPath": "vendor/golang.org/x/net/http/httpproxy",
+        "Action": "build-fail"
+      }
+    ],
+    "exact_owned_path_independently_absent": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-f2fb21db716c41559cdd409eb2757ba9",
+    "scope": "original three frozen packages had passing test events but native gate exit one; not accepted as a successful integration gate. Later MFA changes covered only by final two affected packages.",
+    "later_focus_pins": [
+      {
+        "path": "backend/internal/systembackupsecurity/sensitive_download_totp.go",
+        "size": 6309,
+        "sha256": "378a5ac6fb4150bb441666d8d057b7ba09d283977315df6da825e80839f48408"
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/sensitive_download_totp_test.go",
+        "size": 15197,
+        "sha256": "e4e697635ceef7ed67a31d158039195d2ac22b3a40fc6474dd3b54de32e7e442"
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/totp_sql.go",
+        "size": 13976,
+        "sha256": "c8cac3d4f853c056703d5b6d6ee9b7252451ab4520127fc27bd976b7af768a25"
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/providerproof_http.go",
+        "size": 6231,
+        "sha256": "9b6c8c71f0df162300fe10fae11be049c0d1a0fdf6a7ca95f117a6a8b0307118"
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+        "size": 17853,
+        "sha256": "622a15d9ee7925253fefdb0d0c950221200e689b78febae2cbbea069cd94772a"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/sensitive_download_totp.go",
+        "size": 6773,
+        "sha256": "e809d2b63787d35c0184d7c64a13599c19272aa94af80079df6068ad9d865d47"
+      },
+      {
+        "path": "scripts/system-backup-d-download-admission-native-validation.ps1",
+        "size": 5170,
+        "sha256": "d3055853efbbec89b042307dfd81779391f85bd5228da516e553a91b3c72ab04"
+      }
+    ]
+  },
+  "exact_owned_path_independently_absent": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-696484c7a51b48ea91455938ea8fdfdf",
+  "dependencies_installed": false,
+  "default_vet": true,
+  "actual_password_AESGCM_TOTP_JWT_Ed25519": true,
+  "SQL_transport_and_owner_facts": "scripted model with synthetic material files",
+  "real_human_MFA_accepted": false,
+  "real_owner_adapter_accepted": false,
+  "real_MySQL_issuance_accepted": false,
+  "runtime_download_source_enabled": false,
+  "formal_schema_approved": false,
+  "production_download_route_enabled": false
+}

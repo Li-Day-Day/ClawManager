@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "scope": "six normalization boundaries and read-only verifier source review",
+  "result": "limited_semantics_accepted",
+  "registry_cross_review_approved": false,
+  "production_restore_approved": false,
+  "new_business_tests_run": false,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupbusinessa/users_restore.go",
+      "sha256": "bbe2c0c31d4ffbca0d11149698bb665b99ffc45621b51d5751ffa0bcd426694b"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/enterprise_auth_restore.go",
+      "sha256": "a5fa8310b8c8fef1c915c437aa75a19d8a67d56dd93c77176fd08a2b257d11cd"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/llm_model_restore.go",
+      "sha256": "25965f7d24f434df1ad6fb6686fb0c1a44ea35c663357fbcc8e217547d6aa30d"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/gateway_alias_restore.go",
+      "sha256": "d116270c6ff2e04fa035212411c54abf45abbcf762b34a2de5c84145cfef2097"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/risk_rule_restore.go",
+      "sha256": "0bff346b2a82beaf1d865c94902545ca3302edb712d65282d0199159c53bcbb6"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/ai_gateway_history_restore.go",
+      "sha256": "238ee8324f5fb868c4cf7501ad2c4d549cfa223058baff4d54214d7c940f09ce"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/ai_gateway_cross_table_restore.go",
+      "sha256": "793bd0fdc8b7c2a68b36172aa618f6138c2f67a0a1bbd3b24da2f6081d493a7a"
+    },
+    {
+      "path": "backend/internal/systembackupbusinessa/restore_verify.go",
+      "sha256": "2e00d5d2dda4d93f3007fe1e8e12fa837bcd7435befca52200c173d3804ee0b8"
+    },
+    {
+      "path": "backend/internal/services/enterprise_auth_manager.go",
+      "sha256": "e52027dc8c731c2b8e1d6fd273de158e392d05191320ee7273bb5a71d8ef85bc"
+    },
+    {
+      "path": "backend/internal/repository/instance_repository.go",
+      "sha256": "5a5eab284233258792aff6e1a1b7b3229a62eea96dcad51d8dc49076a4e667e5"
+    },
+    {
+      "path": "backend/internal/repository/risk_rule_repository.go",
+      "sha256": "c7c6dc89ea1912481bc8e1ea0912eeb6ea9f0682a4a4ca11a6b3b6c4bfd0053d"
+    },
+    {
+      "path": "backend/internal/services/risk_detection_service.go",
+      "sha256": "46e49a9ae20186578b4ac759bdcd27b08203b0da8267a32f4e2647256a8eb97f"
+    }
+  ],
+  "remaining": [
+    "B real source/target proofs",
+    "B transactional SQL writer",
+    "full fifteen-table MySQL and large-data validation",
+    "D startup and traffic release integration"
+  ]
+}

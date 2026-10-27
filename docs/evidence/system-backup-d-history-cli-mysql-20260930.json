@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "recorded_at_utc": "2026-09-30T06:29:23.4863287Z",
+  "status": "PASS_isolated_mysql_history_cli_eight_cases",
+  "evidence_origin": "operator supplied full terminal transcript; no independent SSH recheck in this turn",
+  "transcript_sha256": "8cdb889d3d891e304e064a8d44f2629b34ad6ade8ff8f303c265430710b365bd",
+  "local_validation_reference": "system-backup-d-history-cli-fault-boundary-20260930.json",
+  "run": {
+    "namespace": "sbk-mig-260930062648-2795",
+    "namespace_uid": "417bb93c-0a4b-42e5-afec-a0bc999f59da",
+    "scratch_owner": "d2446689684b478ba40741a34b228912",
+    "mysql_version": "8.4.8",
+    "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+    "test_started_utc": "2026-09-30T06:27:09Z",
+    "duration_seconds": 0.52
+  },
+  "pins": {
+    "backend_source_sha256": "da3a64b57805dffdaa6ef711c5d696b12a711da39659b254dd3d872a188aac4f",
+    "runner_sha256": "69e44727bcfad1e483263ab8fc0d9faf6a29977ea4accd887c6ffe3994304ef7",
+    "probe_sha256": "6bfc8a2acf76bdad7ae6807a2cb3d40c0b325188750cc921d657807dd3ab7f92",
+    "catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+    "all_three_match_final_local_validation": true
+  },
+  "local_operator_build": {
+    "unit_tests": "skipped explicitly via BuildOnly; prior local validation referenced above",
+    "vet": "skipped explicitly via BuildOnly; prior local validation referenced above",
+    "probe_attempts": 1,
+    "runner_attempts": 1,
+    "dependencies_downloaded": false
+  },
+  "fresh_replay": {
+    "result": "PASS",
+    "migration_count": 94,
+    "exact_filenames": true,
+    "d_column_types": "blob/blob/blob/char",
+    "runner": "current compiled pinned CLI; no old migration-app Pod in this mode"
+  },
+  "history": {
+    "result": "PASS",
+    "case_count": 8,
+    "passed_cases": [
+      "unreviewed_ledger_rejected_without_DDL",
+      "wrong_target_rejected_without_DDL",
+      "unreviewed_extra_rejected_without_DDL",
+      "capture_gate_rejects_then_recovers",
+      "CLI_partial_DDL_connection_killed_preserves_ledger",
+      "CLI_complete_DDL_ledger_write_failure_no_false_PASS",
+      "apply_runtime_preserves_history_and_exact_runtime_DDL",
+      "retry_preserves_ledger_and_runtime_rows"
+    ],
+    "partial_ddl_completed_tables_before_kill": 2,
+    "ledger_failure_completed_tables_before_kill": 4,
+    "migration_lock_owner_verified_at_both_faults": true,
+    "fault_boundary": "target SQL query/prepare held before forwarding; real server connection killed",
+    "ledger_before": 96,
+    "ledger_after": 97,
+    "historical_rows_retained": true,
+    "original_sql_executed": false,
+    "retry_preserves_ledger_and_runtime_rows": true,
+    "inputs": "synthetic isolated fixtures"
+  },
+  "cleanup": {
+    "namespace": "reported CLEANED with exact UID",
+    "remote_scratch": "reported yes",
+    "local_cache_and_binaries": "reported True",
+    "independent_remote_recheck": false
+  },
+  "scope": {
+    "production_upgrade": false,
+    "config_activated": false,
+    "historical_equivalence_verified": false,
+    "human_mfa_verified": false,
+    "does_not_cover": [
+      "real historical SQL provenance or owner review",
+      "arbitrary schema drift repair",
+      "target statement interrupted during server execution",
+      "committed ledger with lost success acknowledgement"
+    ]
+  },
+  "remaining": "real-installation provenance, review and deployment/activation prerequisites remain separate",
+  "rerun_required_for_this_pinned_acceptance": false
+}

@@ -1,0 +1,220 @@
+{
+  "kind": "d_gc_task_prune_identity_migration_repair_preparation",
+  "status": "local_repair_validated_actual_rerun_pending",
+  "source_sha256": "6e76360a56b6153212875569be33341f7015e8f59bbd74b242a4003bb484ca2e",
+  "source_files": 1475,
+  "base_source_sha256": "5a446bbf5b42c39745d04998cdfabc1e2978a1f5164ae3cec9d0ea3b7d6bf85c",
+  "changes": [
+    "backend/internal/db/migrations/081_fix_system_backup_prune_item_identity.sql",
+    "backend/internal/migrationcatalog/catalog_test.go",
+    "backend/internal/systembackupbusinessa/testdata/schema-registry.json",
+    "backend/internal/systembackupcontroller/bootstrap.go",
+    "backend/internal/systembackupcontroller/metrics_http_test.go",
+    "backend/internal/systembackupcontroller/sql_queue_budget_test.go",
+    "backend/internal/systembackupevidence/download_admission_audit_mysql_test.go",
+    "backend/internal/systembackupevidence/download_gc_task_mysql_test.go",
+    "backend/internal/systembackupevidence/download_producer_owner_mysql_test.go",
+    "backend/internal/systembackupevidence/sensitive_download_mfa_mysql_test.go",
+    "backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json",
+    "backend/internal/systembackupevidence/testdata/download_producer_probe_inputs.json",
+    "contracts/system-backup/v12/schema-registry.json",
+    "scripts/system-backup-d-download-audit-bundle.mjs",
+    "scripts/system-backup-d-download-producer-dispatch.test.ps1",
+    "scripts/system-backup-d-download-producer-inputs.mjs",
+    "scripts/system-backup-prune-identity.test.mjs"
+  ],
+  "old_070_preserved": true,
+  "one_check_predicate_repaired": true,
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 96,
+    "hash": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"
+  },
+  "runs": [
+    {
+      "label": "initial_full",
+      "prefix": "docs/evidence/d-prune-identity-20261021-r1-full",
+      "source_sha256": "4665a990596c8fc4eb1d0b747058b8639e83844e8f5e19e08bb10b896ce49fe1",
+      "source_files": 1475,
+      "main": 919,
+      "checks": 6332,
+      "passed": 6330,
+      "failed": [
+        "TestQueueBudgetMetricsRenderCompleteClosedPrometheusSampleSet",
+        "TestSQLQueueBudgetReaderEmitsOnlyClosedLowCardinalitySamples"
+      ],
+      "exit": 1,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        "clawreef/internal/migrationcatalog",
+        "clawreef/internal/systembackupbusinessa",
+        "clawreef/internal/systembackupsecurity",
+        "clawreef/internal/systembackupevidence",
+        "clawreef/internal/systembackupproducer"
+      ],
+      "source_manifest_sha256": "eb7317a0faa96543d5a360cb298d6d79e197a74312c700be7e218c4aadbca07c",
+      "events_sha256": "8c107e6bd8ee6b3e37b1ebdd5548c4d05e58c08023f4ca096d0c3c99ec36a1f9",
+      "native_sha256": "d397983b4e629990d92bde7f31b2dfa3d3d9b49bcd80af22d9899fdbf4f0dcba",
+      "built": []
+    },
+    {
+      "label": "controller",
+      "prefix": "docs/evidence/d-prune-identity-20261021-r1-controller",
+      "source_sha256": "6e76360a56b6153212875569be33341f7015e8f59bbd74b242a4003bb484ca2e",
+      "source_files": 1475,
+      "main": 143,
+      "checks": 191,
+      "passed": 191,
+      "failed": [],
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        "clawreef/internal/systembackupcontroller"
+      ],
+      "source_manifest_sha256": "d38c4ab0c5b3d9fb4951c61160805b108c26a0ddb74ce26b98e4efbdc8e1cca6",
+      "events_sha256": "625cd0d90493b8cc565d48a1ad9cf4730f72f791f7f9fb34661597ed25539e8b",
+      "native_sha256": "ad0fc9ab4153a55407c8fd3cb88cff8be1f713408154533b3236a07db15bb9f6",
+      "built": []
+    },
+    {
+      "label": "probe",
+      "prefix": "docs/evidence/d-prune-identity-20261021-r2-probe",
+      "source_sha256": "6e76360a56b6153212875569be33341f7015e8f59bbd74b242a4003bb484ca2e",
+      "source_files": 1475,
+      "main": 4,
+      "checks": 29,
+      "passed": 29,
+      "failed": [],
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        "clawreef/internal/systembackupevidence"
+      ],
+      "source_manifest_sha256": "d38c4ab0c5b3d9fb4951c61160805b108c26a0ddb74ce26b98e4efbdc8e1cca6",
+      "events_sha256": "f8e469d691a8cc1b5e97ff6838c9bea9f2377885afd898b9ba892105d6fc9e61",
+      "native_sha256": "8a5c6e637ce1d56dd59dd215e76169d2853382980add9e595e6af6ea610795a8",
+      "built": [
+        {
+          "name": "gc-task.test.exe",
+          "bytes": 22452224,
+          "sha256": "0bbf1621b0da0151c8fb9319c9ba15e95308ae1dd9718eb5b5c26a0980c70db8"
+        },
+        {
+          "name": "gc-task.test",
+          "bytes": 22139267,
+          "sha256": "800872eb169483236f7d142c80319070a1d7b5f01c30e4966ebf73465d953d68"
+        },
+        {
+          "name": "system-backup-migrate",
+          "bytes": 9100667,
+          "sha256": "23b8e7ff25fa025458d52c1130a2fab100afd9b465699353108d2164240b44c7"
+        },
+        {
+          "name": "audit-inputs-r2.json",
+          "bytes": 3964,
+          "sha256": "1703d9c36f9b9655b62cd5be3de88a7318743bb9806fffbfb5d3db233568b557"
+        }
+      ]
+    }
+  ],
+  "complete_go_coverage": {
+    "kind": "five_unchanged_packages_plus_controller_full_package_retest",
+    "source_compatibility": "only two controller tests, one ignored tagged test and audit bundle count changed after initial full run",
+    "main": 919,
+    "checks": 6332,
+    "packages": [
+      "clawreef/internal/migrationcatalog",
+      "clawreef/internal/systembackupbusinessa",
+      "clawreef/internal/systembackupcontroller",
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupsecurity"
+    ],
+    "initial_full_exit_retained": 1,
+    "controller_retest_exit": 0,
+    "tagged_change_covered_by_probe": true
+  },
+  "probe_wrapper_failure": {
+    "prefix": "docs/evidence/d-prune-identity-20261021-r1-probe",
+    "native_sha256": "431d6e902ae9568e75856f6309dcf84fdaee448fdb9da42a8dd6c9b855395740",
+    "events_sha256": "c97eedd50179acee9e1a26009e16ed9e3a21a629dd72a2b21bb7803f5353ee6d",
+    "detached_stderr_sha256": "8c41e431236bc99b9b5b3826c51ee534a17156184e6fbc611de5e8057bb13e60",
+    "exit": 2,
+    "source_identical_to_final": true,
+    "reason": "PowerShell native test flags were not passed as a string array; parsing failed before detached tests",
+    "accepted": false
+  },
+  "node": {
+    "checks": 94,
+    "exit": 0,
+    "tap_sha256": "728dab02c293954e388895d340b5020bc300c9d107a093dee1ab949ac1218402",
+    "native_sha256": "efb2ab7891c4f084fecb8e708f86bed18276b924e5774bbbe32f6e81970b3daa"
+  },
+  "controls": {
+    "receipt": "docs/evidence/d-prune-identity-controls-20261021-r2.json",
+    "sha256": "085cfb3e9474866d2f79b3a02081577b64c13b5de07195dc36ebc5efacc41da2",
+    "steps": 9,
+    "strict_exit": 1
+  },
+  "old_operator_failure": {
+    "receipt": "docs/evidence/d-prune-identity-operator-failure-20261021.json",
+    "sha256": "69e9d7efe34f39c1e428bcd33725893d39346a9dc61d90f9e09d7059bd6ef24e",
+    "passed": 15,
+    "failed": 3,
+    "accepted": false
+  },
+  "capsules": {
+    "mfa_sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0",
+    "producer_sha256": "2f7533093e5b1b38980f0c86bd65c632be8b6b515d4dbcf46d984e2032f060a8",
+    "old_bytes_archived": true,
+    "only_catalog_and_embedded_admission_changed": true,
+    "C1_DDL_and_records_unchanged": true
+  },
+  "registry": {
+    "only_catalog_changed": true,
+    "policies_and_approvals_unchanged": true
+  },
+  "published": {
+    "source_sha256": "5383dd6b3967edf9966896b7b298a0d05df04ab23b10db42df18f354c33a5f5b",
+    "manifest_sha256": "74018af71ecab212d80a9c46120257909c9b67913de7d5b917c8bc2e3da6f868",
+    "matches_final_frozen": false,
+    "concurrent_changes": [
+      "backend/internal/systembackupevidence/download_gc_role_a_mysql_test.go",
+      "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go"
+    ],
+    "concurrent_additions": [],
+    "own_seventeen_files_and_modules_match": true,
+    "concurrent_assessment": {
+      "receipt": "docs/evidence/d-prune-identity-concurrent-review-20261021.json",
+      "sha256": "e863a467f95c449309189ab26dab9b8a21245b4a4ee3b458c91af63fcf370b1d",
+      "selected_gc_root_and_shared_task_seeds_unchanged": true,
+      "other_A_roots_not_accepted": true
+    }
+  },
+  "cleanup": {
+    "receipt": "docs/evidence/d-prune-identity-cleanup-20261021.json",
+    "sha256": "0b0b27d71a891922c555d88b1cf28831ab1d47848f0e1cece5ffc030a2950c7d",
+    "removed": true
+  },
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "boundaries": {
+    "old_failure_not_relabelled": true,
+    "actual_96_file_migration_not_yet_run": true,
+    "actual_GC_task_eighteen_pending": true,
+    "old_MFA_tasks_producer_receipts_not_expanded": true,
+    "full_GC_not_accepted": true,
+    "historical_upgrade_equivalence_not_proven": true,
+    "production_approval": false,
+    "original_six_scopes_complete": false
+  },
+  "prepublication_binaries": {
+    "receipt": "docs/evidence/d-prune-identity-prepublish-binaries-20261021.json",
+    "sha256": "86664d82e2b9d03834357feedfe012e747938efc3530010cf53fb3682b0cb71d",
+    "PE_and_ELF64_amd64_checked": true,
+    "audit_input_catalog_checked": true
+  }
+}

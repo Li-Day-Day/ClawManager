@@ -1,0 +1,63 @@
+{
+  "schema_version": "d-provider-registration-mysql.operator-report.v1",
+  "reported_date": "2026-09-28",
+  "status": "passed_within_isolated_mysql_scope",
+  "source": "operator-provided console output in this task",
+  "independently_requeried": false,
+  "remote_exit_code": null,
+  "exit_code_note": "A separate process exit code was not supplied; PASS and CLEANED markers were supplied.",
+  "ssh_target": "root@10.130.14.23",
+  "namespace": "sbk-mig-260928011743-79d7",
+  "namespace_uid": "fa8f9f94-517f-4f38-b179-30e47a2470a7",
+  "app_image": "10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea",
+  "mysql_image": "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+  "mysql_version": "8.4.8",
+  "binary_sha256": "0134051f33c48cda5f245f6738231689170b1f30de43f94ff962b78e345a0c02",
+  "ddl_sha256": "e3ea82737411a4cfdc49f84709bca462db4a9bbed2015b9b89b48bed05f3362a",
+  "matches_local_validation_record": "system-backup-d-registration-runtime-local-20260928.json",
+  "local_source_hashes_rechecked": true,
+  "local": {
+    "registration_unit_tests": "PASS",
+    "duration_seconds": 1.362,
+    "linux_mysql_probe_compiled": true,
+    "real_mysql_at_local_phase": "not_run"
+  },
+  "bundle_checksum": "OK",
+  "migration": {
+    "status": "PASS",
+    "range": "001..079",
+    "applied": 92,
+    "exact_filenames": true,
+    "d_columns": "blob/blob/blob/char"
+  },
+  "mysql_test": {
+    "name": "TestDProviderRegistrationMySQL",
+    "status": "PASS",
+    "duration_seconds": 0.58,
+    "cases": {
+      "concurrent_same_request_has_one_atomic_result": "PASS",
+      "body_conflict": "PASS",
+      "nonce_replay_with_new_idempotency_key": "PASS",
+      "result_audit_failure_rolls_back_every_table": "PASS",
+      "permission_revocation_blocks_committed_retry": "PASS",
+      "totp_persistence_replay_throttle_and_session_revocation": "PASS"
+    },
+    "final_marker": "PASS d-provider-registration-mysql"
+  },
+  "cleanup_reported": {
+    "run_owned_database": true,
+    "namespace_with_matching_uid": true,
+    "remote_registration_scratch": true,
+    "local_registration_build_cache": true
+  },
+  "local_runner_scratch_absent_on_review": true,
+  "transport_note": "OpenSSH close/IO-pending warnings appeared; subsequent PASS and CLEANED markers were supplied.",
+  "scope_limits": [
+    "Unsigned operator report, not an independently captured remote transcript.",
+    "Actual isolated MySQL with synthetic config, target, session/visibility and capacity dependencies.",
+    "TOTP SQL tests use a synthetic user, generated seed and signing key; not human MFA acceptance.",
+    "Does not establish deployed HTTPS, core logout hook, real provider observation/signing or signing-token isolation.",
+    "Does not establish formal registry/config activation or release approval.",
+    "Does not cover actual MySQL commit-disconnect faults or concurrent cross-installation HMAC rotation."
+  ]
+}

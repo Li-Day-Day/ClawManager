@@ -1,0 +1,28 @@
+{
+  "kind": "a_config_writer_security_failed_frozen_gate",
+  "date": "2026-10-15",
+  "status": "formal_byte_fix_passed_default_regression_failed_in_old_D_positive_fixtures",
+  "log": "docs/evidence/a-config-writer-security-local-20261015-r2.txt",
+  "log_sha256": "8c5c0e0824e5f02d6654ca8f6d919b14891913991fa216b2b8840eddf1ea81f5",
+  "source_manifest": "docs/evidence/a-config-writer-security-source-20261015-r2.json",
+  "source_sha256": "8ec91f9e03c42c778b7d22980823bb1e69542964fdbef2229e7c499a685f86d5",
+  "source_files": 1243,
+  "exit": 1,
+  "known_tool_crash_retries": 1,
+  "failed_checks": [
+    "TestConfigBackfillLockedRowPreservesUnsignedIDAndNullableUnicodeMetadata/empty-reason (0.02s)",
+    "TestConfigBackfillLockedRowPreservesUnsignedIDAndNullableUnicodeMetadata/unicode (0.06s)"
+  ],
+  "reason": "Frozen D row tests still expected empty nonnull reason and over-budget Unicode metadata to be legal; current D source has moved these to rejection cases and tests legal exact byte boundaries",
+  "do_not_weaken_production_checks": true,
+  "counterfactual_reached": false,
+  "new_seed_reached": false,
+  "linux_build_reached": false,
+  "cleanup_roots": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-da6a00d67c6b41f0bd7fa5640c69138c"
+  ],
+  "cleanup_independently_confirmed": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "production_approved": false
+}

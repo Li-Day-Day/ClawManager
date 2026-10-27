@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-16",
+  "scope": "D task-event control metadata pagination and detail-control actual-MySQL probe preparation; no public API or production acceptance",
+  "implementation": {
+    "eventReader": "Reader.ReadTaskEventControlPage",
+    "eventService": "Service.ListTaskEventControl",
+    "assemblyBoundary": "readTaskEventControlInTransaction",
+    "eventMessageSelected": false,
+    "publicHTTPMounted": false,
+    "newSchemaOrGrants": false,
+    "detailsMySQLAssertions": "Added to existing TestDAdminReadFullSchemaMySQL; not executed"
+  },
+  "validation": {
+    "finalExitCode": 0,
+    "platform": "Go 1.26.1 Linux amd64 in cached image sha256:2389ebfa5b7f43eeafbd6be0c3700cc46690ef842ad962f6c5bd6be49ed82039",
+    "network": "none",
+    "defaultVet": true,
+    "topLevelTests": 69,
+    "testsIncludingSubtests": 470,
+    "newEventTopLevelTests": 7,
+    "newEventTestsIncludingSubtests": 57,
+    "skipped": 0,
+    "mysqlTaggedCompilePassed": true,
+    "mysqlRuntimeTestsExecuted": false,
+    "sourceCount": 1318,
+    "sourceSHA256": "4cb1fced2e73225a01856a18d70650ab7e4dde35548454e701160c6e834f70b4",
+    "currentFocusChecked": 48,
+    "currentFocusDrift": [],
+    "manifest": "docs/evidence/system-backup-d-task-read-source-20261016-r2.json",
+    "log": "docs/evidence/system-backup-d-task-read-local-20261016-r2.txt",
+    "logSHA256": "d76c9e6039796ce5cc5ec4d858012f75e24cf95442f6f78c089155aebd2227b2"
+  },
+  "firstAttempt": {
+    "revision": "r1",
+    "readTestsPassed": 470,
+    "taggedCompilePassed": false,
+    "reason": "New detail probe declared racedScope/racedReader but referenced tracedScope/tracedReader. Corrected before r2; original failure log and source manifest retained."
+  },
+  "cleanup": {
+    "runs": [
+      {
+        "revision": "r1",
+        "sourceDirectory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-977de6b6f1494f66970e1e38a7294dc8",
+        "container": "codex-d-task-read-977de6b6f1494f66970e1e38a7294dc8",
+        "directoryExists": false,
+        "cleanupReported": true,
+        "containerExists": false
+      },
+      {
+        "revision": "r2",
+        "sourceDirectory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6d6af65b78f14b8c938a43236afa9790",
+        "container": "codex-d-task-read-6d6af65b78f14b8c938a43236afa9790",
+        "directoryExists": false,
+        "cleanupReported": true,
+        "containerExists": false
+      }
+    ],
+    "containersVerifiedAbsent": true,
+    "dependenciesInstalled": false,
+    "imagesDownloaded": false,
+    "buildCache": "Container tmpfs, removed on --rm exit; source directories independently confirmed absent",
+    "containerVerificationNote": "The first combined Docker listing returned exit 1 without diagnostics. Separate per-owner listings both returned DOCKER_EXIT=0 and OWNED_CONTAINER_COUNT=0."
+  },
+  "remaining": [
+    "Actual pinned isolated MySQL execution and new receipt. Local MySQL image is absent; no download or SSH performed.",
+    "A event message read/redaction inside the same task/event transaction before a full EventResource can be returned.",
+    "A/B/C report/artifact/restore authority for full task DetailResources.",
+    "Log content/manifest/overview production integration and mutations remain as previously recorded."
+  ]
+}

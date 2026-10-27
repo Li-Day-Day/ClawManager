@@ -1,0 +1,119 @@
+{
+  "kind": "d_config_response_pipeline_frozen_local",
+  "round": "r9",
+  "recorded_at": "2026-10-15T11:05:34.2472718+08:00",
+  "status": "full_local_pass_with_exact_chunk_cardinality",
+  "main_pass": 152,
+  "subtest_pass": 745,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "seconds": 46.308,
+      "main_pass": 141,
+      "subtest_pass": 689
+    },
+    {
+      "package": "clawreef/internal/systembackupconfig",
+      "seconds": 5.854,
+      "main_pass": 7,
+      "subtest_pass": 33
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "seconds": 3.017,
+      "main_pass": 4,
+      "subtest_pass": 23
+    }
+  ],
+  "exit": 0,
+  "vet_enabled": true,
+  "tool_crash_retries": 0,
+  "source_sha256": "b161bab950fa7570fe62029b4d0595f5c63c4cf0f157a712aed2d1140078cd9c",
+  "source_files": 1188,
+  "snapshot_manifest_sha256": "ce75482b7ffe51c1efcb894c59675a22ca07a41f53f9bb78ff9e3ff5554240e8",
+  "transcript_sha256": "1f493bdd37c1619cfc319253b0d846d99fca1575c990e39d519bb49d39127d98",
+  "changed_source_pins_verified": [
+    {
+      "path": "backend/internal/systembackupconfig/response_content_test.go",
+      "size": 5766,
+      "sha256": "52b2ccfa094668eb0f9fbcf2e58e4ec256dd1f9e1a872cbc5fc8e40818b8387c"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_content.go",
+      "size": 6933,
+      "sha256": "632a01a299f88caba94700dd87d38dce7700efb20068411f83917bf4540e91bd"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_fixture_test.go",
+      "size": 5377,
+      "sha256": "23494e9bd265c3a9e45a3e319d69a6f297582735941ffa8c4e3413869ba00590"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_helpers.go",
+      "size": 1724,
+      "sha256": "19a32fd19d08f0688017b2a2cb8384c13a2df3d43023ba65e53d5780107ab16c"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_pipeline.go",
+      "size": 8028,
+      "sha256": "1900713f78ff747a3532209adee8ee27c2c904b6d3f43b62a1f95d821356fa74"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_read.go",
+      "size": 3236,
+      "sha256": "d9b0dfab32cc878c765930da37d65ea2b3c8b75743e789ba9365074bfd39c4c6"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_sql_test.go",
+      "size": 10101,
+      "sha256": "460f00ed6d181ff75669b3e5c73f301a9d3a707613ea9bf201989f2ced8a31c5"
+    },
+    {
+      "path": "backend/internal/systembackupconfig/response_stage.go",
+      "size": 4865,
+      "sha256": "0013dcba254bc9f1d92550983f267731d18870816c2a08bfc64d9a03d9217bd4"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_guard_test.go",
+      "size": 1968,
+      "sha256": "129f787e412514400dc8d6ba10ea5fe8bd1a084c72f19fc8945b2a4779058c33"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_response_preparation.go",
+      "size": 3054,
+      "sha256": "a316661215141e69ef880f494fa22f6b7863bbd146d70ee42504685d311515a8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction_test.go",
+      "size": 24317,
+      "sha256": "57626a5844b392e5498164204edef4cfc8d081da0a2d2abed93f7b7dc77d1a07"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_transaction.go",
+      "size": 36845,
+      "sha256": "2c28d9304b6c67228449813c9bc616f4830a4a6ccbaa5f0baf1e7d537aaaccab"
+    },
+    {
+      "path": "scripts/system-backup-d-config-mutation-local-validation.ps1",
+      "size": 5072,
+      "sha256": "c223996200fad635f857f9d20e8469659a587701b155e4160a0ce587707bc418"
+    }
+  ],
+  "cleanup_paths": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-67b9b7b851cb40af9025a52972a6ff9f",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-e4fb624207534b1893f2e882ae1131eb"
+  ],
+  "cleanup_confirmed": true,
+  "change": "Lock entire response chunk set; require exactly one matching row and clean EOF/close; reject extra chunk rows",
+  "regression": "TestResponsePublishedBindingRequiresExactReadyRecord/extra-chunk",
+  "crypto": "real AES-GCM KEK wrapping and SBEV full-object roundtrip",
+  "sql": "model drivers",
+  "prior_round": "docs/evidence/system-backup-d-config-response-local-20261015-r8.json",
+  "full_responses_adapter_complete": false,
+  "runtime_sources_complete": false,
+  "producer_publication_implemented": false,
+  "mysql_run": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "remote_run": false
+}

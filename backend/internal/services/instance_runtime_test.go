@@ -22,6 +22,21 @@ func TestDefaultImagePullPolicy_IgnoresEnvOverride(t *testing.T) {
 	}
 }
 
+func TestResolveSystemNamespace(t *testing.T) {
+	tests := map[string]string{
+		"clawmanager":                     "clawmanager-system",
+		"clawmanager-zhanghui08":          "clawmanager-zhanghui08-system",
+		"clawmanager-zhanghui08-system":   "clawmanager-zhanghui08-system",
+		" clawmanager-zhanghui08-system ": "clawmanager-zhanghui08-system",
+		"":                                "",
+	}
+	for input, expected := range tests {
+		if got := resolveSystemNamespace(input); got != expected {
+			t.Errorf("resolveSystemNamespace(%q) = %q, want %q", input, got, expected)
+		}
+	}
+}
+
 func TestBuildRuntimeConfig_HermesUsesWebtopDefaults(t *testing.T) {
 	config := buildRuntimeConfig("hermes", "hermes", "latest", nil, nil)
 

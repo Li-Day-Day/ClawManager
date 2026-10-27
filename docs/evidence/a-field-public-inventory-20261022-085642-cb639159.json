@@ -1,0 +1,705 @@
+{
+    "kind":  "a_field_public_inventory_transport.v1",
+    "script_sha256":  "d02c03c1b840bc6c0244aba17ecf93f4c39602b411e5a89232fb2d77c388c35e",
+    "payload_sha256":  "d02c03c1b840bc6c0244aba17ecf93f4c39602b411e5a89232fb2d77c388c35e",
+    "ssh_target":  "root@10.130.14.23",
+    "context":  "kubernetes-admin@kubernetes",
+    "namespace":  "clawmanager-zhanghui08-system",
+    "namespace_uid":  "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "ssh_exit":  0,
+    "result":  {
+                   "kind":  "a_field_public_inventory.v1",
+                   "status":  "PUBLIC_REFERENCES_OBSERVED_REVIEW_REQUIRED",
+                   "context":  "kubernetes-admin@kubernetes",
+                   "namespace":  "clawmanager-zhanghui08-system",
+                   "namespace_uid":  "337cfe30-2c17-4b8e-b32a-760778b8098e",
+                   "namespace_before":  {
+                                            "name":  "clawmanager-zhanghui08-system",
+                                            "uid":  "337cfe30-2c17-4b8e-b32a-760778b8098e",
+                                            "resource_version":  "32954847"
+                                        },
+                   "namespace_after":  {
+                                           "name":  "clawmanager-zhanghui08-system",
+                                           "uid":  "337cfe30-2c17-4b8e-b32a-760778b8098e",
+                                           "resource_version":  "32954847"
+                                       },
+                   "pods":  [
+                                {
+                                    "name":  "clawmanager-app-788b97b78f-l8k5f",
+                                    "uid":  "aabba383-5db9-48a7-a3b7-2b92624c2f3a",
+                                    "resource_version":  "108482852",
+                                    "phase":  "Running",
+                                    "node":  "node1",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "clawmanager-app-788b97b78f",
+                                                       "uid":  "1cf25790-66e9-423a-95ca-a991ca405101"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "clawmanager-app",
+                                                           "declared_image":  "10.130.14.23:5000/clawmanager:backup-test-zh-fix18",
+                                                           "observed_image_id":  "10.130.14.23:5000/clawmanager@sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d",
+                                                           "container_id":  "containerd://1e921a33872a92c45b0634867673f95c02a6adbeb5695ec6c5afcb3a517377e5",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "secret-broker-token",
+                                                                              "path":  "/var/run/secrets/clawmanager-secret-broker",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "secret-broker-ca",
+                                                                              "path":  "/var/run/secrets/clawmanager-secret-broker-ca",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "tls-cert",
+                                                                              "path":  "/var/run/clawreef-tls",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "workspaces",
+                                                                              "path":  "/workspaces",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-k2llp",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "secret-broker-token",
+                                                        "kind":  "other_volume"
+                                                    },
+                                                    {
+                                                        "name":  "secret-broker-ca",
+                                                        "kind":  "configmap_reference",
+                                                        "reference_name":  "clawmanager-secret-broker-ca"
+                                                    },
+                                                    {
+                                                        "name":  "tls-cert",
+                                                        "kind":  "secret_reference_only",
+                                                        "reference_name":  "clawmanager-tls"
+                                                    },
+                                                    {
+                                                        "name":  "workspaces",
+                                                        "kind":  "other_volume"
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-k2llp",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "clawmanager-secret-broker-754797878-ncth6",
+                                    "uid":  "5409179f-07a9-4acc-8fc9-eda31f259f47",
+                                    "resource_version":  "107772117",
+                                    "phase":  "Running",
+                                    "node":  "node1",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "clawmanager-secret-broker-754797878",
+                                                       "uid":  "d348627c-815c-491f-9826-a4ae95759627"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "secret-broker",
+                                                           "declared_image":  "10.130.14.23:5000/clawmanager@sha256:1ba8cc47f468610e6875117f75fe42ce9fdb15e1cd2e6f877ac8ff2f99e2baa0",
+                                                           "observed_image_id":  "10.130.14.23:5000/clawmanager@sha256:1ba8cc47f468610e6875117f75fe42ce9fdb15e1cd2e6f877ac8ff2f99e2baa0",
+                                                           "container_id":  "containerd://913f9487c319e35a97371d50859241b08d5775980cb3dfc764e2f5fdd755e8e9",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "secret-broker-tls",
+                                                                              "path":  "/var/run/secrets/clawmanager-secret-broker-tls",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-lqlfw",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "secret-broker-tls",
+                                                        "kind":  "secret_reference_only",
+                                                        "reference_name":  "clawmanager-secret-broker-tls"
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-lqlfw",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "clawmanager-team-redis-6b99688494-m8fs6",
+                                    "uid":  "d4bd6cf8-9799-4100-a3ce-7cda5dea20d5",
+                                    "resource_version":  "57249113",
+                                    "phase":  "Running",
+                                    "node":  "k8s-master",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "clawmanager-team-redis-6b99688494",
+                                                       "uid":  "f03da718-ac71-44fc-be2b-759fc505ca3f"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "redis",
+                                                           "declared_image":  "redis:7-alpine",
+                                                           "observed_image_id":  "docker.io/library/redis@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf",
+                                                           "container_id":  "containerd://d730a1746036fdcfbb0f411b882d335b0da427522f824da2ca9664e6181a3962",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "redis-data",
+                                                                              "path":  "/data",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-fllnz",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "redis-data",
+                                                        "kind":  "other_volume"
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-fllnz",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "hermes-runtime-544c99ff7-7ghcw",
+                                    "uid":  "39b187c9-dbb4-49c9-a305-e14503b82a2d",
+                                    "resource_version":  "80524113",
+                                    "phase":  "Running",
+                                    "node":  "node1",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "hermes-runtime-544c99ff7",
+                                                       "uid":  "37397a4b-a20f-49d9-b72b-6b010464fde3"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "runtime",
+                                                           "declared_image":  "10.130.14.23:5000/hermes-lite:2026.7.1",
+                                                           "observed_image_id":  "10.130.14.23:5000/hermes-lite@sha256:6688834a944161d8dada995cdffd90781533b24ab1e75bb2182c46eaee3fb52c",
+                                                           "container_id":  "containerd://54c1176054e0fc7e9c3684ab9db62a150e040e375c1931455282daa072fcfdb2",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "workspaces",
+                                                                              "path":  "/workspaces",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-5jnvk",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "workspaces",
+                                                        "kind":  "other_volume"
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-5jnvk",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "minio-788dfd959f-pgslj",
+                                    "uid":  "2b674b10-0360-4164-8055-022c46991d17",
+                                    "resource_version":  "57249370",
+                                    "phase":  "Running",
+                                    "node":  "k8s-master",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "minio-788dfd959f",
+                                                       "uid":  "341bb8c4-c941-4bf6-b458-7994d5260377"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "minio",
+                                                           "declared_image":  "10.130.14.23:5000/minio:2026.6.5",
+                                                           "observed_image_id":  "10.130.14.23:5000/minio@sha256:52dfd5c0bbd38d3219f2058c7af216d9f9a27a994b7b5baad09bbd38866015ff",
+                                                           "container_id":  "containerd://c3a5836b312f972d3e6322a719a155b935ba031aae89aa78530ca0de4559e53d",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "minio-data",
+                                                                              "path":  "/data",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-cz6nl",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "minio-data",
+                                                        "kind":  "pvc",
+                                                        "claim":  "minio-data",
+                                                        "read_only":  false
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-cz6nl",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "mysql-66496b8965-d6tsl",
+                                    "uid":  "dab1cbf6-ca49-4e16-bd2d-27e70da52004",
+                                    "resource_version":  "57249303",
+                                    "phase":  "Running",
+                                    "node":  "k8s-master",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "mysql-66496b8965",
+                                                       "uid":  "92681383-3575-49f4-8bb2-85217f334270"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "mysql",
+                                                           "declared_image":  "10.130.14.23:5000/mysql:2026.6.5",
+                                                           "observed_image_id":  "10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977",
+                                                           "container_id":  "containerd://816a1df239cfa2c0a053d91e120e170a72c082c35a8f574d1e9274b82127da2f",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "mysql-data",
+                                                                              "path":  "/var/lib/mysql",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "mysql-init",
+                                                                              "path":  "/docker-entrypoint-initdb.d",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-lxjnj",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "mysql-data",
+                                                        "kind":  "pvc",
+                                                        "claim":  "mysql-data",
+                                                        "read_only":  false
+                                                    },
+                                                    {
+                                                        "name":  "mysql-init",
+                                                        "kind":  "configmap_reference",
+                                                        "reference_name":  "clawmanager-mysql-init"
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-lxjnj",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "openclaw-runtime-59c5549fd5-75mtw",
+                                    "uid":  "3c2b2f89-a10d-4bf9-a8d6-afca470c8ce2",
+                                    "resource_version":  "47440467",
+                                    "phase":  "Running",
+                                    "node":  "k8s-master",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "openclaw-runtime-59c5549fd5",
+                                                       "uid":  "c4295679-915b-48c6-a82f-1321ebeacd8e"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "runtime",
+                                                           "declared_image":  "ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest",
+                                                           "observed_image_id":  "10.130.14.23:5000/openclaw-lite@sha256:37c43ba05ff7fd4f0949f274fc67c3e9825f6d3d0f9124b5fc45dc8366c39cee",
+                                                           "container_id":  "containerd://fbc68d5ccad6f44560d454810b4d73e5c266500ea1238b129a24d0ed78a1d534",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "workspaces",
+                                                                              "path":  "/workspaces",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-5qx5b",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "workspaces",
+                                                        "kind":  "other_volume"
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-5qx5b",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "skill-scanner-6cbf6887d4-2pv29",
+                                    "uid":  "b4fc0585-c302-4fcc-97f6-66941e13cc06",
+                                    "resource_version":  "80524393",
+                                    "phase":  "Running",
+                                    "node":  "node1",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "skill-scanner-6cbf6887d4",
+                                                       "uid":  "bcf3bff2-dd46-4970-8f74-34e2f549c1e7"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "skill-scanner",
+                                                           "declared_image":  "10.130.14.23:5000/skill-scanner:2026.6.5",
+                                                           "observed_image_id":  "10.130.14.23:5000/skill-scanner@sha256:07925a31ddcd38554bdd428f418a7622cf92341520e71e309d96d921f2c2e0f4",
+                                                           "container_id":  "containerd://8cadb5f50c50d0bc72684c8b0ab840e6bd0462c76d77f2208162c4294e6e31c3",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "kube-api-access-646gk",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "kube-api-access-646gk",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                },
+                                {
+                                    "name":  "workspace-store-5f6db46744-9z6g8",
+                                    "uid":  "094b3f6f-5310-4a1c-9fc6-df254749cd39",
+                                    "resource_version":  "47440462",
+                                    "phase":  "Running",
+                                    "node":  "k8s-master",
+                                    "owners":  [
+                                                   {
+                                                       "kind":  "ReplicaSet",
+                                                       "name":  "workspace-store-5f6db46744",
+                                                       "uid":  "2662db74-df89-48de-9e93-f25549b017cc"
+                                                   }
+                                               ],
+                                    "containers":  [
+                                                       {
+                                                           "name":  "nfs-server",
+                                                           "declared_image":  "10.130.14.23:5000/nfs-server-alpine:2026.6.9",
+                                                           "observed_image_id":  "10.130.14.23:5000/nfs-server-alpine@sha256:7fa99ae65c23c5af87dd4300e543a86b119ed15ba61422444207efc7abd0ba20",
+                                                           "container_id":  "containerd://7f76746afe9c7cc54fd54d7a62c805b87dab6caeba23232d988899b1c5633a53",
+                                                           "ready":  true,
+                                                           "restart_count":  0,
+                                                           "dsn_references":  [
+
+                                                                              ],
+                                                           "mounts":  [
+                                                                          {
+                                                                              "name":  "workspaces",
+                                                                              "path":  "/exports/workspaces",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  false,
+                                                                              "sub_path_expr_present":  false
+                                                                          },
+                                                                          {
+                                                                              "name":  "kube-api-access-tdk2p",
+                                                                              "path":  "/var/run/secrets/kubernetes.io/serviceaccount",
+                                                                              "sub_path":  "",
+                                                                              "read_only":  true,
+                                                                              "sub_path_expr_present":  false
+                                                                          }
+                                                                      ],
+                                                           "native_inspector_capability_verified":  false,
+                                                           "runtime_identity_or_role_approved":  false
+                                                       }
+                                                   ],
+                                    "volumes":  [
+                                                    {
+                                                        "name":  "workspaces",
+                                                        "kind":  "pvc",
+                                                        "claim":  "clawmanager-workspaces",
+                                                        "read_only":  false
+                                                    },
+                                                    {
+                                                        "name":  "kube-api-access-tdk2p",
+                                                        "kind":  "other_volume"
+                                                    }
+                                                ]
+                                }
+                            ],
+                   "claims":  [
+                                  {
+                                      "name":  "clawmanager-workspaces",
+                                      "uid":  "12354b07-dd21-4d40-ac9b-da5c97699109",
+                                      "resource_version":  "32955216",
+                                      "phase":  "Bound",
+                                      "volume_name":  "clawmanager-zhanghui08-workspaces-pv",
+                                      "storage_class":  "manual",
+                                      "access_modes":  [
+                                                           "ReadWriteMany"
+                                                       ],
+                                      "capacity":  {
+                                                       "storage":  "50Gi"
+                                                   },
+                                      "pv":  {
+                                                 "name":  "clawmanager-zhanghui08-workspaces-pv",
+                                                 "uid":  "d57c7bc1-3d3c-45e8-a898-0d2e5e340810",
+                                                 "resource_version":  "33885135",
+                                                 "claim_namespace":  "clawmanager-zhanghui08-system",
+                                                 "claim_name":  "clawmanager-workspaces",
+                                                 "claim_uid":  "12354b07-dd21-4d40-ac9b-da5c97699109"
+                                             }
+                                  },
+                                  {
+                                      "name":  "minio-data",
+                                      "uid":  "e7bc8d73-e8fb-4010-8751-d9a0c8bb2467",
+                                      "resource_version":  "32955207",
+                                      "phase":  "Bound",
+                                      "volume_name":  "clawmanager-zhanghui08-minio-pv",
+                                      "storage_class":  "manual",
+                                      "access_modes":  [
+                                                           "ReadWriteOnce"
+                                                       ],
+                                      "capacity":  {
+                                                       "storage":  "10Gi"
+                                                   },
+                                      "pv":  {
+                                                 "name":  "clawmanager-zhanghui08-minio-pv",
+                                                 "uid":  "b1d05395-a5f5-4421-ae52-d63f7ce03327",
+                                                 "resource_version":  "33885129",
+                                                 "claim_namespace":  "clawmanager-zhanghui08-system",
+                                                 "claim_name":  "minio-data",
+                                                 "claim_uid":  "e7bc8d73-e8fb-4010-8751-d9a0c8bb2467"
+                                             }
+                                  },
+                                  {
+                                      "name":  "mysql-data",
+                                      "uid":  "e3c297bd-a00a-4a60-bce7-7368a69e8fd2",
+                                      "resource_version":  "32955213",
+                                      "phase":  "Bound",
+                                      "volume_name":  "clawmanager-zhanghui08-mysql-pv",
+                                      "storage_class":  "manual",
+                                      "access_modes":  [
+                                                           "ReadWriteOnce"
+                                                       ],
+                                      "capacity":  {
+                                                       "storage":  "5Gi"
+                                                   },
+                                      "pv":  {
+                                                 "name":  "clawmanager-zhanghui08-mysql-pv",
+                                                 "uid":  "2661bbff-e182-4189-9a09-3c23d5c71050",
+                                                 "resource_version":  "33885128",
+                                                 "claim_namespace":  "clawmanager-zhanghui08-system",
+                                                 "claim_name":  "mysql-data",
+                                                 "claim_uid":  "e3c297bd-a00a-4a60-bce7-7368a69e8fd2"
+                                             }
+                                  },
+                                  {
+                                      "name":  "redis-data",
+                                      "uid":  "34941b96-4f87-4c08-a1c4-843c3d18fa2e",
+                                      "resource_version":  "33885187",
+                                      "phase":  "Bound",
+                                      "volume_name":  "clawmanager-zhanghui08-redis-pv",
+                                      "storage_class":  "manual",
+                                      "access_modes":  [
+                                                           "ReadWriteOnce"
+                                                       ],
+                                      "capacity":  {
+                                                       "storage":  "1Gi"
+                                                   },
+                                      "pv":  {
+                                                 "name":  "clawmanager-zhanghui08-redis-pv",
+                                                 "uid":  "074f1c17-d597-4e62-a9a5-63561cd8d565",
+                                                 "resource_version":  "33885134",
+                                                 "claim_namespace":  "clawmanager-zhanghui08-system",
+                                                 "claim_name":  "redis-data",
+                                                 "claim_uid":  "34941b96-4f87-4c08-a1c4-843c3d18fa2e"
+                                             }
+                                  },
+                                  {
+                                      "name":  "system-backup-capacity-report",
+                                      "uid":  "d9452769-2406-4437-8dab-775f2de7bf13",
+                                      "resource_version":  "93184146",
+                                      "phase":  "Bound",
+                                      "volume_name":  "pvc-d9452769-2406-4437-8dab-775f2de7bf13",
+                                      "storage_class":  "longhorn-rwx",
+                                      "access_modes":  [
+                                                           "ReadWriteMany"
+                                                       ],
+                                      "capacity":  {
+                                                       "storage":  "16Mi"
+                                                   },
+                                      "pv":  {
+                                                 "name":  "pvc-d9452769-2406-4437-8dab-775f2de7bf13",
+                                                 "uid":  "85c6c189-a646-4031-8e59-de26f8a45ed6",
+                                                 "resource_version":  "93184164",
+                                                 "claim_namespace":  "clawmanager-zhanghui08-system",
+                                                 "claim_name":  "system-backup-capacity-report",
+                                                 "claim_uid":  "d9452769-2406-4437-8dab-775f2de7bf13"
+                                             }
+                                  }
+                              ],
+                   "candidate_roles_with_dsn_variable_names":  [
+
+                                                               ],
+                   "blockers":  [
+
+                                ],
+                   "missing_candidate_roles":  [
+                                                   "registration",
+                                                   "download",
+                                                   "collector"
+                                               ],
+                   "pending":  [
+                                   "native inspector bytes/capability in actual image",
+                                   "actual SQL users and grants",
+                                   "original materials and validity",
+                                   "capacity input and measured volume budgets",
+                                   "formal role approval and complete field acceptance"
+                               ],
+                   "snapshot_atomic":  false,
+                   "secrets_requested":  false,
+                   "container_files_read":  false,
+                   "sql_executed":  false,
+                   "cluster_mutated":  false,
+                   "dependencies_installed":  false,
+                   "production_approved":  false
+               },
+    "production_approved":  false
+}

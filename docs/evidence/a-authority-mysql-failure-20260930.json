@@ -1,0 +1,41 @@
+{
+  "namespace": "sbk-mig-260930003602-2567",
+  "cleanup_markers": [
+    "evidence run-owned database",
+    "namespace",
+    "remote-registration-scratch",
+    "local-registration-build-cache"
+  ],
+  "log": {
+    "sha256": "9c634c42431aafc30a54f303bd14d5a4bfc5e18599f68629a1c3e5b2f5cd7f2f",
+    "path": "docs/evidence/a-authority-mysql-remote-20260930-082000.txt"
+  },
+  "binary_sha256": "a2cbe0445a9ef951dc5486550dd9ee3394bca355ee07054f390ece5a626e358f",
+  "status": "failed_gc_fixture_setup",
+  "namespace_uid": "ebae089e-49cb-4d9d-9eb0-4605dd178e44",
+  "migration_count": 93,
+  "new_cases_passed": [
+    "recovery_two_workers_one_live_claim",
+    "recovery_expired_claim_takeover_rejects_old_result",
+    "recovery_persisted_backoff_blocks_direct_retry",
+    "recovery_active_config_revokes_inflight_result",
+    "recovery_config_hash_revokes_inflight_result",
+    "recovery_credential_ref_revokes_inflight_result"
+  ],
+  "exit_code": 1,
+  "previous_cases_passed": 8,
+  "new_cases_failed": [
+    "gc_two_workers_one_live_claim",
+    "gc_expired_claim_takeover_rejects_old_result",
+    "gc_persisted_backoff_blocks_direct_retry",
+    "gc_active_config_revokes_inflight_result",
+    "gc_config_hash_revokes_inflight_result",
+    "gc_credential_ref_revokes_inflight_result",
+    "gc_operation_lease_before_delete",
+    "gc_operation_takeover_before_delete",
+    "gc_new_reference_before_delete",
+    "gc_reference_added_after_delete_retains_payload",
+    "gc_operation_expires_during_real_row_lock_wait"
+  ],
+  "root_cause": "Synthetic seed store omitted authoritative absence, so Publish correctly refused PUT; GC fixtures failed before concurrency checks"
+}

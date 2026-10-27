@@ -1,0 +1,69 @@
+{
+  "kind": "system_backup_a_evidence_spike_preparation",
+  "recorded_at": "2026-09-24T01:51:53.118Z",
+  "status": "local_tests_passed_remote_execution_pending",
+  "remote_access_performed": false,
+  "dependencies_installed": false,
+  "test_artifacts_created": false,
+  "provider_capability_approved": false,
+  "evidence_registered": false,
+  "validation": [
+    {
+      "command": "py -3.10 -B scripts/system-backup-a-evidence-spike.test.py",
+      "exit_code": 0,
+      "tests": 10
+    },
+    {
+      "command": "node scripts/system-backup-a-evidence-spike.test.mjs",
+      "exit_code": 0,
+      "tests": 3
+    }
+  ],
+  "remote_plan": {
+    "temporary_pods": 3,
+    "identity_per_pod": 1,
+    "immutable_run_intent_configmaps": 1,
+    "object_intents": 2,
+    "matrix_checks": 18,
+    "cleanup_verified_separately": true
+  },
+  "limitations": [
+    "Local mocks and public cryptographic vector only; real MinIO behavior pending.",
+    "Out-of-prefix GET uses a never-created random key and does not alone prove isolation of existing objects.",
+    "Static lab credentials do not prove production request-bound grants or signed evidence."
+  ],
+  "files": [
+    {
+      "path": "docs/evidence/system-backup-d-provider-lab-handoff-20260924.json",
+      "sha256": "c6d15516cc4b9f32dd1f4cffaa767c050ff2f2315df4509ad086c7aa51eccf4b"
+    },
+    {
+      "path": "docs/evidence/system-backup-a-provider-handoff-preflight-20260924T013626Z.json",
+      "sha256": "29abc4d6b596015e9705038710f373dcbde98a9874aa4d10f68f69f38bfd66c8"
+    },
+    {
+      "path": "docs/system-backup-a-evidence-spike-20260924.md",
+      "sha256": "3c6da97296beb8efe0cf37f27483dad660ca3cc7a17ae718542be0e7fe532d33"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-client.py",
+      "sha256": "e8c48aa2e2e2a7979be98a93ec0d92dee8111835fafc55c45689ebb57f979613"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.py",
+      "sha256": "bd91ab8cba9233035b3bde28d8c1e4f86070d7a90e040167e9af0fda6aaad565"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.mjs",
+      "sha256": "2df4ed0a87549fed6de1bdf3bd581b0a5d451df876077cc28f35d54bdf09132e"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.test.py",
+      "sha256": "868d7304bba84ecbfa40984e1780186394c71734d174744e6ae9bd784171f266"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-spike.test.mjs",
+      "sha256": "d979e396bd7f3bfda499b1fbba91098741778f988b967f5ce7e8a1782ed7b514"
+    }
+  ]
+}

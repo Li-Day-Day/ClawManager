@@ -1,0 +1,157 @@
+**********************
+PowerShell transcript start
+Start time: 20261016095009
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$proofRunStamp=Get-Date -Format 'yyyyMMdd-HHmmss'; $proofRunLog=Join-Path $PWD "docs/evidence/a-config-proof-mysql-local-$proofRunStamp.txt"; $proofRunManifest=Join-Path $PWD "docs/evidence/a-config-proof-mysql-source-$proofRunStamp.json"; Start-Transcript -Path $proofRunLog -NoClobber; $proofRunExit=1; try { & ./scripts/system-backup-a-config-proof-validation.ps1 -BuildParallelism 1 -SourceManifestPath $proofRunManifest; $proofRunExit=0 } catch { Write-Output $_.Exception.ToString() } finally { Write-Output "a_config_proof_local_exit=$proofRunExit"; Stop-Transcript }; exit $proofRunExit
+Process ID: 43728
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-config-proof-mysql-local-20261016-095009.txt
+LOCAL_SOURCE config-proof-frozen=yes source_sha256=5c70c5c7235e51f1701fea438e9d09dc12e7557aebfe5c293eed463d58850176 files=1274
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS>TerminatingError(): "ConfigProofOnly requires its dedicated validation profile"
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: history"
+PASS reject-original-dispatch-defect-history
+PS>TerminatingError(): "Missing exact KUBE_CONTEXT environment assignment: restore"
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE config-proof-only=yes config-write=no backfill=no human-mfa=no real_mysql=not_run
+=== RUN   TestConfigProofIssuesBoundUpdateAndRollbackOnce
+=== RUN   TestConfigProofIssuesBoundUpdateAndRollbackOnce/updateSystemBackupConfig
+=== RUN   TestConfigProofIssuesBoundUpdateAndRollbackOnce/rollbackSystemBackupConfig
+--- PASS: TestConfigProofIssuesBoundUpdateAndRollbackOnce (0.05s)
+    --- PASS: TestConfigProofIssuesBoundUpdateAndRollbackOnce/updateSystemBackupConfig (0.04s)
+    --- PASS: TestConfigProofIssuesBoundUpdateAndRollbackOnce/rollbackSystemBackupConfig (0.01s)
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/missing-session
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/revoked
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/shortened
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/unconfirmed
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/changed-totp-credential
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/signer-failed
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/audit-failed
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/final-denied
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/signer-expired-proof
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/signer-expired-session
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/signer-revoked-session
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/clock-backwards
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/non-utc
+=== RUN   TestConfigProofRejectsSessionSignerAndFinalFailures/commit-unknown
+--- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures (0.29s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/missing-session (0.03s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/revoked (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/shortened (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/unconfirmed (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/changed-totp-credential (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/signer-failed (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/audit-failed (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/final-denied (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/signer-expired-proof (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/signer-expired-session (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/signer-revoked-session (0.03s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/clock-backwards (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/non-utc (0.02s)
+    --- PASS: TestConfigProofRejectsSessionSignerAndFinalFailures/commit-unknown (0.02s)
+=== RUN   TestConfigProofHTTPUsesStrictBusinessRequestAndActualJWT
+=== RUN   TestConfigProofHTTPUsesStrictBusinessRequestAndActualJWT/updateSystemBackupConfig
+=== RUN   TestConfigProofHTTPUsesStrictBusinessRequestAndActualJWT/rollbackSystemBackupConfig
+--- PASS: TestConfigProofHTTPUsesStrictBusinessRequestAndActualJWT (0.05s)
+    --- PASS: TestConfigProofHTTPUsesStrictBusinessRequestAndActualJWT/updateSystemBackupConfig (0.03s)
+    --- PASS: TestConfigProofHTTPUsesStrictBusinessRequestAndActualJWT/rollbackSystemBackupConfig (0.01s)
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/digest
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/actor
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/session
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/unknown-endpoint
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/missing-key
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/duplicate
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/bad-key
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/bad-token
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/plain-http
+=== RUN   TestConfigProofHTTPRejectsAssertionsBeforeSQL/oversize
+--- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL (0.03s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/digest (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/actor (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/session (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/unknown-endpoint (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/missing-key (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/duplicate (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/bad-key (0.01s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/bad-token (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/plain-http (0.00s)
+    --- PASS: TestConfigProofHTTPRejectsAssertionsBeforeSQL/oversize (0.00s)
+=== RUN   TestConfigProofHTTPAcceptsFullRequestBeyondOldLimit
+--- PASS: TestConfigProofHTTPAcceptsFullRequestBeyondOldLimit (0.03s)
+=== RUN   TestConfigProofPreservesProviderAndEnrollmentFlow
+=== RUN   TestConfigProofPreservesProviderAndEnrollmentFlow/provider
+=== RUN   TestConfigProofPreservesProviderAndEnrollmentFlow/confirm
+--- PASS: TestConfigProofPreservesProviderAndEnrollmentFlow (0.03s)
+    --- PASS: TestConfigProofPreservesProviderAndEnrollmentFlow/provider (0.01s)
+    --- PASS: TestConfigProofPreservesProviderAndEnrollmentFlow/confirm (0.02s)
+=== RUN   TestConfigProofFixtureCoversFormalInstallationStateRequiredColumns
+--- PASS: TestConfigProofFixtureCoversFormalInstallationStateRequiredColumns (0.01s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	2.128s
+=== RUN   TestAConfigProofMySQLSeed
+=== RUN   TestAConfigProofMySQLSeed/kind
+=== RUN   TestAConfigProofMySQLSeed/catalog
+=== RUN   TestAConfigProofMySQLSeed/duplicate-file
+=== RUN   TestAConfigProofMySQLSeed/path
+=== RUN   TestAConfigProofMySQLSeed/unknown-field
+=== RUN   TestAConfigProofMySQLSeed/digest
+--- PASS: TestAConfigProofMySQLSeed (0.01s)
+    --- PASS: TestAConfigProofMySQLSeed/kind (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/catalog (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/duplicate-file (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/path (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/unknown-field (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/digest (0.00s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	1.403s
+=== RUN   TestAConfigProofMySQLSeed
+=== RUN   TestAConfigProofMySQLSeed/kind
+=== RUN   TestAConfigProofMySQLSeed/catalog
+=== RUN   TestAConfigProofMySQLSeed/duplicate-file
+=== RUN   TestAConfigProofMySQLSeed/path
+=== RUN   TestAConfigProofMySQLSeed/unknown-field
+=== RUN   TestAConfigProofMySQLSeed/digest
+--- PASS: TestAConfigProofMySQLSeed (0.03s)
+    --- PASS: TestAConfigProofMySQLSeed/kind (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/catalog (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/duplicate-file (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/path (0.02s)
+    --- PASS: TestAConfigProofMySQLSeed/unknown-field (0.00s)
+    --- PASS: TestAConfigProofMySQLSeed/digest (0.00s)
+PASS
+LOCAL_PASS config-standalone-seed=yes checkout-fixtures=absent writer-candidate=False real_mysql=not_run
+LOCAL_PASS config-proof-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=d8cd186fd065e5a32b1a03c49afcac5e1062a420507f3947c0c5086655849ff9 ddl_sha256=42496bc1187aeb081f1b3193284b6c976a9f697b1e950504cd0b0c7c54d8d3e5
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=a4d9355519b2f4aa7f554f875e7da9536779b67ea954f20ac946bbb0cc269403
+CLEANED local-registration-build-cache=True
+LOCAL_PASS config-proof-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=False
+LOCAL_CLEANUP config-proof-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-1c20cc170dc240688dfd1432cbb508aa removed=True
+a_config_proof_local_exit=0
+**********************
+PowerShell transcript end
+End time: 20261016101733
+**********************

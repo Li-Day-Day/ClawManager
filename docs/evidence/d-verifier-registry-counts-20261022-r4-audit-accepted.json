@@ -1,0 +1,199 @@
+{
+  "kind": "d_verifier_registry_counts_independently_accepted",
+  "status": "locally_validated_published_cleaned",
+  "original_preparation": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-preparation.json",
+  "original_orchestration_exit": -1,
+  "original_orchestration_failure_preserved": true,
+  "original_source_postcheck_claimed": false,
+  "source_sha256": "c401b705b9cf3ef9df1df3ac238628d0745a8bff4177eba03a88d6cc0814319d",
+  "source_files": 1562,
+  "input_scope_sha256": "1910e4167ed29a686324c2cf747cb80dd960b5834d0499023363833c7153abc9",
+  "input_files": 345,
+  "isolated_and_published_tests": 112,
+  "independent_recheck_tests": 112,
+  "counterfactual_failures": 2,
+  "original_generated_reads": [
+    {
+      "stage": "published-tests",
+      "op": "read",
+      "path": ".tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66/tmp/clawmanager-catalog-hash-M81hzN/001_example.sql",
+      "exists": true,
+      "size": 47,
+      "sha256": "289aac42c7d62ec890006e52b6c78b679687cba31b616c87e74ab88fe37433be"
+    },
+    {
+      "stage": "published-tests",
+      "op": "read",
+      "path": ".tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66/tmp/clawmanager-catalog-hash-M81hzN/001_example.sql",
+      "exists": true,
+      "size": 50,
+      "sha256": "8a537b9573e607c303de0f17994013783c4548943a05ca514f784a5802240472"
+    },
+    {
+      "stage": "published-tests",
+      "op": "read",
+      "path": ".tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66/tmp/clawmanager-schema-evidence-1JiGf8/reviewed-evidence.json",
+      "exists": true,
+      "size": 1900,
+      "sha256": "d6d13628d0ad6e3dc63251686d281e8b00716d0ade1e66e1b3703aa4715d91ce"
+    }
+  ],
+  "changed_files": [
+    {
+      "path": "contracts/system-backup/v12/verifier-contract.schema.json",
+      "before_sha256": "a629ab1d43601a02297a3d2bdc1fca31c32c771b97b599fe8b7e2fa18ec85ca7",
+      "after_sha256": "32957c05eb59c70abcac99ddfc5f6eabf3be330c0489dc55494959522b69513c"
+    },
+    {
+      "path": "scripts/system-backup-contract-check.mjs",
+      "before_sha256": "daf7b9b2bf9f8b6d4496f16fbf70ea3bde32c75890985e58937786ca47c66ef9",
+      "after_sha256": "10964221e0f0f001ab267f6e93fe8dcdc3e957d33c5af1730e0cd74a48acd004"
+    },
+    {
+      "path": "scripts/system-backup-d-control-exclusion.test.mjs",
+      "before_sha256": "791f9b464d631ead11aa4eb441b8ee1b337f7487bd478ccde3cd5f7d8e7398ec",
+      "after_sha256": "ee01ec998ac7f0476dd3f4b8ea8d386cf99cf3858de295ae97df80538320a202"
+    },
+    {
+      "path": "scripts/system-backup-verifier-registry.test.mjs",
+      "before_sha256": null,
+      "after_sha256": "0266902ecafcef8860a0e9b15cc007c50358ac902a1b8931ab92a8bb42ac9cd7"
+    }
+  ],
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-788706e355b74d1f8888baad8b29038f",
+    "removed": true,
+    "files_removed": 1,
+    "test_build_artifacts_removed": true,
+    "cleaned_utc": "2026-10-22T05:00:46.4713043Z"
+  },
+  "prior_cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-83ec9750682d46c5996ebe45720dcf66",
+    "removed": true,
+    "files_removed": 1571,
+    "test_build_artifacts_removed": true,
+    "cleaned_utc": "2026-10-22T04:58:53.1239951Z"
+  },
+  "go_tests_run": false,
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "remote_executed": false,
+  "contract_frozen": false,
+  "evidence": [
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-inputs.json",
+      "size": 1310,
+      "sha256": "bdb74d3d11fdbe6f2a83a214115653b54034dd147431053a34fcbb64b68d326f"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-validation.ps1",
+      "size": 3976,
+      "sha256": "45c53055177e4339d2f3f33de9e1ff2b4a6796cf62783298953f2902e40bf4df"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-review.mjs",
+      "size": 13710,
+      "sha256": "a87557ced4537a60a6d9edcf8e0efe1606f951efe8db152f294e30c2acf7f2e3"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-native.json",
+      "size": 1175,
+      "sha256": "2d1290bf778800321bdfa77af34ec2636dba5fdc7759559294c67d2f0ba0b828"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-recheck.stdout",
+      "size": 9805,
+      "sha256": "86bfffb9504cc8f4c99dcb70f62862c9186e13c136d7b48ea40633a1595e0442"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-recheck.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-dto.stdout",
+      "size": 346,
+      "sha256": "ef7ca4b3f66110404244378227b7035160ee2f162ac0e03ba605fd9a48a23dbe"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r4-audit-dto.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-preparation.json",
+      "size": 119743,
+      "sha256": "28338b95b0e539e298df488e0e64572b93b824ae3809a0b2eaa7a486268fda93"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-native.json",
+      "size": 3889,
+      "sha256": "e6a7ea4c562306458372056c8836673f124ff42a9a8069934ec945cc1078535f"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-stages.json",
+      "size": 3079,
+      "sha256": "a24f703f4f3c1983ba44978e6e7645a5d8d536a070772fa7770fe21cabacdd24"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-tests.stdout",
+      "size": 9818,
+      "sha256": "daa49183f97f838b0f707746de39e6de705d1849d9d9ab1032c4ce39c8e8a7f8"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-tests.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-tests-reads.jsonl",
+      "size": 216331,
+      "sha256": "f1688ae2596a8ac49ea490610a1b368d79880f321316648fcdf09904c83a4e52"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-cli.stdout",
+      "size": 6721,
+      "sha256": "f91513f21082d350f18b88d12207e3341596b8acbbe49e1b0445a4ba2c5a3d9b"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-cli.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-cli-reads.jsonl",
+      "size": 23425,
+      "sha256": "bcf216efbc91cac3cab57a4a731f032861ad1440481fec1a710867db7a1b592b"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-strict.stdout",
+      "size": 6721,
+      "sha256": "f91513f21082d350f18b88d12207e3341596b8acbbe49e1b0445a4ba2c5a3d9b"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-strict.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-strict-reads.jsonl",
+      "size": 23425,
+      "sha256": "bcf216efbc91cac3cab57a4a731f032861ad1440481fec1a710867db7a1b592b"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-dto.stdout",
+      "size": 346,
+      "sha256": "ef7ca4b3f66110404244378227b7035160ee2f162ac0e03ba605fd9a48a23dbe"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-dto.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-verifier-registry-counts-20261022-r3-83ec9750-published-dto-reads.jsonl",
+      "size": 2000,
+      "sha256": "96bf69b9546c8ae4e0163a4b58588c3e3903c2754470044f09788ee6188a8329"
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "kind": "system_backup_a_operator_evidence_spike_receipt",
+  "source": "operator-provided console output; presentation escapes normalized; not signed evidence",
+  "recorded_at": "2026-09-24T02:27:33.580Z",
+  "remote_exit": 0,
+  "local_closed_validator_passed": true,
+  "result": {
+    "kind": "a_evidence_spike_v2",
+    "status": "passed",
+    "run_id": "a-ev-7b1a56dbc722a6e70b0dc4f0",
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "action": "run",
+    "started_at": "2026-09-24T02:08:46.443352+00:00",
+    "finished_at": "2026-09-24T02:11:27.677205+00:00",
+    "failed_stage": "none",
+    "checks_passed": [
+      "write-sha256",
+      "conditional-create-conflict",
+      "read-content-sha256",
+      "range-content",
+      "bad-checksum-rejected",
+      "read-put-conflict-denied",
+      "read-delete-denied",
+      "write-get-denied",
+      "write-delete-denied",
+      "delete-get-denied",
+      "delete-put-conflict-denied",
+      "read-outside-get-denied",
+      "read-list-denied",
+      "write-outside-get-denied",
+      "write-list-denied",
+      "delete-outside-get-denied",
+      "delete-list-denied",
+      "tls-ca-and-hostname-denials"
+    ],
+    "observations": [
+      {
+        "role": "write",
+        "action": "put",
+        "object": "payload",
+        "http_status": 200,
+        "error_code": "none"
+      },
+      {
+        "role": "write",
+        "action": "put-conflict",
+        "object": "payload",
+        "http_status": 412,
+        "error_code": "PreconditionFailed"
+      },
+      {
+        "role": "read",
+        "action": "get",
+        "object": "payload",
+        "http_status": 200,
+        "error_code": "none"
+      },
+      {
+        "role": "read",
+        "action": "range",
+        "object": "payload",
+        "http_status": 206,
+        "error_code": "none"
+      },
+      {
+        "role": "write",
+        "action": "put-bad-checksum",
+        "object": "bad-checksum",
+        "http_status": 400,
+        "error_code": "XAmzContentChecksumMismatch"
+      },
+      {
+        "role": "read",
+        "action": "put-conflict",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "read",
+        "action": "delete",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "write",
+        "action": "get",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "write",
+        "action": "delete",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "delete",
+        "action": "get",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "delete",
+        "action": "put-conflict",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "read",
+        "action": "outside-get",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "read",
+        "action": "list",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "write",
+        "action": "outside-get",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "write",
+        "action": "list",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "delete",
+        "action": "outside-get",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "delete",
+        "action": "list",
+        "object": "payload",
+        "http_status": 403,
+        "error_code": "AccessDenied"
+      },
+      {
+        "role": "read",
+        "action": "tls-negative",
+        "object": "payload",
+        "http_status": null,
+        "error_code": "none"
+      },
+      {
+        "role": "read",
+        "action": "get",
+        "object": "payload",
+        "http_status": 200,
+        "error_code": "none"
+      },
+      {
+        "role": "delete",
+        "action": "delete",
+        "object": "payload",
+        "http_status": 204,
+        "error_code": "none"
+      },
+      {
+        "role": "read",
+        "action": "get",
+        "object": "payload",
+        "http_status": 404,
+        "error_code": "NoSuchKey"
+      },
+      {
+        "role": "read",
+        "action": "get",
+        "object": "bad-checksum",
+        "http_status": 404,
+        "error_code": "NoSuchKey"
+      }
+    ],
+    "objects_removed": true,
+    "pods_removed": true,
+    "recovery_intent_retained": false,
+    "provider_capability_approved": false,
+    "evidence_registered": false,
+    "production_scoped_grant_verified": false
+  },
+  "transport_warning": "OpenSSH reported pending IO on closed socket; complete validated result and exit 0 were provided",
+  "registered_evidence": null,
+  "approved_reviewers": []
+}

@@ -1,5 +1,7 @@
 # 用户和实例备份恢复：合并前审查（2026-10-26）
 
+后续更新：2026-10-27 已在本地处理与 `backup@52117dee` 的两处实际文本冲突及发现的兼容问题，详见[分支整合记录](users-instances-backup-branch-integration.zh-CN.md)。下文保留首次审查事实；公共控制面的业务整合项仍未完成。
+
 ## 结论与边界
 
 当前工作区相对 `main` 的后端测试、静态检查、Linux 编译、前端构建及本次 WorkBuddy Lite 隔离复测通过。发现并修复了恢复预检覆盖不足和前端结果页状态更新问题；完整文件清单见[改动清单](users-instances-backup-change-list.md)。

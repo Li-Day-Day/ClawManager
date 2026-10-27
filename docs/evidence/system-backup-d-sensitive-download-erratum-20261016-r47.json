@@ -1,0 +1,15 @@
+{
+  "kind": "d_sensitive_download_contract_erratum.v1",
+  "decision": "docs/evidence/system-backup-d-sensitive-download-contract-20261016.json",
+  "decision_sha256": "8b14d0804e9bfb4b5169bc585fd1aa50d38877b61b228984184c7427d73d8eac",
+  "status": "d_correction_preserving_original_frozen_decision",
+  "overrides": {
+    "signed_request.empty_content": "Current download admission rejects ContentSize <= 0. Existing parseRange with absent Range and size 0 returns 0/-1; current Manifest validation rejects zero size. The 0/0 pure canonical vector is a reserved future encoding, not supported current runtime behavior. Enabling it requires a separately reviewed Manifest/envelope/parser change."
+  },
+  "audit_timestamp_clarification": "Published 001 audit_logs.created_at is TIMESTAMP(0). Bind SQL UTC truncated explicitly to the second and verify the exact stored second; keep the original microsecond SQL time separately in the closed intent JSON and sealed anchor. This does not extend proof/session/claim deadlines or substitute for the final admission UTC check.",
+  "key_grammar_clarification": "Idempotency-Key remains [A-Za-z0-9._:-]{16,128}; ASCII in the prose does not authorize arbitrary ASCII.",
+  "prior_a_candidate_review": "docs/evidence/a-sensitive-download-candidate-review-20261016.json",
+  "prior_a_candidate_scope": "Canonical/proof candidate only, 426 main plus 2759 subtests; no SQL nonce consumption or production adapter. Original 0/0 vector remains evidence of pure encoding only.",
+  "production_approval": false,
+  "migration_catalog_modified": false
+}

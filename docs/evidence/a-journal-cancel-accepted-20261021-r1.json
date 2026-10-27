@@ -1,0 +1,154 @@
+{
+  "kind": "a_context_cancellable_audit_and_failure_journal_local_acceptance",
+  "recorded_at": "2026-10-21T04:39:02.555Z",
+  "status": "accepted_frozen_local_queue_and_latch_only",
+  "source": "docs/evidence/a-journal-cancel-20261021-r1-full-source.json",
+  "source_manifest_sha256": "c0c653396271c738a0ffbe4c701b3a88cde11481dd2ab2278de2c41bb92004a5",
+  "source_sha256": "55b21d88339f915a3a142d81dd6ae5226b1e23fcf7f522a538bad3d0c4f3d9d7",
+  "source_files": 1464,
+  "events": "docs/evidence/a-journal-cancel-20261021-r1-full.jsonl",
+  "events_sha256": "7910bbd6276a6455eaefc87028b819526220aea802faff017be3015b6c75eed1",
+  "native": "docs/evidence/a-journal-cancel-20261021-r1-full-native.txt",
+  "native_sha256": "2b3f0f8a30243088a127a03483c1ae02db8ae21270b331aca9d90187c98ecba3",
+  "full": {
+    "main": 763,
+    "all": 6280
+  },
+  "owner_baseline": {
+    "main": 613,
+    "all": 4977
+  },
+  "old_tests_retained": 6270,
+  "old_owner_tests_retained": 4967,
+  "new_tests": {
+    "main": 4,
+    "all": 10,
+    "names": [
+      "TestFailureJournalsPoisonWithoutWaiting",
+      "TestFailureJournalsPoisonWithoutWaiting/download_cancel",
+      "TestFailureJournalsPoisonWithoutWaiting/download_private",
+      "TestFailureJournalsPoisonWithoutWaiting/gc_cancel",
+      "TestFailureJournalsPoisonWithoutWaiting/gc_private",
+      "TestRecoveryAuditJournalCanceledQueue",
+      "TestRecoveryAuditJournalCanceledQueue/cancel",
+      "TestRecoveryAuditJournalCanceledQueue/deadline",
+      "TestRecoveryAuditJournalConcurrentCompleteRecords",
+      "TestRecoveryAuditJournalPoisonDeniesBeforeQueue"
+    ]
+  },
+  "counter_source": "docs/evidence/a-journal-cancel-20261021-r1-counters-source.json",
+  "counter_source_manifest_sha256": "692428fb890d2c767e3a6ac0888e94968be887097293b3841f516a4db8648e27",
+  "counter_source_sha256": "9e65157324dfed2323c845ca08b7b48744a62fe8609e0d1e691f4b9dfefc838b",
+  "counter_native_sha256": "3a1080b199136e8e0c130df56f9ea428f93f147009a9f19bfb8ec935920901cf",
+  "counterfactuals": [
+    {
+      "stage": "cancel",
+      "failed": [
+        "TestRecoveryAuditJournalCanceledQueue",
+        "TestRecoveryAuditJournalCanceledQueue/cancel",
+        "TestRecoveryAuditJournalCanceledQueue/deadline"
+      ],
+      "healthy": [
+        "TestRecoveryAuditJournalConcurrentCompleteRecords"
+      ],
+      "events_sha256": "0bf506c33a15b12d3d64a9f4d818f7886821a4eca68edb65a91ca0c3a18e7428",
+      "exit": 1,
+      "expected_failure": true
+    },
+    {
+      "stage": "poison",
+      "failed": [
+        "TestFailureJournalsPoisonWithoutWaiting",
+        "TestFailureJournalsPoisonWithoutWaiting/download_cancel",
+        "TestFailureJournalsPoisonWithoutWaiting/download_private",
+        "TestFailureJournalsPoisonWithoutWaiting/gc_cancel",
+        "TestFailureJournalsPoisonWithoutWaiting/gc_private"
+      ],
+      "healthy": [],
+      "events_sha256": "056bd0c340fc0c5fd36a5be6305960ff6d9cbeb7e4974b37bd4247363cb25d7d",
+      "exit": 1,
+      "expected_failure": true
+    }
+  ],
+  "overlays_sha256": "2750fb6b648660f946350300926a8857c27d998eea8012fefe8c6eb4be6c65bf",
+  "focused": {
+    "main": 23,
+    "all": 162,
+    "events_sha256": "129bed3e89b2e9bdecc0cd55f897cdf118567d5b89fcd99f49041a929d6c97ac"
+  },
+  "final_source_changes_after_counters": [
+    "backend/internal/systembackupevidence/system_recovery_audit_journal_context_test.go"
+  ],
+  "final_source_strengthens_already_queued_cancellation_check": true,
+  "probe_stages": [
+    {
+      "stage": "tagged-seed",
+      "output_sha256": "1c02864f3cc3ccb4c5f226615c3760aa207f2b6ef7e7d87942c401d7ef2f5fa5"
+    },
+    {
+      "stage": "windows-probe",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "detached-seed",
+      "output_sha256": "d2e7d03fbd85f344357eb4cc08c0b7cf40aabdf76a85d3f2009337eac6cc7433"
+    },
+    {
+      "stage": "linux-probe",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "linux-migration",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "f72fa947422714c2cf74c4c369a7be747e446ad824e8d0ae8835c740c253ff53"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "54e5e664d635ae043538aad1857f132511c0a940a5aa55a0a6f6d86230e0a001"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "7132e80559798a5a281f5574865f791ff7f0c9e53a200b528ab2ab762fb52241"
+    }
+  ],
+  "default_vet": true,
+  "final_postcheck": true,
+  "validation_exit": 0,
+  "cleanup": "docs/evidence/a-journal-cancel-20261021-r1-cleanup.json",
+  "cleanup_sha256": "188f80c06a465c2fa36fca500e1fbc19a76acd80441d5306273d8523e6ad0215",
+  "owned_directories_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a48027b0cf71494a986cdac21f4c0ded",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-0fb190ced1f1420696e36db4d9bc75c8",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-a-journal-cancel-20261021-r1"
+  ],
+  "parallel_source_not_functionally_accepted": [
+    "backend/internal/systembackupgcmetadata/catalog.go",
+    "backend/internal/systembackupgcmetadata/catalog_test.go",
+    "backend/internal/systembackupgcmetadata/views.go",
+    "backend/internal/systembackupgcmetadata/views_test.go"
+  ],
+  "later_parallel_changes_not_accepted": [
+    "backend/internal/systembackupevidence/download_retention_gc.go",
+    "backend/internal/systembackupevidence/download_retention_gc_test.go",
+    "backend/internal/systembackupevidence/system_publish_runtime_test.go"
+  ],
+  "own_fix_current_bytes_match": true,
+  "current_pinned_drift": [
+    "backend/internal/systembackupevidence/download_retention_gc.go",
+    "backend/internal/systembackupevidence/download_retention_gc_test.go",
+    "backend/internal/systembackupevidence/system_publish_runtime_test.go"
+  ],
+  "current_whole_worktree_verified": false,
+  "actual_sql": false,
+  "actual_provider": false,
+  "filesystem_io_preemption_proved": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "reviewer_sha256": "5290b6915bc6850ba83339e9c6f7d4e8a9cb817c0136674ef1acf5828f3dc4c9",
+  "utility_sha256": "eeb6d205450aac5c22ea6333e73b367af281a3967e50de66f4dabd65741b97f3"
+}

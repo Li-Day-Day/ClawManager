@@ -1,0 +1,374 @@
+LOCAL_PASS isolated-go-telemetry=off
+=== RUN   TestCapabilityContentEnvelope
+--- PASS: TestCapabilityContentEnvelope (0.01s)
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-root
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-redaction
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-cleanup
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-observation
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-root
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/escaped-duplicate
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-redaction
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-cleanup
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-observation
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/case-folded-key
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/null-raw-flag
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/null-removed-list
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/wrong-provider
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/wrong-run
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/wrong-version
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/raw-material
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/expired-observation
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-observation-code
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/trailing-json
+=== RUN   TestCapabilityContentRejectsUnsafeJSONBeforeKeys/invalid-utf8
+--- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys (0.02s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-root (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-redaction (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-cleanup (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/unknown-observation (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-root (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/escaped-duplicate (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-redaction (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-cleanup (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-observation (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/case-folded-key (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/null-raw-flag (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/null-removed-list (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/wrong-provider (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/wrong-run (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/wrong-version (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/raw-material (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/expired-observation (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/duplicate-observation-code (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/trailing-json (0.00s)
+    --- PASS: TestCapabilityContentRejectsUnsafeJSONBeforeKeys/invalid-utf8 (0.00s)
+=== RUN   TestCapabilityContentRequiresSchemaFields
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/schema_version
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/provider_role
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/provider_identity_hash
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/provider_ref_version
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/observed_provider_version
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/probe_started_at
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/probe_finished_at
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/probe_scope_hash
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/capabilities
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/redaction
+=== RUN   TestCapabilityContentRequiresSchemaFields/root/cleanup
+=== RUN   TestCapabilityContentRequiresSchemaFields/Redaction/applied
+=== RUN   TestCapabilityContentRequiresSchemaFields/Redaction/removed_field_classes
+=== RUN   TestCapabilityContentRequiresSchemaFields/Redaction/raw_material_present
+=== RUN   TestCapabilityContentRequiresSchemaFields/Cleanup/run_id
+=== RUN   TestCapabilityContentRequiresSchemaFields/Cleanup/owner_marker
+=== RUN   TestCapabilityContentRequiresSchemaFields/Cleanup/temporary_artifacts_removed
+=== RUN   TestCapabilityContentRequiresSchemaFields/Cleanup/verified_at
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/capability_code
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/status
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/reason_code
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/request_scope_hash
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/response_shape_hash
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/checked_at
+=== RUN   TestCapabilityContentRequiresSchemaFields/Capability/expires_at
+--- PASS: TestCapabilityContentRequiresSchemaFields (0.05s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/schema_version (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/provider_role (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/provider_identity_hash (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/provider_ref_version (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/observed_provider_version (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/probe_started_at (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/probe_finished_at (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/probe_scope_hash (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/capabilities (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/redaction (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/root/cleanup (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Redaction/applied (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Redaction/removed_field_classes (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Redaction/raw_material_present (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Cleanup/run_id (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Cleanup/owner_marker (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Cleanup/temporary_artifacts_removed (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Cleanup/verified_at (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/capability_code (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/status (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/reason_code (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/request_scope_hash (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/response_shape_hash (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/checked_at (0.00s)
+    --- PASS: TestCapabilityContentRequiresSchemaFields/Capability/expires_at (0.00s)
+=== RUN   TestCapabilityContentBindingAndLimits
+--- PASS: TestCapabilityContentBindingAndLimits (0.00s)
+=== RUN   TestEvidenceTypeOwnerMatrix
+--- PASS: TestEvidenceTypeOwnerMatrix (0.00s)
+=== RUN   TestEnvelopeChunkRangesAndTampering
+--- PASS: TestEnvelopeChunkRangesAndTampering (0.04s)
+=== RUN   TestPrepareRejectsDriftSizeAndRedaction
+--- PASS: TestPrepareRejectsDriftSizeAndRedaction (0.00s)
+=== RUN   TestPublishUnknownAndRetentionGC
+--- PASS: TestPublishUnknownAndRetentionGC (0.03s)
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/success
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/denied
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/late-revoke
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/tamper
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/audit-failure
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/multi-range
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/duplicate-range
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/oversize
+=== RUN   TestDownloadAuthAuditRangeAndNoPartialBody/forwarded-http
+--- PASS: TestDownloadAuthAuditRangeAndNoPartialBody (0.12s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/success (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/denied (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/late-revoke (0.02s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/tamper (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/audit-failure (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/multi-range (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/duplicate-range (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/oversize (0.01s)
+    --- PASS: TestDownloadAuthAuditRangeAndNoPartialBody/forwarded-http (0.01s)
+=== RUN   TestRetentionSnapshotAndLogSeparation
+--- PASS: TestRetentionSnapshotAndLogSeparation (0.00s)
+=== RUN   TestRangeAndKeyBoundaries
+--- PASS: TestRangeAndKeyBoundaries (0.00s)
+=== RUN   TestLogSanitizerClosedFields
+=== RUN   TestLogSanitizerClosedFields/A
+=== RUN   TestLogSanitizerClosedFields/B
+=== RUN   TestLogSanitizerClosedFields/C
+=== RUN   TestLogSanitizerClosedFields/D
+=== RUN   TestLogSanitizerClosedFields/E
+=== RUN   TestLogSanitizerClosedFields/F
+=== RUN   TestLogSanitizerClosedFields/G
+=== RUN   TestLogSanitizerClosedFields/H
+=== RUN   TestLogSanitizerClosedFields/I
+=== RUN   TestLogSanitizerClosedFields/J
+=== RUN   TestLogSanitizerClosedFields/K
+=== RUN   TestLogSanitizerClosedFields/L
+=== RUN   TestLogSanitizerClosedFields/M
+=== RUN   TestLogSanitizerClosedFields/N
+=== RUN   TestLogSanitizerClosedFields/O
+=== RUN   TestLogSanitizerClosedFields/P
+=== RUN   TestLogSanitizerClosedFields/Q
+=== RUN   TestLogSanitizerClosedFields/R
+=== RUN   TestLogSanitizerClosedFields/S
+=== RUN   TestLogSanitizerClosedFields/T
+=== RUN   TestLogSanitizerClosedFields/U
+--- PASS: TestLogSanitizerClosedFields (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/A (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/B (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/C (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/D (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/E (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/F (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/G (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/H (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/I (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/J (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/K (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/L (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/M (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/N (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/O (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/P (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/Q (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/R (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/S (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/T (0.00s)
+    --- PASS: TestLogSanitizerClosedFields/U (0.00s)
+=== RUN   TestLogBudgetsAndFailures
+--- PASS: TestLogBudgetsAndFailures (0.00s)
+=== RUN   TestLogPolicyRejectsUnsafeConfiguration
+--- PASS: TestLogPolicyRejectsUnsafeConfiguration (0.00s)
+=== RUN   TestLogDispatchEnvelope
+--- PASS: TestLogDispatchEnvelope (0.01s)
+=== RUN   TestContentDispatchRejectsBeforeKeys
+=== RUN   TestContentDispatchRejectsBeforeKeys/unknown
+=== RUN   TestContentDispatchRejectsBeforeKeys/wrong_owner
+=== RUN   TestContentDispatchRejectsBeforeKeys/wrong_media
+=== RUN   TestContentDispatchRejectsBeforeKeys/identity
+=== RUN   TestContentDispatchRejectsBeforeKeys/producer
+=== RUN   TestContentDispatchRejectsBeforeKeys/expired
+=== RUN   TestContentDispatchRejectsBeforeKeys/denied
+=== RUN   TestContentDispatchRejectsBeforeKeys/revoked
+=== RUN   TestContentDispatchRejectsBeforeKeys/changed_policy
+=== RUN   TestContentDispatchRejectsBeforeKeys/changed_producer
+=== RUN   TestContentDispatchRejectsBeforeKeys/both_profiles
+=== RUN   TestContentDispatchRejectsBeforeKeys/missing_profile
+=== RUN   TestContentDispatchRejectsBeforeKeys/raw_secret
+=== RUN   TestContentDispatchRejectsBeforeKeys/noncanonical
+=== RUN   TestContentDispatchRejectsBeforeKeys/lines
+=== RUN   TestContentDispatchRejectsBeforeKeys/checksum
+=== RUN   TestContentDispatchRejectsBeforeKeys/size
+=== RUN   TestContentDispatchRejectsBeforeKeys/reader
+--- PASS: TestContentDispatchRejectsBeforeKeys (0.04s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/unknown (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/wrong_owner (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/wrong_media (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/identity (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/producer (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/expired (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/denied (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/revoked (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/changed_policy (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/changed_producer (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/both_profiles (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/missing_profile (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/raw_secret (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/noncanonical (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/lines (0.03s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/checksum (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/size (0.00s)
+    --- PASS: TestContentDispatchRejectsBeforeKeys/reader (0.00s)
+=== RUN   TestContentDispatchCapability
+--- PASS: TestContentDispatchCapability (0.01s)
+=== RUN   TestS3EvidenceLifecycle
+--- PASS: TestS3EvidenceLifecycle (0.13s)
+=== RUN   TestS3EvidenceResponseRejection
+=== RUN   TestS3EvidenceResponseRejection/stat-wrong-version
+=== RUN   TestS3EvidenceResponseRejection/stat-duplicate-version
+=== RUN   TestS3EvidenceResponseRejection/stat-etag-only
+=== RUN   TestS3EvidenceResponseRejection/stat-composite
+=== RUN   TestS3EvidenceResponseRejection/stat-delete-marker
+=== RUN   TestS3EvidenceResponseRejection/stat-duplicate-marker
+=== RUN   TestS3EvidenceResponseRejection/stat-invalid-marker
+=== RUN   TestS3EvidenceResponseRejection/stat-redirect
+=== RUN   TestS3EvidenceResponseRejection/stat-denied
+=== RUN   TestS3EvidenceResponseRejection/stat-not-found
+=== RUN   TestS3EvidenceResponseRejection/stat-encoding
+=== RUN   TestS3EvidenceResponseRejection/range-wrong-version
+=== RUN   TestS3EvidenceResponseRejection/range-duplicate-version
+=== RUN   TestS3EvidenceResponseRejection/range-wrong-range
+=== RUN   TestS3EvidenceResponseRejection/range-full-body
+=== RUN   TestS3EvidenceResponseRejection/range-short-body
+=== RUN   TestS3EvidenceResponseRejection/range-encoding
+=== RUN   TestS3EvidenceResponseRejection/put-wrong-checksum
+=== RUN   TestS3EvidenceResponseRejection/put-duplicate-version
+=== RUN   TestS3EvidenceResponseRejection/put-etag-only
+=== RUN   TestS3EvidenceResponseRejection/put-composite
+=== RUN   TestS3EvidenceResponseRejection/put-redirect
+--- PASS: TestS3EvidenceResponseRejection (0.18s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-wrong-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-duplicate-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-etag-only (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-composite (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-delete-marker (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-duplicate-marker (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-invalid-marker (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-redirect (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-denied (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-not-found (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/stat-encoding (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-wrong-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-duplicate-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-wrong-range (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-full-body (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-short-body (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/range-encoding (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-wrong-checksum (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-duplicate-version (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-etag-only (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-composite (0.01s)
+    --- PASS: TestS3EvidenceResponseRejection/put-redirect (0.01s)
+=== RUN   TestS3EvidenceScopeAndBodyBinding
+=== RUN   TestS3EvidenceScopeAndBodyBinding/expired-grant
+=== RUN   TestS3EvidenceScopeAndBodyBinding/wrong-grant
+=== RUN   TestS3EvidenceScopeAndBodyBinding/resolver-failure
+=== RUN   TestS3EvidenceScopeAndBodyBinding/static-grant
+--- PASS: TestS3EvidenceScopeAndBodyBinding (0.04s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/expired-grant (0.00s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/wrong-grant (0.00s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/resolver-failure (0.00s)
+    --- PASS: TestS3EvidenceScopeAndBodyBinding/static-grant (0.00s)
+=== RUN   TestS3EvidenceAbsenceProofBinding
+=== RUN   TestS3EvidenceAbsenceProofBinding/wrong-key
+=== RUN   TestS3EvidenceAbsenceProofBinding/wrong-version
+=== RUN   TestS3EvidenceAbsenceProofBinding/wrong-challenge
+=== RUN   TestS3EvidenceAbsenceProofBinding/stale
+=== RUN   TestS3EvidenceAbsenceProofBinding/future
+=== RUN   TestS3EvidenceAbsenceProofBinding/expired
+=== RUN   TestS3EvidenceAbsenceProofBinding/long-lived
+=== RUN   TestS3EvidenceAbsenceProofBinding/verifier-error
+--- PASS: TestS3EvidenceAbsenceProofBinding (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/wrong-key (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/wrong-version (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/wrong-challenge (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/stale (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/future (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/expired (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/long-lived (0.00s)
+    --- PASS: TestS3EvidenceAbsenceProofBinding/verifier-error (0.00s)
+=== RUN   TestS3EvidenceDeleteAndRangeLimits
+--- PASS: TestS3EvidenceDeleteAndRangeLimits (0.01s)
+=== RUN   TestS3EvidenceTLSAndConfiguration
+2026/09/29 10:49:12 http: TLS handshake error from 127.0.0.1:51829: remote error: tls: bad certificate
+2026/09/29 10:49:12 http: TLS handshake error from 127.0.0.1:51830: remote error: tls: bad certificate
+--- PASS: TestS3EvidenceTLSAndConfiguration (0.32s)
+=== RUN   TestTransitKeyringRotationRetainsEvidence
+--- PASS: TestTransitKeyringRotationRetainsEvidence (0.12s)
+=== RUN   TestTransitKeyringAdmissionAndReadOnly
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/empty
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/invalid-installation
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/missing-writer
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/invalid-writer
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/duplicate
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/cross-installation
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/invalid-provider
+=== RUN   TestTransitKeyringAdmissionAndReadOnly/no-credentials
+--- PASS: TestTransitKeyringAdmissionAndReadOnly (0.03s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/empty (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/invalid-installation (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/missing-writer (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/invalid-writer (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/duplicate (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/cross-installation (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/invalid-provider (0.00s)
+    --- PASS: TestTransitKeyringAdmissionAndReadOnly/no-credentials (0.00s)
+=== RUN   TestTransitEvidenceEnvelopeRoundTrip
+--- PASS: TestTransitEvidenceEnvelopeRoundTrip (0.07s)
+=== RUN   TestTransitEvidenceFailuresAreClosed
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-version
+=== RUN   TestTransitEvidenceFailuresAreClosed/mismatched-version-field
+=== RUN   TestTransitEvidenceFailuresAreClosed/provider-denied
+=== RUN   TestTransitEvidenceFailuresAreClosed/redirect
+=== RUN   TestTransitEvidenceFailuresAreClosed/oversize
+=== RUN   TestTransitEvidenceFailuresAreClosed/encoded-response
+=== RUN   TestTransitEvidenceFailuresAreClosed/duplicate-data
+=== RUN   TestTransitEvidenceFailuresAreClosed/duplicate-field
+=== RUN   TestTransitEvidenceFailuresAreClosed/trailing-json
+=== RUN   TestTransitEvidenceFailuresAreClosed/errors-with-200
+=== RUN   TestTransitEvidenceFailuresAreClosed/response-wrapping
+=== RUN   TestTransitEvidenceFailuresAreClosed/expired-grant
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-installation
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-key
+=== RUN   TestTransitEvidenceFailuresAreClosed/wrong-operation
+=== RUN   TestTransitEvidenceFailuresAreClosed/invalid-token
+=== RUN   TestTransitEvidenceFailuresAreClosed/resolver-error
+=== RUN   TestTransitEvidenceFailuresAreClosed/grant-expires-during-read
+--- PASS: TestTransitEvidenceFailuresAreClosed (0.31s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-version (0.02s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/mismatched-version-field (0.02s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/provider-denied (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/redirect (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/oversize (0.02s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/encoded-response (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/duplicate-data (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/duplicate-field (0.02s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/trailing-json (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/errors-with-200 (0.02s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/response-wrapping (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/expired-grant (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-installation (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-key (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/wrong-operation (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/invalid-token (0.00s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/resolver-error (0.01s)
+    --- PASS: TestTransitEvidenceFailuresAreClosed/grant-expires-during-read (0.11s)
+=== RUN   TestTransitEvidenceRejectsWrongUnwrapAndRefs
+--- PASS: TestTransitEvidenceRejectsWrongUnwrapAndRefs (0.03s)
+=== RUN   TestTransitEvidenceTLSPinningAndConfiguration
+2026/09/29 10:49:13 http: TLS handshake error from 127.0.0.1:51896: remote error: tls: bad certificate
+2026/09/29 10:49:13 http: TLS handshake error from 127.0.0.1:51897: remote error: tls: bad certificate
+--- PASS: TestTransitEvidenceTLSPinningAndConfiguration (0.04s)
+PASS
+ok  	clawreef/internal/systembackupevidence	2.745s
+LOCAL_PASS evidence-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=0ff3118641d35100ec2a49dc492d5f7a01278fa80353da12ece1063a153a5f06 ddl_sha256=c9df72e8060389ddc5347854fca3213fb7b2c07e71b8b359de901fd939e07199
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=4869c6c4e2bb4424cc24671b8ff9c11fc9e2b4a82e5cfb8a2140990b16894e88
+CLEANED local-registration-build-cache=True

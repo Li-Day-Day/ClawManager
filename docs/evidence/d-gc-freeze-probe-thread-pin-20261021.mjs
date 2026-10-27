@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+const root=path.resolve(import.meta.dirname,'../..'),owner=path.join(root,'.tmp-d-index-cache-d8d857ee52dc4f56868c0b79a75f1d0e');
+const json=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
+const prior=json('docs/evidence/d-gc-freeze-probe-20261021-r2-native.json');
+assert.equal(prior.exit,0);assert.equal(prior.source_postcheck,true);
+const name='backend/internal/systembackupevidence/download_gc_freeze_mysql_test.go',file=path.join(owner,'source',name);
+const before=fs.readFileSync(file),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+assert.equal(sha(before),json('docs/evidence/d-gc-freeze-probe-20261021-r2-source.json').files.find(x=>x.path===name).sha256);
+let s=before.toString('utf8').replaceAll('\r\n','\n');
+function one(a,b){assert.equal(s.split(a).length,2,'ambiguous thread-pin edit');s=s.replace(a,()=>b);}
+one("const dGCFreezeWitnessSQL = `SELECT m.LOCK_TYPE,m.LOCK_DURATION,m.LOCK_STATUS FROM performance_schema.metadata_locks m JOIN performance_schema.threads t ON t.THREAD_ID=m.OWNER_THREAD_ID WHERE t.PROCESSLIST_ID=? AND m.OBJECT_TYPE='BACKUP LOCK'`", "const dGCFreezeWitnessSQL = `SELECT LOCK_TYPE,LOCK_DURATION,LOCK_STATUS FROM performance_schema.metadata_locks WHERE OWNER_THREAD_ID=? AND OBJECT_TYPE='BACKUP LOCK'`");
+one('\tcreatedUsers                                          map[string]bool','\tcreatedUsers                                          map[string]bool\n\tthreads map[int64]int64');
+one('createdUsers: map[string]bool{}}','createdUsers: map[string]bool{}, threads: map[int64]int64{}}');
+one('\treturn c, id\n}\nfunc (f *dGCFreezeFixture) tickets', '\tf.pinThread(t, id)\n\treturn c, id\n}\n// Pin while the session is alive. An orphan ticket must remain observable\n// after threads drops its row; disappearance of that row is not unlock proof.\nfunc (f *dGCFreezeFixture) pinThread(t *testing.T, id int64) {\n\tt.Helper()\n\tvar thread int64\n\tdGCFreezeOK(t, f.admin.QueryRowContext(f.ctx, "SELECT THREAD_ID FROM performance_schema.threads WHERE PROCESSLIST_ID=?", id).Scan(&thread))\n\tif id <= 0 || thread <= 0 { t.Fatal("invalid process/thread identity") }\n\tif previous, ok := f.threads[id]; ok && previous != thread { t.Fatal("process/thread mapping changed") }\n\tf.threads[id] = thread\n}\nfunc (f *dGCFreezeFixture) tickets');
+one('\trows, err := f.admin.QueryContext(f.ctx, dGCFreezeWitnessSQL, id)', '\tthread, ok := f.threads[id]\n\tif !ok || thread <= 0 { t.Fatal("unbound backup-lock owner thread") }\n\trows, err := f.admin.QueryContext(f.ctx, dGCFreezeWitnessSQL, thread)');
+one('\tdGCFreezeOK(t, waiter.QueryRowContext(f.ctx, "SELECT CONNECTION_ID()").Scan(&wid))','\tdGCFreezeOK(t, waiter.QueryRowContext(f.ctx, "SELECT CONNECTION_ID()").Scan(&wid))\n\tf.pinThread(t, wid)');
+one('FREEZE_WAIT holder_connection=%d waiter_connection=%d holder=','FREEZE_WAIT holder_connection=%d waiter_connection=%d holder_thread=%d waiter_thread=%d holder=');
+one('id, wid, tc.name)','id, wid, f.threads[id], f.threads[wid], tc.name)');
+fs.chmodSync(file,0o666);fs.writeFileSync(file,s);
+console.log('FREEZE_THREAD_PIN revised one tagged test; lock absence queried by stable OWNER_THREAD_ID, never by a disappearing live-thread join');

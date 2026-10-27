@@ -1,0 +1,43 @@
+**********************
+PowerShell transcript start
+Start time: 20261010085228
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name:
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$log = 'docs/evidence/a-historical-authority-preflight-local-20261010.txt'; Start-Transcript -Path $log; try { & .\scripts\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -RecoveryTest A -BuildParallelism 1; if (-not $?) { throw 'A historical authority local preflight failed' } } finally { Stop-Transcript }
+Process ID: 36160
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is docs/evidence/a-historical-authority-preflight-local-20261010.txt
+LOCAL_PASS isolated-go-telemetry=off
+unicode/utf16: C:\Program Files\Go\pkg\tool\windows_amd64\vet.exe: exit status 0xc0000043
+ok  	clawreef/internal/systembackupevidence	2.391s
+FAIL
+WARNING: Windows vet/asm/compile process exited 0xc0000043; retrying the SAME test-vet command (1/3 failed). Vet remains enabled; isolated cache is retained only until this run ends.
+ok  	clawreef/internal/systembackupevidence	2.098s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.26s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.14s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.12s)
+PASS
+ok  	clawreef/internal/systembackupevidence	1.807s
+LOCAL_PASS a-producer-recovery-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=e7d8ace89c18495e1312f4a9c1d69c5461c08de89f7bb04e90e9c8f18a585feb ddl_sha256=97abacd3f045046d01cb74211362a9a6aeada8c724c16958b48178517d5c8ff8
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=70a28fdd1e0773e06c609556b457ad1392fc91460a6fac7be61ea05b388bf15f
+CLEANED local-registration-build-cache=True
+**********************
+PowerShell transcript end
+End time: 20261010090735
+**********************

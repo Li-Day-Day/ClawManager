@@ -1,0 +1,122 @@
+{
+  "kind": "a_sql_task_download_owner_local_preparation_review",
+  "recorded_at": "2026-10-19T09:24:11.223Z",
+  "checks_passed": 47,
+  "checks": [
+    "ordinary source stable/offline/unapproved",
+    "ordinary source SHA recomputed",
+    "corrected tagged source stable/offline/unapproved",
+    "corrected tagged source SHA recomputed",
+    "base frozen source bound to full-package log",
+    "base has no failed/skipped tests",
+    "base completed two full packages and seed package",
+    "clawreef/internal/systembackupsecurity all RUN/PASS paired uniquely",
+    "clawreef/internal/systembackupevidence all RUN/PASS paired uniquely",
+    "ordinary snapshot inputs remain present",
+    "three declared concurrent task-chain inputs only",
+    "differences limited to tagged fixtures, declared concurrent profile and local helper",
+    "all ordinary Go/module/embedded inputs byte-identical",
+    "corrected fixture matches repair frozen bytes",
+    "changed Go file excluded from ordinary build",
+    "new concurrent Go input is also excluded from ordinary build",
+    "corrected seed checks published key length",
+    "repair log bound to its source",
+    "corrected seed gate no failures/skips",
+    "corrected seed gate thirteen unique checks paired",
+    "corrected seed gate new SQL owner seed passed",
+    "corrected packaged probe seed no failures/skips",
+    "corrected packaged probe seed thirteen unique checks paired",
+    "corrected packaged probe seed new SQL owner seed passed",
+    "detached corrected seeds thirteen checks",
+    "tagged-seed exit zero",
+    "tagged-seed stderr empty",
+    "windows-probe exit zero",
+    "windows-probe stderr empty",
+    "detached-seed exit zero",
+    "detached-seed stderr empty",
+    "linux-probe exit zero",
+    "linux-probe stderr empty",
+    "linux-migration exit zero",
+    "linux-migration stderr empty",
+    "corrected gate default vet/frozen postcheck/exit zero",
+    "three corrected Windows/Linux payloads pinned",
+    "base exact workspace owner absent",
+    "repair exact workspace owner absent",
+    "cache exact workspace owner absent",
+    "both wrappers reported cleanup",
+    "base outer exit zero and no remote requested",
+    "all corrected source paths stay within workspace",
+    "current Go/data/owner phase still match; exactly two declared transport changes",
+    "current transport bytes independently checked scripts/system-backup-a-evidence-validation.ps1",
+    "current transport bytes independently checked scripts/system-backup-d-download-admission-native-validation.ps1",
+    "current WinPS owner/admission/MFA/general and Bash checks passed"
+  ],
+  "ordinary": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 253,
+      "all_pass": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 290,
+      "all_pass": 2244
+    }
+  ],
+  "ordinary_main": 543,
+  "ordinary_all": 4229,
+  "ordinary_source_sha256": "e2f2a078884e3159f105dd11b10659f10d3bdcedc02f505b5c295a48ae045a68",
+  "ordinary_source_manifest_sha256": "4de65ab620d901caeec0d8952147b0ea6bcdfd37796d960d7aa9dbf88d8ee3be",
+  "corrected_source_sha256": "f0c3a376395a6c671ad71473475240b826ad82dcb023782057351cd184a94b61",
+  "corrected_source_manifest_sha256": "6ae0042f01e2f5eb98925912182eb551fafb55a062bdeb10bba6d8ae025e9d94",
+  "source_files": 1408,
+  "explicit_snapshot_differences": [
+    "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go",
+    "backend/internal/systembackupevidence/download_task_owner_chain_mysql_test.go",
+    "scripts/system-backup-a-evidence-validation.ps1",
+    "scripts/system-backup-d-download-admission-native-validation.ps1",
+    "scripts/system-backup-d-download-task-chain-dispatch.test.ps1",
+    "scripts/system-backup-d-download-task-chain-phase.sh"
+  ],
+  "concurrent_inputs_not_accepted": [
+    "backend/internal/systembackupevidence/download_task_owner_chain_mysql_test.go",
+    "scripts/system-backup-d-download-task-chain-dispatch.test.ps1",
+    "scripts/system-backup-d-download-task-chain-phase.sh"
+  ],
+  "current_transport_drift": [
+    "scripts/system-backup-a-evidence-validation.ps1",
+    "scripts/system-backup-d-download-admission-native-validation.ps1"
+  ],
+  "current_transport_log_sha256": "ddfc4b1f50dbb49a330ff1db34581113bd727cc5ea0060a9afafa1f83692514b",
+  "current_transport_scope": "Current profile bindings, exclusive guards and shell syntax only; these later script bytes are not retroactively part of the earlier Go build snapshot.",
+  "corrected_seed_checks": 13,
+  "detached_seed_checks": 13,
+  "binaries": [
+    {
+      "name": "download-admission.test.exe",
+      "sha256": "9adcb2ae146c2d00b1f87c6ee60bfab9f7f5ab7bbd7069312bee61f6fb606c95"
+    },
+    {
+      "name": "download-admission.test",
+      "sha256": "2242e291cebc1d4953ec161300e0ac35b592381e81f32232b0ea0e91f1207716"
+    },
+    {
+      "name": "system-backup-migrate",
+      "sha256": "219bfb7c0a89c31071ef4091d4fe36c94f776c2c1208b7b3cb98c8c3dc92d11d"
+    }
+  ],
+  "cleanup": {
+    "baseOwner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-39abf6be011c4d6da1b0767651904849",
+    "repairOwner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-fae59ef7d9fc482590ebc044d7bf8501",
+    "cacheOwner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-a-owner-repair-331926c52ea146539807eab429eb8fdc",
+    "all_absent": true
+  },
+  "actual_mysql": false,
+  "actual_task_owner_cases_pending": 11,
+  "production_tasks": false,
+  "provider_read": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "new_inputs_not_covered": true,
+  "scope": "Full ordinary package results bind to byte-identical ordinary Go/module/embedded inputs. Changes/new Go inputs are build-tagged; the corrected owner fixture was separately seed-tested/compiled. Concurrent D task-chain logic is type-checked only and excluded from functional acceptance. Earlier SQL fixture bytes are excluded. No actual owner SQL, producer history, production grants or deployment acceptance."
+}

@@ -1,0 +1,6 @@
+PASS copies all selected source inputs, rejects raw run artifacts, verifies read-only snapshot
+PASS later working-tree edits do not change frozen source
+PASS rejects snapshot overwrite
+PASS rejects an added build input in frozen snapshot
+PASS rejects copied-source mutation before another remote run
+CLEANED source snapshot fixture=True

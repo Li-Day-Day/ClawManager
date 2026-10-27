@@ -1,0 +1,36 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import {fileURLToPath} from 'node:url';
+import {buildRegistry} from '../../scripts/system-backup-contract-check.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const raw=p=>fs.readFileSync(path.join(root,p));
+const read=p=>JSON.parse(raw(p).toString('utf8').replace(/^\uFEFF/,''));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const requestsPath='contracts/system-backup/v12/cross-owner-review-requests.json';
+const requests=read(requestsPath),registry=buildRegistry();
+const rows=registry.objects.filter(o=>o.required_cross_reviewers.includes('D')&&!o.approved_cross_reviewers.includes('D'));
+assert.equal(rows.length,15);assert.ok(rows.every(o=>o.owner==='A'&&o.decision_status==='owner_recorded'));
+assert.deepEqual(rows.map(o=>`${o.object_type}:${o.name}`).sort(),requests.schema_policy_submissions.A.slice().sort());
+const byReviewer={};
+for(const o of registry.objects)for(const r of o.required_cross_reviewers.filter(r=>!o.approved_cross_reviewers.includes(r)))(byReviewer[r]??=[]).push(`${o.object_type}:${o.name}`);
+const manifestPath='contracts/system-backup/v12/contract-manifest.json',manifest=read(manifestPath);
+const publicReviews=requests.public_contract_reviews.filter(r=>r.required_reviewers.includes('D')&&!r.approved_reviewers.includes('D')).map(r=>({...r,artifacts:r.artifact_ids.map(id=>{
+  const a=manifest.artifacts.find(a=>a.id===id);assert.ok(a);assert.ok(a.path);
+  return {id,path:a.path,status:a.status,sha256:sha(raw(a.path))};
+})}));
+assert.equal(publicReviews.length,4);
+const receiptPath='docs/evidence/a-business-restore-mysql-accepted-sbk-mig-261014083514-40ca.json',receipt=read(receiptPath);
+assert.equal(receipt.status,'accepted_bounded_isolated_mysql_scope');assert.equal(receipt.production_approved,false);
+const drift=[];
+const sources=receipt.source_inputs.map(p=>{
+  const exists=fs.existsSync(path.join(root,p.file)),current=exists?sha(raw(p.file)):null;
+  if(current!==p.sha256)drift.push(p.file);
+  return {path:p.file,accepted_sha256:p.sha256,current_sha256:current,matches:current===p.sha256};
+});
+const decisionsPath='contracts/system-backup/v12/schema-registry-decisions.json';
+const report={kind:'d_substantive_cross_review_queue',status:'pending_D_substantive_review_no_approval_recorded',recorded_utc:new Date().toISOString(),inputs:[requestsPath,manifestPath,decisionsPath].map(p=>({path:p,sha256:sha(raw(p))})),schema_policy_reviews:rows.map(o=>({object:o.object_type+':'+o.name,owner:o.owner,status:'pending_D_review',policy:o,policy_sha256:sha(JSON.stringify(o))})),public_contract_reviews:publicReviews,pending_schema_reviews_by_reviewer:byReviewer,existing_A_actual_evidence:{receipt:receiptPath,receipt_sha256:sha(raw(receiptPath)),source_files:sources,source_drift:drift,all_listed_sources_match:drift.length===0,accepted_scope:receipt.status,production_approved:false,source_target_proofs_and_writer:receipt.source_target_proofs_and_writer,still_pending:receipt.still_pending},review_requirements:['Verify classification and capture whitelist against actual models and protected archive boundaries','Map all fifteen normalizer/verifier IDs to reviewed implementations and column-level outcomes','Check credential and identity invalidation, exact Ref rebind, history inertness and counters without treating synthetic B proofs/writer as production','Check exclusions, dependencies and source/schema/catalog pins; record unresolved evidence explicitly','Review the four public contracts against current Go/TypeScript/canonical fixtures and accepted scope','Record only D conclusions supported by this review; other reviewer signatures and runtime approvals remain separate'],registry_changed:false,approval_recorded:false,tests_repeated:false,dependencies_installed:false,remote_executed:false};
+const out='docs/evidence/d-owner-review-queue-20261021.json';
+fs.writeFileSync(path.join(root,out),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({report:out,D_schema_reviews:rows.length,D_public_contract_groups:publicReviews.length,A_source_files:sources.length,A_source_drift:drift,pending_by_reviewer:Object.fromEntries(Object.entries(byReviewer).map(([r,items])=>[r,items.length])),approval_recorded:false},null,2));

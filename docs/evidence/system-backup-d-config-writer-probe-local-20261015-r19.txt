@@ -1,0 +1,27 @@
+**********************
+PowerShell transcript start
+Start time: 20261015131716
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$writerLog=Join-Path (Get-Location) 'docs/evidence/system-backup-d-config-writer-probe-local-20261015-r19.txt'; Start-Transcript -LiteralPath $writerLog -NoClobber | Out-Null; try { & scripts/system-backup-d-config-writer-validation.ps1 -SourceManifestPath (Join-Path (Get-Location) 'docs/evidence/system-backup-d-config-writer-probe-source-20261015-r19.json') -BuildParallelism 2 } finally { Stop-Transcript | Out-Null }
+Process ID: 33628
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+PS>TerminatingError(): "Source file set changed while snapshot was copied: backend/internal/systembackupsecurity/config_backfill_identity.go"
+LOCAL_CLEANUP config-writer-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-629db3db22504571911eb04ccc43174e removed=True
+PS>TerminatingError(): "Source file set changed while snapshot was copied: backend/internal/systembackupsecurity/config_backfill_identity.go"
+**********************
+PowerShell transcript end
+End time: 20261015131734
+**********************

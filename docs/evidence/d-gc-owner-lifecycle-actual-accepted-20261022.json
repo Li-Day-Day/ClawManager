@@ -1,0 +1,449 @@
+{
+  "kind": "d_gc_owner_lifecycle_actual_acceptance.v1",
+  "status": "actual_mysql_42_of_42_accepted_prerequisites_and_owner_lifecycle_only",
+  "log": {
+    "path": "docs/evidence/d-download-gc-owner-lifecycle-remote-20261022-155741-ad6ff1fd.txt",
+    "size": 1751674,
+    "sha256": "7f9b89a736008c51f9208f9888d67082363c94c1a16f4427b7dfeed4dc12ad37"
+  },
+  "source_manifest": {
+    "path": "docs/evidence/d-download-gc-owner-lifecycle-remote-20261022-155741-ad6ff1fd-source.json",
+    "size": 309052,
+    "sha256": "2df0928b9525a7c4439932d7a23e9862f96ff634c792ad9efb9414fce3eef29c"
+  },
+  "source_sha256": "31353f64be59645bcbee973d238b8754176faa4b5e198d7f159b7c3c1631bd7f",
+  "source_files": 1573,
+  "repaired_input_receipt": {
+    "path": "docs/evidence/d-gc-owner-cancel-repair-20261022.json",
+    "size": 6157,
+    "sha256": "1220653a8d4ac0349451fa3d033dd3c22b30b3beb1992537d01f81c791c6df7a"
+  },
+  "critical_inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_mysql_test.go",
+      "size": 13125,
+      "sha256": "56c14b89a7a670d1d4529961fbbf65799d9edaab1f20ae683b100f8034314ec9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_owner_lifecycle_wire_test.go",
+      "size": 7800,
+      "sha256": "e99af7538db4a50c18cc868f2a3d0978b33c9c7b5dd4f36b1109fa2fc6e75776"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_freeze_mysql_test.go",
+      "size": 27300,
+      "sha256": "a8aa5e0062144f85018a5e1321077d281536ab206c2a0db0fda618eb25e24126"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+      "size": 3232,
+      "sha256": "964b5d9cd2d7bb71e3201003c2538edfe45b550b585d19428cf7991ece6a9cf5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection_test.go",
+      "size": 12648,
+      "sha256": "cda35914e5f69305855e9e2cb5ff431ecd171c2a9ef92a08af7ac9ecaeeedd0f"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-freeze-phase.sh",
+      "size": 3031,
+      "sha256": "cd2cdb73b3be0ed27f6d38ded1e8fb3c0c8ee4dd7103e20259f5f805bc9a43df"
+    },
+    {
+      "path": "scripts/system-backup-d-download-gc-freeze-dispatch.test.ps1",
+      "size": 8399,
+      "sha256": "19cf244fb63232038cd6e8b33e5d6c57d21204e5f6051f4b062bb9c6042a08b0"
+    },
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    }
+  ],
+  "actual": {
+    "mysql": "8.4.8",
+    "migrations": 96,
+    "replay": "001..081",
+    "binary_sha256": "c48a38797ce39ab65ed371e91b75be5110020c510d746cd89cfd185233c8f272",
+    "inputs_sha256": "d9c5e055812f2467ed0377337e864ee94e082c13b0cc53d7f4b150c9b8e329c0",
+    "prerequisite_cases": [
+      "table_create",
+      "table_alter",
+      "table_drop",
+      "table_rename",
+      "incoming_foreign_key",
+      "procedure_create",
+      "procedure_alter",
+      "procedure_drop",
+      "function_create",
+      "function_alter",
+      "function_drop",
+      "trigger_create",
+      "trigger_drop",
+      "event_create",
+      "event_alter",
+      "event_drop",
+      "view_create",
+      "view_alter",
+      "view_algorithm",
+      "view_drop",
+      "account_create",
+      "account_alter",
+      "account_drop",
+      "account_grant",
+      "account_revoke",
+      "privilege_deny",
+      "transaction_commit",
+      "transaction_rollback",
+      "unlock_no_commit",
+      "legal_dml",
+      "multiple_holders",
+      "killed_holder",
+      "pool_reuse",
+      "temporary_shadow_and_fresh_session"
+    ],
+    "lifecycle_cases": [
+      "known_commit_unlock",
+      "known_commit_discard",
+      "known_rollback_discard",
+      "commit_reply_lost",
+      "rollback_reply_lost",
+      "unlock_reply_lost",
+      "canceled_holder",
+      "killed_holder"
+    ],
+    "passed": 42,
+    "failed": 0,
+    "skipped": 0,
+    "parent_seconds": {
+      "TestDDownloadGCFreezeMySQL": 0.59,
+      "TestDDownloadGCOwnerLifecycleMySQL": 5.18
+    },
+    "ddl_wait_witnesses": [
+      {
+        "case": "table_create",
+        "holder_connection": 18,
+        "waiter_connection": 17,
+        "holder_thread": 364,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_alter",
+        "holder_connection": 20,
+        "waiter_connection": 17,
+        "holder_thread": 366,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_drop",
+        "holder_connection": 21,
+        "waiter_connection": 17,
+        "holder_thread": 370,
+        "waiter_thread": 363
+      },
+      {
+        "case": "table_rename",
+        "holder_connection": 22,
+        "waiter_connection": 17,
+        "holder_thread": 371,
+        "waiter_thread": 363
+      },
+      {
+        "case": "incoming_foreign_key",
+        "holder_connection": 23,
+        "waiter_connection": 17,
+        "holder_thread": 372,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_create",
+        "holder_connection": 24,
+        "waiter_connection": 17,
+        "holder_thread": 373,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_alter",
+        "holder_connection": 25,
+        "waiter_connection": 17,
+        "holder_thread": 374,
+        "waiter_thread": 363
+      },
+      {
+        "case": "procedure_drop",
+        "holder_connection": 26,
+        "waiter_connection": 17,
+        "holder_thread": 375,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_create",
+        "holder_connection": 27,
+        "waiter_connection": 17,
+        "holder_thread": 376,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_alter",
+        "holder_connection": 28,
+        "waiter_connection": 17,
+        "holder_thread": 377,
+        "waiter_thread": 363
+      },
+      {
+        "case": "function_drop",
+        "holder_connection": 29,
+        "waiter_connection": 17,
+        "holder_thread": 378,
+        "waiter_thread": 363
+      },
+      {
+        "case": "trigger_create",
+        "holder_connection": 30,
+        "waiter_connection": 17,
+        "holder_thread": 379,
+        "waiter_thread": 363
+      },
+      {
+        "case": "trigger_drop",
+        "holder_connection": 31,
+        "waiter_connection": 17,
+        "holder_thread": 380,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_create",
+        "holder_connection": 32,
+        "waiter_connection": 17,
+        "holder_thread": 381,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_alter",
+        "holder_connection": 33,
+        "waiter_connection": 17,
+        "holder_thread": 382,
+        "waiter_thread": 363
+      },
+      {
+        "case": "event_drop",
+        "holder_connection": 34,
+        "waiter_connection": 17,
+        "holder_thread": 383,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_create",
+        "holder_connection": 35,
+        "waiter_connection": 17,
+        "holder_thread": 384,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_alter",
+        "holder_connection": 36,
+        "waiter_connection": 17,
+        "holder_thread": 385,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_algorithm",
+        "holder_connection": 37,
+        "waiter_connection": 17,
+        "holder_thread": 386,
+        "waiter_thread": 363
+      },
+      {
+        "case": "view_drop",
+        "holder_connection": 38,
+        "waiter_connection": 17,
+        "holder_thread": 387,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_create",
+        "holder_connection": 39,
+        "waiter_connection": 17,
+        "holder_thread": 388,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_alter",
+        "holder_connection": 40,
+        "waiter_connection": 17,
+        "holder_thread": 389,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_drop",
+        "holder_connection": 41,
+        "waiter_connection": 17,
+        "holder_thread": 390,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_grant",
+        "holder_connection": 42,
+        "waiter_connection": 17,
+        "holder_thread": 391,
+        "waiter_thread": 363
+      },
+      {
+        "case": "account_revoke",
+        "holder_connection": 43,
+        "waiter_connection": 17,
+        "holder_thread": 392,
+        "waiter_thread": 363
+      }
+    ],
+    "owner_outcomes": [
+      {
+        "case": "known_commit_unlock",
+        "connection": 56,
+        "thread": 405,
+        "commit": "known",
+        "rollback": "not_attempted",
+        "unlock": "known",
+        "wire_ok_dropped": false,
+        "canary": 101,
+        "fresh_connection": 57,
+        "release_wait": "539.399碌s",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "539.399µs",
+        "unit_encoding_repaired": true
+      },
+      {
+        "case": "known_commit_discard",
+        "connection": 58,
+        "thread": 407,
+        "commit": "known",
+        "rollback": "not_attempted",
+        "unlock": "not_attempted",
+        "wire_ok_dropped": false,
+        "canary": 102,
+        "fresh_connection": 59,
+        "release_wait": "520.073碌s",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "520.073µs",
+        "unit_encoding_repaired": true
+      },
+      {
+        "case": "known_rollback_discard",
+        "connection": 60,
+        "thread": 409,
+        "commit": "not_attempted",
+        "rollback": "known",
+        "unlock": "not_attempted",
+        "wire_ok_dropped": false,
+        "canary": 0,
+        "fresh_connection": 61,
+        "release_wait": "542.525碌s",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "542.525µs",
+        "unit_encoding_repaired": true
+      },
+      {
+        "case": "commit_reply_lost",
+        "connection": 62,
+        "thread": 411,
+        "commit": "unknown",
+        "rollback": "not_attempted",
+        "unlock": "not_attempted",
+        "wire_ok_dropped": true,
+        "canary": 104,
+        "fresh_connection": 63,
+        "release_wait": "573.921碌s",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "573.921µs",
+        "unit_encoding_repaired": true
+      },
+      {
+        "case": "rollback_reply_lost",
+        "connection": 64,
+        "thread": 413,
+        "commit": "not_attempted",
+        "rollback": "unknown",
+        "unlock": "not_attempted",
+        "wire_ok_dropped": true,
+        "canary": 0,
+        "fresh_connection": 65,
+        "release_wait": "484.347碌s",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "484.347µs",
+        "unit_encoding_repaired": true
+      },
+      {
+        "case": "unlock_reply_lost",
+        "connection": 66,
+        "thread": 415,
+        "commit": "known",
+        "rollback": "not_attempted",
+        "unlock": "unknown",
+        "wire_ok_dropped": true,
+        "canary": 106,
+        "fresh_connection": 67,
+        "release_wait": "508.338碌s",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "508.338µs",
+        "unit_encoding_repaired": true
+      },
+      {
+        "case": "canceled_holder",
+        "connection": 68,
+        "thread": 417,
+        "commit": "not_attempted",
+        "rollback": "unknown",
+        "unlock": "not_attempted",
+        "wire_ok_dropped": false,
+        "canary": 0,
+        "fresh_connection": 70,
+        "release_wait": "5.002020571s",
+        "release_budget_seconds": 40,
+        "release_wait_normalized": "5.002020571s",
+        "unit_encoding_repaired": false
+      },
+      {
+        "case": "killed_holder",
+        "connection": 71,
+        "thread": 420,
+        "commit": "not_attempted",
+        "rollback": "unknown",
+        "unlock": "not_attempted",
+        "wire_ok_dropped": false,
+        "canary": 0,
+        "fresh_connection": 72,
+        "release_wait": "1.029002ms",
+        "release_budget_seconds": 5,
+        "release_wait_normalized": "1.029002ms",
+        "unit_encoding_repaired": false
+      }
+    ],
+    "exit": 0
+  },
+  "cleanup": {
+    "namespace": "sbk-mig-261022090541-3520",
+    "uid": "a34978ab-85b8-4351-be8b-a2a76c72d01d",
+    "namespace_and_remote_scratch_reported": true,
+    "local_cache_reported": true,
+    "exact_outer_owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-8d328c9da08b4c2facd2e8d5c2a6d613",
+    "outer_owner_independently_absent": true,
+    "remote_cleanup_independently_checked": false
+  },
+  "boundaries": {
+    "synthetic_fixture": true,
+    "freeze_adapter_wired": false,
+    "full_gc": false,
+    "role_approval": false,
+    "human_mfa": false,
+    "provider_read": false,
+    "production_approval": false,
+    "reviewer_remote_run": false,
+    "current_whole_tree_tested": false,
+    "twelve_protocol_groups_complete": false
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "kind": "a_live_audit_collector_local_validation.v1",
+  "status": "local_unit_vet_windows_linux_passed_real_mysql_pending",
+  "started_at": "2026-10-22T01:54:03.2765390Z",
+  "completed_at": "2026-10-22T02:09:08.6258561Z",
+  "files": [
+    {
+      "path": "backend/cmd/system-backup-audit-collect/audit.sql",
+      "size": 2097,
+      "sha256": "c15ffa67a921d76c798319226a318bc9657f2832cdb4e340e8966dc960746f01"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/export.go",
+      "size": 5321,
+      "sha256": "c3724f1969547f2d6455c541084232ca1eb9a7c9523fc9585d8687b9ae690797"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main_test.go",
+      "size": 9716,
+      "sha256": "2fbd265364824489fa10ca0e5b9dda10b6cb0d0025946be2c2a06ddd21f6c842"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/main.go",
+      "size": 11224,
+      "sha256": "6cd473f3151204bd22e1b479bcb568622158ff8745abf34d6e5f84ef06c32869"
+    },
+    {
+      "path": "backend/cmd/system-backup-audit-collect/testdata/audit.json",
+      "size": 4140,
+      "sha256": "09410f2dccef8ebf22502c505c433ee286c154e623a529369d2faf3444a24f41"
+    },
+    {
+      "path": "backend/go.mod",
+      "size": 3961,
+      "sha256": "8773d7602c321740f073feed2a959ec299c690f9b723b20cc15936ba57e9b318"
+    },
+    {
+      "path": "backend/go.sum",
+      "size": 24218,
+      "sha256": "a07be97a96070663a657d75dd5cb844d68cc51ef769509214d3fb0785d44d964"
+    }
+  ],
+  "source_sha256": "2a45e6cdcd732635a8c89bf6931bd6e3ff1c1807b43a98c8ce8c70159c3e8ecd",
+  "test_vet_passed": true,
+  "windows_sha256": "5a9776761f2a49de5b15fefa339b4c563e44e44adad329b2e5185156a836314e",
+  "linux_sha256": "f8e317f7ba5bdebc9fd619a4ced2c5384b84b6562830a900ff83638ee27b5ed3",
+  "source_stable": true,
+  "cleanup_verified": true,
+  "sql_driver": "synthetic_only",
+  "remote_contacted": false,
+  "dependencies_installed": false,
+  "validation_inputs": [
+    {
+      "path": "scripts/system-backup-a-live-audit-validation.ps1",
+      "size": 7657,
+      "sha256": "1904a7f4fbc6f02cc9971ccfe6a1113ac863f760d38dd517d4f83441ea202a96"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "size": 4823,
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    },
+    {
+      "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+      "size": 5615,
+      "sha256": "34ea566ef0bd646aa93c2e530a0d1c6a8a059db760f425696c0f8129c0de3081"
+    }
+  ]
+}

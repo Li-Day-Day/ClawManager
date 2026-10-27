@@ -1,0 +1,30 @@
+{
+  "phase": "complete",
+  "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-rbac-review-165b26f50a274bcaac3d1f0f2fd52140",
+  "runs": [
+    {
+      "stage": "repro",
+      "attempt": 1,
+      "exit": 1,
+      "command": "go test -count=1 -v -p=1 -run ^TestConfigMutationRBAC(RequiresRepresentableAdminSubjects|PreservesValidSubjectBoundary)$ ./internal/systembackupsecurity",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-config-rbac-repro-20261015.txt"
+    },
+    {
+      "stage": "targeted",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 -run ^TestConfigMutationRBAC ./internal/systembackupsecurity",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-config-rbac-targeted-20261015.txt"
+    },
+    {
+      "stage": "full",
+      "attempt": 1,
+      "exit": 0,
+      "command": "go test -count=1 -v -p=1 ./internal/systembackupsecurity ./internal/systembackupread",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-config-rbac-full-20261015.txt"
+    }
+  ],
+  "succeeded": true,
+  "scratch_absent": true,
+  "observed_at": "2026-10-15T09:24:21.9514375+08:00"
+}

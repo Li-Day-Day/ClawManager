@@ -1,0 +1,64 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20261009143859
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 26556
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+已启动脚本，输出文件为 docs/evidence/a-historical-recovery-mtls-mysql-remote-20261009.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    & .\scripts\system-backup-a-evidence-validation.ps1 -ProducerRecoveryOnly -RecoveryTest A -Remote -SshTarget 'root@10.130.14.23'
+    if (-not $?) { throw 'A historical recovery MySQL validation failed' }
+} finally {
+    Stop-Transcript
+}
+LOCAL_PASS isolated-go-telemetry=off
+ok  	clawreef/internal/systembackupevidence	1.687s
+LOCAL_PASS recovery-focused-tests-and-vet=yes
+=== RUN   TestDProducerMySQLSeed
+=== RUN   TestDProducerMySQLSeed/fixed_clock
+=== RUN   TestDProducerMySQLSeed/advancing_clock
+--- PASS: TestDProducerMySQLSeed (0.34s)
+    --- PASS: TestDProducerMySQLSeed/fixed_clock (0.19s)
+    --- PASS: TestDProducerMySQLSeed/advancing_clock (0.15s)
+PASS
+ok  	clawreef/internal/systembackupevidence	2.016s
+internal/fmtsort: C:\Program Files\Go\pkg\tool\windows_amd64\compile.exe: exit status 0xc0000043
+警告: Windows vet/asm/compile process exited 0xc0000043; retrying the SAME mysql-probe-build command (1/3 failed). Vet remains enabled; isolated cache is retained only until this run ends.
+LOCAL_PASS a-producer-recovery-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=a8e9842e598e6e7306984845e28e6ce0c43568e013a17a53075ff5fafa1a872b ddl_sha256=97abacd3f045046d01cb74211362a9a6aeada8c724c16958b48178517d5c8ff8
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea
+
+close - IO is still pending on closed socket. read:1, write:0, io:00000190554F6E20
+close - IO is still pending on closed socket. read:1, write:0, io:000001C99EF8D240
+bundle.tar: OK
+RUN namespace=sbk-mig-261009065153-2e5e uid=e663f61e-2a7e-49e8-9359-5bb5f782b9d3 app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93","migration_count":94,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=0de9fa2fe36acb028a5e449765bf7f1a1713005ec6afe2db03616b157e6f7fea catalog_sha256=0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93
+PASS fresh-migration-replay=001..080 applied=94 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestAHistoricalRecoveryMySQL
+    a_historical_recovery_mysql_test.go:89: live mTLS workload could not load original binding checksum_mismatch
+    d_producer_mysql_test.go:90: CLEANED evidence run-owned database
+--- FAIL: TestAHistoricalRecoveryMySQL (0.50s)
+FAIL
+command terminated with exit code 1
+CLEANED namespace=sbk-mig-261009065153-2e5e uid=e663f61e-2a7e-49e8-9359-5bb5f782b9d3
+close - IO is still pending on closed socket. read:1, write:0, io:000001FAC47C5990
+close - IO is still pending on closed socket. read:1, write:0, io:0000024E37C2D610
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“MySQL validation failed; retain any CLEANUP_PENDING identity”
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261009145242
+**********************

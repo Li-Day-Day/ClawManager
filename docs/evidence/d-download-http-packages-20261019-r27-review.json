@@ -1,0 +1,155 @@
+{
+  "kind": "d_download_admitted_http_result_frozen_review",
+  "source_files": 1380,
+  "source_sha256": "eba7fcb21aa7afb00062f8e9b81d7822d85a6cb2cd4dcc73ffca5fb2f29e58fb",
+  "capture_attempts": 1,
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "main_pass": 253,
+      "all_pass": 1985
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "main_pass": 258,
+      "all_pass": 1977
+    },
+    {
+      "package": "clawreef/internal/systembackupread",
+      "main_pass": 75,
+      "all_pass": 519
+    },
+    {
+      "package": "clawreef/cmd/server",
+      "main_pass": 6,
+      "all_pass": 12
+    }
+  ],
+  "go_main_pass": 592,
+  "go_all_pass": 4493,
+  "new_roots": [
+    "TestDownloadResultActualIDOriginalGroupAndRevokedSession",
+    "TestDownloadResultFailuresRollbackAndNeverRetry",
+    "TestDownloadResultUnknownCommitIsTerminal",
+    "TestDownloadResultRejectsInvalidObservationBeforeSQL",
+    "TestAdmittedDownloadHTTPCompleteRangeAuditAndNoReplay",
+    "TestAdmittedDownloadHTTPRejectsBeforeProviderAndCommitUnknown",
+    "TestAdmittedDownloadHTTPInterruptionRevocationAndResultFailure",
+    "TestAdmittedDownloadHTTPPublicInternalAndClassificationRace",
+    "TestAdmittedDownloadErrorBoundaryNeverReturnsPrivateCause",
+    "TestAdmittedDownloadHTTPMatchesOriginalMachineErrorDecision",
+    "TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit",
+    "TestDownloadRuntimeWithoutAdmissionNeverInvokesPrivateCallback",
+    "TestDownloadAdmissionPinnedPublicClassificationDoesNotLoadMFA"
+  ],
+  "new_all_pass": 91,
+  "independent_A_native_roots": [
+    "TestADownloadNativeBufferedOutputKeepsOriginalDeadline",
+    "TestADownloadPlaintextWipedAfterWriteAndAbort"
+  ],
+  "independent_A_native_all_pass": 9,
+  "current_source_drift": [],
+  "current_sources_match": true,
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-admission-http-20261019-r23",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-7775468b8c5a46f8b1fab6d1b706e6b1",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-cdc972d3081948f496bb5e6c46911174",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a35b803353864cc0a9a861b82fdd0730",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-b7080c9822a54391be007ec84f0be163",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-3b8678bbd4024048af56c08fc8ccf35a",
+      "exists": false
+    }
+  ],
+  "preserved_failed_runs": [
+    {
+      "prefix": "d-download-http-focused-20261019-r23",
+      "go_sha256": "0dfb3761f18b173285788b54c1e7368f6ed9b53cedd420d3985c78f48ee5f05a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "accepted_as_whole_run_pass": false
+    },
+    {
+      "prefix": "d-download-http-focused-20261019-r24",
+      "go_sha256": "04b88bf2125b0c60b1497406e90f2ec507421e0a1b539999d7c3f73ac17be2d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "accepted_as_whole_run_pass": false
+    }
+  ],
+  "preceding_full_run": {
+    "prefix": "d-download-http-packages-20261019-r25",
+    "accepted_only_for_its_frozen_sources": true,
+    "subsequent_inputs": [
+      {
+        "path": "backend/internal/systembackupevidence/download_admission_transaction_model_test.go",
+        "reason": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_admitted_http_test.go",
+        "reason": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_admitted_http.go",
+        "reason": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_output_deadline_a_test.go",
+        "reason": "newly_included"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_result_test.go",
+        "reason": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_result.go",
+        "reason": "changed"
+      },
+      {
+        "path": "backend/internal/systembackupevidence/download_runtime_test.go",
+        "reason": "changed"
+      },
+      {
+        "path": "docs/evidence/system-backup-d-sensitive-download-contract-20261016.json",
+        "reason": "newly_included"
+      },
+      {
+        "path": "scripts/system-backup-d-index-source-snapshot.ps1",
+        "reason": "changed"
+      }
+    ]
+  },
+  "focused_followup": {
+    "prefix": "d-download-http-focused-20261019-r26",
+    "native_exit": 0,
+    "source_sha256": "25b9c0035ea860e9004e8e5e9addfccbbdda2d8dcabb663193863a9c5a9bfde7"
+  },
+  "log_hashes": {
+    "go": "18e9519d15dbd0d4cb66b9832cb9491fe1cb61f266fa3167bb59689cadc7ee0d",
+    "native": "4cf68f66924c578a34c9afadf33d384411613b149e08c34b98a29df769586dce",
+    "source": "ed7ba9cdcbf2fc781e7a203fcb9203c39a90b9017b7e0ce79725173874a8a30e"
+  },
+  "installed_dependencies": false,
+  "actual_mysql": false,
+  "local_tls_sts_s3_transit_chain_verified": true,
+  "http_runtime_factory_wired": true,
+  "result_audit_wired": true,
+  "current_server_rerun": true,
+  "production_main_enabled": false,
+  "formal_schema_or_grants_installed": false,
+  "original_six_scopes_complete": false,
+  "limitations": "Scripted SQL and synthetic owners/reports/keys. Actual atomic admission, session/RBAC/config/capacity, HTTP binary response, result SQL and local TLS STS/S3/Transit run; no deployed owner/physical capacity, InnoDB/grants/GC acceptance, real historical upgrade, current production main activation, browser E2E or full original-goal completion."
+}

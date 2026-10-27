@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "scope": "Sequential MySQL probe fixture public-ID isolation and cleanup-marker report classification",
+  "remote_action_performed": false,
+  "real_mysql_run": false,
+  "dependency_installation": false,
+  "production_approved": false,
+  "checks": {
+    "admin_local_profile": "PASS",
+    "default_vet": "PASS",
+    "reporter_tests": 43,
+    "fixture_resource_uuid_domains_disjoint": "PASS source inspection: full-schema 000000d1 / HTTP 00000000",
+    "actual_failed_v2_receipt": "REJECTED: Final wrapper exit=0 missing",
+    "legacy_report_unchanged": true,
+    "documented_operator_powershell_syntax": "PASS (parsed only)",
+    "windows_native_vet_crash_retries": 1,
+    "linux_security_mysql_probe_compile": "PASS",
+    "linux_http_mysql_probe_compile": "PASS",
+    "linux_migration_cli_compile": "PASS",
+    "exit": 0
+  },
+  "binary_sha256": {
+    "authority_mysql_probe": "c4ba30b52786f437e49b5ec21e8290c760361f6bcba1729e593f85cb89b48385",
+    "probe_ddl": "1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2",
+    "http_mysql_probe": "2adc8f11dfef91f67584ecf22774f05238de2e19cceb38a856b19074f097b64c",
+    "migration_cli": "0b867cb471b6c5b1b6d529977c079c9a85fbb577e013ca71889b6673263e24ab"
+  },
+  "transcript": {
+    "path": "docs/evidence/system-backup-d-http-fixture-fix-local-20261014.txt",
+    "sha256": "321ca907279f36c50c06f55bbe887b9bbb8c7491e3d1696ef3b1b30e082dce1d"
+  },
+  "failed_remote_receipt": {
+    "path": "docs/evidence/d-admin-read-index-mysql-remote-20261014-v2.txt",
+    "sha256": "ed611add7af274566179cf6aac28bf0100e9bc312cf4ca49dedcff0d1aeb1521",
+    "preserved": true
+  },
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+      "sha256": "bcdb1baed385b22fc23cf56d41694287a077b8c98fbd8c0c25a008629453116e"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live_mysql_test.go",
+      "sha256": "0fb99298b661cd556b02f46a45af5d0bbfe45d9d29bb8884238177604e037def"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.mjs",
+      "sha256": "d6d4e24059be4a8f713a6976292f9325d14ce9ef482b61ab068792bb40c3cd38"
+    },
+    {
+      "path": "scripts/system-backup-d-admin-read-index-report.test.mjs",
+      "sha256": "f3cd3460dc133addc32f8782272bf51d1a7c0f7064b42ed5afc9cf83034f4b14"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-validation.ps1",
+      "sha256": "299e89f3975d2756c1bb7f35f3f67d69b3462c17f757f9985125e2c3f0d3bf40"
+    },
+    {
+      "path": "scripts/system-backup-a-evidence-go-step.ps1",
+      "sha256": "01b132a87031f86a5bdfe33bb5366de4c98009d015f9a2968cad1000a7c761dc"
+    }
+  ],
+  "cleanup": {
+    "scratch": "C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/.tmp-a-evidence-d558f20cd785451bb73bde0d018eb302",
+    "reported": true,
+    "directory_absent": true,
+    "retained_build_products": false
+  },
+  "next_operator_transcript": "docs/evidence/d-admin-read-index-mysql-remote-20261014-v2-r2.txt",
+  "limitations": [
+    "Local compilation and source fixture isolation are not the repaired real MySQL/HTTP joint run",
+    "Failed v2 run remains failed; no successful report or production approval fabricated",
+    "Passing remote subtests remain limited observations in the separate failure audit"
+  ]
+}

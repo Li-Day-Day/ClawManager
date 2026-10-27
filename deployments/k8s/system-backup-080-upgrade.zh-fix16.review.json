@@ -1,0 +1,105 @@
+{
+  "kind": "d_080_upgrade_review_plan",
+  "status": "BLOCKED_REVIEW_ONLY",
+  "executable": false,
+  "latest_readonly_prerequisites": {
+    "receipt": "docs/evidence/system-backup-d-upgrade-review-live-20260929.json",
+    "only_080_pending": true,
+    "runtime_tables_absent": true,
+    "users_fk_metadata_compatible": true,
+    "capture_gate_observed_idle": true,
+    "capture_lock_acquired": false,
+    "target_identity_stable": true,
+    "recheck_under_runner_lock_required": true
+  },
+  "target": {
+    "namespace": "clawmanager-zhanghui08-system",
+    "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "server_uuid": "f1f5f76a-95f5-11f1-b08e-366835b4a029",
+    "database": "clawmanager",
+    "image": "10.130.14.23:5000/clawmanager@sha256:d462c2a08f8ff5dccabad5d1634c2ce1ccc478822b809d3329393a527e12169e",
+    "catalog_sha256": "68794bddc66b9809fae57a111778dd8ad53e2a5a5bfb218108295c8d751b1564"
+  },
+  "migration": {
+    "filename": "080_add_system_backup_registration_runtime.sql",
+    "creates_tables": [
+      "system_backup_admin_revocations",
+      "system_backup_totp_credentials",
+      "system_backup_metadata_reservations",
+      "system_backup_admin_sessions"
+    ],
+    "creates_config_or_enrollment": false,
+    "foreign_key_dependency": "users.id signed INT PRIMARY KEY in InnoDB"
+  },
+  "observed_ledger": {
+    "count_before": 95,
+    "missing": [
+      "080_add_system_backup_registration_runtime.sql"
+    ],
+    "unresolved_historical_extras": [
+      "045_update_workbuddy_windows_runtime.sql",
+      "046_add_instance_pvc_name.sql",
+      "047_add_instance_runtime_variant.sql"
+    ],
+    "count_after_080_only": 96
+  },
+  "execution": {
+    "entry": "clawreef-system-backup-migrate --apply",
+    "dsn_source": "separate operator-provisioned migration Secret; not yet supplied",
+    "same_connection_database_pin": true,
+    "migration_exclusion_and_capture_gate_required": true,
+    "current_source_rejects_unknown_ledger": true,
+    "reviewed_history_path": "implemented after fix16; original SQL and target-bound owner review still missing; directly inspected fix16 CLI lacks all three history-review flags; deliver and attest a new standalone runner",
+    "fix16_guard_implementation_attested": false
+  },
+  "required_before_execution": [
+    "Recover old SQL/build provenance and owner-reviewed disposition; no filename-similarity whitelist",
+    "Deliver a new standalone runner with all three historical review flags; fix16 CLI cannot accept reviewed-history inputs",
+    "Recheck live target pins and ledger; only 080 may be newly pending",
+    "Read users.id FK metadata and capture gate state; observation is not lock acquisition",
+    "Verify image embedded catalog and actual guard/source correspondence",
+    "Provide current recovery checkpoint and migration identity through normal deployment procedure",
+    "Compare any partially existing 080 tables before retry; IF NOT EXISTS alone is not validation"
+  ],
+  "forbidden_shortcuts": [
+    "delete or rename historical ledger rows",
+    "run 080 through raw mysql to bypass guarded entry",
+    "restart core merely to use its less-strict legacy startup path",
+    "weaken unknown-ledger checks without reviewed historical evidence"
+  ],
+  "postconditions": [
+    "four runtime tables structurally match 080 including indexes and FKs",
+    "080 ledger row exists once; historical records are retained",
+    "no enrollment, session, signing identity or active config is created",
+    "historical compatibility and fresh baseline remain separately reviewed"
+  ],
+  "failure_policy": "MySQL DDL may partially commit. Keep target/catalog fixed, inspect completed table shapes and ledger before retry; do not drop tables or rewrite ledger as rollback.",
+  "latest_schema_comparison": {
+    "receipt": "docs/evidence/system-backup-d-fresh-live-comparison-20260929.json",
+    "d_tables": 45,
+    "missing_080_tables": [
+      "system_backup_admin_revocations",
+      "system_backup_totp_credentials",
+      "system_backup_metadata_reservations",
+      "system_backup_admin_sessions"
+    ],
+    "other_d_tables_without_compared_differences": 41,
+    "scope": "D_columns_indexes_foreign_keys_and_server_version",
+    "fresh_canonical_sha256": "252611190c9d2cc4e02959ec5443709e78e55687773bb7afc3647eb45c0cea44",
+    "old_sql_semantics_proved": false,
+    "upgrade_authorized": false
+  },
+  "latest_build_provenance": {
+    "receipt": "docs/evidence/system-backup-d-build-provenance-followup-20260929.json",
+    "handoff": "docs/system-backup-d-legacy-source-upgrade-handoff-20260929.md",
+    "fix16_build_ref": "lonxosx8cu2i6blgphjedv9ta",
+    "fix16_build_attachment_matches_image": true,
+    "fix16_runner_sha256": "5596bd834caf90d57bf6cdda4faea3e82a1ac95c94703a87a99579a6485b77cc",
+    "fix16_catalog_directly_verified": true,
+    "fix16_history_review_flags_present": false,
+    "new_reviewed_history_runner_required": true,
+    "original_sql_recovered": false,
+    "applied_ledger_build_binding_proved": false,
+    "owner_semantics_approved": false
+  }
+}

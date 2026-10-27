@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-14",
+  "owner": "D",
+  "scope": "Current-installation/matrix active promotion and persisted backup/drill/evidence/creation-config bindings",
+  "production_overview_enabled": false,
+  "production_promotion_resource_enabled": false,
+  "real_mysql_run": false,
+  "dependency_installation": false,
+  "checks": {
+    "read_package_and_default_vet": "PASS",
+    "package_top_level_tests": 50,
+    "package_named_checks_including_subtests": 256,
+    "promotion_top_level_tests": 6,
+    "promotion_named_checks_including_subtests": 75,
+    "linux_tagged_security_mysql_probe_compile": "PASS",
+    "five_fixed_sql_projections_match_migrations": "PASS",
+    "handoff_links": "PASS",
+    "exit": 0
+  },
+  "binary_sha256": {
+    "authority_mysql_probe": "c27e39152b0c7d9ff7b7cbadc39ecee46967d327a809eed91d3862bd25600932"
+  },
+  "transcript": {
+    "path": "docs/evidence/system-backup-d-promotion-control-local-20261014.txt",
+    "sha256": "266e72d3788a55a0fb0b98613f976518315d80e96f9014ee84428e8fdee0f35a"
+  },
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupread/overview_promotion.go",
+      "sha256": "fd19c8e8873258e570734326cc4a6d7ae6a33757bc6ce1f2041e3673ae6f6d43"
+    },
+    {
+      "path": "backend/internal/systembackupread/overview_promotion_test.go",
+      "sha256": "281ec815617cc6dc6efbcc34db4ad42fc8ea98ce9cbc0fad6a1a98b7200a74f8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope_full_mysql_test.go",
+      "sha256": "a18020ed126e16c5b4cb99a0f04b67b2c7cca52286221a6cad5d0a7c8171c7aa"
+    }
+  ],
+  "cleanup": {
+    "scratch": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-34b2c0cc06c644478cbbb3652dff95df",
+    "reported": true,
+    "directory_absent": true,
+    "retained_build_products": false
+  },
+  "remote_pending": [
+    "TestDAdminReadFullSchemaMySQL/overview_current_promotion_binding_and_availability_loss",
+    "Empty lookup, formal CHECK/FK synthetic rows, A scope and cross-installation isolation",
+    "Artifact corrupt and mutable row-version advance retains historical active record",
+    "Revoked real A session returns zero control result",
+    "Same-run migration/probe/DDL fingerprints, namespace UID and complete cleanup/exit"
+  ],
+  "limitations": [
+    "Metadata and persisted-flag binding, not actual signed artifact/catalog/report or isolated restore proof",
+    "No current seven-group health/readiness derivation or public DTO/HTTP enablement",
+    "Decision hash provenance/mapping and Owner adapters/signoffs remain incomplete",
+    "Source manifest covers three changed D sources, not a frozen complete dependency graph",
+    "Compiled fixture is not a real MySQL execution"
+  ]
+}

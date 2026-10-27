@@ -1,0 +1,29 @@
+{
+  "schema_version": "d-issuer-signing-receipt.v1",
+  "recorded_date": "2026-09-28",
+  "run_id": "d-sig-fa480a2d4c87ebdf0e48f9e6",
+  "operator_exit_code": 0,
+  "evidence_file": "docs/evidence/system-backup-issuer-signing-d-sig-fa480a2d4c87ebdf0e48f9e6.json",
+  "evidence_sha256": "b6c5bca348f1b9d7b7235af7c3b5402af9dd3a036c4346f68d97793cf68a07a5",
+  "verification": {
+    "source_bindings_match": true,
+    "registry_pins_match": true,
+    "local_ed25519_signatures_verified": 2,
+    "acl_denials_reported_and_validated": 16,
+    "remote_independently_requeried": false,
+    "verification_method": "validateSigningResult with recomputed challenges, locally pinned issuer candidates and normalized current source hashes"
+  },
+  "cleanup": {
+    "reported_complete": true,
+    "issuer_keys_retained": true,
+    "local_test_or_build_artifacts_created_during_receipt": false
+  },
+  "remaining": {
+    "application_http_service": "NOT_DEPLOYED_OR_ACCEPTED",
+    "human_totp": "NOT_RUN",
+    "config_mutation_and_activation": "NOT_IMPLEMENTED_OR_EXECUTED",
+    "runtime_signing_tokens": "NOT_ISSUED_TEST_TOKENS_REVOKED",
+    "administrator_rbac_binding": "AWAITING_OPERATOR_ACCOUNT_IDENTITY"
+  },
+  "scope_note": "Cryptographic verification establishes signatures by the pinned keys. ACL/cleanup claims are operator-supplied runner results, not independently re-queried remote facts. No release approval."
+}

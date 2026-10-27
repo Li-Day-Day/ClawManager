@@ -1,0 +1,50 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {workspace,decode,sha256,canonicalLocalName} from './a-download-owners-actual-review-20261020.mjs';
+const raw=p=>fs.readFileSync(path.join(workspace,p));
+const read=p=>decode(raw(p));
+const prefix='docs/evidence/d-download-gc-task-remote-20261021-100302';
+const fixedPrefix='docs/evidence/d-download-gc-producer-20261021-r5';
+const fixedReceipt='docs/evidence/d-download-gc-producer-preparation-20261021.json';
+const output='docs/evidence/d-download-gc-task-local-failure-20261021-100302.json';
+const exact=(a,b)=>assert.deepEqual(a.slice().sort(),b.slice().sort());
+const names=(t,re)=>[...t.matchAll(re)].map(m=>canonicalLocalName(m[1]));
+const bytes=raw(prefix+'.txt'),text=decode(bytes),source=JSON.parse(read(prefix+'-source.json'));
+assert.equal(sha256(bytes),'fdba0b45827097deac645279005beeea22a9d459d01d0117a1bc356840c97ad9');
+assert.equal(sha256(raw(prefix+'-source.json')),'85e7fd739cca0898421c2d2008d53069ef543fbf1ed757ad4f75ed9e4e3f229e');
+assert.equal(source.source_sha256,'0df9ca928b7990db0046c6fc4d42ebfe5123af59f45f60b9aee8dccc180c5c8b');assert.equal(source.files.length,1457);
+assert.equal(source.stable_copy_verified,true);assert.equal(source.dependencies_installed,false);assert.equal(source.production_approved,false);
+assert.equal(sha256(source.files.map(f=>`${f.path}\0${f.sha256}\0${f.size}`).join('\n')+'\n'),source.source_sha256);assert.equal(new Set(source.files.map(f=>f.path)).size,1457);
+const one=re=>{const ms=[...text.matchAll(re)];assert.equal(ms.length,1,String(re));return ms[0];};
+const bound=one(/^LOCAL_SOURCE config-writer-frozen=yes source_sha256=([a-f0-9]{64}) files=(\d+)$/gm);assert.equal(bound[1],source.source_sha256);assert.equal(Number(bound[2]),source.files.length);
+const failed=['TestDownloadRetentionGCProducerReceiptFacts','TestDownloadRetentionGCProducerReceiptFacts/null_version','TestDownloadRetentionGCProducerReceiptFacts/no_version'];
+exact(names(text,/^\s*--- FAIL: (\S+) /gm),failed);assert.doesNotMatch(text,/^\s*--- SKIP:|^panic:|CLEANUP_PENDING/m);
+assert.equal([...text.matchAll(/download_retention_gc_producer_test\.go:291: invalid character 'o' looking for beginning of value/g)].length,2);
+const fixed=JSON.parse(read(fixedReceipt)),fixedSource=JSON.parse(read(fixedPrefix+'-source.json'));
+assert.equal(fixed.status,'local_component_preparation_only');assert.equal(fixed.full.exit,0);assert.equal(fixed.full.default_vet,true);assert.equal(fixed.full.main,754);assert.equal(fixed.full.all,6242);
+assert.equal(fixed.source.sha256,fixedSource.source_sha256);assert.equal(fixed.full.events_sha256,sha256(raw(fixedPrefix+'.jsonl')));
+exact(source.files.map(f=>f.path),fixedSource.files.map(f=>f.path));
+const changed=source.files.filter(f=>!fixedSource.files.some(g=>f.path===g.path&&f.sha256===g.sha256&&f.size===g.size)).map(f=>f.path);
+exact(changed,['backend/internal/systembackupevidence/download_retention_gc_producer_test.go']);
+const events=read(fixedPrefix+'.jsonl').trim().split('\n').map(JSON.parse);assert.ok(!events.some(e=>['fail','skip','build-fail'].includes(e.Action)));
+for(const n of failed)assert.equal(events.filter(e=>e.Test===n&&e.Action==='pass').length,1);
+const summaries=[...text.matchAll(/^(ok|FAIL)\s+(clawreef\/\S+)\s+([0-9.]+s)$/gm)];assert.equal(summaries.length,2);
+const stages=[];let start=0;
+for(const [n,m] of summaries.entries()){
+  const segment=text.slice(start,m.index);start=m.index+m[0].length;
+  assert.equal(m[1],n===0?'ok':'FAIL');assert.equal(m[2],n===0?'clawreef/internal/systembackupsecurity':'clawreef/internal/systembackupevidence');
+  const ran=names(segment,/^=== RUN\s+(\S+)\s*$/gm),passed=names(segment,/^\s*--- PASS: (\S+) /gm),denied=names(segment,/^\s*--- FAIL: (\S+) /gm);
+  assert.equal(new Set(ran).size,ran.length);exact(ran,[...passed,...denied]);exact(denied,n===0?[]:failed);
+  const expected=events.filter(e=>e.Package===m[2]&&e.Test&&e.Action==='pass'&&!e.Test.startsWith('TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback')).map(e=>e.Test);exact(ran,expected);
+  stages.push({package:m[2],main:ran.filter(t=>!t.includes('/')).length,all:ran.length,passed:passed.length,failed:denied.length,elapsed:m[3],status:m[1]});
+}
+assert.equal(stages[0].all,2011);assert.equal(stages[1].all,2924);assert.equal(stages[1].elapsed,'384.192s');
+assert.doesNotMatch(text,/^RUN namespace=|^PASS fresh-migration-replay|^PASS d-download-gc-task-mysql|^=== RUN\s+TestDDownloadGCTaskMySQL(?:\/|$)/m);
+assert.match(text,/remote validation has not started; dependencies will not be installed/);
+const owner=one(/^LOCAL_OWNER config-writer-source=(.+)$/gm)[1].trim();assert.equal(path.dirname(path.resolve(owner)).toLowerCase(),workspace.toLowerCase());assert.match(path.basename(owner),/^\.tmp-d-index-cache-[a-f0-9]{32}$/);
+assert.ok(text.includes(`LOCAL_CLEANUP config-writer-source-owned=${owner} removed=True`));assert.equal(fs.existsSync(owner),false);assert.ok(text.includes('CLEANED local-registration-build-cache=True'));
+assert.equal(one(/^download_gc_task_exit=(-?\d+)$/gm)[1],'1');assert.match(text.trimEnd(),/download_gc_task_exit=1$/);
+const report={kind:'d_download_gc_task_local_failure_review',recorded_at:new Date().toISOString(),status:'local_fixture_failure_fixed_and_full_packages_revalidated',log:prefix+'.txt',log_sha256:sha256(bytes),source_manifest:prefix+'-source.json',source_manifest_sha256:sha256(raw(prefix+'-source.json')),source_sha256:source.source_sha256,source_files:1457,stages,failed_tests:failed,failed_leaves:2,outer_exit:1,remote_started:false,actual_sql_cases:0,reason:'D negative fixtures decoded C1 typed binary framing as JSON; both failed in fixture construction before entering the component',fixed:{receipt:fixedReceipt,receipt_sha256:sha256(raw(fixedReceipt)),source_sha256:fixedSource.source_sha256,changed_files:changed,production_inputs_unchanged_from_failed_operator_run:true,full_main:754,full_all:6242,default_vet:true,exit:0,dependencies_installed:false,test_gate_not_weakened:true},cleanup:{local_owner:owner,local_source_independently_absent:true,local_build_cache_reported:true},boundaries:{producer_eighteen_actual_acceptance_unchanged:true,gc_task_eighteen_actual_still_pending:true,production_approval:false,reviewer_remote_run:false}};
+if(process.argv.includes('--check')){const saved=JSON.parse(read(output));report.recorded_at=saved.recorded_at;assert.deepEqual(saved,report);console.log('PASS operator GC task local failure: exact two fixture leaves, no remote run, one test file fixed, full four packages and cleanup revalidated');}
+else{assert.equal(fs.existsSync(path.join(workspace,output)),false);fs.writeFileSync(path.join(workspace,output),JSON.stringify(report,null,2)+'\n');console.log(output);}

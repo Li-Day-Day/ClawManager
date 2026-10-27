@@ -1,0 +1,413 @@
+{
+  "kind": "d_six_scope_current_dependency_audit",
+  "recorded_utc": "2026-10-22T06:23:52.510Z",
+  "status": "incomplete_external_materials_and_actual_results_needed",
+  "source": {
+    "path": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-source.json",
+    "sha256": "e0175abb67f274fd7521f8e19997bef4b0c327fdec92effebbe1f15d9d8bd10d",
+    "files": 1559,
+    "input_digest": "bda3b2d87a0b7050e98478f6cbacd70cea8bd02eb80b20efa7ba7cdae7703dc1",
+    "stable_read_verified": true
+  },
+  "native": {
+    "path": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-native.json",
+    "sha256": "fc3fc6e41914a3fd69f3cdae949d42ebe97163650b0757724234c0ab4147a43f"
+  },
+  "audit_scripts": [
+    {
+      "path": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd.ps1",
+      "sha256": "f5d14b3dc2904cf0b0273ddf6c7b016e68e96422a6ea662702d608b14a4f70ba"
+    },
+    {
+      "path": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd.mjs",
+      "sha256": "93b1aedb0f8f6d638e40ec1538c509d0aead98921fd7210b3916a970aa2e085b"
+    }
+  ],
+  "gates": [
+    {
+      "name": "inventory",
+      "stdout": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-inventory.stdout.json",
+      "native_exit": 0,
+      "stderr": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-inventory.stderr.txt",
+      "arguments": [
+        "scripts/system-backup-schema-inventory.mjs",
+        "--check"
+      ],
+      "result": {
+        "summary": {
+          "plan_business_tables": 99,
+          "plan_control_tables": 32,
+          "plan_control_without_inventory": 3,
+          "inventoried_objects": 100,
+          "migration_objects": 99,
+          "without_migration": 0,
+          "unassigned": 0,
+          "repository_runtime_create": 0,
+          "repository_runtime_alter": 0,
+          "deployment_bootstrap_create": 0
+        },
+        "gaps": {
+          "plan_control_without_inventory": [
+            "system_backup_catalog_imports",
+            "system_backup_catalog_records",
+            "system_backup_catalog_scan_states"
+          ],
+          "without_migration": [],
+          "unassigned": [],
+          "repository_runtime_create": [],
+          "repository_runtime_alter": [],
+          "deployment_bootstrap_create": []
+        },
+        "database_comparison": null
+      },
+      "stdout_sha256": "a57ed9e967be90d1ef403dba7feb7e353d48a90769b96efbc424866b9ef4ef12",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "contract",
+      "stdout": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-contract.stdout.json",
+      "native_exit": 1,
+      "stderr": "docs/evidence/d-six-scope-current-audit-20261022-528e2ecd-contract.stderr.txt",
+      "arguments": [
+        "scripts/system-backup-contract-check.mjs",
+        "--check",
+        "--strict"
+      ],
+      "result": {
+        "contract_version": "system-backup-plan.v12",
+        "contract_status": "draft",
+        "migration_catalog": {
+          "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+          "file_count": 96,
+          "hash": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"
+        },
+        "summary": {
+          "object_count": 100,
+          "policy_recorded": 60,
+          "policy_pending": 40,
+          "cross_review_pending": 60
+        },
+        "blockers": {
+          "plan_control_without_inventory": [
+            "system_backup_catalog_imports",
+            "system_backup_catalog_records",
+            "system_backup_catalog_scan_states"
+          ],
+          "missing_artifacts": [
+            "recovery_catalog_records",
+            "restore_target",
+            "status_relay",
+            "catalog_scan_record"
+          ],
+          "draft_artifacts": [
+            "registry_enums",
+            "hash_algorithms",
+            "schema_registry",
+            "admin_openapi",
+            "task_operation_dto",
+            "status_failure_enums",
+            "manifest_system_backup_v1",
+            "artifact_index",
+            "provider_finalizer_request",
+            "committed_marker",
+            "acceptance_marker",
+            "control_evidence_sidecar",
+            "strong_auth_proof_nonce",
+            "strong_auth_nonce_ledger",
+            "provider_proof_registration",
+            "secret_ref",
+            "restore_drill_resource_lifecycle",
+            "job_observation_cursor",
+            "verifier_contract",
+            "metrics_alert_registry",
+            "staging_resource_lifecycle",
+            "maintenance_participant_state",
+            "external_action_payload",
+            "evidence_chunk_log",
+            "dependency_provider_capability",
+            "compact_tombstone",
+            "installation_state",
+            "source_writer_check_state",
+            "runner_collector_normalizer_interfaces",
+            "audit_cursor_redacted_examples",
+            "go_typescript_dto_parity",
+            "capability_evidence",
+            "producer_authority",
+            "cross_owner_reviews"
+          ],
+          "policy_pending": [
+            "table:backup_schedules",
+            "table:backups",
+            "table:custom_team_templates",
+            "table:instance_agents",
+            "table:instance_browser_workers",
+            "table:instance_commands",
+            "table:instance_config_revisions",
+            "table:instance_desired_state",
+            "table:instance_external_access",
+            "table:instance_runtime_bindings",
+            "table:instance_runtime_status",
+            "table:instance_skills",
+            "table:instance_usage",
+            "table:instances",
+            "table:northbound_operations",
+            "table:openclaw_config_bundle_items",
+            "table:openclaw_config_bundle_skills",
+            "table:openclaw_config_bundles",
+            "table:openclaw_config_resources",
+            "table:openclaw_injection_snapshots",
+            "table:persistent_volumes",
+            "table:runtime_pods",
+            "table:runtime_rollouts",
+            "table:runtime_upgrade_audits",
+            "table:runtime_upgrade_items",
+            "table:skill_blobs",
+            "table:skill_hub_tag_assignments",
+            "table:skill_hub_tags",
+            "table:skill_package_materialize_jobs",
+            "table:skill_scan_results",
+            "table:skill_versions",
+            "table:skills",
+            "table:team_event_outbox",
+            "table:team_events",
+            "table:team_members",
+            "table:team_tasks",
+            "table:team_work_items",
+            "table:team_workflow_phases",
+            "table:teams",
+            "table:workspace_file_audits"
+          ],
+          "cross_review_pending": [
+            "table:audit_events",
+            "table:audit_logs",
+            "table:chat_messages",
+            "table:chat_sessions",
+            "table:cost_records",
+            "table:egress_private_exceptions",
+            "table:enterprise_auth_settings",
+            "table:instance_gateway_token_aliases",
+            "table:llm_models",
+            "table:model_invocations",
+            "table:northbound_admin_settings",
+            "table:northbound_auth_challenges",
+            "table:northbound_caller_policies",
+            "table:northbound_sessions",
+            "table:northbound_settings_audit",
+            "table:risk_hits",
+            "table:risk_rules",
+            "table:schema_migrations",
+            "table:security_scan_configs",
+            "table:security_scan_job_items",
+            "table:security_scan_jobs",
+            "table:security_scan_reports",
+            "table:system_artifact_lease_states",
+            "table:system_artifact_leases",
+            "table:system_backup_admin_revocations",
+            "table:system_backup_admin_sessions",
+            "table:system_backup_alert_states",
+            "table:system_backup_artifact_verifications",
+            "table:system_backup_attempts",
+            "table:system_backup_check_results",
+            "table:system_backup_compact_tombstones",
+            "table:system_backup_configs",
+            "table:system_backup_dependency_health",
+            "table:system_backup_events",
+            "table:system_backup_evidence",
+            "table:system_backup_evidence_chunks",
+            "table:system_backup_external_actions",
+            "table:system_backup_installation_state",
+            "table:system_backup_job_observations",
+            "table:system_backup_log_chunks",
+            "table:system_backup_metadata_reservations",
+            "table:system_backup_operations",
+            "table:system_backup_preflights",
+            "table:system_backup_promotions",
+            "table:system_backup_provider_capabilities",
+            "table:system_backup_prune_items",
+            "table:system_backup_prune_runs",
+            "table:system_backup_source_writer_check_states",
+            "table:system_backup_staging_resources",
+            "table:system_backup_strong_auth_nonces",
+            "table:system_backup_totp_credentials",
+            "table:system_backups",
+            "table:system_image_settings",
+            "table:system_maintenance_locks",
+            "table:system_maintenance_mutation_leases",
+            "table:system_maintenance_participants",
+            "table:system_restore_drill_resources",
+            "table:system_restore_drills",
+            "table:user_quotas",
+            "table:users"
+          ],
+          "schema_hash_pending": true
+        },
+        "verifier_check_registries": [
+          {
+            "owner": "A",
+            "registry": "users_backup_validate",
+            "check_schema": "#/$defs/AUsersBackupCheck",
+            "required_check_count": 8
+          },
+          {
+            "owner": "A",
+            "registry": "ai_gateway_backup_validate",
+            "check_schema": "#/$defs/AAIGatewayBackupCheck",
+            "required_check_count": 12
+          },
+          {
+            "owner": "A",
+            "registry": "users_restore_validate",
+            "check_schema": "#/$defs/AUsersRestoreCheck",
+            "required_check_count": 11
+          },
+          {
+            "owner": "A",
+            "registry": "ai_gateway_restore_validate",
+            "check_schema": "#/$defs/AAIGatewayRestoreCheck",
+            "required_check_count": 14
+          },
+          {
+            "owner": "D",
+            "registry": "resources_backup_validate",
+            "check_schema": "#/$defs/ResourcesBackupCheck",
+            "required_check_count": 12
+          },
+          {
+            "owner": "D",
+            "registry": "control_plane_restore_validate",
+            "check_schema": "#/$defs/ControlExclusionCheck",
+            "required_check_count": 35
+          }
+        ]
+      },
+      "stdout_sha256": "f91513f21082d350f18b88d12207e3341596b8acbbe49e1b0445a4ba2c5a3d9b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "pending_policy_by_owner": {
+    "B": [
+      "table:backup_schedules",
+      "table:backups",
+      "table:instance_agents",
+      "table:instance_browser_workers",
+      "table:instance_commands",
+      "table:instance_config_revisions",
+      "table:instance_desired_state",
+      "table:instance_external_access",
+      "table:instance_runtime_bindings",
+      "table:instance_runtime_status",
+      "table:instance_usage",
+      "table:instances",
+      "table:northbound_operations",
+      "table:openclaw_config_bundle_items",
+      "table:openclaw_config_bundle_skills",
+      "table:openclaw_config_bundles",
+      "table:openclaw_config_resources",
+      "table:openclaw_injection_snapshots",
+      "table:persistent_volumes",
+      "table:runtime_pods",
+      "table:runtime_rollouts",
+      "table:runtime_upgrade_audits",
+      "table:runtime_upgrade_items",
+      "table:workspace_file_audits"
+    ],
+    "C": [
+      "table:custom_team_templates",
+      "table:instance_skills",
+      "table:skill_blobs",
+      "table:skill_hub_tag_assignments",
+      "table:skill_hub_tags",
+      "table:skill_package_materialize_jobs",
+      "table:skill_scan_results",
+      "table:skill_versions",
+      "table:skills",
+      "table:team_event_outbox",
+      "table:team_events",
+      "table:team_members",
+      "table:team_tasks",
+      "table:team_work_items",
+      "table:team_workflow_phases",
+      "table:teams"
+    ]
+  },
+  "adapter_delivery": {
+    "B": "user_confirmed_not_delivered",
+    "C": "user_confirmed_not_delivered"
+  },
+  "actual_result_logs_observed": [
+    {
+      "path": "docs/evidence/d-download-gc-freeze-remote-20261022-084739-1604f031.txt",
+      "size": 1720772,
+      "sha256": "76071f8c77782f8eecbba2745061fc639ff0c563295dafc2bc6b57a2a8b70309"
+    }
+  ],
+  "actual_result_search_scope": "local docs/evidence names and bytes only; no remote query",
+  "http_source_observation": {
+    "verification_history": "wired",
+    "other_three_details": "unavailable",
+    "source": "backend/cmd/server/system_backup_read_live.go",
+    "runtime_verified_by_this_audit": false
+  },
+  "scopes": [
+    {
+      "id": 1,
+      "status": "incomplete",
+      "remaining": [
+        "Owner policies and cross reviews",
+        "missing catalog schemas/artifacts and observed schema hash",
+        "actual deployment grants, physical capacity, production adapters and workload/index acceptance"
+      ]
+    },
+    {
+      "id": 2,
+      "status": "incomplete",
+      "remaining": [
+        "actual verification-history HTTP/MySQL result for the newly prepared cases",
+        "current authoritative Owner facts for overview and other three details",
+        "logs/manifest and remaining catalog/prune/promotion readers"
+      ]
+    },
+    {
+      "id": 3,
+      "status": "incomplete",
+      "remaining": [
+        "B production capture/target/clock/fence/transaction writer",
+        "D nine-table normalization and reviewed resource mappings",
+        "actual D production orchestration and full large-smoke"
+      ]
+    },
+    {
+      "id": 4,
+      "status": "not_proven_for_real_deployment",
+      "remaining": [
+        "management mTLS and upper authorization",
+        "independent physical audit volume and reservation",
+        "single-writer takeover and actual IO faults"
+      ]
+    },
+    {
+      "id": 5,
+      "status": "not_proven_for_real_installation",
+      "remaining": [
+        "original historical SQL, ledger and canonical inputs",
+        "reviewed upgrade/deployment authorization",
+        "human MFA and activation transaction"
+      ]
+    },
+    {
+      "id": 6,
+      "status": "incomplete",
+      "remaining": [
+        "real backend/Owner/browser end-to-end",
+        "four deployment matrices",
+        "specified large-smoke data and measured resources/deadlines"
+      ]
+    }
+  ],
+  "registry_or_approval_rewritten": false,
+  "changes_to_running_code": false,
+  "dependencies_installed": false,
+  "build_or_test_products_created": false,
+  "remote_executed": false,
+  "original_six_scopes_complete": false
+}

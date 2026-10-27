@@ -1,0 +1,143 @@
+{
+  "kind": "system_backup_d_provider_lab_handoff",
+  "recorded_date": "2026-09-24",
+  "source": "operator-provided console output; not independently re-queried or signed",
+  "normalized_output_sha256": "0af44d73c6858e3d743bbcee883296145eeacb21ed445f5b324023ffde3db089",
+  "provider_lab_exit": 0,
+  "local_client_hash_matches": true,
+  "registered_evidence": null,
+  "approved_reviewers": [],
+  "handoff": {
+    "status": "isolated_provider_bootstrap_passed",
+    "provider_capability_approved": false,
+    "disaster_recovery_eligible": false,
+    "kms": {
+      "provider": "openbao-transit",
+      "endpoint": "https://bao.sbk-provider-zh-7474d6e0b052.svc:8200",
+      "key_path": "transit/keys/d-kek-v1",
+      "key_version": 1,
+      "context_base64": "c2JrLXByb3ZpZGVyLXpoLTc0NzRkNmUwYjA1Mi9jYXBhYmlsaXR5LXNwaWtlL2F0dGVtcHQtMS9jYXB0dXJl",
+      "generate_identity": "d-kms-generate",
+      "unwrap_identity": "d-kms-unwrap",
+      "rotation_rule": "new named key/ref; never silently use latest"
+    },
+    "provider_wire_parameters": {
+      "bits": "256",
+      "signing_key_version": "1"
+    },
+    "signing": {
+      "capture_certificate": {
+        "key_path": "transit/keys/d-capture-certificate-v1",
+        "key_version": 1,
+        "identity_alias": "d-sign-capture-certificate",
+        "public_key_base64": "jdIQDCLRw0memyBs2hMY0AzXZ5gB03+pfs6MOWAiuI4="
+      },
+      "acceptance_record": {
+        "key_path": "transit/keys/d-acceptance-record-v1",
+        "key_version": 1,
+        "identity_alias": "d-sign-acceptance-record",
+        "public_key_base64": "X6BFO67TYP353I0FJNBiLlDyBmkOA9olq814WRNvbPA="
+      },
+      "catalog_record": {
+        "key_path": "transit/keys/d-catalog-record-v1",
+        "key_version": 1,
+        "identity_alias": "d-sign-catalog-record",
+        "public_key_base64": "Gp9pCN56rcI9C4BbOlJ2JrVStthmwaxYk/RHRZxW6LE="
+      }
+    },
+    "evidence": {
+      "provider": "minio-s3",
+      "endpoint": "https://minio.sbk-provider-zh-7474d6e0b052.svc:9000",
+      "bucket": "d-provider-evidence",
+      "prefix": "a-spike/",
+      "identity_aliases": [
+        "d-evidence-read",
+        "d-evidence-write",
+        "d-evidence-delete"
+      ],
+      "credential_lifetime": "test-only static; delete with lab; not task-scoped production grants"
+    },
+    "signing_and_kms_token_ttl_seconds": 28800,
+    "tools": [
+      "bao",
+      "mc",
+      "python3-stdlib-HTTPS"
+    ],
+    "application_adapter": "not_implemented_by_this_lab",
+    "checks": [
+      "declarative-file-audit-active",
+      "kms-roundtrip-v1",
+      "generate-identity-decrypt-denied",
+      "three-distinct-signing-public-keys",
+      "kms-wrong-context-denied",
+      "kms-wrong-bits-denied",
+      "signing-wrong-version-denied",
+      "three-sign-verify-roundtrips",
+      "six-cross-purpose-sign-denials"
+    ],
+    "pending": [
+      "A capability matrix",
+      "token revocation/expiry probes",
+      "rotation/history probes",
+      "evidence read/write/delete/Range/checksum/denial probes",
+      "provider-proof adapter",
+      "source-independent recovery",
+      "runtime task-scoped identities"
+    ],
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "created_at": "2026-09-24T01:19:44.197729+00:00",
+    "tools_image": "10.130.14.23:5000/clawmanager@sha256:8829a85386402301f06f00a766a8b3627001bb4d7f327e16af228d3b337d9cb3",
+    "minio_image": "10.130.14.23:5000/minio@sha256:52dfd5c0bbd38d3219f2058c7af216d9f9a27a994b7b5baad09bbd38866015ff",
+    "ca_configmap": "lab-trust",
+    "ca_sha256": "798900e820c19cb689b60e80813d98fa3b6f0ddc5e3068fb10e3e40a9593cf5f",
+    "identity_refs": {
+      "d-kms-generate": {
+        "secret_name": "d-kms-generate",
+        "uid": "4e31290d-44af-4b79-988a-e9bc078bda24",
+        "resource_version": "88290263"
+      },
+      "d-kms-unwrap": {
+        "secret_name": "d-kms-unwrap",
+        "uid": "d2864810-0503-4b4f-bbfc-788f6051cedf",
+        "resource_version": "88290273"
+      },
+      "d-sign-capture-certificate": {
+        "secret_name": "d-sign-capture-certificate",
+        "uid": "cfdd9291-578e-4c74-83a8-9c23166ebf45",
+        "resource_version": "88290277"
+      },
+      "d-sign-acceptance-record": {
+        "secret_name": "d-sign-acceptance-record",
+        "uid": "e74eae5d-fa24-4ed6-ba7a-ebe5eb0b64ef",
+        "resource_version": "88290281"
+      },
+      "d-sign-catalog-record": {
+        "secret_name": "d-sign-catalog-record",
+        "uid": "588400a0-5c11-489b-a255-727784e4d35a",
+        "resource_version": "88290282"
+      },
+      "d-evidence-read": {
+        "secret_name": "d-evidence-read",
+        "uid": "40abf6f7-c512-4134-9c74-6bd638632dfd",
+        "resource_version": "88290283"
+      },
+      "d-evidence-write": {
+        "secret_name": "d-evidence-write",
+        "uid": "59027c31-f7a4-4150-9d4b-f8cc3937cea6",
+        "resource_version": "88290284"
+      },
+      "d-evidence-delete": {
+        "secret_name": "d-evidence-delete",
+        "uid": "9ed99e73-c0c2-414a-b51a-6a96591da512",
+        "resource_version": "88290285"
+      }
+    },
+    "bootstrap_client_configmap": "lab-client",
+    "bootstrap_client_sha256": "3ebe6f7e7233c9848dc252d983cbacab5322738758cb32672f6c09511baa7f8a",
+    "credential_delivery": "operator mounts only the required named Secret into each test pod; never paste Secret values",
+    "cleanup_required_after_A_tests": true,
+    "same_cluster_only": true,
+    "tls_certificate_validity_days": 7
+  }
+}

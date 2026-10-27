@@ -1,0 +1,15 @@
+{
+  "kind": "d_history_remote_wrapper_local_build_failure",
+  "source": "operator_supplied_conversation_error_text",
+  "stage": "local go test/build before SSH",
+  "package": "internal/runtime/gc",
+  "compiler": "C:/Program Files/Go/pkg/tool/windows_amd64/compile.exe",
+  "exit_status": "0xc0000043",
+  "ntstatus": "STATUS_SHARING_VIOLATION",
+  "lock_holder_identified": false,
+  "go_tests_passed": false,
+  "remote_history_test_started": false,
+  "cleanup_reported_local_probe_build_cache": true,
+  "mitigation": "default GOFLAGS -p=1 and GOMAXPROCS=1; run-owned telemetry/cache/tmp; no automatic dependency installation or blind retry",
+  "reference": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55"
+}

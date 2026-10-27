@@ -1,0 +1,148 @@
+{
+  "kind": "d_a_business_and_public_contract_substantive_review",
+  "status": "local_review_and_two_read_completion_corrections",
+  "base_source_sha256": "a60c3efeac10462359b1f185021936561097aa5d2f6f4d30ff94e040cf1a7688",
+  "base_manifest_sha256": "926bb903c936ca33385d80f2621a54e475fe9b75952301a95074f0066eb8e4db",
+  "changes": [
+    "backend/internal/systembackupbusinessa/capture.go",
+    "backend/internal/systembackupbusinessa/restore_verify.go",
+    "backend/internal/systembackupbusinessa/d_review_commit_context_test.go"
+  ],
+  "post_commit_guards": 2,
+  "new_main": 2,
+  "new_checks": 12,
+  "runs": [
+    {
+      "stage": "counterfactual",
+      "source_sha256": "8d97434e997a58bd9decd3d3059b0afbaa350484cf07d07228b97d5cc84c7a8b",
+      "files": 1472,
+      "main": 2,
+      "checks": 12,
+      "passed": 5,
+      "failed": [
+        "TestDReviewABusinessReadCommitBoundary",
+        "TestDReviewABusinessReadCommitBoundary/capture_counts",
+        "TestDReviewABusinessReadCommitBoundary/capture_counts/canceled_commit",
+        "TestDReviewABusinessReadCommitBoundary/restore_verifier",
+        "TestDReviewABusinessReadCommitBoundary/restore_verifier/canceled_commit",
+        "TestDReviewARestoreMismatchAndCanceledResult",
+        "TestDReviewARestoreMismatchAndCanceledResult/canceled_mismatch_commit"
+      ],
+      "exit": 1,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [],
+      "source_manifest": "docs/evidence/d-a-business-review-20261021-r1-counterfactual-source.json",
+      "source_manifest_sha256": "dd1c4e4e09bc4e97622d66b3e72fb87cb4aa149517e9d9953e34511e3180f7e1",
+      "events_sha256": "592f040345ddda8b61bc5a4b42b600276ab29354613159bbac5cff012b50bdfb",
+      "native_sha256": "61cd4c66a2f6559623742d40ac13076cd9be3fc190aaba942409bb3908347e9a"
+    },
+    {
+      "stage": "target",
+      "source_sha256": "c5faafbe0468c67537746a76c3237400a7bd72fe18a3e2857d6c3d923e51e4c4",
+      "files": 1472,
+      "main": 2,
+      "checks": 12,
+      "passed": 12,
+      "failed": [],
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupbusinessa",
+          "elapsed_seconds": 3.035
+        }
+      ],
+      "source_manifest": "docs/evidence/d-a-business-review-20261021-r1-target-source.json",
+      "source_manifest_sha256": "2918f4cc1f3ccc19d1028dbf1b6526770ad0e87c376ed2f5119fae010b2ada1f",
+      "events_sha256": "230431337c9d88b47f985bafef99432d9347e53377e84cb1afe7a5b6c3792f77",
+      "native_sha256": "85b8464ae3285bbaf60c55b882179a7bb4957ec21a31f1f109985cc737936d76"
+    },
+    {
+      "stage": "full",
+      "source_sha256": "c5faafbe0468c67537746a76c3237400a7bd72fe18a3e2857d6c3d923e51e4c4",
+      "files": 1472,
+      "main": 333,
+      "checks": 2346,
+      "passed": 2346,
+      "failed": [],
+      "exit": 0,
+      "default_vet": true,
+      "source_postcheck": true,
+      "packages": [
+        {
+          "package": "clawreef/internal/systembackupbusinessa",
+          "elapsed_seconds": 17.714
+        },
+        {
+          "package": "clawreef/internal/systembackupsecurity",
+          "elapsed_seconds": 125.057
+        }
+      ],
+      "source_manifest": "docs/evidence/d-a-business-review-20261021-r1-full-source.json",
+      "source_manifest_sha256": "2918f4cc1f3ccc19d1028dbf1b6526770ad0e87c376ed2f5119fae010b2ada1f",
+      "events_sha256": "a9dad42f55b640d19d6aa239263e47a550d41a473893ad8bd78230ef1f77bb76",
+      "native_sha256": "0973516da1cd0129c0ceea82ad8b702b8f3de13d7503c61c7eb6a76b692bb8b0"
+    }
+  ],
+  "public_contracts": {
+    "native": "docs/evidence/d-a-public-review-20261021-r1-native.json",
+    "native_sha256": "00db947bd42c867cd9b015c23a368af138d93986e180b4643dc360c9f94ab91c",
+    "runs": [
+      {
+        "stage": "schemas",
+        "checks": 4,
+        "tap_sha256": "e274ffae5b5a15d1ae51918daa1cd0f9a4ddc1e5ae558bc20c88e3fc6a59dcc8"
+      },
+      {
+        "stage": "signatures",
+        "checks": 10,
+        "tap_sha256": "aeb831f7e1c6a4f94e3f5c5e2a1f10342cd4aba63f52d4468ed97b782864d8cb"
+      }
+    ],
+    "full_wire_parity_proven": false,
+    "online_provider_proven": false
+  },
+  "review": {
+    "document": "docs/system-backup-d-a-cross-review-20261021.md",
+    "sha256": "a4417481b65925edb72f292412c3820c48923eab5039117c8508a8123f97d0d6",
+    "queue": "docs/evidence/d-owner-review-queue-20261021.json",
+    "queue_sha256": "57c9d5ea32a714d2556dcc01442d88a9a213b9d05b2dd215e77dd8b154e6451d",
+    "policy_count": 15,
+    "public_contract_groups": 4,
+    "fixture_comparison": "docs/evidence/d-six-scope-audit-correction-20261021.json",
+    "fixture_comparison_sha256": "753f2f3904428b1db1d27a32c24d3fb730f989d2319de7fa70e716c188f906b8",
+    "approvals_written": false
+  },
+  "published": {
+    "source_context_sha256": "5a446bbf5b42c39745d04998cdfabc1e2978a1f5164ae3cec9d0ea3b7d6bf85c",
+    "source_context_manifest_sha256": "ca5a4c1b32ce9ed38475ff7e4e525c5314abf1a4d1400f01e3c371662a9b3d98",
+    "matches_frozen_full": false,
+    "concurrent_changes": [
+      "backend/internal/systembackupread/task_check_evidence_control.go"
+    ],
+    "concurrent_additions": [
+      "backend/internal/systembackupread/task_check_evidence_control_test.go"
+    ],
+    "own_three_files_and_module_match": true
+  },
+  "cleanup": {
+    "receipt": "docs/evidence/d-a-business-review-cleanup-20261021.json",
+    "sha256": "25debf56900900da52fc3fe194162508e3d5d1d629fc7277dd893df3157bed83",
+    "removed": true
+  },
+  "dependencies_installed": false,
+  "remote": false,
+  "boundaries": {
+    "healthy_commit_error_and_live_mismatch_preserved": true,
+    "late_commit_returns_zero_and_context_cause": true,
+    "no_commit_retry_or_rollback_claim": true,
+    "sql_proof_and_isolation_unchanged": true,
+    "old_mysql_receipt_not_expanded": true,
+    "real_B_dump_and_target_writer_proven": false,
+    "current_global_registry_frozen": false,
+    "production_approval": false,
+    "original_six_scopes_complete": false
+  }
+}

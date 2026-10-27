@@ -1,0 +1,160 @@
+{
+  "kind": "d_node_pod_capacity_read_only_local_preparation",
+  "recorded_at": "2026-10-20T09:25:53.464Z",
+  "inputs_recorded_after_checks": [
+    {
+      "path": "scripts/system-backup-d-node-pod-capacity.sh",
+      "size": 2902,
+      "sha256": "15e4ef747d219b1ef55ea94601f7dcaaf9b975336d3bb49ba2b4bce311a9438a"
+    },
+    {
+      "path": "scripts/system-backup-mysql-startup-diagnostic.ps1",
+      "size": 8210,
+      "sha256": "e73f42630e32587f3b4d9d8e92669bf89eb7127a688f92bcfdc08a4d4e1ec3fd"
+    },
+    {
+      "path": "scripts/system-backup-d-node-pod-capacity.test.mjs",
+      "size": 4937,
+      "sha256": "e7a42f618acaf6e32da6b0c4f279189fc372cbb88b6f9c1b0678d8ac3fa4c0f0"
+    },
+    {
+      "path": "scripts/system-backup-d-node-pod-capacity-dispatch.test.ps1",
+      "size": 3933,
+      "sha256": "14be9f050f33f6c2abffd6234e77293ab03267034f6222cca4b7f535eed40c3e"
+    },
+    {
+      "path": "scripts/system-backup-mysql-startup.test.mjs",
+      "size": 4269,
+      "sha256": "b21558d4dba7f69e13cfb5e65fc1ceba7cb4e8fec99f252c86ba621e426ae5d6"
+    },
+    {
+      "path": "scripts/system-backup-fresh-migration-smoke.sh",
+      "size": 29625,
+      "sha256": "26b4826f69580680faaf0287e309101ba50df730085d20e774c58bea34ec93f9"
+    }
+  ],
+  "normalized_capacity_script_sha256": "15e4ef747d219b1ef55ea94601f7dcaaf9b975336d3bb49ba2b4bce311a9438a",
+  "evidence_files": [
+    {
+      "path": "docs/evidence/d-node-pod-capacity-tests-20261020-r2.txt",
+      "size": 1274,
+      "sha256": "0e34007616fbab4439ba3215f5819e012226b05180ff264fa53aa21782323522"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-dispatch-pwsh5-20261020-r3.txt",
+      "size": 254,
+      "sha256": "9ac8f4d5d144cc09cc30ab52fecd2e720be3093d6bd6434bf9a3f4f740077235"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-dispatch-pwsh7-20261020-r3.txt",
+      "size": 254,
+      "sha256": "9ac8f4d5d144cc09cc30ab52fecd2e720be3093d6bd6434bf9a3f4f740077235"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-local-validation-20261020-r1.txt",
+      "size": 1469,
+      "sha256": "498253f6bb67944847005a264f35f150d3c2363564e3957a1ee688648f9798d6"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-local-pwsh5-capacity-20261020-r1.txt",
+      "size": 417,
+      "sha256": "1c7136f8aadc31cd8745433014e7d4d29219b038ac3253be300fa1a0c1e7b784"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-local-pwsh7-capacity-20261020-r1.txt",
+      "size": 417,
+      "sha256": "0347b201ec33f30a516973a038f32ffd7f3c639472ad2da90623356cb32425c4"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-local-pwsh7-original-startup-20261020-r1.txt",
+      "size": 369,
+      "sha256": "4d3d43409642ff34f3254de4eb3b77e9b16b0681294370daeaec83d0f8e31db8"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-tests-20261020-r1.txt",
+      "size": 7430,
+      "sha256": "7e2132a34ea15df2e9733e16202e6346c9dc944ef7ceebfe10f5a9226dd65373"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-dispatch-pwsh5-20261020-r1.txt",
+      "size": 587,
+      "sha256": "37df94d4ea98115d0d04e84a8ca1a72b7ace86afb255e5cde1c53488df83b866"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-dispatch-pwsh5-20261020-r2.txt",
+      "size": 605,
+      "sha256": "51f83c279adda9b7d2eb367a9a637df386419559888126565ba57361374f69b3"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-dispatch-pwsh7-20261020-r1.txt",
+      "size": 443,
+      "sha256": "11752fef557af74b72a2d92f79948e34d91b1f5703027b2c39bf6a525a272b9c"
+    },
+    {
+      "path": "docs/evidence/d-node-pod-capacity-dispatch-pwsh7-20261020-r2.txt",
+      "size": 449,
+      "sha256": "d63fd13d1c4f4a3f869da5be2e6f94556fbdc0130ede9bc731b99556e72bd2f3"
+    }
+  ],
+  "accepted_bash_checks": 13,
+  "capacity_checks": 8,
+  "existing_startup_checks": 5,
+  "test_names": [
+    "stdin entry counts phases including final unreported phase without printing pod bodies",
+    "empty successful list is distinguished from failed API query",
+    "110 running plus 57 terminal records remains an observation, never a scheduling approval",
+    "zero allocatable is valid and still not an admission decision",
+    "failed node query stops before pod query and prints no success observation",
+    "missing, signed, fractional, padded and excessive allocatable values fail closed",
+    "malformed API rows and unexpected phases are not ignored or echoed",
+    "invalid context/node and missing arguments are rejected before all API calls",
+    "ready MySQL continues without diagnostics",
+    "failed wait diagnoses the original pod before cleanup and preserves exit",
+    "changed namespace or pod identity prevents diagnostic reads",
+    "diagnostic API failure still preserves failed wait and cleanup",
+    "lightweight mode uses the production pod and exits before all SQL"
+  ],
+  "powershell_dispatch": {
+    "pwsh5": 2,
+    "pwsh7": 2
+  },
+  "offline_native_wrappers": [
+    "pwsh5-capacity",
+    "pwsh7-capacity",
+    "pwsh7-original-startup"
+  ],
+  "owned_cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-mysql-startup-0a0baf624a3a495ab4d3c8ea981ed7e4",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-mysql-startup-223a227b872644b68ec5896d4d986d67",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-mysql-startup-91cc337a6274438bb6e96e70c663ddcf",
+      "exists": false
+    }
+  ],
+  "failed_attempts_preserved": [
+    "d-node-pod-capacity-tests-20261020-r1.txt",
+    "d-node-pod-capacity-dispatch-pwsh5-20261020-r1.txt",
+    "d-node-pod-capacity-dispatch-pwsh5-20261020-r2.txt",
+    "d-node-pod-capacity-dispatch-pwsh7-20261020-r1.txt",
+    "d-node-pod-capacity-dispatch-pwsh7-20261020-r2.txt"
+  ],
+  "failed_attempt_reason": "Initial test observers counted stub calls on stderr suppressed by the production script, and AST selectors included additive/conditional assignments. Tests now observe a separate descriptor and select the actual initial plan/early dispatch branch. The original failed logs remain.",
+  "dependencies_installed": false,
+  "go_build": false,
+  "go_tests": false,
+  "ssh_run": false,
+  "actual_sql_cases": 0,
+  "cluster_writes": false,
+  "live_capacity_verified": false,
+  "scheduler_fit": "not_verified",
+  "production_approved": false,
+  "whole_worktree_verified": false,
+  "reviewer_sha256": "1e0bf90f598da04c17dc822498c83be6a4ca6ba36f2dc961c8627dc8fd39863c",
+  "scope": "Read-only node allocatable and bound-pod phase observations; API errors/malformed values do not become empty/free capacity. Local stubbed Bash, both PowerShell parsers/dispatch and no-Remote wrappers only. This is not a live scheduler/admission, MySQL, capacity-remediation or deployment acceptance."
+}

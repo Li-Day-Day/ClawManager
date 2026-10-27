@@ -1,0 +1,50 @@
+{
+  "kind": "a_preparation_call_mysql_remote_acceptance",
+  "date": "2026-10-08",
+  "status": "accepted_for_isolated_mysql_preparation_absence_lock_scope",
+  "run": "sbk-mig-261008082403-4cba",
+  "namespace_uid": "a226511d-1f60-44b9-901e-8ffbbc1f0eaa",
+  "mysql_version": "8.4.8",
+  "operator_transcript": {
+    "path": "docs/evidence/a-preparation-call-mysql-remote-20261008-161704.txt",
+    "sha256": "27e5a49cc84b61b10529da04984fcb8f875cefe863359472a3b785aae5f9bb72",
+    "complete": true
+  },
+  "expected_snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261008-080606-a325d8a3.json",
+  "run_snapshot": "docs/evidence/system-backup-a-producer-snapshot-20261008-081714-c9c5b714.json",
+  "snapshot_file_count": 861,
+  "live_drift_files": 0,
+  "snapshot_passed": true,
+  "mysql_subtest_count": 24,
+  "mysql_subtests_passed": 24,
+  "run_owned_databases_cleaned": 24,
+  "preparation_absence_gap_lock_passed": true,
+  "binary_sha256": "857ece17593dfa6be1f734ec132f76d22dc3a3aae535d0976173a8c91f9e1085",
+  "ddl_sha256": "70d001e7cfc465f8098dc037fd932a6d76647629561e2e8be91decbdf75df016",
+  "migration_runner_sha256": "e0d5652e7e0f5874ba7f3a400ff141ec97aa50a514018008c4429e8e66fe7660",
+  "migration_catalog_sha256": "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93",
+  "migration_count": 94,
+  "cleanup": {
+    "namespace_deleted": true,
+    "remote_registration_scratch_deleted": true,
+    "local_registration_build_cache_deleted": true,
+    "producer_adapter_build_cache_deleted": true
+  },
+  "wrapper_exit_code": 0,
+  "ssh_socket_close_diagnostics": "Present after successful tests; no test or cleanup failure recorded",
+  "accepted_scope": [
+    "Fresh migration replay and isolated D producer MySQL tests",
+    "A preparation evidence absence gap lock across two MySQL connections",
+    "Same competing INSERT completes after D transaction releases the lock",
+    "New preparation call rejects the now-present A evidence row"
+  ],
+  "excluded_scope": [
+    "Production D current-deployment, identity, evaluator, host, reference, capacity and audit authority integration",
+    "Independent C provider profile and absence/result proofs",
+    "Real provider and historical recovery",
+    "Complete V01-V10 system backup and restore acceptance"
+  ],
+  "original_failure_preserved": "docs/evidence/a-preparation-call-mysql-remote-20261008-154330.txt",
+  "agent_remote_actions": false,
+  "live_cluster_independently_rechecked": false
+}

@@ -1,0 +1,34 @@
+**********************
+PowerShell transcript start
+Start time: 20261016141124
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$auditParseErrors=$null; [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD.Path 'docs/evidence/a-download-audit-review-20261016.ps1'),[ref]$null,[ref]$auditParseErrors)|Out-Null; if($auditParseErrors){throw ($auditParseErrors|Out-String)}; $auditStamp=(Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N').Substring(0,8); $auditLog=Join-Path $PWD.Path ('docs/evidence/a-download-audit-local-'+$auditStamp+'.txt'); $auditSource=Join-Path $PWD.Path ('docs/evidence/a-download-audit-source-'+$auditStamp+'.json'); Start-Transcript -LiteralPath $auditLog -NoClobber|Out-Null; $auditExit=1; try { Write-Output 'BUILD_RECOVERY previous-compile-exit=0xc0000043 before-test-execution=yes failed-build-driver-stopped=yes same-audit-and-tests-required=yes'; & './docs/evidence/a-download-audit-review-20261016.ps1' -SourceManifestPath $auditSource -BuildParallelism 1 -PreparedScratchPath (Join-Path $PWD.Path '.tmp-a-evidence-a5d91831cff444f2b2cf8ecdd13bf1b8'); $auditExit=0 } catch { Write-Output ('DOWNLOAD_AUDIT_ERROR='+$_.Exception.Message) } finally { Write-Output ('a_download_audit_exit='+$auditExit); Write-Output ('audit_review_log='+$auditLog); Write-Output ('audit_review_source='+$auditSource); Stop-Transcript|Out-Null }; exit $auditExit
+Process ID: 6784
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+BUILD_RECOVERY previous-compile-exit=0xc0000043 before-test-execution=yes failed-build-driver-stopped=yes same-audit-and-tests-required=yes
+OWNED download-audit-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-4bbb2c0e762440f48ac0a2d27dd39878 scratch=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-a5d91831cff444f2b2cf8ecdd13bf1b8
+PS>TerminatingError(): "Source changed while snapshot was copied"
+LOCAL_CLEANUP download-audit-review-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-a5d91831cff444f2b2cf8ecdd13bf1b8 removed=True
+LOCAL_CLEANUP download-audit-review-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-4bbb2c0e762440f48ac0a2d27dd39878 removed=True
+PS>TerminatingError(): "Source changed while snapshot was copied"
+DOWNLOAD_AUDIT_ERROR=Source changed while snapshot was copied
+a_download_audit_exit=1
+audit_review_log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-local-20261016-141124-9bd97cb6.txt
+audit_review_source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-download-audit-source-20261016-141124-9bd97cb6.json
+**********************
+PowerShell transcript end
+End time: 20261016141233
+**********************
