@@ -22,10 +22,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type sqlInstance struct {
-	ID, UserID, Generation                                              int
-	Mode, Type, Backend, Variant, OS, Status, Pod, Namespace, Workspace string
-}
+type sqlInstance = domain.SourceInstance
 type frozenInstance struct {
 	Input                                       Instance
 	SQL                                         sqlInstance
@@ -70,23 +67,8 @@ func (d *Driver) inventory(ctx context.Context) (int, []sqlInstance, error) {
 	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM users").Scan(&users) != nil || users < 1 {
 		return 0, nil, ErrProfile
 	}
-	rows, e := tx.QueryContext(ctx, "SELECT id,user_id,instance_mode,type,runtime_type,COALESCE(runtime_variant,''),os_type,status,runtime_generation,COALESCE(pod_name,''),COALESCE(pod_namespace,''),COALESCE(workspace_path,'') FROM instances ORDER BY id")
+	out, e := domain.ReadSourceInstances(ctx, tx)
 	if e != nil {
-		return 0, nil, ErrProfile
-	}
-	defer rows.Close()
-	var out []sqlInstance
-	for rows.Next() {
-		var i sqlInstance
-		if rows.Scan(&i.ID, &i.UserID, &i.Mode, &i.Type, &i.Backend, &i.Variant, &i.OS, &i.Status, &i.Generation, &i.Pod, &i.Namespace, &i.Workspace) != nil {
-			return 0, nil, ErrProfile
-		}
-		out = append(out, i)
-		if len(out) > 9998 {
-			return 0, nil, ErrProfile
-		}
-	}
-	if rows.Err() != nil {
 		return 0, nil, ErrProfile
 	}
 	return users, out, nil

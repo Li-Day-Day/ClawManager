@@ -1,5 +1,9 @@
 # B 接入公共 v12：本轮范围、差异及待交付输入
 
+## 公共 runner 开发增量
+
+基于下述共享 ABI 同步，已新增 `publicadapter.NewPublicRunner/NewLinuxDispatcher`、真实只读发现与 flow/Job/恢复适配，未另建控制面。最新范围、生产构造示例、差异关闭表与准确的 D/A/C 输入缺口以 [公共 runner 交接](system-backup-b-public-runner-handoff-20261028.md) 为准。下文“B publicadapter 待开发”等为同步时的历史状态，不表示当前增量未实现；公共生产 loop/Ports 与实际现场整链仍未通过。
+
 ## 最新同步：d3c5715a
 
 后续按用户通知重新 fetch，公共 `backup` 更新为 `d3c5715a05a80c1134edd3ad0132a6c292ee1672`。已取得原 `systembackupdispatch/contract.go`、Dispatcher 测试及 Skill gate 交接，不再将共享 ABI 或 Skill 原增量列为缺失。下文 `680b0ce1` / `63a13b27` 及“ABI 未到齐”是上一轮准确历史状态。
