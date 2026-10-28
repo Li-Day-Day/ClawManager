@@ -36,7 +36,7 @@ func main() {
 	_ = mysql.SetLogger(log.New(io.Discard, "", 0))
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
-	code := run(ctx, os.Args[1:], os.Stdout, linkedOwnerAdapters())
+	code := runLinkedBootstrap(ctx, os.Args[1:], os.Stdout, deploymentMaterialLink)
 	if code != 0 && code != 2 {
 		fmt.Fprintln(os.Stderr, "bootstrap rejected or failed; retain the same target and idempotency key")
 	}

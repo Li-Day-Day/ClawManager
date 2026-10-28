@@ -121,6 +121,20 @@ func (s *SQLApplication) submit(ctx context.Context, scope taskActionScope, prep
 	task, err := prepared.Stage(capability, identity)
 	closedOK := capability.close()
 	if err != nil {
+		var expired *ExpiredTaskError
+		if errors.As(err, &expired) {
+			// A retired response still contains an installation-bound identity.
+			// Recheck before exposing it, then roll back this read-only outcome.
+			if !closedOK || ctx.Err() != nil {
+				return zero, &Error{"not_ready"}
+			}
+			if checkErr := scope.RecheckAction(ctx, tx, installation); checkErr != nil {
+				return zero, applicationError(checkErr)
+			}
+			if !capability.close() || ctx.Err() != nil {
+				return zero, &Error{"not_ready"}
+			}
+		}
 		return zero, applicationError(err)
 	}
 	if !closedOK || ctx.Err() != nil {
@@ -163,6 +177,26 @@ func (s *SQLApplication) ReadPreflight(r *http.Request, id string) (contract.Pre
 		return contract.PreflightDetailResource{}, applicationError(err)
 	}
 	result, err := s.details.Preflight(scope.Context(), scope, id)
+	return result, applicationError(err)
+}
+
+type taskManifestDetails interface {
+	Manifest(context.Context, *security.SystemBackupReadScope, string) ([]byte, error)
+}
+
+func (s *SQLApplication) ReadManifest(r *http.Request, id string) ([]byte, error) {
+	if s == nil || s.reads == nil {
+		return nil, &Error{"not_ready"}
+	}
+	details, ok := s.details.(taskManifestDetails)
+	if !ok || nilDependency(details) {
+		return nil, &Error{"not_ready"}
+	}
+	scope, err := s.reads.Scope(r)
+	if err != nil {
+		return nil, applicationError(err)
+	}
+	result, err := details.Manifest(scope.Context(), scope, id)
 	return result, applicationError(err)
 }
 func applicationError(err error) error {

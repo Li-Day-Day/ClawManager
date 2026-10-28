@@ -1,0 +1,315 @@
+{
+  "kind": "a_current_catalog_git_metadata.v1",
+  "baseline": "52117deea14df5a3a8dcceb8abed5b9c7cada17e",
+  "head": "63a13b2771091e4ba47b691ce066a670cbc88d54",
+  "baseline_names": [
+    "backend/internal/db/migrations/001_init_schema.sql",
+    "backend/internal/db/migrations/002_add_webtop_instance_type.sql",
+    "backend/internal/db/migrations/003_add_system_image_settings.sql",
+    "backend/internal/db/migrations/004_fix_seeded_admin_password.sql",
+    "backend/internal/db/migrations/005_update_openclaw_default_image.sql",
+    "backend/internal/db/migrations/006_add_openclaw_config_center.sql",
+    "backend/internal/db/migrations/007_add_instance_agent_control_plane.sql",
+    "backend/internal/db/migrations/008_add_skill_management.sql",
+    "backend/internal/db/migrations/009_cpu_cores_decimal.sql",
+    "backend/internal/db/migrations/010_add_instance_environment_overrides.sql",
+    "backend/internal/db/migrations/011_add_hermes_instance_type.sql",
+    "backend/internal/db/migrations/012_update_agents_runtime_default_images.sql",
+    "backend/internal/db/migrations/013_normalize_agents_runtime_image_names.sql",
+    "backend/internal/db/migrations/014_add_team_mvp.sql",
+    "backend/internal/db/migrations/015_add_team_member_description.sql",
+    "backend/internal/db/migrations/016_release_deleted_team_names.sql",
+    "backend/internal/db/migrations/017_add_team_member_runtime_state.sql",
+    "backend/internal/db/migrations/018_add_team_member_runtime_type.sql",
+    "backend/internal/db/migrations/019_add_instance_runtime_type.sql",
+    "backend/internal/db/migrations/020_add_system_image_runtime_type.sql",
+    "backend/internal/db/migrations/021_add_openclaw_shell_runtime_image.sql",
+    "backend/internal/db/migrations/022_add_openclaw_config_bundle_skills.sql",
+    "backend/internal/db/migrations/023_add_runtime_pool_v2.sql",
+    "backend/internal/db/migrations/023_add_skill_hub.sql",
+    "backend/internal/db/migrations/023_normalize_runtime_config_mounts.sql",
+    "backend/internal/db/migrations/024_add_gateway_runtime_type.sql",
+    "backend/internal/db/migrations/025_add_instance_mode.sql",
+    "backend/internal/db/migrations/027_add_instance_external_access.sql",
+    "backend/internal/db/migrations/028_add_ai_gateway_runtime_attribution.sql",
+    "backend/internal/db/migrations/029_add_short_external_access_links.sql",
+    "backend/internal/db/migrations/030_add_external_access_password_value.sql",
+    "backend/internal/db/migrations/031_add_hermes_lite_runtime_image.sql",
+    "backend/internal/db/migrations/032_add_team_member_instance_mode.sql",
+    "backend/internal/db/migrations/033_system_image_gateway_runtime_type.sql",
+    "backend/internal/db/migrations/034_update_lite_default_images.sql",
+    "backend/internal/db/migrations/035_harden_team_event_protocol.sql",
+    "backend/internal/db/migrations/036_add_team_event_outbox.sql",
+    "backend/internal/db/migrations/037_add_team_workflow_ledger.sql",
+    "backend/internal/db/migrations/038_add_instance_gateway_token_aliases.sql",
+    "backend/internal/db/migrations/039_add_skill_package_materialize.sql",
+    "backend/internal/db/migrations/040_fix_injected_skill_provenance.sql",
+    "backend/internal/db/migrations/041_add_session_usage_indexes.sql",
+    "backend/internal/db/migrations/042_add_skill_summary_status.sql",
+    "backend/internal/db/migrations/042_add_team_review_contract.sql",
+    "backend/internal/db/migrations/043_add_external_access_workspace_scope.sql",
+    "backend/internal/db/migrations/043_drop_skill_summary_status.sql",
+    "backend/internal/db/migrations/044_add_egress_private_exceptions.sql",
+    "backend/internal/db/migrations/044_add_workbuddy_instance_type.sql",
+    "backend/internal/db/migrations/045_add_llm_model_reasoning_control.sql",
+    "backend/internal/db/migrations/045_add_northbound_api.sql",
+    "backend/internal/db/migrations/045_add_opencode_instance_type.sql",
+    "backend/internal/db/migrations/046_add_custom_team_templates.sql",
+    "backend/internal/db/migrations/046_add_enterprise_auth_identity.sql",
+    "backend/internal/db/migrations/046_add_opencode_lite_runtime.sql",
+    "backend/internal/db/migrations/047_add_deepseek_harness_runtime.sql",
+    "backend/internal/db/migrations/047_add_instance_owner.sql",
+    "backend/internal/db/migrations/048_add_workbuddy_instance_type.sql",
+    "backend/internal/db/migrations/048_fix_instance_type_enum.sql",
+    "backend/internal/db/migrations/049_add_ldap_login_alias.sql",
+    "backend/internal/db/migrations/049_add_opencode_instance_type.sql",
+    "backend/internal/db/migrations/050_add_enterprise_auth_settings.sql",
+    "backend/internal/db/migrations/050_update_workbuddy_windows_runtime.sql",
+    "backend/internal/db/migrations/051_add_codex_and_claude_code_instance_types.sql",
+    "backend/internal/db/migrations/052_add_instance_pvc_name.sql",
+    "backend/internal/db/migrations/053_add_instance_runtime_variant.sql",
+    "backend/internal/db/migrations/054_add_system_image_runtime_variant.sql",
+    "backend/internal/db/migrations/055_reconcile_instance_type_enum.sql",
+    "backend/internal/db/migrations/056_add_llm_provider_models.sql",
+    "backend/internal/db/migrations/057_add_northbound_admin_settings.sql",
+    "backend/internal/db/migrations/058_add_openclaw_runtime_upgrade_safety.sql",
+    "backend/internal/db/migrations/058_enable_deepseek_harness_pro.sql",
+    "backend/internal/db/migrations/059_pin_openclaw_2026_8_1_images.sql",
+    "backend/internal/db/migrations/060_allow_terminal_runtime_upgrade_instance_deletion.sql",
+    "backend/internal/db/migrations/061_persist_runtime_upgrade_source_identity.sql",
+    "backend/internal/db/migrations/062_follow_openclaw_latest_images.sql",
+    "backend/internal/db/migrations/063_add_security_scan_tables.sql",
+    "backend/internal/db/migrations/063_unique_usernames.sql",
+    "backend/internal/db/migrations/064_add_instance_browser_workers.sql",
+    "backend/internal/db/migrations/064_reconcile_system_image_settings_schema.sql",
+    "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+    "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+    "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+    "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+    "backend/internal/db/migrations/069_add_system_backup_promotion_authority.sql",
+    "backend/internal/db/migrations/070_add_system_backup_prune_authority.sql",
+    "backend/internal/db/migrations/071_add_system_backup_external_action_authority.sql",
+    "backend/internal/db/migrations/072_add_system_backup_check_authority.sql",
+    "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+    "backend/internal/db/migrations/074_add_system_maintenance_participants.sql",
+    "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+    "backend/internal/db/migrations/076_add_system_backup_job_observations.sql",
+    "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql",
+    "backend/internal/db/migrations/078_reconcile_local_username_key.sql",
+    "backend/internal/db/migrations/079_add_a_owned_chat_and_risk_tables.sql",
+    "backend/internal/db/migrations/080_add_system_backup_registration_runtime.sql",
+    "backend/internal/db/migrations/081_fix_system_backup_prune_item_identity.sql"
+  ],
+  "changes": [
+    {
+      "status": "M",
+      "path": "backend/internal/db/migrations/001_init_schema.sql",
+      "original_git_blob": "c9bad57df39a4539f8429e967111854d86a1b2ea"
+    },
+    {
+      "status": "M",
+      "path": "backend/internal/db/migrations/046_add_enterprise_auth_identity.sql",
+      "original_git_blob": "73ef032c37a211dff167c90e7b126d90600fd89d"
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/049_add_llm_model_groups.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/050_add_gateway_keys.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/051_add_gateway_key_rate_limits.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/052_add_gateway_key_budget_and_attribution.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/053_add_llm_model_context_window.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/054_add_llm_model_quality_tier.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/055_gateway_budget_currency_review.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/056_add_gateway_deployment_routing.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/057_add_llm_model_capabilities.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/058_add_llm_model_tools_override.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/059_add_llm_reasoning_control_mode.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/060_add_routing_classifier_settings.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/061_add_routing_classifier_mode.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/062_add_model_user_access.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/063_add_gateway_runtime_tasks.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/063_add_instance_alias.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/064_add_instance_lifecycle_batches.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/064_add_runtime_protocol.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/065_add_lifecycle_batch_retry_policy.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/065_add_runtime_maintenance.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/066_add_northbound_api_keys.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/066_add_runtime_upgrade_fence.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/067_add_northbound_owner_records.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/067_add_runtime_upgrade_stop.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/068_add_runtime_rollout_checkpoints.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/068_add_workspace_write_intents.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/069_add_instance_runtime_error_code.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/069_add_llm_model_vision_override.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/070_add_llm_model_image_operations.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/070_add_upgrade_restart_attempts.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/071_add_image_budget_price.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/071_add_team_member_icon.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/072_add_gateway_image_artifacts.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/072_add_team_workspace_file_audits.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/073_add_gateway_image_jobs.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/073_add_upgrade_operation_claims.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/074_add_image_analytics_outbox.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/074_add_upgrade_recovery_key.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/075_add_upgrade_retry_diagnostics.sql",
+      "original_git_blob": null
+    },
+    {
+      "status": "A",
+      "path": "backend/internal/db/migrations/076_add_upgrade_item_isolation.sql",
+      "original_git_blob": null
+    }
+  ]
+}

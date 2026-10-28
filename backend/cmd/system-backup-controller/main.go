@@ -567,7 +567,17 @@ func run() error {
 					log.Printf("[system-backup-controller] control pass gate_selected=%d gate_idle=%d gate_fenced=%d gate_contention=%d gate_proof_blocked=%d kill_selected=%d kill_transitioned=%d kill_contention=%d deadline_selected=%d deadline_acquired=%d deadline_expired=%d deadline_contention=%d guard_rejections=%d", result.GateRecovery.Selected, result.GateRecovery.ReturnedIdle, result.GateRecovery.FencedForRelease, result.GateRecovery.CASContentions, result.GateRecovery.ParticipantProofBlock, result.KillSwitch.Selected, result.KillSwitch.Transitioned, result.KillSwitch.CASContentions, result.Deadline.Selected, result.Deadline.Acquired, result.Deadline.Expired, result.Deadline.ClaimContentions, result.Deadline.GuardRejections)
 				},
 			}
+			executionLoop, executionErr := composeTaskExecution(taskExecutionDependencies{
+				DB: sqlDB, Kubernetes: k8sClient.Clientset, Snapshot: snapshot,
+			}, loop.Guard, policy.ReconcileInterval)
+			if executionErr != nil {
+				// Fail-safe passes remain live while the forward execution owners
+				// are unavailable. Never acquire tasks through a partial adapter.
+				log.Printf("[system-backup-controller] public task execution disabled: %v", executionErr)
+			}
 			log.Printf("[system-backup-controller] runtime start installation=%s matrix=%s config_version=%d config_enabled=%t effective_enabled=%t monitoring_armed=%t applied_migrations=%d catalog=%s", snapshot.InstallationID, snapshot.MatrixKey, snapshot.ConfigVersion, snapshot.ConfigEnabled, snapshot.EffectiveEnabled, snapshot.MonitoringArmed, snapshot.AppliedMigrationCount, snapshot.MigrationCatalogHash)
+			var leaderRuns systembackupcontroller.LeaderLoopGroup
+			defer leaderRuns.CloseAndWait()
 			leader.Run(runtimeCtx, k8sClient.Clientset, leaderConfig, leader.Callbacks{
 				OnStartedLeading: func(leaderCtx context.Context) {
 					if !leaderBootstrapReconciled.Load() {
@@ -591,10 +601,28 @@ func run() error {
 					}
 					controllerTelemetry.LeaderStarted()
 					status.leading.Store(true)
-					go runLeaderControlLoop(leaderCtx, loop.Run, runtimeErrors, cancelRuntime)
+					runs := []func(context.Context) error{loop.Run}
+					if executionLoop != nil {
+						runs = append(runs, executionLoop.Run)
+					}
+					completed, startErr := leaderRuns.Start(leaderCtx, runs...)
+					if startErr != nil {
+						select {
+						case runtimeErrors <- fmt.Errorf("start leader loops: %w", startErr):
+						default:
+						}
+						cancelRuntime()
+						return
+					}
+					go runLeaderControlLoop(leaderCtx, func(context.Context) error {
+						return <-completed
+					}, runtimeErrors, cancelRuntime)
 				},
 				OnStoppedLeading: func() {
 					status.leading.Store(false)
+					// Restart through the outer supervisor only after all old
+					// execution cleanup has joined; never overlap generations.
+					cancelRuntime()
 				},
 			})
 			status.leading.Store(false)

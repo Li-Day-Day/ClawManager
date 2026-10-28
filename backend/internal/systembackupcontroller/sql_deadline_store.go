@@ -63,7 +63,9 @@ func (s SQLDeadlineStore) Acquire(ctx context.Context, installationID string, ca
 	if s.DB == nil {
 		return ClaimToken{}, errors.New("nil system backup SQL deadline database")
 	}
-	return (ClaimCoordinator{Executor: s.DB, InstallationID: installationID}).Acquire(ctx, candidate.Target, owner, candidate.RowVersion, policy)
+	// This is still the no-side-effect pending deadline caller, not B execution.
+	// The shared entry atomically persists the claim CAS and its public receipt.
+	return (SQLTaskClaimStore{DB: s.DB, InstallationID: installationID}).AcquireWithReceipt(ctx, candidate.Target, owner, candidate.RowVersion, policy)
 }
 
 func (s SQLDeadlineStore) Expire(ctx context.Context, installationID string, token ClaimToken) (uint64, error) {

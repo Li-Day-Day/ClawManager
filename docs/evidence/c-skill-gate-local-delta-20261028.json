@@ -1,0 +1,53 @@
+{
+  "source_commit": "14768599f30846e9cfe22c121059ecf698e1b048",
+  "current": [
+    {
+      "path": "backend/internal/services/skill_package_materialize_worker.go",
+      "pr_blob": "183c33c1e0126eb6ea672e9706b95db315f3a07b",
+      "pr_sha256": "0281d16fc90c80bf87d5eba9222fb854f8a3545ffbb55ddbe2e86cc3a605f161",
+      "local_sha256": "d60ebb37b0fd6c5a7f8a6b508bb5cb9eb5d867b1d554f1e029beac4aae6b0d32",
+      "local_size": 7677,
+      "equal_pr_blob": false
+    },
+    {
+      "path": "backend/internal/services/backup_mutation_gate.go",
+      "pr_blob": "996ab1a00e71a0cddf5ee3fe7a3f29895997157d",
+      "pr_sha256": "7e00ba7bc96b8dbb2aeb73cc97295414bc5a5c93ded63207e63c12d1b5de3cbb",
+      "local_sha256": "7e00ba7bc96b8dbb2aeb73cc97295414bc5a5c93ded63207e63c12d1b5de3cbb",
+      "local_size": 522,
+      "equal_pr_blob": true
+    },
+    {
+      "path": "backend/internal/services/skill_package_materialize_backup_gate_test.go",
+      "pr_blob": "aa7cd1d0050ed718a5ff18a7f1cd34455ad0926a",
+      "pr_sha256": "265af73b27c1674245c3d6c0edf7e56bbd201bb72528d5a3eb3757ba5efafe74",
+      "local_sha256": "454229fd9e07b8c8a892c6dbace321172f214579186e56eabc5d3bbc8bc1a15b",
+      "local_size": 9273,
+      "equal_pr_blob": false
+    },
+    {
+      "path": "backend/internal/systembackup/mutation/gate.go",
+      "pr_blob": "09fae9a1871d0009473ba9634ee08d055e342830",
+      "pr_sha256": "116e7da639c29af56d4bc0e3570ce8ee5c698896f4d284b9e9d32aca2cbedc3b",
+      "local_sha256": "116e7da639c29af56d4bc0e3570ce8ee5c698896f4d284b9e9d32aca2cbedc3b",
+      "local_size": 1221,
+      "equal_pr_blob": true
+    },
+    {
+      "path": "backend/internal/systembackup/mutation/gate_test.go",
+      "pr_blob": "7b62d402077034b26cb4705da212467b4cd0e370",
+      "pr_sha256": "eaa233160295391993ba4a3c007becccc00710254d9abd571186810f7f2c56ab",
+      "local_sha256": "eaa233160295391993ba4a3c007becccc00710254d9abd571186810f7f2c56ab",
+      "local_size": 1342,
+      "equal_pr_blob": true
+    }
+  ],
+  "backfill_reopen_fix": true,
+  "new_tests": [
+    "TestMaterializeBackupGateReopensDeferredBackfillExactlyOnceBeforeClaims",
+    "TestMaterializeBackupGateStopCancelsDeferredBackfillWithoutWrites"
+  ],
+  "source_pr_tests_reused_as_current_result": false,
+  "global_middleware_installed": false,
+  "sql_ledger_installed": false
+}

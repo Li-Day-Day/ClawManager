@@ -14,20 +14,56 @@ import (
 
 // This is the only production task application composition point. The existing
 // read authorizer is intentionally not reused as system_backup.operate authority.
-// Supply the reviewed request decoder + A mutation admission + atomic SQL
-// create/enqueue + B runner/C provider adapters here when those contracts land.
-// No production implementation is currently available, so both POSTs and the
-// dependent details stay not_ready rather than falling through to the proxy.
+// Supply reviewed deployment owners through this build-time composition seam.
+// SQL persistence and complete DTO composition are concrete implementations;
+// the missing owner contract/admission/provider implementations are explicit.
+type systemBackupTaskOwners struct {
+	Admission    systembackupapi.TaskAdmission
+	CurrentFacts systembackupread.CurrentTaskFacts
+	Manifest     systembackupread.ManifestReader
+}
+
+// A deployment composition file may bind real owners, as with the bootstrap
+// owner link. HTTP/env JSON cannot inject callbacks or approve a missing owner.
+// The repository currently has no B/C production link: leave it unavailable.
+var systemBackupTaskOwnerLink func(*sql.DB) (systemBackupTaskOwners, error)
+
 func linkedSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions) systembackupapi.TaskApplication {
-	// The missing reviewed request writer and complete B/C detail adapters
-	// have one explicit link location. Never substitute test models here.
-	var writer systembackupapi.TaskWriter
-	var details systembackupapi.TaskDetails
-	application, err := composeSystemBackupTaskApplication(db, sessions, writer, details, os.Getenv)
+	if db == nil || sessions == nil || systemBackupTaskOwnerLink == nil {
+		return nil
+	}
+	owners, err := systemBackupTaskOwnerLink(db)
+	if err != nil {
+		return nil
+	}
+	application, err := composeOwnedSystemBackupTaskApplication(db, sessions, owners, os.Getenv)
 	if err != nil {
 		return nil
 	}
 	return application
+}
+
+func composeOwnedSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions, owners systemBackupTaskOwners, getenv func(string) string) (systembackupapi.TaskApplication, error) {
+	if getenv == nil {
+		return nil, &systembackupapi.Error{Code: "not_ready"}
+	}
+	var enabled bool
+	switch getenv("SYSTEM_BACKUP_ENABLED") {
+	case "", "false":
+	case "true":
+		enabled = true
+	default:
+		return nil, &systembackupapi.Error{Code: "not_ready"}
+	}
+	writer, err := systembackupapi.NewSQLTaskWriter(systembackupapi.NewTaskRequestContract(), owners.Admission, enabled)
+	if err != nil {
+		return nil, err
+	}
+	details, err := systembackupapi.NewSQLTaskDetails(db, owners.CurrentFacts, owners.Manifest)
+	if err != nil {
+		return nil, err
+	}
+	return composeSystemBackupTaskApplication(db, sessions, writer, details, getenv)
 }
 
 func composeSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions,

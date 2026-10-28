@@ -1,0 +1,224 @@
+{
+  "kind": "d_backup_start_atomic.v1",
+  "date": "2026-10-28",
+  "head": "d3c5715a05a80c1134edd3ad0132a6c292ee1672",
+  "pr_head": "1e678b097ff8d7fd3c975183515d9e09af92f138",
+  "native": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.json",
+  "steps": [
+    {
+      "phase": "execution-controller",
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "-p=2",
+        "-count=1",
+        "-json",
+        "-run",
+        "Test(ExecutionAuthority|TaskExecutionLoop|LeaderLoop|BackupStart|TaskClaim|SQLDeadlineAcquire)",
+        "./internal/systembackupcontroller"
+      ],
+      "exit": 0
+    },
+    {
+      "phase": "execution-dispatch",
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "-p=2",
+        "-count=1",
+        "-json",
+        "./internal/systembackupdispatch"
+      ],
+      "exit": 0
+    },
+    {
+      "phase": "execution-main",
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "-p=2",
+        "-count=1",
+        "-json",
+        "-run",
+        "Test(TaskExecutionProduction|LeaderControlLoop)",
+        "./cmd/system-backup-controller"
+      ],
+      "exit": 0
+    },
+    {
+      "phase": "execution-build",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-p=2",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-first-chain-937673dedd044162bee2c511dd26d92c\\system-backup-controller.exe",
+        "./cmd/system-backup-controller"
+      ],
+      "exit": 0
+    }
+  ],
+  "tests": [
+    {
+      "phase": "execution-controller",
+      "roots": 34,
+      "pass_events": 92,
+      "fail_skip": 0
+    },
+    {
+      "phase": "execution-dispatch",
+      "roots": 1,
+      "pass_events": 1,
+      "fail_skip": 0
+    },
+    {
+      "phase": "execution-main",
+      "roots": 3,
+      "pass_events": 3,
+      "fail_skip": 0
+    }
+  ],
+  "binary": {
+    "size": 67627520,
+    "sha256": "6ddca78956209bd31ce897ed22371a542613d43a17be480edb1c34cbd778ff1c"
+  },
+  "source_current_match": true,
+  "cleanup": true,
+  "runs": [
+    {
+      "id": "c54e96dcec0445c6972d3d587091213c",
+      "status": "passed",
+      "cleanup": true,
+      "owner_absent": true,
+      "superseded": true
+    },
+    {
+      "id": "93c1118ff95c4143a38fbafcc141a627",
+      "status": "passed",
+      "cleanup": true,
+      "owner_absent": true,
+      "superseded": true
+    },
+    {
+      "id": "385f07c9b1154c75ad896e4d372ee749",
+      "status": "passed",
+      "cleanup": true,
+      "owner_absent": true,
+      "superseded": true
+    },
+    {
+      "id": "937673dedd044162bee2c511dd26d92c",
+      "status": "passed",
+      "cleanup": true,
+      "owner_absent": true,
+      "superseded": false
+    }
+  ],
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "actual_b_execution": false,
+  "real_chain_passed": false,
+  "task_owner_link_bound": false,
+  "execution_owner_link_bound": false,
+  "full_execution_work_store_implemented": false,
+  "atomic_initial_start_implemented": true,
+  "initial_write_set": {
+    "claim_cas": 1,
+    "status_transition": "pending->preparing",
+    "attempt_number": 1,
+    "phase_units": [
+      "capture",
+      "secret_capture"
+    ],
+    "events": [
+      "diagnostic.d.task_claim_acquired",
+      "task_status_changed",
+      "attempt_started"
+    ],
+    "commit": 1
+  },
+  "sql_clock_chain": [
+    "entry_utc_offset",
+    "claim_stage_first_heartbeat_and_now",
+    "claim_stage_last_now",
+    "original_claim_reread",
+    "authority_bind",
+    "admission_first",
+    "admission_recheck",
+    "authority_recheck_after_caller_floor",
+    "fixed_final_claim",
+    "final_utc_offset"
+  ],
+  "regressions": [
+    "entry5_to_stage2",
+    "stage_last2_to_outer1",
+    "budget_first5_to_recheck2_before_callback",
+    "authority4_to_fixed2",
+    "fixed5_to_final4",
+    "authorization_expiry_during_last_fixed_sql"
+  ],
+  "source_review": "docs/evidence/a-d-backup-start-atomic-review-20261028.json",
+  "remaining": [
+    "Full ExecutionWorkStore with original profile mapping, encrypted plan persistence/recovery/results",
+    "Original production background purpose/resource grant and real business/physical-capacity guard",
+    "B publicadapter and full public Job/pause/relay ports",
+    "C public artifact/finalizer/catalog/manifest and current facts",
+    "Requests/Admission/CurrentFacts links, missing catalog schemas/contracts, original schema/phase/permission gates",
+    "zhanghui08 original bootstrap materials/config, independent observer account/pins and same-version deployment"
+  ],
+  "sources": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store.go",
+      "sha256": "309798bb424a5bd0f7cb7832910f4c10477e90554798ef76aa0023ac6b84eb12"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store_test.go",
+      "sha256": "9b7d22ce96ed05c1958266554ee12c64cb20ab8fb96b21edf6b6b15013288293"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store.go",
+      "sha256": "38a49b360ee9e5caeedd5edf5d3afef07801fdb65e5daf5aa715f8e80493f1e6"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store_test.go",
+      "sha256": "e7c9e8e8fead7aa2257940a6c803be55b3d7669135e218d83c1f617c2465d588"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "99ae226ed38ca0f0ce376d6f2f1384a5376b4833dc346f7137800b716eaca0ab"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports_test.go",
+      "sha256": "562603b7b1fd7d91921055b25f6c9c4da9bc8a748dfa65df79971580349e95a5"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/task_execution_loop.go",
+      "sha256": "63748ce821e165c404ecd3c0698bcaf78c755966aa338e1f05ef491a947dc28c"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/contract.go",
+      "sha256": "a0f1c6393a10f818e0f5ea4929efcab780c6a7a06564f78a1a64949c1538b101"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "sha256": "1e4743812b6a10e701ba8363470cbae00a9f077d42986ad1ba05ec1932cdb7b0"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/task_execution_live.go",
+      "sha256": "79c721d2d92fb8ae4635185ccf9664fe0ed8ad8c0712d5ed48f4c6977e786b30"
+    },
+    {
+      "path": "scripts/system-backup-d-first-chain-validation.ps1",
+      "sha256": "9052af37918beadc0d0ca0db58826f787629fae87a92cecbb2962e5f84f1f205"
+    },
+    {
+      "path": "docs/system-backup-b-implementation-instructions-20261028.md",
+      "sha256": "24111f0fed0d35848f4c5b616a868bbbb55dc458afe10c9ae0df629660e9a6c9"
+    }
+  ],
+  "superseded_by_lock_shape_validation": "8bd0243724f441f4b1f9bc86f91a9f7a"
+}

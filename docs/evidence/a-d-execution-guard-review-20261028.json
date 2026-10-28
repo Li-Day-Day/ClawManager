@@ -1,0 +1,91 @@
+{
+  "kind": "a_d_execution_guard_source_review.v1",
+  "date": "2026-10-28",
+  "scope": "two_reported_guard_findings_only",
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "c9d9b6af772da796ddc0710a418484feb27b1ea428f5e809cf8e4d5a025f64c3",
+      "size": 11540
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports_test.go",
+      "sha256": "26d600fed65b17fddfe275680f592e701fc0b25c8f7246a380407be909e10ad9",
+      "size": 9554
+    }
+  ],
+  "findings": [
+    {
+      "id": "shared_failure_latch",
+      "source_status": "fixed_in_inspected_bytes",
+      "evidence": "ExecutionAuthorityGuard holds *executionAuthorityState; mutex and failed flag reside in shared state; Recheck locks state and latches failure before callbacks",
+      "test_source": "TestExecutionAuthorityCopySharesFailureAndOriginalContext",
+      "executed_by_A": false
+    },
+    {
+      "id": "original_context_and_typed_nil",
+      "source_status": "fixed_in_inspected_bytes",
+      "evidence": "Bind rejects absent/non-comparable context; shared state retains original context; Recheck requires same context and transaction; Check rejects typed-nil",
+      "test_source": "TestExecutionAuthorityRejectsTypedNilContext",
+      "executed_by_A": false
+    }
+  ],
+  "D_final_test_receipt_verified": true,
+  "production_execution_authorization_present": false,
+  "full_SQL_authority_review": false,
+  "tests_rerun": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "field_slots_closed": 0,
+  "production_approved": false,
+  "D_controller_phase": {
+    "receipt": "docs/evidence/d-first-chain-native-838a12af4f4c4b838735c6281695159d.json",
+    "phase": "execution-controller",
+    "exit": 0,
+    "source_matches_A_review": true,
+    "log": "docs/evidence/d-first-chain-native-838a12af4f4c4b838735c6281695159d.execution-controller.jsonl",
+    "log_sha256": "bb1a7cb36dfbe7a8318285f6e4ea431187e8761c55f6b46d674e7fd7420c1eb7",
+    "two_required_regression_roots_passed": true,
+    "whole_D_run_status_at_observation": "running",
+    "whole_D_cleanup_at_observation": false
+  },
+  "D_final_run": {
+    "receipt": "docs/evidence/d-execution-wiring-20261028.json",
+    "native": "docs/evidence/d-first-chain-native-a74d9157f9b94a74ab1dec38904e7099.json",
+    "native_roots": 21,
+    "native_pass_events": 33,
+    "fail_skip": 0,
+    "all_four_phase_exits": 0,
+    "current_D_sources_match": true,
+    "reviewed_guard_bytes_match": true,
+    "logs": [
+      {
+        "path": "docs/evidence/d-first-chain-native-a74d9157f9b94a74ab1dec38904e7099.execution-controller.jsonl",
+        "sha256": "840c0ad3f6f61516aebecaddbcbc6db4d5745a94f1337c10d1e65abb8e945f79"
+      },
+      {
+        "path": "docs/evidence/d-first-chain-native-a74d9157f9b94a74ab1dec38904e7099.execution-dispatch.jsonl",
+        "sha256": "10c2f7e7f8c2aa41a90bcaeee29cf99c52520a3a1b2de3a7830dcb5ff2d2abb1"
+      },
+      {
+        "path": "docs/evidence/d-first-chain-native-a74d9157f9b94a74ab1dec38904e7099.execution-main.jsonl",
+        "sha256": "b8b1621e80ff735fb36477f14668163727ad4e718498a05decea0931b5d3ae8f"
+      }
+    ],
+    "cleanup": true,
+    "four_owner_directories_absent": true,
+    "real_SQL": false,
+    "production_authorization": false,
+    "tests_rerun_by_A": false,
+    "relay_compatibility": {
+      "original_public_commit": "d3c5715a05a80c1134edd3ad0132a6c292ee1672",
+      "Authority_and_JobBinding_declarations_unchanged": true,
+      "comparison": "exact declarations ignoring whitespace only",
+      "four_A_relay_sources_match_tested_bytes": true,
+      "whole_current_ABI_tested_by_A": false
+    },
+    "superseded_for_current_source": true,
+    "superseding_source_review": "docs/evidence/a-d-backup-start-atomic-review-20261028.json",
+    "scope_note": "21/33 verifies the prior frozen execution source only; later SQL start and ValidUntil/floor changes require D new exact-source validation"
+  }
+}

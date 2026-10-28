@@ -3,6 +3,9 @@
 package systembackupapi
 
 import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -34,11 +37,56 @@ type TaskApplication interface {
 	ReadPreflight(*http.Request, string) (contract.PreflightDetailResource, error)
 }
 
+type TaskManifestApplication interface {
+	ReadManifest(*http.Request, string) ([]byte, error)
+}
+
+// Manifest returns the original C bytes: re-encoding would change the checksum
+// domain. The application owns authorization, snapshot, current facts/recheck.
+func (h *Handler) Manifest(w http.ResponseWriter, r *http.Request, id, requestID string) {
+	w.Header().Set("Cache-Control", "no-store")
+	if h == nil || h.application == nil {
+		writeError(w, requestID, nil)
+		return
+	}
+	app, ok := h.application.(TaskManifestApplication)
+	if !ok || nilDependency(app) {
+		writeError(w, requestID, nil)
+		return
+	}
+	if r.URL.RawQuery != "" || len(id) != 40 || id[:4] != "sbk_" || !uuid.MatchString(id[4:]) {
+		writeError(w, requestID, &Error{"validation_failed"})
+		return
+	}
+	data, err := app.ReadManifest(r, id)
+	if err != nil {
+		writeError(w, requestID, err)
+		return
+	}
+	if len(data) < 2 || len(data) > 8<<20 || !json.Valid(data) || r.Context().Err() != nil {
+		writeError(w, requestID, nil)
+		return
+	}
+	digest := sha256.Sum256(data)
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("X-System-Backup-Data-Source", "live")
+	w.Header().Set("X-System-Backup-Manifest-SHA256", hex.EncodeToString(digest[:]))
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(data)
+}
+
 // Error contains only a closed business code. Never put driver/provider errors,
 // credentials, request bodies or authorization material in the public response.
 type Error struct{ Code string }
 
 func (e *Error) Error() string { return "system backup task application rejected" }
+
+// Only the closed, non-secret tombstone summary is returned after current
+// action authority has been rechecked. Detailed retired resources stay gone.
+type ExpiredTaskError struct{ PublicID, TerminalStatus, FailureCategory string }
+
+func (*ExpiredTaskError) Error() string { return "system backup task idempotency expired" }
+func (*ExpiredTaskError) Unwrap() error { return &Error{"idempotency_expired"} }
 
 type Handler struct{ application TaskApplication }
 
@@ -77,6 +125,8 @@ func taskRoute(kind systembackupread.TaskKind) (path, endpoint, prefix string) {
 
 const maxTaskBody = 64 << 10 // transport bound; owner DTO may require a smaller one
 
+type taskRequestIDKey struct{}
+
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request, kind systembackupread.TaskKind, requestID string) {
 	w.Header().Set("Cache-Control", "no-store")
 	path, endpoint, _ := taskRoute(kind)
@@ -108,6 +158,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request, kind systemback
 		writeError(w, requestID, &Error{"validation_failed"})
 		return
 	}
+	// Preserve the server-selected correlation ID without trusting another
+	// request header or changing the client request in place.
+	r = r.WithContext(context.WithValue(r.Context(), taskRequestIDKey{}, requestID))
 	task, err := h.application.CreateAndEnqueue(r, kind, endpoint, keys[0], json.RawMessage(body))
 	if err != nil {
 		writeError(w, requestID, err)
@@ -194,7 +247,12 @@ func writeError(w http.ResponseWriter, requestID string, err error) {
 	if status == http.StatusTooManyRequests {
 		w.Header().Set("Retry-After", "1")
 	}
-	writeJSON(w, status, map[string]any{"code": code, "message": code, "details": map[string]any{}, "request_id": requestID})
+	details := map[string]any{}
+	var expired *ExpiredTaskError
+	if code == "idempotency_expired" && errors.As(err, &expired) && expired != nil {
+		details = map[string]any{"public_id": expired.PublicID, "terminal_status": expired.TerminalStatus, "failure_category": expired.FailureCategory}
+	}
+	writeJSON(w, status, map[string]any{"code": code, "message": code, "details": details, "request_id": requestID})
 }
 
 // Existing admin-operation-errors task_create codes and common HTTP statuses.

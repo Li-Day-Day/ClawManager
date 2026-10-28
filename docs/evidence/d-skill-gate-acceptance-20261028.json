@@ -1,0 +1,30 @@
+{
+  "kind": "d_skill_gate_acceptance.v1",
+  "native": "docs/evidence/d-first-chain-native-9221ce72d7f744dfa815cdbf155cfc65.json",
+  "roots": 7,
+  "passes": 7,
+  "fail": 0,
+  "skip": 0,
+  "source_pins": [
+    {
+      "path": "backend/internal/services/skill_package_materialize_worker.go",
+      "sha256": "d60ebb37b0fd6c5a7f8a6b508bb5cb9eb5d867b1d554f1e029beac4aae6b0d32"
+    },
+    {
+      "path": "backend/internal/services/skill_package_materialize_backup_gate_test.go",
+      "sha256": "454229fd9e07b8c8a892c6dbace321172f214579186e56eabc5d3bbc8bc1a15b"
+    },
+    {
+      "path": "backend/internal/services/backup_mutation_gate.go",
+      "sha256": "7e00ba7bc96b8dbb2aeb73cc97295414bc5a5c93ded63207e63c12d1b5de3cbb"
+    },
+    {
+      "path": "backend/internal/systembackup/mutation/gate.go",
+      "sha256": "116e7da639c29af56d4bc0e3570ce8ee5c698896f4d284b9e9d32aca2cbedc3b"
+    }
+  ],
+  "whole_checkout_match": false,
+  "cleanup": true,
+  "real_gate_or_writer_inventory_accepted": false,
+  "dependencies_installed": false
+}

@@ -1,0 +1,70 @@
+{
+  "kind": "a_relay_message_validation.v1",
+  "date": "2026-10-28",
+  "status": "passed_for_exact_snapshot",
+  "native_receipt": "docs/evidence/a-relay-message-native-123e09588521409191676ff54581f1b2.json",
+  "native_exit": 0,
+  "native_roots": 2,
+  "native_pass_events": 20,
+  "fail_skip": 0,
+  "native_log_sha256": "c2d7cf88ddb27e42294fa5a58c0f08b03012b122909cf1f9950f5097d812e2ff",
+  "linux_compile_exit": 0,
+  "linux_binary": {
+    "size": 74383170,
+    "executed": false,
+    "sha256": "54ce54c96531d9e41cd5aad49801ee51b5dc7111b14afc712e98ec3566487871"
+  },
+  "boundary_inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/relay_message.go",
+      "sha256": "1f6125fce50eda3b6c35edd66246e98d434ebe1accfddcad67c224ff12c2964a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_message_test.go",
+      "sha256": "9e4df475762331c91f89edb231e4f5d805ca259f6854a902a1a46e846bbae42f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_peer.go",
+      "sha256": "43b62779243cb94a46f0301e5ee0aa5758ae74e349dd48b44cef58d035447de8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_peer_test.go",
+      "sha256": "b663337bffdf3ff63f07a2ab8c1975d137d4cbb1ece4dc6ee4ae80e8b4ba79b6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_dispatch.go",
+      "sha256": "139e87c5b4ccad7e66b79c12d6b1fcc3c33fe11fc961137ffb30a306588e0aef"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_dispatch_test.go",
+      "sha256": "72515c9bd61b3eeee6a5d360a7584cea1f2b2c40fb54610607a29aaa456049af"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/relay.go",
+      "sha256": "8829a0f9a97d15d5c4f57d3b0fb63575835214c87f193b6c8c3dadd1ffc75d8b"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/contract.go",
+      "sha256": "a0f1c6393a10f818e0f5ea4929efcab780c6a7a06564f78a1a64949c1538b101"
+    }
+  ],
+  "current_boundary_inputs_match_snapshot": true,
+  "whole_current_checkout_tested": false,
+  "frozen_source_postcheck_performed": false,
+  "workspace_changed_since_snapshot": [
+    "backend/cmd/server/system_backup_tasks_live.go",
+    "scripts/system-backup-d-api-smoke.mjs",
+    "scripts/system-backup-d-api-smoke.test.mjs"
+  ],
+  "workspace_source_paths_changed": true,
+  "initial_snapshot_drift_receipt": "docs/evidence/a-relay-message-native-ab6b39462dd14f6a9152649c4a6866b4.json",
+  "initial_round_tests_started": false,
+  "independent_source_review": "docs/evidence/d-a-relay-message-source-review-20261028.json",
+  "independent_source_review_bytes_match": true,
+  "cleanup": true,
+  "two_owner_directories_absent": true,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "field_slots_closed": 0
+}

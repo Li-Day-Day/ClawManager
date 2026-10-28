@@ -1,0 +1,243 @@
+{
+  "kind": "a_d_backup_start_atomic_source_review.v1",
+  "date": "2026-10-28",
+  "scope": "read_only_atomic_start_boundary",
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store.go",
+      "sha256": "9e0bc8e849f7935123ed7dc0bb0a2995b41cd373950f2ba289081d74bdfce361",
+      "size": 17063
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store_test.go",
+      "sha256": "f557e1e215dc8cdc1e9f53f15affe65aff4810f83cfe0bb3a99ed2930142e0fa",
+      "size": 16294
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store.go",
+      "sha256": "0d7157eb3da8228b68d4f252cf26e8708c639599daf88b34d6a6e84817859b91",
+      "size": 7048
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "bd22f3f75a51d71e149717458ba68f17335a78305a74801cbeb49b1982815a05",
+      "size": 12360
+    }
+  ],
+  "source_confirmed": [
+    "stageTaskClaimWithReceipt joins caller transaction and never commits",
+    "gate then installation/config then shared claim/task locking",
+    "tentative claim receipt, pending to preparing, attempt 1 capture and secret_capture units, 2 core events, same transaction",
+    "original task config/spec loaded; no inferred profile or provider work",
+    "missing ExecutionAuthorization or BackupStartAdmission rejects before transaction",
+    "detached owner inputs and no owner callback after fixed final SQL",
+    "single commit, commit_unknown returns no authority and no automatic replay"
+  ],
+  "findings": [
+    {
+      "id": "final_sql_clock_floor",
+      "priority": "P1",
+      "status": "closed_for_reviewed_frozen_source",
+      "location": "sql_backup_start_store.go final clock after guard.Recheck/checkBackupStartFinal",
+      "trace": "old now=t1; successful A guard snapshot/floor=t3; fixed claim sample and final sample=t2 with t0<t1<t2<t3; old lower-bound tests pass despite clock rollback",
+      "required": "Carry successful guard clock floor through fixed final reads; final SQL time must be >= all prior checked samples and strictly below original smallest expiry; no owner callback after final SQL",
+      "regressions": [
+        "SQL clock rolls back after successful A recheck but remains after outer old now",
+        "SQL clock rolls back after fixed final read"
+      ],
+      "D_fix_and_final_tests_pending": false
+    }
+  ],
+  "tests_run_by_A": false,
+  "real_SQL": false,
+  "dependencies_installed": false,
+  "D_files_edited_by_A": false,
+  "full_execution_store_review": false,
+  "production_approved": false,
+  "field_slots_closed": 0,
+  "fixed_source_inputs": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store.go",
+      "sha256": "e0da646c6f39f37f71f46fe4878a9a6dc7a6a785a19a2de3a5410137af5fa811",
+      "size": 17370
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store_test.go",
+      "sha256": "3acd19e20b82159274abe027692691fed6470b49af745031d87f32be71ebd2fc",
+      "size": 17152
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store.go",
+      "sha256": "0d7157eb3da8228b68d4f252cf26e8708c639599daf88b34d6a6e84817859b91",
+      "size": 7048
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "829e208094aa1152becab10330206cd8033ad42a01acb6ccce315d5e8e5451d2",
+      "size": 12736
+    }
+  ],
+  "source_fix_review": {
+    "ObservedAt_shared_latch_and_original_floor": true,
+    "post_A_floor_passed_to_fixed_SQL": true,
+    "fixed_SQL_clock_returned_to_final_check": true,
+    "no_owner_callback_after_fixed_SQL": true,
+    "new_negative_root": "TestBackupStartPreservesAuthorityAndFixedSQLClockFloors",
+    "test_model_traces": [
+      "A snapshot 4 then fixed claim 2",
+      "fixed claim 5 then final 4"
+    ],
+    "final_new_test_receipt_verified": false
+  },
+  "remaining_findings": [
+    {
+      "id": "budget_clock_sample_overwritten",
+      "status": "closed_for_reviewed_frozen_source",
+      "location": "first backupStartClock before AdmitStart and overwritten now before RecheckStart",
+      "trace": "A bind floor0; budget admission now5; second budget time2; subsequent A/fixed/final2; earlier observed5 lost",
+      "required": "Preserve first budget sample as lower bound before invoking RecheckStart; maintain transaction-wide checked-clock watermark",
+      "test_receipt_verified": false
+    }
+  ],
+  "latest_source_inputs": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store.go",
+      "sha256": "309798bb424a5bd0f7cb7832910f4c10477e90554798ef76aa0023ac6b84eb12",
+      "size": 17709
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store_test.go",
+      "sha256": "9b7d22ce96ed05c1958266554ee12c64cb20ab8fb96b21edf6b6b15013288293",
+      "size": 18757
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store.go",
+      "sha256": "38a49b360ee9e5caeedd5edf5d3afef07801fdb65e5daf5aa715f8e80493f1e6",
+      "size": 7500
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "99ae226ed38ca0f0ce376d6f2f1384a5376b4833dc346f7137800b716eaca0ab",
+      "size": 13105
+    }
+  ],
+  "latest_clock_chain_review": {
+    "entry_to_staged_claim_floor": true,
+    "stage_exit_to_original_claim": true,
+    "Bind_to_budget_first_sample": true,
+    "budget_first_to_second_sample_before_callback": true,
+    "RecheckAfter_preserves_caller_floor_before_A_callback": true,
+    "successful_A_to_fixed_to_final_floor": true,
+    "original_upper_bounds_not_extended": true,
+    "new_source_findings": 0,
+    "scope": "reported atomic start clock chain only"
+  },
+  "latest_regression_phase": {
+    "receipt": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.json",
+    "log": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.execution-controller.jsonl",
+    "log_sha256": "19e06357077ccea1f006dcf309acaf6edfc524923f939e6001a3c939ba820557",
+    "exit": 0,
+    "package_pass": true,
+    "required_roots": [
+      "TestBackupStartPreservesAuthorityAndFixedSQLClockFloors",
+      "TestBackupStartPreservesEntryClaimAndBudgetClockFloors"
+    ],
+    "required_cases": [
+      "rollback_after_auth",
+      "rollback_after_fixed",
+      "entry_clock",
+      "claim_exit_clock",
+      "budget_clock"
+    ],
+    "source_pins_match": true,
+    "tests_rerun_by_A": false,
+    "whole_run_status_at_observation": "passed",
+    "whole_run_cleanup_at_observation": true,
+    "final_run_receipt_verified": false
+  },
+  "open_source_findings_in_reviewed_scope": 0,
+  "D_final_run_pending": false,
+  "final_receipt": {
+    "receipt": "docs/evidence/d-backup-start-atomic-20261028.json",
+    "native": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.json",
+    "verified": true,
+    "logs": [
+      {
+        "passes": 92,
+        "path": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.execution-controller.jsonl",
+        "phase": "execution-controller",
+        "roots": 34,
+        "sha256": "19e06357077ccea1f006dcf309acaf6edfc524923f939e6001a3c939ba820557"
+      },
+      {
+        "passes": 1,
+        "path": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.execution-dispatch.jsonl",
+        "phase": "execution-dispatch",
+        "roots": 1,
+        "sha256": "f7bb2c97c2d8cd16e599990fb0e8d03d3cde0ed5172680eb71b1966cd5b068a9"
+      },
+      {
+        "passes": 3,
+        "path": "docs/evidence/d-first-chain-native-937673dedd044162bee2c511dd26d92c.execution-main.jsonl",
+        "phase": "execution-main",
+        "roots": 3,
+        "sha256": "250fa296394557addf4248699ecfd5d1c0966066621c82abef69bc9862fedc7d"
+      }
+    ],
+    "native_roots": 38,
+    "native_pass_events": 96,
+    "fail_skip": 0,
+    "all_four_phase_exits": 0,
+    "current_record_source_pins_match": true,
+    "A_reviewed_clock_chain_bytes_match": true,
+    "cleanup": true,
+    "four_owner_directories_absent": true,
+    "tests_rerun_by_A": false,
+    "actual_MySQL": false,
+    "production_execution_verified": false,
+    "full_checkout_retested_by_A": false,
+    "superseded_for_new_lock_shape_source": true,
+    "later_grant_source_review": "docs/evidence/a-d-controller-start-grant-review-20261028.json"
+  },
+  "lock_shape_final_receipt": {
+    "receipt": "docs/evidence/d-backup-start-atomic-20261028.json",
+    "native": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.json",
+    "verified": true,
+    "logs": [
+      {
+        "roots": 36,
+        "sha256": "d53d0b1c3eb46a35e88b2682faf5c714d3677679a176d5122d60267cbd9c1bc1",
+        "phase": "execution-controller",
+        "passes": 94,
+        "path": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.execution-controller.jsonl"
+      },
+      {
+        "roots": 1,
+        "sha256": "5cade814322e76e1fce2f72f7853c925983815c94d3388e26340df3d93faea1c",
+        "phase": "execution-dispatch",
+        "passes": 1,
+        "path": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.execution-dispatch.jsonl"
+      },
+      {
+        "roots": 3,
+        "sha256": "ed0d5c49303589dcd80b18f7dd66055250ee85de865fc67412b38787a6a9946a",
+        "phase": "execution-main",
+        "passes": 3,
+        "path": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.execution-main.jsonl"
+      }
+    ],
+    "roots": 40,
+    "pass_events": 98,
+    "fail_skip": 0,
+    "all_four_phase_exits": 0,
+    "current_record_pins_match": true,
+    "A_lock_grant_source_pins_match": true,
+    "original_matrix_unchanged": true,
+    "cleanup": true,
+    "five_owner_directories_absent": true,
+    "tests_rerun_by_A": false,
+    "real_MySQL_grant_tests": false,
+    "field_grants_authorized": false,
+    "field_preflight_test_results_reviewed_by_A": false
+  }
+}

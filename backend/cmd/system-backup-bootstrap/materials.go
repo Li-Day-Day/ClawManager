@@ -21,6 +21,48 @@ type bootstrapMaterialInputs struct {
 	Selections             []systembackupproducer.BootstrapCandidateSelection
 }
 
+// deploymentMaterialLink is assigned only by a deployment-owned Go composition
+// file, after newBootstrapMaterialLink succeeds. It has no flag, environment,
+// JSON, receipt or plugin loader. An unconfigured binary retains all 27 missing
+// owners. The deployment must supply the independently authenticated Original
+// authority and the remaining owner implementations; this link grants nothing.
+var deploymentMaterialLink *bootstrapMaterialLink
+
+type bootstrapMaterialLink struct {
+	owners systembackupsecurity.BootstrapOwnerAdapters
+}
+
+// Freeze the concrete validators and candidate selections before main runs.
+// Construction does not read materials, dial TLS, open SQL or approve mapping.
+func newBootstrapMaterialLink(base systembackupsecurity.BootstrapOwnerAdapters, inputs bootstrapMaterialInputs) (*bootstrapMaterialLink, error) {
+	owners, err := composeBootstrapMaterials(base, inputs)
+	if err != nil {
+		return nil, err
+	}
+	return &bootstrapMaterialLink{owners: owners}, nil
+}
+
+func (bootstrapMaterialLink) String() string   { return "BootstrapMaterialLink" }
+func (bootstrapMaterialLink) GoString() string { return "BootstrapMaterialLink" }
+func (bootstrapMaterialLink) MarshalJSON() ([]byte, error) {
+	return nil, systembackupsecurity.ErrRegistrationUnavailable
+}
+func (*bootstrapMaterialLink) UnmarshalJSON([]byte) error {
+	return systembackupsecurity.ErrRegistrationUnavailable
+}
+
+// This is also the actual main path. A present but invalid link fails closed;
+// it never falls back to the unconfigured binary or the legacy Apply route.
+func runLinkedBootstrap(ctx context.Context, args []string, out io.Writer, link *bootstrapMaterialLink) int {
+	if link == nil {
+		return run(ctx, args, out, linkedOwnerAdapters())
+	}
+	if link.owners.Candidates == nil {
+		return 1
+	}
+	return run(ctx, args, out, link.owners)
+}
+
 // composeBootstrapMaterials consumes A's real constructors without modifying
 // their policy. The remaining owner slots are still checked by the unchanged
 // run/LoadBootstrapDeployment path before credentials or SQL are opened.

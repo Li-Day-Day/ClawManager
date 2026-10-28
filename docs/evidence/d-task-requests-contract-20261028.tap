@@ -1,0 +1,219 @@
+✔ draft machine artifacts use one contract version and local references resolve (161.2543ms)
+✔ Admin OpenAPI route inventory exactly matches plan v12 and has unique operation IDs (4.0144ms)
+✔ Admin mutations require bounded idempotency keys and common envelopes are closed (1.4804ms)
+✔ Admin path IDs are resource-prefixed instead of generic database IDs (2.1351ms)
+✔ Admin list, event and log routes use bounded opaque cursor pagination (0.778ms)
+✔ Admin synchronous and asynchronous mutation status codes match the plan (0.9708ms)
+✔ Admin 201 and 202 responses publish Location and task-producing routes return tasks (1.5228ms)
+✔ Admin operation policy covers OpenAPI exactly and preserves D orchestration boundaries (2.7591ms)
+✔ Admin API error codes have one frozen HTTP status mapping (1.6457ms)
+✔ Admin operation error profiles cover every route once and keep exceptional codes scoped (3.9548ms)
+✔ D-owned Admin mutation bodies are closed and owner authentication fields stay external (1.7951ms)
+✔ Go and TypeScript DTO snapshots match enum and field schemas (29.6924ms)
+✔ D-owned Admin resources replace only D placeholders and bind the existing manifest contract (1.203ms)
+✔ D-owned task detail routes use typed closed projections without claiming owner payloads (3.0754ms)
+✔ D-owned task detail conditions preserve eligibility, cleanup and artifact-state authority (1.1032ms)
+✔ D-owned task detail examples assemble into exact redacted response shapes (4.0015ms)
+✔ D-owned config wire records all defaults, redacted references and cross-field safety rules (4.3659ms)
+✔ D-owned control examples are closed snapshots of their response schemas (0.5646ms)
+✔ D-owned activity routes use typed task, operation, event, log, prune and promotion lists (0.7168ms)
+✔ D-owned event and log envelopes are bounded, redacted and non-authoritative (0.6344ms)
+✔ D-owned prune item and promotion views preserve lifecycle and derived-health boundaries (0.6403ms)
+✔ redacted examples are closed against DTO fields and contain no credential material (0.886ms)
+✔ module interfaces keep ownership boundaries and source-writer state is closed (0.3073ms)
+✔ D-owned controller claim primitive is DB-time CAS only and has no owner execution dependency (3.4439ms)
+✔ D-owned pending deadline transition is transactional, evidence-guarded and task-only (3.5738ms)
+✖ D-owned pending deadline sweep is bounded, fair and has no runner surface (17.7058ms)
+✔ D-owned gate and mutation lease core preserves row-lock order and explicit participant proof (8.5988ms)
+✔ D-owned controller skeleton is feature-gated and uses a lease-only ServiceAccount (17.3058ms)
+✔ D-owned system image schema is migration-owned instead of repository runtime DDL (49.7498ms)
+✔ D-owned audit log table is created by embedded migration, not four deployment init scripts (18.0762ms)
+✔ core applies embedded migrations before constructing D repositories (2.7751ms)
+✔ D-owned control metadata core is migration-owned and remains metadata-only (6.0322ms)
+✔ D-owned config and operation authorities materialize the closed machine contracts (20.8423ms)
+✔ D-owned task and attempt authorities preserve typed cross-owner boundaries (7.3094ms)
+✔ D-owned staging resource intent is migration-owned and follows the plan lifecycle (6.3266ms)
+✔ D-owned maintenance participant ACK is migration-owned and generation-scoped (15.5685ms)
+✔ D-owned strong-auth nonce ledger stores consumed HMACs without defining A proof verification (15.7704ms)
+✔ A-owned secret ref union carries only typed redacted identities (1.8481ms)
+✔ A-owned strong-auth contract is closed and matches the redacted runtime fixture (1.5711ms)
+✔ A-owned provider-proof registration is closed, bounded and target-bound (3.6411ms)
+✔ A-owned capability evidence is closed, redacted and cleanup-proven (1.7144ms)
+✔ D-owned Job observation cursor is migration-owned while B status relay stays missing (10.2484ms)
+✔ D-owned restore drill resource intent records cleanup without B target behavior (9.8016ms)
+✔ D-owned coordination and observability tables stay closed and owner-neutral (10.9694ms)
+✔ D-owned promotion authority binds one active baseline without caching current health (16.4106ms)
+✔ D-owned prune authority freezes candidates and owner-neutral item retries (5.2143ms)
+✔ D-owned external action authority persists exact bytes without provider execution (8.5244ms)
+✔ D-owned check authorities persist summaries without owner discovery or verifier registries (11.3222ms)
+✔ cross-owner request covers every pending owner decision and required D/C review without inventing approvals (3.8477ms)
+✔ publication schemas exclude self-references and post-commit eligibility (0.3759ms)
+✔ external action persists exact immutable bytes without a replayable credential (1.8273ms)
+✔ acceptance signs payload only and keeps local reason codes canonical (34.476ms)
+✔ installation state preserves first-enable and matrix transition authority (0.4243ms)
+✔ live schema-hash evidence cannot satisfy the gate before cleanup, registration and three-owner review (1.1425ms)
+✔ compact tombstone separates permanent destructive keys from standard expiry (0.2536ms)
+✔ verifier shell owns aggregation and keeps A business checks as draft (1.0905ms)
+✔ metrics registry shape rejects high-cardinality labels and requires complete alert metadata (0.3832ms)
+✔ D-owned metrics registry materializes every section-15 metric exactly once (19.6715ms)
+✔ D-owned alert registry closes section-15 defaults and profile behavior (6.3347ms)
+✔ D alert expressions preserve labeled series when joined to singleton guards and config (9.7771ms)
+✔ D queue budget reader is bound to registered low-cardinality metric names (3.772ms)
+✔ D controller queue metrics outlet uses registered HELP and leader-only fail-closed scrape (3.081ms)
+✔ D controller self telemetry is wired to the loop and remains leader-only (2.9345ms)
+✔ D controller-state predicates cover the six non-PromQL registry rules (14.1719ms)
+✔ D-owned dependency and provider capability records are closed and fail closed (1.5314ms)
+✔ D-owned dependency and capability fixtures prove expiry and exact-role projections (2.0484ms)
+✔ D-owned control-evidence sidecar is a closed encrypted summary envelope (0.6661ms)
+✔ control-evidence example keeps A/B/C payloads external and binds only registered evidence (0.7417ms)
+✔ D-owned evidence, chunk and log persistence contract is closed and fail-closed (1.9706ms)
+✔ evidence and log examples bind contiguous chunks and redacted inline bytes (1.2761ms)
+ℹ tests 70
+ℹ suites 0
+ℹ pass 69
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 655.5094
+
+✖ failing tests:
+
+test at scripts\system-backup-contract-artifacts.test.mjs:1049:1
+✖ D-owned pending deadline sweep is bounded, fair and has no runner surface (17.7058ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ClaimCoordinator\{Executor: s\.DB, InstallationID: installationID\}\)\.Acquire\(/. Input:
+  
+  'package systembackupcontroller\n' +
+    '\n' +
+    'import (\n' +
+    '\t"context"\n' +
+    '\t"database/sql"\n' +
+    '\t"errors"\n' +
+    '\t"fmt"\n' +
+    ')\n' +
+    '\n' +
+    'type SQLDeadlineStore struct {\n' +
+    '\tDB *sql.DB\n' +
+    '}\n' +
+    '\n' +
+    'func (s SQLDeadlineStore) ListExpiredPending(ctx context.Context, installationID string, kind TargetKind, owner string, limit int) ([]DeadlineCandidate, error) {\n' +
+    '\tif s.DB == nil {\n' +
+    '\t\treturn nil, errors.New("nil system backup SQL deadline database")\n' +
+    '\t}\n' +
+    '\tif err := ctx.Err(); err != nil {\n' +
+    '\t\treturn nil, err\n' +
+    '\t}\n' +
+    '\tif !controllerOwnerPattern.MatchString(owner) {\n' +
+    '\t\treturn nil, errors.New("invalid system backup SQL deadline owner")\n' +
+    '\t}\n' +
+    '\tif !installationIDPattern.MatchString(installationID) {\n' +
+    '\t\treturn nil, errors.New("invalid system backup SQL deadline installation ID")\n' +
+    '\t}\n' +
+    '\tif limit < 1 || limit > MaxDeadlineSweepBatch {\n' +
+    '\t\treturn nil, fmt.Errorf("deadline candidate limit must be between 1 and %d", MaxDeadlineSweepBatch)\n' +
+    '\t}\n' +
+    '\tquery, err := expiredPendingCandidateSQL(kind)\n' +
+    '\tif err != nil {\n' +
+    '\t\treturn nil, err\n' +
+    '\t}\n' +
+    '\trows, err := s.DB.QueryContext(ctx, query, installationID, owner, limit)\n' +
+    '\tif err != nil {\n' +
+    '\t\treturn nil, fmt.Errorf("query expired pending %s tasks: %w", kind, err)\n' +
+    '\t}\n' +
+    '\tdefer rows.Close()\n' +
+    '\n' +
+    '\tcandidates := make([]DeadlineCandidate, 0)\n' +
+    '\tfor rows.Next() {\n' +
+    '\t\tvar publicID string\n' +
+    '\t\tvar rowVersion uint64\n' +
+    '\t\tif err := rows.Scan(&publicID, &rowVersion); err != nil {\n' +
+    '\t\t\treturn nil, fmt.Errorf("scan expired pending %s task: %w", kind, err)\n' +
+    '\t\t}\n' +
+    '\t\tcandidate := DeadlineCandidate{Target: Target{Kind: kind, PublicID: publicID}, RowVersion: rowVersion}\n' +
+    '\t\tif _, err := candidate.Target.descriptor(); err != nil {\n' +
+    '\t\t\treturn nil, fmt.Errorf("database returned invalid %s deadline candidate: %w", kind, err)\n' +
+    '\t\t}\n' +
+    '\t\tif rowVersion < 1 {\n' +
+    '\t\t\treturn nil, fmt.Errorf("database returned invalid %s deadline row version", kind)\n' +
+    '\t\t}\n' +
+    '\t\tcandidates = append(candidates, candidate)\n' +
+    '\t}\n' +
+    '\tif err := rows.Err(); err != nil {\n' +
+    '\t\treturn nil, fmt.Errorf("iterate expired pending %s tasks: %w", kind, err)\n' +
+    '\t}\n' +
+    '\treturn candidates, nil\n' +
+    '}\n' +
+    '\n' +
+    'func (s SQLDeadlineStore) Acquire(ctx context.Context, installationID string, candidate DeadlineCandidate, owner string, policy LeasePolicy) (ClaimToken, error) {\n' +
+    '\tif s.DB == nil {\n' +
+    '\t\treturn ClaimToken{}, errors.New("nil system backup SQL deadline database")\n' +
+    '\t}\n' +
+    '\t// This is still the no-side-effect pending deadline caller, not B execution.\n' +
+    '\t// The shared entry atomically persists the claim CAS and its public receipt.\n' +
+    '\treturn (SQLTaskClaimStore{DB: s.DB, InstallationID: installationID}).AcquireWithReceipt(ctx, candidate.Target, owner, candidate.RowVersion, policy)\n' +
+    '}\n' +
+    '\n' +
+    'func (s SQLDeadlineStore) Expire(ctx context.Context, installationID string, token ClaimToken) (uint64, error) {\n' +
+    '\tif s.DB == nil {\n' +
+    '\t\treturn 0, errors.New("nil system backup SQL deadline database")\n' +
+    '\t}\n' +
+    '\tif !installationIDPattern.MatchString(installationID) {\n' +
+    '\t\treturn 0, errors.New("invalid system backup SQL deadline installation ID")\n' +
+    '\t}\n' +
+    '\ttx, err := s.DB.BeginTx(ctx, nil)\n' +
+    '\tif err != nil {\n' +
+    '\t\treturn 0, fmt.Errorf("begin pending deadline transaction: %w", err)\n' +
+    '\t}\n' +
+    '\treturn ExpirePendingClaim(ctx, tx, installationID, token)\n' +
+    '}\n' +
+    '\n' +
+    'func (s SQLDeadlineStore) Release(ctx context.Context, installationID string, token ClaimToken, policy LeasePolicy) (uint64, error) {\n' +
+    '\tif s.DB == nil {\n' +
+    '\t\treturn 0, errors.New("nil system backup SQL deadline database")\n' +
+    '\t}\n' +
+    '\treturn (ClaimCoordinator{Executor: s.DB, InstallationID: installationID}).Release(ctx, token, policy.ReconcileInterval)\n' +
+    '}\n' +
+    '\n' +
+    'func expiredPendingCandidateSQL(kind TargetKind) (string, error) {\n' +
+    '\tdescriptor, ok := targetDescriptors[kind]\n' +
+    '\tif !ok || kind == TargetOperation {\n' +
+    '\t\treturn "", fmt.Errorf("unsupported pending deadline target kind %q", kind)\n' +
+    '\t}\n' +
+    '\tguard := fmt.Sprintf(\n' +
+    `\t\t"NOT EXISTS (SELECT 1 FROM system_backup_attempts AS attempt WHERE attempt.target_type = '%s' AND attempt.target_public_id = %s.public_id)",\n` +
+    '\t\tkind,\n' +
+    '\t\tdescriptor.table,\n' +
+    '\t)\n' +
+    '\tif kind == TargetBackup {\n' +
+    `\t\tguard += " AND NOT EXISTS (SELECT 1 FROM system_backup_external_actions AS action WHERE action.target_type = 'backup' AND action.target_public_id = system_backups.public_id)"\n` +
+    '\t} else {\n' +
+    '\t\tguard += fmt.Sprintf(\n' +
+    `\t\t\t" AND NOT EXISTS (SELECT 1 FROM system_artifact_leases AS artifact_lease WHERE artifact_lease.holder_type = '%s' AND artifact_lease.holder_public_id = %s.public_id)",\n` +
+    '\t\t\tkind,\n' +
+    '\t\t\tdescriptor.table,\n' +
+    '\t\t)\n' +
+    '\t}\n' +
+    '\treturn fmt.Sprintf(\n' +
+    `\t\t"SELECT public_id, row_version FROM %s WHERE origin_installation_id = ? AND status = 'pending' AND deadline_at <= UTC_TIMESTAMP(6) AND (next_reconcile_at IS NULL OR next_reconcile_at <= UTC_TIMESTAMP(6)) AND (%s IS NULL OR %s = ? OR %s <= UTC_TIMESTAMP(6)) AND %s ORDER BY deadline_at, id LIMIT ?",\n` +
+    '\t\tdescriptor.table,\n' +
+    '\t\tdescriptor.ownerColumn,\n' +
+    '\t\tdescriptor.ownerColumn,\n' +
+    '\t\tdescriptor.leaseColumn,\n' +
+    '\t\tguard,\n' +
+    '\t), nil\n' +
+    '}\n'
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-contract-artifacts.test.mjs:1082:13)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'package systembackupcontroller\n\nimport (\n\t"context"\n\t"database/sql"\n\t"errors"\n\t"fmt"\n)\n\ntype SQLDeadlineStore struct {\n...',
+    expected: /ClaimCoordinator\{Executor: s\.DB, InstallationID: installationID\}\)\.Acquire\(/,
+    operator: 'match',
+    diff: 'simple'
+  }

@@ -1,0 +1,880 @@
+{
+  "kind": "d_b_public_runtime_wiring.v1",
+  "head": "8ef5fa7fd4df45f6306e910705db01f589266ba7",
+  "b_pr_head": "08d15abf443511376bf1a0c9c9593caea8feef5c",
+  "c_teams_head": "288d74a92c37c6432ebb3dcdd6fd7c2afd837675",
+  "windows_receipt": "docs/evidence/d-first-chain-native-3ef397196d1543c396f1e3fd96b349d7.json",
+  "linux_receipt": "docs/evidence/d-first-chain-native-f4f7900f8962443aa2cdb23f0103eac8.json",
+  "tests": [
+    {
+      "phase": "b-public-adapter",
+      "roots": 86,
+      "passes": 251,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "phase": "execution-controller",
+      "roots": 36,
+      "passes": 94,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "phase": "execution-dispatch",
+      "roots": 6,
+      "passes": 17,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "phase": "execution-main",
+      "roots": 4,
+      "passes": 4,
+      "fail": 0,
+      "skip": 0
+    }
+  ],
+  "roots": 132,
+  "pass_events": 366,
+  "owned_source_matches_both_native_snapshots": true,
+  "linux_whole_checkout_match": false,
+  "linux_whole_checkout_drift": [
+    {
+      "path": "backend/cmd/server/system_backup_tasks_live.go",
+      "change": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupobserver/observer_test.go",
+      "change": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupobserver/observer.go",
+      "change": "changed"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-mutation-requests.schema.json",
+      "change": "changed"
+    },
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "change": "changed"
+    },
+    {
+      "path": "backend/internal/systembackupplancustody/store_test.go",
+      "change": "added"
+    },
+    {
+      "path": "backend/internal/systembackupplancustody/store.go",
+      "change": "added"
+    },
+    {
+      "path": "backend/internal/systembackupapi/task_requests_test.go",
+      "change": "added"
+    },
+    {
+      "path": "backend/internal/systembackupapi/task_requests.go",
+      "change": "added"
+    }
+  ],
+  "production_B_constructor_called": true,
+  "production_owner_links_bound": false,
+  "complete_sql_workstore": false,
+  "real_chain_passed": false,
+  "dependencies_installed": false,
+  "cleanup": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-first-chain-3ef397196d1543c396f1e3fd96b349d7",
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-first-chain-f4f7900f8962443aa2cdb23f0103eac8",
+      "absent": true
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "backend/cmd/system-backup-controller/main_test.go",
+      "sha256": "9cce28081a54e15d97c645f011617960755ee0662f380b2cbc2f01e2883f46db"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "sha256": "1e4743812b6a10e701ba8363470cbae00a9f077d42986ad1ba05ec1932cdb7b0"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/task_execution_live_test.go",
+      "sha256": "c8fee44e57a2b0fddbb5a7f5e306ee2ac2a11f7b8bea86cb620f00e710980bce"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/task_execution_live.go",
+      "sha256": "25aae0641b840af1b6f3ebad2e28e156d58cc596117ec186a332c3d2b2718f09"
+    },
+    {
+      "path": "backend/internal/systembackup/assets/assets_test.go",
+      "sha256": "1b8bc6298a78b94b3d1bd59fc1ea1d87a4976907411e4b4907881a0a0af62a15"
+    },
+    {
+      "path": "backend/internal/systembackup/assets/assets.go",
+      "sha256": "eb175527462bfbcf4303cde27a8cf0acd22df8c6177cfe5d6a08f77a0f72055f"
+    },
+    {
+      "path": "backend/internal/systembackup/assets/configmaps_test.go",
+      "sha256": "dfd4e5c47e2d285ece139ee48f8bcc0d9a341484944dcc22f03b3d7d9d735617"
+    },
+    {
+      "path": "backend/internal/systembackup/assets/configmaps.go",
+      "sha256": "352f6d4ac09ff5e6d7082b38979eb16d724090069ec14b0da7631f4e7fcc9b71"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/browser_worker_test.go",
+      "sha256": "6b870975d293debbf400fe4a9ed104f9031b355ff860c06ea48f9a8f1c32807e"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/codec.go",
+      "sha256": "9333278a74926bac0bd22ac39fe4b1e577733b97f88004c67284a1d3275a93c6"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/config_test.go",
+      "sha256": "25fca0730cff646befff53556ebaf4ffcce1817870e5c8e4a9dae5255f49d021"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/config.go",
+      "sha256": "350c6cebead5388dd19e3a18bb57a68470fec4c50d78ac416435104211abafcc"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/crossdomain_test.go",
+      "sha256": "27f081d6a146678e7ba4967f45f1980b0e1ab4739208ab388bdf33ccfebd6f89"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/crossdomain.go",
+      "sha256": "f67aa3cdd270e4a52b42e1947ec82bdf237f042b33f88392602b6351b6b32873"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/data.go",
+      "sha256": "2a1e01c3dc8d9131a6cee42c28d293ee36db34feaa526c33ac372ad38f3e7d21"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/dependencies_test.go",
+      "sha256": "527f4d04e9918422a2bc3197e124b0334f781dca80d28cbc6c44f68af1e35a2c"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/dependencies.go",
+      "sha256": "8b64927611cde5b73aaa6d4812a9fa4ad9b23204a53d84165f8db2587506e70e"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/export_test.go",
+      "sha256": "f385d16470bd01060f0996e46f072caf2f362c06bc7b53c37ade9183ce6335c6"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/formats_test.go",
+      "sha256": "7f9fb0061851defeb8823313b9ff512b8c6e3fea0e6486acc4a8949955186887"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/formats.go",
+      "sha256": "71a0a2af182989d5ae20e32b3476a4ddde682c26a12c7a65eefb14980cfa488e"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/grants_test.go",
+      "sha256": "e9b263f964057e234d0d740830f96dd127abc08df495c9fed9115cff1c66280f"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/grants.go",
+      "sha256": "359eb5e53ba78586c5a1d318f4fd0c111e35976c1cef16deaed5f0b66ebe65e1"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/mysql_test.go",
+      "sha256": "a68acf421dabf1bffa6b554fcb61c0dfed8a4ca577851fd6d54acd9e99563eff"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/mysql.go",
+      "sha256": "c556419a61177e325adcc1e360b3187ac630371b2cb5cd5fddf13796630caf1f"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/normalize_test.go",
+      "sha256": "eb61c5d3be999bce15dc1aacaebb70ac8de2ea7364ed1d11c1a167bb7269e5e0"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/normalize.go",
+      "sha256": "5cc3dcef3d53b5686a595bb5c82c6d37ef19b2e2cbb0750fa453d360671bcd45"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/preflight_test.go",
+      "sha256": "f1ff49f5adb1378f06296171111f218d5b1144a5171c10c2d675682966a0326f"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/preflight.go",
+      "sha256": "8e934e86769e77ccce5c62bf7ad13f5b4900e780d3b299ebd090a1938397d634"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/restore.go",
+      "sha256": "aab9f05eccad734602a9edf7f94be5c9430d8a69c59108ed0444ccc8050a532b"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/roundtrip_test.go",
+      "sha256": "3b540e65b8e66f4b5f222ce885aefa288338d4f4cc9b9b3603cfe42af0e5424b"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/source_inventory.go",
+      "sha256": "1e8b8a097035ff258f5c5dd8115d6ed4f1190ac58bf490884d3302cea65ebbb4"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/teams.go",
+      "sha256": "b8d8ed2cefeae94fbbe8ef73a1b593671e2930583cc5d24ebd6dbdb68f116148"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_observed_test.go",
+      "sha256": "5e6d3e990572f6c40443097b5e048e9d7df1faa4f2590484e8bfe3480ca1a09c"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_uid_test.go",
+      "sha256": "565da6e2352add9a7278d0b9ec4b7cdf424b24df1880168be1db2d9601501086"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_uid.go",
+      "sha256": "37fff5263238822a058cd81c03331e7100a31960dcf7d04577202ad588d1c298"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_workspace_linux_test.go",
+      "sha256": "2c3745b004c4295dd49a437c0f49feeee4eec143616d6593404aa49dc2b26c24"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_workspace_linux.go",
+      "sha256": "ab219210c0c086a90d867140a41bfd73645f4659784255f7a9f96884422b61b8"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_workspace_other.go",
+      "sha256": "54082e90e7fd35faf5007f28da3d1066aaf27bcc7b31138fabfab2226bba1208"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy_workspace.go",
+      "sha256": "ecc2010e8ed4b36f3393fbe404ff5fa6b4674278a0bac5d5a5e21cc7c1508db6"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/workbuddy.go",
+      "sha256": "39e4ce9680fb60634d7bbbd1365d29d2a81ef8818f7baf3ca297ab0f03692691"
+    },
+    {
+      "path": "backend/internal/systembackup/domain/worker_integration_test.go",
+      "sha256": "94177a3056821f34029bec809fddfdf8c86716068452c4513c73cf1f74d68ee9"
+    },
+    {
+      "path": "backend/internal/systembackup/flow/capture_test.go",
+      "sha256": "570f46762dcc0f280cd06586bde1f0133072d67d42c31d500ba49ae185d0bab4"
+    },
+    {
+      "path": "backend/internal/systembackup/flow/capture.go",
+      "sha256": "7c653317d0441ecb7de89528d9ca19ad61463a2e79f2e43db92017ada85fd948"
+    },
+    {
+      "path": "backend/internal/systembackup/flow/recovery_test.go",
+      "sha256": "23d7d3dd093147a0fe70ae58e9a2500ca49284f6b0fb4a96a9388049040485e3"
+    },
+    {
+      "path": "backend/internal/systembackup/flow/recovery.go",
+      "sha256": "49850f21528889f1233d66971019ab56fdf569feb9f1f5ba0ac1b3f8319bc446"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/database_job_test.go",
+      "sha256": "93dd7e3933604025b07f8d43d15ed2f29ed6060d85ac66dc6aae8249ebd7a6a1"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/database_job.go",
+      "sha256": "c2bc4b6641b2998b9625bd22a3df40f319cda06b8d7d728da0deb15760adff24"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/journal_rows.go",
+      "sha256": "3c0bb0772add65f967d2893d9c6cbb11769def0fec583cc322f0b5257d34da24"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/journal_test.go",
+      "sha256": "8199188eb0d025e569411a498448d353feac4d036e565c5847b4a9e2aac9a49f"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/journal.go",
+      "sha256": "080c8561db1c6811986e7afb2f72c532c18adc414e984878d8d1ffb1b41e290f"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/resources_test.go",
+      "sha256": "69227a280454ba4db2c368f0b5821ddd8c485483a81dbe2ac4c15ab25668aa2f"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/resources.go",
+      "sha256": "82431d2c8089b0d2eba8e46d1eb210c72aee3a39ca85efa94f4a9eea63512105"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/runner_test.go",
+      "sha256": "671235ce139c745382c7bca811a9e6409e2c91099e0eade11dbe6383f14077a9"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/runner.go",
+      "sha256": "4d6556cea9194b8c367e543124b549e2e5832a53bd194f323c3ae99d23736d7d"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/worker_config_test.go",
+      "sha256": "5301b88542e0c85dc01fb412578772e36c757a46219bc132057b37629baa1636"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/worker_config.go",
+      "sha256": "6403b6d09c05adb7ced3a2343c7985723ee34b67097b73dfbfd98540eb33f77f"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/worker_network_test.go",
+      "sha256": "73ce3e2a27081c2a8e36fbcf7188d8524c3df3f9a7dd92a0071ba01088603184"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/worker_network.go",
+      "sha256": "afadeedb4b2cc9d75f7f200441217b8a9eed327ca2aa43e40311d1c3a7e8e288"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/worker_observer_test.go",
+      "sha256": "4ef7fd77a9326e91d820b343a19b68f8b2631be68615ae629e40b0d45f20c7dd"
+    },
+    {
+      "path": "backend/internal/systembackup/kube/worker_observer.go",
+      "sha256": "b32a894f56bb9c45999edd71d52fe3187f63e1c6449daeae73fa186044b4a7fe"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/capture.go",
+      "sha256": "2f0c72d5ab02cf89149242832d068e3db2257aee9099f073f41d9884570d7a90"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/composition.go",
+      "sha256": "c3e57745b4c1178213ca5aa705f828077a1957079d2463d811968ee65de2a22b"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/contracts_test.go",
+      "sha256": "6e16ebd1f4f5be56e0cf8d0d199459d5d919ab1fb9319fc1f1dad222455df548"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/d_spec_integration_test.go",
+      "sha256": "472e4e55ca312654dd377215438a7476abedf2214743933245946be3d494afc6"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/job_factory_test.go",
+      "sha256": "8b3635395ee891b64bbb075cc99ede63d937dd9c168f2e97fd6b516f5ef34ab1"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/job_factory.go",
+      "sha256": "fd41ab867784eb7cb2273ecfa82777ab54f1c5aefb6f4506539160b6c92c2197"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/jobs.go",
+      "sha256": "cfc589fcdf51a1d9c5976eb51f62af215d29552b1bbec1fc0c98d247fb48f539"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/linux_profile_test.go",
+      "sha256": "936c4f7ca14e84ee3da0bd24c5900f3c1b40120266d173d76be77c3eb1cb7f60"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/linux_profile.go",
+      "sha256": "f82de6e7aa6c1dc702635965056b55302a297daf384cca52123b73775f2c509d"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/README.md",
+      "sha256": "9b195c575da28f1a72c081dc1a358ada216ae131d971007a44e87933770d50a6"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/relay_test.go",
+      "sha256": "b587cf51a78f4b310e56e568392df12ad713b8a9d384fc2bc9ff7ec994a73bcb"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/relay_tls_test.go",
+      "sha256": "afb27c4d948f822476abb965581194244cadd8a7c0d931ffec807b500820847e"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/relay.go",
+      "sha256": "8829a0f9a97d15d5c4f57d3b0fb63575835214c87f193b6c8c3dadd1ffc75d8b"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/restore_target_test.go",
+      "sha256": "bb2edeab815af14c10829560678e2dfd3d45a252909cabde99ae56d830be14db"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/restore_target.go",
+      "sha256": "8fe89301380132d7e0bba9b8a9f47b37812616b0a94586350a61630c56f1550a"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/results_test.go",
+      "sha256": "3136ae9962445057d75297bf66d2b4c07ce277f3751e4f355245e77dbb5d43af"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/results.go",
+      "sha256": "fe2a89aa82e64aeb904323be5730b5044035b9767386c3b7b8a32e011979134c"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/runner_test.go",
+      "sha256": "99e9289499f42ce24542f0fe0a9dc06a2357952b199bb9c363391c1b246e0ba3"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/runner.go",
+      "sha256": "edb89bc7e79fd02de8adc4c91f12500c7ece5acf25b3392b955140b4fc715f4d"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/inventory_test.go",
+      "sha256": "b465bc64718a9f5dec6607667c5408c63c367caa522d938f04cebc8e1063e878"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/inventory.go",
+      "sha256": "e356b7c2bbb2281480a6e5b880ac9bf664d125b5c49ee8092d9f3f8bccb3f955"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/registry_test.go",
+      "sha256": "d72bd6beb4dc6989856bd6a187ebe2e484d98f00f00038131249c6eb1e9d003b"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/registry.go",
+      "sha256": "ff67bdee854c03422f03805580edf331e294903b5b5a9e9f235cdae10e3f8a07"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/runtime_test.go",
+      "sha256": "ec3772caabdf47209f0738b54a6bfecb9199559e77bdf1b750aa4a2186a74bc3"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/runtime.go",
+      "sha256": "00c90b3d31e0e5d3e7243bad6318fc9e87bb5134efcc31b78aa494f4afff0845"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/storage_test.go",
+      "sha256": "fa0e7682a8ea3012c10430511b2b3f95cfc13b3519b79b2c3185f89f5cda6fbb"
+    },
+    {
+      "path": "backend/internal/systembackup/scope/storage.go",
+      "sha256": "dbf8ecd8034fbb90ddd5a95961266ec3226fc11d54c653b776ee8cc1b3f73a8c"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/compression.go",
+      "sha256": "832aaa1748fc7612030b446647f13bf8978556b292623eed334b97e00af8eca3"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/file_test.go",
+      "sha256": "ca3fae01b7db5b83263c259f3378867cb92363132d64394d7fe964f89d6753b8"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/file.go",
+      "sha256": "96cce50f4db97053b7a612fb955708528db7eea1d260c15e3386f87c4d9c55c1"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/stream_test.go",
+      "sha256": "0d9bd29041749780643371453f91ad055a305c83b8b0118b8638e4a7a6115f1d"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/stream.go",
+      "sha256": "45f3661f6d63892e2afc772b1f9e54b352b863f0131e9f02925518fd6e3a0721"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/sync_unix.go",
+      "sha256": "4d0e37e4d6ce344b1a190f1b0a03465653ca622f2420379fa99b7689bd3247b6"
+    },
+    {
+      "path": "backend/internal/systembackup/staging/sync_windows.go",
+      "sha256": "b0758fedcbc32b1f74f7bd3dabcdc3b9142ac0b36cc56837cc1b528d54b36405"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/assets_test.go",
+      "sha256": "7398df0c4b5ab64727a9e21a0c8766cf4bf9855bfb20321411f5d2bdb69f5091"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/assets.go",
+      "sha256": "25a99da16a32bfaab6ee1c24571f95ff03a433e4ed837c3774f43e4c713e280f"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/control_test.go",
+      "sha256": "dcab0da1b6eff3230a697feb15805ae882c80eda6e6172ed8ef08d31caf4a044"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/control.go",
+      "sha256": "88ec8000b5a147e95208273adb52e5578e2034e79398eadfa430b54782cbcedf"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/database_test.go",
+      "sha256": "fce158bf98d26fea9101947b6f5824f9dcb9aad80a7a6017c810c0b8fd70c955"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/database.go",
+      "sha256": "b33c755a1d3f7610f69a3808851a1392316e32cf80b8556b5f68775f3c7060f3"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/runtime_policy_test.go",
+      "sha256": "3f881b6e4c3270fd45121f0e9a0e69aea6688c14f67116ba643fa912c52e44c4"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/runtime_policy.go",
+      "sha256": "5b89903e01db14a3c2b80d4405e8b1f7092171558c5775f1215d0085097c6e57"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/server.go",
+      "sha256": "21e08e56ee409daf6b5d0583018fe212ae8e47c5efa4a228783574510bf3b483"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/wine_linux_test.go",
+      "sha256": "4f68a9184e9f5e78ece4231d3a2db1286433fe4afaf25097fc9580c4d6958fac"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/workbuddy_linux_test.go",
+      "sha256": "ad94f856f36115a21e2f3858b40406acdb92189cf45f87f817b1047798430cc5"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/workspace_test.go",
+      "sha256": "0674e6ffd3f9da940c96fcd996780b5516969db4f1fc095887792b61833abdaa"
+    },
+    {
+      "path": "backend/internal/systembackup/worker/workspace.go",
+      "sha256": "5772d54eec5ed2fc05b3821dd51d97d67aa7decd801328b96b01983e83c4eac1"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/archive_test.go",
+      "sha256": "0ea1474c8390c52fe8a925ed88eed6ec2b298f94d6497de519033c6120c4a09d"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/archive.go",
+      "sha256": "57bcdc172c997e61365bad6567606796c099f0fb96e6632a3cfc936e1041c1bc"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/deepseek_linux_test.go",
+      "sha256": "aab4e29732d7a29b791287be49660f1c0eca8801e3ab30f753896e2a6202fac0"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/instance_wine_linux_test.go",
+      "sha256": "196efb860150185293d00e5a705a4d44cabdb757eee40b524456190acb67ab28"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/layout_linux_test.go",
+      "sha256": "d64ba35ac0b37ec22a059203ec9dbaa57b6d0559613602712268f91441f332fb"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/layout.go",
+      "sha256": "b705c0ff286a9788959be28f916c145c09b06cf960640080be74328141244ca2"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/metadata_linux.go",
+      "sha256": "d4ea6f70d16a4e417b28fc0655232496a88964a6b0edfa601d5f6d348b179e5b"
+    },
+    {
+      "path": "backend/internal/systembackup/workspace/metadata_other.go",
+      "sha256": "fce1154318c9f14c1ad794ebd29254590d37793f1d9a9065e21468a03108855e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence_test.go",
+      "sha256": "7046a6aca6828e3283d6c8302b0d836ba858a094ea7f4833647fc3b7f237cb5e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence.go",
+      "sha256": "8b3628279ebf7c4d5bfdd190aafcbfb676e20e542af71ca0003528aa98eb73d6"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction_test.go",
+      "sha256": "a870f65e0a515eb8c0e9ec748a10e97f8c766dbf4c3c4229ff558f7c75b5224f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction.go",
+      "sha256": "73fc2058a60ae301b0821f907eceaa6207167d2a2ab7cbc76af43f3dfab2eb91"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap_recovery_test.go",
+      "sha256": "badff36b76ede29b0bb7c7f038603beddf64886703cef824e1026d54f98414bb"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap_supervisor_test.go",
+      "sha256": "29818f49f7f0f0fed44e36207e55a52cd27fd4f679591a5a46d6e22124ac7bb4"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap_supervisor.go",
+      "sha256": "9bd6ef18541e3e9033b722f025f8094cc5989d376aee46a4fc6325fea08339f0"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap_test.go",
+      "sha256": "a3defbd8e5e52299c240c4e735f62faec01c47e458f61f66d86fd5ee003f2df9"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap.go",
+      "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/claim_coordinator_test.go",
+      "sha256": "1756613e195efcde6a6b45112bcda022a90f90d203f157e240c44b8f5002fd74"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/claim_coordinator.go",
+      "sha256": "5195e763c322ee49e8cea40682f47d44f17d402b53595fd2225c347e318229cb"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/claim_takeover_test.go",
+      "sha256": "3c79480e31fdc50d10bb2f25ef156f2581f64c1e3f50b79cc2c029e44564db47"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/claim_test.go",
+      "sha256": "9cee66087ef2510474f41bbc4877ce8b5379c100d2674e5fc15886fb7653656f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/claim.go",
+      "sha256": "71ea5eae4e8f8a089252aa9ec4889837312636fbc0b920a523b6d38da1aeb9ae"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health_mysql_test.go",
+      "sha256": "7316c8f6e3fad9544d6bfbd8eb887345e00472e4247745036e28263d23670397"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health_observer_test.go",
+      "sha256": "f79b02c2b3797ecfc884273432a44f76d8c9fdd552cfa8911e1bdc205c298ae0"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health_observer.go",
+      "sha256": "ec1bc1822c02da97b83ff56b1d5dbf6e1746e5e8733be6a432ed50993129ad9a"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health_test.go",
+      "sha256": "d66152210675b73d3a46f1ba75999a4d14e5ebbfcca9cb6f4a154e59cd9fcfc5"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_health.go",
+      "sha256": "f9f8e90653e6baed2a0ec42071661ffcfb3792dde7dc3094d75674a1e379ef22"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_loop_test.go",
+      "sha256": "4cc963d99f2a6311518d96fe3e7a1d6a5a94c8aefc4a2b0ca555ece71bc62967"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/control_loop.go",
+      "sha256": "8da96eabe5d2a9778f2f6f57a7b5388b5b16aa38ec3e60de4d6a77d9a05b716c"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+      "sha256": "f4f96dcd5b6a77141f017e1b49416aa2d899f2cbbfa825bd78dabc95bd63694a"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+      "sha256": "34715dbc064c42f025f5a4585ae6cd4fe212dc5251e500d80624b0c1633ed27e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_telemetry_test.go",
+      "sha256": "ba1a777a344b3321193920f111a5fa64f20510e9826fcaf4e87b6137b0790196"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_telemetry.go",
+      "sha256": "813316fe5ddc94c361c0f4198f915ae4c3d4f00faed6db2067eccbba5a634e49"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/coordination_test.go",
+      "sha256": "572ce096b7ab59edae1c66386dab8fa07c6d8f70217b7333fe5c662616657d8e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/database_grants_test.go",
+      "sha256": "6daa0867e8f4c8e20485cc1b6ddfd09a826fb85d68956fff61c918e77e08fb41"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/database_grants.go",
+      "sha256": "3e7c2a21e56d067b3875dc16a00c2125b917cb5989c6009cdfd1e28a64e766b2"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/database_identity_test.go",
+      "sha256": "30a6c976c726edb9a007c6c3b83856021aa072f1b1f207623c2a0b8aae6e5f2b"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/database_identity.go",
+      "sha256": "e06edcdbc362a9ec3571302766d5ebcc3c057f9301aad5f72b549bb4c3211c78"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/deadline_loop_test.go",
+      "sha256": "3c91c888995ae934fa8d9bd5ede1b38ecdd01f053ed9c2abf03166e9700e7364"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/deadline_loop.go",
+      "sha256": "24becb2ba8bf6a5835e4c248fedf4a1826797bf9bd5f63c8b58be996851a4eeb"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/deadline_sweeper_test.go",
+      "sha256": "64a19299a20674333b3f32e3e649f4b7b1b97f7e161bbd56eebeaa6d040ea22a"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/deadline_sweeper.go",
+      "sha256": "5bc0197e742557585235a1b59978b42f266aca65c3080067b95743fab83d9deb"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/deadline_test.go",
+      "sha256": "c45120b443135c360687dc1871a263a0006f7e9b0f6ee73a3c37ce041ae3f40e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/deadline.go",
+      "sha256": "abb9fb95137b471c439a7db71ab4af3c8cb4677e2a5a74d074d5dc2edbaa9495"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports_test.go",
+      "sha256": "318f35f7203114105f6b67fe4c7d985fc7d0ce978e9bf3853760b3bbc725005f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "db4a5bdaa0f0efd54b0f2ba76e8e1613ecf1fdd50ba525a5af89b78f3c9cacc2"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_coordinator_test.go",
+      "sha256": "37163d43207226a0cd37de18212ee1e371797385295005458ad5271be611c463"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_coordinator.go",
+      "sha256": "7658f9764a57c4780bcfe95f8a09c1f2c78294e84fd3bc6a0b72fd25f030286b"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_event_test.go",
+      "sha256": "e9bc01fe10f64dcf357b9c48322cb86c61db5ef68c080c2f805bdbae0c8a4764"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_event.go",
+      "sha256": "8b42c064972343b76817d578221d5e3a71425bec19616c27cd4bb80756104b32"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_initializer_test.go",
+      "sha256": "c32781cb95873f41e1de29b772476853b7c63ab28727ad891e474cf668e766cd"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+      "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_recovery_test.go",
+      "sha256": "f5a61d8968b4836669b24192202f1ee585762e341ed92047bf4b0dbc39144abf"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_recovery.go",
+      "sha256": "ac0cc2566be12518acc12eb1b0d6a49969ba4818d17fafa38bd5179576fbbd04"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate.go",
+      "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/kill_switch_test.go",
+      "sha256": "ee185be33830322e4b656408f7ee02c7f5d173c73f1e4e92f6f7fee779ec4f6f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/kill_switch.go",
+      "sha256": "354ac65b754ef607e47e5d2eb0e9ddaeb3032f3b9d4e7f1c7e8b90c5e89c490c"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/metrics_http_test.go",
+      "sha256": "bff65482bce2c218b7da66ac968569c27c335a3c2dd16597e538e20c7311a59a"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/metrics_http.go",
+      "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator_test.go",
+      "sha256": "9ecfa9105f26c0134e22787c0872f4b11d23bcd7dd65aee54e22aedd8df5ff17"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator.go",
+      "sha256": "14001be0a8a7e1201558d0e280371028be28f5a809937647a74d691581faf8f2"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/mutation_lease.go",
+      "sha256": "b2258622b3a99f9ebce15977a7cca79ab5dc76280a6b1ba5b7226cc521f8ac4f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/protected_mutation_test.go",
+      "sha256": "6172886536143161829ef69b0ab4a2e8e686dd9d0489fa50dcf9c58211540159"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/protected_mutation.go",
+      "sha256": "8913ee0aba146f0762c432854c9727b8cb52ea0a72428214789710b36b4fd99b"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/queue_budget_test.go",
+      "sha256": "7537f5dad8c9612e485b1fbd2b807de1158524e73a8878b281d2990202324150"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/queue_budget.go",
+      "sha256": "5140c399c0e0ca3b704a342d667f5167d32c8283b7fc824f85748d595e7448c5"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/readiness_test.go",
+      "sha256": "4d8354f13ff05c3929152d332b65bcb73fdec8e31a93855ea8ad997e1cf0ab45"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/readiness.go",
+      "sha256": "d38218ab811b1ed3424824752605df3b8df1ab7dcc66b4998405cb4cb0b34475"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state_test.go",
+      "sha256": "f7d20538a6018f362af79fee211d11f03a9d8f2a06c995085e53cd2594c1078d"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state.go",
+      "sha256": "8dd73bf454e0f5a947927d6d05f8b000858fc8bd64cc34e33a0ba294a18a8e02"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store_test.go",
+      "sha256": "3f2239d5f8a3e627584df509ecae8f159b768b3718af1b8a4a1ab0b9945db6cf"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store.go",
+      "sha256": "ca7197e5ff4c4af26b55c7caa1932305611c2a9e24cf513c7c2ca4b79353b6bb"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_deadline_store.go",
+      "sha256": "eabac2dfc0a4e77bc69ee851221c5672ede211d4aa490156d4dc19bd5e160d37"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_recovery_store.go",
+      "sha256": "755ec25d99fe841f641f4021781d3de682df894953b043f30699a5933f080518"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_kill_switch_store.go",
+      "sha256": "ad825b8dc2947df23c2b3f95e3f5d2e08deb53c2b4ac8847d4358e980ec5979e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_queue_budget_test.go",
+      "sha256": "8099548980b8bfcd63938bb97e60d026da8995be370af2349cb14b337ddfa231"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_queue_budget.go",
+      "sha256": "edaa42ab480b2d81e4a6cb0d5ef53a0a7ff4f6e63aecd589e0044cf9b170698e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store_test.go",
+      "sha256": "e7c9e8e8fead7aa2257940a6c803be55b3d7669135e218d83c1f617c2465d588"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store.go",
+      "sha256": "38a49b360ee9e5caeedd5edf5d3afef07801fdb65e5daf5aa715f8e80493f1e6"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/task_execution_loop_test.go",
+      "sha256": "02d4acb32a7cc6c98c962f548ebf85293405812a9e867975d570652245f1f9fb"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/task_execution_loop.go",
+      "sha256": "63748ce821e165c404ecd3c0698bcaf78c755966aa338e1f05ef491a947dc28c"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/utc_readiness_test.go",
+      "sha256": "c346a0df00546c0eb2be16d491a3b655fc3b4651c31791b75b2b2ed1656879e7"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/backup_spec.go",
+      "sha256": "01e3b0a6a9140fc946077154826c3b15c2a023c136f03072b50e5ea06e7859e8"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/contract_test.go",
+      "sha256": "91aa2f7dfea736286ae3056e13d1fd0e170213d29385988ee3747a9f394eb684"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/contract.go",
+      "sha256": "a0f1c6393a10f818e0f5ea4929efcab780c6a7a06564f78a1a64949c1538b101"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/task_binding_test.go",
+      "sha256": "e4af0b9e0424bc107936cb7ee99a87d96a2453bccd08518d252f124344adbb3b"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/task_binding.go",
+      "sha256": "169e88024682f691b2f8430532a2c445c4dafdc1536437fa26b5ea9c30a99706"
+    }
+  ],
+  "handoff": "docs/evidence/d-b-task-binding-handoff-20261028.json",
+  "later_parallel_changed_pinned_files": [
+    "backend/cmd/system-backup-controller/task_execution_live_test.go",
+    "backend/cmd/system-backup-controller/task_execution_live.go"
+  ],
+  "final_current_package_validation_pending": true,
+  "later_note": "Parallel execution-records owner changed main and added controller files after this snapshot; prior successful snapshots do not validate those later changes. See execution-records primary review and owner final receipt."
+}
