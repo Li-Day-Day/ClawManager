@@ -80,6 +80,7 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 		return err
 	}
 
+	optionalReady := true
 	entries, err := embeddedMigrations.ReadDir("migrations")
 	if err != nil {
 		return fmt.Errorf("failed to list embedded migrations: %w", err)
@@ -132,9 +133,33 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 		}
 
 		statements := splitSQLStatements(string(rawSQL))
+		optionalFailed := false
 		for idx, statement := range statements {
-			if _, err := guard.ExecContext(ctx, statement); err != nil {
+			statementCtx := ctx
+			stop := func() {}
+			if entry.Name() == "067_add_northbound_owner_records.sql" {
+				statementCtx, stop = context.WithTimeout(statementCtx, 30*time.Second)
+			}
+			_, statementErr := guard.ExecContext(statementCtx, statement)
+			stop()
+			if err := statementErr; err != nil {
+				if entry.Name() == "067_add_northbound_owner_records.sql" {
+					log.Printf("Optional owner analytics migration deferred: %T", err)
+					optionalFailed = true
+					break
+				}
 				return fmt.Errorf("failed to execute migration %s statement %d: %w", entry.Name(), idx+1, err)
+			}
+		}
+		if optionalFailed {
+			optionalReady = false
+			continue
+		}
+		if entry.Name() == "067_add_northbound_owner_records.sql" {
+			if err := verifyOwnerAnalytics(ctx, guard); err != nil {
+				optionalReady = false
+				log.Printf("Optional analytics schema incompatible: %T", err)
+				continue
 			}
 		}
 
@@ -143,13 +168,23 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 			entry.Name(),
 			time.Now().UTC(),
 		); err != nil {
+			if entry.Name() == "067_add_northbound_owner_records.sql" {
+				optionalReady = false
+				log.Printf("Optional analytics migration record unavailable: %T", err)
+				continue
+			}
 			return fmt.Errorf("failed to record applied migration %s: %w", entry.Name(), err)
 		}
 
 		applied[entry.Name()] = struct{}{}
 		log.Printf("Applied database migration %s", entry.Name())
 	}
-
+	if err := verifyOwnerAnalytics(ctx, guard); err != nil {
+		ownerAnalyticsAvailable.Store(false)
+		log.Printf("Owner analytics disabled; schema validation unavailable: %T", err)
+	} else {
+		ownerAnalyticsAvailable.Store(optionalReady)
+	}
 	return nil
 }
 

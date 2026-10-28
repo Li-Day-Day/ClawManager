@@ -1187,7 +1187,9 @@ test('D-owned gate and mutation lease core preserves row-lock order and explicit
     'AcquireSQL(ctx)',
     'assertCaptureGateIdle(ctx, guard)',
     "gate_state <> 'idle'",
-    'guard.ExecContext(ctx, statement)',
+    'statementCtx := ctx',
+    'context.WithTimeout(statementCtx, 30*time.Second)',
+    'guard.ExecContext(statementCtx, statement)',
     'guard.Release(releaseCtx)',
   ]) assert.match(migrationRunner, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
