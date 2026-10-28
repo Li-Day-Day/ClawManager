@@ -1,5 +1,7 @@
 # B 接入公共 v12：本轮范围、差异及待交付输入
 
+最新来源与 B relay/runtime writer 增量：已在工作分支整合 `backup@8ef5fa7f`，详见 [最新交接](system-backup-b-relay-writers-handoff-20261028.md)。以下同步记录按当时版本保留；不再将 A relay 认证代码列为缺失，也不以 GitHub 无冲突代替新组合验证或真实链放行。
+
 ## 公共 runner 开发增量
 
 基于下述共享 ABI 同步，已新增 `publicadapter.NewPublicRunner/NewLinuxDispatcher`、真实只读发现与 flow/Job/恢复适配，未另建控制面。最新范围、生产构造示例、差异关闭表与准确的 D/A/C 输入缺口以 [公共 runner 交接](system-backup-b-public-runner-handoff-20261028.md) 为准。下文“B publicadapter 待开发”等为同步时的历史状态，不表示当前增量未实现；公共生产 loop/Ports 与实际现场整链仍未通过。

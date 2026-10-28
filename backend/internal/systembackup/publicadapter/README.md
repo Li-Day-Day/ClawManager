@@ -12,6 +12,17 @@ D supplies the authoritative Ports and encrypted plan journal; A supplies
 authenticated worker identities/grants/results; C supplies immutable seals and
 public artifact/finalizer/catalog services. Missing dependencies fail closed.
 
+`NewRuntimeWriterBuilder` now constructs the existing real Gateway/Pod/
+Deployment writers and registered stopped/gate participants. Its public owner
+callbacks carry full Authority and the original restart reservations. Bind is
+side-effect free; current registry and physical stop proofs remain mandatory.
+
+Use `NewAuthenticatedRelayHandler` for the HTTP boundary: it calls A's original
+RelayPeerAuthenticator and passes its request-bound context into D's single
+transaction owner. The opaque session requires Bind/Recheck with the same tx;
+D still owns its final SQL guard and confirmed commit. The raw decoder seam is
+private. No handler, route, controller or owner fallback is registered here.
+
 Use `DescribePlan` with the original persisted Plan to assemble invocation
 ConfigMaps/grants. `BuildPartResult` converts an already authenticated worker
 receipt plus an observed immutable C seal into public module data. Neither
@@ -31,3 +42,7 @@ acceptance are not enabled by these helpers.
 See [the complete handoff](../../../../docs/system-backup-b-public-runner-handoff-20261028.md)
 for actual call positions, input fields, safety invariants, limitations and test
 scope. No private SQLStore/Vault/task/publication fallback is imported here.
+
+The [relay/writer increment](../../../../docs/system-backup-b-relay-writers-handoff-20261028.md)
+supersedes older missing-A-code and generic-writer-factory notes; it lists the
+exact remaining production inputs and targeted isolated validation boundaries.

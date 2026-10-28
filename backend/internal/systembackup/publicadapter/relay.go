@@ -123,20 +123,15 @@ func RelayProgress(previous string, next RelayMessage, decision RelayDecision) e
 	return &Failure{"coordination_invalid"}
 }
 
-// RelayAcceptor is the required D transaction owner, not a B SQL callback. It
-// must invoke A's original peer authorizer using r.TLS, check database time and
-// current revocation, lock task/fence/Job/cursor, apply RelaySequence and
-// RelayProgress together, persist
-// authenticated result references and perform final permission/clock rechecks
-// before the one COMMIT. Ambiguous commit must read the SAME sequence/body.
-// The current shared Ports ABI has no Accept method; D must supply this exact
-// extra integration input. A missing implementation never installs a handler.
-type RelayAcceptor interface {
+// relayAcceptor is the private transport decoder seam. Production construction
+// goes through NewAuthenticatedRelayHandler and A's original peer proof; there
+// is no exported unauthenticated handler constructor or fallback route.
+type relayAcceptor interface {
 	AcceptRelay(context.Context, *http.Request, RelayMessage, []byte, string) (RelayDecision, error)
 }
-type relayHandler struct{ acceptor RelayAcceptor }
+type relayHandler struct{ acceptor relayAcceptor }
 
-func NewRelayHandler(a RelayAcceptor) (http.Handler, error) {
+func newRelayHandler(a relayAcceptor) (http.Handler, error) {
 	if nilValue(a) {
 		return nil, d.ErrNotReady
 	}

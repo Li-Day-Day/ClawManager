@@ -1,0 +1,58 @@
+{
+  "checks": [
+    {
+      "log": "adapter-quiesce-dispatch-tests",
+      "exit": 0,
+      "packages": [
+        {
+          "Package": "clawreef/internal/systembackupdispatch",
+          "Action": "pass"
+        },
+        {
+          "Package": "clawreef/internal/systembackup/publicadapter",
+          "Action": "pass"
+        },
+        {
+          "Package": "clawreef/internal/systembackup/quiesce",
+          "Action": "pass"
+        }
+      ],
+      "passed_test_events": 194,
+      "fail_events": 0,
+      "skipped": []
+    },
+    {
+      "log": "a-relay-tests",
+      "exit": 0,
+      "packages": [
+        {
+          "Package": "clawreef/internal/systembackupevidence",
+          "Action": "pass"
+        }
+      ],
+      "passed_test_events": 102,
+      "fail_events": 0,
+      "skipped": []
+    },
+    {
+      "log": "services-gateway-tests",
+      "exit": 0,
+      "packages": [
+        {
+          "Package": "clawreef/internal/services",
+          "Action": "pass"
+        }
+      ],
+      "passed_test_events": 21,
+      "fail_events": 0,
+      "skipped": []
+    }
+  ],
+  "vet_exit": 0,
+  "linux_build_exit": 0,
+  "source_drift": [],
+  "live_environment": false,
+  "dependency_installs": false,
+  "real_migration": false,
+  "pr_merge": false
+}

@@ -1,5 +1,7 @@
 # B 公共 runner：实现、构造与联调缺口
 
+最新增量已整合 `backup@8ef5fa7f`，并完成 A 原 relay proof 的 handler 接入和 B 具体 runtime writer 构造。准确新接口、输入缺口与验证记录见 [relay/writer 交接](system-backup-b-relay-writers-handoff-20261028.md)。下文基于 d3c5715a 的“缺 A 认证代码”“D 自行构造 writer”以及裸 RelayAcceptor 是上一轮状态；裸 HTTP 构造已收为私有，生产使用 NewAuthenticatedRelayHandler。真实 D 事务/loop、现场材料及整链验收仍未完成。
+
 ## 准确来源与当前结论
 
 实现基于功能分支 `1e678b097ff8d7fd3c975183515d9e09af92f138`，其中已整合 `backup@d3c5715a05a80c1134edd3ad0132a6c292ee1672`。本轮再次只读核对远端仍是该 backup commit，使用其原 `systembackupdispatch` 类型，没有复制另一份 ABI。

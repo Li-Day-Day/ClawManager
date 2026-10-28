@@ -67,7 +67,7 @@ func TestRelayTransportRequiresPeerAndForwardsExactBytesToD(t *testing.T) {
 	for _, kind := range []string{"plain", "double-uri", "unknown-field", "duplicate-field", "case-alias", "alias-duplicate", "zero-sequence", "valid"} {
 		t.Run(kind, func(t *testing.T) {
 			f := &relayFixture{}
-			h, err := NewRelayHandler(f)
+			h, err := newRelayHandler(f)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -108,7 +108,7 @@ func TestRelayTransportRequiresPeerAndForwardsExactBytesToD(t *testing.T) {
 		})
 	}
 	// These are handler boundary fixtures, NOT A trust/revocation or SQL tests.
-	if _, err := NewRelayHandler(nil); err == nil {
+	if _, err := newRelayHandler(nil); err == nil {
 		t.Fatal("missing D acceptor enabled handler")
 	}
 }

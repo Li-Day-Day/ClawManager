@@ -45,7 +45,7 @@ func TestRelayLoopbackRequiresRealMutualTLS(t *testing.T) {
 	}
 	peer := tls.Certificate{Certificate: [][]byte{der, caDER}, PrivateKey: key}
 	owner := &relayFixture{}
-	handler, err := NewRelayHandler(owner)
+	handler, err := newRelayHandler(owner)
 	if err != nil {
 		t.Fatal(err)
 	}
