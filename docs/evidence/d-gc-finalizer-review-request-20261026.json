@@ -1,0 +1,151 @@
+{
+  "kind": "d_gc_finalizer_incremental_review_request.v1",
+  "source_sha256": "41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16",
+  "source_files": 1629,
+  "requested_requirements": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6",
+    "F7",
+    "F8",
+    "F9",
+    "F10"
+  ],
+  "native_acceptance": {
+    "path": "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json",
+    "sha256": "083ce6049ea7e95987ae6b62c540e209e004bf38db05102471b2535b01db2acb"
+  },
+  "current_scope": "private exact-original-context/tx one-use completion and fixed concrete collector candidate; original public Collect owner unchanged",
+  "current_whole_tree_accepted": false,
+  "current_tagged_drill_delta_pending": [
+    {
+      "path": "backend/cmd/server/system_backup_read_drill_history_mysql_test.go",
+      "frozen_size": 15250,
+      "frozen_sha256": "04ff3f7266b9b99c72cd024b1c189e34fbb13c613231f7da41a1b1d63b09be9b",
+      "current_size": 20190,
+      "current_sha256": "e8df47f25eb1765cb354a7f88a1dc2952bc56b699129d7ac8ba604c91b3e21b7"
+    }
+  ],
+  "standalone_scope": {
+    "explicit_Go_sources": [
+      "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "backend/internal/systembackupevidence/download_retention_gc_finalize_test.go"
+    ],
+    "native_stages": [
+      19,
+      20
+    ],
+    "default_vet": true,
+    "concrete_collector_certified_by_standalone": false
+  },
+  "historical_receipts": {
+    "inputs": [
+      {
+        "path": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd.json",
+        "sha256": "38fd97c60c61b45b3fd9e145662776c2aa27ea8541ddb918dfe3db377d979845"
+      },
+      {
+        "path": "docs/evidence/a-gc-freeze-nil-reviewed-20261023.json",
+        "sha256": "14696e73295859fcddd20f738ae3452da093b414791d777311bcc5e096248a7e"
+      },
+      {
+        "path": "docs/evidence/a-gc-work-extraction-reviewed-20261023.json",
+        "sha256": "78b9e318f11fa18b371680f57d0a53bd193e5ba5fa293cb7b1d2a391ad952f31"
+      },
+      {
+        "path": "scripts/system-backup-d-gc-freeze-review-request.mjs",
+        "sha256": "de7650253d74be1b2486d28cd93e3dee10810d41cbfcc23c58182b9c948889f3"
+      }
+    ],
+    "current_code_approval_inherited": false,
+    "old_generator_current_command": false,
+    "reason": "Old generator correctly binds predecessor fixed SHA; use this exact new-source request rather than deleting its historical checks."
+  },
+  "production_wired": false,
+  "joint_real_grants_approved": false,
+  "complete_metadata_policy_approved": false,
+  "production_approved": false,
+  "actual_mysql": false,
+  "remote_contacted": false,
+  "dependencies_installed": false,
+  "inputs": [
+    {
+      "path": "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json",
+      "sha256": "083ce6049ea7e95987ae6b62c540e209e004bf38db05102471b2535b01db2acb"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-source.json",
+      "sha256": "cd90768f6b3d4bc11fb870434a5335c6499c3f279719d2f4fe8ba35f2cce713a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "6e973153f4f2f59b891211c3ece8b782b54e277078dbeb82427351221cf968b8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "sha256": "085ec806d6cc0147c3c9147ec45077f847b30357bcfe7d4d9415e771b582cf48"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "sha256": "28e93f205ee04d8692e996b709485e6f7582f63f3a15b2cf7177f72bdcb269bc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work.go",
+      "sha256": "5d9ec0a60074d9b2b4dfcd7e9119ce4e78e3e87c3a2a2f76ec61356f29cd4843"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_work_test.go",
+      "sha256": "00e570ea38623fffa5e9ad0966a40a4cf4f278d639d1bda8c74a1e580683dc41"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "sha256": "3582061492a9bd5f5bd7c3a83e3183e8c1834f87ee884cd86b74c5db55a8c339"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "sha256": "ff26954ff8e337d2eb3657fdc6b3d2b1cb483286f882312dd7c5b50ace1cb082"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize_test.go",
+      "sha256": "a7c0a5125a71f3fb315ea1e6bc20f76c9de045858a92e0ae6a5e4151303e7db6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work_test.go",
+      "sha256": "ea4349acdc2baa904dcd203a2de07e915094a4e746a00059c5f7fd6571861e0e"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-freeze-candidate-validation.ps1",
+      "sha256": "6ba3f555db52c669897fb6583ce95311bb9c957f20558c6b3ba8f73355963089"
+    },
+    {
+      "path": "docs/evidence/d-finalizer-independent-review-requirements-20261023.json",
+      "sha256": "1dd008c48f87417c5894586c8779fe589148fe05c6dbff9b54b86414fdc72516"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-review-request-20261026.mjs",
+      "sha256": "d929e2aac4cafbdf28de2c20a0522bb16ac04955145ce540c900b0b0e3db172c"
+    },
+    {
+      "path": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd.json",
+      "sha256": "38fd97c60c61b45b3fd9e145662776c2aa27ea8541ddb918dfe3db377d979845"
+    },
+    {
+      "path": "docs/evidence/a-gc-freeze-nil-reviewed-20261023.json",
+      "sha256": "14696e73295859fcddd20f738ae3452da093b414791d777311bcc5e096248a7e"
+    },
+    {
+      "path": "docs/evidence/a-gc-work-extraction-reviewed-20261023.json",
+      "sha256": "78b9e318f11fa18b371680f57d0a53bd193e5ba5fa293cb7b1d2a391ad952f31"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-freeze-review-request.mjs",
+      "sha256": "de7650253d74be1b2486d28cd93e3dee10810d41cbfcc23c58182b9c948889f3"
+    }
+  ]
+}

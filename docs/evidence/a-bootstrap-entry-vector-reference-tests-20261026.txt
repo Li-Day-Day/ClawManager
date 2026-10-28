@@ -1,0 +1,33 @@
+✖ current entry fixtures resolve only original catalog groups and IDs (17.8597ms)
+✔ unknown configured_artifact producer fixture is rejected (4.6448ms)
+✔ nonexistent results group is rejected before claiming a seed (3.2579ms)
+✔ changed dynamic admission selector is rejected (3.0877ms)
+✔ missing canonical configured vector is rejected (7.0798ms)
+✔ missing literal record fixture is rejected (3.872ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 119.2528
+
+✖ failing tests:
+
+test at docs\evidence\a-bootstrap-entry-vector-reference-review-20261026.test.mjs:10:1
+✖ current entry fixtures resolve only original catalog groups and IDs (17.8597ms)
+  AssertionError [ERR_ASSERTION]: Unknown original entry vector: records/DomainRecord
+      at reviewEntryVectorReferences (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-bootstrap-entry-vector-reference-review-20261026.mjs:26:52)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-bootstrap-entry-vector-reference-review-20261026.test.mjs:11:18)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

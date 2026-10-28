@@ -3,6 +3,7 @@ package systembackupevidence
 import (
 	"bytes"
 	"context"
+	"database/sql/driver"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
@@ -11,12 +12,17 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 )
 
 func downloadRuntimeFixture(t *testing.T) (DownloadRuntimeConfig, *downloadTransitFixture, *atomic.Int32) {
+	return downloadRuntimeFixtureBeforeRead(t, nil)
+}
+
+func downloadRuntimeFixtureBeforeRead(t *testing.T, beforeRead func(context.Context)) (DownloadRuntimeConfig, *downloadTransitFixture, *atomic.Int32) {
 	t.Helper()
 	x := newDownloadTransitFixture(t, "ok")
 	f := x.f
@@ -45,6 +51,9 @@ func downloadRuntimeFixture(t *testing.T) (DownloadRuntimeConfig, *downloadTrans
 			w.Header().Set("X-Amz-Checksum-Sha256", base64.StdEncoding.EncodeToString(digest))
 			w.Header().Set("Content-Length", fmt.Sprint(len(f.object)))
 		case "GET":
+			if beforeRead != nil {
+				beforeRead(r.Context())
+			}
 			var start, end int
 			if _, err := fmt.Sscanf(r.Header.Get("Range"), "bytes=%d-%d", &start, &end); err != nil || start < 0 || end < start || end >= len(f.object) {
 				t.Error("unbounded Range")
@@ -161,9 +170,25 @@ func TestDownloadLegacyHTTPWithSTSAndTransit(t *testing.T) {
 }
 
 func TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit(t *testing.T) {
-	for _, mode := range []string{"success", "revoked_after_decrypt", "revoked_after_headers"} {
+	for _, mode := range []string{"success", "revoked_after_decrypt", "revoked_after_headers", "stale_sql_after_provider_wait", "fresh_sql_after_provider_wait", "stale_capacity_after_provider_wait"} {
 		t.Run(mode, func(t *testing.T) {
-			cfg, x, requests := downloadRuntimeFixture(t)
+			var waitUntil atomic.Int64
+			var waitOnce sync.Once
+			var waited atomic.Bool
+			cfg, x, requests := downloadRuntimeFixtureBeforeRead(t, func(ctx context.Context) {
+				if !strings.HasSuffix(mode, "_after_provider_wait") {
+					return
+				}
+				waitOnce.Do(func() {
+					timer := time.NewTimer(time.Until(time.Unix(0, waitUntil.Load())))
+					defer timer.Stop()
+					select {
+					case <-timer.C:
+						waited.Store(true)
+					case <-ctx.Done():
+					}
+				})
+			})
 			f, a := uncommittedConfiguredFixture(t, func(f *admissionTxFixture) {
 				f.initial.Manifest = x.f.record.Manifest
 				f.initial.Ref.ImmutableVersion = x.f.record.Ref.ImmutableVersion
@@ -174,7 +199,8 @@ func TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit(t *testing.T) {
 			cfg.Authority = a.c
 			cfg.S3.Store.Identity, cfg.S3.Store.Version = a.c.Store.Identity, a.c.Store.Version
 			cfg.Admission = f.service
-			cfg.Results = resultFixture(t, f)
+			var sampleResultCapacity func(time.Time) error
+			cfg.Results, sampleResultCapacity = resultFixtureWithReportSampler(t, f)
 			failures := 0
 			cfg.Failure = func(context.Context, string, string) { failures++ }
 			runtime, err := NewDownloadRuntime(cfg)
@@ -185,6 +211,20 @@ func TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit(t *testing.T) {
 			if runtime.admitted == nil {
 				t.Fatal("new admission not mounted")
 			}
+			// Real SQL samples UTC on every clock query. Keep admission's
+			// original proof acceptance and every original lease/deadline;
+			// advance only subsequent SQL time, never an authorization limit.
+			commitsBeforeAdmission := f.db.commits
+			originalProof := f.request.Header.Get("X-Strong-Auth-Proof")
+			originalReservation, originalAuthority, originalOwner := f.env.reservationUntil, f.env.validUntil, f.initial.OwnerDeadline
+			if mode != "stale_sql_after_provider_wait" {
+				f.db.ownerQuery = func(_ context.Context, q string, _ []driver.NamedValue) (driver.Rows, bool, error) {
+					if f.db.commits > commitsBeforeAdmission && (strings.HasPrefix(q, "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6)") || q == downloadIntentClockSQL) {
+						f.db.now = time.Now().UTC().Truncate(time.Microsecond)
+					}
+					return nil, false, nil
+				}
+			}
 			if mode == "revoked_after_decrypt" {
 				policy := f.service.registry.Policy.(*committedTestPolicy)
 				policy.onAuthorize = func() {
@@ -194,11 +234,24 @@ func TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit(t *testing.T) {
 				}
 			}
 			server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if mode == "revoked_after_headers" {
-					runtime.ServeHTTP(runtimeHeaderHook{ResponseWriter: w, after: func() { f.db.sessionRevoked = true }}, r)
+				if err := sampleAAdmissionProofTime(f, time.Now().UTC().Truncate(time.Microsecond)); err != nil {
+					t.Error("sample original runtime proof", err)
+					http.Error(w, "test fixture unavailable", http.StatusInternalServerError)
 					return
 				}
-				runtime.ServeHTTP(w, r)
+				waitUntil.Store(f.db.now.Add(6 * time.Second).UnixNano())
+				runtime.ServeHTTP(runtimeHeaderHook{ResponseWriter: w, after: func() {
+					// Model a separate collector observation before the independent
+					// result transaction. Never refresh its reservation after Reserve.
+					if mode != "stale_capacity_after_provider_wait" {
+						if err := sampleResultCapacity(f.db.now); err != nil {
+							t.Error("sample result capacity", err)
+						}
+					}
+					if mode == "revoked_after_headers" {
+						f.db.sessionRevoked = true
+					}
+				}}, r)
 			}))
 			defer server.Close()
 			req, err := http.NewRequest("GET", server.URL+Path+f.initial.Manifest.Identity.ID, nil)
@@ -215,8 +268,26 @@ func TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit(t *testing.T) {
 			if err != nil && mode != "revoked_after_headers" {
 				t.Fatal(err)
 			}
+			if strings.HasSuffix(mode, "_after_provider_wait") && !waited.Load() {
+				t.Fatal("provider delay did not cross the SQL freshness bound")
+			}
+			if originalProof != f.request.Header.Get("X-Strong-Auth-Proof") || originalReservation != f.env.reservationUntil || originalAuthority != f.env.validUntil || originalOwner != f.initial.OwnerDeadline {
+				t.Fatal("runtime SQL sampling changed original proof or authorization limits")
+			}
+			if mode == "stale_sql_after_provider_wait" {
+				if res.StatusCode != http.StatusServiceUnavailable || bytes.Contains(body, x.f.plain[:21]) || requests.Load() == 0 || x.logins.Load() != 0 || x.decrypts.Load() != 0 {
+					t.Fatal("stale SQL clock did not deny before Transit", res.StatusCode, requests.Load(), x.logins.Load(), x.decrypts.Load())
+				}
+				return
+			}
 			if requests.Load() < 4 || x.logins.Load() != 1 || x.decrypts.Load() != 1 {
 				t.Fatal("atomic runtime did not reach real TLS provider chain", res.StatusCode, string(body), requests.Load(), x.logins.Load(), x.decrypts.Load())
+			}
+			if mode == "stale_capacity_after_provider_wait" {
+				if res.StatusCode != 206 || !bytes.Equal(body, x.f.plain[:21]) || failures != 1 || f.db.resultInserts != 0 || f.db.record.Claim == "" {
+					t.Fatal("stale result capacity was accepted or failure was lost", res.StatusCode, failures)
+				}
+				return
 			}
 			if mode == "revoked_after_headers" {
 				if res.StatusCode != 206 || len(body) != 0 || err == nil || !bytes.Contains(f.db.resultBody, []byte(`"outcome":"interrupted"`)) {

@@ -1,0 +1,133 @@
+{
+  "kind": "a_api_readiness_mechanical_review.v1",
+  "status": "exact_snapshot_verified",
+  "native_receipt": {
+    "path": "docs/evidence/a-api-readiness-native-148b2d3547074f7ca4c4a046f19be373.json",
+    "size": 386784,
+    "sha256": "ce072a2634e65d8b0afc8bea357bed119c37082d8330c8b0dd7fa2cb1c9b94f7"
+  },
+  "source_files": 1758,
+  "current_source_matches_all_recorded_bytes": false,
+  "current_drift": [
+    "backend/cmd/server/main.go",
+    "backend/cmd/server/system_backup_read_live.go",
+    "backend/cmd/server/system_backup_tasks_live.go",
+    "backend/internal/systembackupapi/submission_test.go",
+    "backend/internal/systembackupapi/submission.go",
+    "backend/internal/systembackupapi/tasks.go",
+    "scripts/system-backup-d-api-smoke.mjs",
+    "scripts/system-backup-d-api-smoke.test.mjs",
+    "scripts/system-backup-d-api-validation.ps1"
+  ],
+  "source_unchanged_at_runner_finish": null,
+  "stages": {
+    "targeted": {
+      "log": {
+        "path": "docs/evidence/a-api-readiness-native-148b2d3547074f7ca4c4a046f19be373.targeted.jsonl",
+        "size": 273503,
+        "sha256": "b6185722e9f7cfb0b14031311e9a5f22990d5505b4832d7101361057b408ebfe"
+      },
+      "packages": [
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupbootstrapmaterials",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap",
+        "clawreef/internal/systembackupproducer",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "roots": 47,
+      "passed_events": 276
+    },
+    "full": {
+      "log": {
+        "path": "docs/evidence/a-api-readiness-native-148b2d3547074f7ca4c4a046f19be373.full.jsonl",
+        "size": 2633174,
+        "sha256": "3e722b12e493fdf8ac829c1821b34229e68374f7ba04330b151307b4e2d973f3"
+      },
+      "packages": [
+        "clawreef/internal/systembackupbootstrapmaterials",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "roots": 342,
+      "passed_events": 2637
+    }
+  },
+  "linux_binaries": [
+    {
+      "format": "ELF",
+      "sha256": "6c56313db18601f66b86a7e64209fc79d01b637c373016fb1b7b6f6a801cb520",
+      "size": 11932599,
+      "package": "systembackupbootstrapmaterials"
+    },
+    {
+      "format": "ELF",
+      "sha256": "c4df090a6df9f2d4ebc279ef708aafb300479259fd4d1c2020b387768f6a868b",
+      "size": 12125136,
+      "package": "systembackupcatrust"
+    },
+    {
+      "format": "ELF",
+      "sha256": "202bc9de4567cad187d2f5f758742c92b119c55816b705ecefcc89c8d7a27019",
+      "size": 10122441,
+      "package": "systembackupnoncebootstrap"
+    },
+    {
+      "format": "ELF",
+      "sha256": "bd87e9edd1e09e2fedc10ea369b9ebd6c94fc10c9d94c7f59e98b81893cdefa4",
+      "size": 17324615,
+      "package": "systembackupsecurity"
+    }
+  ],
+  "compile_supplement": {
+    "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.json",
+    "size": 429094,
+    "sha256": "ebda04cf3a04c026e88e8727f9e0295f25fa6d070e0db905350d83b9e18151ab"
+  },
+  "compile_logs": [
+    {
+      "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.systembackupbootstrapmaterials.txt",
+      "output_file_present": false
+    },
+    {
+      "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.systembackupcatrust.txt",
+      "output_file_present": false
+    },
+    {
+      "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.systembackupnoncebootstrap.txt",
+      "output_file_present": false
+    },
+    {
+      "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.systembackupsecurity.txt",
+      "output_file_present": false
+    }
+  ],
+  "linux_compile_vet": false,
+  "tested_dependency_files": 401,
+  "current_tested_dependencies_match": true,
+  "compilation_dependency_source_unchanged": true,
+  "uncovered_changed_paths": [
+    "backend/cmd/server/main.go",
+    "backend/cmd/server/system_backup_read_live.go",
+    "backend/cmd/server/system_backup_tasks_live.go",
+    "backend/internal/systembackupapi/submission_test.go",
+    "backend/internal/systembackupapi/submission.go",
+    "backend/internal/systembackupapi/tasks.go",
+    "scripts/system-backup-d-api-smoke.mjs",
+    "scripts/system-backup-d-api-smoke.test.mjs",
+    "scripts/system-backup-d-api-validation.ps1"
+  ],
+  "uncovered_added_paths": [
+    "backend/cmd/server/system_backup_api_tls_test.go",
+    "backend/cmd/server/system_backup_api_tls.go",
+    "backend/cmd/system-backup-bootstrap/materials_test.go",
+    "backend/cmd/system-backup-bootstrap/materials.go",
+    "scripts/system-backup-a-api-linux-supplement.ps1"
+  ],
+  "cleanup_verified": true,
+  "actual_sql": false,
+  "production_authorized": false,
+  "independent_security_reviewer_signed": false
+}

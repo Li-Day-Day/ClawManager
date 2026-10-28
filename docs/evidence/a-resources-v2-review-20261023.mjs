@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const read=f=>fs.readFileSync(path.join(root,f));
+const json=f=>JSON.parse(read(f).toString('utf8').replace(/^\uFEFF/,''));
+const pin=f=>{const b=read(f);return {path:f,size:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')};};
+const request='docs/evidence/d-resources-field-review-request-20261023.json';
+const r=json(request);
+assert.equal(r.policy_version,'d.resources.restore.v2');
+for(const p of r.source_files)assert.deepEqual(pin(p.path),p);
+const files=d=>fs.readdirSync(path.join(root,d),{withFileTypes:true}).flatMap(e=>{assert.ok(!e.isSymbolicLink());return e.isDirectory()?files(d+'/'+e.name):[d+'/'+e.name];}).sort();
+assert.deepEqual(files('backend/internal/systembackupresources'),r.source_files.filter(p=>p.path.startsWith('backend/internal/systembackupresources/')).map(p=>p.path).sort());
+const document='docs/system-backup-a-resources-v2-review-20261023.md';
+const result={kind:'a_resources_v2_security_review.v1',date:'2026-10-23',policy_version:r.policy_version,request:pin(request),source_digest:r.source_digest,source_files:r.source_files,document:pin(document),checker:pin('docs/evidence/a-resources-v2-review-20261023.mjs'),tables:['audit_logs','egress_private_exceptions','northbound_admin_settings','northbound_settings_audit','security_scan_configs','security_scan_jobs'].map(table=>({table,security_policy:'accepted_as_implementation_constraints',runtime_approved:false})),supplemental:{table:'security_scan_reports',scope:'redacted_closed_historical_body_only',domain_approval:false},method:'static_code_and_policy_review_no_Go_run',complete_normalizer:false,actual_SQL:false,production_approved:false,B_C_facts_accepted:false,registry_written:false};
+const output='docs/evidence/a-resources-v2-reviewed-20261023.json';
+if(process.argv.includes('--write'))fs.writeFileSync(path.join(root,output),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+else {assert.ok(process.argv.includes('--check'));assert.deepEqual(json(output),result);}
+console.log('A_RESOURCES_V2_REVIEW six_tables=6 report_body=1 runtime=no production=no');

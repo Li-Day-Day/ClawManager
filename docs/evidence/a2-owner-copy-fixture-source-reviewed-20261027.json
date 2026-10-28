@@ -1,0 +1,63 @@
+{
+  "kind": "a2_owner_copy_fixture_source_review.v1",
+  "reviewed_at": "2026-10-27T07:53:05.834Z",
+  "status": "exact_single_tagged_fixture_fix_source_reviewed_real_SQL_retest_required",
+  "previous_complete_source": {
+    "path": "docs/evidence/a-owner-current-full-source-composed-reviewed-20261027-r2.json",
+    "size": 332655,
+    "sha256": "3555b4257818218a37c6099111d36907f37f124a3cd83ff0e866889963220760"
+  },
+  "before": {
+    "path": "docs/evidence/a-owner-copy-fixture-before-20261027.go.txt",
+    "size": 14522,
+    "sha256": "19a5705a62f378a24f34d751405a8e37d9d9dee46c7138fe5632633c328a41ae"
+  },
+  "after": {
+    "path": "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go",
+    "size": 15504,
+    "sha256": "23c894adacfed130c5683909befea9e39b081f1bcfdd74aad33721c2fd19a489"
+  },
+  "archived_after": {
+    "path": "docs/evidence/a2-owner-copy-fixture-reviewed-20261027.go.txt",
+    "size": 15504,
+    "sha256": "23c894adacfed130c5683909befea9e39b081f1bcfdd74aad33721c2fd19a489"
+  },
+  "old_source_file_count": 1720,
+  "current_source_file_count": 1720,
+  "current_source_sha256": "d646eee69aacb451e90c79dc187f086388d010cac373849f2c6d4e8d50e22f27",
+  "only_source_delta": [
+    "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go"
+  ],
+  "production_migration_bytes_unchanged": true,
+  "other_source_pins_unchanged": true,
+  "only_text_delta_outside_negative_case": "regexp import",
+  "original_sql_owner_rejection_and_two_lock_probes_preserved": true,
+  "DDL_statements_separate_and_ordered": [
+    "DROP CHECK chk_sb_dependency_evidence",
+    "DROP FOREIGN KEY fk_sb_dependency_evidence",
+    "RENAME COLUMN evidence_id TO hidden_reference, ALGORITHM=COPY",
+    "ADD CONSTRAINT fk_sb_dependency_evidence FOREIGN KEY (hidden_reference) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT, ALGORITHM=COPY"
+  ],
+  "every_DDL_error_checked_before_continuing": true,
+  "owned_database_pattern": "^amfa_[a-f0-9]{32}$",
+  "final_checks": [
+    "original column absent",
+    "hidden column present",
+    "same-schema named FK targets system_backup_evidence.id with RESTRICT",
+    "session and global FK checks equal 1"
+  ],
+  "FK_checks_disabled_by_fix": false,
+  "official_DDL_sources": [
+    "https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html",
+    "https://dev.mysql.com/doc/refman/8.4/en/create-table-foreign-keys.html"
+  ],
+  "prior_failed_run": "docs/evidence/a2-owner11-failed-terminal-reviewed-20261027-489723bd.json",
+  "Go_executed_by_A2": false,
+  "actual_SQL_retest_executed": false,
+  "agent_SSH": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "whole_owner_suite_accepted": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

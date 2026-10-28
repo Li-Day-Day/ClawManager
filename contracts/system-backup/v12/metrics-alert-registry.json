@@ -6,7 +6,7 @@
     "plan": "docs/system-backup-restore-division-plan.md",
     "section": "15",
     "metric_count": 210,
-    "alert_count": 99
+    "alert_count": 100
   },
   "metrics": [
     {
@@ -4298,17 +4298,15 @@
     },
     {
       "id": "cleanup-overdue",
-      "expression_language": "promql",
-      "expression": "clawmanager_system_backup_cleanup_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+      "expression_language": "controller_state",
+      "expression": "any(cleanup_owner.age > cleanup_owner.immutable_deadline)",
       "severity": "critical",
       "for_seconds": 0,
-      "threshold_source": "current_system_config",
-      "dedupe_key": [
-        "cleanup_status"
-      ],
-      "recovery_condition": "no cleanup resource exceeds its immutable cleanup deadline",
-      "missing_series": "healthy_zero",
-      "counter_reset": "not_applicable",
+      "threshold_source": "immutable_task_config",
+      "dedupe_key": [],
+      "recovery_condition": "a complete cleanup owner collection has no owner beyond its immutable cleanup deadline",
+      "missing_series": "unknown",
+      "counter_reset": "persisted_state_not_reset_by_restart",
       "runbook": "system-backup/cleanup-overdue",
       "profiles": [
         "production",
@@ -4366,15 +4364,15 @@
     },
     {
       "id": "restore-residual-volume-overdue",
-      "expression_language": "promql",
-      "expression": "clawmanager_system_backup_restore_residual_volumes_current > 0 and clawmanager_system_backup_restore_residual_volume_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+      "expression_language": "controller_state",
+      "expression": "any(cleanup_owner.residual_volume && cleanup_owner.age > cleanup_owner.immutable_deadline)",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "immutable_task_config",
       "dedupe_key": [],
-      "recovery_condition": "no restore residual volume remains beyond cleanup deadline",
-      "missing_series": "healthy_zero",
-      "counter_reset": "not_applicable",
+      "recovery_condition": "a complete cleanup owner collection has no residual volume beyond its owner immutable cleanup deadline",
+      "missing_series": "unknown",
+      "counter_reset": "persisted_state_not_reset_by_restart",
       "runbook": "system-backup/restore-residual-volume-overdue",
       "profiles": [
         "production",
@@ -4998,7 +4996,7 @@
     {
       "id": "confirmation-rejections-warning",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+      "expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5",
       "severity": "warning",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5031,7 +5029,7 @@
     {
       "id": "confirmation-rejections-critical",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+      "expression": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5130,7 +5128,7 @@
     {
       "id": "redaction-failures-warning",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+      "expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5",
       "severity": "warning",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5163,7 +5161,7 @@
     {
       "id": "redaction-failures-critical",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+      "expression": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5196,7 +5194,7 @@
     {
       "id": "isolation-rejections-warning",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+      "expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5",
       "severity": "warning",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5229,7 +5227,7 @@
     {
       "id": "isolation-rejections-critical",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+      "expression": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5262,7 +5260,7 @@
     {
       "id": "strong-auth-rejections-warning",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+      "expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5",
       "severity": "warning",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5295,7 +5293,7 @@
     {
       "id": "strong-auth-rejections-critical",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+      "expression": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5359,9 +5357,44 @@
       ]
     },
     {
-      "id": "signature-or-checksum-failure",
+      "id": "signature-operation-failure",
       "expression_language": "promql",
-      "expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failed\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0",
+      "severity": "critical",
+      "for_seconds": 0,
+      "threshold_source": "contract_default",
+      "dedupe_key": [
+        "key_purpose"
+      ],
+      "recovery_condition": "the five-minute window contains no new signature operation failure",
+      "missing_series": "healthy_zero",
+      "counter_reset": "prometheus_increase",
+      "runbook": "system-backup/signature-operation-failure",
+      "profiles": [
+        "production",
+        "development"
+      ],
+      "fixed_clock_cases": [
+        {
+          "case": "recovered",
+          "clock_unix_seconds": 2000000000,
+          "condition_result": false,
+          "condition_true_since_unix_seconds": null,
+          "expected_firing": false
+        },
+        {
+          "case": "at_for",
+          "clock_unix_seconds": 2000000000,
+          "condition_result": true,
+          "condition_true_since_unix_seconds": 2000000000,
+          "expected_firing": true
+        }
+      ]
+    },
+    {
+      "id": "checksum-or-signature-verifier-failure",
+      "expression_language": "promql",
+      "expression": "increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -5369,10 +5402,10 @@
         "task_type",
         "failure_category"
       ],
-      "recovery_condition": "the five-minute window contains no new signature or checksum failure",
+      "recovery_condition": "the five-minute window contains no new checksum or signature verifier failure",
       "missing_series": "healthy_zero",
       "counter_reset": "prometheus_increase",
-      "runbook": "system-backup/signature-or-checksum-failure",
+      "runbook": "system-backup/checksum-or-signature-verifier-failure",
       "profiles": [
         "production",
         "development"

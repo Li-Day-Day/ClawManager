@@ -1,0 +1,39 @@
+{
+  "kind": "a2_bootstrap_6c6519_failure_and_three_file_delta.v1",
+  "status": "targeted_build_failure_retained_alias_fix_and_test_sync_pending_native",
+  "receipt": "docs/evidence/d-bootstrap-consumer-native-6c6519b338b04d2081bc47b1b1f593ba.json",
+  "targeted_exit": 1,
+  "full_nine_packages_ran": false,
+  "failed_package": "clawreef/internal/systembackupnoncebootstrap",
+  "exact_failure": "nonce_test.go:23 hash already declared through import of package hash; candidate_adapter.go:8 other declaration",
+  "fix": "stdlib import alias stdhash and two Hash type references only; no digest algorithm or API change",
+  "test_delta": "two material test drivers wait for asynchronous attempt-context rollback completion before counters; no runtime/API/test-root change",
+  "deltas": [
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "frozen_sha256": "e0f0c70dfbd7ec1653846b979eeae975432ecc90e859a442b5e285cddb918871",
+      "frozen_size": 12345,
+      "current_sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc",
+      "current_size": 12360
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+      "frozen_sha256": "83a61f152465ab16b37bdbf3ea87aee4fc6d2ca8f8d543474d4761df1962a82f",
+      "frozen_size": 16372,
+      "current_sha256": "28e8e69dfbfb45e3b5895e3ccbe48d826afa988a7046ca68d356712da8850590",
+      "current_size": 16624
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter_test.go",
+      "frozen_sha256": "af9bc42ae23164a4fcdfe3863b574ff1e7f8a2bab7c64622f6798a9ca8d40214",
+      "frozen_size": 11419,
+      "current_sha256": "d2f5f2c679f7c7682c5362f2ab28ac34de5f0aac614faae50d80154da123cccb",
+      "current_size": 11798
+    }
+  ],
+  "original_owner_removed": true,
+  "whole_joint_accepted": false,
+  "A2_started_another_Go": false,
+  "ready": "docs/evidence/a2-bootstrap-original-files-material-adapters-ready-20261026.json",
+  "production_approved": false
+}

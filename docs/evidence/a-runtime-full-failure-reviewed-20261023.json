@@ -1,0 +1,55 @@
+{
+  "kind": "a_runtime_full_failure_review.v1",
+  "date": "2026-10-23",
+  "status": "full_evidence_failed_preserved_no_baseline",
+  "evidence": [
+    {
+      "path": "docs/evidence/a-owner-eof-20261023-084028.json",
+      "size": 311038,
+      "sha256": "3ad528d60ddd85d747b75b042fb290d1e7ef64ae2b73b38bfdab862e4d3a44a4"
+    },
+    {
+      "path": "docs/evidence/a-owner-eof-20261023-084028.txt",
+      "size": 3573053,
+      "sha256": "dab5e4dd858872518767bfaa7f22d126b276c607dbd349a82fc1e5d9e91d5d1d"
+    },
+    {
+      "path": "docs/evidence/a-runtime-full-failure-review-20261023.mjs",
+      "size": 2909,
+      "sha256": "d57a70eae02b83150940b15f66bdccb9f12a006c8e52642a849928b0c985dfce"
+    }
+  ],
+  "stages": [
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "pass": 17,
+      "failed": [],
+      "terminal": "pass"
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "pass": 3089,
+      "failed": [
+        "TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/success",
+        "TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit"
+      ],
+      "terminal": "fail"
+    },
+    {
+      "package": "clawreef/internal/systembackupproducer",
+      "pass": 784,
+      "failed": [],
+      "terminal": "pass"
+    }
+  ],
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-evidence-66ada0aec92c44ffaaab7b463945df86",
+    "independently_absent": true
+  },
+  "actual_sql": false,
+  "dependencies_installed": false,
+  "baseline_accepted": false,
+  "frozen_postcheck_not_provided": true,
+  "current_runtime_repair_tested": false,
+  "production_approved": false
+}

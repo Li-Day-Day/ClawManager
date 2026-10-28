@@ -1,0 +1,46 @@
+{
+  "kind": "d1_a2_reference_capability_supplement_source_review.v1",
+  "status": "no_source_objection_native_receipt_required",
+  "pins": [
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-20261027.ps1",
+      "size": 18312,
+      "sha256": "fb8f04af05687f3c5be956a8a7c1856895ee37290caf989107232eb9a3e99bc7"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-review-20261027.mjs",
+      "size": 11485,
+      "sha256": "8349ac5aa391895a0ae93a9e2fb4eda0d20146e8927ff0721ccae7a12f3f05c6"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-review-20261027.test.mjs",
+      "size": 2280,
+      "sha256": "82d7d2ada5268113b9a09268a83a374bf8c87194de98f70061b67234d4aeb198"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-supplement-source-ready-20261027-r1.json",
+      "size": 2705,
+      "sha256": "9d6519c526bad9615b195b07165cabc44bb4f6eca2b821406874d4d23b72e810"
+    }
+  ],
+  "reviewed_reuse_boundary": "Only the independently accepted old/fixed/full Windows phases; failed parent retained. Every source path must match, with exactly the approved tagged lifecycle rename and an independent PowerShell driver delta.",
+  "reviewed_runtime_boundary": "Four actual platform/tag go-list captures must preserve the selected files and runtime/test caller closure. The tagged evidence caller and lifecycle test remain included.",
+  "reviewed_native_obligations": [
+    "Exactly one local OriginalMaterials seed with run/pass/package completion",
+    "Five Linux runtime test compiles and one tagged evidence compile, exit 0, ELF header and hash",
+    "Driver and staged-input stability, candidate snapshot postcheck and exact owner cleanup"
+  ],
+  "reviewed_limitations": [
+    "Inputs-only mode and receiver fixture tests cannot establish native success",
+    "No ordinary five-package rerun is claimed",
+    "Candidate validation does not apply the live patch or approve the current API/whole tree",
+    "GC three seeds and actual SQL remain separate obligations"
+  ],
+  "mandatory_source_fix_identified": false,
+  "source_review_only": true,
+  "native_result_reviewed": false,
+  "Go_executed_by_D1": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

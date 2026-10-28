@@ -1,0 +1,55 @@
+{
+  "kind": "d_bootstrap_candidate_proposal_independent_review.v1",
+  "date": "2026-10-26",
+  "status": "DESIGN_DIRECTION_ALIGNED_TWO_INTERFACE_INVARIANTS_REQUIRE_EXPLICIT_IMPLEMENTATION",
+  "proposal": {
+    "path": "docs/evidence/d-bootstrap-candidate-consumption-proposal-20261026.json",
+    "sha256": "3d7e42fd26050926133c13e854b6767586035a9bda4ac92536c95a50151fb1db"
+  },
+  "proposal_text": {
+    "path": "docs/system-backup-d-bootstrap-candidate-consumption-proposal-20261026.md",
+    "sha256": "009b9bc51962f029094c4aca6d9b3302f150f7970f8e9514a1f6ddbba979a302"
+  },
+  "reviewer_chat": "01a1676d-ff9a-7a71-9df5-bfb6b97c3f84",
+  "implementation_review": false,
+  "accepted_choices": [
+    "committed candidate consumer independent of Execution and historical receipt permission",
+    "constructor-fixed trusted authority and complete purpose-bound batch identity",
+    "single shared L0-L10 union prefix before A user/operation/config processing",
+    "explicit current bootstrap/domain/observation/dependency bounds without using elapsed old execution windows as fresh consume limits",
+    "preserve original candidate/receipt/hold references and protection, close epoch and disabled-v1 atomically",
+    "retain original inline request-hash semantics and separate internally encoded candidate path",
+    "fixed independent expected-post-state final guard and unique bootstrap commit"
+  ],
+  "findings": [
+    {
+      "id": "D-BOOT-TIME-01",
+      "priority": 1,
+      "scope": "proposal/interface completeness, not a demonstrated production vulnerability",
+      "requirement": "BC3/BC6/BC8",
+      "observation": "Existing Transaction and GuardInTx do not observe UTC values scanned through A bootstrapWork or resource callbacks using the caller raw *sql.Tx. A private D clock tracker alone cannot establish a floor for these A observations.",
+      "required_resolution": "Define the shared bounded SQL-time sampling capability used by every authoritative A/D sample. Capture each successful sample in the same tx/context floor; close any external sampling capability with work while internal final sampling remains possible. Do not claim all raw SQL clock reads are automatically intercepted.",
+      "counterexample": "Initial D T0, A callback validates later T2, final D T1 with T0<=T1<T2 must reject and roll back all A/D writes. Include failure/cancellation sampling and no post-final callback."
+    },
+    {
+      "id": "D-BOOT-REPLAY-01",
+      "priority": 1,
+      "scope": "proposal phase order, not an implemented defect",
+      "requirement": "BC1/BC9/BC10",
+      "observation": "If Prepare or L1 requires an open domain, fresh old observation or unchanged live current-run before L3 identifies a matching prior success, the documented historical retry cannot reach its read-only branch after lawful epoch close or observation expiry.",
+      "required_resolution": "Before L3, authenticate current bootstrap read/operation identity and bind retained original selection without requiring new-consume freshness/open state. At L3 select exact prior-success readback versus first consume; enforce original fresh observation/open domain/current target only in first-consume branch. Original mappings and request hash remain exact; no latest-run reconstruction or fresh probe.",
+      "counterexample": "After successful consume with closed epoch and expired old observation, same original operation/mapping under current A authority returns original result with no consume/CAS/charge/activation. Changed hash or revoked current A authority rejects."
+    }
+  ],
+  "additional_contract_notes": [
+    "Candidate/config/set digest correspondence may apply only where the original trusted domain profile proves the exact A canonical byte algorithms; do not reinterpret older persisted admissions.",
+    "Original ResultBinding.GrantVersion is absent from ReceiptRecord; original execution snapshot cannot be reconstructed from caller-added fields.",
+    "No new delete primitive is needed to retain the three original references; preserving them must not invent a capacity release."
+  ],
+  "blocking_runtime_findings_claimed": false,
+  "production_approved": false,
+  "Go_or_builds_run": false,
+  "dependencies_installed": false,
+  "build_artifacts_created": 0,
+  "full_goal_complete": false
+}

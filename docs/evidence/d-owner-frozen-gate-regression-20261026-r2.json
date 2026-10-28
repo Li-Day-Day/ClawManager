@@ -1,0 +1,108 @@
+{
+  "kind": "d_owner_frozen_baseline_gate_mock_regression.v1",
+  "error": "approved_role_snapshot: unexpected success=False The term 'C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-0e4ed8878da547b1973141bc842e34b3\\approved_role_snapshot\\.tmp-d-index-cache-ba66fa2145064effae93510220bdcf83\\source\\scripts\\system-backup-a-download-gc-role-dispatch.test.ps1' is not recognized as a name of a cmdlet, function, script file, or executable program.\r\nCheck the spelling of the name, or if a path was included, verify that the path is correct and try again.",
+  "cases": [
+    {
+      "name": "predecessor_ready_then_retry_new_source_reaches_dispatch",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK",
+        "RECEIVER_MOCK_NO_SQL_ACCEPTANCE"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r2-predecessor_ready_then_retry_new_source_reaches_dispatch.log",
+        "sha256": "d672050f8636a5d1587b1c6b61abfe394d62fd2bd9d63ce027a7d8fe3def6a81"
+      }
+    },
+    {
+      "name": "owners_ready_then_retry_new_source_rejected",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r2-owners_ready_then_retry_new_source_rejected.log",
+        "sha256": "233726dc1ae4ddd4fa1332b0c8ef9bcb826403e417b90bcbc0f9e2ca48a644e4"
+      }
+    },
+    {
+      "name": "role_ready_then_retry_new_source_rejected",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r2-role_ready_then_retry_new_source_rejected.log",
+        "sha256": "34d4cf495088f9fd7645750647982356e7d59eb648b3499ce6a065f9006faef8"
+      }
+    },
+    {
+      "name": "approved_owners_snapshot",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "none",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK",
+        "RECEIVER_MOCK_NO_SQL_ACCEPTANCE"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r2-approved_owners_snapshot.log",
+        "sha256": "3b6baf1e56c6e44f6048e60d0461250b7d4e085322e784617e4df8a2bb61fc4d"
+      }
+    }
+  ],
+  "input_pins": [
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "sha256": "07937556bba05020d6a6194540f0ef4a774c3797e274bc3a8c9468ed17064d98"
+    },
+    {
+      "path": "docs/evidence/a-download-owner-role-retest-20261021.ps1",
+      "sha256": "09bbe126025dd574aa3145b6d59fb619f55489e49413d17bd93b14c71ce8146d"
+    },
+    {
+      "path": "docs/evidence/a-download-retest-source-preflight-20261021.mjs",
+      "sha256": "983e0ed0c5f6bebfd30553ab668de84f8068402fb9daf5fd2f7d7af3782697e2"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-regression-20261026.ps1",
+      "sha256": "bcc18e1b3515076b4086cef898f47b90a332a24c531d25e281ad25d5d08e63e4"
+    }
+  ],
+  "inputs_stable": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-0e4ed8878da547b1973141bc842e34b3",
+  "owner_removed": true,
+  "real_snapshot_copy_executed": false,
+  "real_registered_baseline_parser_executed": true,
+  "predecessor_counterexample_is_mock_only": true,
+  "Go_or_builds_run": false,
+  "SSH_or_SQL_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

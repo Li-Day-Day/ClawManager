@@ -35,6 +35,9 @@ func TestRegistryCoversCurrentUserAndInstanceModels(t *testing.T) {
 	if known["users"].RestoreAction != "preserve" || known["instance_runtime_bindings"].RestoreAction != "drop" || known["backup_schedules"].RestoreAction != "disable" || known["instance_browser_workers"].RestoreAction != "disable" {
 		t.Fatal("credentials/business identity and replayable state need different restore rules")
 	}
+	if known["runtime_rollout_checkpoints"].RestoreAction != "reference_only" || known["instance_workspace_write_intents"].RestoreAction != "drop" {
+		t.Fatal("source rollout progress and outstanding remote writes must not execute on target")
+	}
 }
 
 func TestNewInstanceMigrationTablesRequireExplicitOwnership(t *testing.T) {

@@ -1,0 +1,16 @@
+{
+  "kind": "a2_bootstrap_CA_snapshot_draft_withdrawal.v1",
+  "status": "withdrawn_before_testing_or_wiring",
+  "draft": "docs/evidence/a2-bootstrap-ca-snapshot-draft-withdrawn-20261026.go.txt",
+  "draft_sha256": "24ca5b2226293ce5146ef7924de39b1b2aed6c07261de42c97e52c0a4f0a3cd6",
+  "reason": "Original CA Recheck re-reads exact descriptor/CA bytes and rejects removed/changed input. A memory observation plus SQL clock alone cannot prove immutable material or current revocation; dropping that check would change source semantics.",
+  "source_boundary": "C1 forbids file/provider I/O under locks; retain old legacy Recheck unchanged. Require independently authenticated original immutable-version/lifecycle and current revocation facts through the original trusted authority before claiming equivalent narrow-SQL material admission.",
+  "nonce_also_affected": "Original nonce Recheck reads all original active/retained descriptor/material bytes, so its candidate adapter must address the same current-material truth source in addition to the global lock prefix.",
+  "runtime_source_absent": true,
+  "old_CA_source_changed": false,
+  "old_nonce_source_changed": false,
+  "new_adapter_tests_run": false,
+  "dependencies_installed": false,
+  "production_linked": false,
+  "production_approved": false
+}

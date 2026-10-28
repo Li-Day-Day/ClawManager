@@ -60,6 +60,8 @@ func TableRegistry() []TableRule {
 		{"instance_lifecycle_manual_guards", Instances, "drop", nil, nil, "Source guards are not target coordination locks."},
 		{"instance_lifecycle_scheduler", Instances, "drop", nil, nil, "Do not import source scheduler cursors."},
 		{"runtime_rollout_instances", Instances, "reference_only", nil, nil, "Never resume source rollout items."},
+		{"runtime_rollout_checkpoints", Instances, "reference_only", []string{"runtime_rollouts"}, []string{"state_json"}, "Archive source rollout checkpoints as evidence; never resume source rollout execution."},
+		{"instance_workspace_write_intents", Instances, "drop", []string{"instances"}, nil, "Outstanding source remote writes are coordination state; never replay them or block target workspace access."},
 		{"workbuddy_browser_grants", Instances, "drop", nil, nil, "Do not replay browser authorization grants."},
 		{"workbuddy_instance_recoveries", Instances, "reference_only", nil, nil, "Do not execute source recovery attempts."},
 		{"workbuddy_linux_identities", Instances, "preserve", []string{"instances"}, nil, "Preserve Linux identity and workspace ownership; target schema adapter must explicitly support its columns."},

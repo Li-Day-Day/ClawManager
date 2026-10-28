@@ -1,0 +1,562 @@
+// Candidate for backend/internal/systembackupcleanup/recorder.go.
+package systembackupcleanup
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"math"
+	"sync"
+	"time"
+)
+
+// RecordRequest is an internal D transition request, never a public DTO or
+// substitute for original admission, provider safety or producer fencing.
+type RecordRequest struct {
+	Installation        string
+	ParentKind          string
+	ParentPublicID      string
+	ParentRowVersion    uint64
+	ControllerOwner     string
+	Source              Source
+	OperationID         uint64
+	OperationRowVersion uint64
+}
+
+type StartResource struct {
+	Binding           Binding
+	RowVersion        uint64
+	Clock             Clock
+	PreviousLifecycle string
+	PreviousResult    string
+	AlreadySettled    bool
+	Sequence          uint64
+}
+type StartView struct {
+	Now              time.Time
+	ParentRowVersion uint64
+	OperationID      uint64
+	Resources        []StartResource
+}
+
+// MutationExecutor has only a fixed, once-only metadata CAS. It cannot express
+// arbitrary SQL, COMMIT, ROLLBACK, DDL, a second transaction or external I/O.
+// The original D transition checks its original prerequisite facts before Apply.
+type MutationExecutor struct{ state *fixedMutation }
+type fixedMutation struct {
+	mu                      sync.Mutex
+	ctx                     context.Context
+	tx                      *sql.Tx
+	request                 RecordRequest
+	parent                  lockedParent
+	view                    StartView
+	active, used, completed bool
+	err                     error
+}
+
+func (MutationExecutor) MarshalJSON() ([]byte, error) { return nil, ErrClock }
+func (MutationExecutor) String() string               { return "[fixed cleanup metadata CAS]" }
+func (MutationExecutor) Format(s fmt.State, _ rune) {
+	_, _ = s.Write([]byte("[fixed cleanup metadata CAS]"))
+}
+func (e MutationExecutor) Apply() (err error) {
+	if e.state == nil {
+		return ErrClock
+	}
+	s := e.state
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if !s.active || s.used {
+		s.err = ErrClock
+		return ErrClock
+	}
+	s.used = true
+	s.err = ErrClock
+	defer func() {
+		if err != nil {
+			s.err = err
+		}
+	}()
+	req := s.request
+	table := "system_backups"
+	if req.ParentKind == "drill" {
+		table = "system_restore_drills"
+	}
+	var result sql.Result
+	if req.Source == AutomaticDrill {
+		result, err = s.tx.ExecContext(s.ctx, `UPDATE system_restore_drills SET status='succeeded',can_cancel=FALSE,failure_category='none',cleanup_status='pending',cleanup_failure_code='none',finished_at=?,row_version=row_version+1 WHERE origin_installation_id=? AND public_id=? AND row_version=? AND status='verifying' AND cleanup_policy='delete-on-success' AND cleanup_status='not_started' AND finished_at IS NULL AND controller_owner=? AND controller_lease_expires_at>UTC_TIMESTAMP(6) AND deadline_at>UTC_TIMESTAMP(6)`, s.view.Now, req.Installation, req.ParentPublicID, req.ParentRowVersion, req.ControllerOwner)
+	} else {
+		set := "row_version=row_version+1"
+		if req.ParentKind == "drill" {
+			set = "cleanup_status='pending',cleanup_failure_code='none'," + set
+		}
+		query := "UPDATE " + table + " SET " + set + " WHERE origin_installation_id=? AND public_id=? AND row_version=? AND status=?"
+		args := []any{req.Installation, req.ParentPublicID, req.ParentRowVersion, s.parent.status}
+		if req.Source == AutomaticBackup {
+			query += " AND controller_owner=? AND controller_lease_expires_at>UTC_TIMESTAMP(6) AND finished_at IS NULL"
+			args = append(args, req.ControllerOwner)
+		}
+		result, err = s.tx.ExecContext(s.ctx, query, args...)
+	}
+	if err != nil {
+		return err
+	}
+	if err = oneMutationRow(result); err != nil {
+		return err
+	}
+	for _, resource := range s.view.Resources {
+		rtable := "system_backup_staging_resources"
+		set := ""
+		if req.ParentKind == "drill" {
+			rtable = "system_restore_drill_resources"
+		} else if !resource.AlreadySettled {
+			set = "lifecycle='deleting',cleanup_result='running',last_failure_code='none',"
+		}
+		var operation any
+		if req.Source == ExplicitOperation {
+			operation = req.OperationID
+		}
+		result, err = s.tx.ExecContext(s.ctx, "UPDATE "+rtable+" SET "+set+"cleanup_operation_id=?,row_version=row_version+1 WHERE origin_installation_id=? AND public_id=? AND row_version=? AND lifecycle=?", operation, req.Installation, resource.Binding.ResourcePublicID, resource.RowVersion, resource.PreviousLifecycle)
+		if err != nil {
+			return err
+		}
+		if err = oneMutationRow(result); err != nil {
+			return err
+		}
+	}
+	s.completed = true
+	s.err = nil
+	return nil
+}
+func oneMutationRow(result sql.Result) error {
+	if result == nil {
+		return ErrClock
+	}
+	n, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n != 1 {
+		return ErrClock
+	}
+	return nil
+}
+
+type ClockMutation func(MutationExecutor, StartView) error
+
+type lockedParent struct {
+	status          string
+	rowVersion      uint64
+	owner           sql.NullString
+	lease           sql.NullTime
+	finished        sql.NullTime
+	policy, cleanup string
+}
+type lockedResource struct {
+	binding           Binding
+	rowVersion        uint64
+	lifecycle, result string
+	operation         sql.Null[uint64]
+}
+
+// RecordInTx atomically appends original cleanup clocks and invokes the
+// original D state CAS. The caller owns the sole successful commit and its
+// original admission/audit boundary. Any error/panic rolls back that SAME tx,
+// so an ignored callback error cannot commit orphan timing facts.
+//
+// This is not an entry point into producer C1 finalization. Such integration
+// must place its new ledger/reference keys in the original early L3/L4 plan,
+// before L7-L10; this function must never be called from a finalizer/L10 hook.
+func RecordInTx(ctx context.Context, tx *sql.Tx, request RecordRequest, mutation ClockMutation) (err error) {
+	if tx == nil {
+		return ErrClock
+	}
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			_ = tx.Rollback()
+			panic(recovered)
+		}
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	if ctx == nil || mutation == nil {
+		return ErrClock
+	}
+	if _, bounded := ctx.Deadline(); !bounded {
+		return errors.New("cleanup transition requires the original bounded context")
+	}
+	if err = ctx.Err(); err != nil {
+		return err
+	}
+	if !installationPattern.MatchString(request.Installation) || request.ParentRowVersion == 0 || request.ParentRowVersion == math.MaxUint64 {
+		return ErrClock
+	}
+	table, prefix := "system_backups", "sbk_"
+	if request.ParentKind == "drill" {
+		table, prefix = "system_restore_drills", "sdr_"
+	} else if request.ParentKind != "backup" {
+		return ErrClock
+	}
+	if !validID(request.ParentPublicID, prefix) {
+		return ErrClock
+	}
+	parent, err := readCleanupParent(ctx, tx, request.Installation, request.ParentKind, request.ParentPublicID)
+	if err != nil {
+		return err
+	}
+	// Lock the original immutable configuration row before task/resource rows.
+	var configVersion uint64
+	var configDigest string
+	var configSeconds int64
+	if err = tx.QueryRowContext(ctx, "SELECT version,config_sha256,cleanup_deadline_seconds FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR SHARE", request.Installation, parent.budget.version).Scan(&configVersion, &configDigest, &configSeconds); err != nil {
+		return err
+	}
+	if configVersion != parent.budget.version || configDigest != parent.budget.sha256 || configSeconds != parent.budget.seconds {
+		return ErrClock
+	}
+	var operation OperationFacts
+	var retry sql.NullString
+	var operationVersion uint64
+	var operationStatus string
+	if request.Source == ExplicitOperation {
+		if request.OperationID == 0 || request.OperationRowVersion == 0 {
+			return ErrClock
+		}
+		if err = tx.QueryRowContext(ctx, `SELECT id,origin_installation_id,public_id,operation_type,target_type,target_public_id,created_at,deadline_at,row_version,status,retry_of_operation_public_id FROM system_backup_operations WHERE id=? FOR UPDATE`, request.OperationID).Scan(&operation.ID, &operation.Installation, &operation.PublicID, &operation.OperationType, &operation.TargetType, &operation.TargetPublicID, &operation.CreatedAt, &operation.DeadlineAt, &operationVersion, &operationStatus, &retry); err != nil {
+			return err
+		}
+		if operationVersion != request.OperationRowVersion || operation.Installation != request.Installation || operation.OperationType != "cleanup" || (operationStatus != "pending" && operationStatus != "running") {
+			return ErrClock
+		}
+		if retry.Valid {
+			var oldID uint64
+			var oldInstall, oldType, oldTargetType, oldTargetID, oldStatus string
+			if err = tx.QueryRowContext(ctx, "SELECT id,origin_installation_id,operation_type,target_type,target_public_id,status FROM system_backup_operations WHERE origin_installation_id=? AND public_id=? FOR UPDATE", request.Installation, retry.String).Scan(&oldID, &oldInstall, &oldType, &oldTargetType, &oldTargetID, &oldStatus); err != nil {
+				return err
+			}
+			if oldID == operation.ID || oldInstall != operation.Installation || oldType != "cleanup" || oldTargetType != operation.TargetType || oldTargetID != operation.TargetPublicID || oldStatus != "failed" {
+				return ErrClock
+			}
+		}
+	} else if request.OperationID != 0 || request.OperationRowVersion != 0 {
+		return ErrClock
+	}
+	state := lockedParent{}
+	policySelect := "'', ''"
+	if request.ParentKind == "drill" {
+		policySelect = "cleanup_policy,cleanup_status"
+	}
+	if err = tx.QueryRowContext(ctx, "SELECT status,row_version,controller_owner,controller_lease_expires_at,finished_at,"+policySelect+" FROM "+table+" WHERE origin_installation_id=? AND public_id=? FOR UPDATE", request.Installation, request.ParentPublicID).Scan(&state.status, &state.rowVersion, &state.owner, &state.lease, &state.finished, &state.policy, &state.cleanup); err != nil {
+		return err
+	}
+	if state.rowVersion != request.ParentRowVersion || state.finished != parent.finished {
+		return ErrClock
+	}
+	var now time.Time
+	var offset int64
+	if err = tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6), TIMESTAMPDIFF(MICROSECOND, UTC_TIMESTAMP(6), CURRENT_TIMESTAMP(6))").Scan(&now, &offset); err != nil || offset != 0 || !databaseTime(now) {
+		return errors.Join(ErrClock, err)
+	}
+	switch request.Source {
+	case AutomaticDrill:
+		if request.ParentKind != "drill" || state.status != "verifying" || state.policy != "delete-on-success" || state.cleanup != "not_started" || state.finished.Valid {
+			return ErrClock
+		}
+	case AutomaticBackup:
+		if request.ParentKind != "backup" || state.status == "pending" || state.status == "succeeded" || state.status == "failed" || state.status == "canceled" || state.finished.Valid {
+			return ErrClock
+		}
+	case ExplicitOperation:
+		if !operation.DeadlineAt.After(now) {
+			return ErrClock
+		}
+		if request.ParentKind == "drill" && state.cleanup != "not_started" && state.cleanup != "retained" && state.cleanup != "failed" && state.cleanup != "partial_failed" {
+			return ErrClock
+		}
+	default:
+		return ErrClock
+	}
+	if request.Source != ExplicitOperation && (!state.owner.Valid || state.owner.String != request.ControllerOwner || request.ControllerOwner == "" || !state.lease.Valid || !state.lease.Time.After(now)) {
+		return ErrClock
+	}
+	resources, err := lockRecordResources(ctx, tx, request)
+	if err != nil {
+		return err
+	}
+	view := StartView{Now: now, ParentRowVersion: state.rowVersion, OperationID: request.OperationID}
+	beforeLedger := map[Binding][]ledgerFact{}
+	historyRows := 0
+	for _, resource := range resources {
+		if request.Source == ExplicitOperation && operation.TargetType == resource.binding.ResourceKind && operation.TargetPublicID != resource.binding.ResourcePublicID {
+			continue
+		}
+		if resource.lifecycle == "creating" || resource.lifecycle == "ownership_unknown" || resource.lifecycle == "deleting" {
+			return errors.New("cleanup start requires resolved original resource state")
+		}
+		if request.Source != ExplicitOperation && resource.operation.Valid {
+			return ErrClock
+		}
+		var clock Clock
+		if request.Source == ExplicitOperation {
+			clock, err = NewOperationClock(resource.binding, parent.budget, operation, now)
+		} else {
+			finished := time.Time{}
+			if request.Source == AutomaticDrill {
+				finished = now
+			}
+			clock, err = NewAutomaticClock(resource.binding, parent.budget, now, finished)
+		}
+		if err != nil {
+			return err
+		}
+		history, historyErr := readLedgerFacts(ctx, tx, resource.binding, true)
+		if historyErr != nil {
+			return historyErr
+		}
+		historyRows += len(history)
+		if historyRows > MaxSnapshotRows {
+			return ErrClock
+		}
+		beforeLedger[resource.binding] = history
+		var previous uint64
+		var priorOperation sql.Null[uint64]
+		if len(history) > 0 {
+			previous = history[len(history)-1].sequence
+			priorOperation = history[len(history)-1].operation
+		}
+		if request.Source != ExplicitOperation && previous != 0 {
+			return errors.New("automatic cleanup clock already exists; replay must use the original record")
+		}
+		if previous == math.MaxUint64 || priorOperation.Valid && priorOperation.V == request.OperationID {
+			return ErrClock
+		}
+		if resource.operation.Valid != (priorOperation.Valid) || resource.operation.Valid && resource.operation.V != priorOperation.V {
+			return ErrClock
+		}
+		var operationID any
+		if request.Source == ExplicitOperation {
+			operationID = request.OperationID
+		}
+		// All referenced configuration/operation/task/resource rows have been
+		// read and locked before this insert and the final transition callback.
+		insert, insertErr := tx.ExecContext(ctx, `INSERT INTO system_backup_cleanup_attempts (origin_installation_id,parent_type,parent_public_id,resource_type,resource_public_id,attempt_sequence,clock_source,cleanup_operation_id,config_version,config_sha256,started_at,deadline_at,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, request.Installation, request.ParentKind, request.ParentPublicID, resource.binding.ResourceKind, resource.binding.ResourcePublicID, previous+1, string(request.Source), operationID, parent.budget.version, parent.budget.sha256, clock.started, clock.deadline, now)
+		if insertErr != nil {
+			return insertErr
+		}
+		if insert == nil {
+			return ErrClock
+		}
+		count, countErr := insert.RowsAffected()
+		if countErr != nil || count != 1 {
+			return errors.Join(ErrClock, countErr)
+		}
+		view.Resources = append(view.Resources, StartResource{Binding: resource.binding, RowVersion: resource.rowVersion, Clock: clock, PreviousLifecycle: resource.lifecycle, PreviousResult: resource.result, AlreadySettled: resource.lifecycle == "absent" || resource.lifecycle == "deleted", Sequence: previous + 1})
+	}
+	if len(view.Resources) == 0 {
+		return ErrClock
+	}
+	mutationState := &fixedMutation{ctx: ctx, tx: tx, request: request, parent: state, view: view, active: true}
+	callbackView := view
+	callbackView.Resources = append([]StartResource(nil), view.Resources...)
+	if err = mutation(MutationExecutor{mutationState}, callbackView); err != nil {
+		return err
+	}
+	mutationState.mu.Lock()
+	mutationState.active = false
+	mutationComplete := mutationState.used && mutationState.completed && mutationState.err == nil
+	mutationState.mu.Unlock()
+	if !mutationComplete {
+		return errors.New("original cleanup transition did not complete its fixed metadata CAS")
+	}
+	// Re-read the precise parent and selected resources after the original
+	// callback. A one-row CAS on some other row cannot commit these clocks.
+	var afterStatus, afterCleanup string
+	var afterVersion uint64
+	var afterFinished sql.NullTime
+	cleanupSelect := "''"
+	if request.ParentKind == "drill" {
+		cleanupSelect = "cleanup_status"
+	}
+	if err = tx.QueryRowContext(ctx, "SELECT status,row_version,finished_at,"+cleanupSelect+" FROM "+table+" WHERE origin_installation_id=? AND public_id=?", request.Installation, request.ParentPublicID).Scan(&afterStatus, &afterVersion, &afterFinished, &afterCleanup); err != nil {
+		return err
+	}
+	if afterVersion != state.rowVersion+1 {
+		return ErrClock
+	}
+	afterBudget, budgetErr := readCleanupParent(ctx, tx, request.Installation, request.ParentKind, request.ParentPublicID)
+	if budgetErr != nil {
+		return budgetErr
+	}
+	if afterBudget.budget != parent.budget {
+		return errors.New("original parent configuration changed during cleanup CAS")
+	}
+	if request.Source == AutomaticDrill {
+		if afterStatus != "succeeded" || afterCleanup != "pending" || !afterFinished.Valid || !afterFinished.Time.Equal(now) {
+			return ErrClock
+		}
+	} else {
+		if afterStatus != state.status || afterFinished != state.finished {
+			return ErrClock
+		}
+		if request.ParentKind == "drill" && afterCleanup != "pending" {
+			return ErrClock
+		}
+	}
+	for _, resource := range view.Resources {
+		targetTable := "system_backup_staging_resources"
+		resultSelect := "cleanup_result"
+		if request.ParentKind == "drill" {
+			targetTable = "system_restore_drill_resources"
+			resultSelect = "''"
+		}
+		var lifecycle, result string
+		var version uint64
+		var currentOperation sql.Null[uint64]
+		if err = tx.QueryRowContext(ctx, "SELECT lifecycle,"+resultSelect+",row_version,cleanup_operation_id FROM "+targetTable+" WHERE origin_installation_id=? AND public_id=?", request.Installation, resource.Binding.ResourcePublicID).Scan(&lifecycle, &result, &version, &currentOperation); err != nil {
+			return err
+		}
+		if version != resource.RowVersion+1 || currentOperation.Valid != (request.Source == ExplicitOperation) || currentOperation.Valid && currentOperation.V != request.OperationID {
+			return ErrClock
+		}
+		if resource.AlreadySettled {
+			if lifecycle != resource.PreviousLifecycle || result != resource.PreviousResult {
+				return errors.New("completed cleanup step was resurrected")
+			}
+			continue
+		}
+		if request.ParentKind == "backup" {
+			if lifecycle != "deleting" || result != "running" {
+				return ErrClock
+			}
+		} else if lifecycle != "created" && lifecycle != "delete_failed" {
+			return ErrClock
+		}
+	}
+	if request.Source == ExplicitOperation {
+		var after OperationFacts
+		var afterOperationVersion uint64
+		var afterOperationStatus string
+		var afterRetry sql.NullString
+		if err = tx.QueryRowContext(ctx, `SELECT id,origin_installation_id,public_id,operation_type,target_type,target_public_id,created_at,deadline_at,row_version,status,retry_of_operation_public_id FROM system_backup_operations WHERE id=?`, request.OperationID).Scan(&after.ID, &after.Installation, &after.PublicID, &after.OperationType, &after.TargetType, &after.TargetPublicID, &after.CreatedAt, &after.DeadlineAt, &afterOperationVersion, &afterOperationStatus, &afterRetry); err != nil {
+			return err
+		}
+		if after.ID != operation.ID || after.Installation != operation.Installation || after.PublicID != operation.PublicID || after.OperationType != operation.OperationType || after.TargetType != operation.TargetType || after.TargetPublicID != operation.TargetPublicID || !after.CreatedAt.Equal(operation.CreatedAt) || !after.DeadlineAt.Equal(operation.DeadlineAt) || afterOperationVersion != operationVersion || afterOperationStatus != operationStatus || afterRetry != retry {
+			return ErrClock
+		}
+	}
+	for _, resource := range view.Resources {
+		after, readErr := readLedgerFacts(ctx, tx, resource.Binding, false)
+		if readErr != nil {
+			return readErr
+		}
+		before := beforeLedger[resource.Binding]
+		if len(after) != len(before)+1 {
+			return errors.New("cleanup callback removed or inserted unexpected ledger facts")
+		}
+		for i := range before {
+			if !before[i].same(after[i]) {
+				return errors.New("cleanup callback modified an earlier immutable clock")
+			}
+		}
+		last := after[len(after)-1]
+		clock := resource.Clock
+		if last.id == 0 || last.sequence != resource.Sequence || last.parentKind != resource.Binding.ParentKind || last.parentID != resource.Binding.ParentPublicID || last.source != clock.source || last.configVersion != clock.budget.version || last.configSHA != clock.budget.sha256 || !last.started.Equal(clock.started) || !last.deadline.Equal(clock.deadline) || !last.created.Equal(now) || last.operation.Valid != (request.Source == ExplicitOperation) || last.operation.Valid && last.operation.V != clock.operationID {
+			return errors.New("cleanup callback modified the newly persisted immutable clock")
+		}
+	}
+	var finalNow time.Time
+	if err = tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&finalNow); err != nil {
+		return err
+	}
+	if !databaseTime(finalNow) || finalNow.Before(now) || request.Source == ExplicitOperation && !operation.DeadlineAt.After(finalNow) || request.Source != ExplicitOperation && !state.lease.Time.After(finalNow) {
+		return ErrClock
+	}
+	if err = ctx.Err(); err != nil {
+		return err
+	}
+	return nil
+}
+
+type ledgerFact struct {
+	id, sequence               uint64
+	parentKind, parentID       string
+	source                     Source
+	operation                  sql.Null[uint64]
+	configVersion              uint64
+	configSHA                  string
+	started, deadline, created time.Time
+}
+
+func (f ledgerFact) same(g ledgerFact) bool {
+	return f.id == g.id && f.sequence == g.sequence && f.parentKind == g.parentKind && f.parentID == g.parentID && f.source == g.source && f.operation == g.operation && f.configVersion == g.configVersion && f.configSHA == g.configSHA && f.started.Equal(g.started) && f.deadline.Equal(g.deadline) && f.created.Equal(g.created)
+}
+func readLedgerFacts(ctx context.Context, tx *sql.Tx, b Binding, lock bool) ([]ledgerFact, error) {
+	query := "SELECT id,attempt_sequence,parent_type,parent_public_id,clock_source,cleanup_operation_id,config_version,config_sha256,started_at,deadline_at,created_at FROM system_backup_cleanup_attempts WHERE origin_installation_id=? AND resource_type=? AND resource_public_id=? ORDER BY attempt_sequence LIMIT ?"
+	if lock {
+		query += " FOR UPDATE"
+	}
+	rows, err := tx.QueryContext(ctx, query, b.Installation, b.ResourceKind, b.ResourcePublicID, MaxSnapshotRows+1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var result []ledgerFact
+	for rows.Next() {
+		if len(result) >= MaxSnapshotRows {
+			return nil, ErrClock
+		}
+		var f ledgerFact
+		if err = rows.Scan(&f.id, &f.sequence, &f.parentKind, &f.parentID, &f.source, &f.operation, &f.configVersion, &f.configSHA, &f.started, &f.deadline, &f.created); err != nil {
+			return nil, err
+		}
+		if f.id == 0 || f.sequence != uint64(len(result))+1 || f.parentKind != b.ParentKind || f.parentID != b.ParentPublicID || !databaseTime(f.started) || !databaseTime(f.deadline) || !databaseTime(f.created) || !f.deadline.After(f.started) || f.created.Before(f.started) {
+			return nil, ErrClock
+		}
+		result = append(result, f)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	if err = rows.Close(); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func lockRecordResources(ctx context.Context, tx *sql.Tx, request RecordRequest) ([]lockedResource, error) {
+	table, parentColumn, resultColumn, kind := "system_backup_staging_resources", "backup_public_id", "cleanup_result", "backup_staging"
+	if request.ParentKind == "drill" {
+		table, parentColumn, resultColumn, kind = "system_restore_drill_resources", "drill_public_id", "''", "restore_resource"
+	}
+	rows, err := tx.QueryContext(ctx, "SELECT public_id,row_version,lifecycle,"+resultColumn+",cleanup_operation_id FROM "+table+" WHERE origin_installation_id=? AND "+parentColumn+"=? ORDER BY public_id LIMIT ? FOR UPDATE", request.Installation, request.ParentPublicID, MaxSnapshotRows+1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var result []lockedResource
+	for rows.Next() {
+		if len(result) >= MaxSnapshotRows {
+			return nil, errors.New("cleanup transition resource inventory overflow")
+		}
+		resource := lockedResource{binding: Binding{Installation: request.Installation, ParentKind: request.ParentKind, ParentPublicID: request.ParentPublicID, ResourceKind: kind}}
+		if err = rows.Scan(&resource.binding.ResourcePublicID, &resource.rowVersion, &resource.lifecycle, &resource.result, &resource.operation); err != nil {
+			return nil, err
+		}
+		if !resource.binding.valid() || resource.rowVersion == 0 || resource.rowVersion == math.MaxUint64 || !knownLifecycle(resource.lifecycle, request.ParentKind == "backup") {
+			return nil, ErrClock
+		}
+		result = append(result, resource)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	if err = rows.Close(); err != nil {
+		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, fmt.Errorf("cleanup start requires a complete original resource inventory")
+	}
+	return result, nil
+}

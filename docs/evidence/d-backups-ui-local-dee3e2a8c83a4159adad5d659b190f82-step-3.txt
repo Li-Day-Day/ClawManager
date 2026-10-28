@@ -1,0 +1,56 @@
+▶ all four task activity channels fetch only requested pages with task checks on both sides
+  ✔ backups/events (140.3149ms)
+  ✔ backups/logs (17.8801ms)
+  ✔ drills/events (6.8118ms)
+  ✔ drills/logs (7.1428ms)
+  ✔ preflights/events (5.3207ms)
+  ✔ preflights/logs (4.1774ms)
+  ✔ verifications/events (2.4246ms)
+  ✔ verifications/logs (2.2377ms)
+✔ all four task activity channels fetch only requested pages with task checks on both sides (190.191ms)
+▶ activity continuations cannot move across a task, installation, kind, version or channel
+  ✔ task (6.276ms)
+  ✔ installation (0.3292ms)
+  ✔ kind (0.2672ms)
+  ✔ version (0.2073ms)
+  ✔ channel (0.187ms)
+✔ activity continuations cannot move across a task, installation, kind, version or channel (9.8626ms)
+▶ cursor loops and consistency changes reject the whole new page
+  ✔ cursor_loop (0.5741ms)
+  ✔ consistency_changed (0.3475ms)
+✔ cursor loops and consistency changes reject the whole new page (1.516ms)
+▶ a task moving installations or regressing its row version during the page prevents publication
+  ✔ installation_changed (0.4737ms)
+  ✔ snapshot_changed (0.2701ms)
+✔ a task moving installations or regressing its row version during the page prevents publication (1.33ms)
+✔ a mismatched task before the page cannot fetch its activity (0.3581ms)
+▶ cancellation at any stage rejects late results even for an uncooperative client
+  ✔ 0 (0.5234ms)
+  ✔ 1 (0.2416ms)
+  ✔ 2 (0.3097ms)
+  ✔ 3 (0.1861ms)
+✔ cancellation at any stage rejects late results even for an uncooperative client (1.9826ms)
+▶ permission, readiness and expiry errors never become empty or complete activity pages
+  ✔ 401 (1.5646ms)
+  ✔ 403 (1.1695ms)
+  ✔ 503 (0.6935ms)
+  ✔ 410 (0.6111ms)
+✔ permission, readiness and expiry errors never become empty or complete activity pages (5.3182ms)
+✔ expiry presentation is limited to the logs code and never masks authentication errors (0.5206ms)
+▶ a later page failure or final permission failure cannot publish a successful collection
+  ✔ later-page (5.796ms)
+  ✔ final-permission (0.835ms)
+✔ a later page failure or final permission failure cannot publish a successful collection (7.293ms)
+▶ activity retains the existing closed DTO and target validation
+  ✔ events (1.7189ms)
+  ✔ logs (3.4139ms)
+✔ activity retains the existing closed DTO and target validation (5.8006ms)
+✔ selection identity is fixed before a page awaits its first task read (0.4258ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 249.0116

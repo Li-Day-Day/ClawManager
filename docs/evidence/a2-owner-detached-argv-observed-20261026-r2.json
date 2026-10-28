@@ -1,0 +1,59 @@
+{
+  "kind": "a2_owner_detached_native_argv_probe.v1",
+  "powershell_version": "7.6.5",
+  "execution_mode": "saved_ps1_file",
+  "comparison": "argument_count_and_each_string_ordinal",
+  "literal_argv": [
+    "-test",
+    ".run",
+    "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+    "-test",
+    ".v",
+    "-test",
+    ".count=1",
+    "-test",
+    ".timeout=60s"
+  ],
+  "variable_executable_bare_pipeline_argv": [
+    "-test",
+    ".run",
+    "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+    "-test",
+    ".v",
+    "-test",
+    ".count=1",
+    "-test",
+    ".timeout=60s"
+  ],
+  "explicit_string_array_argv": [
+    "-test.run",
+    "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+    "-test.v",
+    "-test.count=1",
+    "-test.timeout=60s"
+  ],
+  "literal_matches_expected": false,
+  "variable_executable_bare_pipeline_matches_expected": false,
+  "explicit_string_array_preserves_switches": true,
+  "literal_probe_exit": 0,
+  "string_array_probe_exit": 0,
+  "variable_executable_bare_pipeline_exit": 0,
+  "runner": {
+    "path": "docs/evidence/d-gc-finalizer-validation-20261026.ps1",
+    "sha256": "32f5859ebd45de412a44592e2298e129716ade5a030c830a63b2af3b76c94bfb"
+  },
+  "runner_still_contains_unquoted_call": true,
+  "probe": {
+    "path": "docs/evidence/a2-owner-detached-argv-probe-20261026.ps1",
+    "sha256": "67df5d2cedcfc9eabe99ff84175625bdbb401b7d0a1e021c35616dd267e1a60e"
+  },
+  "in_flight_peer_runner_modified": false,
+  "saved_runner_failure_proven": false,
+  "same_saved_pipeline_dotted_switch_splitting_reproduced": true,
+  "previous_invalid_comparison_report": "docs/evidence/a2-owner-detached-argv-observed-20261026.json",
+  "previous_comparison_error": "NUL-joined PowerShell culture comparison ignored token separators; use the raw argv and this ordinal comparison instead.",
+  "Go_or_test_binary_executed": false,
+  "scratch_created": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

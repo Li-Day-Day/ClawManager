@@ -126,7 +126,7 @@ func referenceVariant(f map[string]string) ([]string, bool) {
 		capabilities := map[string][]string{
 			"artifact_write": {"exact_write", "conditional_create"}, "artifact_read": {"exact_read", "range_read"}, "artifact_delete": {"exact_delete"},
 			"catalog_append": {"append_record"}, "catalog_read": {"exact_read"}, "catalog_discovery": {"snapshot_list", "inventory_read"},
-			"evidence_read_write": {"exact_write", "exact_read", "exact_delete", "conditional_create", "append_record", "range_read", "snapshot_list", "inventory_read"},
+			"evidence_read_write": {"exact_write", "exact_read", "conditional_create", "range_read"},
 			"evidence_read":       {"exact_read", "range_read"}, "evidence_write": {"exact_write", "conditional_create"}, "evidence_delete": {"exact_delete"},
 		}
 		return []string{"provider_role", "credential_capability"}, f["provider_role"] == role && has(purposes[role], purpose) && has(capabilities[purpose], f["credential_capability"])

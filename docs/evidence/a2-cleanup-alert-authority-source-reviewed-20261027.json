@@ -1,0 +1,293 @@
+{
+  "kind": "a2_cleanup_alert_existing_authority_source_audit.v1",
+  "status": "controller_state_predicate_direction_source_compatible_collector_authority_and_automatic_origin_unproven",
+  "sources": [
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "size": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "size": 56783,
+      "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+    },
+    {
+      "path": "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+      "size": 6838,
+      "sha256": "0bf4a07de699ff237cf4674761bc12879f3806b454214fc4f1802870efc5f5b9"
+    },
+    {
+      "path": "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql",
+      "size": 5931,
+      "sha256": "26105cd49490837b44138a5df91d978c33a5994ef1477996f52aeadb1844b59e"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+      "size": 3917,
+      "sha256": "fc44562e7375cb1af78b6f28ecc64817814ba67d15cbe92707a8d8f72642bc8d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+      "size": 7176,
+      "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.schema.json",
+      "size": 6859,
+      "sha256": "6f3e30a1ee322170edbe17f156854317ac9b2ce480a1843a4710910e12803b58"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "plan_facts": [
+    {
+      "fact": "operation_absolute_deadline",
+      "path": "docs/system-backup-restore-division-plan.md",
+      "line": 238,
+      "excerpt": "`system_backup_operations`是第4.2节operation type的幂等权威账本；artifact verify本身是独立task create，其cancel才使用operation账本。Operation状态为`pending|running|succeeded|failed`；记录operation public ID、target identity、可选且互斥的result resource public ID或result config version、endpoint、actor scope、idempotency key、request hash、关联external-action IDs、claim/row version、HTTP status、redacted response ref/hash、failure、`deadline_at`和时间。只有`config_update`允许result config version且必须填写，其他产生新资源的同步operation填写匹配类型的result public ID，不产生新资源者两项都为空；数据库CHECK拒绝其他组合。异步operation的deadline从operation `created_at`起算，不因排队或接管延长；同步纯数据库mutation必须在请求deadline内完成且不创建pending operation。API在同一数据库事务中写audit intent与task/operation创建记录；任一写入失败均不产生资源。纯数据库mutation可在该事务内直接写terminal operation和audit result；凡涉及外部动作，API只返回pending operation。每类多步骤外部操作必须使用已有权威明细：cleanup用resource lifecycle、prune用item/external-action、catalog import用record/evidence、promotion仅为数据库CAS；P0不提供无法持久化step结果的通用“只重跑未成功步骤”。失败operation使用新key和明确的专用重试语义，不能泛化继承旧action。"
+    },
+    {
+      "fact": "automatic_cleanup_linearization",
+      "path": "docs/system-backup-restore-division-plan.md",
+      "line": 632,
+      "excerpt": "- `cleanup_policy=delete-on-success|retain-always`。默认 `delete-on-success`：drill 终态 CAS 写入 `succeeded` 时必须同时把 cleanup 从 `not_started` 写为 `pending`，随后由独立 cleanup claim 推进 `pending -> running -> succeeded|partial_failed|failed`；失败和取消保留为 `not_started`。`retain-always` 在任务终态 CAS 同时写 `cleanup_status=retained`。Cleanup 不复活或改写 drill 主状态；但只有`delete-on-success`且cleanup已succeeded的acceptance drill可创建promotion，避免未清理明文资源在cleanup竞态窗口内成为baseline。"
+    },
+    {
+      "fact": "manual_cleanup_operation",
+      "path": "docs/system-backup-restore-division-plan.md",
+      "line": 633,
+      "excerpt": "- 失败/取消现场以及`retain-always`成功后保留的现场只能由管理员显式执行cleanup；endpoint接受`cleanup_status=not_started|retained|failed|partial_failed`并以新operation驱动到pending。二次drill必须使用新ID和新目标。"
+    },
+    {
+      "fact": "owner_frozen_threshold",
+      "path": "docs/system-backup-restore-division-plan.md",
+      "line": 806,
+      "excerpt": "- 每个告警必须在机器合同旁登记阈值来源、持续时间、级别、去重键和 runbook。任务级阈值来自 immutable config snapshot；controller/全局 recovery-point 告警来自当前 system config 并记录 config version。“最高级别”等自然语言不得替代明确的 `critical|warning|info`。"
+    },
+    {
+      "fact": "cleanup_critical",
+      "path": "docs/system-backup-restore-division-plan.md",
+      "line": 808,
+      "excerpt": "- P0默认告警公式固定：`backup_monitoring_armed=1 AND alert_profile=production AND effective_enabled=0`持续15分钟warning、持续24小时critical；kill switch和first-enable recovery grace均不得抑制该关闭告警。Recovery-point/promotion critical要求monitoring armed且production，首次启用grace结束后仍无恢复点即critical；effective disabled期间仍继续计算且不冻结age。`recovery_point_shortage_domains{matrix}>0`持续5分钟critical；recovery-point age超过RPO持续5分钟critical。活动task/operation queue age达到deadline的50%持续5分钟warning、达到90%立即critical；gate wait达到acquisition timeout的80%、capture hold达到绝对上限的80%为warning，达到上限立即critical；cleanup age超过cleanup deadline、controller无成功超过3个reconcile interval、artifact health或catalog stable full scan无成功超过2个对应interval均critical。`finalization_unknown`超过`finalization_resolution_grace_seconds`、evidence write pending/write_unknown最老年龄达到其owner immutable task/operation deadline的90%、`capture_kms_identity_revocation_pending_current>0`、`restore_credential_destroy_pending_current>0`、participant state=error或writer registry drift立即critical；`increase(participant_forced_resume_total[5m])>0`或`increase(participant_resume_failures_total[5m])>0`同样立即critical，窗口无新增事件后自动恢复。其他累计failure counter只用于趋势，不直接表达未恢复状态。存在活动relay依赖任务时，relay无成功超过`max(60,2*retry_max_backoff_seconds)`或5分钟拒绝5次为warning，拒绝20次为critical。Staging bytes达到容量80%为warning、100%为critical，最老staging超过retention为critical；catalog tombstone或import verification pending最老年龄超过900秒warning、3600秒critical。任一活动dependency health为degraded/unknown/stale时按机器registry告警；Credential/CA/KEK/signing/catalog/evidence/attestation在`expiry_timestamp-now < max(86400,retention_seconds*10%)`时warning，仅当`dependency_protection_active=1`且margin<0时critical。当前nonce-HMAC key或仍被nonce记录使用的历史key在`expiry-now < control_metadata_retention_seconds`、provider-proof issuer key在`expiry-now < max(provider_proof_max_age_seconds,evidence_retention_seconds)`时warning，过期或缺失立即critical并fail closed。Confirmation/idempotency/redaction/isolation/strong-auth rejection五分钟5次warning、20次critical。Evidence integrity failure立即critical。Alert evaluator自身无成功超过3个controller reconcile interval立即critical；control metadata超过容量预算80% warning、control/evidence GC连续失败3次、last-success超过3个对应interval或超过预算critical。P0手动backup只能监测和告警RPO，不宣称自动满足RPO；默认值由v12 alert-registry revision提供，后续数值调整只升级alert/config revision，规则语义或label/schema变化才升级机器合同。"
+    }
+  ],
+  "existing_tables": [
+    {
+      "file": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "table": "system_backup_operations",
+      "columns": [
+        "id",
+        "schema_version",
+        "public_id",
+        "origin_installation_id",
+        "operation_type",
+        "target_type",
+        "target_public_id",
+        "actor_type",
+        "actor_id",
+        "endpoint",
+        "idempotency_key",
+        "request_hash",
+        "retry_of_operation_public_id",
+        "external_action_public_ids_canonical_json",
+        "external_action_public_ids_size_bytes",
+        "external_action_public_ids_sha256",
+        "status",
+        "result_resource_public_id",
+        "result_config_version",
+        "retryable",
+        "failure_category",
+        "failure_message",
+        "http_status",
+        "redacted_response_evidence_id",
+        "redacted_response_sha256",
+        "claim_owner",
+        "claim_expires_at",
+        "next_reconcile_at",
+        "row_version",
+        "deadline_at",
+        "started_at",
+        "finished_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "file": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "table": "system_restore_drills",
+      "columns": [
+        "id",
+        "schema_version",
+        "public_id",
+        "origin_installation_id",
+        "task_type",
+        "actor_type",
+        "actor_id",
+        "endpoint",
+        "idempotency_key",
+        "request_hash",
+        "request_id",
+        "retry_of_public_id",
+        "status",
+        "pending_reason",
+        "attention_reason",
+        "can_cancel",
+        "config_version",
+        "config_snapshot_json",
+        "config_snapshot_size_bytes",
+        "config_snapshot_sha256",
+        "retryable",
+        "failure_category",
+        "failure_message",
+        "heartbeat_at",
+        "row_version",
+        "controller_owner",
+        "controller_lease_expires_at",
+        "next_reconcile_at",
+        "deadline_at",
+        "started_at",
+        "finished_at",
+        "source_artifact_type",
+        "source_public_id",
+        "local_source_backup_public_id",
+        "source_manifest_checksum",
+        "source_acceptance_checksum",
+        "source_catalog_checksum",
+        "task_purpose",
+        "target_profile",
+        "restore_target_config_ref",
+        "restore_target_config_hash",
+        "cleanup_policy",
+        "cleanup_status",
+        "cleanup_failure_code",
+        "preflight_evidence_public_id",
+        "preflight_evidence_sha256",
+        "diff_evidence_public_id",
+        "diff_evidence_sha256",
+        "verifier_aggregate_status",
+        "verifier_passed",
+        "verifier_warning",
+        "verifier_failed",
+        "verifier_skipped",
+        "verifier_report_evidence_public_id",
+        "verifier_report_evidence_sha256",
+        "consistency",
+        "acceptance_eligible",
+        "eligibility_decision_hash",
+        "eligibility_decided_at",
+        "maintenance_lock_owner",
+        "maintenance_fencing_token",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "file": "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+      "table": "system_backup_staging_resources",
+      "columns": [
+        "id",
+        "schema_version",
+        "public_id",
+        "origin_installation_id",
+        "backup_public_id",
+        "attempt_no",
+        "phase",
+        "phase_uid",
+        "resource_type",
+        "planned_locator",
+        "location_sha256",
+        "owner_marker_hmac",
+        "owner_marker_key_version",
+        "observed_name",
+        "observed_uid",
+        "immutable_version",
+        "candidate_checksum_sha256",
+        "candidate_length_bytes",
+        "lifecycle",
+        "cleanup_result",
+        "last_failure_code",
+        "cleanup_operation_id",
+        "ownership_resolution_operation_id",
+        "ownership_resolution_evidence_id",
+        "claim_owner",
+        "claim_expires_at",
+        "next_reconcile_at",
+        "row_version",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "file": "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql",
+      "table": "system_restore_drill_resources",
+      "columns": [
+        "id",
+        "schema_version",
+        "public_id",
+        "origin_installation_id",
+        "drill_public_id",
+        "resource_type",
+        "planned_name",
+        "observed_name",
+        "observed_uid",
+        "immutable_version",
+        "location_sha256",
+        "owner_token_hmac",
+        "owner_token_key_version",
+        "lifecycle",
+        "cleanup_operation_id",
+        "ownership_resolution_operation_id",
+        "ownership_resolution_evidence_id",
+        "ownership_resolution_evidence_sha256",
+        "last_failure_code",
+        "failure_message",
+        "observed_at",
+        "claim_owner",
+        "claim_expires_at",
+        "next_reconcile_at",
+        "row_version",
+        "created_at",
+        "updated_at"
+      ]
+    }
+  ],
+  "all_migration_sources_mentioning_cleanup_operation_id": [
+    "backend/internal/db/migrations/073_add_system_backup_staging_resources.sql",
+    "backend/internal/db/migrations/077_add_system_restore_drill_resources.sql"
+  ],
+  "findings": {
+    "controller_state_is_existing_expression_language": true,
+    "explicit_cleanup_operation_absolute_times_exist": true,
+    "cleanup_operation_result_config_version_is_not_a_frozen_config_reference": "Plan and operation CHECK reserve result_config_version for successful config_update.",
+    "task_snapshot_frozen_config_identity_exists": true,
+    "drill_has_dedicated_cleanup_start_or_deadline_columns": false,
+    "resource_cleanup_operation_links_nullable": true,
+    "link_FK_alone_proves_installation_operation_type_and_target": false,
+    "all_automatic_cleanup_owners_have_operation_rows_proven": false,
+    "task_finished_at_is_approved_universal_cleanup_start": false
+  },
+  "required_collector_invariants": [
+    "Use one authoritative database observation time and a consistent complete owner/resource set.",
+    "Validate installation, cleanup operation type, target kind and target identity for every linked operation; an id-only FK is insufficient.",
+    "For explicit cleanup, preserve the recorded created_at/deadline_at envelope across queueing and takeover; validate that envelope is the correct cleanup budget authority.",
+    "Cover automatic cleanup without assuming every owner has a cleanup operation row; settle its durable start and frozen budget mapping.",
+    "Do not substitute resource created_at, mutable updated_at, worker claim time, result_config_version or current config for an unproven cleanup start/budget.",
+    "Distinguish a fully read empty set from absent, failed, truncated, stale or incomplete collection; unknown collection must not become healthy.",
+    "Evaluate strict Age > ImmutableDeadline per owner with valid nonnegative age and positive deadline, then any; preserve immediate critical in both profiles."
+  ],
+  "approved_new_metric_names": [],
+  "approved_new_SQL_columns": [],
+  "approved_automatic_cleanup_time_projection": null,
+  "proposed_controller_state_count_is_not_implemented": true,
+  "collector_or_SQL_executed": false,
+  "Go_executed": false,
+  "PromQL_executed": false,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "whole_baseline_accepted": false,
+  "production_approved": false
+}

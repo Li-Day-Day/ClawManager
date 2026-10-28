@@ -1,0 +1,72 @@
+{
+  "kind": "a_nonce_ca_local_acceptance.v2",
+  "status": "exact_local_preparation_only",
+  "receipt": {
+    "path": "docs/evidence/a-nonce-ca-r2-candidate-20261023-164639-61dbbaab.json",
+    "size": 79571,
+    "sha256": "74a23ab5c3695bb20dd54b8cc9dd7f24c76ac0fcb2bbafddb9182c2eb4cfcac5"
+  },
+  "transcript": {
+    "path": "docs/evidence/a-nonce-ca-r2-local-20261023-164638.txt",
+    "size": 12377,
+    "sha256": "69d33c0edf33750366086442a864b2fb66a2e251c5c164f44e0fc6247c5c8b24"
+  },
+  "source_sha256": "3f10b7cb687f2ecb666b428600b44850436afb051b72673d7d0a30aa604710bb",
+  "source_files": 385,
+  "tests": [
+    "TestNoncePrepareAndTransactionRetention",
+    "TestNonceRejectsIncompleteOrChangedHistory",
+    "TestNoncePrepareRejectsBadMaterialAndBinding",
+    "TestNonceMappingCopyAndOutputIsolation",
+    "TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit",
+    "TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs",
+    "TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead",
+    "TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting",
+    "TestCATrustBindingNeverFormatsOrSerializesDeploymentPins"
+  ],
+  "pass_events": 63,
+  "original_tests_preserved": 54,
+  "original_transcript": {
+    "path": "docs/evidence/a-nonce-ca-final-local-20261023-153722.txt",
+    "size": 10614,
+    "sha256": "9170292d3355afaac051670fff706172558a698c25bbf013fae7620ce4eb1338"
+  },
+  "original_counterexample": {
+    "path": "docs/evidence/a-nonce-ca-r2-candidate-20261023-164639-61dbbaab.old.jsonl",
+    "size": 11509,
+    "sha256": "ed1fdfdfbdd23eb0804d347e70a55c913226d2bc488f84d57b53abc72fb98822"
+  },
+  "original_source": {
+    "path": "docs/evidence/a-ca-binding-original-source-20261023.json",
+    "size": 30182,
+    "sha256": "f1bc50c34e6b35b2b7cd381c931d3c6ae5386eb0091b352683aa2983fab78ec1"
+  },
+  "original_peer_review": {
+    "path": "docs/evidence/d-a-nonce-ca-reviewed-20261023.json",
+    "size": 5239,
+    "sha256": "0b4ae71057df23acae984b667c6ef976bb67e72a109d98d3cbb6b103bc25c738"
+  },
+  "old_failed_boundaries": 8,
+  "cache_seed_audit": {
+    "path": "docs/evidence/a-nonce-ca-r2-candidate-20261023-164639-61dbbaab.cache-seed.json",
+    "size": 634,
+    "sha256": "c67401ff461afee3e469461de257a126c430bec31f55fbe9209e45a5f1480134"
+  },
+  "exact_owner_absent": true,
+  "default_vet": true,
+  "Linux_builds": [
+    "nonce-bootstrap.test",
+    "ca-trust.test"
+  ],
+  "current_source_set_and_bytes_match": true,
+  "actual_SQL": false,
+  "external_provider": false,
+  "non_implementer_review": false,
+  "production_linked": false,
+  "production_approved": false,
+  "receiver": {
+    "path": "docs/evidence/a-nonce-ca-r2-local-review-20261023.mjs",
+    "size": 10742,
+    "sha256": "030d7027468d6f0d33d1e511a2467081a9b401cdfbfde46e7ab7dcdd9d33dc1e"
+  }
+}

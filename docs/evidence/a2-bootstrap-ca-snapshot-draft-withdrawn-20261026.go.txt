@@ -1,0 +1,148 @@
+package systembackupcatrust
+
+import (
+	"context"
+	"reflect"
+	"sync/atomic"
+	"time"
+
+	pd "clawreef/internal/systembackupproducer"
+	sec "clawreef/internal/systembackupsecurity"
+)
+
+// PreparedCandidateCA is an original material observation, never deployment or
+// bootstrap authority. Its source is the fixed Validator, not a request policy.
+// Physical preparation failures are retained so an independently authenticated
+// exact historical retry can reach L3 without probing the resource again.
+type PreparedCandidateCA struct{ state *candidateCAState }
+
+type candidateCAState struct {
+	ctx                          context.Context
+	server, database             string
+	notBefore, observed, expires time.Time
+	ready                        bool
+	used                         atomic.Bool
+}
+
+// CandidateCAObservation belongs to the original caller's guarded transaction.
+// The independent resource authority must invoke its final check after all
+// mutable resource callbacks, before A/D's fixed independent readback.
+type CandidateCAObservation struct {
+	state *candidateCAState
+	tx    pd.BootstrapSQL
+}
+
+func (PreparedCandidateCA) String() string               { return "PreparedCandidateCA" }
+func (PreparedCandidateCA) GoString() string             { return "PreparedCandidateCA" }
+func (PreparedCandidateCA) MarshalJSON() ([]byte, error) { return nil, sec.ErrRegistrationUnavailable }
+func (*PreparedCandidateCA) UnmarshalJSON([]byte) error  { return sec.ErrRegistrationUnavailable }
+func (CandidateCAObservation) String() string            { return "CandidateCAObservation" }
+func (CandidateCAObservation) GoString() string          { return "CandidateCAObservation" }
+func (CandidateCAObservation) MarshalJSON() ([]byte, error) {
+	return nil, sec.ErrRegistrationUnavailable
+}
+func (*CandidateCAObservation) UnmarshalJSON([]byte) error { return sec.ErrRegistrationUnavailable }
+
+func sameCandidateCAContext(a, b context.Context) bool {
+	if a == nil || b == nil {
+		return false
+	}
+	av, bv := reflect.ValueOf(a), reflect.ValueOf(b)
+	return av.Comparable() && bv.Comparable() && !(av.Kind() == reflect.Pointer && av.IsNil()) && !(bv.Kind() == reflect.Pointer && bv.IsNil()) && a == b
+}
+
+// PrepareCandidateAttempt performs the existing real descriptor/CA/TLS checks
+// entirely before locks. Only immutable original scope and times survive; no
+// Validator, clock callback, file path, certificate pool or connection escapes.
+// Input/context errors still fail immediately. A failed physical observation
+// yields no deadline and can NEVER pass CheckCandidate for a new consumption.
+func (v *Validator) PrepareCandidateAttempt(ctx context.Context, g sec.OfflineBootstrapGrant, c sec.BootstrapConfig) (*PreparedCandidateCA, error) {
+	if v == nil || v.now == nil || !sameCandidateCAContext(ctx, ctx) || ctx.Err() != nil || g.InstallationID != v.binding.InstallationID || g.ServerUUID != v.binding.ServerUUID || g.Database != v.binding.Database || g.ConfigSHA256 != v.binding.ConfigSHA256 || c.SHA256() != v.binding.ConfigSHA256 {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	owned, err := sec.DecodeBootstrapConfig(c.CanonicalJSON())
+	if err != nil || owned.SHA256() != g.ConfigSHA256 {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	s := &candidateCAState{ctx: ctx, server: v.binding.ServerUUID, database: v.binding.Database}
+	legacy, err := v.Prepare(ctx, g, owned)
+	if ctx.Err() != nil {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	if err != nil {
+		return &PreparedCandidateCA{s}, nil
+	}
+	checked, ok := legacy.(*check)
+	if !ok || checked == nil || checked.validator == nil {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	s.notBefore, s.observed, s.expires = checked.validator.binding.NotBefore, checked.observedAt, checked.expiresAt
+	s.ready = true
+	return &PreparedCandidateCA{s}, nil
+}
+
+// DependencyDeadline is the ORIGINAL unrenewed observation/chain/mapping bound.
+// The mandatory original resource authority must intersect a non-nil value
+// into BootstrapConsumptionAdmission.DependencyExpiresAt. D applies that bound
+// on the new-consume branch through its final sample AFTER every callback. An
+// early resource Recheck alone cannot cover subsequent SQL/callback waits.
+// Nil means failed preparation, never an unlimited resource lifetime.
+func (p *PreparedCandidateCA) DependencyDeadline() *pd.Timestamp {
+	if p == nil || p.state == nil || !p.state.ready {
+		return nil
+	}
+	t := p.state.expires.UTC()
+	if rem := t.Nanosecond() % 1000; rem != 0 {
+		t = t.Add(time.Duration(1000-rem) * time.Nanosecond)
+	}
+	stamp := pd.Timestamp(t.Format("2006-01-02T15:04:05.000000Z"))
+	if _, err := stamp.Time(); err != nil {
+		return nil
+	}
+	return &stamp
+}
+
+func candidateCATime(s *candidateCAState, now time.Time) bool {
+	_, offset := now.Zone()
+	return s != nil && s.ready && now.Year() >= 1000 && now.Year() <= 9999 && offset == 0 && now.Nanosecond()%1000 == 0 && !now.Before(s.notBefore) && !now.Before(s.observed) && now.Before(s.expires)
+}
+
+// CheckCandidate is a one-shot, read-only new-consume resource check. The outer
+// consumer authenticates the original mapping and chooses the L3 branch first.
+// No failed preparation may reach SQL or create a usable observation.
+func (p *PreparedCandidateCA) CheckCandidate(ctx context.Context, tx pd.BootstrapSQL) (*CandidateCAObservation, error) {
+	if p == nil || p.state == nil || !p.state.used.CompareAndSwap(false, true) {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	s := p.state
+	if !s.ready || !sameCandidateCAContext(ctx, s.ctx) || ctx.Err() != nil || !pd.SameBootstrapTransaction(tx, tx) {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	observation := &CandidateCAObservation{state: s, tx: tx}
+	if observation.Recheck(ctx, tx) != nil {
+		return nil, sec.ErrRegistrationUnavailable
+	}
+	return observation, nil
+}
+
+// Recheck uses only the original owned observation, already-owned caller SQL
+// and its shared monotonic clock. Physical files and provider availability are
+// never re-read or interpreted as current grant/RBAC/deployment permission.
+func (o *CandidateCAObservation) Recheck(ctx context.Context, tx pd.BootstrapReadSQL) error {
+	if o == nil || o.state == nil || !sameCandidateCAContext(ctx, o.state.ctx) || ctx.Err() != nil || !pd.SameBootstrapTransaction(o.tx, tx) {
+		return sec.ErrRegistrationUnavailable
+	}
+	start, err := tx.SampleTime(ctx)
+	if err != nil || !candidateCATime(o.state, start) {
+		return sec.ErrRegistrationUnavailable
+	}
+	var server, database string
+	if tx.QueryRowContext(ctx, "SELECT @@server_uuid,DATABASE()").Scan(&server, &database) != nil || server != o.state.server || database != o.state.database {
+		return sec.ErrRegistrationUnavailable
+	}
+	end, err := tx.SampleTime(ctx)
+	if err != nil || ctx.Err() != nil || end.Before(start) || !candidateCATime(o.state, end) {
+		return sec.ErrRegistrationUnavailable
+	}
+	return nil
+}

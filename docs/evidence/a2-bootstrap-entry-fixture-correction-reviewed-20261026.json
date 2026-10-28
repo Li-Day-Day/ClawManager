@@ -1,0 +1,96 @@
+{
+  "kind": "a2_bootstrap_entry_fixture_correction_review.v1",
+  "status": "exact_fixture_and_label_corrections_verified_fresh_native_required",
+  "withdrawn_preliminary_review": {
+    "path": "docs/evidence/a2-bootstrap-entry-source-reviewed-20261026.json",
+    "size": 13221,
+    "sha256": "596f8f1c497a3c2864bb5930bda27d5187688fc6d6b818d51ef8e28d40aa7b45"
+  },
+  "diagnosis": "docs/evidence/a2-bootstrap-entry-vector-lookup-gap-20261026.json",
+  "D1_entry_before": {
+    "path": "docs/evidence/d-bootstrap-entry-fe6f-lookup-failed-source-20261026.go.txt",
+    "size": 21773,
+    "sha256": "fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c"
+  },
+  "D1_entry_after": {
+    "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+    "size": 21772,
+    "sha256": "ba5414ace5a76d653c4865ad63738aae72612cb7c738da4fbb647471a449a956"
+  },
+  "exact_two_literal_changes": true,
+  "original_vector_contract": {
+    "path": "contracts/system-backup/v12/producer-authority-vectors.json",
+    "size": 141814,
+    "sha256": "91ea7bff4c6044959ac8e7549d25204ef68c8ab4ea60b3ecd2ef244968d4dbb5"
+  },
+  "original_contract_unchanged": true,
+  "literal_calls_resolved_against_original_catalog": [
+    {
+      "group": "records",
+      "key": "DomainRecord"
+    }
+  ],
+  "dynamic_positive_IDs_resolved": [
+    "unconfigured_artifact",
+    "disabled_artifact"
+  ],
+  "wrapper": {
+    "path": "scripts/system-backup-d-bootstrap-entry-mysql-validation.ps1",
+    "size": 13978,
+    "sha256": "7c1ea9218e0b2cb098dafea1d794eb120b48419d4a7090c2a302993498f6e7cf"
+  },
+  "wrapper_exact_single_label_change": true,
+  "D1_current_ready_all_nine_pins_match": true,
+  "D2_producer_test": {
+    "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+    "size": 9302,
+    "sha256": "2e651bc713551a731c4ac5977a076d98868cdda2a4ffbcaf66b42a43062fa0c7"
+  },
+  "D2_producer_exact_single_fixture_ID_change": true,
+  "D2_ready_current_mismatches": [
+    {
+      "recorded": {
+        "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+        "size": 9304,
+        "sha256": "b89d371554e2e3d11c335903bd46714a0fe75445950d1a0708adc665e93bee8d"
+      },
+      "current": {
+        "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+        "size": 9302,
+        "sha256": "2e651bc713551a731c4ac5977a076d98868cdda2a4ffbcaf66b42a43062fa0c7"
+      }
+    }
+  ],
+  "text_receiver_source_and_regressions_unchanged": true,
+  "receiver33_not_rerun": true,
+  "prior_receiver33_scope": "same unchanged Node text receiver only, not Go seed",
+  "fresh_Go_or_actual_SQL_accepted": false,
+  "production_gate_or_vectors_changed": false,
+  "Go_executed_by_A2": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "inputs": [
+    {
+      "path": "docs/evidence/d-bootstrap-entry-source-ready-20261026.json",
+      "size": 3137,
+      "sha256": "0b013d276b9a9e715df185cecf088459698c827f9d5189246b0c5b943a6effeb"
+    },
+    {
+      "path": "docs/evidence/d2-bootstrap-entry-source-ready-20261026.json",
+      "size": 5460,
+      "sha256": "1b756723b727767c470c2ce602cce02b4785911b8c4af4c7f9722df5f705f8b6"
+    },
+    {
+      "path": "docs/evidence/d1-bootstrap-entry-fixture-lookup-delta-20261026.json",
+      "size": 720,
+      "sha256": "0b266ff96524c77fa3faf4188e1928675bcbb6484885d94265c428ca9d5efcae"
+    },
+    {
+      "path": "docs/evidence/d1-bootstrap-entry-stdout-tag-delta-20261026.json",
+      "size": 799,
+      "sha256": "f4b3b2369a1dc13f07ce784eeda54628c6c307dac89cbe45ecd39c1a25ecdee2"
+    }
+  ]
+}

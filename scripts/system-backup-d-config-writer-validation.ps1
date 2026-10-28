@@ -11,14 +11,20 @@ param(
     [switch]$DownloadGCRoleOnly,
     [switch]$DownloadGCTaskOnly,
     [switch]$DownloadGCFreezeOnly,
+    [switch]$DownloadGCFullProfileOnly,
+    [switch]$DownloadGCFullCollectOnly,
     [switch]$MaintenanceReceiptsOnly,
     [switch]$BackfillServiceOnly,
     [switch]$BackfillRowGuards,
+    [switch]$RequireReviewedOwnerBaseline,
     [ValidateRange(1,4)][int]$BuildParallelism=1,
     [Parameter(Mandatory=$true)][string]$SourceManifestPath,
     [ValidatePattern('^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+$')][string]$SshTarget='root@10.130.14.23'
 )
 $ErrorActionPreference='Stop'
+if($DownloadGCFullCollectOnly){if($DownloadGCFullProfileOnly -or $DownloadGCFreezeOnly){throw 'Full Collect, Full profile and historical freeze profiles must be selected separately'};$DownloadGCFullProfileOnly=$true}
+if($DownloadGCFullProfileOnly){if($DownloadGCFreezeOnly){throw 'Full-profile and historical freeze profiles must be selected separately'};$DownloadGCFreezeOnly=$true}
+if($RequireReviewedOwnerBaseline -and (-not $Remote -or -not ($DownloadOwnersOnly -or $DownloadGCRoleOnly))){throw 'RequireReviewedOwnerBaseline requires an owner or GC role remote profile'}
 if($DownloadGCFreezeOnly -and ($DownloadGCTaskOnly -or $DownloadGCRoleOnly -or $DownloadProducerOnly -or $DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadGCFreezeOnly requires an exclusive validation profile'}
 if($DownloadGCTaskOnly -and ($DownloadGCRoleOnly -or $DownloadProducerOnly -or $DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadGCTaskOnly requires an exclusive validation profile'}
 if($DownloadGCRoleOnly -and ($DownloadProducerOnly -or $DownloadTaskChainOnly -or $DownloadOwnersOnly -or $DownloadAdmissionOnly -or $DownloadMFAOnly -or $NonceTimeOnly -or $SecurityOnly -or $MaintenanceReceiptsOnly -or $BackfillServiceOnly -or $BackfillRowGuards)){throw 'DownloadGCRoleOnly requires an exclusive validation profile'}
@@ -58,11 +64,35 @@ try {
     $writerStream=[IO.File]::Open($writerManifest,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write)
     try{$writerBytes=[Text.Encoding]::UTF8.GetBytes(($writerSnapshot|ConvertTo-Json -Depth 6));$writerStream.Write($writerBytes,0,$writerBytes.Length)}finally{$writerStream.Dispose()}
     Write-Output ('LOCAL_SOURCE config-writer-frozen=yes source_sha256='+$writerSnapshot.source_sha256+' files='+$writerSnapshot.files.Count)
+    if($RequireReviewedOwnerBaseline){
+        # The early operator check cannot authorize a later snapshot retry.
+        # Check the exact successful immutable capture, never the live tree.
+        $writerBaselineGate=Join-Path $writerRoot 'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+        if(-not (Test-Path -LiteralPath $writerBaselineGate -PathType Leaf)){throw 'Reviewed owner baseline checker unavailable; no test or SSH started'}
+        $writerGatePreviousEncoding=$OutputEncoding
+        try {
+            $OutputEncoding=[Text.UTF8Encoding]::new($false)
+            $writerGateOutput=@(($writerSnapshot|ConvertTo-Json -Depth 8 -Compress)|& node $writerBaselineGate)
+            $writerGateExit=$LASTEXITCODE
+        } finally {$OutputEncoding=$writerGatePreviousEncoding}
+        $writerGateOutput|Write-Output
+        if($writerGateExit -ne 0){throw 'Frozen ordinary source requires a reviewed owner baseline; no test or SSH started'}
+        $writerGateResult=($writerGateOutput -join [Environment]::NewLine)|ConvertFrom-Json -ErrorAction Stop
+        if($writerGateResult -is [Array] -or $writerGateResult.status -cne 'ready_for_original_snapshot_gate' -or
+            $writerGateResult.reviewed_source_sha256 -notmatch '^[a-f0-9]{64}$' -or
+            $writerGateResult.actual_sql -isnot [bool] -or $writerGateResult.actual_sql -or
+            $writerGateResult.tests_started -isnot [bool] -or $writerGateResult.tests_started){throw 'Invalid reviewed owner baseline decision; no test or SSH started'}
+        Write-Output ('LOCAL_PASS owner-baseline-frozen=yes source_sha256='+$writerSnapshot.source_sha256+' reviewed_source_sha256='+$writerGateResult.reviewed_source_sha256)
+    }
     $env:PATH='C:\Program Files\Go\bin;'+$env:PATH
     Push-Location $writerFrozen
     try {
         & (Join-Path $writerFrozen 'scripts/system-backup-a-evidence-dispatch.test.ps1')
-        if($DownloadGCFreezeOnly){
+        if($DownloadGCFullCollectOnly){
+            & (Join-Path $writerFrozen 'scripts/system-backup-d-download-gc-full-collect-dispatch.test.ps1')
+        } elseif($DownloadGCFullProfileOnly){
+            & (Join-Path $writerFrozen 'scripts/system-backup-d-download-gc-full-profile-dispatch.test.ps1')
+        } elseif($DownloadGCFreezeOnly){
             & (Join-Path $writerFrozen 'scripts/system-backup-d-download-gc-freeze-dispatch.test.ps1')
         } elseif($DownloadGCTaskOnly){
             & (Join-Path $writerFrozen 'scripts/system-backup-d-download-gc-task-dispatch.test.ps1')
@@ -86,7 +116,7 @@ try {
             & (Join-Path $writerFrozen 'scripts/system-backup-d-config-writer-dispatch.test.ps1') -MaintenanceReceiptsOnly
             & (Join-Path $writerFrozen 'scripts/system-backup-d-config-writer-dispatch.test.ps1') -BackfillServiceOnly
         }
-        & (Join-Path $writerFrozen 'scripts/system-backup-a-evidence-validation.ps1') -ConfigWriterOnly -ConfigWriterSecurityOnly:$SecurityOnly -ConfigNonceTimeOnly:$NonceTimeOnly -ConfigDownloadMFAOnly:$DownloadMFAOnly -ConfigDownloadAdmissionOnly:$DownloadAdmissionOnly -ConfigDownloadOwnersOnly:$DownloadOwnersOnly -ConfigDownloadTaskChainOnly:$DownloadTaskChainOnly -ConfigDownloadProducerOnly:$DownloadProducerOnly -ConfigDownloadGCRoleOnly:$DownloadGCRoleOnly -ConfigDownloadGCTaskOnly:$DownloadGCTaskOnly -ConfigDownloadGCFreezeOnly:$DownloadGCFreezeOnly -ConfigMaintenanceReceiptOnly:$MaintenanceReceiptsOnly -ConfigBackfillServiceOnly:$BackfillServiceOnly -BackfillRowGuards:$BackfillRowGuards -BuildParallelism $BuildParallelism -Remote:$Remote -SshTarget $SshTarget
+        & (Join-Path $writerFrozen 'scripts/system-backup-a-evidence-validation.ps1') -ConfigWriterOnly -ConfigWriterSecurityOnly:$SecurityOnly -ConfigNonceTimeOnly:$NonceTimeOnly -ConfigDownloadMFAOnly:$DownloadMFAOnly -ConfigDownloadAdmissionOnly:$DownloadAdmissionOnly -ConfigDownloadOwnersOnly:$DownloadOwnersOnly -ConfigDownloadTaskChainOnly:$DownloadTaskChainOnly -ConfigDownloadProducerOnly:$DownloadProducerOnly -ConfigDownloadGCRoleOnly:$DownloadGCRoleOnly -ConfigDownloadGCTaskOnly:$DownloadGCTaskOnly -ConfigDownloadGCFreezeOnly:($DownloadGCFreezeOnly -and -not $DownloadGCFullProfileOnly) -ConfigDownloadGCFullProfileOnly:($DownloadGCFullProfileOnly -and -not $DownloadGCFullCollectOnly) -ConfigDownloadGCFullCollectOnly:$DownloadGCFullCollectOnly -ConfigMaintenanceReceiptOnly:$MaintenanceReceiptsOnly -ConfigBackfillServiceOnly:$BackfillServiceOnly -BackfillRowGuards:$BackfillRowGuards -BuildParallelism $BuildParallelism -Remote:$Remote -SshTarget $SshTarget
         Test-DIndexSourceSnapshot -Root $writerFrozen -Manifest $writerSnapshot
         Write-Output ('LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested='+[bool]$Remote)
     } finally {Pop-Location}

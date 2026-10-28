@@ -1,0 +1,35 @@
+**********************
+PowerShell transcript start
+Start time: 20261026114903
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\scripts\system-backup-d-bootstrap-consumer-mysql-validation.ps1
+Process ID: 40256
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+
+{"ImportPath":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]","Action":"build-output","Output":"# clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]\n"}
+{"ImportPath":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]","Action":"build-output","Output":"internal\\systembackupevidence\\bootstrap_consumer_mysql_test.go:12:2: \"database/sql\" imported and not used\n"}
+{"ImportPath":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]","Action":"build-fail"}
+{"Time":"2026-10-26T11:53:42.9927452+08:00","Action":"start","Package":"clawreef/internal/systembackupevidence"}
+{"Time":"2026-10-26T11:53:42.9932925+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"FAIL\tclawreef/internal/systembackupevidence [build failed]\n"}
+{"Time":"2026-10-26T11:53:42.9932925+08:00","Action":"fail","Package":"clawreef/internal/systembackupevidence","Elapsed":0.001,"FailedBuild":"clawreef/internal/systembackupevidence [clawreef/internal/systembackupevidence.test]"}
+PS>TerminatingError(): "BootstrapConsumer Go step failed exit=1"
+CLEANED bootstrapConsumer-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-75e285e0dc224232bbbbf34c938e0708 removed=True
+BOOTSTRAP_CONSUMER_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-bootstrap-consumer-mysql-20261026-114903-75e285e0.json
+**********************
+PowerShell transcript end
+End time: 20261026115355
+**********************

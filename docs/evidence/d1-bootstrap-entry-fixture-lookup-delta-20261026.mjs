@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const archive='docs/evidence/d-bootstrap-entry-fe6f-lookup-failed-source-20261026.go.txt';
+const current='backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go';
+const before=fs.readFileSync(archive),after=fs.readFileSync(current);
+assert.equal(sha(before),'fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c');
+const changes=[['name = "configured_artifact"','name = "disabled_artifact"'],['dIntegrationVector(t, "results", name)','dIntegrationVector(t, "positive", name)']];
+let fixed=before.toString('utf8');
+for(const [from,to]of changes){assert.equal(fixed.split(from).length-1,1);fixed=fixed.replace(from,to);}
+assert.ok(Buffer.from(fixed).equals(after),'unrelated Go bytes changed');
+const contract='contracts/system-backup/v12/producer-authority-vectors.json';
+const manifest=JSON.parse(fs.readFileSync('docs/evidence/d-gc-full-supplement-2775832f44dc48d28bc8c68c88c74d4b-source.json','utf8').replace(/^\uFEFF/,''));
+assert.equal(sha(fs.readFileSync(contract)),manifest.files.find(p=>p.path===contract).sha256);
+const capsule=fs.readFileSync('backend/internal/systembackupevidence/testdata/bootstrap-consumer-mysql-inputs.json');
+assert.equal(sha(capsule),'947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa');
+const vectors=JSON.parse(JSON.parse(capsule).producer_vectors);
+assert.equal(vectors.positive.find(p=>p.id==='disabled_artifact')?.value.admission.scenario,'disabled');
+assert.equal(vectors.positive.find(p=>p.id==='unconfigured_artifact')?.value.admission.scenario,'unconfigured');
+assert.equal(vectors.results,undefined);
+const result={kind:'d1_bootstrap_entry_fixture_lookup_delta.v1',before_sha256:sha(before),after_sha256:sha(after),before_size:before.length,after_size:after.length,exact_two_literal_replacements:true,before_source_archive:archive,source_group:'positive',configured_fixture_id:'disabled_artifact',unconfigured_fixture_id:'unconfigured_artifact',original_vectors_changed:false,production_gate_changed:false,new_native_execution:false,actual_mysql:false,production_approved:false};
+const output='docs/evidence/d1-bootstrap-entry-fixture-lookup-delta-20261026.json';
+if(process.argv.includes('--check'))assert.deepEqual(JSON.parse(fs.readFileSync(output,'utf8')),result);else fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log('ENTRY_LOOKUP_DELTA_ONLY source='+result.after_sha256+' original_vectors=unchanged native=not_run');

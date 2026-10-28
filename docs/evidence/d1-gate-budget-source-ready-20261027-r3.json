@@ -1,0 +1,123 @@
+{
+  "kind": "d1_gate_budget_SQL_and_runtime_candidate.v3",
+  "status": "source_only_native_and_independent_review_pending",
+  "base": {
+    "path": "docs/evidence/d1-gate-budget-current-base-20261027-r3.json",
+    "size": 329764,
+    "sha256": "fb636811466145fbf07856856983aa3c9a855548f1457bfcca8cb33a6556db65"
+  },
+  "base_source_sha256": "dc79d81f74d6d6c293372f6c5404b2a673c3f469da1c4d14d4adc763199efa8e",
+  "base_source_files": 1720,
+  "candidate_source_sha256": "8be6028b7c2ca7a383d1bc7f7ec7b81bf3fb16e75ae6193ce645589d81dadb30",
+  "candidate_source_files": 1722,
+  "changes": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+        "size": 12644,
+        "sha256": "76332a6880a8037756db194212cd0b42fd4b804707eae0110c68fd6e9dee4d5a"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-sql-candidate-20261027-r3.go.txt",
+        "size": 12644,
+        "sha256": "76332a6880a8037756db194212cd0b42fd4b804707eae0110c68fd6e9dee4d5a"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+        "size": 17070,
+        "sha256": "6e132ecc7c3fef18ec46ca90758b5cea36af82718cd0f7ce1bba199501b0e05b"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-test-candidate-20261027-r3.go.txt",
+        "size": 17070,
+        "sha256": "6e132ecc7c3fef18ec46ca90758b5cea36af82718cd0f7ce1bba199501b0e05b"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/metrics_http.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 6658,
+        "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-http-candidate-20261027-r3.go.txt",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      }
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "before": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22140,
+        "sha256": "1d1b63326ffd7490f5e702f0b3125f688a826454c42fec150814ceb14b23cfeb"
+      },
+      "after": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-main-candidate-20261027-r3.go.txt",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      }
+    }
+  ],
+  "prepared_test_roots": [
+    "TestGateBudgetFrozenThresholdsAcrossConfigurationChanges",
+    "TestGateBudgetExpiredLeaseDoesNotHideOverdueGate",
+    "TestGateBudgetExactBoundariesAndOriginalMatrixLabels",
+    "TestGateBudgetRejectsUnknownOrContradictoryOriginalFacts",
+    "TestGateBudgetClippedLeaseKeepsOriginalFrozenBudget",
+    "TestSQLGateBudgetReadsBoundedOriginalSourcesInOneUTCReadOnlySnapshot",
+    "TestSQLGateBudgetNeverPublishesMissingPartialFailedOrCanceledSnapshots",
+    "TestGateBudgetHTTPRejectsPartialMetricsAndSuppressesAfterLeaderLoss"
+  ],
+  "tightening": {
+    "frozen_acquisition_window": "equals original frozen seconds exactly",
+    "frozen_hold_window": "equals original frozen seconds exactly",
+    "lease_window": "positive and at most the original TTL; LEAST clipping remains accepted",
+    "new_negative_cases": [
+      "shortened_acquisition",
+      "shortened_hold"
+    ],
+    "new_positive_case": "TestGateBudgetClippedLeaseKeepsOriginalFrozenBudget"
+  },
+  "previous_source_preparation": {
+    "path": "docs/evidence/d1-gate-budget-source-ready-20261027-r1.json",
+    "size": 6649,
+    "sha256": "ef51b4d5645f1e02c79a58413ead3459d445fb76e03f47ccd233f16389358509"
+  },
+  "format_parse": {
+    "path": "docs/evidence/d1-gate-budget-formatted-source-20261027-r2.json",
+    "size": 2198,
+    "sha256": "e22fe2dadbc534df922fa7a96dc627d31cb61e19323481f42deaddb548283137"
+  },
+  "source_preparer": {
+    "path": "docs/evidence/d1-gate-budget-tighten-source-20261027-r3.mjs",
+    "size": 6310,
+    "sha256": "d300faf126031480d2772d7d2fd1d001649493b626288a164bf8484521714d16"
+  },
+  "current_tagged_fixes_captured_in_base": true,
+  "whole_ordinary_baseline_reapproved_by_this_command": false,
+  "Go_started": false,
+  "tests_executed": false,
+  "actual_SQL": false,
+  "PromQL_executed": false,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

@@ -1,0 +1,67 @@
+{
+  "kind": "a2_cleanup_reader_source_review.v1",
+  "reviewed_at": "2026-10-27T07:50:21.300Z",
+  "status": "two_reported_reader_defects_fixed_in_archived_source_no_runtime_acceptance",
+  "reader_input": {
+    "path": "docs/evidence/d2-cleanup-reader-candidate-20261027.go.txt",
+    "size": 13591,
+    "sha256": "9af5a78c3a558f78da769d1be6a37892b182446a17201cdfe7e303291ffccb65"
+  },
+  "archived_reader": {
+    "path": "docs/evidence/a2-cleanup-reader-source-reviewed-20261027-r1.go.txt",
+    "size": 13591,
+    "sha256": "9af5a78c3a558f78da769d1be6a37892b182446a17201cdfe7e303291ffccb65"
+  },
+  "original_config_schema": {
+    "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+    "size": 31699,
+    "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+  },
+  "clock_dependency": {
+    "path": "docs/evidence/d2-cleanup-clock-candidate-20261027.go.txt",
+    "size": 8259,
+    "sha256": "3add7030e122b7c19db002a7221fbd0a7ce3051d7c872f4139cd6920e10bf6c2"
+  },
+  "findings": [
+    {
+      "id": "A2-CLEANUP-READER-01",
+      "issue": "Active cleanup parent with zero resource rows could fall through to Complete=true Owners=[]",
+      "initial_source_observed": "for each active parent -> readCleanupResources -> for each resources; no empty-resource branch",
+      "fix_observed": "Explicit no-resource error before the resource loop",
+      "source_status": "fixed",
+      "required_runtime_regression": "A pending/overdue drill parent with a valid immutable snapshot but no resource rows must never return a complete healthy collection."
+    },
+    {
+      "id": "A2-CLEANUP-READER-02",
+      "issue": "Original query selected nonexistent c.canonical_config_json",
+      "initial_query_fragment": "c.config_sha256,c.config_size_bytes,c.canonical_config_json",
+      "original_schema_evidence": "066 stores typed config columns; no canonical_config_json column exists",
+      "fix_observed": "Query selects original cleanup_deadline_seconds plus hash/size, DecodeBudget validates task canonical bytes, then compares decoded seconds to the typed original config value",
+      "source_status": "fixed",
+      "required_runtime_regression": "Real-schema-backed reader query and mismatched original budget/hash/size rejection."
+    }
+  ],
+  "positive_source_observations": [
+    "RR read-only transaction and database UTC observation clock",
+    "whole collection only marked Complete after commit and context recheck",
+    "bounded row accounting and rows error/close checks",
+    "unknown nil residual fact rejected; observation identity must match original resource",
+    "failed/partial_failed parents included and older clocks retained for unsettled resources",
+    "new query only selects existing original config columns"
+  ],
+  "remaining_review": [
+    "writer atomic CAS and operation/retry binding",
+    "consistent full inventory and provider fact completeness",
+    "actual native reader regression and real SQL query execution",
+    "GC and migration/reference integration",
+    "accurate source postcheck and owned artifact cleanup"
+  ],
+  "Go_executed": false,
+  "SQL_executed": false,
+  "agent_SSH": false,
+  "live_source_changed_by_A2": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

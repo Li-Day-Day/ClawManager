@@ -1,0 +1,180 @@
+{
+  "kind": "a_gc_finalizer_static_source_review.v1",
+  "decision": "private_finalizer_static_boundaries_reviewed_runtime_gate_and_production_pending",
+  "source_sha256": "41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16",
+  "manifest": {
+    "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-source.json",
+    "size": 311940,
+    "sha256": "cd90768f6b3d4bc11fb870434a5335c6499c3f279719d2f4fe8ba35f2cce713a"
+  },
+  "predecessor": {
+    "path": "docs/evidence/d-gc-finalizer-predecessor-source-20261026.json",
+    "size": 73864,
+    "sha256": "a86f1f52fee6a509f1bdd88681eec54fe2f58722dde7493a1cdf33c7f9f022ef"
+  },
+  "collector_explicit_delta": [
+    "private protected-work delegation and captured completion",
+    "retain final work SQL sample in captured now"
+  ],
+  "predecessor_collector_reconstructed_sha256": "77718ddf597105ca73544bd270024e3f5c8fa989316471122ef27468df303417",
+  "original_work_preserved_after_reversing_explicit_delta": true,
+  "original_freeze_body_preserved_after_removing_finalizer_call": true,
+  "original_capacity_guard_unchanged": true,
+  "dynamic_context_comparability_checked": true,
+  "shared_atomic_one_use": true,
+  "real_work_issues_completion": true,
+  "finalizer_after_ticket_before_sole_commit": true,
+  "production_Collect_freeze_linked": false,
+  "full_local_gate_received": false,
+  "current_baseline_registration_permitted": false,
+  "actual_SQL": false,
+  "joint_protocol_approved": false,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "size": 33161,
+      "sha256": "6e973153f4f2f59b891211c3ece8b782b54e277078dbeb82427351221cf968b8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_batch.go",
+      "size": 8040,
+      "sha256": "2006a974666770da50868750661628dd9de46726268652fa4bc77f7ada22b6cc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_batch_test.go",
+      "size": 13123,
+      "sha256": "f708a569b54d3876eb4590feec4eca74ae2982039b47d9e72e6e1843b786bf02"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+      "size": 3232,
+      "sha256": "964b5d9cd2d7bb71e3201003c2538edfe45b550b585d19428cf7991ece6a9cf5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection_test.go",
+      "size": 12648,
+      "sha256": "cda35914e5f69305855e9e2cb5ff431ecd171c2a9ef92a08af7ac9ecaeeedd0f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_dependencies_test.go",
+      "size": 15517,
+      "sha256": "6f707c7973535770215d329da4fadf06707571b7cd55316019a2244b88238bab"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+      "size": 15973,
+      "sha256": "daaf8a8278b786d002080581de0f2323e9de8e11fcb926ef8481e545a6b0f299"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_early_test.go",
+      "size": 15837,
+      "sha256": "424e2184759f29f75c131c5694fcbb38dca339d32fd27bf0495a501dd57df52d"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "size": 2816,
+      "sha256": "28e93f205ee04d8692e996b709485e6f7582f63f3a15b2cf7177f72bdcb269bc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize_test.go",
+      "size": 5426,
+      "sha256": "a7c0a5125a71f3fb315ea1e6bc20f76c9de045858a92e0ae6a5e4151303e7db6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "size": 6950,
+      "sha256": "085ec806d6cc0147c3c9147ec45077f847b30357bcfe7d4d9415e771b582cf48"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "size": 2788,
+      "sha256": "ff26954ff8e337d2eb3657fdc6b3d2b1cb483286f882312dd7c5b50ace1cb082"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "size": 9785,
+      "sha256": "3582061492a9bd5f5bd7c3a83e3183e8c1834f87ee884cd86b74c5db55a8c339"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work.go",
+      "size": 1820,
+      "sha256": "5d9ec0a60074d9b2b4dfcd7e9119ce4e78e3e87c3a2a2f76ec61356f29cd4843"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work_test.go",
+      "size": 7050,
+      "sha256": "ea4349acdc2baa904dcd203a2de07e915094a4e746a00059c5f7fd6571861e0e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_producer.go",
+      "size": 13286,
+      "sha256": "d6f7fee273dc34f198ed532d8bcdb45973499c454a464a95354bd7e2114a5647"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_producer_test.go",
+      "size": 28322,
+      "sha256": "8418dca7e20b4aaa5c4f4eafd65c496a052b7d50eba289f8dfeac70f5e0f7baa"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_references.go",
+      "size": 17443,
+      "sha256": "0557ade43cc68109444f8e90f3db7cf337e160f16b028405183889f3040eb4b9"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_references_a_test.go",
+      "size": 2280,
+      "sha256": "b890bd6865bc5c7b3f202714ebaefcd03dc61bc8fdc4334a6e4a289c0f70f001"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_references_test.go",
+      "size": 19753,
+      "sha256": "7b3229bfbfacf049eab096176532c8c6bb4c1957567210144913cb5edca9b9d6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_rollback_test.go",
+      "size": 9689,
+      "sha256": "a002b660f7cc523ab69bfda3c9a8da704e5b60768287179e52a98dddad424894"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_scan_completion_test.go",
+      "size": 4598,
+      "sha256": "1284e53baced1c30d6fd6530ca23f55c3c575c1a127fd067780e9e5b8e714892"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_task.go",
+      "size": 24358,
+      "sha256": "c60088caca6cd1e9c6a7404aa545126be78786c2af2d5ef50f6f73fbae868f33"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_task_test.go",
+      "size": 26250,
+      "sha256": "02e03f3220f64d71a6040e5d5ee523b64a4b5cce59b280d63a01e91e397f1641"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_test.go",
+      "size": 25630,
+      "sha256": "7061106002cbae4d23a842a2ad76a85dff6a2688669c34369f8924e93fbaae69"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_work_test.go",
+      "size": 5467,
+      "sha256": "00e570ea38623fffa5e9ad0966a40a4cf4f278d639d1bda8c74a1e580683dc41"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_mutation_capacity.go",
+      "size": 6311,
+      "sha256": "c3d93719cc69cdd0881a54dd8e5916e5ff9cea7cb57fbd6c3fb1cd01fd00a32a"
+    },
+    {
+      "path": "docs/evidence/a-owner-closeout-source-20261023.mjs",
+      "size": 1675,
+      "sha256": "b51e3d6d2c84a64f1f6abe25e535ee2d91e3f9c62c10935feb00b93a795c7908"
+    },
+    {
+      "path": "docs/evidence/a-gc-finalizer-source-review-20261026.mjs",
+      "size": 6661,
+      "sha256": "2cfa70d574843f2dba2fef9f0b38e5a438209eac5844e5851cc47bc468c5a5d7"
+    }
+  ]
+}

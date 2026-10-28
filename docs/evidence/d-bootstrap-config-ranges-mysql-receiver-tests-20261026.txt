@@ -1,0 +1,52 @@
+✖ accepts complete synthetic receiver fixture only (18.4302ms)
+✔ rejects no_graph (2.4062ms)
+✔ rejects wrong_waited_index (2.0065ms)
+✔ rejects source_row_lock (0.8607ms)
+✔ rejects same_connection (1.0593ms)
+✔ rejects installation_lock_used (5.7499ms)
+✔ rejects commit_not_proven (0.9992ms)
+✔ rejects original_not_rolled_back (0.6901ms)
+✔ rejects missing_release (0.7839ms)
+✔ rejects missing_case (4.215ms)
+✔ rejects duplicate_case (1.2378ms)
+✔ rejects missing_database_cleanup (0.8516ms)
+✔ rejects namespace_mismatch (0.8831ms)
+✔ rejects nonzero (0.9554ms)
+✔ rejects failed (0.5672ms)
+✔ rejects pending_cleanup (0.3996ms)
+✔ rejects wrong_binary (0.7082ms)
+✔ rejects old_consumer_profile (0.5885ms)
+✔ rejects missing_fk (0.646ms)
+✔ rejects skipped (0.325ms)
+✔ rejects missing_native_pass (0.6297ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 20
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 175.8031
+
+✖ failing tests:
+
+test at docs\evidence\d-bootstrap-config-ranges-mysql-review-20261026.test.mjs:21:1
+✖ accepts complete synthetic receiver fixture only (18.4302ms)
+  AssertionError [ERR_ASSERTION]: missing/duplicate /^s+S+.go:d+: CONFIG_RANGE_WAIT case=existing_nonce_metadata index=(PRIMARY|uk_sb_config_version) lock_type=RECORD lock_mode=([A-Z_,]+) requester=([0-9]+) blocker=([0-9]+) direct_writer_installation_lock=no$/
+  
+  0 !== 1
+  
+      at one (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.mjs:27:12)
+      at validateBootstrapTranscript (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.mjs:49:18)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.test.mjs:21:74)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,77 @@
+{
+  "kind": "d_resources_mysql_preparation.v1",
+  "error": null,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=180s",
+        "-json",
+        "./internal/systembackupresources"
+      ],
+      "exit_code": 0,
+      "platform": "windows",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-20261023-105555-57c95ee9-step-0.jsonl",
+      "log_sha256": "541af0f3298b92eb723f180e5f882324ebf5a6d833f56a48c748f1b568578e30"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDResourcesReadbackMySQLSeed$",
+        "-count=1",
+        "-json",
+        "./internal/systembackupresources"
+      ],
+      "exit_code": 0,
+      "platform": "windows",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-20261023-105555-57c95ee9-step-1.jsonl",
+      "log_sha256": "2c176f5165e5786db6279d0f059f98ceb51b8ef7d10c3d6cbd59a1e1671cd4f5"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-57c95ee98da04a8d9f7162ace742ad8c\\bundle\\d-resources-readback.test",
+        "./internal/systembackupresources"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-20261023-105555-57c95ee9-step-2.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-57c95ee98da04a8d9f7162ace742ad8c\\bundle\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-20261023-105555-57c95ee9-step-3.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-resources-mysql-20261023-105555-57c95ee9-source.json",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-57c95ee98da04a8d9f7162ace742ad8c",
+  "owner_removed": true,
+  "remote_requested": false,
+  "remote_scratch_removed": false,
+  "binary_sha256": "79f13d6044a4e47d2ef2cf711a16d21a171968c4538b8abc8d42204b8bac2f32",
+  "migration_binary_sha256": "90c81a9944fccadfc14730c03be1a9cebd2b53f4f89e97e19b4817ab52010936",
+  "inputs_sha256": "b129488961375a7e523a2265d9d22c98dd0c0c664da2916403ee3e79a215f302",
+  "dependencies_installed": false,
+  "synthetic_proofs": true,
+  "production_approved": false
+}

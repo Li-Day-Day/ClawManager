@@ -1,0 +1,29 @@
+{
+  "kind": "d_closeout_runner_static_review.v1",
+  "runner": "docs/evidence/d-local-closeout-validation-r2-20261023.ps1",
+  "sha256": "a8b7ec39e519d23128df895a37ec4addd4ad943dec40ecbafe31693fe2102646",
+  "parse_error_count": 0,
+  "invocations": [
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=10m','-run','^(TestAdmittedHTTPFixtureStillRejectsStaleSQLClock|TestAdmittedDownloadHTTPCompleteRangeAuditAndNoReplay|TestAdmittedDownloadHTTPInterruptionRevocationAndResultFailure|TestAdmittedDownloadHTTPPublicInternalAndClassificationRace|TestADownloadNativeBufferedOutputKeepsOriginalDeadline|TestGCProducerResultCapacitySamplingDoesNotRenewAdmission|TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback)$','./internal/systembackupevidence')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=45m','./internal/systembackupevidence')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=45m','./internal/systembackupproducer')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=45m','./internal/systembackupresources')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=45m','./internal/systembackupread')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=45m','./internal/systembackupsecurity')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-count=1','-timeout=45m','./cmd/server')",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-tags','systembackup_mysql','-run','^Test(DResources(Readback|Write)|AResourcesWriteFK)MySQLSeed$','-count=1','./internal/systembackupresources')",
+    "        Invoke-CloseGo -GoArguments (@('test','-json','-tags','systembackup_mysql','-run','^TestDDrillDetailHTTPSeed$','-count=1')+$closeHTTPSources)",
+    "        Invoke-CloseGo -GoArguments @('test','-json','-tags','systembackup_mysql','-run','^TestAAdminReadMySQLSeed$','-count=1','./internal/db')",
+    "        Invoke-CloseGo -GoArguments @('test','-c','-tags','systembackup_mysql','-o',(Join-Path $closeOwner 'binary/resources.test'),'./internal/systembackupresources')",
+    "        Invoke-CloseGo -GoArguments (@('test','-c','-tags','systembackup_mysql','-o',(Join-Path $closeOwner 'binary/drill-http.test'))+$closeHTTPSources)",
+    "        Invoke-CloseGo -GoArguments @('test','-c','-tags','systembackup_mysql','-o',(Join-Path $closeOwner 'binary/admin-read.test'),'./internal/db')",
+    "        Invoke-CloseGo -GoArguments @('build','-o',(Join-Path $closeOwner 'binary/system-backup-migrate'),'./cmd/system-backup-migrate')",
+    "        Invoke-CloseGo -GoArguments @('build','-o',(Join-Path $closeOwner 'binary/server'),'./cmd/server')"
+  ],
+  "invocation_count": 15,
+  "accepted_for_native_execution": true,
+  "runtime_accepted": false,
+  "test_or_build_started_by_this_review": false,
+  "dependencies_installed": false,
+  "prior_failure": "docs/evidence/d-closeout-runner-static-review-20261023.json"
+}

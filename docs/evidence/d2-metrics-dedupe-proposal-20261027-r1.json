@@ -1,0 +1,237 @@
+{
+  "kind": "d2_metrics_dedupe_original_D_draft_proposal.v1",
+  "status": "source_only_requires_A_nonimplementer_review_before_generator_or_live_promotion",
+  "base_combined_nine_expression_candidate": {
+    "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+    "size": 194141,
+    "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+  },
+  "candidate": {
+    "path": "docs/evidence/d2-metrics-dedupe-proposal-candidate-20261027-r1.json",
+    "size": 195203,
+    "sha256": "e647ef1ff736428279c329a12d71111066afef2415aeb49f23f2e82051ff6e1b"
+  },
+  "original_plan": {
+    "path": "docs/system-backup-restore-division-plan.md",
+    "size": 269090,
+    "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+  },
+  "original_source_archive": {
+    "path": "docs/evidence/a2-metrics-security-original-source-20261027.json",
+    "size": 3213,
+    "sha256": "a5010d2e3324cda0f92a1e9c8043aa596e2dafca668094c74970b8a082f56261"
+  },
+  "carrier_review": {
+    "path": "docs/evidence/a2-metrics-dedupe-carriers-reviewed-20261027.json",
+    "size": 70243,
+    "sha256": "13c767ae949d86c8c27fb12369ffadba395b9065033aa2c74ca26a36c4548275"
+  },
+  "D_decisions_proposed": [
+    {
+      "finding": "A-METRICS-04",
+      "before": {
+        "id": "cleanup-overdue",
+        "expression_language": "promql",
+        "expression": "clawmanager_system_backup_cleanup_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+        "severity": "critical",
+        "for_seconds": 0,
+        "threshold_source": "current_system_config",
+        "dedupe_key": [
+          "cleanup_status"
+        ],
+        "recovery_condition": "no cleanup resource exceeds its immutable cleanup deadline",
+        "missing_series": "healthy_zero",
+        "counter_reset": "not_applicable",
+        "runbook": "system-backup/cleanup-overdue",
+        "profiles": [
+          "production",
+          "development"
+        ],
+        "fixed_clock_cases": [
+          {
+            "case": "recovered",
+            "clock_unix_seconds": 2000000000,
+            "condition_result": false,
+            "condition_true_since_unix_seconds": null,
+            "expected_firing": false
+          },
+          {
+            "case": "at_for",
+            "clock_unix_seconds": 2000000000,
+            "condition_result": true,
+            "condition_true_since_unix_seconds": 2000000000,
+            "expected_firing": true
+          }
+        ]
+      },
+      "after": {
+        "id": "cleanup-overdue",
+        "expression_language": "promql",
+        "expression": "clawmanager_system_backup_cleanup_oldest_age_seconds > clawmanager_system_backup_configured_cleanup_deadline_seconds",
+        "severity": "critical",
+        "for_seconds": 0,
+        "threshold_source": "current_system_config",
+        "dedupe_key": [],
+        "recovery_condition": "no cleanup resource exceeds its immutable cleanup deadline",
+        "missing_series": "healthy_zero",
+        "counter_reset": "not_applicable",
+        "runbook": "system-backup/cleanup-overdue",
+        "profiles": [
+          "production",
+          "development"
+        ],
+        "fixed_clock_cases": [
+          {
+            "case": "recovered",
+            "clock_unix_seconds": 2000000000,
+            "condition_result": false,
+            "condition_true_since_unix_seconds": null,
+            "expected_firing": false
+          },
+          {
+            "case": "at_for",
+            "clock_unix_seconds": 2000000000,
+            "condition_result": true,
+            "condition_true_since_unix_seconds": 2000000000,
+            "expected_firing": true
+          }
+        ]
+      },
+      "rationale": "Current declared output is one global unlabeled series. Preserve its predicate, threshold, severity, deadline source and existing metric definitions, and declare the existing global dedupe scope explicitly."
+    },
+    {
+      "finding": "A-METRICS-02",
+      "before": {
+        "id": "signature-or-checksum-failure",
+        "expression_language": "promql",
+        "expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+        "severity": "critical",
+        "for_seconds": 0,
+        "threshold_source": "contract_default",
+        "dedupe_key": [
+          "task_type",
+          "failure_category"
+        ],
+        "recovery_condition": "the five-minute window contains no new signature or checksum failure",
+        "missing_series": "healthy_zero",
+        "counter_reset": "prometheus_increase",
+        "runbook": "system-backup/signature-or-checksum-failure",
+        "profiles": [
+          "production",
+          "development"
+        ],
+        "fixed_clock_cases": [
+          {
+            "case": "recovered",
+            "clock_unix_seconds": 2000000000,
+            "condition_result": false,
+            "condition_true_since_unix_seconds": null,
+            "expected_firing": false
+          },
+          {
+            "case": "at_for",
+            "clock_unix_seconds": 2000000000,
+            "condition_result": true,
+            "condition_true_since_unix_seconds": 2000000000,
+            "expected_firing": true
+          }
+        ]
+      },
+      "after": [
+        {
+          "id": "signature-operation-failure",
+          "expression_language": "promql",
+          "expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0",
+          "severity": "critical",
+          "for_seconds": 0,
+          "threshold_source": "contract_default",
+          "dedupe_key": [
+            "key_purpose"
+          ],
+          "recovery_condition": "the five-minute window contains no new signature operation failure",
+          "missing_series": "healthy_zero",
+          "counter_reset": "prometheus_increase",
+          "runbook": "system-backup/signature-operation-failure",
+          "profiles": [
+            "production",
+            "development"
+          ],
+          "fixed_clock_cases": [
+            {
+              "case": "recovered",
+              "clock_unix_seconds": 2000000000,
+              "condition_result": false,
+              "condition_true_since_unix_seconds": null,
+              "expected_firing": false
+            },
+            {
+              "case": "at_for",
+              "clock_unix_seconds": 2000000000,
+              "condition_result": true,
+              "condition_true_since_unix_seconds": 2000000000,
+              "expected_firing": true
+            }
+          ]
+        },
+        {
+          "id": "checksum-or-signature-verifier-failure",
+          "expression_language": "promql",
+          "expression": "increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+          "severity": "critical",
+          "for_seconds": 0,
+          "threshold_source": "contract_default",
+          "dedupe_key": [
+            "task_type",
+            "failure_category"
+          ],
+          "recovery_condition": "the five-minute window contains no new checksum or signature verifier failure",
+          "missing_series": "healthy_zero",
+          "counter_reset": "prometheus_increase",
+          "runbook": "system-backup/checksum-or-signature-verifier-failure",
+          "profiles": [
+            "production",
+            "development"
+          ],
+          "fixed_clock_cases": [
+            {
+              "case": "recovered",
+              "clock_unix_seconds": 2000000000,
+              "condition_result": false,
+              "condition_true_since_unix_seconds": null,
+              "expected_firing": false
+            },
+            {
+              "case": "at_for",
+              "clock_unix_seconds": 2000000000,
+              "condition_result": true,
+              "condition_true_since_unix_seconds": 2000000000,
+              "expected_firing": true
+            }
+          ]
+        }
+      ],
+      "rationale": "Preserve both immediate critical branches while grouping each only by facts its existing declared metric output carries; no fabricated task type or failure category on signature operations."
+    }
+  ],
+  "alerts_before": 99,
+  "alerts_after": 100,
+  "promql_after": 96,
+  "controller_state_after": 4,
+  "other_98_alert_rows_preserved": true,
+  "inverse_restores_combined_nine_expression_candidate": true,
+  "metric_definitions_unchanged": true,
+  "new_labels_or_label_values": false,
+  "new_schema_fields": false,
+  "generator_candidate_prepared": false,
+  "schema_or_PromQL_runtime_validation_claimed": false,
+  "live_sources_modified": false,
+  "Go_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "contract_frozen": false,
+  "unresolved": [
+    "A review of whether the current global cleanup metric semantics satisfy the original plan",
+    "A review of split branch identifiers and dedupe choice",
+    "Review and run the exact updated generator, consumers and raw-series fixtures before promotion"
+  ]
+}

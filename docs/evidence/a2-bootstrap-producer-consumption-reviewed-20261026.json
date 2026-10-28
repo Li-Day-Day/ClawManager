@@ -1,0 +1,162 @@
+{
+  "kind": "a2_bootstrap_producer_consumption_interface_review.v1",
+  "date": "2026-10-26",
+  "status": "current_interfaces_reviewed_specific_same_transaction_consumption_contract_needs_confirmation",
+  "item": "A-BOOT-CONSUME-01",
+  "document": "docs/system-backup-a2-bootstrap-producer-consumption-review-20261026.md",
+  "unconfigured_producer_interface_present": true,
+  "concrete_system_execution_preparer_present": true,
+  "historical_receipt_is_not_current_authority": true,
+  "reviewed_recheck_call_owns_transaction": true,
+  "equivalent_existing_entry_search_complete": false,
+  "requested_next": "For the existing draft C1 route, specify and implement committed candidate receipt/evidence consumption with trusted offline-grant/config/ref mapping, early shared lock prefix, same-tx observation/current authority recheck and atomic epoch closure with disabled-v1; preserve replay/unknown semantics and terminal-call rejection. Do not replace this with pre-result call reuse or a separate revocation transaction.",
+  "backend_contracts_scripts_modified": false,
+  "Go_or_builds_run": false,
+  "provider_or_SQL_contacted": false,
+  "new_resource_adapter_approved": false,
+  "entry_missing_slots": 27,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupproducer/types.go",
+      "size": 16193,
+      "sha256": "eb3f933c775d05ab36481cc9ca666b3f47baf0714527e76beea10b41e0f321de"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/validate.go",
+      "size": 11468,
+      "sha256": "a23f6c121f304c566f033d20cd30c8976dcb69ac52bd56d10417fdd1fbe14ed2"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution.go",
+      "size": 12846,
+      "sha256": "3195e9e2150241cd457f197cead636be6ba3953ce9737d6c4b84a322228ef606"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/history_read.go",
+      "size": 4504,
+      "sha256": "01939f414b738779bb4206bb86de01beda0295306221aa99992248af36b87134"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/result.go",
+      "size": 16412,
+      "sha256": "c5f288ce41d834bc7b6517cb57c1b4739df75bad257728b1acf3d53b5b1c2e98"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_execution.go",
+      "size": 10969,
+      "sha256": "2fb9dce5737444772b442e8d88626108dd978d5622c34e30c5845f4cd5b3b1e5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "size": 7037,
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "size": 3609,
+      "sha256": "6309733321361c08ba45afb98811d4eee3b539c6b8c6f07c5cd82a65ee29f27d"
+    },
+    {
+      "path": "docs/system-backup-a2-bootstrap-producer-consumption-review-20261026.md",
+      "size": 15188,
+      "sha256": "983a745eccd8836e1891f88a2f34744a5bbf9e76836d6bc630b3585bd94bbac5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "size": 12846,
+      "sha256": "cfb0b3d18c677fe062870e1e1b02cd439d90bc4ad537cb13cff7985f9601489a"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/execution_policy.go",
+      "size": 10326,
+      "sha256": "3264b58051fcc612e50282c439cf4af505b9063cb51217047133dc2d5f0dbcbc"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/recovery.go",
+      "size": 21657,
+      "sha256": "a5c244549f2e6b31ab9576a5ac1979e27c7278558a9bb5f65cfbc1048c4857f1"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/recovery_tx_test.go",
+      "size": 1235,
+      "sha256": "21c1223a40534ee12c22a40d3291f66be9f00b70fc93834cd017c8c656919e12"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "size": 9648,
+      "sha256": "25876e8991a02d3c855f98d89cfde2a02bffbcfe9b1ec4fb8978d75679fb959f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/providerproof_transaction.go",
+      "size": 17853,
+      "sha256": "622a15d9ee7925253fefdb0d0c950221200e689b78febae2cbbea069cd94772a"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-persistence.json",
+      "size": 16609,
+      "sha256": "0bdc91220d5168821abcd66ebbaa8dfc677a7a67eb65d0ad9c8d12edf51d4f1f"
+    },
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "size": 18415,
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/domain_revoke.go",
+      "size": 5683,
+      "sha256": "2a0042b1a5cf8b31103f150fdb22c47623680d08a620ee49446e17de0a4507bd"
+    }
+  ],
+  "borrowed_transaction_primitive_present": true,
+  "borrowed_transaction_primitive": "backend/internal/systembackupproducer/transaction.go::Transactions.GuardInTx",
+  "concrete_existing_reuse": "backend/internal/systembackupproducer/recovery.go::HistoricalRecovery.FinishRecoveryInTx",
+  "recovery_finish_is_not_bootstrap_authority": true,
+  "original_CallSnapshot_borrowed_tx_export_identified": false,
+  "lock_order_composition_proven": false,
+  "D2_response_20261026": {
+    "same_goal_authorized_chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+    "existing_runner_reuse_direction_agreed": true,
+    "no_same_semantics_bootstrap_CallSnapshot_consumer_found_in_reviewed_scope": true,
+    "early_common_installation_producer_prefix_required": true,
+    "late_recheck_existing_lock_ranges_only": true,
+    "offline_grant_config_refs_observation_binding_requires_contract": true,
+    "concrete_lock_contract_approved": false,
+    "new_API_or_production_wiring_approved": false
+  },
+  "committed_candidate_lifecycle_review": {
+    "result_commit_sets_run_committed": true,
+    "candidate_mode_also_commits_run": true,
+    "Execution_RecheckCall_rejects_committed_run": true,
+    "prior_full_facts_must_match": true,
+    "existing_prior_GuardInTx_direction_is_not_committed_candidate_consumer": true,
+    "consumer_stage_contract_required": true,
+    "committed_execution_rejection_must_not_be_relaxed": true,
+    "unconfigured_admission_to_offline_grant_mapping_approved": false
+  },
+  "existing_C1_draft_consumption_direction": {
+    "persistence": "contracts/system-backup/v12/producer-authority-persistence.json",
+    "transactions": "contracts/system-backup/v12/producer-authority-transactions.json",
+    "committed_candidate_receipt_evidence_consumption_specified": true,
+    "bootstrap_closes_epoch_atomically_with_disabled_v1": true,
+    "contract_status": "draft",
+    "approved_reviewers_empty": true,
+    "current_bootstrap_integration_present": false,
+    "independent_DomainRevoker_is_not_atomic_bootstrap_closure": true
+  },
+  "A_side_first_concrete_relation": {
+    "bootstrap_purpose": "capture_signing",
+    "existing_SecretRef_purpose": "capture_certificate",
+    "C1_target_role": "signing",
+    "C1_evaluator_owner": "A",
+    "C1_results_kind": "dependency",
+    "C1_dependency_slot": "signing",
+    "model": "docs/evidence/a2-bootstrap-capture-binding-model-reviewed-20261026.json",
+    "relation_only_positive": 1,
+    "resealed_C1_valid_rejections": 41,
+    "production_adapter_implemented": false,
+    "unresolved_authority_fields_and_owners_listed": true,
+    "all_27_scope_preserved": true,
+    "nonce_CA_forced_through_producer": false
+  }
+}

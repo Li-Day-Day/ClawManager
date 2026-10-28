@@ -1,0 +1,978 @@
+{
+  "kind": "a2_reference_capability_actual_go_list_scope.v1",
+  "scope": "Imports and selected test metadata from supplied actual go-list captures; platform, command exit and frozen-source provenance require the owning native receipt.",
+  "captures": [
+    {
+      "goos_label": "windows",
+      "tags_label": "ordinary",
+      "input": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.windows.ordinary.jsonl",
+        "size": 9166116,
+        "sha256": "4da06e6200b53e05f6a678f76752fbff94b8c0a7f946f52a3f1bce218103994c"
+      },
+      "listed_packages": 1070,
+      "project_original_packages": 44,
+      "runtime_affected": [
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupbootstrapmaterials",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap"
+      ],
+      "additional_test_callers": [],
+      "selected_files": [
+        {
+          "package": "clawreef/cmd/system-backup-bootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\cmd\\system-backup-bootstrap",
+          "production_files": [
+            "main.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "main_test.go",
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapmaterials",
+            "clawreef/internal/systembackupbootstrapsecurity",
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapmaterials",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapmaterials",
+          "production_files": [
+            "inputs.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapsecurity",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapsecurity",
+          "production_files": [
+            "issuers.go",
+            "producer_candidate_binding.go",
+            "rbac.go",
+            "reference.go"
+          ],
+          "test_files": [
+            "issuers_test.go",
+            "producer_candidate_binding_test.go",
+            "rbac_test.go",
+            "reference_contract_parity_test.go",
+            "reference_test.go"
+          ],
+          "imports_of_affected_runtime": [],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupcatrust",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupcatrust",
+          "production_files": [
+            "ca.go",
+            "candidate_adapter.go",
+            "inputs.go"
+          ],
+          "test_files": [
+            "ca_test.go",
+            "candidate_adapter_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupnoncebootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupnoncebootstrap",
+          "production_files": [
+            "candidate_adapter.go",
+            "nonce.go"
+          ],
+          "test_files": [
+            "candidate_adapter_test.go",
+            "nonce_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        }
+      ]
+    },
+    {
+      "goos_label": "windows",
+      "tags_label": "systembackup_mysql",
+      "input": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.windows.systembackup_mysql.jsonl",
+        "size": 9186278,
+        "sha256": "625b340ec550bedf4422c7843534eb55677ed161d29bb97b233529ef119a42e0"
+      },
+      "listed_packages": 1070,
+      "project_original_packages": 44,
+      "runtime_affected": [
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupbootstrapmaterials",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap"
+      ],
+      "additional_test_callers": [
+        "clawreef/internal/systembackupevidence"
+      ],
+      "selected_files": [
+        {
+          "package": "clawreef/cmd/system-backup-bootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\cmd\\system-backup-bootstrap",
+          "production_files": [
+            "main.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "main_test.go",
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapmaterials",
+            "clawreef/internal/systembackupbootstrapsecurity",
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapmaterials",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapmaterials",
+          "production_files": [
+            "inputs.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapsecurity",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapsecurity",
+          "production_files": [
+            "issuers.go",
+            "producer_candidate_binding.go",
+            "rbac.go",
+            "reference.go"
+          ],
+          "test_files": [
+            "issuers_test.go",
+            "producer_candidate_binding_test.go",
+            "rbac_test.go",
+            "reference_contract_parity_test.go",
+            "reference_test.go"
+          ],
+          "imports_of_affected_runtime": [],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupcatrust",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupcatrust",
+          "production_files": [
+            "ca.go",
+            "candidate_adapter.go",
+            "inputs.go"
+          ],
+          "test_files": [
+            "ca_test.go",
+            "candidate_adapter_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupnoncebootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupnoncebootstrap",
+          "production_files": [
+            "candidate_adapter.go",
+            "nonce.go"
+          ],
+          "test_files": [
+            "candidate_adapter_test.go",
+            "nonce_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupevidence",
+          "production_files": [
+            "access_claim.go",
+            "capability_content.go",
+            "config_response_content.go",
+            "content_dispatch.go",
+            "detached_verify.go",
+            "download_actor_context.go",
+            "download_admission_audit.go",
+            "download_admission_binding.go",
+            "download_admission_claim.go",
+            "download_admission_content.go",
+            "download_admission_environment.go",
+            "download_admission_keys.go",
+            "download_admission_nonce.go",
+            "download_admission_records.go",
+            "download_admission_transaction.go",
+            "download_admitted_http.go",
+            "download_application.go",
+            "download_authority.go",
+            "download_authority_sql.go",
+            "download_committed.go",
+            "download_failure_journal.go",
+            "download_producer_owner.go",
+            "download_public_release.go",
+            "download_result.go",
+            "download_result_retention.go",
+            "download_retention_gc.go",
+            "download_retention_gc_batch.go",
+            "download_retention_gc_connection.go",
+            "download_retention_gc_early.go",
+            "download_retention_gc_finalize.go",
+            "download_retention_gc_freeze.go",
+            "download_retention_gc_freeze_work.go",
+            "download_retention_gc_full.go",
+            "download_retention_gc_producer.go",
+            "download_retention_gc_references.go",
+            "download_retention_gc_task.go",
+            "download_retention_group.go",
+            "download_runtime.go",
+            "download_runtime_journal.go",
+            "download_task_owner.go",
+            "download_task_references.go",
+            "download_transit.go",
+            "envelope.go",
+            "gc_authority.go",
+            "gc_authority_sql.go",
+            "gc_registry.go",
+            "gc_runtime.go",
+            "gc_runtime_journal.go",
+            "http.go",
+            "lifecycle.go",
+            "log_content.go",
+            "producer_binding.go",
+            "recovery_runtime.go",
+            "recovery_scan.go",
+            "retention.go",
+            "s3.go",
+            "s3_sts.go",
+            "sensitive_download_preview.go",
+            "sensitive_download_request.go",
+            "sensitive_download_totp.go",
+            "sql.go",
+            "system_execution.go",
+            "system_historical_deployment_authority.go",
+            "system_historical_deployment_sql.go",
+            "system_historical_original.go",
+            "system_historical_recovery.go",
+            "system_historical_workload.go",
+            "system_peer.go",
+            "system_pending.go",
+            "system_pending_sql.go",
+            "system_preparation_call.go",
+            "system_prepare.go",
+            "system_publication.go",
+            "system_publication_call.go",
+            "system_publish_runtime.go",
+            "system_recovery_audit_journal.go",
+            "system_recovery_authority.go",
+            "system_recovery_authority_decision.go",
+            "system_recovery_authority_read.go",
+            "system_recovery_manager_bootstrap.go",
+            "system_recovery_manager_peer.go",
+            "system_recovery_manager_revoke.go",
+            "system_recovery_manager_sql.go",
+            "system_result.go",
+            "system_sts.go",
+            "system_transit.go",
+            "task_authority.go",
+            "task_authority_sql.go",
+            "task_prepare.go",
+            "task_runtime.go",
+            "transit.go",
+            "transit_jwt.go",
+            "transit_keyring.go",
+            "types.go",
+            "write_recovery.go"
+          ],
+          "test_files": [
+            "a_historical_deployment_mysql_test.go",
+            "a_historical_recovery_mysql_test.go",
+            "a_recovery_authority_mysql_test.go",
+            "a_recovery_authority_read_mysql_test.go",
+            "a_recovery_manager_bootstrap_mysql_test.go",
+            "a_recovery_manager_revocation_mysql_test.go",
+            "authority_mysql_test.go",
+            "bootstrap_consumer_mysql_test.go",
+            "bootstrap_consumer_ranges_mysql_test.go",
+            "bootstrap_entry_mysql_test.go",
+            "bootstrap_original_materials_mysql_test.go",
+            "business_report_delivery_test.go",
+            "capability_content_test.go",
+            "config_response_content_test.go",
+            "d_producer_integration_authority_test.go",
+            "d_producer_integration_db_test.go",
+            "d_producer_integration_sql_test.go",
+            "d_producer_integration_test.go",
+            "d_producer_mysql_test.go",
+            "d_producer_scope_test.go",
+            "d_recovery_authority_mysql_test.go",
+            "d_recovery_authority_race_mysql_test.go",
+            "d_recovery_authority_schema_mysql_test.go",
+            "d_recovery_fence_mysql_test.go",
+            "d_recovery_fence_race_mysql_test.go",
+            "d_recovery_fence_read_mysql_test.go",
+            "d_recovery_manager_mysql_test.go",
+            "d_recovery_mysql_test.go",
+            "detached_verify_test.go",
+            "download_admission_a_mysql_test.go",
+            "download_admission_audit_a_test.go",
+            "download_admission_audit_mysql_test.go",
+            "download_admission_audit_test.go",
+            "download_admission_binding_a_test.go",
+            "download_admission_binding_test.go",
+            "download_admission_content_test.go",
+            "download_admission_environment_test.go",
+            "download_admission_keys_test.go",
+            "download_admission_public_vector_test.go",
+            "download_admission_records_test.go",
+            "download_admission_transaction_a_test.go",
+            "download_admission_transaction_model_test.go",
+            "download_admission_transaction_test.go",
+            "download_admitted_http_test.go",
+            "download_application_test.go",
+            "download_authority_test.go",
+            "download_committed_test.go",
+            "download_failure_journal_test.go",
+            "download_gc_freeze_mysql_test.go",
+            "download_gc_full_collect_mysql_test.go",
+            "download_gc_full_lifecycle_mysql_test.go",
+            "download_gc_full_profile_mysql_test.go",
+            "download_gc_owner_lifecycle_mysql_test.go",
+            "download_gc_owner_lifecycle_wire_test.go",
+            "download_gc_role_a_mysql_test.go",
+            "download_gc_task_mysql_test.go",
+            "download_http_failure_budget_test.go",
+            "download_output_deadline_a_test.go",
+            "download_producer_owner_a_test.go",
+            "download_producer_owner_mysql_test.go",
+            "download_producer_owner_test.go",
+            "download_public_release_test.go",
+            "download_result_retention_mysql_test.go",
+            "download_result_retention_test.go",
+            "download_result_test.go",
+            "download_retention_gc_batch_test.go",
+            "download_retention_gc_connection_test.go",
+            "download_retention_gc_dependencies_test.go",
+            "download_retention_gc_early_test.go",
+            "download_retention_gc_finalize_test.go",
+            "download_retention_gc_freeze_a_test.go",
+            "download_retention_gc_freeze_test.go",
+            "download_retention_gc_freeze_work_test.go",
+            "download_retention_gc_full_test.go",
+            "download_retention_gc_producer_test.go",
+            "download_retention_gc_references_a_test.go",
+            "download_retention_gc_references_test.go",
+            "download_retention_gc_rollback_test.go",
+            "download_retention_gc_scan_completion_test.go",
+            "download_retention_gc_task_test.go",
+            "download_retention_gc_test.go",
+            "download_retention_gc_work_test.go",
+            "download_retention_group_model_test.go",
+            "download_retention_group_test.go",
+            "download_runtime_test.go",
+            "download_task_owner_a_mysql_test.go",
+            "download_task_owner_chain_mysql_test.go",
+            "download_task_owner_model_test.go",
+            "download_task_owner_test.go",
+            "download_transit_test.go",
+            "evidence_mysql_test.go",
+            "evidence_test.go",
+            "gc_authority_test.go",
+            "gc_nil_adapters_a_test.go",
+            "gc_observation_test.go",
+            "gc_runtime_input_isolation_test.go",
+            "gc_runtime_journal_test.go",
+            "gc_runtime_test.go",
+            "log_content_test.go",
+            "prepare_boundary_test.go",
+            "producer_binding_test.go",
+            "read_snapshot_test.go",
+            "recovery_runtime_test.go",
+            "recovery_scan_test.go",
+            "s3_sts_test.go",
+            "s3_test.go",
+            "sensitive_download_mfa_mysql_test.go",
+            "sensitive_download_preview_test.go",
+            "sensitive_download_request_a_test.go",
+            "sensitive_download_totp_test.go",
+            "system_execution_test.go",
+            "system_historical_deployment_authority_test.go",
+            "system_historical_deployment_sql_test.go",
+            "system_historical_original_test.go",
+            "system_historical_recovery_test.go",
+            "system_historical_workload_test.go",
+            "system_peer_test.go",
+            "system_pending_test.go",
+            "system_preparation_call_integration_test.go",
+            "system_prepare_test.go",
+            "system_publication_call_integration_test.go",
+            "system_publication_test.go",
+            "system_publish_runtime_test.go",
+            "system_recovery_audit_journal_context_test.go",
+            "system_recovery_audit_journal_test.go",
+            "system_recovery_authority_decision_test.go",
+            "system_recovery_authority_read_test.go",
+            "system_recovery_authority_test.go",
+            "system_recovery_manager_bootstrap_test.go",
+            "system_recovery_manager_peer_test.go",
+            "system_recovery_manager_revoke_test.go",
+            "system_recovery_manager_sql_test.go",
+            "system_result_test.go",
+            "system_sts_test.go",
+            "system_transit_test.go",
+            "task_authority_test.go",
+            "task_prepare_test.go",
+            "task_runtime_test.go",
+            "transit_keyring_test.go",
+            "transit_test.go",
+            "write_recovery_test.go"
+          ],
+          "imports_of_affected_runtime": [],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        }
+      ]
+    },
+    {
+      "goos_label": "linux",
+      "tags_label": "ordinary",
+      "input": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.linux.ordinary.jsonl",
+        "size": 9090634,
+        "sha256": "fecb2fb691d2dfb7d797f3e52cdb936fd4e186c362f6be08cd6fef5fed33019c"
+      },
+      "listed_packages": 1074,
+      "project_original_packages": 44,
+      "runtime_affected": [
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupbootstrapmaterials",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap"
+      ],
+      "additional_test_callers": [],
+      "selected_files": [
+        {
+          "package": "clawreef/cmd/system-backup-bootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\cmd\\system-backup-bootstrap",
+          "production_files": [
+            "main.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "main_test.go",
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapmaterials",
+            "clawreef/internal/systembackupbootstrapsecurity",
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapmaterials",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapmaterials",
+          "production_files": [
+            "inputs.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapsecurity",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapsecurity",
+          "production_files": [
+            "issuers.go",
+            "producer_candidate_binding.go",
+            "rbac.go",
+            "reference.go"
+          ],
+          "test_files": [
+            "issuers_test.go",
+            "producer_candidate_binding_test.go",
+            "rbac_test.go",
+            "reference_contract_parity_test.go",
+            "reference_test.go"
+          ],
+          "imports_of_affected_runtime": [],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupcatrust",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupcatrust",
+          "production_files": [
+            "ca.go",
+            "candidate_adapter.go",
+            "inputs.go"
+          ],
+          "test_files": [
+            "ca_test.go",
+            "candidate_adapter_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupnoncebootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupnoncebootstrap",
+          "production_files": [
+            "candidate_adapter.go",
+            "nonce.go"
+          ],
+          "test_files": [
+            "candidate_adapter_test.go",
+            "nonce_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        }
+      ]
+    },
+    {
+      "goos_label": "linux",
+      "tags_label": "systembackup_mysql",
+      "input": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.linux.systembackup_mysql.jsonl",
+        "size": 9110798,
+        "sha256": "4821481d4af1715202bd5a6ef7a6aef8e542f83b501ac88a538d3a53140ae899"
+      },
+      "listed_packages": 1074,
+      "project_original_packages": 44,
+      "runtime_affected": [
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupbootstrapmaterials",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/internal/systembackupnoncebootstrap"
+      ],
+      "additional_test_callers": [
+        "clawreef/internal/systembackupevidence"
+      ],
+      "selected_files": [
+        {
+          "package": "clawreef/cmd/system-backup-bootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\cmd\\system-backup-bootstrap",
+          "production_files": [
+            "main.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "main_test.go",
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapmaterials",
+            "clawreef/internal/systembackupbootstrapsecurity",
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapmaterials",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapmaterials",
+          "production_files": [
+            "inputs.go",
+            "materials.go"
+          ],
+          "test_files": [
+            "materials_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        },
+        {
+          "package": "clawreef/internal/systembackupbootstrapsecurity",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupbootstrapsecurity",
+          "production_files": [
+            "issuers.go",
+            "producer_candidate_binding.go",
+            "rbac.go",
+            "reference.go"
+          ],
+          "test_files": [
+            "issuers_test.go",
+            "producer_candidate_binding_test.go",
+            "rbac_test.go",
+            "reference_contract_parity_test.go",
+            "reference_test.go"
+          ],
+          "imports_of_affected_runtime": [],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupcatrust",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupcatrust",
+          "production_files": [
+            "ca.go",
+            "candidate_adapter.go",
+            "inputs.go"
+          ],
+          "test_files": [
+            "ca_test.go",
+            "candidate_adapter_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupnoncebootstrap",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupnoncebootstrap",
+          "production_files": [
+            "candidate_adapter.go",
+            "nonce.go"
+          ],
+          "test_files": [
+            "candidate_adapter_test.go",
+            "nonce_test.go"
+          ],
+          "imports_of_affected_runtime": [
+            "clawreef/internal/systembackupbootstrapsecurity"
+          ],
+          "test_imports_of_affected_runtime": []
+        },
+        {
+          "package": "clawreef/internal/systembackupevidence",
+          "directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-a-reference-supplement-b53eccbdc25449d1947e7bf90b179b92\\source\\backend\\internal\\systembackupevidence",
+          "production_files": [
+            "access_claim.go",
+            "capability_content.go",
+            "config_response_content.go",
+            "content_dispatch.go",
+            "detached_verify.go",
+            "download_actor_context.go",
+            "download_admission_audit.go",
+            "download_admission_binding.go",
+            "download_admission_claim.go",
+            "download_admission_content.go",
+            "download_admission_environment.go",
+            "download_admission_keys.go",
+            "download_admission_nonce.go",
+            "download_admission_records.go",
+            "download_admission_transaction.go",
+            "download_admitted_http.go",
+            "download_application.go",
+            "download_authority.go",
+            "download_authority_sql.go",
+            "download_committed.go",
+            "download_failure_journal.go",
+            "download_producer_owner.go",
+            "download_public_release.go",
+            "download_result.go",
+            "download_result_retention.go",
+            "download_retention_gc.go",
+            "download_retention_gc_batch.go",
+            "download_retention_gc_connection.go",
+            "download_retention_gc_early.go",
+            "download_retention_gc_finalize.go",
+            "download_retention_gc_freeze.go",
+            "download_retention_gc_freeze_work.go",
+            "download_retention_gc_full.go",
+            "download_retention_gc_producer.go",
+            "download_retention_gc_references.go",
+            "download_retention_gc_task.go",
+            "download_retention_group.go",
+            "download_runtime.go",
+            "download_runtime_journal.go",
+            "download_task_owner.go",
+            "download_task_references.go",
+            "download_transit.go",
+            "envelope.go",
+            "gc_authority.go",
+            "gc_authority_sql.go",
+            "gc_registry.go",
+            "gc_runtime.go",
+            "gc_runtime_journal.go",
+            "http.go",
+            "lifecycle.go",
+            "log_content.go",
+            "producer_binding.go",
+            "recovery_runtime.go",
+            "recovery_scan.go",
+            "retention.go",
+            "s3.go",
+            "s3_sts.go",
+            "sensitive_download_preview.go",
+            "sensitive_download_request.go",
+            "sensitive_download_totp.go",
+            "sql.go",
+            "system_execution.go",
+            "system_historical_deployment_authority.go",
+            "system_historical_deployment_sql.go",
+            "system_historical_original.go",
+            "system_historical_recovery.go",
+            "system_historical_workload.go",
+            "system_peer.go",
+            "system_pending.go",
+            "system_pending_sql.go",
+            "system_preparation_call.go",
+            "system_prepare.go",
+            "system_publication.go",
+            "system_publication_call.go",
+            "system_publish_runtime.go",
+            "system_recovery_audit_journal.go",
+            "system_recovery_authority.go",
+            "system_recovery_authority_decision.go",
+            "system_recovery_authority_read.go",
+            "system_recovery_manager_bootstrap.go",
+            "system_recovery_manager_peer.go",
+            "system_recovery_manager_revoke.go",
+            "system_recovery_manager_sql.go",
+            "system_result.go",
+            "system_sts.go",
+            "system_transit.go",
+            "task_authority.go",
+            "task_authority_sql.go",
+            "task_prepare.go",
+            "task_runtime.go",
+            "transit.go",
+            "transit_jwt.go",
+            "transit_keyring.go",
+            "types.go",
+            "write_recovery.go"
+          ],
+          "test_files": [
+            "a_historical_deployment_mysql_test.go",
+            "a_historical_recovery_mysql_test.go",
+            "a_recovery_authority_mysql_test.go",
+            "a_recovery_authority_read_mysql_test.go",
+            "a_recovery_manager_bootstrap_mysql_test.go",
+            "a_recovery_manager_revocation_mysql_test.go",
+            "authority_mysql_test.go",
+            "bootstrap_consumer_mysql_test.go",
+            "bootstrap_consumer_ranges_mysql_test.go",
+            "bootstrap_entry_mysql_test.go",
+            "bootstrap_original_materials_mysql_test.go",
+            "business_report_delivery_test.go",
+            "capability_content_test.go",
+            "config_response_content_test.go",
+            "d_producer_integration_authority_test.go",
+            "d_producer_integration_db_test.go",
+            "d_producer_integration_sql_test.go",
+            "d_producer_integration_test.go",
+            "d_producer_mysql_test.go",
+            "d_producer_scope_test.go",
+            "d_recovery_authority_mysql_test.go",
+            "d_recovery_authority_race_mysql_test.go",
+            "d_recovery_authority_schema_mysql_test.go",
+            "d_recovery_fence_mysql_test.go",
+            "d_recovery_fence_race_mysql_test.go",
+            "d_recovery_fence_read_mysql_test.go",
+            "d_recovery_manager_mysql_test.go",
+            "d_recovery_mysql_test.go",
+            "detached_verify_test.go",
+            "download_admission_a_mysql_test.go",
+            "download_admission_audit_a_test.go",
+            "download_admission_audit_mysql_test.go",
+            "download_admission_audit_test.go",
+            "download_admission_binding_a_test.go",
+            "download_admission_binding_test.go",
+            "download_admission_content_test.go",
+            "download_admission_environment_test.go",
+            "download_admission_keys_test.go",
+            "download_admission_public_vector_test.go",
+            "download_admission_records_test.go",
+            "download_admission_transaction_a_test.go",
+            "download_admission_transaction_model_test.go",
+            "download_admission_transaction_test.go",
+            "download_admitted_http_test.go",
+            "download_application_test.go",
+            "download_authority_test.go",
+            "download_committed_test.go",
+            "download_failure_journal_test.go",
+            "download_gc_freeze_mysql_test.go",
+            "download_gc_full_collect_mysql_test.go",
+            "download_gc_full_lifecycle_mysql_test.go",
+            "download_gc_full_profile_mysql_test.go",
+            "download_gc_owner_lifecycle_mysql_test.go",
+            "download_gc_owner_lifecycle_wire_test.go",
+            "download_gc_role_a_mysql_test.go",
+            "download_gc_task_mysql_test.go",
+            "download_http_failure_budget_test.go",
+            "download_output_deadline_a_test.go",
+            "download_producer_owner_a_test.go",
+            "download_producer_owner_mysql_test.go",
+            "download_producer_owner_test.go",
+            "download_public_release_test.go",
+            "download_result_retention_mysql_test.go",
+            "download_result_retention_test.go",
+            "download_result_test.go",
+            "download_retention_gc_batch_test.go",
+            "download_retention_gc_connection_test.go",
+            "download_retention_gc_dependencies_test.go",
+            "download_retention_gc_early_test.go",
+            "download_retention_gc_finalize_test.go",
+            "download_retention_gc_freeze_a_test.go",
+            "download_retention_gc_freeze_test.go",
+            "download_retention_gc_freeze_work_test.go",
+            "download_retention_gc_full_test.go",
+            "download_retention_gc_producer_test.go",
+            "download_retention_gc_references_a_test.go",
+            "download_retention_gc_references_test.go",
+            "download_retention_gc_rollback_test.go",
+            "download_retention_gc_scan_completion_test.go",
+            "download_retention_gc_task_test.go",
+            "download_retention_gc_test.go",
+            "download_retention_gc_work_test.go",
+            "download_retention_group_model_test.go",
+            "download_retention_group_test.go",
+            "download_runtime_test.go",
+            "download_task_owner_a_mysql_test.go",
+            "download_task_owner_chain_mysql_test.go",
+            "download_task_owner_model_test.go",
+            "download_task_owner_test.go",
+            "download_transit_test.go",
+            "evidence_mysql_test.go",
+            "evidence_test.go",
+            "gc_authority_test.go",
+            "gc_nil_adapters_a_test.go",
+            "gc_observation_test.go",
+            "gc_runtime_input_isolation_test.go",
+            "gc_runtime_journal_test.go",
+            "gc_runtime_test.go",
+            "log_content_test.go",
+            "prepare_boundary_test.go",
+            "producer_binding_test.go",
+            "read_snapshot_test.go",
+            "recovery_runtime_test.go",
+            "recovery_scan_test.go",
+            "s3_sts_test.go",
+            "s3_test.go",
+            "sensitive_download_mfa_mysql_test.go",
+            "sensitive_download_preview_test.go",
+            "sensitive_download_request_a_test.go",
+            "sensitive_download_totp_test.go",
+            "system_execution_test.go",
+            "system_historical_deployment_authority_test.go",
+            "system_historical_deployment_sql_test.go",
+            "system_historical_original_test.go",
+            "system_historical_recovery_test.go",
+            "system_historical_workload_test.go",
+            "system_peer_test.go",
+            "system_pending_test.go",
+            "system_preparation_call_integration_test.go",
+            "system_prepare_test.go",
+            "system_publication_call_integration_test.go",
+            "system_publication_test.go",
+            "system_publish_runtime_test.go",
+            "system_recovery_audit_journal_context_test.go",
+            "system_recovery_audit_journal_test.go",
+            "system_recovery_authority_decision_test.go",
+            "system_recovery_authority_read_test.go",
+            "system_recovery_authority_test.go",
+            "system_recovery_manager_bootstrap_test.go",
+            "system_recovery_manager_peer_test.go",
+            "system_recovery_manager_revoke_test.go",
+            "system_recovery_manager_sql_test.go",
+            "system_result_test.go",
+            "system_sts_test.go",
+            "system_transit_test.go",
+            "task_authority_test.go",
+            "task_prepare_test.go",
+            "task_runtime_test.go",
+            "transit_keyring_test.go",
+            "transit_test.go",
+            "write_recovery_test.go"
+          ],
+          "imports_of_affected_runtime": [],
+          "test_imports_of_affected_runtime": [
+            "clawreef/internal/systembackupcatrust",
+            "clawreef/internal/systembackupnoncebootstrap"
+          ]
+        }
+      ]
+    }
+  ],
+  "runtime_union": [
+    "clawreef/cmd/system-backup-bootstrap",
+    "clawreef/internal/systembackupbootstrapmaterials",
+    "clawreef/internal/systembackupbootstrapsecurity",
+    "clawreef/internal/systembackupcatrust",
+    "clawreef/internal/systembackupnoncebootstrap"
+  ],
+  "additional_ordinary_test_callers": [],
+  "additional_mysql_test_callers": [
+    "clawreef/internal/systembackupevidence"
+  ],
+  "tests_executed_by_reader": false,
+  "actual_SQL": false,
+  "production_approved": false
+}

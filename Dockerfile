@@ -17,6 +17,7 @@ COPY frontend/package*.json ./
 RUN npm ci
 
 COPY frontend/ ./
+COPY backend/internal/teampresentation/catalog.json /app/backend/internal/teampresentation/catalog.json
 ARG VITE_SYSTEM_BACKUP_LIVE_READ=0
 ARG VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD=0
 RUN case "${VITE_SYSTEM_BACKUP_LIVE_READ}:${VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD}" in \
@@ -61,7 +62,7 @@ FROM nginx:1.27-alpine
 
 # nginx-module-njs provides ngx_http_js_module.so, loaded by nginx.conf to run
 # the desktop access-token verification (deployments/nginx/njs/desktop_auth.js).
-RUN apk add --no-cache dumb-init openssl nginx-module-njs
+RUN apk add --no-cache dumb-init openssl nginx-module-njs sqlite
 
 WORKDIR /app
 

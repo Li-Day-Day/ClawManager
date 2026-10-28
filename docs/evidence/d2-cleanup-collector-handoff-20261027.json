@@ -1,0 +1,71 @@
+{
+  "kind": "d2_cleanup_collector_authority_handoff.v1",
+  "status": "typed_predicate_implemented_collector_and_automatic_clock_decisions_required",
+  "current_source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+  "implementation": {
+    "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+    "size": 5796,
+    "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+  },
+  "local_promotion": {
+    "path": "docs/evidence/d2-metrics-controller-live-promotion-20261027.json",
+    "size": 7922,
+    "sha256": "6eeba4cdd7fbb9fad1509b498b40fe02f6e78bf740b4c1c922b064538c6661e1"
+  },
+  "source_authority_audit": {
+    "path": "docs/evidence/a2-cleanup-alert-authority-source-reviewed-20261027.json",
+    "size": 15859,
+    "sha256": "22b62d6b23e328e891a98534ca27baa50e67c700e2c222c92aba9d0431dbed61"
+  },
+  "bounded_threshold_audit": {
+    "path": "docs/evidence/a2-metrics-immutable-threshold-scope-reviewed-20261027.json",
+    "size": 31541,
+    "sha256": "66a6db71896647267676b651d2a2098c52888ac51b405ffe65937dea810e890b"
+  },
+  "implemented_local_contract": [
+    "Unknown or incomplete cleanup owner collection returns an error and no decisions.",
+    "ObservedAt must equal the supplied alert snapshot clock.",
+    "Every owner must have nonnegative age, positive immutable deadline, and an explicitly known residual-volume fact.",
+    "All owners are validated, including invalid owners after an already-overdue one.",
+    "Only age strictly greater than that same owner immutable deadline fires either critical.",
+    "A confirmed complete empty collection is healthy; absent collection is not an empty result."
+  ],
+  "required_collector_invariants": [
+    "Read the complete installation-scoped authoritative owner/resource set in one bounded read-only consistent transaction, with one UTC database clock.",
+    "Check every row, result-set error, cancellation, read limit and transaction end; overflow or partial data cannot set Complete.",
+    "Preserve the exact frozen owner budget and original start anchor; never replace them with active_config, updated_at, a heartbeat or claim reacquisition.",
+    "Bind origin, operation_type, target and resource relationship explicitly; the existing cleanup_operation_id foreign key to operations.id alone does not prove those bindings.",
+    "For an explicit cleanup operation use its reviewed immutable creation/deadline facts only after the complete owner/target binding is established. Do not join cleanup via result_config_version, whose defined use is config_update.",
+    "Automatic cleanup owners require an original reviewed durable linearization-time mapping. finished_at is only a candidate for the specific success-to-pending atomic transition, not a general cleanup start.",
+    "Residual-volume classification and authoritative residual presence must be known; nil cannot become false by default.",
+    "Populate Complete only after the full read and all validations succeed; this flag grants no SQL authority, readiness, admission or production permission."
+  ],
+  "remaining_owner_inputs": [
+    {
+      "owner": "D and B",
+      "decision": "Approve automatic backup staging/drill cleanup start and immutable budget provenance, and the precise resource/operation binding; do not invent a SQL column or timestamp mapping."
+    },
+    {
+      "owner": "D with A source review",
+      "decision": "Implement and review the bounded authoritative collector/read integration once the original time and config mappings are fixed."
+    },
+    {
+      "owner": "D and relevant owner collectors",
+      "decision": "For four singleton gate/hold rules project the same active gate frozen timeout/hold values and matching labels; active system configuration is not a substitute."
+    }
+  ],
+  "production_evaluator": {
+    "required": "Select and validate actual PromQL/controller-state evaluator, no-data, counter reset, recovery and notification dedupe behavior.",
+    "local_PromQL_executed": false,
+    "fixture_sources": [
+      "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+      "docs/evidence/a2-metrics-split-promtool-raw-series-20261027-r3.yml"
+    ],
+    "prepared_expectations_are_not_passes": true
+  },
+  "SQL_queries_or_new_database_columns_created_by_this_handoff": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

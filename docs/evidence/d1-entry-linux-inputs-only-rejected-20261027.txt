@@ -1,0 +1,23 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'verified_original_inputs_only'
+- 'passed_exact_linux_supplement'
+
+    at file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/d1-bootstrap-entry-linux-review-20261027.mjs:14:111
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'verified_original_inputs_only',
+  expected: 'passed_exact_linux_supplement',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.15.0

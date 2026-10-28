@@ -1,0 +1,254 @@
+{
+  "kind": "a2_reference_existing_contract_capability_parity_candidate.v1",
+  "status": "real_decoder_schema_drift_one_literal_fix_and_contract_derived_tests_staged_not_applied",
+  "original_schema": {
+    "path": "contracts/system-backup/v12/secret-ref.schema.json",
+    "size": 23434,
+    "sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9"
+  },
+  "schema_status": "draft_unchanged",
+  "current_decoder": {
+    "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+    "size": 7804,
+    "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+  },
+  "candidate": {
+    "path": "docs/evidence/a2-reference-capability-parity-candidate-20261026.go.txt",
+    "size": 7736,
+    "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+  },
+  "before_archive": {
+    "path": "docs/evidence/a2-reference-capability-parity-before-20261026.go.txt",
+    "size": 7804,
+    "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+  },
+  "candidate_test": {
+    "path": "docs/evidence/a2-reference-capability-parity-test-candidate-20261026.go.txt",
+    "size": 3372,
+    "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+  },
+  "provider_purpose_count": 10,
+  "capability_rows": [
+    {
+      "purpose": "artifact_write",
+      "schema_capabilities": [
+        "exact_write",
+        "conditional_create"
+      ],
+      "current_decoder_capabilities": [
+        "exact_write",
+        "conditional_create"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_write",
+        "conditional_create"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "artifact_read",
+      "schema_capabilities": [
+        "exact_read",
+        "range_read"
+      ],
+      "current_decoder_capabilities": [
+        "exact_read",
+        "range_read"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_read",
+        "range_read"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "artifact_delete",
+      "schema_capabilities": [
+        "exact_delete"
+      ],
+      "current_decoder_capabilities": [
+        "exact_delete"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_delete"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "catalog_append",
+      "schema_capabilities": [
+        "append_record"
+      ],
+      "current_decoder_capabilities": [
+        "append_record"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "append_record"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "catalog_read",
+      "schema_capabilities": [
+        "exact_read"
+      ],
+      "current_decoder_capabilities": [
+        "exact_read"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_read"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "catalog_discovery",
+      "schema_capabilities": [
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "current_decoder_capabilities": [
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "evidence_read_write",
+      "schema_capabilities": [
+        "exact_write",
+        "exact_read",
+        "conditional_create",
+        "range_read"
+      ],
+      "current_decoder_capabilities": [
+        "exact_write",
+        "exact_read",
+        "exact_delete",
+        "conditional_create",
+        "append_record",
+        "range_read",
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "currently_accepted_beyond_schema": [
+        "exact_delete",
+        "append_record",
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "candidate_capabilities": [
+        "exact_write",
+        "exact_read",
+        "conditional_create",
+        "range_read"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "evidence_read",
+      "schema_capabilities": [
+        "exact_read",
+        "range_read"
+      ],
+      "current_decoder_capabilities": [
+        "exact_read",
+        "range_read"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_read",
+        "range_read"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "evidence_write",
+      "schema_capabilities": [
+        "exact_write",
+        "conditional_create"
+      ],
+      "current_decoder_capabilities": [
+        "exact_write",
+        "conditional_create"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_write",
+        "conditional_create"
+      ],
+      "candidate_static_set_matches_schema": true
+    },
+    {
+      "purpose": "evidence_delete",
+      "schema_capabilities": [
+        "exact_delete"
+      ],
+      "current_decoder_capabilities": [
+        "exact_delete"
+      ],
+      "currently_accepted_beyond_schema": [],
+      "candidate_capabilities": [
+        "exact_delete"
+      ],
+      "candidate_static_set_matches_schema": true
+    }
+  ],
+  "actual_drift": [
+    {
+      "purpose": "evidence_read_write",
+      "schema_capabilities": [
+        "exact_write",
+        "exact_read",
+        "conditional_create",
+        "range_read"
+      ],
+      "current_decoder_capabilities": [
+        "exact_write",
+        "exact_read",
+        "exact_delete",
+        "conditional_create",
+        "append_record",
+        "range_read",
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "currently_accepted_beyond_schema": [
+        "exact_delete",
+        "append_record",
+        "snapshot_list",
+        "inventory_read"
+      ],
+      "candidate_capabilities": [
+        "exact_write",
+        "exact_read",
+        "conditional_create",
+        "range_read"
+      ],
+      "candidate_static_set_matches_schema": true
+    }
+  ],
+  "change": "Remove four capabilities disallowed by the existing evidence_read_write conditional; other nine sets and all purpose mappings remain unchanged.",
+  "new_Go_test_root": "TestSecurityReferenceCombinedEvidenceCapabilitiesFollowExistingSchema",
+  "planned_Go_test_children": 8,
+  "test_expected_values_come_from": "Existing SecretRef JSON schema at test time, not the decoder capability map",
+  "gofmt_syntax_and_format_exit": 0,
+  "live_runtime_applied": false,
+  "original_schema_or_vectors_changed": false,
+  "grant_or_alias_created": false,
+  "resource_authority_conferred": false,
+  "Go_tests_or_builds_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "next": "After ae7 terminal and cleanup, apply exact narrow source/test change, freeze accurate inputs, demonstrate four old-source negative failures and fixed full bootstrapsecurity package, preserve previous tests, perform independent review and delete owned build products."
+}

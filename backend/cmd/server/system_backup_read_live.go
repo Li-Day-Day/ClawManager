@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"clawreef/internal/middleware"
+	"clawreef/internal/systembackupapi"
 	"clawreef/internal/systembackupread"
 	"clawreef/internal/systembackupsecurity"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,7 @@ type liveBackupRead struct {
 	db         *sql.DB
 	authorizer *systembackupsecurity.SystemBackupReadAuthorizer
 	cursorKey  []byte
+	tasks      *systembackupapi.Handler
 }
 
 func loadLiveBackupRead(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions, getenv func(string) string) (*liveBackupRead, error) {
@@ -72,8 +74,16 @@ func registerBackupReadLive(admin *gin.RouterGroup, live *liveBackupRead) {
 		admin.GET(route.path, func(c *gin.Context) { live.listTasks(c, kind) })
 		if kind == systembackupread.VerificationTask {
 			admin.GET(route.path+"/:id", live.getVerificationDetail)
+		} else if kind == systembackupread.DrillTask {
+			admin.GET(route.path+"/:id", live.getDrillDetail)
 		} else {
-			admin.GET(route.path+"/:id", unavailable)
+			admin.GET(route.path+"/:id", func(c *gin.Context) {
+				var handler *systembackupapi.Handler
+				if live != nil {
+					handler = live.tasks
+				}
+				handler.Detail(c.Writer, c.Request, kind, c.Param("id"), middleware.SystemBackupRequestID(c))
+			})
 		}
 		admin.GET(route.path+"/:id/events", func(c *gin.Context) { live.listTaskEvents(c, kind) })
 		admin.GET(route.path+"/:id/logs", unavailable)
@@ -276,6 +286,27 @@ func (l *liveBackupRead) getOperation(c *gin.Context) {
 		return
 	}
 	c.Header("X-System-Backup-Data-Source", "live")
+	c.JSON(http.StatusOK, result)
+}
+
+func (l *liveBackupRead) getDrillDetail(c *gin.Context) {
+	if c.Request.URL.RawQuery != "" {
+		liveReadError(c, systembackupread.ErrInvalid)
+		return
+	}
+	service, ctx, ok := l.service(c)
+	if !ok {
+		return
+	}
+	result, err := service.ReadDrillDetailDTO(ctx, c.Param("id"))
+	if err != nil {
+		liveReadError(c, err)
+		return
+	}
+	c.Header("X-System-Backup-Data-Source", "live")
+	c.Writer.Header().Add("Access-Control-Expose-Headers", "X-System-Backup-Data-Source, X-System-Backup-Origin-Installation-ID, X-System-Backup-Task-Row-Version")
+	c.Header(systembackupread.TaskEventInstallationHeader, result.Task.OriginInstallationID)
+	c.Header(systembackupread.TaskEventRowVersionHeader, strconv.FormatInt(result.Task.RowVersion, 10))
 	c.JSON(http.StatusOK, result)
 }
 

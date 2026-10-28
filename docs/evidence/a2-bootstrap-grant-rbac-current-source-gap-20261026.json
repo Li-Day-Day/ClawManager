@@ -1,0 +1,78 @@
+{
+  "kind": "a2_bootstrap_grant_RBAC_current_source_gap.v1",
+  "status": "confirmed_original_semantic_gap_next_separate_phase_not_hot_patch",
+  "primary_source": {
+    "grant_file": "bootstrap_grant.go:5-8 explicitly says Removing/replacing it revokes retry authorization; exact-file hash is not a signature or filesystem ACL",
+    "original_authorize": "bootstrap_admission.go authorize invokes sources.ReadGrant and PinnedRegistrationAuthority with actual sources.RegistryBytes every call; Prepare/SQL Authorize/ValidateAndReserve invoke it",
+    "real_factory": "bootstrap_deployment.go:109 ReadGrant closes over original c.GrantFile/c.GrantSHA256 and calls ReadBootstrapGrantFile; RegistryBytes is RegistrationFiles.RegistryBytes, not an arbitrary provider callback",
+    "file_reader": "registration_files.go:19 limits controlled registry kind/version path, exact digest and boundedFile <=262144; ReadBootstrapGrantFile uses boundedFile <=16384 and complete strict original document"
+  },
+  "current_scope": {
+    "generic_new_wrapper": "fresh original grant/all9 at every Prepare, cached original RBAC/window in SQL Authorize/Recheck",
+    "native_108_passes": "scoped snapshot component only, not late file revocation equivalence",
+    "gap": "Removed/changed original grant or RBAC between preparation and L2/final callback is not observed by authorizeSnapshot; elapsed valid windows alone do not restore that original source guarantee",
+    "non_RBAC": "All9 resource registry late validation also needs original-source preservation on new-use branch; do not reject unrelated missing resource before L3 history"
+  },
+  "proposed_concrete_profile": {
+    "origin": "reuse existing successfully loaded BootstrapDeployment original grant path/SHA + registry directory/config pins",
+    "mechanism": "new opaque concrete local-file profile/factory in separate A2 source pair; direct ReadBootstrapGrantFile and RegistrationFiles methods under original deployment-owned paths, not invocation of arbitrary BootstrapAdmissionSources functions under locks",
+    "not_authority": "profile gives only provenance and bounded original file reads; original independent deployment/resource authority remains mandatory",
+    "stages": "current grant+RBAC on both branches before L3 and before fixed FinalGuard; full9 source checks only on fresh resource/new-use and final-new branch. Original raw bounds/data remain unchanged and deadlines never renew.",
+    "time": "shared SQL SampleTime before/after bounded local source reads, single min caller/config attempt ctx, fixed D readback and final clock afterward without further callbacks/files",
+    "compatibility": "existing generic snapshot constructor remains explicitly limited; production assembly must use reviewed concrete current-source profile, no approved/local_safe boolean or new grant."
+  },
+  "required_regressions": [
+    "Original actual grant file removed/changed after Prepare and during prefix wait: reject both new and exact historical attempt, no business writes/second charge.",
+    "Original actual RBAC file deleted/changed or role binding removed after Prepare: reject both branches even with unchanged cached RBAC/window.",
+    "Full g/notBefore/expires original-file pin mismatch or apparent renewed expiry cannot extend the captured original deadline.",
+    "Non-authorizing non-RBAC resource registry removed/changed after preparation: reject new use before reservation/audit and at final check, but do not preempt otherwise authorized L3 exact historical read.",
+    "Arbitrary source callback that can call network is never defaulted to safe late local-file work; fail when concrete original controlled profile is absent.",
+    "All late read waits/context cancellation/SQL rollback/strict expiry equality still reject through shared monotonic sample and D final deadline."
+  ],
+  "current_88b2_frozen_source_edited": false,
+  "runtime_fix_implemented": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_grant.go",
+      "size": 1212,
+      "sha256": "b9b301e525825eb6230c89d68d736df36a7c138eb37129d6f5ad8991c03fc014"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "size": 7037,
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "size": 9116,
+      "sha256": "88b5a7c8e0e4c60d22da3e465dffd76cfa0e6acd2061086a5f943921e3d9a703"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/registration_files.go",
+      "size": 2842,
+      "sha256": "6597f252283569df33a5e1738a43088f2342881e8c469c0d7fadb15b4efb23f5"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_authority.go",
+      "size": 16557,
+      "sha256": "56d4a4f436729b2fa3f42753c21af7b73320f2664b2c2a9ad21482f174cd1be3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_authority_test.go",
+      "size": 27959,
+      "sha256": "e4c722221fd92ee3303d258242a957da72a89577314c6054ae1264b088ce5c6c"
+    }
+  ],
+  "resolution_candidate": {
+    "status": "concrete_file_profile_source_ready_not_native_or_acceptance",
+    "receipt": "docs/evidence/a2-bootstrap-original-files-material-adapters-ready-20261026.json",
+    "runtime_pair": [
+      "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go"
+    ],
+    "original_gap_record_preserved": true,
+    "whole_consumer_test_owner": "01a17616-0a6c-7821-86d2-68e068819b85"
+  }
+}

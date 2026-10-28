@@ -1,0 +1,160 @@
+{
+  "kind": "d1_a2_reference_capability_windows_partial_review.v1",
+  "status": "passed_exact_windows_counterfactual_and_runtime5_only",
+  "failed_parent_preserved": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+  "parent_status": "failed",
+  "candidate_source_files": 1765,
+  "candidate_source_sha256": "f1decc93d096c44160dd839e786517ead25873a27ace927a12b2daf0034efd5f",
+  "candidate_delta": [
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+      "size": 7736,
+      "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference_contract_parity_test.go",
+      "size": 3372,
+      "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+    }
+  ],
+  "old_native_exit": 1,
+  "old_expected_failed_capabilities": [
+    "append_record",
+    "exact_delete",
+    "inventory_read",
+    "snapshot_list"
+  ],
+  "old_permitted_controls_passed": 4,
+  "fixed_native_exit": 0,
+  "fixed": {
+    "roots": 1,
+    "pass_events": 9
+  },
+  "full_native_exit": 0,
+  "full": {
+    "roots": 42,
+    "pass_events": 347
+  },
+  "runtime_packages": [
+    "clawreef/cmd/system-backup-bootstrap",
+    "clawreef/internal/systembackupbootstrapmaterials",
+    "clawreef/internal/systembackupbootstrapsecurity",
+    "clawreef/internal/systembackupcatrust",
+    "clawreef/internal/systembackupnoncebootstrap"
+  ],
+  "actual_go_list_platform_tag_captures": 4,
+  "additional_tagged_test_caller": "clawreef/internal/systembackupevidence",
+  "tagged_seed_executed": false,
+  "tagged_seed_build_failure_preserved": true,
+  "linux_compiles_completed": 0,
+  "snapshot_postcheck": true,
+  "reviewed_inputs_postcheck": true,
+  "driver_unchanged": true,
+  "owner_independently_absent": true,
+  "run_artifacts_cleaned": true,
+  "live_patch_application_approved_by_this_review": false,
+  "current_tree_accepted": false,
+  "complete_candidate_run_accepted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "whole_goal_complete": false,
+  "artifacts": [
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+      "sha256": "67c12fd8e695c9778d69478f5b25cbb933faddb84da32399bf95e306853d5dc9"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.scope.json",
+      "sha256": "b5d180425485ce1f8f96c9b160cf557167e0ba260e330ddf5721cec8faa4d7be"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.windows.ordinary.jsonl",
+      "sha256": "8c75851bebc309f952bfdefd0629b15751bca5685255e438fc1bb795448b28aa"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.windows.ordinary.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.windows.systembackup_mysql.jsonl",
+      "sha256": "bb3c285e3058474fdaf225c5e63a991dd974a2ac3f5cb33cc14770b7179f5b6f"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.windows.systembackup_mysql.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.linux.ordinary.jsonl",
+      "sha256": "be4d0d2533bc3cc2ecb9b135704f445e53e4f84619766c30e75fae2be8281fcf"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.linux.ordinary.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.linux.systembackup_mysql.jsonl",
+      "sha256": "22a7615cd76641b0df91e0d45cb0068c9d37d1ac9e06a60a6c173e5cb8fe9244"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.linux.systembackup_mysql.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.old.jsonl",
+      "sha256": "1260d659058002fff9074ab79cae3ae70988ff7627753a46edf17a067edff4f5"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.old.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.fixed.jsonl",
+      "sha256": "481b32626a0fd61715f561b7b8855a9327146053bc616c3e827f7a7d87fd6a19"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.fixed.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.full.jsonl",
+      "sha256": "6d26dd95567d83e01b50db0cf123616968c68f68a07089af048c700f91f8e802"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.full.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.tagged_seed.jsonl",
+      "sha256": "e214bbad06f1743e490dcb2fea615f38b2271f11a2c19f061e21cb7739a05c03"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.tagged_seed.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-validation-20261027.ps1",
+      "sha256": "decb2e046c591d5d33c2725babafd7556c56dded8fefcfb8a632e168571c83d5"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-candidate-20261026.go.txt",
+      "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-before-20261026.go.txt",
+      "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-test-candidate-20261026.go.txt",
+      "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-go-scope-20261026.mjs",
+      "sha256": "8f2a7b31fb7339802afe3196078c50cd5438806ce676a9c1430bcf5b264b0024"
+    },
+    {
+      "path": "docs/evidence/d1-a2-reference-capability-windows-review-20261027.mjs",
+      "sha256": "f48cb7a6c030ef47ff1ac9aefd0b34c86242249c6befd4dd3e6fcf5a2eff0dc2"
+    }
+  ]
+}

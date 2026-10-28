@@ -1,0 +1,96 @@
+{
+  "kind": "d_bootstrap_entry_source_ready.v1",
+  "status": "source_ready_for_independent_native_not_acceptance",
+  "date": "2026-10-26",
+  "owner_chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+  "ownership_revision": 13,
+  "files": [
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_inline_domain.go",
+      "size": 8230,
+      "sha256": "33988165713a32d07d4b2f32b8eba91634c0fc16c9c5b3956377b7e6ce959b47"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+      "size": 9302,
+      "sha256": "2e651bc713551a731c4ac5977a076d98868cdda2a4ffbcaf66b42a43062fa0c7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "size": 10733,
+      "sha256": "074f2cc9c8439a625bed0ddbc305fb279f0e64fc0acb0284be2c0779ef1d38d0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_test.go",
+      "size": 12493,
+      "sha256": "1862afc186752fd6a9e5b68e510b59427394535d2eee5df0bab9ba90d1a182b6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_candidates.go",
+      "size": 4833,
+      "sha256": "80dd9b2f6e84369ca39f465926ccbffffb2a875f44f354c39f64720db0b94783"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_candidates_test.go",
+      "size": 10698,
+      "sha256": "a481cd496fcb4ab5309ee4e823386cb06dfd58a3fc18674bb5285b642e98fb7d"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "size": 3917,
+      "sha256": "b62ada7f8cdb876290c59e6565f35b6570118f1ecc664f2e1602ba63998c6e7d"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main_test.go",
+      "size": 1633,
+      "sha256": "b860617abd5e93fe6487084be7d570e696e487f91a056a94f271a7df1d3b3224"
+    }
+  ],
+  "new_test_roots": [
+    "TestBootstrapInlineDomainFenceLegacyAndHistoricalBranches",
+    "TestBootstrapInlineDomainFenceRejectsPartialUnknownAndDrift",
+    "TestBootstrapInlineDomainFenceBindingAndRedaction",
+    "TestBootstrapDeploymentCandidatesImmutableComposition",
+    "TestBootstrapDeploymentCandidatesApplyConsumerAndHistoricalRetry",
+    "TestBootstrapDeploymentCandidatesPreparationAndLateFilesBeforeCredentials",
+    "TestDeploymentLegacyAttemptKeepsPreparationContextThroughSQL",
+    "TestDeploymentLegacyRejectsTypedNilOwnersBeforeCredentials",
+    "TestDeploymentLegacyClosesDatabaseReturnedWithOpenError"
+  ],
+  "new_root_count": 9,
+  "API": [
+    "pd.LockBootstrapInlineDomain / CheckLegacyBranch / Recheck",
+    "NewBootstrapDeploymentCandidates(selections, mandatory original authority)",
+    "BootstrapOwnerAdapters.Candidates is Go-only fixed composition, copied at Load",
+    "BootstrapDeployment.Apply routes candidate attempts, or preserves one legacy context through preparation and A private SQL core",
+    "UsesCandidateConsumption is compiled-route metadata, never authority"
+  ],
+  "invariants": [
+    "All eight C1 tables require BASE TABLE/InnoDB; partial/unknown/permissions reject. Metadata zero requires eight direct typed MySQL1146 absence proofs, never metadata visibility alone",
+    "Full C1 storage denies first grant-only initialization even with no domain. Exact current-authorized legacy history permits only absent or matching configured v1/hash; all unconfigured/corrupt/wrong-scope reject",
+    "Original ctx/tx/scope identity and complete canonical domain facts are checked again after callbacks; no callback/file/network is added after fixed guard",
+    "Mandatory original resource authority and all 30 owner implementations remain required. No missing owner is replaced by a candidate receipt or approval flag",
+    "Preparation failures/current grant or RBAC revocation cannot open credentials. Non-authorizing physical failures are deferred only to the real locked historical/new-use decision",
+    "Provider preparation occurs once per candidate attempt. Original file sources are reinspected after preparation, before the DB opener",
+    "One original bounded legacy context includes all owner preparation and SQL, without re-deriving a public-service child. Every nonnil DB returned by an opener is closed even with error",
+    "Default CLI still links only three old registry owners and remains blocked for missing 27. No JSON candidate/approval field or dummy production original authority is introduced"
+  ],
+  "fixture_boundary": "Synthetic independent mapping, provider and physical facts plus in-memory SQL; real loader/files, A attempt, D consumer and transaction-owner paths. The deployment fixture initializes its bootstrap grant window before any Prepare to cover fixed SQL and real loader clocks, without changing committed observations.",
+  "native_run_for_entry": false,
+  "prior_a2e7_covers_entry": false,
+  "required_next_gate": [
+    "Fresh final full original nine ordinary packages PLUS bootstrap CLI (ten total), explicit 45m timeout/expected roots, same-source boundary and source postcheck",
+    "D1 four local seed roots, tagged evidence test compile and agreed Linux server/bootstrap/migration/material compiles; no actual MySQL tests",
+    "Driver start/pre-Go/end pins, owned temp/cache/telemetry settings verified, exact finally cleanup",
+    "A/D independent BE1-BE10 and current entry source review"
+  ],
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "implementation_accepted": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "supersedes": "docs/evidence/d2-bootstrap-entry-source-ready-20261026.json",
+  "revision": 2,
+  "change": "Test-only: use the existing positive disabled_artifact vector instead of the nonexistent configured_artifact ID. No producer/runtime gate or vector content changed.",
+  "failed_prior_native": "docs/evidence/d-bootstrap-entry-native-7582937f2d644279917714206041d1df.json"
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "a2_current_fifteen_stage_peer_replay_observation.v1",
+  "observed_at": "2026-10-27T05:55:12.807Z",
+  "command": [
+    "node",
+    "docs/evidence/d1-current-fifteen-stage-review-20261027.mjs",
+    "--check"
+  ],
+  "actual_exit": 0,
+  "actual_stdout": "CURRENT_FIFTEEN_STAGE_REVIEWED source=4003f0f0 inputs=1718 stages=15 exits=13zero+2expected roots=GC3 cleanup=yes whole_baseline=no actual_sql=0",
+  "checker": {
+    "path": "docs/evidence/d1-current-fifteen-stage-review-20261027.mjs",
+    "size": 11350,
+    "sha256": "724002d3ee31117c261e22628d182cca6e6c90d23835110ee36294acd7009d9b"
+  },
+  "D1_review": {
+    "path": "docs/evidence/d1-current-fifteen-stage-reviewed-20261027-2d061.json",
+    "size": 11010,
+    "sha256": "0a1866235611a7563349a7e7130e0ae2f7673f475e8c0f3c57b4a87714de085b"
+  },
+  "A1_review": {
+    "path": "docs/evidence/a-current-fifteen-stage-reviewed-20261027-r1.json",
+    "size": 2556,
+    "sha256": "f4453167078d7eac453ef9f7b72c0f8f0f227f08e53cb66fa9cb251d9ec293a2"
+  },
+  "native_receipt": {
+    "path": "docs/evidence/d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95.json",
+    "size": 27354,
+    "sha256": "d9645cef72d962b1dc6c30852c374df9ba6a121eac5f22828d7e6948f5374332"
+  },
+  "accepted_scope": "exact 4003 source fifteen-stage native supplement only",
+  "source_files": 1718,
+  "successful_stages": 13,
+  "expected_assertion_failure_stages": 2,
+  "Go_repeated_by_A2": false,
+  "SQL_executed": false,
+  "whole_baseline_accepted": false,
+  "current_controller_candidate_covered": false
+}

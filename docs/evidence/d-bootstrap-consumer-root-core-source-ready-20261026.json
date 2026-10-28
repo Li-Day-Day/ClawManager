@@ -1,0 +1,123 @@
+{
+  "kind": "d_bootstrap_consumer_root_core_source_ready.v1",
+  "status": "ready_for_next_exact_snapshot_not_native_acceptance",
+  "date": "2026-10-26",
+  "owner_chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+  "ownership_revision": 11,
+  "files": [
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_contract.go",
+      "size": 6894,
+      "sha256": "d70deb031481533f62d21039bd032775a8672944e9e0e97d9d8c0e24ef80851f"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume.go",
+      "size": 14040,
+      "sha256": "db0192271bcb7c2b651cfedd1e43c2104fa773bef2041f9312d2bf79171f7cea"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_records.go",
+      "size": 16112,
+      "sha256": "bea6fb3847bbc91385662ff5534a4c0827d60c4306cf31eb3068c6be58a2470e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_snapshot.go",
+      "size": 9577,
+      "sha256": "edae70a26fbe16da3ed6afa9b3477c4f7cba446e202068de0fc56d23d0f27976"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "size": 15442,
+      "sha256": "315def86b128974b4aaf8fb060a44581be04d0defc4f3b95ae4737d2c6cb12b7"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "size": 11810,
+      "sha256": "8cccd08f52c62cdb01acb53b8f64d8e08e05a5603998f83f117ea1513bfef646"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_transaction_copy_test.go",
+      "size": 3265,
+      "sha256": "3f5014d46eedb715a2e1a35efaa257241d9ff8230919da19a1944dc81fb5c24f"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_callback_phase_test.go",
+      "size": 7939,
+      "sha256": "d08641d503d4e20f3da94b28f1fb2aa4572b8acf3c7f06b91c03d88b857c13b7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_capacity.go",
+      "size": 9542,
+      "sha256": "6961d7849e872ef44449143659541c281a2e801f61b8547647f6ddd76de1ca31"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_capacity_test.go",
+      "size": 11474,
+      "sha256": "1c185c1815ad1d1424e9551ff4df6527ae9ce8e943c2f3c0cb604ed71667ad0d"
+    }
+  ],
+  "stage": "Both first consumption and exact historical retry: Work captures expected rows, closes every public write capability, checks original shared clock/plan/context, invokes Session.Recheck once under private read/time view, closes that view including panic paths, checks latched errors and original clock/plan/context again, then SQL-only fixed FinalGuard and last clock/context; A alone commits.",
+  "API_unchanged": true,
+  "new_root": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard",
+  "new_modes": [
+    "normal",
+    "removed",
+    "changed",
+    "retained_write",
+    "invalid_read_sql",
+    "expired_before_callback",
+    "late_wait",
+    "panic"
+  ],
+  "new_root_native_pending": true,
+  "prior_component_proof": {
+    "receipt": "docs/evidence/d-bootstrap-consumer-native-362c2352023f4438a2fd7694f4ad8b70.json",
+    "scope": "Three capacity roots plus one transaction-value-copy root, 37 pass events, inside an overall failed targeted run; NOT whole acceptance",
+    "current_component_inputs": [
+      {
+        "path": "backend/internal/systembackupproducer/transaction.go",
+        "size": 15442,
+        "sha256": "315def86b128974b4aaf8fb060a44581be04d0defc4f3b95ae4737d2c6cb12b7",
+        "exact_match": true
+      },
+      {
+        "path": "backend/internal/systembackupproducer/record_sql.go",
+        "size": 11810,
+        "sha256": "8cccd08f52c62cdb01acb53b8f64d8e08e05a5603998f83f117ea1513bfef646",
+        "exact_match": true
+      },
+      {
+        "path": "backend/internal/systembackupproducer/bootstrap_transaction_copy_test.go",
+        "size": 3265,
+        "sha256": "3f5014d46eedb715a2e1a35efaa257241d9ff8230919da19a1944dc81fb5c24f",
+        "exact_match": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/bootstrap_candidate_capacity.go",
+        "size": 9542,
+        "sha256": "6961d7849e872ef44449143659541c281a2e801f61b8547647f6ddd76de1ca31",
+        "exact_match": true
+      },
+      {
+        "path": "backend/internal/systembackupsecurity/bootstrap_candidate_capacity_test.go",
+        "size": 11474,
+        "sha256": "1c185c1815ad1d1424e9551ff4df6527ae9ce8e943c2f3c0cb604ed71667ad0d",
+        "exact_match": true
+      }
+    ],
+    "single_defect_identity_overlay_pending": true
+  },
+  "next_requirements": [
+    "Current-source targeted and full nine-package native tests, preserving old nonce/CA roots",
+    "Linux server/bootstrap builds plus nonce/CA test compiles",
+    "Root phase regression and intended single-defect counterexamples",
+    "Concrete original-material integration BM1-BM10 and independent BC1-BC12 review",
+    "Exact owner cleanup and unchanged snapshot bytes"
+  ],
+  "source_change_not_covered_by_88b2": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "implementation_accepted": false,
+  "goal_complete": false,
+  "shared_read_copy_closure": "Issued private read views and whole-value reflection copies share one private mutex/open/read/transaction state; immediate and panic closure seals every copy before fixed SQL FinalGuard."
+}

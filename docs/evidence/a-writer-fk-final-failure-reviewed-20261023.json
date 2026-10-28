@@ -1,0 +1,42 @@
+{
+  "kind": "a_writer_fk_failed_final_preparation_review.v1",
+  "status": "terminal_failure_preserved_not_accepted",
+  "error": "Frozen grouped source file set drift",
+  "frozen_source_set_verified": false,
+  "current_source_set_verified": false,
+  "passing_seed_names": [
+    "TestAResourcesWriteFKMySQLSeed",
+    "TestDResourcesReadbackMySQLSeed",
+    "TestDResourcesWriteMySQLSeed"
+  ],
+  "reported_linux_build_exit": 0,
+  "reported_binary_sha256": "40072f1a7102d7a3b04e42083d1de2d4f4fd48f7c816d24cf5f572431f19ef32",
+  "original_owner_independently_absent": true,
+  "original_source_manifest_digest_valid": true,
+  "actual_SQL": false,
+  "production_approved": false,
+  "acceptance_written": false,
+  "next_requirement": "Fresh exact-version preparation and both frozen/current source-set checks; existing failed result must not be rewritten as success.",
+  "evidence": [
+    {
+      "path": "docs/evidence/a-writer-fk-final-20261023-145605-7d41cb5f.json",
+      "size": 1360,
+      "sha256": "102768cd25b8253f22dd8552658bdb4a1befda9a9117c6f5baa5e79d9ab92d2e"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-final-20261023-145605-7d41cb5f-source.json",
+      "size": 317983,
+      "sha256": "b71781540a215a4ae3dbd35acc7c22c9c85035a21d3350a3544a538d2cb39e84"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-final-20261023-145605-7d41cb5f-seed.jsonl",
+      "size": 3727,
+      "sha256": "fb03eac7b26d45739e324afa6aca886531125bd298291fdd2c2c2b7f28bdc8ad"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-final-failure-review-20261023.mjs",
+      "size": 3203,
+      "sha256": "0df529294948c32fe952dddfc6e97aeccda1e26bb59edfa74b93954758f8949b"
+    }
+  ]
+}

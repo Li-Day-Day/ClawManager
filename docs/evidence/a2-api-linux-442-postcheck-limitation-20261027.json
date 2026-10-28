@@ -1,0 +1,62 @@
+{
+  "kind": "a2_api_linux_prior_receipt_postcheck_scope_limitation.v1",
+  "status": "observed_successful_compiles_live_postcheck_only_not_frozen_aftercheck",
+  "inputs": [
+    {
+      "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.json",
+      "size": 429094,
+      "sha256": "ebda04cf3a04c026e88e8727f9e0295f25fa6d070e0db905350d83b9e18151ab"
+    },
+    {
+      "path": "scripts/system-backup-a-api-linux-supplement.ps1",
+      "size": 9925,
+      "sha256": "fe27a3a445cf1979e3f25055ff4d9226c6fc455cf930ce9e8653539283e8bd93"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.source.json",
+      "size": 329475,
+      "sha256": "9f420f4aa4b8839ed9dd64207c8f9bd0b627dd37c02c5c211638ae40cbea7a13"
+    },
+    {
+      "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux.ordinary.jsonl",
+      "size": 7113861,
+      "sha256": "628c254003d0f19afa1ea5b7135c5a427e539f2ddb947a0d338ac36f8185fed7"
+    }
+  ],
+  "recorded_driver_hash_matches_current_file": true,
+  "observed_linux_binary_count": 4,
+  "observed_linux_exits": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "old_receipt_status_preserved": "passed_for_exact_native_test_bytes",
+  "reported_source_unchanged": true,
+  "actual_postcheck_root_variable": "$compileRoot (live workspace)",
+  "actual_after_assignment": "$after=Get-CompilePins $compileRoot $paths",
+  "frozen_compile_source_final_postcheck_present": false,
+  "source_path_comparison_is_live_only": true,
+  "current_security_module_scope_observation": {
+    "actual_root_linux_go_list_test_dependency_packages": 224,
+    "main_module_package_directories": [
+      "backend/internal/systembackupcontract",
+      "backend/internal/systembackupproducer",
+      "backend/internal/systembackupread",
+      "backend/internal/systembackupsecurity"
+    ],
+    "main_module_Go_files": 285,
+    "old_to_current_changed_added_removed_Go_files": 0,
+    "scope": "Read-only GoList traversal observation; identical bytes do not recreate missing old frozen-source final postcheck."
+  },
+  "old_builds_not_relabelled_as_failed": true,
+  "old_parent_148_failure_preserved": true,
+  "not_sufficient_for_current_frozen_security_compile_gate": true,
+  "next_action": "A1 exact current security-only Linux test compile with both frozen/current final postchecks and owned cleanup; use b53 exact current proofs for the other helper packages.",
+  "Go_executed_by_A2": false,
+  "old_owners_modified": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false
+}

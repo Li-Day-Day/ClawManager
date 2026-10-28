@@ -1,0 +1,28 @@
+{
+  "kind": "d1_final_source_support_addition_rejection.v1",
+  "prior_exact_source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+  "prior_exact_source_files": 1718,
+  "actual_rejected_replays": [
+    {"command": ["node", "docs/evidence/a-owner-current-local-review-20261027.mjs", "--check"], "exit": 1, "reason": "exact metrics candidate is not live; no final source acceptance"},
+    {"command": ["node", "docs/evidence/d-gc-full-lifecycle-source-preparation-20261027.mjs", "--check-version", "r3"], "exit": 1, "reason": "source/harness/request drift; prepare a new version"}
+  ],
+  "initial_detected_addition": "scripts/system-backup-promql-prepare.ps1",
+  "subsequent_independent_full_enumeration": {
+    "files": 1720,
+    "source_sha256": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+    "additions": [
+      {"path": "scripts/system-backup-promql-prepare.ps1", "size": 5496, "sha256": "c6cb38cd748d9f7bb72f309e0946d1a30a820e9417667ea890fa7cf56f3795be"},
+      {"path": "scripts/system-backup-promql-prepare.test.ps1", "size": 6589, "sha256": "06f01fbd4c5c8bb3741db0c52e317f7d72b2bbd4c0700a17852d9249e3deab6e"}
+    ],
+    "prior_files_modified_or_removed": false
+  },
+  "owner_coordination_sent_to_Root_A1_A2_GC": true,
+  "D1_moved_deleted_or_modified_peer_source": false,
+  "old_1718_acceptance_rewritten": false,
+  "new_final_source_review_required": true,
+  "new_GC_source_review_required": true,
+  "Go_started": false,
+  "SSH": false,
+  "dependencies_installed": false,
+  "whole_goal_complete": false
+}

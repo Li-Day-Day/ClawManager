@@ -1,0 +1,92 @@
+{
+  "kind": "a_owner_unchanged_dependency_readback_composition.v1",
+  "date": "2026-10-23",
+  "status": "owner_inventory_retained_after_non_dependency_layout_changes",
+  "source": "docs/evidence/a-owner-dependency-freeze-20261023-r3-source.json",
+  "source_manifest_sha256": "db80f7e33e3cb5d72efb2cebd3ea2b3856b28e9663977a35cbb2712bee89d588",
+  "source_sha256": "58e8675e0213ad3542957108b625e9cc85b14a762bd5275e4ca7830ea9688a3b",
+  "source_files": 1610,
+  "events": "docs/evidence/a-owner-gc-full-local-20261023-111154-inventory.json",
+  "events_sha256": "2985bb09929aec33e6afa0d7c5ebb49b90b18ac7caf4adb69932cf8894addcd6",
+  "inventory_source_sha256": "a2e69921b109dbf12fa7ed9b40689332feb93f99834e3c3ad97a8016e9f4246b",
+  "owner_baseline": {
+    "main": 636,
+    "all": 5138
+  },
+  "tested_source": "docs/evidence/a-owner-gc-full-local-20261023-111154-source.json",
+  "tested_source_manifest_sha256": "121d6586f0ce06eda7887e40e21e5dbca12591e8c29a736336262b04481503bd",
+  "changed_ordinary_inputs": [
+    "backend/internal/systembackupresources/restore_fields_sql.go",
+    "backend/internal/systembackupresources/restore_fields_sql_test.go",
+    "backend/internal/systembackupresources/restore_readback.go"
+  ],
+  "added_ordinary_inputs": [
+    "backend/internal/systembackupresources/restore_write.go",
+    "backend/internal/systembackupresources/restore_write_test.go"
+  ],
+  "ordinary_owner_dependency_inputs_unchanged": true,
+  "tagged_dependency_graph_resolved": true,
+  "platforms": [
+    "windows",
+    "linux"
+  ],
+  "resources_in_owner_dependency_closure": false,
+  "current_resources_package_accepted": false,
+  "tests_repeated": false,
+  "actual_SQL": false,
+  "human_mfa": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "current_whole_worktree_verified": false,
+  "cleanup": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-cb6386d59a4b4ad687c15ffa0a5423f4",
+    "independently_absent": true
+  },
+  "evidence": [
+    {
+      "path": "docs/evidence/a-owner-gc-full-accepted-20261023.json",
+      "size": 28526,
+      "sha256": "73058cc7276e80eef360c71cccf40154bdc9e858d46fa7f2740053ba4bd96978"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3-source.json",
+      "size": 316396,
+      "sha256": "db80f7e33e3cb5d72efb2cebd3ea2b3856b28e9663977a35cbb2712bee89d588"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3-native.json",
+      "size": 862,
+      "sha256": "4095d36d72e70d55828ec7c4e58be13ce9306e1da4a87421f79b05e15bc48850"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3-windows-imports.txt",
+      "size": 5666,
+      "sha256": "5c5c5e19a8314497dacda442965dd7e98542951b335fd20f1a070d5095e6d323"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3-windows-stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3-linux-imports.txt",
+      "size": 5611,
+      "sha256": "be485eeece3a2b04c598d9d20f334d047a8f1eaba26ae2ec12b9a0fc1296d3dd"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3-linux-stderr.txt",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/a-owner-dependency-freeze-20261023-r3.ps1",
+      "size": 4707,
+      "sha256": "7a49a50bf09af8164f8e88bb956cccfe8011a6dc5a8116185d798dc3d4d40dd7"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-dependency-review-20261023-r3.mjs",
+      "size": 5569,
+      "sha256": "7351b4df3a4c45f6016bcf26ff3fb41ae0d7a4220c072056432420a5127666d8"
+    }
+  ]
+}

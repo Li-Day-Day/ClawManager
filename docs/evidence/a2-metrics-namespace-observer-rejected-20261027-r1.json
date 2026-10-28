@@ -1,0 +1,27 @@
+{
+  "kind": "a2_namespace_observer_initial_preflight_rejection.v1",
+  "status": "preflight_rejected_no_post_native_observation",
+  "observer": {
+    "path": "docs/evidence/a2-metrics-post-native-namespace-20261027.mjs",
+    "size": 5953,
+    "sha256": "342f8cf244cb63a916c872ff11985edb2a5bbf610f6804f146a585be7c04a0d4"
+  },
+  "actual_command": [
+    "node",
+    "docs/evidence/a2-metrics-post-native-namespace-20261027.mjs"
+  ],
+  "actual_exit": 1,
+  "reason": "Initial observer incorrectly restricted all manifest paths to backend/contracts/scripts; actual manifest includes 11 docs inputs.",
+  "first_rejected_input": "docs/evidence/a-config-canonical-maintenance-digest-vectors-20261015.json",
+  "actual_source_by_root": {
+    "backend": 1296,
+    "contracts": 81,
+    "docs": 11,
+    "scripts": 330
+  },
+  "post_native_namespace_proven": false,
+  "Go_executed": false,
+  "peer_files_modified": false,
+  "observer_process_running": false,
+  "root_formal_window_status": "failed"
+}

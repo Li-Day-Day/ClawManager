@@ -1,0 +1,412 @@
+✔ public admission list and detail accept the producer vector without issuing a download (262.6163ms)
+✔ public admission rejects wrong type for evidence in list and detail (35.0117ms)
+✔ public admission rejects wrong target in list and detail (1.876ms)
+✔ public admission rejects wrong evidence ID in list and detail (2.2477ms)
+✔ public admission rejects wrong endpoint in list and detail (2.8601ms)
+✔ public admission rejects system actor in list and detail (2.0801ms)
+✔ public admission rejects zero actor in list and detail (1.6598ms)
+✔ public admission rejects actor alias in list and detail (0.9465ms)
+✔ public admission rejects actor overflow in list and detail (0.9463ms)
+✔ public admission rejects pending in list and detail (1.4135ms)
+✔ public admission rejects running in list and detail (0.8647ms)
+✔ public admission rejects failed in list and detail (17.3593ms)
+✔ public admission rejects partial transport status in list and detail (5.4475ms)
+✔ public admission rejects missing status in list and detail (0.9287ms)
+✔ public admission rejects retryable in list and detail (0.8579ms)
+✔ public admission rejects failure in list and detail (18.5302ms)
+✔ public admission rejects failure text in list and detail (4.8378ms)
+✔ public admission rejects resource result in list and detail (0.8184ms)
+✔ public admission rejects config result in list and detail (1.0703ms)
+✔ public admission rejects missing start in list and detail (0.8918ms)
+✔ public admission rejects missing finish in list and detail (0.8213ms)
+✔ public admission rejects sub-microsecond finish replacement in list and detail (0.747ms)
+✔ public admission rejects sub-microsecond update replacement in list and detail (0.6946ms)
+✔ public admission rejects equal deadline in list and detail (0.6513ms)
+✔ public admission rejects earlier deadline in list and detail (0.8324ms)
+✔ public admission rejects invalid calendar in list and detail (16.2004ms)
+✔ public admission rejects private receipt in list and detail (0.786ms)
+✔ public admission rejects raw claim in list and detail (0.7618ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 429.303
+✔ MFA then one exact full GET returns a verified file and admission Operation ID (147.6479ms)
+✔ ordinary mode sends one GET without proof and does not require a sensitive admission ID (3.8255ms)
+✔ HTTP 400 cannot retry, leak server error text or proceed to download (2.5712ms)
+✔ HTTP 401 cannot retry, leak server error text or proceed to download (7.4769ms)
+✔ HTTP 403 cannot retry, leak server error text or proceed to download (0.7724ms)
+✔ HTTP 404 cannot retry, leak server error text or proceed to download (0.7075ms)
+✔ HTTP 409 cannot retry, leak server error text or proceed to download (0.5931ms)
+✔ HTTP 410 cannot retry, leak server error text or proceed to download (0.6654ms)
+✔ HTTP 416 cannot retry, leak server error text or proceed to download (7.1568ms)
+✔ HTTP 429 cannot retry, leak server error text or proceed to download (1.0835ms)
+✔ HTTP 500 cannot retry, leak server error text or proceed to download (0.7422ms)
+✔ HTTP 503 cannot retry, leak server error text or proceed to download (0.536ms)
+✔ proof wrong audience prevents GET (1.3023ms)
+✔ proof wrong endpoint prevents GET (0.7142ms)
+✔ proof wrong key prevents GET (0.7022ms)
+✔ malformed proof envelope null cannot become a request header (0.7707ms)
+✔ malformed proof envelope [] cannot become a request header (0.5492ms)
+✔ malformed proof envelope {} cannot become a request header (9.4243ms)
+✔ malformed proof envelope {"header_nam cannot become a request header (1.1859ms)
+✔ malformed proof envelope {"header_nam cannot become a request header (1.306ms)
+✔ download rejects wrong checksum without releasing a file (10.0233ms)
+✔ download rejects short file without releasing a file (1.2112ms)
+✔ download rejects weak checksum without releasing a file (0.7192ms)
+✔ download rejects HTML without releasing a file (1.5159ms)
+✔ download rejects wrong operation ID without releasing a file (2.8343ms)
+✔ download rejects cacheable without releasing a file (0.9846ms)
+✔ download rejects inline without releasing a file (0.9357ms)
+✔ download rejects unexpected range without releasing a file (1.9485ms)
+✔ sensitive download requires a valid Operation header and never accepts partial transport success (1.8935ms)
+✔ response headers and streaming body both enforce the original 8 MiB bound (3.9804ms)
+✔ session changes at either await boundary discard the response (1.3396ms)
+✔ a session change while streaming the file prevents release of a completed body (3.9387ms)
+✔ cancellation prevents initial work and discards uncooperative late proof/file responses (2.0696ms)
+✔ input selectors and credentials are fixed before asynchronous proof completion (8.1184ms)
+✔ missing login or malformed selectors stop before transport (0.841ms)
+✔ browser transport confines password/token requests to configured same-origin HTTPS without redirect following (3.6833ms)
+✔ download UI remains gated, explicit, localized and absent from sample workspace (2.8825ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 267.9086
+✔ every configured language resolves every backup message through the shared registry (113.8237ms)
+✔ entry points, scenarios, execution states and page message calls have translations (54.389ms)
+✔ localized demo copy changes without changing authoritative IDs or status fields (8.4681ms)
+✔ read errors remain language independent until rendered (0.5349ms)
+✔ date and byte formatting use the selected language, not the browser default (260.393ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 472.8927
+▶ all four task activity channels fetch only requested pages with task checks on both sides
+  ✔ backups/events (140.3149ms)
+  ✔ backups/logs (17.8801ms)
+  ✔ drills/events (6.8118ms)
+  ✔ drills/logs (7.1428ms)
+  ✔ preflights/events (5.3207ms)
+  ✔ preflights/logs (4.1774ms)
+  ✔ verifications/events (2.4246ms)
+  ✔ verifications/logs (2.2377ms)
+✔ all four task activity channels fetch only requested pages with task checks on both sides (190.191ms)
+▶ activity continuations cannot move across a task, installation, kind, version or channel
+  ✔ task (6.276ms)
+  ✔ installation (0.3292ms)
+  ✔ kind (0.2672ms)
+  ✔ version (0.2073ms)
+  ✔ channel (0.187ms)
+✔ activity continuations cannot move across a task, installation, kind, version or channel (9.8626ms)
+▶ cursor loops and consistency changes reject the whole new page
+  ✔ cursor_loop (0.5741ms)
+  ✔ consistency_changed (0.3475ms)
+✔ cursor loops and consistency changes reject the whole new page (1.516ms)
+▶ a task moving installations or regressing its row version during the page prevents publication
+  ✔ installation_changed (0.4737ms)
+  ✔ snapshot_changed (0.2701ms)
+✔ a task moving installations or regressing its row version during the page prevents publication (1.33ms)
+✔ a mismatched task before the page cannot fetch its activity (0.3581ms)
+▶ cancellation at any stage rejects late results even for an uncooperative client
+  ✔ 0 (0.5234ms)
+  ✔ 1 (0.2416ms)
+  ✔ 2 (0.3097ms)
+  ✔ 3 (0.1861ms)
+✔ cancellation at any stage rejects late results even for an uncooperative client (1.9826ms)
+▶ permission, readiness and expiry errors never become empty or complete activity pages
+  ✔ 401 (1.5646ms)
+  ✔ 403 (1.1695ms)
+  ✔ 503 (0.6935ms)
+  ✔ 410 (0.6111ms)
+✔ permission, readiness and expiry errors never become empty or complete activity pages (5.3182ms)
+✔ expiry presentation is limited to the logs code and never masks authentication errors (0.5206ms)
+▶ a later page failure or final permission failure cannot publish a successful collection
+  ✔ later-page (5.796ms)
+  ✔ final-permission (0.835ms)
+✔ a later page failure or final permission failure cannot publish a successful collection (7.293ms)
+▶ activity retains the existing closed DTO and target validation
+  ✔ events (1.7189ms)
+  ✔ logs (3.4139ms)
+✔ activity retains the existing closed DTO and target validation (5.8006ms)
+✔ selection identity is fixed before a page awaits its first task read (0.4258ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 249.0116
+✔ history reads only requested pages, preserves descending versions and carries opaque cursors (319.43ms)
+✔ single-version reads bind the exact version and current configuration on both sides (5.0722ms)
+▶ continuations reject installation, active version, row version and effective-state changes before a request
+  ✔ origin_installation_id (3.0429ms)
+  ✔ version (0.4853ms)
+  ✔ row_version (0.5008ms)
+  ✔ effective_enabled (0.3672ms)
+✔ continuations reject installation, active version, row version and effective-state changes before a request (17.8423ms)
+▶ history rejects loops, cross-page overlaps and foreign installation rows
+  ✔ loop (65.4096ms)
+  ✔ overlap (57.13ms)
+  ✔ foreign (118.6505ms)
+✔ history rejects loops, cross-page overlaps and foreign installation rows (245.3821ms)
+▶ history activation flags and active row version must agree with the workspace baseline
+  ✔ active (1.763ms)
+  ✔ row_version (24.9403ms)
+  ✔ effective_enabled (1.2405ms)
+✔ history activation flags and active row version must agree with the workspace baseline (29.116ms)
+▶ current-configuration drift before or after a page cannot publish that page
+  ✔ before (0.5236ms)
+  ✔ after (0.3019ms)
+✔ current-configuration drift before or after a page cannot publish that page (1.6096ms)
+✔ an empty first history is not reported when the active configuration exists (0.3576ms)
+▶ single-version rows reject a different installation, wrong version, stale row or wrong activation
+  ✔ origin_installation_id (0.3292ms)
+  ✔ version (0.1599ms)
+  ✔ row_version (0.1401ms)
+  ✔ active (0.1383ms)
+✔ single-version rows reject a different installation, wrong version, stale row or wrong activation (1.442ms)
+▶ both config reads discard canceled results at every request stage
+  ✔ history/0 (0.5536ms)
+  ✔ history/1 (0.2635ms)
+  ✔ history/2 (0.3285ms)
+  ✔ history/3 (0.5475ms)
+  ✔ version/0 (0.2347ms)
+  ✔ version/1 (0.2034ms)
+  ✔ version/2 (0.2753ms)
+  ✔ version/3 (0.1802ms)
+✔ both config reads discard canceled results at every request stage (4.1446ms)
+✔ invalid version selection cannot issue a request (0.6184ms)
+▶ config failures and unreviewed fields never fall back to an empty history or preview
+  ✔ 401 (2.7594ms)
+  ✔ 403 (1.3381ms)
+  ✔ 503 (30.1267ms)
+✔ config failures and unreviewed fields never fall back to an empty history or preview (36.124ms)
+✔ the baseline is captured before awaiting external reads (0.4713ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 839.7284
+▶ all four live details use the validated read client and preserve distinct decisions
+  ✔ backups (82.2934ms)
+  ✔ drills (3.5754ms)
+  ✔ preflights (1.5707ms)
+  ✔ verifications (1.2637ms)
+✔ all four live details use the validated read client and preserve distinct decisions (105.1429ms)
+▶ detail reads allow a newer task row and reject an older one for every task kind
+  ✔ backups (1.7391ms)
+  ✔ drills (0.4713ms)
+  ✔ preflights (0.5103ms)
+  ✔ verifications (0.4901ms)
+✔ detail reads allow a newer task row and reject an older one for every task kind (6.2608ms)
+✔ a well-formed detail from another installation cannot replace the selected task (2.1495ms)
+▶ detail errors and leaked owner fields never fall back to preview data
+  ✔ 401 (1.2283ms)
+  ✔ 403 (0.6907ms)
+  ✔ 503 (0.6866ms)
+✔ detail errors and leaked owner fields never fall back to preview data (5.8185ms)
+✔ canceled detail selection does not issue a request (0.7498ms)
+✔ late detail completion cannot publish after cancellation even when transport ignores abort (0.8222ms)
+✔ the requested identity is frozen before awaiting the client (0.3921ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.3712
+▶ events for all four kinds paginate without requiring full task detail
+  ✔ backups (141.6884ms)
+  ✔ drills (2.6502ms)
+  ✔ preflights (21.2099ms)
+  ✔ verifications (5.0987ms)
+✔ events for all four kinds paginate without requiring full task detail (174.6172ms)
+▶ event context rejects missing, foreign and regressing transport identities
+  ✔ source missing (25.9136ms)
+  ✔ fixture (26.0067ms)
+  ✔ installation missing (1.1749ms)
+  ✔ foreign installation (11.191ms)
+  ✔ version  (12.4103ms)
+  ✔ version 0 (0.7695ms)
+  ✔ version 01 (0.4534ms)
+  ✔ version -1 (0.5216ms)
+  ✔ version 1.5 (0.4675ms)
+  ✔ version 9007199254740992 (0.5338ms)
+  ✔ version 0 (0.4178ms)
+✔ event context rejects missing, foreign and regressing transport identities (90.8927ms)
+▶ permission and unavailable responses retain their errors without context headers
+  ✔ authentication_required (0.7934ms)
+  ✔ permission_denied (0.4066ms)
+  ✔ not_ready (0.4143ms)
+✔ permission and unavailable responses retain their errors without context headers (2.341ms)
+▶ continuation scope, cursor loops and consistency changes reject before publication
+  ✔ kind (0.4173ms)
+  ✔ public_id (0.2782ms)
+  ✔ origin_installation_id (0.4591ms)
+  ✔ row_version (0.3898ms)
+✔ continuation scope, cursor loops and consistency changes reject before publication (6.7911ms)
+✔ event selection is frozen before await and late cancellation cannot publish (0.9641ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 364.1071
+✔ operations use actual read-client endpoints independently of overview/config and preserve cursor encoding (98.8428ms)
+✔ empty operations do not infer installation or health and terminal page makes no request (0.4859ms)
+✔ rejects duplicate across pages without a partial result (1.2312ms)
+✔ rejects duplicate within page without a partial result (1.7595ms)
+✔ rejects foreign installation without a partial result (0.4123ms)
+✔ rejects cursor loop without a partial result (0.2996ms)
+✔ rejects consistency drift without a partial result (0.4048ms)
+✔ detail rejects wrong ID (0.4369ms)
+✔ detail rejects foreign installation (0.5905ms)
+✔ detail rejects stale row version (3.3584ms)
+✔ a changed parent installation rejects even a completed old page (0.7356ms)
+✔ permissions, missing adapters and network errors propagate instead of becoming empty records (0.7175ms)
+✔ cancellation rejects late page and detail responses (0.7813ms)
+✔ identity and cursor baselines are fixed before awaiting an uncooperative reader (0.579ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 138.8677
+✔ the current server overview 503 no longer blocks independently available real records (179.9481ms)
+▶ unavailable config or task resources stay unavailable without invented empty pages
+  ✔ lists-only (7.9089ms)
+  ✔ config-only (6.4677ms)
+✔ unavailable config or task resources stay unavailable without invented empty pages (16.4336ms)
+✔ authenticated empty lists preserve unknown installation and do not imply global health (8.9523ms)
+✔ no available endpoints retains the unavailable view (2.9047ms)
+▶ only the exact overview not_ready error enables records mode
+  ✔ 401/authentication_required (0.6987ms)
+  ✔ 403/permission_denied (0.5364ms)
+  ✔ 500/internal_error (0.6875ms)
+  ✔ 503/internal_error (1.2469ms)
+✔ only the exact overview not_ready error enables records mode (5.0038ms)
+▶ authorization, malformed DTO and fixture failures never publish partial records
+  ✔ 401 (2.1887ms)
+  ✔ 403 (2.1026ms)
+  ✔ invalid (2.2803ms)
+  ✔ fixture (3.925ms)
+✔ authorization, malformed DTO and fixture failures never publish partial records (11.5517ms)
+▶ cross-installation records are rejected with or without an available config
+  ✔ true (8.0205ms)
+  ✔ false (8.4275ms)
+✔ cross-installation records are rejected with or without an available config (17.516ms)
+▶ config identity, version, row-version, effective-state and availability cannot change across records reads
+  ✔ installation (2.8944ms)
+  ✔ version (2.51ms)
+  ✔ row-version (2.3625ms)
+  ✔ effective (2.149ms)
+  ✔ becomes-unavailable (2.5329ms)
+  ✔ becomes-available (5.181ms)
+✔ config identity, version, row-version, effective-state and availability cannot change across records reads (19.4534ms)
+✔ records pagination requests one cursor at a time with config checks and no overview dependency (5.1967ms)
+✔ a first nonempty continuation establishes installation without a placeholder identity (3.3373ms)
+▶ unsafe record continuations are rejected without mutating already displayed pages
+  ✔ installation (6.7009ms)
+  ✔ duplicate (4.3322ms)
+  ✔ cursor-loop (3.0849ms)
+  ✔ consistency (3.8266ms)
+  ✔ config (5.5493ms)
+✔ unsafe record continuations are rejected without mutating already displayed pages (24.7983ms)
+✔ an unavailable record group cannot be paginated (2.4695ms)
+▶ cancellation discards initial and continued record results
+  ✔ initial (2.4084ms)
+  ✔ continuation (4.9166ms)
+✔ cancellation discards initial and continued record results (8.531ms)
+✔ available overview automatically restores the full existing read path (11.6651ms)
+✔ config comparison snapshots primitives before independent list callbacks (0.7031ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 375.8404
+✔ live read polling backs off errors and bounds refresh intervals (6.8ms)
+✔ live polling avoids overlapping reads, pauses hidden tabs and discards stopped results (1.4831ms)
+✔ preview read projections conform to the existing draft JSON schemas (96.0083ms)
+✔ default source never reports fixture data as an installed system (0.5353ms)
+✔ Admin read client binds pagination and resource IDs without fixture fallback (95.8653ms)
+✔ Admin read client rejects fixture responses and malformed list envelopes (2.538ms)
+✔ Admin read client preserves cancellation and never returns a late response (1.0926ms)
+✔ Admin read client addresses versioned config and bounded task activity (3.8513ms)
+✔ Admin config history read checks closed resources and descending versions (34.9019ms)
+✔ Admin operation read requires an exact redacted operation (15.1383ms)
+✔ Admin operation list checks every item and pagination boundary (3.4985ms)
+✔ Admin activity read rejects unreviewed event and log fields (7.0802ms)
+✔ Admin overview read enforces closed state and measured counts (22.4755ms)
+✔ Admin read client accepts matching task and activity projections (6.0358ms)
+✔ task lists and task details keep their distinct v12 wire shapes (53.9316ms)
+✔ all four Admin detail reads reject raw owner and execution fields (23.5148ms)
+✔ Admin read client rejects mismatched resources and malformed cursor envelopes (20.8691ms)
+✔ Admin read client rejects wrong overview, config and activity identities (2.2883ms)
+✔ Admin read client rejects an abort during JSON decoding (2.9714ms)
+✔ task page collection follows opaque cursors and preserves one installation (1.6417ms)
+✔ on-demand task pages fetch one page at a time and reject unsafe continuations (3.9886ms)
+✔ task page collection refuses cursor loops, duplicates, mixed installations and incomplete budgets (2.5693ms)
+✔ task page collection stops after cancellation without returning partial rows (2.8302ms)
+✔ live read source assembles only authenticated read resources (5.1438ms)
+✔ live read source rejects config drift during task page reads (1.5801ms)
+✔ live source loads later pages only when requested (1.5245ms)
+✔ live source rejects a later page after config changes (1.497ms)
+✔ live reads require an explicit build-time opt-in (0.2215ms)
+✔ live read source keeps fixture and wholly unavailable resources unavailable (3.2787ms)
+✔ live read source rejects changing config and cross-installation task pages (1.5399ms)
+✔ live read source propagates cancellation without a stale result (0.5303ms)
+✔ preview failures and unsupported/loading states do not fall back to successful data (1.4966ms)
+✔ execution success does not imply backup eligibility or recovery readiness (0.7017ms)
+✔ unknown finalization is neither a readable artifact nor a registered recovery point (0.6005ms)
+✔ empty and disabled states retain their distinct semantics (2.9432ms)
+✔ expired log preview retains durable events and refresh produces isolated fixtures (1.0315ms)
+✔ backup filters combine ID/matrix search with exact execution status (0.7418ms)
+✔ unknown byte count is not displayed as a measured zero (114.5845ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 598.9558
+vite v8.0.11 building client environment for production...
+[2K
+transforming...✓ 2283 modules transformed.
+rendering chunks...
+computing gzip size...
+../.tmp-d-backups-ui-dee3e2a8c83a4159adad5d659b190f82/dist/index.html                                       0.48 kB │ gzip:   0.31 kB
+../.tmp-d-backups-ui-dee3e2a8c83a4159adad5d659b190f82/dist/assets/index-DL41_mgX.css                      191.96 kB │ gzip:  30.46 kB
+../.tmp-d-backups-ui-dee3e2a8c83a4159adad5d659b190f82/dist/assets/WorkspaceMarkdownPreview-TM9e4ZN5.js    156.40 kB │ gzip:  46.69 kB
+../.tmp-d-backups-ui-dee3e2a8c83a4159adad5d659b190f82/dist/assets/index-D0m6lFyR.js                     3,039.16 kB │ gzip: 805.52 kB
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 17.27s
+BACKUPS_UI_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-backups-ui-local-dee3e2a8c83a4159adad5d659b190f82.json

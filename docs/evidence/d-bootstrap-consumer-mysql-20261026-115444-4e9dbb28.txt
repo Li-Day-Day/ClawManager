@@ -1,0 +1,44 @@
+**********************
+PowerShell transcript start
+Start time: 20261026115445
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\scripts\system-backup-d-bootstrap-consumer-mysql-validation.ps1
+Process ID: 42480
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 2/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=2 max=3 build-started=no remote-started=no
+PS>TerminatingError(): "Source changed while snapshot was copied"
+WARNING: Proof source changed during capture; discarded this partial copy before retry 3/3. No build or remote action has started. Source changed while snapshot was copied
+LOCAL_SNAPSHOT config-proof-attempt=3 max=3 build-started=no remote-started=no
+
+{"Time":"2026-10-26T12:00:37.8210688+08:00","Action":"start","Package":"clawreef/internal/systembackupevidence"}
+{"Time":"2026-10-26T12:00:39.7743066+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed"}
+{"Time":"2026-10-26T12:00:39.7743066+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"=== RUN   TestDBootstrapConsumerMySQLSeed\n"}
+{"Time":"2026-10-26T12:00:40.0735691+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"    bootstrap_consumer_mysql_test.go:218: PASS bootstrap-consumer-mysql-seed original_compatible_lifecycle=yes complete_manifest=yes migrations=96 candidate_tables=8 actual_mysql=not_run synthetic_authority=yes production=no\n"}
+{"Time":"2026-10-26T12:00:40.0980799+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"--- PASS: TestDBootstrapConsumerMySQLSeed (0.32s)\n"}
+{"Time":"2026-10-26T12:00:40.0980799+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Elapsed":0.32}
+{"Time":"2026-10-26T12:00:40.0980799+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"PASS\n"}
+{"Time":"2026-10-26T12:00:40.1357149+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"ok  \tclawreef/internal/systembackupevidence\t2.315s\n"}
+{"Time":"2026-10-26T12:00:40.1357149+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Elapsed":2.315}
+LOCAL_PASS bootstrap-consumer targeted_seed=yes default_vet=yes seed=yes linux_probe=yes pinned_migrations=yes binary_sha256=14bb1456545e8e2eb1cda5f0a8fb42a4c03c83bc2caea3c1e93febcef9996031 real_mysql=not_run
+CLEANED bootstrapConsumer-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-4e9dbb28332945179563e6485b266c43 removed=True
+BOOTSTRAP_CONSUMER_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-bootstrap-consumer-mysql-20261026-115444-4e9dbb28.json
+**********************
+PowerShell transcript end
+End time: 20261026120705
+**********************

@@ -1,0 +1,138 @@
+{
+  "kind": "a2_split_signature_verifier_promtool_fixture_source_ready.v1",
+  "status": "prepared_not_executed",
+  "fixture": {
+    "path": "docs/evidence/a2-metrics-split-promtool-raw-series-20261027-r3.yml",
+    "size": 40520,
+    "sha256": "ca30557e658c18938fc53dce6e1a9cbe296b21ec4d957131bbb3340cbc7ffcde"
+  },
+  "inputs": [
+    {
+      "path": "docs/evidence/d2-metrics-controller-registry-candidate-20261027-r3.json",
+      "size": 195161,
+      "sha256": "59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-promtool-fixture-source-ready-20261027-r2.json",
+      "size": 36186,
+      "sha256": "788d232b9dadfb0332a611479ae4e7d6676500995752dc2ac8c761a9f6826984"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+      "size": 38608,
+      "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "contracts/system-backup/v12/status-failure-enums.schema.json",
+      "size": 4229,
+      "sha256": "02e8d13bb8e96ff13da4049b8673835015445bc4b60d6b736095c914f829f676"
+    },
+    {
+      "path": "frontend/node_modules/js-yaml/package.json",
+      "size": 2153,
+      "sha256": "a60d092d63c8108375c203870ad8dc50af32bc373d45816ecee98eacc389bbba"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-split-promtool-fixture-20261027-r3.mjs",
+      "size": 8012,
+      "sha256": "47b03e8070ca45adf50e0bc44e07c789d442f89cbd3f48001408fef540c3e3bd"
+    }
+  ],
+  "exact_rule_bindings": [
+    {
+      "id": "signature-operation-failure",
+      "expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0",
+      "dedupe_key": [
+        "key_purpose"
+      ]
+    },
+    {
+      "id": "checksum-or-signature-verifier-failure",
+      "expression": "increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0",
+      "dedupe_key": [
+        "task_type",
+        "failure_category"
+      ]
+    }
+  ],
+  "historical_corrected_OR_control": {
+    "id": "signature-or-checksum-failure",
+    "expression": "increase(clawmanager_system_backup_signature_operations_total{metric_result=\"failure\"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~\"checksum_mismatch|signature_invalid\"}[5m]) > 0"
+  },
+  "test_groups": 38,
+  "expression_checks_prepared": 114,
+  "rule_files_loaded": 0,
+  "coverage": {
+    "signature_key_purposes": [
+      "capture_certificate",
+      "acceptance_record",
+      "catalog_record"
+    ],
+    "signature_metric_results": [
+      "success",
+      "failure",
+      "rejected",
+      "timeout",
+      "conflict",
+      "canceled"
+    ],
+    "verifier_task_types": [
+      "backup",
+      "drill",
+      "preflight",
+      "artifact_verify"
+    ],
+    "verifier_failure_categories": [
+      "checksum_mismatch",
+      "signature_invalid",
+      "internal_error",
+      "none"
+    ],
+    "simultaneous_both_rule_outputs": true,
+    "empty_series": true,
+    "present_zero": true,
+    "independent_counter_resets": true,
+    "all_input_label_names_and_values_checked_against_existing_sources": true
+  },
+  "prior_fixture_preserved": {
+    "path": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+    "size": 38608,
+    "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39"
+  },
+  "prior_prepared_checks": 117,
+  "yaml_structural_roundtrip_only": true,
+  "yaml_parser": {
+    "package": "js-yaml",
+    "version": "4.2.0",
+    "already_present": true
+  },
+  "official_format": "https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/",
+  "counter_reference": "https://github.com/prometheus/prometheus/blob/main/promql/promqltest/testdata/functions.test",
+  "pending_execution_command": [
+    "promtool",
+    "test",
+    "rules",
+    "docs/evidence/a2-metrics-split-promtool-raw-series-20261027-r3.yml"
+  ],
+  "expected_results_proven": false,
+  "promtool_executed": false,
+  "PromQL_parser_or_evaluator_executed": false,
+  "source_ready_is_not_PASS": true,
+  "notification_dedupe_executed": false,
+  "collector_or_missing_series_loader_tested": false,
+  "dependencies_installed": false,
+  "Go_executed": false,
+  "SQL_executed": false,
+  "live_sources_modified": false,
+  "production_approved": false
+}

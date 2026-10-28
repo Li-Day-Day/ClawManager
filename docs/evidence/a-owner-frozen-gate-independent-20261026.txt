@@ -1,0 +1,15 @@
+PASS predecessor_ready_then_retry_new_source_reaches_dispatch mock_dispatch=1 actual_Go=no actual_SSH=no
+PASS owners_ready_then_retry_new_source_rejected mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS role_ready_then_retry_new_source_rejected mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS approved_owners_snapshot mock_dispatch=1 actual_Go=no actual_SSH=no
+PASS approved_role_snapshot mock_dispatch=1 actual_Go=no actual_SSH=no
+PASS script_only_snapshot_change_is_not_ordinary_drift mock_dispatch=1 actual_Go=no actual_SSH=no
+PASS checker_disappears_after_early_ready mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS checker_invalid_json mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS checker_nonzero_with_ready_json mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS checker_wrong_boolean_type mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS node_unavailable_after_early_ready mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS malformed_frozen_snapshot mock_dispatch=0 actual_Go=no actual_SSH=no
+PASS local_new_source_preparation_does_not_require_old_baseline mock_dispatch=1 actual_Go=no actual_SSH=no
+PASS require_gate_on_nonremote_profile_rejected mock_dispatch=0 actual_Go=no actual_SSH=no
+FROZEN_GATE_REGRESSION_PASS cases=14 owner_removed=yes Go=no SSH=no

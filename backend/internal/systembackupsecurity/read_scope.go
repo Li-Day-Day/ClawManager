@@ -120,7 +120,13 @@ func (s *SystemBackupReadScope) check(ctx context.Context, tx *sql.Tx) error {
 		ctx.Value(readScopeContextKey{}) != s || tx == nil || !time.Now().Before(s.actor.SessionExpiresAt) {
 		return ErrRegistrationPermission
 	}
-	if err := s.config.database.check(ctx, tx); err != nil {
+	return s.config.checkSessionPermissions(ctx, tx, s.actor, []string{"system_backup.read"})
+}
+
+// Shared by read scopes and the two first-chain actions. Permissions are fixed
+// by those constructors, never accepted from HTTP input or a caller's role.
+func (c readScopeConfig) checkSessionPermissions(ctx context.Context, tx *sql.Tx, actor RegistrationActor, permissions []string) error {
+	if err := c.database.check(ctx, tx); err != nil {
 		return err
 	}
 	// Follow the existing registration lock order: installation, config,
@@ -129,24 +135,25 @@ func (s *SystemBackupReadScope) check(ctx context.Context, tx *sql.Tx) error {
 	if err := lockRegistrationInstallations(ctx, tx); err != nil {
 		return err
 	}
-	current, err := lockRegistrationConfig(ctx, tx, s.config.pins.InstallationID)
-	if err != nil || current.Version != s.config.pins.ConfigVersion ||
-		current.RBACRegistryVersion != s.config.pins.RBACVersion ||
-		current.RBACRegistrySHA256 != s.config.pins.RBACSHA256 {
+	current, err := lockRegistrationConfig(ctx, tx, c.pins.InstallationID)
+	if err != nil {
+		return err
+	}
+	if current.Version != c.pins.ConfigVersion || current.RBACRegistryVersion != c.pins.RBACVersion || current.RBACRegistrySHA256 != c.pins.RBACSHA256 {
 		return ErrRegistrationUnavailable
 	}
-	until, err := CheckRegistrationSessionUntil(ctx, tx, s.config.pins.InstallationID, s.actor)
+	until, err := CheckRegistrationSessionUntil(ctx, tx, c.pins.InstallationID, actor)
 	if err != nil {
 		return err
 	}
 	if !time.Now().Before(until) {
 		return ErrRegistrationPermission
 	}
-	raw, err := (RegistrationFiles{RegistryDirectory: s.config.pins.RegistryDirectory}).RegistryBytes("rbac_bindings", current.RBACRegistryVersion, current.RBACRegistrySHA256)
+	raw, err := (RegistrationFiles{RegistryDirectory: c.pins.RegistryDirectory}).RegistryBytes("rbac_bindings", current.RBACRegistryVersion, current.RBACRegistrySHA256)
 	if err != nil {
 		return ErrRegistrationUnavailable
 	}
 	defer wipeSecret(raw)
 	return AuthorizeEvidencePermissions(raw, current.RBACRegistrySHA256, current.RBACRegistryVersion,
-		s.config.pins.InstallationID, s.actor, []string{"system_backup.read"})
+		c.pins.InstallationID, actor, permissions)
 }

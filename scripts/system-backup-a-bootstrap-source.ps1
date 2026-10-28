@@ -11,7 +11,7 @@ function Get-ABootstrapSourceState {
     param([Parameter(Mandatory=$true)][string]$Root)
     Push-Location $Root
     try {
-        $candidates=@(& rg --files --hidden --no-ignore backend/internal/systembackupsecurity backend/internal/systembackupread backend/internal/systembackupcontract backend/internal/systembackupbootstrapsecurity backend/cmd/system-backup-bootstrap backend/internal/db/migrations contracts/system-backup/v12)
+        $candidates=@(& rg --files --hidden --no-ignore backend/internal/systembackupsecurity backend/internal/systembackupread backend/internal/systembackupcontract backend/internal/systembackupbootstrapsecurity backend/internal/systembackupproducer backend/cmd/system-backup-bootstrap backend/internal/db/migrations contracts/system-backup/v12)
         if($LASTEXITCODE -ne 0){throw 'Cannot enumerate bootstrap dependencies'}
     } finally {Pop-Location}
     $selected=@($candidates | ForEach-Object {$_.Replace('\','/')} | Where-Object {

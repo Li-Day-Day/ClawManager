@@ -1,0 +1,39 @@
+▶ events for all four kinds paginate without requiring full task detail
+  ✔ backups (92.7445ms)
+  ✔ drills (3.2935ms)
+  ✔ preflights (1.8847ms)
+  ✔ verifications (1.8132ms)
+✔ events for all four kinds paginate without requiring full task detail (103.0017ms)
+▶ event context rejects missing, foreign and regressing transport identities
+  ✔ source missing (2.2356ms)
+  ✔ fixture (0.9152ms)
+  ✔ installation missing (0.7874ms)
+  ✔ foreign installation (0.6781ms)
+  ✔ version  (0.9324ms)
+  ✔ version 0 (0.9044ms)
+  ✔ version 01 (0.521ms)
+  ✔ version -1 (0.4821ms)
+  ✔ version 1.5 (0.4881ms)
+  ✔ version 9007199254740992 (0.4862ms)
+  ✔ version 0 (0.4482ms)
+✔ event context rejects missing, foreign and regressing transport identities (35.2503ms)
+▶ permission and unavailable responses retain their errors without context headers
+  ✔ authentication_required (0.7307ms)
+  ✔ permission_denied (0.4147ms)
+  ✔ not_ready (0.7978ms)
+✔ permission and unavailable responses retain their errors without context headers (2.7971ms)
+▶ continuation scope, cursor loops and consistency changes reject before publication
+  ✔ kind (0.528ms)
+  ✔ public_id (0.2808ms)
+  ✔ origin_installation_id (0.2323ms)
+  ✔ row_version (0.3628ms)
+✔ continuation scope, cursor loops and consistency changes reject before publication (15.7187ms)
+✔ event selection is frozen before await and late cancellation cannot publish (1.3201ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.6308

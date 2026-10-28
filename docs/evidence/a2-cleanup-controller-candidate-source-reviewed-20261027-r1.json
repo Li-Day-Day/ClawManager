@@ -1,0 +1,101 @@
+{
+  "kind": "a2_nonimplementer_cleanup_controller_candidate_source_review.v1",
+  "status": "exact_source_candidate_reviewed_ready_for_private_native_validation_only",
+  "inputs": [
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-before-20261027.go.txt",
+      "size": 3917,
+      "sha256": "fc44562e7375cb1af78b6f28ecc64817814ba67d15cbe92707a8d8f72642bc8d"
+    },
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-candidate-20261027.go.txt",
+      "size": 5361,
+      "sha256": "5098d9e1356a856ce801df4069729877886bf69582dd49e5fafe8f11072b59be"
+    },
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-test-before-20261027.go.txt",
+      "size": 3587,
+      "sha256": "4f805fbb90face2db78cdeff5fe55e338b655b6571e4c7db7a2eaaeae92a21dc"
+    },
+    {
+      "path": "docs/evidence/d2-controller-state-alerts-test-candidate-20261027.go.txt",
+      "size": 8638,
+      "sha256": "405bd92272253f2795aa85b22c8f894ba205db8365e1fc25e49435ceaf7b9d8e"
+    }
+  ],
+  "production_code_inverse_restores_original_after_line_ending_normalization": true,
+  "previous_predicates_and_decision_fields_unchanged_for_valid_complete_collection": true,
+  "previous_callers_must_now_supply_explicit_complete_cleanup_collection": true,
+  "source_guard_findings": {
+    "nil_collection_rejected": true,
+    "partial_collection_rejected": true,
+    "missing_or_nonmatching_clock_rejected": true,
+    "confirmed_complete_empty_collection_healthy": true,
+    "each_owner_validated_before_its_predicate": true,
+    "later_invalid_owners_not_skipped_after_overdue": true,
+    "strict_greater_than_frozen_deadline": true,
+    "duration_comparison_no_arithmetic_overflow": true,
+    "critical_cleanup_decision_not_downleveled_in_development": true,
+    "existing_acceptance_evidence_issuer_logic_preserved": true
+  },
+  "authored_tests_observed": {
+    "old_roots": [
+      "TestControllerStateAlertsFixedClockAndProfile",
+      "TestControllerStateAlertsExactBoundariesAndMissingSeries",
+      "TestControllerStateAlertsRejectInvalidInputs"
+    ],
+    "new_roots": [
+      "TestControllerStateAlertsFixedClockAndProfile",
+      "TestControllerStateAlertsExactBoundariesAndMissingSeries",
+      "TestControllerStateAlertsRejectInvalidInputs",
+      "TestControllerCleanupUsesEachImmutableDeadline",
+      "TestControllerCleanupRejectsUnknownPartialOrInvalidCollections"
+    ],
+    "positive_cases": [
+      "confirmed_empty",
+      "before",
+      "equal_is_not_overdue",
+      "one_nanosecond_after",
+      "younger_owner_is_overdue",
+      "same_global_gauges_but_no_owner_overdue",
+      "overdue_owner_first",
+      "maximum_equal",
+      "maximum_one_after"
+    ],
+    "rejection_cases": [
+      "not_read",
+      "partial_empty",
+      "partial_nonempty",
+      "missing_clock",
+      "stale_clock",
+      "future_clock",
+      "negative_age",
+      "zero_deadline",
+      "negative_deadline",
+      "overdue_before_invalid_owner"
+    ],
+    "cases_are_source_inventory_not_executed_PASS": true
+  },
+  "required_native_scope": "Root unique window: actual selected controller package/caller source closure, full ordinary controller package tests, current Linux compilation, source postchecks and cleanup",
+  "required_registry_alignment": {
+    "total_alerts": 100,
+    "promql": 95,
+    "controller_state": 5,
+    "cleanup_language": "controller_state",
+    "cleanup_counter_reset": "persisted_state_not_reset_by_restart",
+    "counts_and_language_candidate_not_reviewed_here": true
+  },
+  "authority_limitations": [
+    "Complete/ObservedAt are predicate inputs, not proof of SQL authority or collection completeness.",
+    "Original immutable deadline and automatic-cleanup start mapping remain unproven at collector/persistence integration.",
+    "Missing collection now returns an error for the whole evaluation; callers and actual evaluator readiness must handle this explicitly.",
+    "Native tests, Linux binary validation, registry generation and raw PromQL evaluation require their own exact receipts."
+  ],
+  "Go_executed_by_A2": false,
+  "SQL_executed": false,
+  "PromQL_executed": false,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "whole_baseline_accepted": false,
+  "production_approved": false
+}

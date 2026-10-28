@@ -29,6 +29,10 @@ import (
 // Run only inside the UID-pinned fresh-migration namespace. This exercises
 // the actual Gin handlers, A read scope, and D SQL reader as one request path.
 func TestDAdminReadLiveHTTPMySQL(t *testing.T) {
+	drillOnly := os.Getenv("D_ADMIN_DRILL_HISTORY_ONLY")
+	if drillOnly != "" && drillOnly != "0" && drillOnly != "1" {
+		t.Fatal("invalid isolated drill history mode")
+	}
 	run, uid := os.Getenv("D_INVARIANT_RUN"), os.Getenv("D_INVARIANT_NAMESPACE_UID")
 	if !regexp.MustCompile(`^sbk-mig-[0-9]{12}-[0-9a-f]{4}$`).MatchString(run) ||
 		!regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`).MatchString(uid) {
@@ -230,6 +234,10 @@ func TestDAdminReadLiveHTTPMySQL(t *testing.T) {
 		w := httptest.NewRecorder()
 		router.ServeHTTP(w, r)
 		return w
+	}
+	if drillOnly == "1" {
+		testDDrillDetailHTTPHistoryMySQL(t, db, ctx, request, token, installation, foreign, strconv.FormatInt(userID, 10), ownBackup)
+		return
 	}
 	backup := request("/api/v1/admin/system-backups?limit=1", token)
 	var firstPage struct {

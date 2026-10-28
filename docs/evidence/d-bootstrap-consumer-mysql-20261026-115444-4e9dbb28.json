@@ -1,0 +1,67 @@
+{
+  "kind": "d_bootstrap_consumer_mysql_preparation.v1",
+  "suite": "bootstrap-consumer",
+  "error": null,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDBootstrapConsumerMySQLSeed$",
+        "-count=1",
+        "-timeout=180s",
+        "-json",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "platform": "windows",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-115444-4e9dbb28-step-0.jsonl",
+      "log_sha256": "1459ed95f2b23db1d7124b36c10d15588641591b52947fd77d50af7622ce0f38"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4e9dbb28332945179563e6485b266c43\\bundle\\d-bootstrap-consumer.test",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-115444-4e9dbb28-step-1.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4e9dbb28332945179563e6485b266c43\\bundle\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-115444-4e9dbb28-step-2.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-consumer-mysql-20261026-115444-4e9dbb28-source.json",
+  "source_postcheck": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-4e9dbb28332945179563e6485b266c43",
+  "owner_removed": true,
+  "remote_requested": false,
+  "remote_scratch_removed": false,
+  "binary_sha256": "14bb1456545e8e2eb1cda5f0a8fb42a4c03c83bc2caea3c1e93febcef9996031",
+  "migration_binary_sha256": "44570db9d209f2b7d548cc55475202b5873de2841a054119f073dc87aa0dc0a4",
+  "inputs_sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa",
+  "dependencies_installed": false,
+  "synthetic_proofs": true,
+  "actual_mysql_results_accepted": false,
+  "production_approved": false
+}

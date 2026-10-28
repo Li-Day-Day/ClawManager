@@ -1,0 +1,189 @@
+{
+  "kind": "d2_metrics_controller_private_native.v1",
+  "status": "passed_private_controller_candidate",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6eb295fa53fa4b299fc506a66bc76960",
+  "source_manifest": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.source.json",
+  "Go_started": true,
+  "tests_started": true,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "windows",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-0.jsonl",
+      "sha256": "a65b7ca297c7262ba2ed64b3b6b7f480b4ff4e02f1caa07140563b780f6789e8",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-0.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "windows",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-1.jsonl",
+      "sha256": "6b8a9109a1e3f7f33bf27908a02dafa9d33022925f8506ef66a02c34588c7e12",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-1.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-2.jsonl",
+      "sha256": "f82128710cdb575eecf09162cbb1045aa09ff8df2c3cd70a2cf954d0a29ebe27",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-2.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-3.jsonl",
+      "sha256": "4db1cdbf01653bc8fbf5e3ad5edf7931bb52265504791b1fe3e32fc7e1104919",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-3.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "windows",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-4.jsonl",
+      "sha256": "72d5c5773bbb6202c602e79d5c8213fd78ed8fc362ba5373f5d9507744a82e2e"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6eb295fa53fa4b299fc506a66bc76960\\binary\\controller.ordinary.test",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-5.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6eb295fa53fa4b299fc506a66bc76960\\binary\\controller.systembackup_mysql.test",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.step-6.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "error": null,
+  "source_precheck": true,
+  "source_postcheck": true,
+  "owner_removed": true,
+  "actual_SQL": false,
+  "remote_contacted": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "live_sources_promoted": false,
+  "collector_and_automatic_clock_bindings_approved": false,
+  "source_set_precheck": true,
+  "go_telemetry": {
+    "GOTELEMETRY": "off",
+    "GOTELEMETRYDIR": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6eb295fa53fa4b299fc506a66bc76960\\telemetry"
+  },
+  "native_inventory": {
+    "kind": "d2_metrics_controller_candidate_native_inventory.v1",
+    "source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+    "complete_source_file_set": {
+      "selected_files": 1718,
+      "node_extra_inputs": 1,
+      "physical_files": 1719,
+      "paths_sha256": "bffe7245ebbf00dde975b72a1963f8aa62cdd022b5f4e6d6d3cd72c38e10c213"
+    },
+    "steps": 7,
+    "roots": 147,
+    "pass_events": 237,
+    "required_roots_preserved": [
+      "TestControllerStateAlertsFixedClockAndProfile",
+      "TestControllerStateAlertsExactBoundariesAndMissingSeries",
+      "TestControllerStateAlertsRejectInvalidInputs",
+      "TestControllerCleanupUsesEachImmutableDeadline",
+      "TestControllerCleanupRejectsUnknownPartialOrInvalidCollections",
+      "TestControllerResidualVolumeUsesEachImmutableDeadline",
+      "TestControllerCleanupRejectsUnknownResidualVolumeFacts"
+    ],
+    "binaries": [
+      {
+        "platform": "linux",
+        "tags": "ordinary",
+        "sha256": "daf9c411c674b7b2993eff46c58fd49e524bbbb0ea56c909d84967366c526a49",
+        "size": 8519444,
+        "header64_hex": "7f454c4602010100000000000000000002003e0001000000e0fa480000000000400000000000000090010000000000000000000040003800060040001a001900",
+        "executed": false
+      },
+      {
+        "platform": "linux",
+        "tags": "systembackup_mysql",
+        "sha256": "b3a2f72b9109827a34d68f4120846c33bce14aeeef59e0d4536d1bc2f0f309fd",
+        "size": 11284677,
+        "header64_hex": "7f454c4602010100000000000000000002003e0001000000e007490000000000400000000000000090010000000000000000000040003800060040001a001900",
+        "executed": false
+      }
+    ],
+    "actual_SQL": false,
+    "production_approved": false
+  },
+  "source_set_postcheck": true,
+  "runner_sha256": "96d194e95b7eecb5121717443220a00f88602138f74c8a2f92fa0ec9c197dd26",
+  "source_manifest_sha256": "554b074615e4d73c5e0f58b38c7221786f2ecdaa669d74328d24a4c185718b96"
+}

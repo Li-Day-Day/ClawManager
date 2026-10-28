@@ -1,0 +1,81 @@
+{
+  "kind": "a2_bootstrap_nonce_candidate_API_plan.v1",
+  "status": "A1_API_assignment_recorded_pending_D2_and_88b2_terminal",
+  "scope": "A2 candidate_adapter.go/_test.go only after core native terminal and separate freeze; do not edit legacy nonce.go or ca.go",
+  "A1_global_L1": {
+    "owner": "A1 config_bootstrap_candidates.go",
+    "sql": "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE",
+    "placement": "after complete global installation prefix, before producer domain",
+    "semantics": "stream complete global range including empty insertion gaps; only target installation count/version/hash/enabled decides L3, foreign material validity does not preempt historical read"
+  },
+  "API": [
+    {
+      "name": "Validator.PrepareCandidateAttempt(ctx, originalGrant, disabledConfig)",
+      "result": "opaque prepared attempt, not authority",
+      "semantics": "strict input/scope/config/context errors; physical errors captured closed for new-use after L3; check every original active+retained key, exact descriptor+actual32byte material, wipe bytes, preserve <=30s and original binding window; no invented grant/provider facts"
+    },
+    {
+      "name": "PreparedCandidateNonce.DependencyDeadline()",
+      "result": "owned optional original UTC6 ceiling deadline",
+      "semantics": "nil physical failure is not unlimited validity; original authority must intersect successful original unrenewed limit into admission dependency deadline; historical branch ignores resource freshness without renewing it"
+    },
+    {
+      "name": "PreparedCandidateNonce.LockReferences(ctx, BootstrapSQL)",
+      "result": "original-ctx/transaction-bound locked nonce check",
+      "semantics": "only fresh-consume branch at L5; read already L1-locked GLOBAL config tuples; acquire GLOBAL retained raw nonce range using original shared cutoff and idx_sb_auth_nonce_retention order retain_until,id; stream no new raw-row cap; no physical reads here until stage decision"
+    },
+    {
+      "name": "LockedCandidateNonce.Recheck(ctx, BootstrapReadSQL)",
+      "result": "read-only same-transaction check",
+      "semantics": "same original cutoff and held global prefix; no earlier-layer/gap discovery; compare original global config tuples plus sole expected disabled-v1 row; preserve full key identity/version and retained maximum/ProtectedUntil; all shared time samples remain monotonic and within original raw window"
+    }
+  ],
+  "material_validation_stage": {
+    "status": "A1_and_D2_chosen_Work_end_callbacks_before_close_then_fixed_SQL_only_FinalGuard",
+    "source_review": "docs/evidence/a2-bootstrap-material-IO-contract-reviewed-20261026.json",
+    "must_preserve": "original late descriptor/material changed/missing refusal and lifecycle protection across every original key",
+    "alternatives": [
+      "A1/D2 explicitly review bounded original local-file verification before fixed FinalGuard, under single attempt deadline, then no callbacks/files after guard.",
+      "Concrete independently authenticated original immutable-version/lifecycle and current revocation state proves same material guarantees using narrow locked SQL."
+    ],
+    "forbidden": "No snapshot-only default acceptance, new approved boolean, fabricated material/provider proof, or silent weakening of legacy tests.",
+    "A1_decision": "Root moves Bootstrap session.Recheck callbacks to the end of Work after writes/audits/snapshots but before write capability closure. Bounded original local-file validation plus shared SampleTime/plan/context occurs there. Then close capabilities, fixed SQL/snapshot-only Policy.Recheck, final time/context, sole A commit. Generic Policy.Recheck no-file contract remains intact."
+  },
+  "counterexamples": [
+    "Exact committed success + current g/RBAC/mapping, unrelated missing non-authorizing physical resource: history read permitted, no new epoch/ref/CAS/charge/probe. Same missing resource + no original success: deny before business writes.",
+    "Original grant/RBAC/mapping revoked or unauthenticated: both branches reject.",
+    "Foreign installation config has unknown nonce version or conflicting identity: first consume rejects; target-only filtering must not hide it.",
+    "Global retained ledger unknown version, NULL retention facts, maximum retention beyond original ProtectedUntil: reject.",
+    "Many duplicate config/nonce rows with one legitimate original version: stream without a false raw20000 cap, preserve UNION distinct semantics.",
+    "Retained-only old key missing/changed material, current descriptor changed/deleted after preparation: do not pass solely from memory snapshot.",
+    "Insertion into retained/global config gaps, changed old global tuple, unexpected extra new config or nonce ledger mutation: reject in final already-held range checks.",
+    "Final raw expiry equality, wait past deadline, intermediate SQL rollback, different context/transaction, ignored error/capability value copy: reject with no new authorization."
+  ],
+  "dependencies_installed": false,
+  "runtime_implemented": false,
+  "production_approved": false,
+  "A2_owned_files": [
+    "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+    "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go",
+    "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+    "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+    "backend/internal/systembackupcatrust/candidate_adapter.go",
+    "backend/internal/systembackupcatrust/candidate_adapter_test.go",
+    "backend/internal/systembackupsecurity/bootstrap_candidate_authority.go",
+    "backend/internal/systembackupsecurity/bootstrap_candidate_authority_test.go"
+  ],
+  "controlled_file_API": {
+    "constructor": "NewBootstrapCandidateFileAuthority(original BootstrapDeploymentConfig, mandatory BootstrapCandidateAuthority) (BootstrapCandidateAuthority,error)",
+    "implementation": "Keep only original deployment-owned grant path/SHA, registry dir, scope/config pins; direct concrete ReadBootstrapGrantFile and RegistrationFiles methods, opaque/private/redacted state, no new grant or arbitrary function safety flag",
+    "Prepare": "reuse generic pinned snapshot preparation outside locks; require exact original deployment scope/config and g; physical non-RBAC failures deferred for L3 as agreed",
+    "Authorize": "L2 current concrete grant/RBAC on both branches with shared SampleTime before/after; intersect identity with ORIGINAL raw offline window, never renewed from reread",
+    "new_use": "current full9 concrete bytes/hash/size before original LockReferences and reservation/audit; resource authority remains mandatory",
+    "Recheck": "Work-end: after all inner material callbacks, current concrete grant/RBAC for both branches and full9 for new use only, final shared SampleTime; then D closes capability and runs callback-free fixed FinalGuard"
+  },
+  "CA_API": [
+    "Validator.PrepareCandidateAttempt(ctx,g,c) (*PreparedCandidateCA,error)",
+    "PreparedCandidateCA.DependencyDeadline() *pd.Timestamp",
+    "PreparedCandidateCA.CheckCandidate(ctx,BootstrapSQL) (*CandidateCACheck,error)",
+    "CandidateCACheck.Recheck(ctx,BootstrapReadSQL) error -- only Work-end callback stage, preserve original bounded files() checks, no TLS/provider/clock callback/new locks"
+  ]
+}

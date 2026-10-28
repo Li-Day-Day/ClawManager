@@ -1,0 +1,175 @@
+{
+  "kind": "d_gc_finalizer_independent_scope_review.v1",
+  "reviewer_chat": "01a1676d-ff9a-7a71-9df5-bfb6b97c3f84",
+  "implementing_chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+  "date": "2026-10-26",
+  "result": "PRIVATE_GC_FROZEN_SCOPE_ACCEPTED_CURRENT_TAGGED_INCREMENT_PENDING",
+  "review_method": "Independent current-source inspection and read-only native receipt/request replay; no Go/build/remote rerun.",
+  "scope": "private exact-original-context/tx one-use completion and fixed concrete collector candidate; original public Collect owner unchanged",
+  "source_sha256": "41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16",
+  "source_files": 1629,
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "6e973153f4f2f59b891211c3ece8b782b54e277078dbeb82427351221cf968b8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "sha256": "085ec806d6cc0147c3c9147ec45077f847b30357bcfe7d4d9415e771b582cf48"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "sha256": "28e93f205ee04d8692e996b709485e6f7582f63f3a15b2cf7177f72bdcb269bc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work.go",
+      "sha256": "5d9ec0a60074d9b2b4dfcd7e9119ce4e78e3e87c3a2a2f76ec61356f29cd4843"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_work_test.go",
+      "sha256": "00e570ea38623fffa5e9ad0966a40a4cf4f278d639d1bda8c74a1e580683dc41"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "sha256": "3582061492a9bd5f5bd7c3a83e3183e8c1834f87ee884cd86b74c5db55a8c339"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "sha256": "ff26954ff8e337d2eb3657fdc6b3d2b1cb483286f882312dd7c5b50ace1cb082"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize_test.go",
+      "sha256": "a7c0a5125a71f3fb315ea1e6bc20f76c9de045858a92e0ae6a5e4151303e7db6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work_test.go",
+      "sha256": "ea4349acdc2baa904dcd203a2de07e915094a4e746a00059c5f7fd6571861e0e"
+    }
+  ],
+  "native_acceptance": {
+    "path": "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json",
+    "sha256": "083ce6049ea7e95987ae6b62c540e209e004bf38db05102471b2535b01db2acb"
+  },
+  "review_request": {
+    "path": "docs/evidence/d-gc-finalizer-review-request-20261026.json",
+    "sha256": "cb2a52bce08c8aad49f57bc45ed91c78183c764d25173a2e703810f7ddd1d574"
+  },
+  "requirements": {
+    "path": "docs/evidence/d-finalizer-independent-review-requirements-20261023.json",
+    "sha256": "1dd008c48f87417c5894586c8779fe589148fe05c6dbff9b54b86414fdc72516"
+  },
+  "observed_native_checks": [
+    {
+      "command": [
+        "node",
+        "docs/evidence/d-gc-finalizer-native-review-20261026.mjs",
+        "--check-frozen",
+        "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25.json",
+        "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json"
+      ],
+      "exit_code": 0,
+      "stdout": "FINALIZER_NATIVE_ACCEPTED scope=immutable_frozen_run_current_tagged_drill_delta_pending stages=23 packages=6 source_files=1629 prior_preserved=5148 production=no"
+    },
+    {
+      "command": [
+        "node",
+        "docs/evidence/d-gc-finalizer-review-request-20261026.mjs",
+        "--check",
+        "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json",
+        "docs/evidence/d-gc-finalizer-review-request-20261026.json"
+      ],
+      "exit_code": 0,
+      "stdout": "FINALIZER_REQUEST_OK source=41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16 requirements=10 inherited_approval=no"
+    }
+  ],
+  "native_check_receivers": [
+    {
+      "path": "docs/evidence/d-gc-finalizer-native-review-20261026.mjs",
+      "sha256": "734185520bf2e8547ca62f48661e93157ad6d7c0f768e1bcc38e8dbfff93b447"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-review-request-20261026.mjs",
+      "sha256": "d929e2aac4cafbdf28de2c20a0522bb16ac04955145ce540c900b0b0e3db172c"
+    }
+  ],
+  "criteria": [
+    {
+      "id": "F1",
+      "status": "accepted_private_gc_scope",
+      "finding": "Private issuer captures original comparable context, transaction pointer, collector pointer, operation and guard closure only after protected work completes; wrong bindings deny before checker SQL."
+    },
+    {
+      "id": "F2",
+      "status": "accepted_private_gc_scope",
+      "finding": "All copies share atomic consumption state. Failed and concurrent attempts cannot repeat checker or renew authority. Native roots include copied and concurrent consumption."
+    },
+    {
+      "id": "F3",
+      "status": "accepted_private_gc_scope",
+      "finding": "Freeze owner observes final ticket, invokes captured finalizer, checks original context, then attempts sole commit. Controlled missing-finalizer overlay reaches committed state and fails the exact rollback assertion."
+    },
+    {
+      "id": "F4",
+      "status": "accepted_private_gc_scope",
+      "finding": "Value.Comparable handles nested dynamic interface values. Closure captures returned last work SQL time and original hard until. Final checks reject original cancellation, fresh context, intermediate clock rollback and equality at until; earlier-clock-floor overlay fails the required assertion."
+    },
+    {
+      "id": "F5",
+      "status": "accepted_private_gc_scope",
+      "finding": "Retained authority/reservation/reference callbacks finish before independent worker lease/fence/deadline, config, deleted evidence envelope, tombstone and absent-key checks. Final SQL time and original context remain binding."
+    },
+    {
+      "id": "F6",
+      "status": "accepted_private_gc_scope",
+      "finding": "Finalizer retains deletion-independent facts rather than calling deleted group Recheck. Native model includes successful deletion and late reference/capacity/worker/config/envelope/tombstone/absence failures with rollback."
+    },
+    {
+      "id": "F7",
+      "status": "accepted_private_gc_scope",
+      "finding": "Finalizer contains no connection acquisition, Begin, commit, unlock, retry or renewal. Freeze owner retains the single transaction boundary and reports unknown commit without retry."
+    },
+    {
+      "id": "F8",
+      "status": "accepted_private_gc_scope",
+      "finding": "Value-receiver String and GoString return constants; MarshalJSON rejects. Native value/pointer formatting and serialization checks cover captured private facts."
+    },
+    {
+      "id": "F9",
+      "status": "accepted_frozen_gc_scope_current_whole_tree_pending",
+      "finding": "Two byte-identical frozen source segments compose 23 obligations; six ordinary packages preserve previous test names and add finalizer coverage. Both owners are absent. Current tagged HTTP delta requires its separate seed/Linux/source/cleanup receipt and A owner baseline acceptance."
+    },
+    {
+      "id": "F10",
+      "status": "accepted_explicit_standalone_scope",
+      "finding": "Validator explicitly selects five standard-library Go files. Current Windows standalone tests and Linux build are covered; standalone does not certify concrete collector dependencies or inherit old 33-event approval."
+    }
+  ],
+  "new_blocking_findings": [],
+  "current_whole_tree_accepted": false,
+  "current_tagged_increment_pending": [
+    {
+      "path": "backend/cmd/server/system_backup_read_drill_history_mysql_test.go",
+      "frozen_size": 15250,
+      "frozen_sha256": "04ff3f7266b9b99c72cd024b1c189e34fbb13c613231f7da41a1b1d63b09be9b",
+      "current_size": 20190,
+      "current_sha256": "e8df47f25eb1765cb354a7f88a1dc2952bc56b699129d7ac8ba604c91b3e21b7"
+    }
+  ],
+  "A1_owner_acceptance_claimed": false,
+  "A2_clock_acceptance_claimed": false,
+  "production_wired": false,
+  "real_grants_approved": false,
+  "complete_metadata_policy_approved": false,
+  "production_approved": false,
+  "full_gc_accepted": false,
+  "full_restore_accepted": false,
+  "dependencies_installed": false,
+  "Go_tests_or_builds_run_by_this_review": false,
+  "remote_contacted": false,
+  "review_build_artifacts_created": 0,
+  "pending": [
+    "current b267397a tagged HTTP seed/Linux/source/cleanup acceptance",
+    "A1/A2 own exact-version reviews and owner baseline registration",
+    "external real grants, complete metadata/Policy, physical facts and B/C inputs"
+  ]
+}

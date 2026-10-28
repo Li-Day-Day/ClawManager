@@ -1,5 +1,33 @@
 # D 六项原始范围的当前验收审计
 
+【2026-10-27 当前本地收尾】准确当前状态集中在[本地收尾记录](system-backup-d-local-closeout-20261026.md)。parser 修复已按 b53 原生组合受检并落地；原入口 1,741 份冻结输入的 d846 Linux 四项已通过、后检和清理齐全，旧 ae7 失败及未到达的原后检保留。当前 1,718 份输入/source `4003f0f0...` 的八阶段已实际通过，包含完整六包、三根 seed、两项 Linux 构建、源码后检和准确清理；A1 随后登记准确 scope，十五阶段亦原生完成，含末两项指定断言反例、来源后检与准确清理。新增前端任务提交校验已完成当前 335 份来源、306 项 Node、两项类型检查及构建，准确产物已清理。十五阶段已有 A1/D1 独立签收；metrics 八文件又经 controller 七阶段、受影响 tagged security 四阶段和最终 A1 组合接收后落地为1718/7c428878，所有准确 Root owner 已清理。后新增两份 PromQL 离线支持/测试脚本已获A独立源码及实际mock接收，完整来源1720/6bf973bd，backend/contracts不变；准确703/5530普通基线已登记，25项Node及131项合成parser控制通过。GC r4已获A正式来源审查，Root实际重放0（original1720/6bf、operator1721/46bc），仅源码接受，未运行operator/SQL。最后 schema/contract 普通检查均0、strict均1：三张表、四份合同、40项policy、60项cross-review、34份draft与现场schema hash仍缺。原 owner/现场依赖不由本地结果补造。
+
+【2026-10-26 演练历史 HTTP/MySQL 十九项实际已接收】[D 限定回执](evidence/d-drill-http-actual-accepted-20261026-c5f6a4a2.json)核对新轮 `sbk-mig-261026022412-229b` 十九子项/root/native/phase 全通过、exit 0、postcheck true，跨安装修复已在真实 MySQL 路由专项通过。MySQL 8.4.8 / 96 迁移、准确摘要、来源 b267397… / 1,629 输入以及 namespace UID/清理齐全，本地准确 owner 缺席；当前接收器与用户附件/nativelog 对应。仅关闭该专项待验收，无需重跑；旧 18/19 失败保留，不扩大为 provider/真人 MFA、B 目标/物理清理、完整恢复/GC、生产批准或原六项整体完成。本次只离线接收，未安装依赖或重复构建/远测。
+
+【2026-10-26 演练跨安装修复本地准备已通过】[修复回执](evidence/d-drill-http-foreign-fixture-repair-20261026.json)记录 origin 在插入前统一、三条 foreign checks 读回及同一夹具路径合成回归，仍以 HTTP 404 验证安装隔离；失败不打印整组 PASS，接收器 58/58 通过。1,629 份来源 b267397… 只有 tagged HTTP 测试相对原轮改变，完整本地准备/三份 Linux 构建 exit 0、来源后检 true，准确 owner/产物已删除。原远测 18/19 失败保留，修复后实际十九项尚待新同轮执行，不记为真实 SQL 已通过；普通六包、GC 与生产资格未据此改变。
+
+【2026-10-26 演练历史十九项实际验收失败】[D 原失败接收记录](evidence/d-drill-http-actual-rejected-20261026-044e5eed.json)确认 `sbk-mig-261026012249-32ca` 18/19 子项通过，跨安装夹具 SQL 失败，根及终端 exit 1；日志普通 PASS 文本不覆盖实际 FAIL，未接收为十九项成功。1,629 份来源当前匹配，原后检 false 保留，准确本地目录缺席及同 UID namespace/scratch/cache 清理记录齐全。须在修复跨安装夹具后新同轮重跑，生产授权/完整恢复/GC 与原六项整体均不扩大接收；未安装依赖或重跑远端。本次失败与此前 writer-FK 十项限定通过分别保留。
+
+【2026-10-26 两条声明外键实际专项已接收】[D writer-FK 回执](evidence/d-resources-writer-fk-actual-accepted-20261026.json)核对 `sbk-mig-261026005733-6904` 的 MySQL 8.4.8 / 96 份迁移、十个子项/根测试、准确 binary/输入摘要、namespace UID 和清理及终端 exit 0。原本地四行编码损坏保留，122 份相同输入显式复用既有 71 根/843 条原生本地证据；D 接收检查 48/48 通过。关闭 migration-063 两条 job FK 的实际改挂/级联/1452/回滚观察待验收，LIKE 基础夹具仍不代表完整 FK/schema proof。通用 FK/UNIQUE、B/C 领域与真实 proof、物理容量/DDL freeze、完整恢复/GC、生产批准和原六项整体继续未完成；未代签 A、未安装依赖或重跑远测。
+
+【2026-10-23 四项独立准备增量】[五表组合、真实 SQL 专项、GC 私有协议及浏览器验收](system-backup-d-independent-work-20261023.md)按独立范围继续推进；最终限定回执为 `docs/evidence/d-independent-work-reviewed-20261023.json`。新 SQL 专项与旧 16/42 项分开；私有 GC 不接生产 Collect、不批准 BACKUP_ADMIN，A 的 typed-nil 修订按其准确字节重新核对。前端构建/浏览器的合成输入范围不关闭真实四矩阵或业务整链；原六项仍未整体完成。
+
+【2026-10-23 当前门禁刷新】[原生审计](evidence/d-current-scope-audit-20261023.json)在 1,588 份稳定输入下确认 inventory 普通 0/strict 1、contract strict 1；40 policy、60 交叉评审、三张计划 catalog 表、四份合同及现场 schema-hash 继续未齐。readback/北向旧限定回执复核通过，不扩大为生产恢复。完整六项与具体 Owner 依赖见[当前阻断交接](system-backup-d-current-blockers-20261023.md)；未运行测试/构建/远端或写入批准，本轮不重复已接收 16/42 项。
+
+【2026-10-23 单事务只读验收候选】[九表字段+35 控制表排除](system-backup-d-resources-readback-20261023.md)已组合到唯一只读 RR 事务，目标/完整预期/最终权限 proof 必填，提交后取消不成功；完整 resources 包 63 主/678 条通过事件、default vet、来源/集合及准确清理由[本地复核](evidence/d-resources-readback-validation-20261023.json)确认。全部 driver/proof 为合成夹具；当前真实 registry/proof 前置未就绪，新增代码待 A/B 评审，没有 actual MySQL 或生产资格。五表离线候选、四张 C 扫描表、B/C 真实事实、受审读写/启动门禁、freeze/完整 GC 和原六项仍需分别完成。
+
+【2026-10-23 北向设置候选】[33 列 northbound 离线候选](system-backup-d-resources-northbound-candidate-20261023.md)使完整列候选累计五表；完整 resources 包 57 主/602 条通过事件、default vet、23 项服务/SQL范围独立核对、来源和准确清理由[本地复核](evidence/d-resources-northbound-validation-20261023.json)确认。版本计算不证明真实缺行/CAS，端口/规格/类型/SQL JSON 投影仍须 B 认证，新候选待 A/B 增量复审；四张扫描表仍待 C 领域决定。未运行实际 MySQL、端口操作或生产恢复，真实读写/35 控制表/启动门禁、freeze/完整 GC 和原六项仍未完成。
+
+【2026-10-23 镜像设置候选】[九列 image 离线候选](system-backup-d-resources-images-candidate-20261023.md)使当前完整列候选累计四表；完整 resources 包 53 主/489 条通过事件、default vet、来源和准确清理由[本地复核](evidence/d-resources-images-validation-20261023.json)确认。目标镜像/名称/逻辑身份仍是待 B 认证的输入声明，不能由不同 hash 推导 collation/服务别名下唯一；新增候选待 B 增量复审，没有实际 SQL/生产装配。余五表完整候选、B/C 真实 proof、受审事务/读回/启动门禁、freeze/完整 GC 和原六项仍未完成。
+
+【2026-10-23 出站网络候选】[完整十列 egress 离线候选](system-backup-d-resources-egress-candidate-20261023.md)与原双审计候选合计三表；完整 resources 包 49 主/453 条通过事件、default vet、来源与准确清理由[本地复核](evidence/d-resources-egress-validation-20261023.json)确认。A 已接收原 SQL reader 冻结合成测试并静态认可原审计候选约束，新增 egress 尚需 A/B 增量评审；策略、占用和映射输入不等于 B proof，未运行实际 SQL 或恢复写入。B/C 仍未交付，余六表完整候选、真实读写/启动门禁、freeze/完整 GC 和原六项仍未完成。
+
+【2026-10-23 双审计表候选】[D 两表完整列离线转换](system-backup-d-resources-audit-candidate-20261023.md)已实现映射/占用/遮蔽与历史 cutoff/引用关联，完整 resources 包 46 主/421 条通过事件、default vet、来源/集合及准确清理由[本地复核](evidence/d-resources-audit-validation-20261023.json)确认。用户再次明确 B/C 仍未交付；输入声明不等于真实来源/目标/事务 proof，新增候选待增量评审，未执行实际 MySQL 或生产写入。九表完整 normalization、可信读写整合、freeze/完整 GC 与原六项仍未完成。
+
+【2026-10-23 后续 SQL reader 候选】A 对原六表 v2 安全规则及 report 正文约束已由 [D 按准确来源接收](evidence/d-a-resources-v2-intake-20261023.json)，没有写入正式批准。新增 [私有事务内 reader](system-backup-d-resources-sql-reader-20261023.md)的完整 resources 包 42 主/388 条通过事件、default vet、来源与准确清理由[本地复核](evidence/d-resources-sql-validation-20261023.json)确认；全部 SQL 为合成 driver，未执行实际 MySQL。它尚未受增量评审、不证明完整类型/schema、目标身份或 SELECT-only 权限、不确认外层事务完成；B/C 真实输入、完整 normalizer、恢复整链/freeze/GC 与原六项仍缺，严格准入继续拒绝。
+
+【2026-10-23 恢复推进】[九表逐字段离线候选与交接](system-backup-d-resources-field-handoff-20261023.md)补齐九表 111 列的集合和逐值比对，独立核对实际 CREATE 列集；完整 resources 包 38 主/368 条通过事件、默认 vet、来源和准确清理已由[本地复核](evidence/d-resources-field-validation-20261023.json)确认。它只证明离线比较行为，不生成合法 normalization 候选、不认证 B/C proof，也不提供实际 SQL reader 或生产恢复资格。新同版本复审请求绑定 142 份输入且回执为空；严格准入仍拒绝，原六项均未扩大接收。此前暂停不再作为当前工作状态。
+
 【2026-10-22 历史详情 HTTP/MySQL 十六项实际已接收】[专项记录](system-backup-d-verification-http-history-20261022.md)与[独立回执](evidence/d-verification-http-actual-accepted-20261022.json)接收用户 16:28 轮完整同来源结果：MySQL 8.4.8、96 份迁移，三个根测试及十六个历史详情子项通过，无失败或跳过，退出 0；1,576 份来源清单内文件与接收时当前字节一致，离线复核 `--check` 通过。准确外层 owner 已独立确认不存在，远端与缓存清理据日志报告；包装器原结果保留。本次未安装依赖或生成构建产物。下方待跑文字保留历史含义；接收限真实 SQL/HTTP reader 上的合成记录，B/C、当前 freshness、真实 provider、完整恢复/GC、生产批准及六项整体仍未完成。
 
 【2026-10-22 GC 前置与连接生命周期实际 42/42 已接收】[D 实测记录](system-backup-d-gc-owner-lifecycle-20261022.md)及[独立回执](evidence/d-gc-owner-lifecycle-actual-accepted-20261022.json)已核对用户 15:57 轮完整日志与同轮来源，`--check` 通过。MySQL 8.4.8、96 份迁移、34 项前置与 8 项生命周期全部通过，退出 0；取消释放约 5.002 秒，满足 40 秒 observer 预算。九份关键输入匹配，准确本地 owner 已独立确认不存在，远端与缓存清理据日志报告。此次只离线接收证据，无依赖安装或构建产物；下方待跑文字保留历史含义。freeze adapter 未接入、完整 GC 未运行，角色批准、human MFA、provider read、生产批准及原六项整体仍未完成。
@@ -177,11 +205,11 @@
 | 原始范围 | 当前已有的限定证据 | 仍未完成/未证明 | 后续动作 |
 | --- | --- | --- | --- |
 | canonical 正式迁移与索引取舍 | 当前 96 份 catalog、081 追加修复与 synthetic fresh replay；下载/writer/索引专项按各自回执保留 | 原 canonical/安装材料、受审生产 schema/grants、真实 target/物理容量/保留适配、代表性生产负载与索引决定 | 复用已接收专项，取得真实材料和 Owner policy/交叉评审后完成生产装配 |
-| 完整总览与四类详情 | SQL 配置/版本、四类列表/events、Operation 列表/详情；artifact-verification 历史详情已接线，新增 16 项 SQL 探针本地准备完成 | 新 16 项实际回执；总览及其余三类详情的当前 Owner 事实；logs/manifest、catalog/prune/promotion 读源及生产部署 | 先接收新 SQL 专项，再按实际 B/C 权威来源组合当前事实；保持独立记录可读 |
+| 完整总览与四类详情 | SQL 配置/版本、四类列表/events、Operation 列表/详情；verification 历史十六项与 drill 历史十九项各有准确实际接收；新 backup/preflight API 具 typed task/detail 接点 | 总览与当前业务 Owner 事实；backup/preflight 生产 details 仍未装配；logs/manifest、catalog/prune/promotion 读源及生产部署 | 保留已接收历史专项，按实际 B/C 权威来源组合当前事实；保持独立记录可读，不重复旧十六/十九项 |
 | A 规范化与 D 恢复编排 | A 十五表合成实际 MySQL 与成本并发五项已有原范围回执；D 九表结构/proof 隔离和 35 表排除闭集本地验证完成 | B 生产 dump/target/clock/fence/事务 writer；D 九表 normalization 和受审映射、实际生产调用、live schema freeze、完整大冒烟 | B/C 交付后组合真实 proof/事务边界；合成恢复和本地检查不替代整链 |
 | 恢复管理生产入口/审计存储 | 既有限定 authority/journal、PVC/PV 与 UID/GID 预检候选 | 真实管理 mTLS/上级授权、独立物理审计卷与预留容量、单写者接管及 I/O 故障证据 | 使用受审部署、身份、卷与容量完成现场验收 |
 | 实际历史升级与激活 | 当前 96 文件 catalog/fresh synthetic replay；既有历史只读结果保留原来源 | 实际旧 SQL/ledger/canonical 输入、受审升级/部署授权、本人 MFA 与激活事务证据 | 取得原始历史和现场授权；保留旧批准 pin，按新来源另行验收 |
-| 前端与真实端到端 | 既有 240 来源完整 TypeScript/Vite 构建、53 项隔离组件浏览器回执及五语言/桌面/375px 图片维持其原范围 | 当前真实 backend/Owner/授权浏览器联调、B→A→C→D、四部署矩阵及规定大数据规模/资源/期限测量 | 复用组件证据，待真实链路与部署输入齐备后完成业务 E2E 和矩阵验收 |
+| 前端与真实端到端 | 当前 335 来源、306 项 Node、两项类型检查和 Vite 构建通过；真实 TS 提交 service 在模拟 HTTP 边界下拒绝 malformed 202/非法 kind；既有 53 项隔离组件浏览器及五语言/桌面/375px 图片保留原范围 | 当前真实 backend/Owner/授权浏览器联调、B→A→C→D、四部署矩阵及规定大数据规模/资源/期限测量 | 复用准确组件与当前前端增量，待真实链路与部署输入齐备后完成业务 E2E 和矩阵验收；本轮未执行远测 |
 
 ## 历史：A 十五表旧待办的接收校正
 
@@ -191,7 +219,7 @@
 
 ## 当前真实页面的具体限制
 
-当前 `backend/cmd/server/system_backup_read_live.go` 已接入 active config、配置历史/单版本、四类任务列表/events、Operation 列表/详情及 artifact-verification 历史详情。总览、backup/drill/preflight 三类详情、任务 logs、backup manifest 与 catalog/prune/promotion 仍使用 unavailable 入口；不能再写成“四类详情全部 503”。校验详情仍受真实 session/授权与字段一致性检查约束；[新增十六项 HTTP/MySQL 探针](system-backup-d-verification-http-history-20261022.md)已接收 16:28 轮完整实际回执，范围限合成历史记录，不证明当前 provider 可用性或 freshness。
+当前 `backend/cmd/server/system_backup_read_live.go` 已接入 active config、配置历史/单版本、四类任务列表/events、Operation 列表/详情以及 verification/drill 历史详情。backup/preflight 详情已移到 typed application 接点，但生产 details 仍为 nil、显式 not_ready；总览、任务 logs、backup manifest 与 catalog/prune/promotion 的当前权威读源仍未齐。不能写成“四类详情全部 503”，也不能把 transport 接点当成当前业务详情可用。历史详情继续受真实 session/授权与字段一致性检查约束；[verification 十六项](system-backup-d-verification-http-history-20261022.md)与[drill 十九项](evidence/d-drill-http-actual-accepted-20261026-c5f6a4a2.json)各限其准确合成历史专项，不证明当前 provider 可用性或 freshness。
 
 前端已有总览与记录分离的限定回执：总览未就绪时，配置/版本/列表/Operation 等资源可按实际可用性显示。这些历史构建和隔离组件结果不证明当前安装的生产授权、Owner 数据或完整业务 E2E。
 

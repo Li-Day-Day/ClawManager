@@ -1,0 +1,47 @@
+{
+  "kind": "d2_a_api_mechanical_replay_observation.v1",
+  "inputs": [
+    {
+      "path": "docs/evidence/a-api-readiness-review-20261026.mjs",
+      "size": 8548,
+      "sha256": "f90fc9aa9cc491ebca70cc90f8329fb218902332428dbf307c1222452e44d52b"
+    },
+    {
+      "path": "docs/evidence/a-api-readiness-native-148b2d3547074f7ca4c4a046f19be373.json",
+      "size": 386784,
+      "sha256": "ce072a2634e65d8b0afc8bea357bed119c37082d8330c8b0dd7fa2cb1c9b94f7"
+    },
+    {
+      "path": "docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.json",
+      "size": 429094,
+      "sha256": "ebda04cf3a04c026e88e8727f9e0295f25fa6d070e0db905350d83b9e18151ab"
+    },
+    {
+      "path": "docs/evidence/a-api-readiness-native-148b2d3547074f7ca4c4a046f19be373.reviewed.json",
+      "size": 4926,
+      "sha256": "cd5e19d70fb17378e30db0b1272e7dbbbe65d603c03dbc8e4439ed9a8cd2f764"
+    }
+  ],
+  "command": "node docs/evidence/a-api-readiness-review-20261026.mjs --check docs/evidence/a-api-readiness-native-148b2d3547074f7ca4c4a046f19be373.json docs/evidence/a-api-linux-native-4428875c0b734a4ea952580fb2c71680.json",
+  "exit_code": 0,
+  "targeted_roots": 47,
+  "full_roots": 342,
+  "linux_binary_count": 4,
+  "tested_dependency_files": 401,
+  "current_tested_dependencies_match": true,
+  "current_source_matches_all_recorded_bytes": false,
+  "original_native_postcheck": null,
+  "compilation_dependency_source_unchanged": true,
+  "cleanup_verified": true,
+  "independent_security_approval": false,
+  "parent_entry_scope_accepted": false,
+  "current_owner_baseline_ready": false,
+  "go_started": false,
+  "actual_mysql": false,
+  "dependencies_installed": false,
+  "limits": [
+    "Original native receipt remains failed with no source_unchanged result",
+    "Linux-only dependency proof covers 401 listed files; changed/added CLI/server/API/smoke files remain uncovered",
+    "This replays the mechanical checker; A scope receiver must decide stage-composition validity separately"
+  ]
+}

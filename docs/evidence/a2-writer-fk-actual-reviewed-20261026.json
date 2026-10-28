@@ -1,0 +1,80 @@
+{
+  "kind": "a2_writer_fk_actual_evidence_review.v1",
+  "result": "LIMITED_EVIDENCE_REVIEW_WITH_CURRENT_SOURCE_DRIFT",
+  "scope": "two_declared_job_foreign_keys_only_synthetic_proofs",
+  "d_acceptance": {
+    "path": "docs/evidence/d-resources-writer-fk-actual-accepted-20261026.json",
+    "sha256": "2bfd99872a956a7160bfa322fc3dcf518fa3b8ea63068591da0488c64a640612"
+  },
+  "d_receiver_invariant_evidence_replay_matches": true,
+  "initial_full_saved_acceptance_replay_rejected": true,
+  "current_all_frozen_files_match": false,
+  "current_source_drift": [
+    {
+      "path": "backend/cmd/server/system_backup_read_drill_history_mysql_test.go",
+      "frozen_sha256": "04ff3f7266b9b99c72cd024b1c189e34fbb13c613231f7da41a1b1d63b09be9b",
+      "current_sha256": "e8df47f25eb1765cb354a7f88a1dc2952bc56b699129d7ac8ba604c91b3e21b7",
+      "current_size": 20190
+    }
+  ],
+  "independently_rehashed_artifacts": 18,
+  "remote_cases": [
+    "reparent_items",
+    "reparent_reports",
+    "reparent_both",
+    "reparent_existing_parent",
+    "delete_children_and_parent",
+    "server_cascade_control_rollback",
+    "server_rejects_orphan_1452",
+    "late_common_failure_rollback",
+    "final_denial_after_reparent_rollback",
+    "unique_conflict_after_new_parent_rollback"
+  ],
+  "mysql_version": "8.4.8",
+  "declared_job_foreign_keys": 2,
+  "local_pass_events": 843,
+  "original_damaged_log_preserved": true,
+  "shared_local_recheck_inputs": 122,
+  "frozen_source_files": 1629,
+  "fk_source_sha256": "5cdfb4ba2f167dffe4d516bc8165d4bc6e06df77db545b36c10c2473ac4f7ff4",
+  "owner_source_sha256": "41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16",
+  "source_pin_sets_byte_identical": true,
+  "source_digest_formats_distinct": true,
+  "static_review": {
+    "files": [
+      {
+        "path": "backend/internal/systembackupresources/restore_write_fk_mysql_test.go",
+        "sha256": "faf55ef231d2953be86560de0258729fe9b18445e38c5db144df3f8e8b22e924"
+      },
+      {
+        "path": "backend/internal/systembackupresources/restore_write_mysql_test.go",
+        "sha256": "220aa399f3f7ff926baddef4c4f258470081539d87a1c6a432dab86ef9499dfc"
+      },
+      {
+        "path": "backend/internal/systembackupresources/restore_readback_mysql_test.go",
+        "sha256": "e67d3a143773ca7c2f2113f77ce8926b13b18dc588eb51f5aefc3c5ea676d782"
+      }
+    ],
+    "canonical_and_owned_two_fk_definitions_compared": true,
+    "foreign_key_checks_verified_in_work_transactions": true,
+    "independent_select_only_readback": true,
+    "actual_writer_transaction_entry_used": true,
+    "actual_mysql_error_1452_and_1062_cases": true,
+    "synthetic_authorization_only": true
+  },
+  "cleanup_recorded": true,
+  "local_owner_independently_absent": true,
+  "remote_cleanup_independently_queried": false,
+  "remote_execution_by_this_review": false,
+  "Go_or_builds_run_by_this_review": false,
+  "dependencies_installed": false,
+  "scratch_or_build_outputs_created": false,
+  "formal_A1_signoff_claimed": false,
+  "generic_FK_UNIQUE_accepted": false,
+  "B_C_rules_accepted": false,
+  "physical_capacity_accepted": false,
+  "full_restore_accepted": false,
+  "current_owner_gate_accepted": false,
+  "production_approved": false,
+  "reviewer_sha256": "86c7bc57d8a117aec56f5aa249d05df59ec748260b97af39aad61b9a46eeee20"
+}

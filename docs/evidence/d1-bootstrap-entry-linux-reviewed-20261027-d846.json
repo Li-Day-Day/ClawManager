@@ -1,0 +1,165 @@
+{
+  "kind": "d1_bootstrap_entry_linux_supplement_independent_review.v1",
+  "status": "passed_exact_frozen_linux_four_only",
+  "supplement": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+  "failed_parent_preserved": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+  "parent_status": "failed",
+  "original_final_postcheck_retroactively_claimed": false,
+  "original_complete_run_reclassified": false,
+  "source_files": 1741,
+  "source_sha256": "8ef5ccb46077c0c93c6ed3e047d2b10d8e09dd12b2d6d4f38d9a12b03a29ca24",
+  "exact_original_input_set_rebuilt": true,
+  "recovered_original_inputs": 4,
+  "supplement_precheck": true,
+  "supplement_postcheck": true,
+  "linux_steps": [
+    {
+      "name": "server",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-server",
+        "./cmd/server"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "8e5f1198b2691fa4c58421542d83a409ea5b7595ac98b95da683f62feb9d253e",
+      "binary_size": 98459012,
+      "binary_removed": true
+    },
+    {
+      "name": "bootstrap",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-bootstrap",
+        "./cmd/system-backup-bootstrap"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "5c678b4f35144cdd043d88d9b96670277967ac9d88e7943b96a312640eb99bd0",
+      "binary_size": 9877966,
+      "binary_removed": true
+    },
+    {
+      "name": "migration-runner",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-migration-runner",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "da6e6b30eeab136e2f754e2f00be77a0e0677198584c779378f672d9e4f9a3fd",
+      "binary_size": 9100627,
+      "binary_removed": true
+    },
+    {
+      "name": "tagged-evidence-test-compile-only",
+      "arguments": [
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-tagged-evidence-test-compile-only",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "8865af7792727037e8c518c36e6daff4edf09020e9171b7e7e1b35bc936a172f",
+      "binary_size": 24126346,
+      "binary_removed": true
+    }
+  ],
+  "owner_independently_absent": true,
+  "all_run_build_products_removed": true,
+  "previous_windows_test_events_retained_as_partial_observations": {
+    "targeted": 164,
+    "full": 8546,
+    "seeds": 4
+  },
+  "new_windows_tests_executed": false,
+  "whole_current_tree_accepted": false,
+  "new_api_materials_or_parser_accepted": false,
+  "dedicated_remote_wrapper_executed": false,
+  "actual_mysql_executed": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "whole_goal_complete": false,
+  "artifacts": [
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+      "sha256": "8394b5383e885585368c930898a91acca58b71afe596202295e305ea73fd160a"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+      "sha256": "fb27a21187e66442dc80191279fc225d5c857d8fd7c78891905b20e958ed0c1f"
+    },
+    {
+      "path": "docs/evidence/d2-entry-parent-recovery-20261027.json",
+      "sha256": "6d9cd02197b81ce45fa148e4c2bd9dde41438018a74cdce00264683e779a92a3"
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-entry-linux-supplement.ps1",
+      "sha256": "c396995dc65b80389d2daa5b801090976b7b0209d6ab2c6082f4068301452bea"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+      "sha256": "67c12fd8e695c9778d69478f5b25cbb933faddb84da32399bf95e306853d5dc9"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-native-rejected-20261027-ae7.json",
+      "sha256": "464175bf92060fb6ee7bdd9174fd0205e142fcbab35fe51e4793db73981d0202"
+    },
+    {
+      "path": "docs/evidence/d2-entry-parent-recovery-20261027/backend__cmd__server__main.go.txt",
+      "sha256": "372036c016b28db6fecc8a6112c2e0f19073d0ea2b5368ce6b411744c1fafc5c"
+    },
+    {
+      "path": "docs/evidence/d2-entry-parent-recovery-20261027/backend__cmd__server__system_backup_read_live.go.txt",
+      "sha256": "775e0d72dc46b556d935dbd38901b94962adb806fa33f4f76f145bc249f11b84"
+    },
+    {
+      "path": "docs/evidence/d2-entry-parent-recovery-20261027/backend__internal__systembackupsecurity__read_scope.go.txt",
+      "sha256": "cb25978ed8ec4765cc8090728eb2fe73d860cfeaf8c1ad53e839a4caf40c49cc"
+    },
+    {
+      "path": "docs/evidence/d2-entry-parent-recovery-20261027/backend__internal__systembackupevidence__download_gc_full_collect_mysql_test.go.txt",
+      "sha256": "d1b0c295339e9e6e61fec08dddf7336cb499a82b9645ff250bab8ca7c9d6818f"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.server.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.server.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.bootstrap.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.bootstrap.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.migration-runner.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.migration-runner.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.tagged-evidence-test-compile-only.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.tagged-evidence-test-compile-only.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d1-bootstrap-entry-linux-review-20261027.mjs",
+      "sha256": "5f12673dcd1eff3a54edb6912442b3f84a1c24bf8ff28f91ff08fe857d4e4a40"
+    }
+  ]
+}

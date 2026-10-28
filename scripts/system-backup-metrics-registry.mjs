@@ -468,16 +468,20 @@ addAlert({
 });
 
 addAlert({
-  id: 'cleanup-overdue', expression: `${metric('cleanup_oldest_age_seconds')} > ${metric('configured_cleanup_deadline_seconds')}`,
-  severity: 'critical', dedupeKey: ['cleanup_status'], missingSeries: 'healthy_zero', recoveryCondition: 'no cleanup resource exceeds its immutable cleanup deadline',
+  id: 'cleanup-overdue', expressionLanguage: 'controller_state',
+  expression: 'any(cleanup_owner.age > cleanup_owner.immutable_deadline)',
+  severity: 'critical', thresholdSource: 'immutable_task_config', dedupeKey: [], missingSeries: 'unknown',
+  recoveryCondition: 'a complete cleanup owner collection has no owner beyond its immutable cleanup deadline',
 });
 addAlert({
   id: 'restore-residual-volume', expression: `${metric('restore_residual_volumes_current')} > 0`, severity: 'warning',
   thresholdSource: 'immutable_task_config', missingSeries: 'healthy_zero', recoveryCondition: 'no restore residual volume remains',
 });
 addAlert({
-  id: 'restore-residual-volume-overdue', expression: `${metric('restore_residual_volumes_current')} > 0 and ${metric('restore_residual_volume_oldest_age_seconds')} > ${metric('configured_cleanup_deadline_seconds')}`,
-  severity: 'critical', thresholdSource: 'immutable_task_config', missingSeries: 'healthy_zero', recoveryCondition: 'no restore residual volume remains beyond cleanup deadline',
+  id: 'restore-residual-volume-overdue', expressionLanguage: 'controller_state',
+  expression: 'any(cleanup_owner.residual_volume && cleanup_owner.age > cleanup_owner.immutable_deadline)',
+  severity: 'critical', thresholdSource: 'immutable_task_config', dedupeKey: [], missingSeries: 'unknown',
+  recoveryCondition: 'a complete cleanup owner collection has no residual volume beyond its owner immutable cleanup deadline',
 });
 addProfiledInfo({
   id: 'staging-capacity-warning', expression: `${metric('staging_bytes')} >= ${metric('configured_staging_capacity_bytes')} * 0.8`,
@@ -555,12 +559,13 @@ for (const [id, counter] of [
   ['isolation-rejections', 'isolation_rejections_total'],
   ['strong-auth-rejections', 'strong_auth_rejections_total'],
 ]) {
+  const counterWindow = (labelSets[counter] ?? []).length ? `sum(increase(${metric(counter)}[5m]))` : `increase(${metric(counter)}[5m])`;
   addAlert({
-    id: `${id}-warning`, expression: `increase(${metric(counter)}[5m]) >= 5`, severity: 'warning',
+    id: `${id}-warning`, expression: `${counterWindow} >= 5`, severity: 'warning',
     thresholdSource: 'contract_default', missingSeries: 'healthy_zero', recoveryCondition: `the five-minute window contains fewer than five ${id.replaceAll('-', ' ')}`,
   });
   addAlert({
-    id: `${id}-critical`, expression: `increase(${metric(counter)}[5m]) >= 20`, severity: 'critical',
+    id: `${id}-critical`, expression: `${counterWindow} >= 20`, severity: 'critical',
     thresholdSource: 'contract_default', missingSeries: 'healthy_zero', recoveryCondition: `the five-minute window contains fewer than twenty ${id.replaceAll('-', ' ')}`,
   });
 }
@@ -569,9 +574,14 @@ addAlert({
   thresholdSource: 'contract_default', missingSeries: 'healthy_zero', recoveryCondition: 'the five-minute window contains no new evidence integrity failure',
 });
 addAlert({
-  id: 'signature-or-checksum-failure', expression: `increase(${metric('signature_operations_total')}{metric_result="failed"}[5m]) > 0 or increase(${metric('verifier_checks_total')}{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0`,
+  id: 'signature-operation-failure', expression: `increase(${metric('signature_operations_total')}{metric_result="failure"}[5m]) > 0`,
+  severity: 'critical', thresholdSource: 'contract_default', dedupeKey: ['key_purpose'], missingSeries: 'healthy_zero',
+  recoveryCondition: 'the five-minute window contains no new signature operation failure',
+});
+addAlert({
+  id: 'checksum-or-signature-verifier-failure', expression: `increase(${metric('verifier_checks_total')}{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0`,
   severity: 'critical', thresholdSource: 'contract_default', dedupeKey: ['task_type', 'failure_category'], missingSeries: 'healthy_zero',
-  recoveryCondition: 'the five-minute window contains no new signature or checksum failure',
+  recoveryCondition: 'the five-minute window contains no new checksum or signature verifier failure',
 });
 
 addProfiledInfo({

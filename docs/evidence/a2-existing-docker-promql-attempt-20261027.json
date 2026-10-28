@@ -1,0 +1,60 @@
+{
+  "kind": "a2_existing_Docker_PromQL_runtime_attempt.v1",
+  "status": "existing_runtime_start_failed_then_restored_initial_off_state",
+  "initial_runtime_processes": [],
+  "initial_engine_pipe_present": false,
+  "existing_CLI": "Docker Desktop",
+  "attempt": {
+    "command": [
+      "docker",
+      "desktop",
+      "start",
+      "--detach",
+      "--timeout",
+      "30"
+    ],
+    "start_CLI_exit": 0,
+    "backend_started_then_crashed": true,
+    "error": "Secrets Engine local engine.sock could not be renamed/accessed by the system",
+    "observed_error_lines": [
+      "[2026-10-27T04:56:19.272963200Z][com.docker.backend.exe.engines] all local engines stopped",
+      "[2026-10-27T04:56:19.273485000Z][com.docker.backend.exe] backend crashed, dumping error to file and reporting to user: starting services: initializing Secrets Engine: listening on unix://<HOME>/AppData/Local/docker-secrets-engine/engine.sock: rename <HOME>/AppData/Local/docker-secrets-engine/engine.sock <HOME>/AppData/Local/docker-secrets-engine/engine.sock.stale: The file cannot be accessed by the system. (listener: The file cannot be accessed by the system.)"
+    ]
+  },
+  "normal_stop": {
+    "command": [
+      "docker",
+      "desktop",
+      "stop",
+      "--timeout",
+      "30"
+    ],
+    "exit": 1,
+    "error": "processes still running; context deadline exceeded"
+  },
+  "forced_cleanup": {
+    "command": [
+      "docker",
+      "desktop",
+      "stop",
+      "--force",
+      "--timeout",
+      "20"
+    ],
+    "exit": 0,
+    "output": "Forcing Docker Desktop to stop",
+    "runtime_processes_independently_absent": true,
+    "engine_pipe_independently_absent": true
+  },
+  "image_inventory_obtained": false,
+  "image_pull_command_issued": false,
+  "container_run_command_issued": false,
+  "dependencies_installed": false,
+  "PromQL_executed": false,
+  "raw_fixture_expression_checks_prepared": 117,
+  "fixture_checks_passed": null,
+  "Go_executed": false,
+  "task_SQL_or_remote_provider_contacted": false,
+  "live_project_sources_modified": false,
+  "repeat_runtime_start_planned": false
+}

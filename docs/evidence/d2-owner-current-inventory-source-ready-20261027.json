@@ -1,0 +1,58 @@
+{
+  "kind": "d2_owner_current_inventory_source_ready.v1",
+  "status": "source_and_synthetic_receiver_checks_only",
+  "inputs": [
+    {
+      "path": "docs/evidence/d2-owner-current-supplement-inventory-20261027.mjs",
+      "size": 3948,
+      "sha256": "44c810483192a9531490466b5c4ad71c881c1c1508803661274db4af2d154ba8"
+    },
+    {
+      "path": "docs/evidence/d2-owner-current-supplement-inventory-20261027.test.mjs",
+      "size": 3636,
+      "sha256": "af36507030f9898bb71ff18782446c72b8f53661c4f6f71e17cbb5aaa179234a"
+    },
+    {
+      "path": "docs/evidence/d2-owner-entry-supplement-inventory-20261026.mjs",
+      "size": 6181,
+      "sha256": "58f10ea50e358986a285ccdf7713d249e49589ee64468d087e9c76bcdbaaacdb"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "size": 26152,
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    },
+    {
+      "path": "docs/evidence/a-owner-finalizer-native-20261026.mjs",
+      "size": 2654,
+      "sha256": "a9c64c9ccbecb7737e2ef2fd775d0b8d34094aef521d7d10970b105222fe4865"
+    }
+  ],
+  "new_stages": [
+    "GC_three_exact_local_seed_roots",
+    "Linux_current_tagged_evidence_compile"
+  ],
+  "original_owner_stages": 13,
+  "total_required_stages": 15,
+  "receiver_checks": {
+    "command": "node --test docs/evidence/d2-owner-current-supplement-inventory-20261027.test.mjs",
+    "exit_code": 0,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "synthetic_logs_only": true,
+    "artifacts_written": false
+  },
+  "go_started": false,
+  "actual_mysql": false,
+  "native_stage_acceptance": false,
+  "source_scope_acceptance": false,
+  "runner_updated": false,
+  "dependencies_installed": false,
+  "remaining": [
+    "A independent exact target/scope review and accurate parent scope proof",
+    "Update driver to use reviewed target and fifteen-stage receiver",
+    "Execute actual local native stages, source pre/postcheck and exact cleanup",
+    "Independent final scope acceptance"
+  ]
+}

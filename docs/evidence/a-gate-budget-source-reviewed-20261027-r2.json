@@ -1,0 +1,139 @@
+{
+  "kind": "a_gate_budget_independent_source_review.v1",
+  "status": "source_reviewed_native_pending",
+  "source_ready": {
+    "path": "docs/evidence/d1-gate-budget-source-ready-20261027-r3.json",
+    "size": 5015,
+    "sha256": "8f493145b3a6e27dec2cded8190ce32cfbde8d932510bbe2dd8ab1de7aebcfbb"
+  },
+  "candidate_source_sha256": "8be6028b7c2ca7a383d1bc7f7ec7b81bf3fb16e75ae6193ce645589d81dadb30",
+  "changes": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget.go",
+        "size": 12644,
+        "sha256": "76332a6880a8037756db194212cd0b42fd4b804707eae0110c68fd6e9dee4d5a"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-sql-candidate-20261027-r3.go.txt",
+        "size": 12644,
+        "sha256": "76332a6880a8037756db194212cd0b42fd4b804707eae0110c68fd6e9dee4d5a"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+      "before": null,
+      "after": {
+        "path": "backend/internal/systembackupcontroller/sql_gate_budget_test.go",
+        "size": 17070,
+        "sha256": "6e132ecc7c3fef18ec46ca90758b5cea36af82718cd0f7ce1bba199501b0e05b"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-test-candidate-20261027-r3.go.txt",
+        "size": 17070,
+        "sha256": "6e132ecc7c3fef18ec46ca90758b5cea36af82718cd0f7ce1bba199501b0e05b"
+      }
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/metrics_http.go",
+      "before": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 6658,
+        "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+      },
+      "after": {
+        "path": "backend/internal/systembackupcontroller/metrics_http.go",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-http-candidate-20261027-r3.go.txt",
+        "size": 7207,
+        "sha256": "d41dc73632e37eeba2380d7ed2f4d2f223d786ef25efa0d744f02d9a1330bd21"
+      }
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "before": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22140,
+        "sha256": "1d1b63326ffd7490f5e702f0b3125f688a826454c42fec150814ceb14b23cfeb"
+      },
+      "after": {
+        "path": "backend/cmd/system-backup-controller/main.go",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      },
+      "candidate": {
+        "path": "docs/evidence/d1-gate-budget-main-candidate-20261027-r3.go.txt",
+        "size": 22213,
+        "sha256": "698430c6566f488c35caba0a339cdd37b0cb2850e4c7b7114182ae5b98d2b8ca"
+      }
+    }
+  ],
+  "reviewed_invariants": [
+    "installation matrix labels from original persisted installation",
+    "singleton original gate and matching active config in bounded read-only RR transaction",
+    "single SQL UTC clock with UTC-session validation",
+    "frozen acquisition and hold thresholds for active dimensions",
+    "expired lease never hides still acquiring/held/releasing gate",
+    "releasing retains original held_at",
+    "positive inactive thresholds prevent zero>=zero false firing",
+    "partial scan/read/close/commit/cancel failure never publishes metrics",
+    "buffered HTTP output and final leader/readiness checks",
+    "runtime controller command mount explicitly wired"
+  ],
+  "original_contract_sources": [
+    {
+      "path": "backend/internal/db/migrations/065_add_system_backup_control_metadata_core.sql",
+      "size": 26225,
+      "sha256": "79252ef1310a7c78facb959e5083c9c72f7fc8172590388aa0099836e6f4052b"
+    },
+    {
+      "path": "backend/internal/db/migrations/067_add_system_backup_task_execution_core.sql",
+      "size": 56783,
+      "sha256": "4c96b3a64ada0599c24e4209c36d7f67ff432239d9d76b8e6966cd3d852ab62f"
+    },
+    {
+      "path": "backend/internal/db/migrations/068_add_system_backup_coordination_observability.sql",
+      "size": 21146,
+      "sha256": "c1297b8341fe7d3f4eeab55ba355526b920d633349053a047420d2cca26df8de"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate.go",
+      "size": 27781,
+      "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+      "size": 1330,
+      "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+    }
+  ],
+  "tests": [
+    "TestGateBudgetFrozenThresholdsAcrossConfigurationChanges",
+    "TestGateBudgetExpiredLeaseDoesNotHideOverdueGate",
+    "TestGateBudgetExactBoundariesAndOriginalMatrixLabels",
+    "TestGateBudgetRejectsUnknownOrContradictoryOriginalFacts",
+    "TestGateBudgetClippedLeaseKeepsOriginalFrozenBudget",
+    "TestSQLGateBudgetReadsBoundedOriginalSourcesInOneUTCReadOnlySnapshot",
+    "TestSQLGateBudgetNeverPublishesMissingPartialFailedOrCanceledSnapshots",
+    "TestGateBudgetHTTPRejectsPartialMetricsAndSuppressesAfterLeaderLoss"
+  ],
+  "scripted_SQL_driver_is_not_actual_MySQL": true,
+  "Go_executed": false,
+  "SQL_executed": false,
+  "live_source_changed": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "previous_source_review": {
+    "path": "docs/evidence/a-gate-budget-source-reviewed-20261027.json",
+    "size": 4589,
+    "sha256": "8e2e3906dc97fbe2e5494dbf7bbae8d91ce8264ca81e0100ebcff3215de91fe3"
+  },
+  "correction": "Active acquisition and hold deadlines must exactly match their frozen original budget; only the renewable lease may be shorter than TTL. Supersedes the first source review on this point.",
+  "base_source_sha256": "dc79d81f74d6d6c293372f6c5404b2a673c3f469da1c4d14d4adc763199efa8e",
+  "new_native_still_required": true
+}

@@ -1,0 +1,94 @@
+{
+  "kind": "d_bootstrap_late_operation_fix.v1",
+  "cause": "test_mutation_violated_target_equals_origin_CHECK_before_final_readback",
+  "mutation_sql": "UPDATE system_backup_operations SET http_status=202 WHERE operation_type='config_update' AND target_type='system' AND http_status=201",
+  "actual_mutation_row_count_required": 1,
+  "production_readback_and_formal_CHECK_unchanged": true,
+  "native_regression": {
+    "fail": 0,
+    "roots_passed": 11,
+    "http_status_final_readback_rejection_passed": true,
+    "log": "docs/evidence/d-bootstrap-late-operation-native-20261026-d727652a.jsonl",
+    "skip": 0,
+    "native_exit": 0,
+    "subcases_passed": 57
+  },
+  "preparation_receipt": "docs/evidence/d-bootstrap-consumer-mysql-20261026-152248-d727652a.json",
+  "preparation_native_exit": 0,
+  "preparation_step_exits": [
+    0,
+    0,
+    0
+  ],
+  "source_sha256": "40364cd54be78e53d3ce855b0b03f3728e6ab0f3feb3dcb21972eed05aee3588",
+  "tested_current_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_mysql_test.go",
+      "size": 24994,
+      "sha256": "269a95323d81ce11ebbd262f788404cda74ad27e7ce7aa3a138366d1b91f6fc7"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_independent_test.go",
+      "size": 28315,
+      "sha256": "c34eaf9fe05068f0af147d04d22476e944782caded02e0405feb82e156c1c5ca"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_snapshot.go",
+      "size": 9577,
+      "sha256": "edae70a26fbe16da3ed6afa9b3477c4f7cba446e202068de0fc56d23d0f27976"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "size": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    }
+  ],
+  "source_postcheck": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-d727652a723e4d539236865e86f70e7c",
+  "owner_independently_absent": true,
+  "test_build_artifacts_removed": true,
+  "receiver": {
+    "test_isolation": "none",
+    "initial_spawn_EPERM_log_preserved": "docs/evidence/d-bootstrap-late-operation-receiver-tests-20261026.txt",
+    "source_pins": [
+      {
+        "path": "docs/evidence/d-bootstrap-consumer-mysql-review-20261026.mjs",
+        "sha256": "a02bbcb6d2abb8bb06085c2729a6dab2c5c7d300a0d2f9bc359c01d343c7a928"
+      },
+      {
+        "path": "docs/evidence/d-bootstrap-consumer-mysql-review-20261026.test.mjs",
+        "sha256": "a9d79466a98ae010dc5a9c33403dc5edc84c7cfb900ad5349022070ff1e6db26"
+      }
+    ],
+    "migration_files_required": 96,
+    "passed": 34,
+    "log": "docs/evidence/d-bootstrap-late-operation-receiver-tests-20261026-r3.txt",
+    "last_migration_prefix": "081",
+    "failed": 0
+  },
+  "dependencies_installed": false,
+  "actual_mysql_rerun": false,
+  "production_approved": false,
+  "prior_failures": [
+    {
+      "receipt": "docs/evidence/d-bootstrap-consumer-mysql-20261026-145632-49e264a6.json",
+      "operator": "docs/evidence/d-bootstrap-consumer-operator-20261026-145625.txt",
+      "passed_cases": 25,
+      "failed_cases": [
+        "late_operation"
+      ],
+      "error": "MySQL 3819 chk_sb_operation_target_id",
+      "reclassified_as_passed": false
+    },
+    {
+      "receipt": "docs/evidence/d-bootstrap-consumer-mysql-20261026-145634-4b3f3d85.json",
+      "operator": "docs/evidence/d-bootstrap-consumer-operator-20261026-145629.txt",
+      "passed_cases": 25,
+      "failed_cases": [
+        "late_operation"
+      ],
+      "error": "MySQL 3819 chk_sb_operation_target_id",
+      "reclassified_as_passed": false
+    }
+  ]
+}

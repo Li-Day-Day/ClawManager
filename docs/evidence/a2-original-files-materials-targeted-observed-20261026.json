@@ -1,0 +1,69 @@
+{
+  "kind": "a2_original_files_materials_targeted_observed.v1",
+  "status": "five_targeted_packages_pass_inside_running_complete9_not_whole_acceptance",
+  "run": "a2e7cbc234ca4e0e9ea79ec7adce1f49",
+  "native_log": "docs/evidence/d-bootstrap-consumer-native-a2e7cbc234ca4e0e9ea79ec7adce1f49.targeted.jsonl",
+  "native_log_sha256": "bd4fa692ee71beb7f6e6b8cec6025c036ba974cce4c04fe77e355d471176d30a",
+  "test_pass_events": 393,
+  "package_passes": [
+    "clawreef/internal/systembackupproducer",
+    "clawreef/internal/systembackupsecurity",
+    "clawreef/internal/systembackupbootstrapsecurity",
+    "clawreef/internal/systembackupnoncebootstrap",
+    "clawreef/internal/systembackupcatrust"
+  ],
+  "groups": [
+    {
+      "prefix": "TestBootstrapCandidateFiles",
+      "roots": 5,
+      "passes": 47
+    },
+    {
+      "prefix": "TestCandidateNonce",
+      "roots": 4,
+      "passes": 41
+    },
+    {
+      "prefix": "TestCandidateCA",
+      "roots": 3,
+      "passes": 25
+    }
+  ],
+  "six_current_ready_source_pins_match_snapshot": true,
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "size": 10160,
+      "sha256": "f9325dd859d8073b0710cf93f58eccb52a80dded6eef5940a3df56d466f288dd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files_test.go",
+      "size": 11994,
+      "sha256": "94aee73fe0cd3e56aa23a8ace2e3118b07188b96ca89c57c098202e07fe33593"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "size": 12360,
+      "sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter_test.go",
+      "size": 16624,
+      "sha256": "28e8e69dfbfb45e3b5895e3ccbe48d826afa988a7046ca68d356712da8850590"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+      "size": 6433,
+      "sha256": "374b9097787f8def36a5e8e807f2d8ab2500242f6b87b5bd9d6983ee34a35312"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/candidate_adapter_test.go",
+      "size": 11798,
+      "sha256": "d2f5f2c679f7c7682c5362f2ab28ac34de5f0aac614faae50d80154da123cccb"
+    }
+  ],
+  "whole_native_terminal": false,
+  "owner_cleanup_pending": true,
+  "actual_SQL": false,
+  "production_approved": false
+}

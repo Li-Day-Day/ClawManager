@@ -1,0 +1,45 @@
+**********************
+PowerShell 记录开始
+开始时间: 20261026145634
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\Program Files\WindowsApps\Microsoft.PowerShell_7.6.8.0_x64__8wekyb3d8bbwe\pwsh.dll -NoProfile -File .\scripts\system-backup-d-bootstrap-consumer-mysql-validation.ps1 -Remote
+进程 ID: 5392
+PSVersion: 7.6.8
+PSEdition: Core
+GitCommitId: 7.6.8
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+BOOTSTRAP_CONSUMER_MYSQL_INPUTS_OK migrations=96 catalog=0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe synthetic_a
+uthority=yes production=no
+{"Time":"2026-10-26T15:03:28.1248996+08:00","Action":"start","Package":"clawreef/internal/systembackupevidence"}
+{"Time":"2026-10-26T15:03:29.9405515+08:00","Action":"run","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed"}
+{"Time":"2026-10-26T15:03:29.9405515+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"=== RUN   TestDBootstrapConsumerMySQLSeed\n"}
+{"Time":"2026-10-26T15:03:30.1678957+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"    bootstrap_consumer_mysql_test.go:292: PASS bootstrap-consumer-mysql-seed original_compatible_lifecycle=yes complete_manifest=yes capacity_report_prepare=real_helper migrations=96 candidate_tables=8 actual_mysql=not_run synthetic_authority=yes production=no\n"}
+{"Time":"2026-10-26T15:03:30.1984741+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Output":"--- PASS: TestDBootstrapConsumerMySQLSeed (0.26s)\n"}
+{"Time":"2026-10-26T15:03:30.1984741+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Test":"TestDBootstrapConsumerMySQLSeed","Elapsed":0.26}
+{"Time":"2026-10-26T15:03:30.2038519+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"PASS\n"}
+{"Time":"2026-10-26T15:03:30.2424866+08:00","Action":"output","Package":"clawreef/internal/systembackupevidence","Output":"ok  \tclawreef/internal/systembackupevidence\t2.117s\n"}
+{"Time":"2026-10-26T15:03:30.2424866+08:00","Action":"pass","Package":"clawreef/internal/systembackupevidence","Elapsed":2.118}
+LOCAL_PASS bootstrap-consumer targeted_seed=yes default_vet=yes seed=yes linux_probe=yes pinned_migrations=yes binary_sha256=87fe6ab5e958ac36a2cce45e6cc655bf0e9863f730317d920791c337fac8982b real_mysql=not_run
+
+
+
+
+PS>TerminatingError(): "BootstrapConsumer remote step failed; retain original output and any CLEANUP_PENDING identity"
+
+CLEANED bootstrapConsumer-remote-scratch=yes
+CLEANED bootstrapConsumer-local-owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-4b3f3d85cb484fa583f30b6106700d39 removed=True
+BOOTSTRAP_CONSUMER_MYSQL_RESULT=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-bootstrap-consumer-mysql-20261026-145634-4b3f3d85.json
+**********************
+PowerShell 记录结束
+结束时间: 20261026151553
+**********************

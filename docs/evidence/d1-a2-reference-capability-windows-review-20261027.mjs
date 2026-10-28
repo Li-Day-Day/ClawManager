@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {parseGoList,affectedScope} from './a2-reference-capability-go-scope-20261026.mjs';
+const root=path.resolve(import.meta.dirname,'../..');
+const raw=p=>fs.readFileSync(path.resolve(root,p));
+const text=b=>(b[0]===255&&b[1]===254?b.toString('utf16le'):b.toString('utf8')).replace(/^\uFEFF/,'');
+const json=p=>JSON.parse(text(raw(p)));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const prefix='docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7';
+const receipt=prefix+'.json',r=json(receipt),test='TestSecurityReferenceCombinedEvidenceCapabilitiesFollowExistingSchema';
+assert.ok(process.argv.slice(2).every(x=>x==='--check')&&process.argv.slice(2).length<=1);
+assert.equal(r.kind,'a2_reference_capability_candidate_native.v1');assert.equal(r.status,'failed');assert.equal(r.error,'Go phase failed: tagged_seed');
+for(const k of ['Go_started','tests_started','cleanup','snapshot_unchanged','reviewed_inputs_unchanged'])assert.equal(r[k],true,k);
+for(const k of ['live_source_modified','dependencies_installed','actual_SQL','production_approved'])assert.equal(r[k],false,k);
+const owner=path.resolve(root,r.owner);assert.equal(path.dirname(owner),root);assert.equal(path.basename(owner),'.tmp-a-reference-parity-9c2f727f86c548a38792cebd423489e7');assert.equal(fs.existsSync(owner),false);
+assert.deepEqual(r.phases.map(p=>p.phase),['windows.ordinary','windows.systembackup_mysql','linux.ordinary','linux.systembackup_mysql','old','fixed','full','tagged_seed']);
+assert.deepEqual(r.phases.map(p=>p.exit),[0,0,0,0,1,0,0,1]);assert.deepEqual(r.phases.map(p=>p.expected_failure),[false,false,false,false,true,false,false,false]);
+assert.equal(sha(raw('docs/evidence/a2-reference-capability-validation-20261027.ps1')),r.driver_sha256);
+for(const p of r.input_pins){const b=raw(p.path);assert.equal(b.length,p.size);assert.equal(sha(b),p.sha256);}
+const oldPins=new Map(r.parent_files.map(p=>[p.path,p])),newPins=new Map(r.files.map(p=>[p.path,p]));
+const decoder='backend/internal/systembackupbootstrapsecurity/reference.go',newTest='backend/internal/systembackupbootstrapsecurity/reference_contract_parity_test.go';
+assert.equal(oldPins.size,r.parent_files.length);assert.equal(newPins.size,r.files.length);
+assert.equal(oldPins.get(decoder).sha256,'99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022');
+assert.equal(newPins.get(decoder).sha256,'bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183');
+assert.equal(newPins.get(newTest).sha256,'6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340');
+assert.equal(oldPins.has(newTest),false);assert.equal(newPins.size,oldPins.size+1);
+for(const [p,pin]of oldPins)if(p!==decoder)assert.deepEqual(newPins.get(p),pin,'unexpected candidate delta '+p);
+const runtime=['clawreef/cmd/system-backup-bootstrap','clawreef/internal/systembackupbootstrapmaterials','clawreef/internal/systembackupbootstrapsecurity','clawreef/internal/systembackupcatrust','clawreef/internal/systembackupnoncebootstrap'];
+const scope=json(prefix+'.scope.json');assert.deepEqual(scope.runtime_union,runtime);assert.deepEqual(scope.additional_ordinary_test_callers,[]);assert.deepEqual(scope.additional_mysql_test_callers,['clawreef/internal/systembackupevidence']);
+for(const cap of scope.captures){const bytes=raw(cap.input.path);assert.equal(bytes.length,cap.input.size);assert.equal(sha(bytes),cap.input.sha256);const actual=affectedScope(parseGoList(text(bytes)));for(const [k,v]of Object.entries(actual))assert.deepEqual(cap[k],v);assert.deepEqual(actual.runtime_affected,runtime);}
+const events=phase=>text(raw(prefix+'.'+phase+'.jsonl')).trim().split(/\r?\n/).map(JSON.parse);
+for(const phase of ['old','fixed','full']){assert.equal(text(raw(prefix+'.'+phase+'.stderr.txt')).trim(),'');assert.ok(!events(phase).some(e=>['skip','build-fail'].includes(e.Action)));assert.doesNotMatch(events(phase).map(e=>e.Output??'').join(''),/panic:|fatal error:|\.exe: exit status 0xc000/i);}
+const old=events('old'),oldFailed=old.filter(e=>e.Action==='fail'&&e.Test).map(e=>e.Test).sort();
+const forbidden=['append_record','exact_delete','inventory_read','snapshot_list'];
+assert.deepEqual(oldFailed,[test,...forbidden.map(n=>test+'/'+n)].sort());assert.equal(old.filter(e=>e.Action==='run'&&e.Test).length,9);assert.equal(old.filter(e=>e.Action==='pass'&&e.Test).length,4);assert.equal(old.filter(e=>e.Action==='fail'&&!e.Test).length,1);
+assert.deepEqual(old.filter(e=>e.Action==='pass'&&e.Test).map(e=>e.Test.split('/').at(-1)).sort(),['conditional_create','exact_read','exact_write','range_read']);
+function passed(phase,packages){const e=events(phase);assert.ok(!e.some(x=>['fail','skip','build-fail'].includes(x.Action)));assert.deepEqual(e.filter(x=>x.Action==='pass'&&!x.Test).map(x=>x.Package).sort(),packages.toSorted());const key=x=>x.Package+'\0'+x.Test;const runs=e.filter(x=>x.Action==='run'&&x.Test).map(key).sort(),passes=e.filter(x=>x.Action==='pass'&&x.Test).map(key).sort();assert.deepEqual(runs,passes);assert.equal(new Set(passes).size,passes.length);return {roots:e.filter(x=>x.Action==='pass'&&x.Test&&!x.Test.includes('/')).length,pass_events:passes.length};}
+const fixed=passed('fixed',['clawreef/internal/systembackupbootstrapsecurity']),full=passed('full',runtime);
+assert.equal(fixed.pass_events,9);assert.equal(full.pass_events,347);assert.equal(r.fixed_pass_events,9);assert.equal(r.full_pass_events,347);
+const tagged=events('tagged_seed'),taggedOutput=tagged.map(x=>x.Output??'').join('');
+for(const name of ['dGCLifecyclePool','dGCLifecycleReleased'])assert.match(taggedOutput,new RegExp(name+' redeclared in this block'));
+assert.ok(tagged.some(x=>x.Action==='build-fail'));assert.equal(tagged.filter(x=>x.Action==='run'&&x.Test).length,0);assert.equal(tagged.filter(x=>x.Action==='pass'&&x.Test).length,0);
+assert.equal(r.linux_binaries??null,null);assert.equal(r.linux_tagged_evidence??null,null);
+const files=[receipt,prefix+'.scope.json',...r.phases.flatMap(p=>[prefix+'.'+p.phase+'.jsonl',prefix+'.'+p.phase+'.stderr.txt']),'docs/evidence/a2-reference-capability-validation-20261027.ps1',...r.input_pins.map(p=>p.path),'docs/evidence/d1-a2-reference-capability-windows-review-20261027.mjs'];
+const result={kind:'d1_a2_reference_capability_windows_partial_review.v1',status:'passed_exact_windows_counterfactual_and_runtime5_only',failed_parent_preserved:receipt,parent_status:'failed',candidate_source_files:r.files.length,candidate_source_sha256:sha(r.files.map(p=>p.path+'\0'+p.sha256+'\0'+p.size).join('\n')+'\n'),candidate_delta:[newPins.get(decoder),newPins.get(newTest)],old_native_exit:1,old_expected_failed_capabilities:forbidden,old_permitted_controls_passed:4,fixed_native_exit:0,fixed,full_native_exit:0,full,runtime_packages:runtime,actual_go_list_platform_tag_captures:4,additional_tagged_test_caller:'clawreef/internal/systembackupevidence',tagged_seed_executed:false,tagged_seed_build_failure_preserved:true,linux_compiles_completed:0,snapshot_postcheck:true,reviewed_inputs_postcheck:true,driver_unchanged:true,owner_independently_absent:true,run_artifacts_cleaned:true,live_patch_application_approved_by_this_review:false,current_tree_accepted:false,complete_candidate_run_accepted:false,actual_SQL:false,production_approved:false,dependencies_installed:false,whole_goal_complete:false,artifacts:[...new Set(files)].map(p=>({path:p,sha256:sha(raw(p))}))};
+const output=path.join(root,'docs/evidence/d1-a2-reference-capability-windows-reviewed-20261027-9c2f.json');
+if(process.argv.includes('--check'))assert.deepEqual(JSON.parse(text(fs.readFileSync(output))),result);else fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log('REFERENCE_CAPABILITY_WINDOWS_REVIEWED old_exit=1 old_negative=4 fixed=9 full_packages=5 full_pass=347 tagged_seed=build_failed linux=not_run cleanup=yes');

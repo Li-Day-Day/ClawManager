@@ -1,0 +1,77 @@
+{
+  "kind": "a2_metrics_original_source_archive.v1",
+  "status": "exact_original_three_files_preserved_before_D_non_Go_change",
+  "original_review": {
+    "path": "docs/evidence/a2-metrics-security-source-reviewed-20261027.json",
+    "size": 16961,
+    "sha256": "a540975f4a411e6c06ae7430be00bc364b5adba3efe84f4a17b99b5dc79f45e0"
+  },
+  "current_ordinary_manifest": {
+    "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.source.json",
+    "size": 329475,
+    "sha256": "9f420f4aa4b8839ed9dd64207c8f9bd0b627dd37c02c5c211638ae40cbea7a13"
+  },
+  "files": [
+    {
+      "source": {
+        "path": "scripts/system-backup-metrics-registry.mjs",
+        "size": 41174,
+        "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+      },
+      "archive": {
+        "path": "docs/evidence/a2-metrics-security-original-20261027/system-backup-metrics-registry.mjs.txt",
+        "size": 41174,
+        "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+      },
+      "present_in_ordinary_manifest": true,
+      "ordinary_manifest_pin": {
+        "path": "scripts/system-backup-metrics-registry.mjs",
+        "size": 41174,
+        "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+      }
+    },
+    {
+      "source": {
+        "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+        "size": 194100,
+        "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+      },
+      "archive": {
+        "path": "docs/evidence/a2-metrics-security-original-20261027/metrics-alert-registry.json",
+        "size": 194100,
+        "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+      },
+      "present_in_ordinary_manifest": true,
+      "ordinary_manifest_pin": {
+        "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+        "size": 194100,
+        "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+      }
+    },
+    {
+      "source": {
+        "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+        "size": 70758,
+        "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+      },
+      "archive": {
+        "path": "docs/evidence/a2-metrics-security-original-20261027/prometheus-alert-rules.yaml",
+        "size": 70758,
+        "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+      },
+      "present_in_ordinary_manifest": true,
+      "ordinary_manifest_pin": {
+        "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+        "size": 70758,
+        "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+      }
+    }
+  ],
+  "purpose": "Keep complete original source and negative-control provenance after a later reviewed live application; old source-ready --check guards may correctly reject a changed live source. Standalone raw-series YAML remains self-contained.",
+  "originals_modified": false,
+  "original_eight_expression_candidates_modified": false,
+  "PromQL_executed": false,
+  "Go_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

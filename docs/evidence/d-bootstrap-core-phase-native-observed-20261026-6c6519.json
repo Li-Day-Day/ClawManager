@@ -1,0 +1,149 @@
+{
+  "kind": "d_bootstrap_core_phase_native_observation.v1",
+  "status": "root_phase_observed_pass_inside_failed_joint_not_whole_acceptance",
+  "run": "6c6519b338b04d2081bc47b1b1f593ba",
+  "receipt": {
+    "path": "docs/evidence/d-bootstrap-consumer-native-6c6519b338b04d2081bc47b1b1f593ba.json",
+    "sha256": "fedf27ec959cf9f5dd8f8a675527caca444c2e4e4382aa0c9135dccc393e4b31"
+  },
+  "native_log": {
+    "path": "docs/evidence/d-bootstrap-consumer-native-6c6519b338b04d2081bc47b1b1f593ba.targeted.jsonl",
+    "sha256": "f3236a4f0b455c309946181309d613e8bf8a88e15827c16518be399956185cb2"
+  },
+  "whole_targeted_exit": 1,
+  "whole_targeted_accepted": false,
+  "failed_package": "clawreef/internal/systembackupnoncebootstrap",
+  "failure_kind": "compile_name_collision",
+  "full_nine_package_tests_started": false,
+  "Linux_builds_started": false,
+  "initial_frozen_snapshot_verified": true,
+  "final_snapshot_postcheck_not_reached": true,
+  "owned_inputs_matching_native_manifest": [
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_contract.go",
+      "size": 6894,
+      "sha256": "d70deb031481533f62d21039bd032775a8672944e9e0e97d9d8c0e24ef80851f"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume.go",
+      "size": 14040,
+      "sha256": "db0192271bcb7c2b651cfedd1e43c2104fa773bef2041f9312d2bf79171f7cea"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_records.go",
+      "size": 16112,
+      "sha256": "bea6fb3847bbc91385662ff5534a4c0827d60c4306cf31eb3068c6be58a2470e"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_snapshot.go",
+      "size": 9577,
+      "sha256": "edae70a26fbe16da3ed6afa9b3477c4f7cba446e202068de0fc56d23d0f27976"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/transaction.go",
+      "size": 15442,
+      "sha256": "315def86b128974b4aaf8fb060a44581be04d0defc4f3b95ae4737d2c6cb12b7"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/record_sql.go",
+      "size": 11810,
+      "sha256": "8cccd08f52c62cdb01acb53b8f64d8e08e05a5603998f83f117ea1513bfef646"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_transaction_copy_test.go",
+      "size": 3265,
+      "sha256": "3f5014d46eedb715a2e1a35efaa257241d9ff8230919da19a1944dc81fb5c24f"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_callback_phase_test.go",
+      "size": 7939,
+      "sha256": "d08641d503d4e20f3da94b28f1fb2aa4572b8acf3c7f06b91c03d88b857c13b7"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_capacity.go",
+      "size": 9542,
+      "sha256": "6961d7849e872ef44449143659541c281a2e801f61b8547647f6ddd76de1ca31"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_capacity_test.go",
+      "size": 11474,
+      "sha256": "1c185c1815ad1d1424e9551ff4df6527ae9ce8e943c2f3c0cb604ed71667ad0d"
+    }
+  ],
+  "phase_pass_events": [
+    {
+      "Time": "2026-10-26T13:53:28.0988172+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/normal",
+      "Elapsed": 5.28
+    },
+    {
+      "Time": "2026-10-26T13:53:32.7011557+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/removed",
+      "Elapsed": 4.55
+    },
+    {
+      "Time": "2026-10-26T13:53:37.1281663+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/changed",
+      "Elapsed": 4.47
+    },
+    {
+      "Time": "2026-10-26T13:53:38.7308489+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/retained_write",
+      "Elapsed": 1.6
+    },
+    {
+      "Time": "2026-10-26T13:53:42.5790605+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/invalid_read_sql",
+      "Elapsed": 3.85
+    },
+    {
+      "Time": "2026-10-26T13:53:46.8140192+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/expired_before_callback",
+      "Elapsed": 4.23
+    },
+    {
+      "Time": "2026-10-26T13:53:47.9106929+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/late_wait",
+      "Elapsed": 1.09
+    },
+    {
+      "Time": "2026-10-26T13:53:48.9786002+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard/panic",
+      "Elapsed": 1.07
+    },
+    {
+      "Time": "2026-10-26T13:53:48.9786002+08:00",
+      "Action": "pass",
+      "Package": "clawreef/internal/systembackupproducer",
+      "Test": "TestBootstrapIndependentControlledFileChecksBeforeFinalGuard",
+      "Elapsed": 26.15
+    }
+  ],
+  "phase_roots": 1,
+  "phase_leaves": 8,
+  "producer_targeted_package_pass_observed": true,
+  "source_ready": "docs/evidence/d-bootstrap-consumer-root-core-source-ready-20261026.json",
+  "checks": "Work-end file checks precede fixed FinalGuard; normal/error/panic paths close the original and reflection-copied private read/time views together, with zero post-guard driver dispatch. Retained writes, invalid read SQL, changed/deleted files and original time expiry reject.",
+  "exact_owner_cleaned": true,
+  "exact_owner_absent": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "implementation_accepted": false,
+  "goal_complete": false
+}

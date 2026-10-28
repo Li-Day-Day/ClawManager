@@ -1,0 +1,92 @@
+{
+  "kind": "d_backups_ui_browser_observations.v1",
+  "url": "http://127.0.0.1:19034/backups-ui-lab.html",
+  "scope": "real_React_components_synthetic_HTTP_and_download_transport",
+  "findings": [
+    {
+      "case": "backup_detail",
+      "text": "sbk_00000000-0000-4000-8000-000000000003\nRefreshClose details\nStatus detailsEventsLogs\nExecution status\nSucceeded\nConfiguration version\nv3\nTask updated at\nSep 30, 2026, 10:30:00 AM GMT+8\nCurrent attempt\n1\nCurrent phase\n—\nLast business progress\nSep 30, 2026, 10:30:00 AM GMT+8\nVerifier checks\nPassed\nVerification counts\nPassed 6 · Warning 0 · Failed 0 · Skipped 0\nArtifact state\nCommitted\nArtifact readability\nReadable\nUnreadability reason\nNone\nAcceptance readiness\nReady\nBackup eligibility\nEligible\nEligibility reason\nEligible\nBackup purpose\nAcceptance backup\nDeployment matrix\nk8s-cluster\nSize\n17.0 GiB"
+    },
+    {
+      "case": "drill_detail",
+      "text": "sdr_00000000-0000-4000-8000-000000000001\nRefreshClose details\nStatus detailsEventsLogs\nExecution status\nSucceeded\nConfiguration version\nv3\nTask updated at\nSep 30, 2026, 10:30:00 AM GMT+8\nCurrent attempt\n1\nCurrent phase\n—\nLast business progress\nSep 30, 2026, 10:30:00 AM GMT+8\nVerifier checks\nPassed\nVerification counts\nPassed 6 · Warning 0 · Failed 0 · Skipped 0\nSource artifact\nsbk_00000000-0000-4000-8000-000000000003\nBackup purpose\nAcceptance backup\nCleanup status\nRunning\nCleanup failure reason\nNone\nDrill eligibility\nNot eligible\nEligibility reason\nIncomplete evidence"
+    },
+    {
+      "case": "expired_preflight_detail",
+      "text": "spf_00000000-0000-4000-8000-000000000001\nRefreshClose details\nStatus detailsEventsLogs\nExecution status\nSucceeded\nConfiguration version\nv3\nTask updated at\nSep 30, 2026, 10:30:00 AM GMT+8\nCurrent attempt\n1\nCurrent phase\n—\nLast business progress\nSep 30, 2026, 10:30:00 AM GMT+8\nVerifier checks\nNeeds attention\nVerification counts\nPassed 5 · Warning 1 · Failed 0 · Skipped 0\nSource artifact\nsbk_00000000-0000-4000-8000-000000000003\nPreflight mode\nProduction read only\nArtifact compatibility\nCompatible with warnings\nReport validity\nReport expired"
+    },
+    {
+      "case": "verification_detail",
+      "text": "sav_00000000-0000-4000-8000-000000000001\nRefreshClose details\nStatus detailsEventsLogs\nExecution status\nSucceeded\nConfiguration version\nv3\nTask updated at\nSep 30, 2026, 10:30:00 AM GMT+8\nCurrent attempt\n1\nCurrent phase\n—\nLast business progress\nSep 30, 2026, 10:30:00 AM GMT+8\nVerifier checks\nPassed\nVerification counts\nPassed 6 · Warning 0 · Failed 0 · Skipped 0\nSource artifact\nsbk_00000000-0000-4000-8000-000000000003\nVerification scope\nFull verification\nVerification decision\nReadability restored\nReadability before\nUnreadable\nReadability after\nReadable\nArtifact state\nCommitted\nUnreadability reason\nNone"
+    },
+    {
+      "case": "events_not_ready",
+      "text": "sav_00000000-0000-4000-8000-000000000001\nRefreshClose details\nStatus detailsEventsLogs\nRefresh\n\nCould not load backup information. Please retry."
+    },
+    {
+      "case": "partial_records_without_health",
+      "text": "D 备份页面交互验收\n\n仅本机固定 HTTP 数据；复用正式 React 组件。这里的读取、会话和报告均为合成测试，不连接业务后端。\n\n接口场景 \nready\npartial\nunavailable\npermission\ndelayed\nstale\ncross-installation\nmalformed\n读取请求统计\nConfiguration and task records\nRefresh\n\nThe overview is not ready. Only records returned by the read endpoints are shown; health, recovery readiness and global counts are unavailable.\n\nCurrent configuration\nConfiguration version\nv3\nActivation status\nActive\nView configuration history\nBackup records\n3 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsbk_00000000-0000-4000-8000-000000000003\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nsbk_00000000-0000-4000-8000-000000000002\tCommit outcome unknown\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nsbk_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nIsolated drills and cleanup\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsdr_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nRead-only production preflight\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nspf_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nBackup verification\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsav_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nOperation records\nView operation records\nImport backups\n\nComing later\n\nBackup cleanup\n\nComing later\n\nRecovery baseline\n\nComing later\n\n下载组件测试\n下载场景 \nsuccess\ndelayed\npermission\n卸载下载组件切换测试会话请求 0；取消 0\nDownload evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download"
+    },
+    {
+      "case": "permission_remount_denies_records",
+      "text": "D 备份页面交互验收\n\n仅本机固定 HTTP 数据；复用正式 React 组件。这里的读取、会话和报告均为合成测试，不连接业务后端。\n\n接口场景 \nready\npartial\nunavailable\npermission\ndelayed\nstale\ncross-installation\nmalformed\n切换场景时重建页面读取请求统计\nLoading failed\n\nCould not load backup information. Please retry.\n\nRetry\n下载组件测试\n下载场景 \nsuccess\ndelayed\npermission\n卸载下载组件切换测试会话请求 0；取消 0\nDownload evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download"
+    },
+    {
+      "case": "detail_cancel",
+      "stats": "{\"requests\":99,\"details\":5,\"abortedDetails\":1,\"activeDetails\":0,\"scenario\":\"delayed\"}",
+      "detailCount": 0
+    },
+    {
+      "case": "stale_detail_rejected",
+      "text": "sbk_00000000-0000-4000-8000-000000000003\nRefreshClose details\nStatus detailsEventsLogs\n\nCould not load backup information. Please retry."
+    },
+    {
+      "case": "cross_installation_rejected",
+      "text": "sbk_00000000-0000-4000-8000-000000000003\nRefreshClose details\nStatus detailsEventsLogs\n\nCould not load backup information. Please retry."
+    },
+    {
+      "case": "malformed_detail_rejected",
+      "text": "sbk_00000000-0000-4000-8000-000000000003\nRefreshClose details\nStatus detailsEventsLogs\n\nCould not load backup information. Please retry."
+    },
+    {
+      "case": "unavailable",
+      "text": "D 备份页面交互验收\n\n仅本机固定 HTTP 数据；复用正式 React 组件。这里的读取、会话和报告均为合成测试，不连接业务后端。\n\n接口场景 \nready\npartial\nunavailable\npermission\ndelayed\nstale\ncross-installation\nmalformed\n切换场景时重建页面读取请求统计{\"requests\":99,\"details\":5,\"abortedDetails\":1,\"activeDetails\":0,\"scenario\":\"delayed\"}\n\n测试接口尚未就绪\n\nOperation records\nView operation records\n下载组件测试\n下载场景 \nsuccess\ndelayed\npermission\n卸载下载组件切换测试会话请求 0；取消 0\nDownload evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download"
+    },
+    {
+      "case": "polling_before_revoke",
+      "stats": "{\"requests\":144,\"details\":8,\"abortedDetails\":1,\"activeDetails\":0,\"scenario\":\"ready\"}"
+    },
+    {
+      "case": "polling_revocation_without_remount",
+      "text": "D 备份页面交互验收\n\n仅本机固定 HTTP 数据；复用正式 React 组件。这里的读取、会话和报告均为合成测试，不连接业务后端。\n\n接口场景 \nready\npartial\nunavailable\npermission\ndelayed\nstale\ncross-installation\nmalformed\n切换场景时重建页面读取请求统计{\"requests\":147,\"details\":8,\"abortedDetails\":1,\"activeDetails\":0,\"scenario\":\"permission\"}\nLoading failed\n\nCould not load backup information. Please retry.\n\nRetry\n下载组件测试\n下载场景 \nsuccess\ndelayed\npermission\n卸载下载组件切换测试会话请求 0；取消 0\nDownload evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download"
+    },
+    {
+      "case": "download_ready",
+      "text": "Download evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest downloadClear received file\n\nFile received and integrity checked (19 bytes). You can save it to your device.\n\nSave file\nSHA-256\ncb8daed7b30399a1c3c8b83b3b7bee4b774a30fc389afc1d375e4c23a3cc4ae8"
+    },
+    {
+      "case": "download_session_change",
+      "text": "Download evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download\n\nYour login session changed. Start a new download in the current session."
+    },
+    {
+      "case": "download_permission_denied",
+      "text": "Download evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download\n\nYour account cannot download this evidence."
+    },
+    {
+      "case": "download_unmount_cancels",
+      "text": "请求 3；取消 1",
+      "downloadForms": 0
+    },
+    {
+      "case": "final_partial_assertion",
+      "text": "D 备份页面交互验收\n\n仅本机固定 HTTP 数据；复用正式 React 组件。这里的读取、会话和报告均为合成测试，不连接业务后端。\n\n接口场景 \nready\npartial\nunavailable\npermission\ndelayed\nstale\ncross-installation\nmalformed\n切换场景时重建页面读取请求统计{\"requests\":147,\"details\":8,\"abortedDetails\":1,\"activeDetails\":0,\"scenario\":\"permission\"}\nConfiguration and task records\nRefresh\n\nThe overview is not ready. Only records returned by the read endpoints are shown; health, recovery readiness and global counts are unavailable.\n\nCurrent configuration\nConfiguration version\nv3\nActivation status\nActive\nView configuration history\nBackup records\n3 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsbk_00000000-0000-4000-8000-000000000003\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nsbk_00000000-0000-4000-8000-000000000002\tCommit outcome unknown\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nsbk_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nIsolated drills and cleanup\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsdr_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nRead-only production preflight\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nspf_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nBackup verification\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsav_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nOperation records\nView operation records\nImport backups\n\nComing later\n\nBackup cleanup\n\nComing later\n\nRecovery baseline\n\nComing later\n\n下载组件测试\n下载场景 \nsuccess\ndelayed\npermission\n挂载下载组件切换测试会话请求 3；取消 1"
+    },
+    {
+      "case": "styled_partial_final",
+      "text": "D 备份页面交互验收\n\n仅本机固定 HTTP 数据；复用正式 React 组件。这里的读取、会话和报告均为合成测试，不连接业务后端。\n\n接口场景 \nready\npartial\nunavailable\npermission\ndelayed\nstale\ncross-installation\nmalformed\n切换场景时重建页面\n读取请求统计\n{\"requests\":266,\"details\":0,\"abortedDetails\":0,\"activeDetails\":0,\"scenario\":\"partial\"}\nConfiguration and task records\nRefresh\n\nThe overview is not ready. Only records returned by the read endpoints are shown; health, recovery readiness and global counts are unavailable.\n\nCurrent configuration\nConfiguration version\nv3\nActivation status\nActive\nView configuration history\nBackup records\n3 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsbk_00000000-0000-4000-8000-000000000003\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nsbk_00000000-0000-4000-8000-000000000002\tCommit outcome unknown\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nsbk_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nIsolated drills and cleanup\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsdr_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nRead-only production preflight\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nspf_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nBackup verification\n1 entries\nID\tExecution status\tConfiguration version\tTask updated at\nsav_00000000-0000-4000-8000-000000000001\tSucceeded\tv3\tSep 30, 2026, 10:30:00 AM GMT+8\nOperation records\nView operation records\nImport backups\n\nComing later\n\nBackup cleanup\n\nComing later\n\nRecovery baseline\n\nComing later\n\n下载组件测试\n下载场景 \nsuccess\ndelayed\npermission\n卸载下载组件切换测试会话请求 0；取消 0\nDownload evidence or a verification report\n\n本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。\n\nEvidence ID\nRequest download"
+    }
+  ],
+  "actual_business_backend": false,
+  "actual_MFA": false,
+  "production_approved": false
+}

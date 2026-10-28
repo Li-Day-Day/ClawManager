@@ -19,6 +19,7 @@ type BootstrapOwnerAdapters struct {
 	Registries     map[string]BootstrapResourceValidator
 	References     map[string]BootstrapResourceValidator
 	CrossResources BootstrapResourceValidator
+	Candidates     *BootstrapDeploymentCandidates // Fixed Go composition only; never loaded from deployment JSON.
 }
 
 // All paths belong to a SHA-pinned deployment document, never an HTTP body.
@@ -55,6 +56,7 @@ type BootstrapDeployment struct {
 	raw          []byte
 	sources      BootstrapAdmissionSources
 	openDatabase func() (*sql.DB, error)
+	candidates   *BootstrapDeploymentCandidates
 }
 
 // MissingBootstrapOwnerAdapters reports only owner integration dependencies.
@@ -63,22 +65,25 @@ type BootstrapDeployment struct {
 func MissingBootstrapOwnerAdapters(a BootstrapOwnerAdapters) []string {
 	missing := []string{}
 	for _, k := range bootstrapRegistryKinds {
-		if a.Registries[k] == nil {
+		if candidateAuthorityNil(a.Registries[k]) {
 			missing = append(missing, "registry:"+k)
 		}
 	}
 	for _, p := range bootstrapReferencePurposes {
-		if a.References[p] == nil {
+		if candidateAuthorityNil(a.References[p]) {
 			missing = append(missing, "reference:"+p)
 		}
 	}
-	if a.CrossResources == nil {
+	if candidateAuthorityNil(a.CrossResources) {
 		missing = append(missing, "cross_resources")
 	}
 	return missing
 }
 
 func LoadBootstrapDeployment(path, digest string, owners BootstrapOwnerAdapters) (*BootstrapDeployment, error) {
+	if owners.Candidates != nil && !owners.Candidates.valid() {
+		return nil, ErrRegistrationUnavailable
+	}
 	raw, err := boundedFile(path, 16384)
 	var c BootstrapDeploymentConfig
 	if err != nil || decodePinnedRegistry(raw, digest, &c) != nil || c.SchemaVersion != "system-backup-bootstrap-deployment.v1" || !(DatabaseIdentity{ServerUUID: c.ExpectedServerUUID, Database: c.ExpectedDatabase}).valid() {
@@ -127,6 +132,11 @@ func LoadBootstrapDeployment(path, digest string, owners BootstrapOwnerAdapters)
 		sources.References[k] = v
 	}
 	d := &BootstrapDeployment{config: c, grant: g, raw: configRaw, sources: sources}
+	if owners.Candidates != nil {
+		// Copy the outer object too: replacing the caller's factory variable
+		// cannot replace the immutable selection/authority after loading.
+		d.candidates = &BootstrapDeploymentCandidates{state: owners.Candidates.state}
+	}
 	d.openDatabase = func() (*sql.DB, error) { return openBootstrapDatabase(c) }
 	return d, nil
 }
@@ -140,6 +150,21 @@ func liveBootstrapGrant(start, end, now time.Time) bool {
 // inputs_checked means precisely that; it is never a live admission success.
 func (d *BootstrapDeployment) Inspect() (BootstrapDeploymentReport, error) {
 	r := BootstrapDeploymentReport{Status: "blocked", ConfigSHA256: d.config.ConfigSHA256, MissingAdapters: MissingBootstrapAdapters(d.sources), MissingInputs: []string{}, ProviderAdmission: "not_run"}
+	// Original source checks also reject typed-nil owner interfaces before any
+	// legacy or candidate Prepare may call a method on them.
+	owners := BootstrapOwnerAdapters{Registries: d.sources.Registries, References: d.sources.References, CrossResources: d.sources.CrossResources}
+	for _, missing := range MissingBootstrapOwnerAdapters(owners) {
+		found := false
+		for _, prior := range r.MissingAdapters {
+			if prior == missing {
+				found = true
+				break
+			}
+		}
+		if !found {
+			r.MissingAdapters = append(r.MissingAdapters, missing)
+		}
+	}
 	g, start, end, err := d.sources.ReadGrant()
 	if err != nil || g != d.grant || !liveBootstrapGrant(start, end, time.Now().UTC()) {
 		return r, ErrRegistrationPermission
@@ -168,9 +193,20 @@ func (d *BootstrapDeployment) Inspect() (BootstrapDeploymentReport, error) {
 // migrates SQL, starts a listener, enables backup work or synthesizes MFA.
 func (d *BootstrapDeployment) Apply(ctx context.Context) (ConfigBootstrapResult, error) {
 	var zero ConfigBootstrapResult
-	if ctx.Err() != nil {
+	if d == nil || candidateAuthorityNil(ctx) || ctx.Err() != nil {
 		return zero, ErrRegistrationUnavailable
 	}
+	if d.candidates != nil {
+		return d.applyCandidates(ctx)
+	}
+	config, err := DecodeBootstrapConfig(d.raw)
+	if err != nil {
+		return zero, err
+	}
+	// One original operation budget covers EVERY legacy owner preparation,
+	// source reinspection, credential open, SQL wait and final commit check.
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(config.numbers["operation_deadline_seconds"])*time.Second)
+	defer cancel()
 	r, err := d.Inspect()
 	if err != nil {
 		return zero, err
@@ -193,11 +229,13 @@ func (d *BootstrapDeployment) Apply(ctx context.Context) (ConfigBootstrapResult,
 		return zero, ErrRegistrationUnavailable
 	}
 	database, err := d.openDatabase()
+	if database != nil {
+		defer database.Close()
+	}
 	if err != nil || database == nil {
 		return zero, ErrRegistrationUnavailable
 	}
-	defer database.Close()
-	return (ConfigBootstrapService{DB: database, Admission: admission}).Bootstrap(ctx, d.grant, d.raw)
+	return (ConfigBootstrapService{DB: database, Admission: admission}).bootstrapLegacyPrepared(ctx, d.grant, config)
 }
 
 func openBootstrapDatabase(c BootstrapDeploymentConfig) (*sql.DB, error) {

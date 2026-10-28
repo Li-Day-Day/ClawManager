@@ -38,7 +38,7 @@ func deploymentFixture(t *testing.T) (string, string, BootstrapDeploymentConfig,
 	p := filepath.Join(dir, "deployment.json")
 	b, _ := json.Marshal(c)
 	writeDeploymentFile(t, p, b)
-	return p, registrationHash(string(b)), c, BootstrapOwnerAdapters{sources.Registries, sources.References, sources.CrossResources}, state, sources
+	return p, registrationHash(string(b)), c, BootstrapOwnerAdapters{Registries: sources.Registries, References: sources.References, CrossResources: sources.CrossResources}, state, sources
 }
 
 func writeDeploymentFile(t *testing.T, path string, raw []byte) {
@@ -48,6 +48,91 @@ func writeDeploymentFile(t *testing.T, path string, raw []byte) {
 	}
 	if err := os.WriteFile(path, raw, 0600); err != nil {
 		t.Fatal(err)
+	}
+}
+
+type deploymentContextResource struct {
+	prepared context.Context
+	checks   int
+}
+
+func (r *deploymentContextResource) Prepare(ctx context.Context, _ OfflineBootstrapGrant, _ BootstrapConfig) (BootstrapResourceCheck, error) {
+	if _, ok := ctx.Deadline(); !ok || ctx.Err() != nil {
+		return nil, ErrRegistrationUnavailable
+	}
+	r.prepared = ctx
+	return r, nil
+}
+
+func (r *deploymentContextResource) Recheck(ctx context.Context, _ *sql.Tx, _ time.Time) error {
+	if ctx != r.prepared || ctx.Err() != nil {
+		return ErrRegistrationUnavailable
+	}
+	r.checks++
+	return nil
+}
+
+func TestDeploymentLegacyAttemptKeepsPreparationContextThroughSQL(t *testing.T) {
+	p, h, _, owners, state, sources := deploymentFixture(t)
+	resource := &deploymentContextResource{}
+	owners.CrossResources = resource
+	d, err := LoadBootstrapDeployment(p, h, owners)
+	if err != nil {
+		t.Fatal(err)
+	}
+	d.sources.ReserveMetadata = sources.ReserveMetadata
+	opens := 0
+	d.openDatabase = func() (*sql.DB, error) {
+		opens++
+		if resource.prepared == nil || resource.prepared.Err() != nil {
+			t.Fatal("credentials preceded bounded preparation")
+		}
+		return sql.OpenDB(bootstrapConnector{state}), nil
+	}
+	parent, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	result, err := d.Apply(parent)
+	if err != nil || result.Version != 1 || opens != 1 || resource.checks == 0 {
+		t.Fatal("legacy deployment replaced original preparation context", result, err)
+	}
+	if parent.Err() != nil || resource.prepared.Err() == nil {
+		t.Fatal("attempt lifetime leaked or canceled parent")
+	}
+}
+
+func TestDeploymentLegacyRejectsTypedNilOwnersBeforeCredentials(t *testing.T) {
+	p, h, _, owners, _, _ := deploymentFixture(t)
+	var absent *admissionTestValidator
+	owners.CrossResources = absent
+	d, err := LoadBootstrapDeployment(p, h, owners)
+	if err != nil {
+		t.Fatal(err)
+	}
+	d.openDatabase = func() (*sql.DB, error) { t.Fatal("typed-nil owner opened credentials"); return nil, nil }
+	report, err := d.Inspect()
+	if err != nil || report.Status != "blocked" || len(report.MissingAdapters) != 1 || report.MissingAdapters[0] != "cross_resources" {
+		t.Fatal("typed-nil owner hidden by inspection", report, err)
+	}
+	if _, err := d.Apply(context.Background()); err == nil {
+		t.Fatal("typed-nil owner admitted")
+	}
+}
+
+func TestDeploymentLegacyClosesDatabaseReturnedWithOpenError(t *testing.T) {
+	p, h, _, owners, state, _ := deploymentFixture(t)
+	d, err := LoadBootstrapDeployment(p, h, owners)
+	if err != nil {
+		t.Fatal(err)
+	}
+	returned := sql.OpenDB(bootstrapConnector{state})
+	d.openDatabase = func() (*sql.DB, error) { return returned, errors.New("PRIVATE opener diagnostic") }
+	result, err := d.Apply(context.Background())
+	if err == nil || result != (ConfigBootstrapResult{}) || strings.Contains(err.Error(), "PRIVATE") || len(state.committed) != 0 {
+		t.Fatal("opener failure leaked or performed SQL work", result, err)
+	}
+	if returned.PingContext(context.Background()) == nil {
+		returned.Close()
+		t.Fatal("failed opener leaked database ownership")
 	}
 }
 

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:clawmanager:a-owner-pre-thin-target:v1",
+  "title": "Pre-thin exact target and independent scope-review interface",
+  "oneOf": [
+    {"$ref": "#/$defs/target"},
+    {"$ref": "#/$defs/scopeReview"}
+  ],
+  "$defs": {
+    "pin": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "size", "sha256"],
+      "properties": {
+        "path": {"type": "string", "pattern": "^(backend|contracts|scripts|docs)/[A-Za-z0-9_./@+ -]+$"},
+        "size": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "nullablePin": {"oneOf": [{"$ref": "#/$defs/pin"}, {"type": "null"}]},
+    "obligations": {
+      "const": ["GC_three_seed_roots", "Linux_current_tagged_evidence_compile", "owner_original_thirteen_stages", "frozen_source_postcheck", "exact_owner_cleanup"]
+    },
+    "delta": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "before", "after", "classification", "proof_ids"],
+      "properties": {
+        "path": {"type": "string"},
+        "before": {"$ref": "#/$defs/nullablePin"},
+        "after": {"$ref": "#/$defs/nullablePin"},
+        "classification": {"enum": ["gc_tagged_component", "ordinary_or_contract_requires_scope_proof", "support_input_requires_scope_proof"]},
+        "proof_ids": {"const": []}
+      }
+    },
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "status", "source_selection", "snapshotter", "parent_receipt", "parent_status_observed", "parent_source_sha256", "target_sha256", "target_files", "deltas", "gc_component_review", "proofs", "scope_review", "post_target_obligations", "native_start_authorized", "current_baseline_ready", "actual_sql_authorized"],
+      "properties": {
+        "kind": {"const": "a_owner_pre_thin_target.v1"},
+        "status": {"const": "pending_native_scope_review"},
+        "source_selection": {"const": "d_local_closeout_snapshot.v1"},
+        "snapshotter": {"$ref": "#/$defs/pin"},
+        "parent_receipt": {"$ref": "#/$defs/pin"},
+        "parent_status_observed": {"type": "string"},
+        "parent_source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "target_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "target_files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/pin"}},
+        "deltas": {"type": "array", "items": {"$ref": "#/$defs/delta"}},
+        "gc_component_review": {"$ref": "#/$defs/pin"},
+        "proofs": {"const": []}, "scope_review": {"type": "null"},
+        "post_target_obligations": {"$ref": "#/$defs/obligations"},
+        "native_start_authorized": {"const": false},
+        "current_baseline_ready": {"const": false}, "actual_sql_authorized": {"const": false}
+      }
+    },
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "before", "after", "proof_ids"],
+      "properties": {
+        "path": {"type": "string"}, "before": {"$ref": "#/$defs/nullablePin"},
+        "after": {"$ref": "#/$defs/nullablePin"},
+        "proof_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}
+      }
+    },
+    "proof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "profile", "native_receipts", "independent_review", "review_validator", "dependency_closure_review"],
+      "allOf": [{
+        "if": {"properties": {"profile": {"const": "gc_two_tagged_components_only"}}},
+        "then": {"properties": {"native_receipts": {"const": []}, "dependency_closure_review": {"type": "null"}}},
+        "else": {
+          "if": {"properties": {"profile": {"const": "support_input_delta"}}},
+          "then": {"properties": {"dependency_closure_review": {"type": "null"}}},
+          "else": {"properties": {"native_receipts": {"minItems": 1}, "dependency_closure_review": {"$ref": "#/$defs/pin"}}}
+        }
+      }],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9_-]+$"},
+        "profile": {"enum": ["entry_complete_or_exact_repaired_scope", "api_a_security_materials", "api_d_task_server_cli", "a2_reference_capability_parity", "support_input_delta", "gc_two_tagged_components_only"]},
+        "native_receipts": {"type": "array", "items": {"$ref": "#/$defs/pin"}},
+        "independent_review": {"$ref": "#/$defs/pin"},
+        "review_validator": {"$ref": "#/$defs/pin"},
+        "dependency_closure_review": {"$ref": "#/$defs/nullablePin"}
+      }
+    },
+    "scopeReview": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "status", "target_manifest", "target_sha256", "parent_scope_proof_ids", "coverage", "proofs", "blockers", "post_target_obligations", "native_start_authorized", "current_baseline_ready", "actual_sql_authorized"],
+      "properties": {
+        "kind": {"const": "a_owner_pre_thin_scope_review.v1"},
+        "status": {"const": "ready_for_fifteen_stage_local_supplement_only"},
+        "target_manifest": {"$ref": "#/$defs/pin"},
+        "target_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "parent_scope_proof_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+        "coverage": {"type": "array", "items": {"$ref": "#/$defs/coverage"}},
+        "proofs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/proof"}},
+        "blockers": {"const": []},
+        "post_target_obligations": {"$ref": "#/$defs/obligations"},
+        "native_start_authorized": {"const": true},
+        "current_baseline_ready": {"const": false}, "actual_sql_authorized": {"const": false}
+      }
+    }
+  }
+}

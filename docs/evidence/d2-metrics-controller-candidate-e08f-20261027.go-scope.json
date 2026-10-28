@@ -1,0 +1,1746 @@
+{
+  "kind": "d2_metrics_controller_actual_go_scope.v1",
+  "source_manifest": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-e08f-20261027.source.json",
+    "size": 337074,
+    "sha256": "390f53de28da2e052bb2622aa3df77185e28241a084c7d322be85cb73b5620f9"
+  },
+  "root": "clawreef/internal/systembackupcontroller",
+  "variants": [
+    {
+      "platform": "windows",
+      "tags": "ordinary",
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-e08f-20261027.windows.ordinary.go-list.jsonl",
+        "size": 483228,
+        "sha256": "a8d8973ff4cacf6f71d4e851bf7ecfd5be16495d93f24e03901fa62f179ef4cc"
+      },
+      "packages": 217,
+      "source_files": [
+        {
+          "path": "backend/internal/migrationcatalog/catalog.go",
+          "size": 2113,
+          "sha256": "36bb9bd2535dec0d284936369605d0d6d6e33fddc7c830719ce2ab66118066d0"
+        },
+        {
+          "path": "backend/internal/migrationcoord/lock.go",
+          "size": 3945,
+          "sha256": "20107d080925b6defee7eee3942e4ade825bb2b3d91fac494f732022cd04117b"
+        },
+        {
+          "path": "backend/internal/systembackupcontract/types.go",
+          "size": 32814,
+          "sha256": "322756010509bca44f5807aef67a30bb98f593e09817ccdd2c1dbb4896e75738"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence.go",
+          "size": 3514,
+          "sha256": "8b3628279ebf7c4d5bfdd190aafcbfb676e20e542af71ca0003528aa98eb73d6"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence_test.go",
+          "size": 3942,
+          "sha256": "7046a6aca6828e3283d6c8302b0d836ba858a094ea7f4833647fc3b7f237cb5e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction.go",
+          "size": 8574,
+          "sha256": "73fc2058a60ae301b0821f907eceaa6207167d2a2ab7cbc76af43f3dfab2eb91"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction_test.go",
+          "size": 15205,
+          "sha256": "a870f65e0a515eb8c0e9ec748a10e97f8c766dbf4c3c4229ff558f7c75b5224f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap.go",
+          "size": 18666,
+          "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_recovery_test.go",
+          "size": 6338,
+          "sha256": "badff36b76ede29b0bb7c7f038603beddf64886703cef824e1026d54f98414bb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor.go",
+          "size": 5749,
+          "sha256": "9bd6ef18541e3e9033b722f025f8094cc5989d376aee46a4fc6325fea08339f0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor_test.go",
+          "size": 4569,
+          "sha256": "29818f49f7f0f0fed44e36207e55a52cd27fd4f679591a5a46d6e22124ac7bb4"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_test.go",
+          "size": 11236,
+          "sha256": "a3defbd8e5e52299c240c4e735f62faec01c47e458f61f66d86fd5ee003f2df9"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim.go",
+          "size": 11648,
+          "sha256": "71ea5eae4e8f8a089252aa9ec4889837312636fbc0b920a523b6d38da1aeb9ae"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator.go",
+          "size": 2716,
+          "sha256": "5195e763c322ee49e8cea40682f47d44f17d402b53595fd2225c347e318229cb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator_test.go",
+          "size": 4842,
+          "sha256": "1756613e195efcde6a6b45112bcda022a90f90d203f157e240c44b8f5002fd74"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_takeover_test.go",
+          "size": 6114,
+          "sha256": "3c79480e31fdc50d10bb2f25ef156f2581f64c1e3f50b79cc2c029e44564db47"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_test.go",
+          "size": 10311,
+          "sha256": "9cee66087ef2510474f41bbc4877ce8b5379c100d2674e5fc15886fb7653656f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health.go",
+          "size": 7151,
+          "sha256": "f9f8e90653e6baed2a0ec42071661ffcfb3792dde7dc3094d75674a1e379ef22"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer.go",
+          "size": 1619,
+          "sha256": "ec1bc1822c02da97b83ff56b1d5dbf6e1746e5e8733be6a432ed50993129ad9a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer_test.go",
+          "size": 4362,
+          "sha256": "f79b02c2b3797ecfc884273432a44f76d8c9fdd552cfa8911e1bdc205c298ae0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_test.go",
+          "size": 6357,
+          "sha256": "d66152210675b73d3a46f1ba75999a4d14e5ebbfcca9cb6f4a154e59cd9fcfc5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop.go",
+          "size": 3520,
+          "sha256": "8da96eabe5d2a9778f2f6f57a7b5388b5b16aa38ec3e60de4d6a77d9a05b716c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop_test.go",
+          "size": 5004,
+          "sha256": "4cc963d99f2a6311518d96fe3e7a1d6a5a94c8aefc4a2b0ca555ece71bc62967"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+          "size": 5796,
+          "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+          "size": 12669,
+          "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry.go",
+          "size": 4196,
+          "sha256": "813316fe5ddc94c361c0f4198f915ae4c3d4f00faed6db2067eccbba5a634e49"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry_test.go",
+          "size": 3375,
+          "sha256": "ba1a777a344b3321193920f111a5fa64f20510e9826fcaf4e87b6137b0790196"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/coordination_test.go",
+          "size": 23295,
+          "sha256": "572ce096b7ab59edae1c66386dab8fa07c6d8f70217b7333fe5c662616657d8e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants.go",
+          "size": 6947,
+          "sha256": "3e7c2a21e56d067b3875dc16a00c2125b917cb5989c6009cdfd1e28a64e766b2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants_test.go",
+          "size": 7070,
+          "sha256": "6daa0867e8f4c8e20485cc1b6ddfd09a826fb85d68956fff61c918e77e08fb41"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity.go",
+          "size": 1453,
+          "sha256": "e06edcdbc362a9ec3571302766d5ebcc3c057f9301aad5f72b549bb4c3211c78"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity_test.go",
+          "size": 1162,
+          "sha256": "30a6c976c726edb9a007c6c3b83856021aa072f1b1f207623c2a0b8aae6e5f2b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline.go",
+          "size": 7652,
+          "sha256": "abb9fb95137b471c439a7db71ab4af3c8cb4677e2a5a74d074d5dc2edbaa9495"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop.go",
+          "size": 1904,
+          "sha256": "24becb2ba8bf6a5835e4c248fedf4a1826797bf9bd5f63c8b58be996851a4eeb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop_test.go",
+          "size": 2833,
+          "sha256": "3c91c888995ae934fa8d9bd5ede1b38ecdd01f053ed9c2abf03166e9700e7364"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper.go",
+          "size": 5069,
+          "sha256": "5bc0197e742557585235a1b59978b42f266aca65c3080067b95743fab83d9deb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper_test.go",
+          "size": 10076,
+          "sha256": "64a19299a20674333b3f32e3e649f4b7b1b97f7e161bbd56eebeaa6d040ea22a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_test.go",
+          "size": 9711,
+          "sha256": "c45120b443135c360687dc1871a263a0006f7e9b0f6ee73a3c37ce041ae3f40e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate.go",
+          "size": 27781,
+          "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator.go",
+          "size": 8117,
+          "sha256": "7658f9764a57c4780bcfe95f8a09c1f2c78294e84fd3bc6a0b72fd25f030286b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator_test.go",
+          "size": 9506,
+          "sha256": "37163d43207226a0cd37de18212ee1e371797385295005458ad5271be611c463"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event.go",
+          "size": 2081,
+          "sha256": "8b42c064972343b76817d578221d5e3a71425bec19616c27cd4bb80756104b32"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event_test.go",
+          "size": 2041,
+          "sha256": "e9bc01fe10f64dcf357b9c48322cb86c61db5ef68c080c2f805bdbae0c8a4764"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+          "size": 1330,
+          "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer_test.go",
+          "size": 3010,
+          "sha256": "c32781cb95873f41e1de29b772476853b7c63ab28727ad891e474cf668e766cd"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery.go",
+          "size": 5063,
+          "sha256": "ac0cc2566be12518acc12eb1b0d6a49969ba4818d17fafa38bd5179576fbbd04"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery_test.go",
+          "size": 7602,
+          "sha256": "f5a61d8968b4836669b24192202f1ee585762e341ed92047bf4b0dbc39144abf"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch.go",
+          "size": 4810,
+          "sha256": "354ac65b754ef607e47e5d2eb0e9ddaeb3032f3b9d4e7f1c7e8b90c5e89c490c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch_test.go",
+          "size": 5542,
+          "sha256": "ee185be33830322e4b656408f7ee02c7f5d173c73f1e4e92f6f7fee779ec4f6f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http.go",
+          "size": 6658,
+          "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http_test.go",
+          "size": 7491,
+          "sha256": "bff65482bce2c218b7da66ac968569c27c335a3c2dd16597e538e20c7311a59a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease.go",
+          "size": 9968,
+          "sha256": "b2258622b3a99f9ebce15977a7cca79ab5dc76280a6b1ba5b7226cc521f8ac4f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator.go",
+          "size": 2325,
+          "sha256": "14001be0a8a7e1201558d0e280371028be28f5a809937647a74d691581faf8f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator_test.go",
+          "size": 5081,
+          "sha256": "9ecfa9105f26c0134e22787c0872f4b11d23bcd7dd65aee54e22aedd8df5ff17"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation.go",
+          "size": 2216,
+          "sha256": "8913ee0aba146f0762c432854c9727b8cb52ea0a72428214789710b36b4fd99b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation_test.go",
+          "size": 5676,
+          "sha256": "6172886536143161829ef69b0ab4a2e8e686dd9d0489fa50dcf9c58211540159"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget.go",
+          "size": 1296,
+          "sha256": "5140c399c0e0ca3b704a342d667f5167d32c8283b7fc824f85748d595e7448c5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget_test.go",
+          "size": 2200,
+          "sha256": "7537f5dad8c9612e485b1fbd2b807de1158524e73a8878b281d2990202324150"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness.go",
+          "size": 4907,
+          "sha256": "d38218ab811b1ed3424824752605df3b8df1ab7dcc66b4998405cb4cb0b34475"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness_test.go",
+          "size": 4267,
+          "sha256": "4d8354f13ff05c3929152d332b65bcb73fdec8e31a93855ea8ad997e1cf0ab45"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state.go",
+          "size": 2611,
+          "sha256": "8dd73bf454e0f5a947927d6d05f8b000858fc8bd64cc34e33a0ba294a18a8e02"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state_test.go",
+          "size": 6564,
+          "sha256": "f7d20538a6018f362af79fee211d11f03a9d8f2a06c995085e53cd2594c1078d"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_deadline_store.go",
+          "size": 4520,
+          "sha256": "b558cda2256cd8d5ef2280c6842eb5686f52c7ea6ba4ce1807f03c6be2e4a097"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_gate_recovery_store.go",
+          "size": 3787,
+          "sha256": "755ec25d99fe841f641f4021781d3de682df894953b043f30699a5933f080518"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_kill_switch_store.go",
+          "size": 3643,
+          "sha256": "ad825b8dc2947df23c2b3f95e3f5d2e08deb53c2b4ac8847d4358e980ec5979e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget.go",
+          "size": 6696,
+          "sha256": "edaa42ab480b2d81e4a6cb0d5ef53a0a7ff4f6e63aecd589e0044cf9b170698e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget_test.go",
+          "size": 9141,
+          "sha256": "8099548980b8bfcd63938bb97e60d026da8995be370af2349cb14b337ddfa231"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/utc_readiness_test.go",
+          "size": 2910,
+          "sha256": "c346a0df00546c0eb2be16d491a3b655fc3b4651c31791b75b2b2ed1656879e7"
+        }
+      ],
+      "directories": [
+        "backend/internal/migrationcatalog",
+        "backend/internal/migrationcoord",
+        "backend/internal/systembackupcontract",
+        "backend/internal/systembackupcontroller"
+      ]
+    },
+    {
+      "platform": "windows",
+      "tags": "systembackup_mysql",
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-e08f-20261027.windows.systembackup_mysql.go-list.jsonl",
+        "size": 505315,
+        "sha256": "b65e10cd0b3cdca88eb451deb7b29eab4f29c1a7327edd8c1038f76161189ecd"
+      },
+      "packages": 223,
+      "source_files": [
+        {
+          "path": "backend/internal/migrationcatalog/catalog.go",
+          "size": 2113,
+          "sha256": "36bb9bd2535dec0d284936369605d0d6d6e33fddc7c830719ce2ab66118066d0"
+        },
+        {
+          "path": "backend/internal/migrationcoord/lock.go",
+          "size": 3945,
+          "sha256": "20107d080925b6defee7eee3942e4ade825bb2b3d91fac494f732022cd04117b"
+        },
+        {
+          "path": "backend/internal/systembackupcontract/types.go",
+          "size": 32814,
+          "sha256": "322756010509bca44f5807aef67a30bb98f593e09817ccdd2c1dbb4896e75738"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence.go",
+          "size": 3514,
+          "sha256": "8b3628279ebf7c4d5bfdd190aafcbfb676e20e542af71ca0003528aa98eb73d6"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence_test.go",
+          "size": 3942,
+          "sha256": "7046a6aca6828e3283d6c8302b0d836ba858a094ea7f4833647fc3b7f237cb5e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction.go",
+          "size": 8574,
+          "sha256": "73fc2058a60ae301b0821f907eceaa6207167d2a2ab7cbc76af43f3dfab2eb91"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction_test.go",
+          "size": 15205,
+          "sha256": "a870f65e0a515eb8c0e9ec748a10e97f8c766dbf4c3c4229ff558f7c75b5224f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap.go",
+          "size": 18666,
+          "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_recovery_test.go",
+          "size": 6338,
+          "sha256": "badff36b76ede29b0bb7c7f038603beddf64886703cef824e1026d54f98414bb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor.go",
+          "size": 5749,
+          "sha256": "9bd6ef18541e3e9033b722f025f8094cc5989d376aee46a4fc6325fea08339f0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor_test.go",
+          "size": 4569,
+          "sha256": "29818f49f7f0f0fed44e36207e55a52cd27fd4f679591a5a46d6e22124ac7bb4"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_test.go",
+          "size": 11236,
+          "sha256": "a3defbd8e5e52299c240c4e735f62faec01c47e458f61f66d86fd5ee003f2df9"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim.go",
+          "size": 11648,
+          "sha256": "71ea5eae4e8f8a089252aa9ec4889837312636fbc0b920a523b6d38da1aeb9ae"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator.go",
+          "size": 2716,
+          "sha256": "5195e763c322ee49e8cea40682f47d44f17d402b53595fd2225c347e318229cb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator_test.go",
+          "size": 4842,
+          "sha256": "1756613e195efcde6a6b45112bcda022a90f90d203f157e240c44b8f5002fd74"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_takeover_test.go",
+          "size": 6114,
+          "sha256": "3c79480e31fdc50d10bb2f25ef156f2581f64c1e3f50b79cc2c029e44564db47"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_test.go",
+          "size": 10311,
+          "sha256": "9cee66087ef2510474f41bbc4877ce8b5379c100d2674e5fc15886fb7653656f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health.go",
+          "size": 7151,
+          "sha256": "f9f8e90653e6baed2a0ec42071661ffcfb3792dde7dc3094d75674a1e379ef22"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_mysql_test.go",
+          "size": 27194,
+          "sha256": "7316c8f6e3fad9544d6bfbd8eb887345e00472e4247745036e28263d23670397"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer.go",
+          "size": 1619,
+          "sha256": "ec1bc1822c02da97b83ff56b1d5dbf6e1746e5e8733be6a432ed50993129ad9a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer_test.go",
+          "size": 4362,
+          "sha256": "f79b02c2b3797ecfc884273432a44f76d8c9fdd552cfa8911e1bdc205c298ae0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_test.go",
+          "size": 6357,
+          "sha256": "d66152210675b73d3a46f1ba75999a4d14e5ebbfcca9cb6f4a154e59cd9fcfc5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop.go",
+          "size": 3520,
+          "sha256": "8da96eabe5d2a9778f2f6f57a7b5388b5b16aa38ec3e60de4d6a77d9a05b716c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop_test.go",
+          "size": 5004,
+          "sha256": "4cc963d99f2a6311518d96fe3e7a1d6a5a94c8aefc4a2b0ca555ece71bc62967"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+          "size": 5796,
+          "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+          "size": 12669,
+          "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry.go",
+          "size": 4196,
+          "sha256": "813316fe5ddc94c361c0f4198f915ae4c3d4f00faed6db2067eccbba5a634e49"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry_test.go",
+          "size": 3375,
+          "sha256": "ba1a777a344b3321193920f111a5fa64f20510e9826fcaf4e87b6137b0790196"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/coordination_test.go",
+          "size": 23295,
+          "sha256": "572ce096b7ab59edae1c66386dab8fa07c6d8f70217b7333fe5c662616657d8e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants.go",
+          "size": 6947,
+          "sha256": "3e7c2a21e56d067b3875dc16a00c2125b917cb5989c6009cdfd1e28a64e766b2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants_test.go",
+          "size": 7070,
+          "sha256": "6daa0867e8f4c8e20485cc1b6ddfd09a826fb85d68956fff61c918e77e08fb41"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity.go",
+          "size": 1453,
+          "sha256": "e06edcdbc362a9ec3571302766d5ebcc3c057f9301aad5f72b549bb4c3211c78"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity_test.go",
+          "size": 1162,
+          "sha256": "30a6c976c726edb9a007c6c3b83856021aa072f1b1f207623c2a0b8aae6e5f2b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline.go",
+          "size": 7652,
+          "sha256": "abb9fb95137b471c439a7db71ab4af3c8cb4677e2a5a74d074d5dc2edbaa9495"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop.go",
+          "size": 1904,
+          "sha256": "24becb2ba8bf6a5835e4c248fedf4a1826797bf9bd5f63c8b58be996851a4eeb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop_test.go",
+          "size": 2833,
+          "sha256": "3c91c888995ae934fa8d9bd5ede1b38ecdd01f053ed9c2abf03166e9700e7364"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper.go",
+          "size": 5069,
+          "sha256": "5bc0197e742557585235a1b59978b42f266aca65c3080067b95743fab83d9deb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper_test.go",
+          "size": 10076,
+          "sha256": "64a19299a20674333b3f32e3e649f4b7b1b97f7e161bbd56eebeaa6d040ea22a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_test.go",
+          "size": 9711,
+          "sha256": "c45120b443135c360687dc1871a263a0006f7e9b0f6ee73a3c37ce041ae3f40e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate.go",
+          "size": 27781,
+          "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator.go",
+          "size": 8117,
+          "sha256": "7658f9764a57c4780bcfe95f8a09c1f2c78294e84fd3bc6a0b72fd25f030286b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator_test.go",
+          "size": 9506,
+          "sha256": "37163d43207226a0cd37de18212ee1e371797385295005458ad5271be611c463"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event.go",
+          "size": 2081,
+          "sha256": "8b42c064972343b76817d578221d5e3a71425bec19616c27cd4bb80756104b32"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event_test.go",
+          "size": 2041,
+          "sha256": "e9bc01fe10f64dcf357b9c48322cb86c61db5ef68c080c2f805bdbae0c8a4764"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+          "size": 1330,
+          "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer_test.go",
+          "size": 3010,
+          "sha256": "c32781cb95873f41e1de29b772476853b7c63ab28727ad891e474cf668e766cd"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery.go",
+          "size": 5063,
+          "sha256": "ac0cc2566be12518acc12eb1b0d6a49969ba4818d17fafa38bd5179576fbbd04"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery_test.go",
+          "size": 7602,
+          "sha256": "f5a61d8968b4836669b24192202f1ee585762e341ed92047bf4b0dbc39144abf"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch.go",
+          "size": 4810,
+          "sha256": "354ac65b754ef607e47e5d2eb0e9ddaeb3032f3b9d4e7f1c7e8b90c5e89c490c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch_test.go",
+          "size": 5542,
+          "sha256": "ee185be33830322e4b656408f7ee02c7f5d173c73f1e4e92f6f7fee779ec4f6f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http.go",
+          "size": 6658,
+          "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http_test.go",
+          "size": 7491,
+          "sha256": "bff65482bce2c218b7da66ac968569c27c335a3c2dd16597e538e20c7311a59a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease.go",
+          "size": 9968,
+          "sha256": "b2258622b3a99f9ebce15977a7cca79ab5dc76280a6b1ba5b7226cc521f8ac4f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator.go",
+          "size": 2325,
+          "sha256": "14001be0a8a7e1201558d0e280371028be28f5a809937647a74d691581faf8f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator_test.go",
+          "size": 5081,
+          "sha256": "9ecfa9105f26c0134e22787c0872f4b11d23bcd7dd65aee54e22aedd8df5ff17"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation.go",
+          "size": 2216,
+          "sha256": "8913ee0aba146f0762c432854c9727b8cb52ea0a72428214789710b36b4fd99b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation_test.go",
+          "size": 5676,
+          "sha256": "6172886536143161829ef69b0ab4a2e8e686dd9d0489fa50dcf9c58211540159"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget.go",
+          "size": 1296,
+          "sha256": "5140c399c0e0ca3b704a342d667f5167d32c8283b7fc824f85748d595e7448c5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget_test.go",
+          "size": 2200,
+          "sha256": "7537f5dad8c9612e485b1fbd2b807de1158524e73a8878b281d2990202324150"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness.go",
+          "size": 4907,
+          "sha256": "d38218ab811b1ed3424824752605df3b8df1ab7dcc66b4998405cb4cb0b34475"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness_test.go",
+          "size": 4267,
+          "sha256": "4d8354f13ff05c3929152d332b65bcb73fdec8e31a93855ea8ad997e1cf0ab45"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state.go",
+          "size": 2611,
+          "sha256": "8dd73bf454e0f5a947927d6d05f8b000858fc8bd64cc34e33a0ba294a18a8e02"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state_test.go",
+          "size": 6564,
+          "sha256": "f7d20538a6018f362af79fee211d11f03a9d8f2a06c995085e53cd2594c1078d"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_deadline_store.go",
+          "size": 4520,
+          "sha256": "b558cda2256cd8d5ef2280c6842eb5686f52c7ea6ba4ce1807f03c6be2e4a097"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_gate_recovery_store.go",
+          "size": 3787,
+          "sha256": "755ec25d99fe841f641f4021781d3de682df894953b043f30699a5933f080518"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_kill_switch_store.go",
+          "size": 3643,
+          "sha256": "ad825b8dc2947df23c2b3f95e3f5d2e08deb53c2b4ac8847d4358e980ec5979e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget.go",
+          "size": 6696,
+          "sha256": "edaa42ab480b2d81e4a6cb0d5ef53a0a7ff4f6e63aecd589e0044cf9b170698e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget_test.go",
+          "size": 9141,
+          "sha256": "8099548980b8bfcd63938bb97e60d026da8995be370af2349cb14b337ddfa231"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/utc_readiness_test.go",
+          "size": 2910,
+          "sha256": "c346a0df00546c0eb2be16d491a3b655fc3b4651c31791b75b2b2ed1656879e7"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_backfill_source.go",
+          "size": 3668,
+          "sha256": "6cafc4a6cfe824895f6f577402a360f46874c624b0c72298a66d9950113cf8ad"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_list.go",
+          "size": 4268,
+          "sha256": "25665d9baefdcd4d1872a7894468a6e3fc189860ec3104b5bb4eb2c335019951"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_list_cursor.go",
+          "size": 3511,
+          "sha256": "0707447c95f18531ffcde8bd4b28c720d1f61ad5077b4e0afada93be07c61e86"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_list_dto.go",
+          "size": 2329,
+          "sha256": "0dce9cb08653e9418f014a3fd5498b9ac6f3e0665205296a08d0e319c7284f7f"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_materialized.go",
+          "size": 3665,
+          "sha256": "347edd6571cd7aa6e7e015ed1e7a727c08c69b2f87e6ba3bd1e17df33ef01fe5"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_projection.go",
+          "size": 9142,
+          "sha256": "f1401f31e2dfec5b0fc67396f944ccec861c6eb78d44336203822fb0f3ef67e1"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_projection_rules.go",
+          "size": 5565,
+          "sha256": "3c9a13fafa6a24592aa472302489a13519e3033a585dbf6f3b722c28354f43ca"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_snapshot.go",
+          "size": 5858,
+          "sha256": "ca944653819b521712f2e56e3f5ff749574d0b6f93d795d95db3cb863cde9f6b"
+        },
+        {
+          "path": "backend/internal/systembackupread/control_health.go",
+          "size": 3212,
+          "sha256": "dcbe533dd21704c763be4bc974f5a715b3a73102442493d1ee81f4bf5c2fa2d7"
+        },
+        {
+          "path": "backend/internal/systembackupread/cursor.go",
+          "size": 4558,
+          "sha256": "cff06a7a2b332354ce6cd6507cbed25ebeb84c545deffd6d22606d60b664a440"
+        },
+        {
+          "path": "backend/internal/systembackupread/drill_detail.go",
+          "size": 8750,
+          "sha256": "f431e19f68493d86f3bdb0d7e047024b811d25b991ae0b8a38ee4b65a759a9a5"
+        },
+        {
+          "path": "backend/internal/systembackupread/operation_detail.go",
+          "size": 9032,
+          "sha256": "cf09974c8c59677f347034734117a0fe57e248fbd461ade9dd9d962f7e945ff0"
+        },
+        {
+          "path": "backend/internal/systembackupread/operation_dto.go",
+          "size": 3410,
+          "sha256": "2d7b9595b9f66e30717ccb81bf4fbe3b31c668f2d0023eef96ccc0a1e576cc64"
+        },
+        {
+          "path": "backend/internal/systembackupread/operation_list.go",
+          "size": 7446,
+          "sha256": "160d685227d38ef88380c4270ba5f24ff388defc92a463cde8aa10257676a74b"
+        },
+        {
+          "path": "backend/internal/systembackupread/overview_control.go",
+          "size": 10651,
+          "sha256": "d48170d2e40ca4020a0a77641818a50d381d0da91bf6c5cb7c4b6545b319a3cd"
+        },
+        {
+          "path": "backend/internal/systembackupread/overview_promotion.go",
+          "size": 14395,
+          "sha256": "fd19c8e8873258e570734326cc4a6d7ae6a33757bc6ce1f2041e3673ae6f6d43"
+        },
+        {
+          "path": "backend/internal/systembackupread/page_sql.go",
+          "size": 596,
+          "sha256": "f4ddd3f51b6d3bc3767b520c2b78f860503ec6937a67239b2b56db5a5c458a15"
+        },
+        {
+          "path": "backend/internal/systembackupread/service.go",
+          "size": 1889,
+          "sha256": "c9723beb064858657f08e4bbe9f3ed21f8dcf9e075f530dba80670b866e4e1ac"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_check_control.go",
+          "size": 7562,
+          "sha256": "5327c6beaa310b4f191d7b1813ec07744838c16912ef5751e24ef839223f4336"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_check_evidence_control.go",
+          "size": 5010,
+          "sha256": "e8fe650ba4c7599805d67f366e4a759a5038a792708fd667cc60a1842bbe5d9a"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_detail_base.go",
+          "size": 4068,
+          "sha256": "71777e6887d55f5622e49dd996559e456a482fda8493ac44ce59c7abe99661fb"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_detail_control.go",
+          "size": 21961,
+          "sha256": "2eb88f63ec033bdb3bd8877b598358fb890b85a9b72a8c45393bea74fd1eb089"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_dto.go",
+          "size": 4349,
+          "sha256": "8e88f4a13169ad17e2ce9644dc4e17352621a4fb5d5193eeb47cdcfe6989912d"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_event_control.go",
+          "size": 11514,
+          "sha256": "827d0e088ff38a4cd767ecaf1c7d7f68f7a5c0ff7eb9be05c3da02b013384bc7"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_event_control_cursor.go",
+          "size": 3860,
+          "sha256": "7cdf24fb627f9959582660e1895c660615a78f4155ea62cb3dfa6d390d2ad413"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_event_dto.go",
+          "size": 5484,
+          "sha256": "206a07a2175f8295e76bd7caeb549585c72f035844294c97274bf5ee61aca3c2"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_execution.go",
+          "size": 11134,
+          "sha256": "459496c5d3383ea44f4c8c744c66064b98c45ed31e6db881bffdf4be59dec143"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_pages.go",
+          "size": 10554,
+          "sha256": "bd98a2190d5b5a5c06bf414b41a62827efba2801b485156aa3b807399ff6d919"
+        },
+        {
+          "path": "backend/internal/systembackupread/verification_detail.go",
+          "size": 9599,
+          "sha256": "1b4cd2832a8d9dad1cab4941b883eb3e7c8fc7fa7a325038a084c94f9787207e"
+        }
+      ],
+      "directories": [
+        "backend/internal/migrationcatalog",
+        "backend/internal/migrationcoord",
+        "backend/internal/systembackupcontract",
+        "backend/internal/systembackupcontroller",
+        "backend/internal/systembackupread"
+      ]
+    },
+    {
+      "platform": "linux",
+      "tags": "ordinary",
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-e08f-20261027.linux.ordinary.go-list.jsonl",
+        "size": 492175,
+        "sha256": "dc99ec34e74cbc44dae0050c57ddf7e85720561d27a7bd02013013bf20fab063"
+      },
+      "packages": 215,
+      "source_files": [
+        {
+          "path": "backend/internal/migrationcatalog/catalog.go",
+          "size": 2113,
+          "sha256": "36bb9bd2535dec0d284936369605d0d6d6e33fddc7c830719ce2ab66118066d0"
+        },
+        {
+          "path": "backend/internal/migrationcoord/lock.go",
+          "size": 3945,
+          "sha256": "20107d080925b6defee7eee3942e4ade825bb2b3d91fac494f732022cd04117b"
+        },
+        {
+          "path": "backend/internal/systembackupcontract/types.go",
+          "size": 32814,
+          "sha256": "322756010509bca44f5807aef67a30bb98f593e09817ccdd2c1dbb4896e75738"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence.go",
+          "size": 3514,
+          "sha256": "8b3628279ebf7c4d5bfdd190aafcbfb676e20e542af71ca0003528aa98eb73d6"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence_test.go",
+          "size": 3942,
+          "sha256": "7046a6aca6828e3283d6c8302b0d836ba858a094ea7f4833647fc3b7f237cb5e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction.go",
+          "size": 8574,
+          "sha256": "73fc2058a60ae301b0821f907eceaa6207167d2a2ab7cbc76af43f3dfab2eb91"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction_test.go",
+          "size": 15205,
+          "sha256": "a870f65e0a515eb8c0e9ec748a10e97f8c766dbf4c3c4229ff558f7c75b5224f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap.go",
+          "size": 18666,
+          "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_recovery_test.go",
+          "size": 6338,
+          "sha256": "badff36b76ede29b0bb7c7f038603beddf64886703cef824e1026d54f98414bb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor.go",
+          "size": 5749,
+          "sha256": "9bd6ef18541e3e9033b722f025f8094cc5989d376aee46a4fc6325fea08339f0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor_test.go",
+          "size": 4569,
+          "sha256": "29818f49f7f0f0fed44e36207e55a52cd27fd4f679591a5a46d6e22124ac7bb4"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_test.go",
+          "size": 11236,
+          "sha256": "a3defbd8e5e52299c240c4e735f62faec01c47e458f61f66d86fd5ee003f2df9"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim.go",
+          "size": 11648,
+          "sha256": "71ea5eae4e8f8a089252aa9ec4889837312636fbc0b920a523b6d38da1aeb9ae"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator.go",
+          "size": 2716,
+          "sha256": "5195e763c322ee49e8cea40682f47d44f17d402b53595fd2225c347e318229cb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator_test.go",
+          "size": 4842,
+          "sha256": "1756613e195efcde6a6b45112bcda022a90f90d203f157e240c44b8f5002fd74"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_takeover_test.go",
+          "size": 6114,
+          "sha256": "3c79480e31fdc50d10bb2f25ef156f2581f64c1e3f50b79cc2c029e44564db47"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_test.go",
+          "size": 10311,
+          "sha256": "9cee66087ef2510474f41bbc4877ce8b5379c100d2674e5fc15886fb7653656f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health.go",
+          "size": 7151,
+          "sha256": "f9f8e90653e6baed2a0ec42071661ffcfb3792dde7dc3094d75674a1e379ef22"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer.go",
+          "size": 1619,
+          "sha256": "ec1bc1822c02da97b83ff56b1d5dbf6e1746e5e8733be6a432ed50993129ad9a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer_test.go",
+          "size": 4362,
+          "sha256": "f79b02c2b3797ecfc884273432a44f76d8c9fdd552cfa8911e1bdc205c298ae0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_test.go",
+          "size": 6357,
+          "sha256": "d66152210675b73d3a46f1ba75999a4d14e5ebbfcca9cb6f4a154e59cd9fcfc5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop.go",
+          "size": 3520,
+          "sha256": "8da96eabe5d2a9778f2f6f57a7b5388b5b16aa38ec3e60de4d6a77d9a05b716c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop_test.go",
+          "size": 5004,
+          "sha256": "4cc963d99f2a6311518d96fe3e7a1d6a5a94c8aefc4a2b0ca555ece71bc62967"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+          "size": 5796,
+          "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+          "size": 12669,
+          "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry.go",
+          "size": 4196,
+          "sha256": "813316fe5ddc94c361c0f4198f915ae4c3d4f00faed6db2067eccbba5a634e49"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry_test.go",
+          "size": 3375,
+          "sha256": "ba1a777a344b3321193920f111a5fa64f20510e9826fcaf4e87b6137b0790196"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/coordination_test.go",
+          "size": 23295,
+          "sha256": "572ce096b7ab59edae1c66386dab8fa07c6d8f70217b7333fe5c662616657d8e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants.go",
+          "size": 6947,
+          "sha256": "3e7c2a21e56d067b3875dc16a00c2125b917cb5989c6009cdfd1e28a64e766b2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants_test.go",
+          "size": 7070,
+          "sha256": "6daa0867e8f4c8e20485cc1b6ddfd09a826fb85d68956fff61c918e77e08fb41"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity.go",
+          "size": 1453,
+          "sha256": "e06edcdbc362a9ec3571302766d5ebcc3c057f9301aad5f72b549bb4c3211c78"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity_test.go",
+          "size": 1162,
+          "sha256": "30a6c976c726edb9a007c6c3b83856021aa072f1b1f207623c2a0b8aae6e5f2b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline.go",
+          "size": 7652,
+          "sha256": "abb9fb95137b471c439a7db71ab4af3c8cb4677e2a5a74d074d5dc2edbaa9495"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop.go",
+          "size": 1904,
+          "sha256": "24becb2ba8bf6a5835e4c248fedf4a1826797bf9bd5f63c8b58be996851a4eeb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop_test.go",
+          "size": 2833,
+          "sha256": "3c91c888995ae934fa8d9bd5ede1b38ecdd01f053ed9c2abf03166e9700e7364"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper.go",
+          "size": 5069,
+          "sha256": "5bc0197e742557585235a1b59978b42f266aca65c3080067b95743fab83d9deb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper_test.go",
+          "size": 10076,
+          "sha256": "64a19299a20674333b3f32e3e649f4b7b1b97f7e161bbd56eebeaa6d040ea22a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_test.go",
+          "size": 9711,
+          "sha256": "c45120b443135c360687dc1871a263a0006f7e9b0f6ee73a3c37ce041ae3f40e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate.go",
+          "size": 27781,
+          "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator.go",
+          "size": 8117,
+          "sha256": "7658f9764a57c4780bcfe95f8a09c1f2c78294e84fd3bc6a0b72fd25f030286b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator_test.go",
+          "size": 9506,
+          "sha256": "37163d43207226a0cd37de18212ee1e371797385295005458ad5271be611c463"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event.go",
+          "size": 2081,
+          "sha256": "8b42c064972343b76817d578221d5e3a71425bec19616c27cd4bb80756104b32"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event_test.go",
+          "size": 2041,
+          "sha256": "e9bc01fe10f64dcf357b9c48322cb86c61db5ef68c080c2f805bdbae0c8a4764"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+          "size": 1330,
+          "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer_test.go",
+          "size": 3010,
+          "sha256": "c32781cb95873f41e1de29b772476853b7c63ab28727ad891e474cf668e766cd"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery.go",
+          "size": 5063,
+          "sha256": "ac0cc2566be12518acc12eb1b0d6a49969ba4818d17fafa38bd5179576fbbd04"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery_test.go",
+          "size": 7602,
+          "sha256": "f5a61d8968b4836669b24192202f1ee585762e341ed92047bf4b0dbc39144abf"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch.go",
+          "size": 4810,
+          "sha256": "354ac65b754ef607e47e5d2eb0e9ddaeb3032f3b9d4e7f1c7e8b90c5e89c490c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch_test.go",
+          "size": 5542,
+          "sha256": "ee185be33830322e4b656408f7ee02c7f5d173c73f1e4e92f6f7fee779ec4f6f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http.go",
+          "size": 6658,
+          "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http_test.go",
+          "size": 7491,
+          "sha256": "bff65482bce2c218b7da66ac968569c27c335a3c2dd16597e538e20c7311a59a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease.go",
+          "size": 9968,
+          "sha256": "b2258622b3a99f9ebce15977a7cca79ab5dc76280a6b1ba5b7226cc521f8ac4f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator.go",
+          "size": 2325,
+          "sha256": "14001be0a8a7e1201558d0e280371028be28f5a809937647a74d691581faf8f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator_test.go",
+          "size": 5081,
+          "sha256": "9ecfa9105f26c0134e22787c0872f4b11d23bcd7dd65aee54e22aedd8df5ff17"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation.go",
+          "size": 2216,
+          "sha256": "8913ee0aba146f0762c432854c9727b8cb52ea0a72428214789710b36b4fd99b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation_test.go",
+          "size": 5676,
+          "sha256": "6172886536143161829ef69b0ab4a2e8e686dd9d0489fa50dcf9c58211540159"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget.go",
+          "size": 1296,
+          "sha256": "5140c399c0e0ca3b704a342d667f5167d32c8283b7fc824f85748d595e7448c5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget_test.go",
+          "size": 2200,
+          "sha256": "7537f5dad8c9612e485b1fbd2b807de1158524e73a8878b281d2990202324150"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness.go",
+          "size": 4907,
+          "sha256": "d38218ab811b1ed3424824752605df3b8df1ab7dcc66b4998405cb4cb0b34475"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness_test.go",
+          "size": 4267,
+          "sha256": "4d8354f13ff05c3929152d332b65bcb73fdec8e31a93855ea8ad997e1cf0ab45"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state.go",
+          "size": 2611,
+          "sha256": "8dd73bf454e0f5a947927d6d05f8b000858fc8bd64cc34e33a0ba294a18a8e02"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state_test.go",
+          "size": 6564,
+          "sha256": "f7d20538a6018f362af79fee211d11f03a9d8f2a06c995085e53cd2594c1078d"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_deadline_store.go",
+          "size": 4520,
+          "sha256": "b558cda2256cd8d5ef2280c6842eb5686f52c7ea6ba4ce1807f03c6be2e4a097"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_gate_recovery_store.go",
+          "size": 3787,
+          "sha256": "755ec25d99fe841f641f4021781d3de682df894953b043f30699a5933f080518"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_kill_switch_store.go",
+          "size": 3643,
+          "sha256": "ad825b8dc2947df23c2b3f95e3f5d2e08deb53c2b4ac8847d4358e980ec5979e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget.go",
+          "size": 6696,
+          "sha256": "edaa42ab480b2d81e4a6cb0d5ef53a0a7ff4f6e63aecd589e0044cf9b170698e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget_test.go",
+          "size": 9141,
+          "sha256": "8099548980b8bfcd63938bb97e60d026da8995be370af2349cb14b337ddfa231"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/utc_readiness_test.go",
+          "size": 2910,
+          "sha256": "c346a0df00546c0eb2be16d491a3b655fc3b4651c31791b75b2b2ed1656879e7"
+        }
+      ],
+      "directories": [
+        "backend/internal/migrationcatalog",
+        "backend/internal/migrationcoord",
+        "backend/internal/systembackupcontract",
+        "backend/internal/systembackupcontroller"
+      ]
+    },
+    {
+      "platform": "linux",
+      "tags": "systembackup_mysql",
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-e08f-20261027.linux.systembackup_mysql.go-list.jsonl",
+        "size": 514481,
+        "sha256": "0cabffe055faeb0abcd5997c11272269204fa8ab0feac3ae0b6cc682bed5204c"
+      },
+      "packages": 221,
+      "source_files": [
+        {
+          "path": "backend/internal/migrationcatalog/catalog.go",
+          "size": 2113,
+          "sha256": "36bb9bd2535dec0d284936369605d0d6d6e33fddc7c830719ce2ab66118066d0"
+        },
+        {
+          "path": "backend/internal/migrationcoord/lock.go",
+          "size": 3945,
+          "sha256": "20107d080925b6defee7eee3942e4ade825bb2b3d91fac494f732022cd04117b"
+        },
+        {
+          "path": "backend/internal/systembackupcontract/types.go",
+          "size": 32814,
+          "sha256": "322756010509bca44f5807aef67a30bb98f593e09817ccdd2c1dbb4896e75738"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence.go",
+          "size": 3514,
+          "sha256": "8b3628279ebf7c4d5bfdd190aafcbfb676e20e542af71ca0003528aa98eb73d6"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_sequence_test.go",
+          "size": 3942,
+          "sha256": "7046a6aca6828e3283d6c8302b0d836ba858a094ea7f4833647fc3b7f237cb5e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction.go",
+          "size": 8574,
+          "sha256": "73fc2058a60ae301b0821f907eceaa6207167d2a2ab7cbc76af43f3dfab2eb91"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/acceptance_alert_transaction_test.go",
+          "size": 15205,
+          "sha256": "a870f65e0a515eb8c0e9ec748a10e97f8c766dbf4c3c4229ff558f7c75b5224f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap.go",
+          "size": 18666,
+          "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_recovery_test.go",
+          "size": 6338,
+          "sha256": "badff36b76ede29b0bb7c7f038603beddf64886703cef824e1026d54f98414bb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor.go",
+          "size": 5749,
+          "sha256": "9bd6ef18541e3e9033b722f025f8094cc5989d376aee46a4fc6325fea08339f0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_supervisor_test.go",
+          "size": 4569,
+          "sha256": "29818f49f7f0f0fed44e36207e55a52cd27fd4f679591a5a46d6e22124ac7bb4"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/bootstrap_test.go",
+          "size": 11236,
+          "sha256": "a3defbd8e5e52299c240c4e735f62faec01c47e458f61f66d86fd5ee003f2df9"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim.go",
+          "size": 11648,
+          "sha256": "71ea5eae4e8f8a089252aa9ec4889837312636fbc0b920a523b6d38da1aeb9ae"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator.go",
+          "size": 2716,
+          "sha256": "5195e763c322ee49e8cea40682f47d44f17d402b53595fd2225c347e318229cb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_coordinator_test.go",
+          "size": 4842,
+          "sha256": "1756613e195efcde6a6b45112bcda022a90f90d203f157e240c44b8f5002fd74"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_takeover_test.go",
+          "size": 6114,
+          "sha256": "3c79480e31fdc50d10bb2f25ef156f2581f64c1e3f50b79cc2c029e44564db47"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/claim_test.go",
+          "size": 10311,
+          "sha256": "9cee66087ef2510474f41bbc4877ce8b5379c100d2674e5fc15886fb7653656f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health.go",
+          "size": 7151,
+          "sha256": "f9f8e90653e6baed2a0ec42071661ffcfb3792dde7dc3094d75674a1e379ef22"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_mysql_test.go",
+          "size": 27194,
+          "sha256": "7316c8f6e3fad9544d6bfbd8eb887345e00472e4247745036e28263d23670397"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer.go",
+          "size": 1619,
+          "sha256": "ec1bc1822c02da97b83ff56b1d5dbf6e1746e5e8733be6a432ed50993129ad9a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_observer_test.go",
+          "size": 4362,
+          "sha256": "f79b02c2b3797ecfc884273432a44f76d8c9fdd552cfa8911e1bdc205c298ae0"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_health_test.go",
+          "size": 6357,
+          "sha256": "d66152210675b73d3a46f1ba75999a4d14e5ebbfcca9cb6f4a154e59cd9fcfc5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop.go",
+          "size": 3520,
+          "sha256": "8da96eabe5d2a9778f2f6f57a7b5388b5b16aa38ec3e60de4d6a77d9a05b716c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/control_loop_test.go",
+          "size": 5004,
+          "sha256": "4cc963d99f2a6311518d96fe3e7a1d6a5a94c8aefc4a2b0ca555ece71bc62967"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts.go",
+          "size": 5796,
+          "sha256": "9a5472c0faed36dfb9239c5e3bdc519fef477af667dce888fc412a9f2998d077"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+          "size": 12669,
+          "sha256": "c75ada2f64fed00ba42920df24f45bd5df93ac653a0d2b59c362cbc82676d2f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry.go",
+          "size": 4196,
+          "sha256": "813316fe5ddc94c361c0f4198f915ae4c3d4f00faed6db2067eccbba5a634e49"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/controller_telemetry_test.go",
+          "size": 3375,
+          "sha256": "ba1a777a344b3321193920f111a5fa64f20510e9826fcaf4e87b6137b0790196"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/coordination_test.go",
+          "size": 23295,
+          "sha256": "572ce096b7ab59edae1c66386dab8fa07c6d8f70217b7333fe5c662616657d8e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants.go",
+          "size": 6947,
+          "sha256": "3e7c2a21e56d067b3875dc16a00c2125b917cb5989c6009cdfd1e28a64e766b2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_grants_test.go",
+          "size": 7070,
+          "sha256": "6daa0867e8f4c8e20485cc1b6ddfd09a826fb85d68956fff61c918e77e08fb41"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity.go",
+          "size": 1453,
+          "sha256": "e06edcdbc362a9ec3571302766d5ebcc3c057f9301aad5f72b549bb4c3211c78"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/database_identity_test.go",
+          "size": 1162,
+          "sha256": "30a6c976c726edb9a007c6c3b83856021aa072f1b1f207623c2a0b8aae6e5f2b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline.go",
+          "size": 7652,
+          "sha256": "abb9fb95137b471c439a7db71ab4af3c8cb4677e2a5a74d074d5dc2edbaa9495"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop.go",
+          "size": 1904,
+          "sha256": "24becb2ba8bf6a5835e4c248fedf4a1826797bf9bd5f63c8b58be996851a4eeb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_loop_test.go",
+          "size": 2833,
+          "sha256": "3c91c888995ae934fa8d9bd5ede1b38ecdd01f053ed9c2abf03166e9700e7364"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper.go",
+          "size": 5069,
+          "sha256": "5bc0197e742557585235a1b59978b42f266aca65c3080067b95743fab83d9deb"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_sweeper_test.go",
+          "size": 10076,
+          "sha256": "64a19299a20674333b3f32e3e649f4b7b1b97f7e161bbd56eebeaa6d040ea22a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/deadline_test.go",
+          "size": 9711,
+          "sha256": "c45120b443135c360687dc1871a263a0006f7e9b0f6ee73a3c37ce041ae3f40e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate.go",
+          "size": 27781,
+          "sha256": "35de78e2c6bc79c03948d363253bd830ec6085396cb0e54e018a9105ce2f7f54"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator.go",
+          "size": 8117,
+          "sha256": "7658f9764a57c4780bcfe95f8a09c1f2c78294e84fd3bc6a0b72fd25f030286b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_coordinator_test.go",
+          "size": 9506,
+          "sha256": "37163d43207226a0cd37de18212ee1e371797385295005458ad5271be611c463"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event.go",
+          "size": 2081,
+          "sha256": "8b42c064972343b76817d578221d5e3a71425bec19616c27cd4bb80756104b32"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_event_test.go",
+          "size": 2041,
+          "sha256": "e9bc01fe10f64dcf357b9c48322cb86c61db5ef68c080c2f805bdbae0c8a4764"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer.go",
+          "size": 1330,
+          "sha256": "ac424977b91b3719c5ff00cbb634c5b8dc8c6f42d75165266ee3d61ac3202b37"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_initializer_test.go",
+          "size": 3010,
+          "sha256": "c32781cb95873f41e1de29b772476853b7c63ab28727ad891e474cf668e766cd"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery.go",
+          "size": 5063,
+          "sha256": "ac0cc2566be12518acc12eb1b0d6a49969ba4818d17fafa38bd5179576fbbd04"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/gate_recovery_test.go",
+          "size": 7602,
+          "sha256": "f5a61d8968b4836669b24192202f1ee585762e341ed92047bf4b0dbc39144abf"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch.go",
+          "size": 4810,
+          "sha256": "354ac65b754ef607e47e5d2eb0e9ddaeb3032f3b9d4e7f1c7e8b90c5e89c490c"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/kill_switch_test.go",
+          "size": 5542,
+          "sha256": "ee185be33830322e4b656408f7ee02c7f5d173c73f1e4e92f6f7fee779ec4f6f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http.go",
+          "size": 6658,
+          "sha256": "a12ef6b6fe420ccc97a76857e3f94c78a9cc0bb098d81095e59f16356b9fcf55"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/metrics_http_test.go",
+          "size": 7491,
+          "sha256": "bff65482bce2c218b7da66ac968569c27c335a3c2dd16597e538e20c7311a59a"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease.go",
+          "size": 9968,
+          "sha256": "b2258622b3a99f9ebce15977a7cca79ab5dc76280a6b1ba5b7226cc521f8ac4f"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator.go",
+          "size": 2325,
+          "sha256": "14001be0a8a7e1201558d0e280371028be28f5a809937647a74d691581faf8f2"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/mutation_lease_coordinator_test.go",
+          "size": 5081,
+          "sha256": "9ecfa9105f26c0134e22787c0872f4b11d23bcd7dd65aee54e22aedd8df5ff17"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation.go",
+          "size": 2216,
+          "sha256": "8913ee0aba146f0762c432854c9727b8cb52ea0a72428214789710b36b4fd99b"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/protected_mutation_test.go",
+          "size": 5676,
+          "sha256": "6172886536143161829ef69b0ab4a2e8e686dd9d0489fa50dcf9c58211540159"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget.go",
+          "size": 1296,
+          "sha256": "5140c399c0e0ca3b704a342d667f5167d32c8283b7fc824f85748d595e7448c5"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/queue_budget_test.go",
+          "size": 2200,
+          "sha256": "7537f5dad8c9612e485b1fbd2b807de1158524e73a8878b281d2990202324150"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness.go",
+          "size": 4907,
+          "sha256": "d38218ab811b1ed3424824752605df3b8df1ab7dcc66b4998405cb4cb0b34475"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/readiness_test.go",
+          "size": 4267,
+          "sha256": "4d8354f13ff05c3929152d332b65bcb73fdec8e31a93855ea8ad997e1cf0ab45"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state.go",
+          "size": 2611,
+          "sha256": "8dd73bf454e0f5a947927d6d05f8b000858fc8bd64cc34e33a0ba294a18a8e02"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_acceptance_alert_state_test.go",
+          "size": 6564,
+          "sha256": "f7d20538a6018f362af79fee211d11f03a9d8f2a06c995085e53cd2594c1078d"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_deadline_store.go",
+          "size": 4520,
+          "sha256": "b558cda2256cd8d5ef2280c6842eb5686f52c7ea6ba4ce1807f03c6be2e4a097"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_gate_recovery_store.go",
+          "size": 3787,
+          "sha256": "755ec25d99fe841f641f4021781d3de682df894953b043f30699a5933f080518"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_kill_switch_store.go",
+          "size": 3643,
+          "sha256": "ad825b8dc2947df23c2b3f95e3f5d2e08deb53c2b4ac8847d4358e980ec5979e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget.go",
+          "size": 6696,
+          "sha256": "edaa42ab480b2d81e4a6cb0d5ef53a0a7ff4f6e63aecd589e0044cf9b170698e"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/sql_queue_budget_test.go",
+          "size": 9141,
+          "sha256": "8099548980b8bfcd63938bb97e60d026da8995be370af2349cb14b337ddfa231"
+        },
+        {
+          "path": "backend/internal/systembackupcontroller/utc_readiness_test.go",
+          "size": 2910,
+          "sha256": "c346a0df00546c0eb2be16d491a3b655fc3b4651c31791b75b2b2ed1656879e7"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_backfill_source.go",
+          "size": 3668,
+          "sha256": "6cafc4a6cfe824895f6f577402a360f46874c624b0c72298a66d9950113cf8ad"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_list.go",
+          "size": 4268,
+          "sha256": "25665d9baefdcd4d1872a7894468a6e3fc189860ec3104b5bb4eb2c335019951"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_list_cursor.go",
+          "size": 3511,
+          "sha256": "0707447c95f18531ffcde8bd4b28c720d1f61ad5077b4e0afada93be07c61e86"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_list_dto.go",
+          "size": 2329,
+          "sha256": "0dce9cb08653e9418f014a3fd5498b9ac6f3e0665205296a08d0e319c7284f7f"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_materialized.go",
+          "size": 3665,
+          "sha256": "347edd6571cd7aa6e7e015ed1e7a727c08c69b2f87e6ba3bd1e17df33ef01fe5"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_projection.go",
+          "size": 9142,
+          "sha256": "f1401f31e2dfec5b0fc67396f944ccec861c6eb78d44336203822fb0f3ef67e1"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_projection_rules.go",
+          "size": 5565,
+          "sha256": "3c9a13fafa6a24592aa472302489a13519e3033a585dbf6f3b722c28354f43ca"
+        },
+        {
+          "path": "backend/internal/systembackupread/config_snapshot.go",
+          "size": 5858,
+          "sha256": "ca944653819b521712f2e56e3f5ff749574d0b6f93d795d95db3cb863cde9f6b"
+        },
+        {
+          "path": "backend/internal/systembackupread/control_health.go",
+          "size": 3212,
+          "sha256": "dcbe533dd21704c763be4bc974f5a715b3a73102442493d1ee81f4bf5c2fa2d7"
+        },
+        {
+          "path": "backend/internal/systembackupread/cursor.go",
+          "size": 4558,
+          "sha256": "cff06a7a2b332354ce6cd6507cbed25ebeb84c545deffd6d22606d60b664a440"
+        },
+        {
+          "path": "backend/internal/systembackupread/drill_detail.go",
+          "size": 8750,
+          "sha256": "f431e19f68493d86f3bdb0d7e047024b811d25b991ae0b8a38ee4b65a759a9a5"
+        },
+        {
+          "path": "backend/internal/systembackupread/operation_detail.go",
+          "size": 9032,
+          "sha256": "cf09974c8c59677f347034734117a0fe57e248fbd461ade9dd9d962f7e945ff0"
+        },
+        {
+          "path": "backend/internal/systembackupread/operation_dto.go",
+          "size": 3410,
+          "sha256": "2d7b9595b9f66e30717ccb81bf4fbe3b31c668f2d0023eef96ccc0a1e576cc64"
+        },
+        {
+          "path": "backend/internal/systembackupread/operation_list.go",
+          "size": 7446,
+          "sha256": "160d685227d38ef88380c4270ba5f24ff388defc92a463cde8aa10257676a74b"
+        },
+        {
+          "path": "backend/internal/systembackupread/overview_control.go",
+          "size": 10651,
+          "sha256": "d48170d2e40ca4020a0a77641818a50d381d0da91bf6c5cb7c4b6545b319a3cd"
+        },
+        {
+          "path": "backend/internal/systembackupread/overview_promotion.go",
+          "size": 14395,
+          "sha256": "fd19c8e8873258e570734326cc4a6d7ae6a33757bc6ce1f2041e3673ae6f6d43"
+        },
+        {
+          "path": "backend/internal/systembackupread/page_sql.go",
+          "size": 596,
+          "sha256": "f4ddd3f51b6d3bc3767b520c2b78f860503ec6937a67239b2b56db5a5c458a15"
+        },
+        {
+          "path": "backend/internal/systembackupread/service.go",
+          "size": 1889,
+          "sha256": "c9723beb064858657f08e4bbe9f3ed21f8dcf9e075f530dba80670b866e4e1ac"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_check_control.go",
+          "size": 7562,
+          "sha256": "5327c6beaa310b4f191d7b1813ec07744838c16912ef5751e24ef839223f4336"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_check_evidence_control.go",
+          "size": 5010,
+          "sha256": "e8fe650ba4c7599805d67f366e4a759a5038a792708fd667cc60a1842bbe5d9a"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_detail_base.go",
+          "size": 4068,
+          "sha256": "71777e6887d55f5622e49dd996559e456a482fda8493ac44ce59c7abe99661fb"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_detail_control.go",
+          "size": 21961,
+          "sha256": "2eb88f63ec033bdb3bd8877b598358fb890b85a9b72a8c45393bea74fd1eb089"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_dto.go",
+          "size": 4349,
+          "sha256": "8e88f4a13169ad17e2ce9644dc4e17352621a4fb5d5193eeb47cdcfe6989912d"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_event_control.go",
+          "size": 11514,
+          "sha256": "827d0e088ff38a4cd767ecaf1c7d7f68f7a5c0ff7eb9be05c3da02b013384bc7"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_event_control_cursor.go",
+          "size": 3860,
+          "sha256": "7cdf24fb627f9959582660e1895c660615a78f4155ea62cb3dfa6d390d2ad413"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_event_dto.go",
+          "size": 5484,
+          "sha256": "206a07a2175f8295e76bd7caeb549585c72f035844294c97274bf5ee61aca3c2"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_execution.go",
+          "size": 11134,
+          "sha256": "459496c5d3383ea44f4c8c744c66064b98c45ed31e6db881bffdf4be59dec143"
+        },
+        {
+          "path": "backend/internal/systembackupread/task_pages.go",
+          "size": 10554,
+          "sha256": "bd98a2190d5b5a5c06bf414b41a62827efba2801b485156aa3b807399ff6d919"
+        },
+        {
+          "path": "backend/internal/systembackupread/verification_detail.go",
+          "size": 9599,
+          "sha256": "1b4cd2832a8d9dad1cab4941b883eb3e7c8fc7fa7a325038a084c94f9787207e"
+        }
+      ],
+      "directories": [
+        "backend/internal/migrationcatalog",
+        "backend/internal/migrationcoord",
+        "backend/internal/systembackupcontract",
+        "backend/internal/systembackupcontroller",
+        "backend/internal/systembackupread"
+      ]
+    }
+  ],
+  "source_scope_acceptance_claimed": false
+}

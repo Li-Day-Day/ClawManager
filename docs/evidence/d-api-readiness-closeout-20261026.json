@@ -1,0 +1,214 @@
+{
+  "kind": "d_api_readiness_closeout.v1",
+  "date": "2026-10-27",
+  "status": "local_checks_passed_real_chain_blocked",
+  "dependencies_installed": false,
+  "production_application_linked": false,
+  "real_chain_run": false,
+  "real_mysql_used": false,
+  "provider_contacted": false,
+  "committed": false,
+  "deployed": false,
+  "native": {
+    "receipt": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.json",
+    "scope": "all",
+    "default_vet": true,
+    "steps": [
+      {
+        "stage": "task-http",
+        "exit_code": 0,
+        "root_tests_passed": 5,
+        "log": "d-api-native-f0e09233447a4d9a86ce614b31fd8431.task-http.txt"
+      },
+      {
+        "stage": "server-composition",
+        "exit_code": 0,
+        "root_tests_passed": 4,
+        "log": "d-api-native-f0e09233447a4d9a86ce614b31fd8431.server-composition.txt"
+      },
+      {
+        "stage": "bootstrap-requirements",
+        "exit_code": 0,
+        "root_tests_passed": 3,
+        "log": "d-api-native-f0e09233447a4d9a86ce614b31fd8431.bootstrap-requirements.txt"
+      }
+    ],
+    "current_source_matches_snapshot": true,
+    "current_source_file_set_matches": true,
+    "cleanup_verified": true,
+    "resumed_after_interrupted_process": true,
+    "interrupted_attempt_accepted": false,
+    "full_repository_tests_run": false,
+    "linux_build_run": false
+  },
+  "node": {
+    "exit_code": 0,
+    "tests": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "mode": "model",
+    "log": "docs/evidence/d-api-smoke-model-tests-20261026-final.txt"
+  },
+  "frontend": {
+    "exit_code": 0,
+    "no_emit": true,
+    "incremental": false,
+    "log": "docs/evidence/d-api-frontend-typecheck-20261026-final.txt"
+  },
+  "strict_gates": {
+    "schema_exit": 1,
+    "contract_exit": 1,
+    "missing_tables": [
+      "system_backup_catalog_imports",
+      "system_backup_catalog_records",
+      "system_backup_catalog_scan_states"
+    ],
+    "missing_contracts": [
+      "recovery_catalog_records",
+      "restore_target",
+      "status_relay",
+      "catalog_scan_record"
+    ]
+  },
+  "blockers": [
+    "Reviewed backup/preflight requestBody, closed DTO/default/JCS contracts absent",
+    "Production TaskWriter and complete TaskDetails adapters absent",
+    "B runner/status relay and C provider/catalog/result adapters incomplete",
+    "Original controlled bootstrap authority/material mappings unavailable; default 27 owner slots missing",
+    "Real independent SQL/executor smoke observer and controlled environment inputs unavailable"
+  ],
+  "prior_evidence": {
+    "ae7af383": "failed: targeted/full/seeds exit 0; Linux server disk-space failure; cleaned",
+    "a_148b2d35": "failed: targeted/full exit 0; Linux security disk-space failure; cleaned",
+    "a_60108f6c": "failed: targeted exit 0, full exit 1; cleaned",
+    "d_391eb1e7_and_faf1e36f": "intermediate local passes only; do not cover final source",
+    "d_643e7866": "failed before tests during compilation-cache copy; cleaned"
+  },
+  "source_files": [
+    {
+      "path": "backend/internal/systembackupapi/tasks.go",
+      "sha256": "d099e72285d0721394d03691c9a0000ff9aeab1b5316002fa38ca0050ffddee4",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/internal/systembackupapi/tasks_test.go",
+      "sha256": "24987630ec0205d8038273fc56c490d59135dfaa9663b85fc14a269476feab12",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/internal/systembackupapi/submission.go",
+      "sha256": "70935c14be1823d098915eec4801abfc97d545409ce0a4ef3d05c94014162b62",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/internal/systembackupapi/submission_test.go",
+      "sha256": "01c2ecc53b6e0666ef29022068e126a187f7653bbafef62a03c246b0aca7a893",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/server/main.go",
+      "sha256": "cf41460bad3f4cb61c51e2b0ce51cf38149aa32937b03d7abdb81f1ff6a3c534",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "sha256": "c919bf59f47f0dd0c174801d42ad5f23fa6741da5cfe818696500221caae5e1f",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_tasks_live.go",
+      "sha256": "e5407ae4ebde00e9b0b6137a728f08cdecd765df7b67397448b81ca7e2b6cba6",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_tasks_live_test.go",
+      "sha256": "0cf65a29f2b8dca216fcce60ec3a8d629ea704b7be027529e579c4da405f2184",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_api_tls.go",
+      "sha256": "e73404add732fbc0e5f6aff590e6791b8ba85fb54e8bfcd883b8226d43fdd157",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_api_tls_test.go",
+      "sha256": "3fe7fd6fd1caa04aa3bc1c5631872c2be0726fd3bbfc45eeb0e403818f849d59",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/materials.go",
+      "sha256": "d8c39383bf6fab0943da519ac27f4e1a1e98f7e4d5376956b16335f3b7d869d8",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/materials_test.go",
+      "sha256": "e395a451188bf19b908f2aba6af413831290a99e9759724d0eae5658ba1d0ac3",
+      "native_snapshot_match": true
+    },
+    {
+      "path": "frontend/src/services/systemBackupTaskService.ts",
+      "sha256": "de839fa3dcd8fd57dbe46796ca05d10f122a3464132cc211cc6f344c14cd9a48",
+      "native_snapshot_match": null
+    },
+    {
+      "path": "scripts/system-backup-d-api-smoke.mjs",
+      "sha256": "b6ed4d55ca0c844bf106f622ab0b743169a392556c833126a0a264d305038a12",
+      "native_snapshot_match": null
+    },
+    {
+      "path": "scripts/system-backup-d-api-smoke.test.mjs",
+      "sha256": "add68670f2a1ef3f2534f3901a3f2673368ffa7671382add9cb15da468c53a55",
+      "native_snapshot_match": null
+    },
+    {
+      "path": "scripts/system-backup-d-api-validation.ps1",
+      "sha256": "9660b0ceeb1d5d2adeb2e8a3b2dc5415ce82fd5499d5a5f6e54f08d5321ebc22",
+      "native_snapshot_match": null
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.json",
+      "sha256": "5081394d888583df309b8f8bc3adac4acecd7eceab450ba41400a22e69bf00b1"
+    },
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.task-http.interrupted.txt",
+      "sha256": "1be2cfce80b23be6fe6069bad2ab5a2de606bdc3cfe2fc6bcbdaf48f70231a1a"
+    },
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.task-http.txt",
+      "sha256": "2d1407209bd04694bedc3e7e7a10f1a136c9794e6e03349301e1c9d6d3e9421c"
+    },
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.server-composition.txt",
+      "sha256": "d03ec9510040c0a4dddb166d086b37d76e6fc4ea18bdbf89383be55d80f249a8"
+    },
+    {
+      "path": "docs/evidence/d-api-native-f0e09233447a4d9a86ce614b31fd8431.bootstrap-requirements.txt",
+      "sha256": "12028034c9be6f3592dc07358c0fc9449c39048642f917f6d60b597317ebd357"
+    },
+    {
+      "path": "docs/evidence/d-api-smoke-model-tests-20261026-final.txt",
+      "sha256": "cf4b1787fbd14adbd34aabd8e11cb10402db79d55d74295ba26ed06ac2f5e449"
+    },
+    {
+      "path": "docs/evidence/d-api-frontend-typecheck-20261026-final.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-api-schema-strict-20261026-final.txt",
+      "sha256": "0ffec3fab6f53e9ef8bec56c0ae2a71d4450bec0a5e177902e921aee72067510"
+    },
+    {
+      "path": "docs/evidence/d-api-contract-strict-20261026-final.txt",
+      "sha256": "004a963f4edb25e780107df25a644f67ee485444997ac2c2028cdb7976ecec77"
+    }
+  ],
+  "owned_test_directories_absent": [
+    "391eb1e7af0b47569ded03703edccd1e",
+    "faf1e36f767b41f9a9f9bbacc916a9e8",
+    "643e786657ba4038a95ebd19e13ee787",
+    "f0e09233447a4d9a86ce614b31fd8431"
+  ]
+}

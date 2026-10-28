@@ -1,0 +1,136 @@
+{
+  "kind": "d_bootstrap_config_ranges_mysql_local_review.v1",
+  "status": "passed_exact_local_preparation_only",
+  "source_sha256": "2452011f88e6fef800bea52a60a29a461fee5887a4f4cd79eb289a059c0ae8aa",
+  "source_files": 1664,
+  "capture_attempts": 1,
+  "native_terminal_exit": 0,
+  "seed_roots": [
+    "TestDBootstrapConsumerMySQLSeed",
+    "TestDBootstrapConsumerRangesMySQLSeed"
+  ],
+  "linux_builds": [
+    "evidence_probe",
+    "embedded_migration_runner"
+  ],
+  "binary_sha256": "382801e70cc56b2cc39e2d7ae7f230fe7afa00c455d5ddb6ed8828c57f1599b1",
+  "migration_binary_sha256": "3c1107da3ccc74220983b61a643a38eeeade7643769d4f2e99c0d587ea538c94",
+  "inputs_sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa",
+  "source_postcheck": true,
+  "own_inputs_current_match": true,
+  "own_input_pins": [
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_ranges_mysql_test.go",
+      "size": 14758,
+      "sha256": "b149adc88b48893c7f8715e06de83b0cbad6740c2c1176d94b9e2828a7277826"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_mysql_test.go",
+      "size": 24070,
+      "sha256": "930d520a25e1f49650060912e7e048d4cec95d204f66d6721d3e13df2c9dd6c2"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/testdata/bootstrap-consumer-mysql-inputs.json",
+      "size": 182283,
+      "sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa"
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-consumer-mysql-inputs.mjs",
+      "size": 2830,
+      "sha256": "6403f9116690950c2daa86ba4796562a6228545398033940c85cbbe4d468200d"
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-ranges-mysql-validation.ps1",
+      "size": 13928,
+      "sha256": "5dc1709574c49db155bb1122cd9036aeeca13f8188e268181316f17bb6788648"
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-ranges-phase.sh",
+      "size": 2715,
+      "sha256": "974298014d8226109c6992eed8c0018aa769f45e3eef3c4fad43927b4ed08661"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 17470,
+      "sha256": "feac22552e1ffc5ab04ac624dd1b0690fce641f9e55b8a40ab13711cea7ab8a0"
+    }
+  ],
+  "default_vet": true,
+  "modules_readonly": true,
+  "dependencies_installed": false,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-9dfbf1f2c5894446b1fd14bfefac8f11",
+  "owner_recorded_removed": true,
+  "owner_independently_absent": true,
+  "test_build_artifacts_removed": true,
+  "receiver_tests": {
+    "pass": 22,
+    "fail": 0,
+    "skip": 0,
+    "actual_mysql": false
+  },
+  "script_syntax": {
+    "powershell_ast": true,
+    "bash_n": true
+  },
+  "actual_mysql_run": false,
+  "actual_mysql_cases_passed": 0,
+  "planned_mysql_cases": 3,
+  "synthetic_authority": true,
+  "physical_capacity_verified": false,
+  "provider_permission_verified": false,
+  "production_approved": false,
+  "ordinary_joint_regression_claimed": false,
+  "copy_regression_execution_claimed": false,
+  "real_index_lock_proof_prepared": true,
+  "real_index_lock_proof_executed": false,
+  "three_anchor_fixture": true,
+  "global_L1_and_attempt_deadline_in_compiled_source": true,
+  "prior_failed_run_preserved": "docs/evidence/d-bootstrap-consumer-mysql-20261026-114903-75e285e0.json",
+  "prior_failed_run_reclassified": false,
+  "artifacts": [
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-130530-9dfbf1f2.json",
+      "sha256": "a4fde1e59e39a8520358875281a1527ad74b6def808eac5224681ec6366f33be"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-130530-9dfbf1f2-source.json",
+      "sha256": "2a8a4e24a2b85d9cc418f1593da02b8ef96a5affc369854ea1216d09b23dcc4c"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-130530-9dfbf1f2-step-0.jsonl",
+      "sha256": "e9947c835a3621c7f1fc858872e14c286263165a83d3c86274209aadfb3aa851"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-130530-9dfbf1f2-step-1.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-20261026-130530-9dfbf1f2-step-2.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-receiver-tests-20261026-r3.txt",
+      "sha256": "7098af7fd5f1b74f2a359709b96841faf793df786239c2c78123c2843709cf19"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-script-syntax-20261026.txt",
+      "sha256": "45ecd930ece92ec3cde34e0f1419b34c309e499e7d7ca1c70f6f757bb40ef95b"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.mjs",
+      "sha256": "0fb3807fdfc0fd0a3476b084d27fe84f1c02b326ff9671df2ac06a3c4560905f"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-review-20261026.test.mjs",
+      "sha256": "7edb5d7c37202097609ff8b7061c7d6498378c8c694c89a64ec7b26039fe90a4"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-config-ranges-mysql-local-review-20261026.mjs",
+      "sha256": "f4d29a6b56925513853e3cf7001ddfba372fc87e60d01b979fe5e72703e212cd"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-consumer-mysql-20261026-114903-75e285e0.json",
+      "sha256": "71da413ee58d73225f96de694a2aba4d32df27c802c48f3f5cb86accdbc7c20a"
+    }
+  ]
+}

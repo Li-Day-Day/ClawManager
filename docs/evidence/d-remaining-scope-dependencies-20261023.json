@@ -1,0 +1,81 @@
+{
+  "kind": "d_remaining_scope_dependency_audit.v1",
+  "date": "2026-10-23",
+  "objective_complete": false,
+  "user_confirmed_bc_delivered": false,
+  "required_scopes": [
+    {
+      "scope": "resources_restore_conversion_and_write",
+      "state": "incomplete",
+      "reason": "Five-table candidate only; C four-table rules and B authenticated proof/common transaction/independent reader/startup facts remain absent",
+      "production_restore_proven": false
+    },
+    {
+      "scope": "complete_cleanup",
+      "state": "incomplete",
+      "reason": "Freeze remains private and not connected to Collect; full reviewed policy, exact grants, catalog definitions, physical capacity and takeover proof missing",
+      "full_gc_proven": false
+    },
+    {
+      "scope": "remaining_page_details",
+      "state": "incomplete",
+      "reason": "Verification/drill historical DTOs wired; backup/preflight current sources, logs/manifest/catalog/prune/promotion and actual deployment remain missing",
+      "actual_drill_http_mysql_run": false
+    }
+  ],
+  "formal_gates": {
+    "inventory_strict_native_exit": 1,
+    "contract_strict_native_exit": 1,
+    "contract_status": "draft",
+    "policy_pending": 40,
+    "cross_review_pending": 60,
+    "missing_artifacts": [
+      "recovery_catalog_records",
+      "restore_target",
+      "status_relay",
+      "catalog_scan_record"
+    ],
+    "planned_control_without_inventory": [
+      "system_backup_catalog_imports",
+      "system_backup_catalog_records",
+      "system_backup_catalog_scan_states"
+    ],
+    "schema_hash_pending": true
+  },
+  "latest_independent_preparation": {
+    "source_files": 1615,
+    "source_sha256": "2e327b2681c94087c6e65c08fb654954d63a8eecfb2bc69ef3ec7f33c972e752",
+    "wrapper_receipt": "docs/evidence/d-drill-http-source-20261023-r1.json.result.json",
+    "child_exit": 0,
+    "dispatch_cases": 7,
+    "actual_mysql": false,
+    "dependencies_installed": false,
+    "source_and_build_artifacts_cleaned": true
+  },
+  "evidence_sources": [
+    {
+      "path": "backend/internal/systembackupresources/restore_five.go",
+      "sha256": "819c5f48adb7588c9e38475ea247c96ca61ad44ff48bd091fe0aef148b17d471"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_write.go",
+      "sha256": "acf046d364e68703b67f87b09ee6fc0803e8a69c4155edd8ef8ee3537b72f7f6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "sha256": "a0ea232611d1ea7b6878b23c04da18500f896fcaa281228eebda408cbf7312b0"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "f919c6b2f13e111e3bebf95ca239787a22baee6321f3f9a4c2a33af8e20fae29"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "sha256": "775e0d72dc46b556d935dbd38901b94962adb806fa33f4f76f145bc249f11b84"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "sha256": "8b72c233d83844e8d36e64b75d0bb690b27aa902ef99c28f38b61f5dedeae9f8"
+    }
+  ]
+}

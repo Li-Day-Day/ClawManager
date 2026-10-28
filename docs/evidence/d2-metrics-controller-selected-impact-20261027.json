@@ -1,0 +1,79 @@
+{
+  "kind": "d2_metrics_controller_actual_selected_go_impact.v1",
+  "status": "actual_per_root_compiler_closure_intersections_verified",
+  "candidate_manifest": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.source.json",
+    "size": 337319,
+    "sha256": "554b074615e4d73c5e0f58b38c7221786f2ecdaa669d74328d24a4c185718b96"
+  },
+  "original_dependency_closure": {
+    "path": "docs/evidence/a-current-entry-repair-closure-reviewed-20261027-r1.json",
+    "size": 223822,
+    "sha256": "f59f04adc8b21ddd283948d2f483b805d0f354ff355eb41378d5940d20164dc3"
+  },
+  "variants": [
+    {
+      "goos": "windows",
+      "tags": "",
+      "native_log": {
+        "path": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.windows.ordinary.jsonl",
+        "size": 9166116,
+        "sha256": "4da06e6200b53e05f6a678f76752fbff94b8c0a7f946f52a3f1bce218103994c"
+      },
+      "root_intersections": []
+    },
+    {
+      "goos": "windows",
+      "tags": "systembackup_mysql",
+      "native_log": {
+        "path": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.windows.systembackup_mysql.jsonl",
+        "size": 9186278,
+        "sha256": "625b340ec550bedf4422c7843534eb55677ed161d29bb97b233529ef119a42e0"
+      },
+      "root_intersections": [
+        {
+          "root": "clawreef/internal/systembackupsecurity",
+          "changed_compiler_inputs": [
+            "backend/internal/systembackupcontroller/controller_state_alerts.go"
+          ]
+        }
+      ]
+    },
+    {
+      "goos": "linux",
+      "tags": "",
+      "native_log": {
+        "path": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.linux.ordinary.jsonl",
+        "size": 9090634,
+        "sha256": "fecb2fb691d2dfb7d797f3e52cdb936fd4e186c362f6be08cd6fef5fed33019c"
+      },
+      "root_intersections": []
+    },
+    {
+      "goos": "linux",
+      "tags": "systembackup_mysql",
+      "native_log": {
+        "path": "docs/evidence/a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.linux.systembackup_mysql.jsonl",
+        "size": 9110798,
+        "sha256": "4821481d4af1715202bd5a6ef7a6aef8e542f83b501ac88a538d3a53140ae899"
+      },
+      "root_intersections": [
+        {
+          "root": "clawreef/internal/systembackupsecurity",
+          "changed_compiler_inputs": [
+            "backend/internal/systembackupcontroller/controller_state_alerts.go"
+          ]
+        }
+      ]
+    }
+  ],
+  "method": "Parse retained actual Go-list and run selectedGoClosure independently for each of eleven roots, rather than using the conservative fixture closure as a compiler list.",
+  "previous_descriptor_only_empty_array_probe_not_used_as_evidence": true,
+  "ordinary_previous_eleven_root_compiler_inputs_unchanged": true,
+  "required_new_scopes": [
+    "full ordinary systembackupcontroller and Linux ordinary/tagged compilation",
+    "tagged systembackupsecurity Windows AAdminRead seed and Linux test compilation"
+  ],
+  "filesystem_fixture_scope_separate": "Compiler non-intersection does not exempt dynamic fixture consumers; exact registry/generator/tests and source namespace are independently verified.",
+  "whole_goal_or_production_approved": false
+}

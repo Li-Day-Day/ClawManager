@@ -1,0 +1,98 @@
+{
+  "kind": "a2_bootstrap_candidate_binding_proposal.v1",
+  "status": "concrete_A_proposal_pending_A1_D_contract_review",
+  "production_authorization": false,
+  "first_relation": {
+    "bootstrap_purpose": "capture_signing",
+    "existing_SecretRef_purpose": "capture_certificate",
+    "C1_evaluator_owner": "A",
+    "C1_target_role": "signing",
+    "C1_result_kind": "dependency",
+    "C1_result_slot": "signing",
+    "remaining_27_slot_scope_preserved": true,
+    "nonce_CA_forced_through_producer": false
+  },
+  "existing_A_authority_source": {
+    "composition": "backend/internal/systembackupsecurity/bootstrap_deployment.go::LoadBootstrapDeployment",
+    "current_grant_reader": "BootstrapAdmissionSources.ReadGrant -> ReadBootstrapGrantFile(c.GrantFile,c.GrantSHA256)",
+    "grant_pin_semantics": "exact original grant file bytes; not configuration canonical hash",
+    "current_full_grant_and_window_rechecked_on_every_attempt": true,
+    "current_local_admin_in_original_SQL_transaction_still_required": true,
+    "contains_DeploymentAdmissionID_or_policy_or_profile": false,
+    "grants_new_producer_execution_rights": false
+  },
+  "required_D_original_deployment_authority_source": {
+    "existing_boundary": "backend/internal/systembackupproducer/domain_open.go::DomainOpenSession.Authorize",
+    "original_request": "DomainOpenRequest.DeploymentHash plus exact Scope and provision/rotate CAS intent",
+    "trusted_output": "DomainOpenAdmission.IssuerIdentityHash/Admission/AdmissionExpiresAt after independent issuer, management, revocation and original deployment receipt checks",
+    "persisted_origin": "DomainRecord.Admission and original deployment/provision receipt",
+    "plain_DomainOpenRequest_or_DomainRecord_is_authority": false,
+    "concrete_production_mapping_implementation_found_in_inspected_scope": false,
+    "scope_of_search": "backend Go declarations and PrepareDomainOpen implementations; concrete matches found only in tests",
+    "owner_of_missing_authority_mapping": "A1 original offline/deployment authority integration with D2 original producer deployment authority",
+    "absence_of_original_issuer_or_receipt_binding_behavior": "reject mapping as unavailable; do not issue a new grant or choose an admission from request data"
+  },
+  "proposed_exact_digest_correspondence": {
+    "CandidateHash": "SHA256 of the original validated BootstrapConfig.CanonicalJSON bytes; identical to that object's SHA256 and OfflineBootstrapGrant.ConfigSHA256; no trailing newline",
+    "RegistrySetHash": "SHA256 of the registries array rendered by the existing bootstrapCanonical algorithm from the original validated ConfigValues; original array order preserved, object keys in the existing canonical order, no trailing newline",
+    "RefSetHash": "SHA256 of the references array rendered by the same existing bootstrapCanonical algorithm; original array order preserved, no implicit sort/dedup/defaults, no trailing newline",
+    "original_domain_digest_profile_must_be_proven_compatible": true,
+    "existing_original_domains_implicitly_reinterpreted": false,
+    "new_public_wire_schema_or_grant_added": false,
+    "current_runtime_implements_or_approves_this_correspondence": false
+  },
+  "fields_not_derived_from_OfflineBootstrapGrant": {
+    "DeploymentAdmissionID": "only the original independently authenticated deployment admission/provision receipt, matched through D's sealed consumer to the original current domain; never the bootstrap idempotency key",
+    "PolicyHash": "original independently approved deployment/candidate admission policy; not automatically the per-call A SystemExecutionPreparationPolicyHash",
+    "ChannelProfileHash": "original independently approved external evidence channel profile; not the evaluator profile or candidate body's digest",
+    "EvaluatorProfileHash_ProbeScope_TargetIdentity": "original purpose-specific A capture signer evaluation and trusted ref-to-target mapping; no assumed equality with bootstrap reference identity hash"
+  },
+  "current_authorization_and_relations_required": [
+    "current full original OfflineBootstrapGrant and its not-before/expiry, exact server/database/installation, current local admin and full disabled ConfigValues",
+    "independently authenticated original deployment admission/provision receipt and current domain issuer/revocation/admission window",
+    "exact full committed candidate ResultRequest/Receipt, original target generation, run, candidate/receipt/hold references, history and ready evidence bytes/manifest/object/version/retention",
+    "original capture signer descriptor, purpose/key/version/domain/payload, public verification material, revocation and history-retention observations",
+    "one caller-owned transaction with complete early union prefix, query-only late rechecks, and atomic disabled-v1/receipt/domain epoch closure"
+  ],
+  "complete_consumption_request_binding": {
+    "original_offline_grant_semantics_and_config_binding_required": true,
+    "each_association_requires": ["bootstrap purpose", "reference identity and version", "original trusted mapping/provenance binding", "exact scope", "candidate receipt key", "complete request hash", "result version"],
+    "only_unordered_candidate_digest_set_is_sufficient": false,
+    "swapped_purpose_to_candidate_mapping_must_change_request_binding": true,
+    "duplicate_purposes_or_omitted_extra_associations_rejected": true,
+    "config_registry_reference_array_order_preserved_separately_from_consumer_batch_normalization": true,
+    "existing_grant_only_bootstrap_operation_hash_implicitly_reused_for_new_consumer": false,
+    "production_encoding_and_legacy_retry_compatibility_decided": false,
+    "independent_design_counterexample": "docs/evidence/d-bootstrap-candidate-idempotency-model-reviewed-20261026.json"
+  },
+  "proposed_time_decision": {
+    "approval_state": "pending_A1_D_review_not_implemented",
+    "old_execution_lease_authorization_or_owner_write_expiry_alone_rejects_committed_consumption": false,
+    "original_result_was_lawfully_committed_proof_still_required": true,
+    "current_domain_deployment_bootstrap_and_resource_dependency_bounds_required": true,
+    "original_observation_freshness_and_retention_bounds_required": true,
+    "explicit_revoke_supersede_epoch_generation_or_target_conflict_rejects": true,
+    "observation_or_old_execution_authority_refreshed": false,
+    "model": "docs/evidence/a2-bootstrap-candidate-time-model-reviewed-20261026.json",
+    "model_positive_time_relations": 2,
+    "model_rejections": 15
+  },
+  "implementation_ownership": {
+    "D2": "sealed committed-candidate consumer, original authority and complete union prefix/CAS/epoch close primitives",
+    "A2": "capture purpose/reference/evaluation relation, immutable prepared inputs and rejection regressions after D sealed contract is defined",
+    "A1": "original offline authority/deployment mapping and Bootstrap transaction composition/deadline integration",
+    "independent_review": "existing designated non-implementer owner after exact source/native evidence"
+  },
+  "safe_runtime_implementation_status": "not implemented: relation/time models cannot supply missing original authority, sealed consumer or common lock contract",
+  "models": [
+    "docs/evidence/a2-bootstrap-capture-binding-model-reviewed-20261026.json",
+    "docs/evidence/a2-bootstrap-candidate-time-model-reviewed-20261026.json"
+  ],
+  "entry_missing_slots_reduced": 0,
+  "backend_contracts_scripts_modified": false,
+  "dependencies_installed": false,
+  "Go_or_builds_run": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false
+}

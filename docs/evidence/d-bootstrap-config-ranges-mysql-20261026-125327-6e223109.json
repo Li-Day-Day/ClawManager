@@ -1,0 +1,67 @@
+{
+  "kind": "d_bootstrap_config_ranges_mysql_preparation.v1",
+  "suite": "bootstrap-config-ranges",
+  "error": null,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDBootstrapConsumer(MySQLSeed|RangesMySQLSeed)$",
+        "-count=1",
+        "-timeout=180s",
+        "-json",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "platform": "windows",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-config-ranges-mysql-20261026-125327-6e223109-step-0.jsonl",
+      "log_sha256": "f66a426ed31a3eebbb0bd67a82c9c64358ab5fc47416d92545bc0efaff7b2c82"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6e223109f05b4a89818b1b68e93ca68b\\bundle\\d-bootstrap-config-ranges.test",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-config-ranges-mysql-20261026-125327-6e223109-step-1.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6e223109f05b4a89818b1b68e93ca68b\\bundle\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "platform": "linux",
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-config-ranges-mysql-20261026-125327-6e223109-step-2.jsonl",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-config-ranges-mysql-20261026-125327-6e223109-source.json",
+  "source_postcheck": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-6e223109f05b4a89818b1b68e93ca68b",
+  "owner_removed": true,
+  "remote_requested": false,
+  "remote_scratch_removed": false,
+  "binary_sha256": "c37596449263324c33be3ac2d4efbfacbfd2cc8ee84c9fca96d55b9aba02525e",
+  "migration_binary_sha256": "dbfca74d5ee01eec0b96b634e61b046f864f201e5abd81b47b4ffe43c6e7596e",
+  "inputs_sha256": "947c32da6cb6047237db23d5eb256ae49e3ad3c09948c2d38cf5cccc9239b2aa",
+  "dependencies_installed": false,
+  "synthetic_proofs": true,
+  "actual_mysql_results_accepted": false,
+  "production_approved": false
+}

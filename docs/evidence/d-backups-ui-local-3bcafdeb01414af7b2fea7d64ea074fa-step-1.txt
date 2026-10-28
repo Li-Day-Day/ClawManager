@@ -1,0 +1,45 @@
+✔ MFA then one exact full GET returns a verified file and admission Operation ID (134.3016ms)
+✔ ordinary mode sends one GET without proof and does not require a sensitive admission ID (3.1027ms)
+✔ HTTP 400 cannot retry, leak server error text or proceed to download (2.7356ms)
+✔ HTTP 401 cannot retry, leak server error text or proceed to download (0.9196ms)
+✔ HTTP 403 cannot retry, leak server error text or proceed to download (0.91ms)
+✔ HTTP 404 cannot retry, leak server error text or proceed to download (0.7767ms)
+✔ HTTP 409 cannot retry, leak server error text or proceed to download (0.6ms)
+✔ HTTP 410 cannot retry, leak server error text or proceed to download (0.7714ms)
+✔ HTTP 416 cannot retry, leak server error text or proceed to download (0.8879ms)
+✔ HTTP 429 cannot retry, leak server error text or proceed to download (0.8509ms)
+✔ HTTP 500 cannot retry, leak server error text or proceed to download (1.0849ms)
+✔ HTTP 503 cannot retry, leak server error text or proceed to download (0.5583ms)
+✔ proof wrong audience prevents GET (1.0892ms)
+✔ proof wrong endpoint prevents GET (0.7017ms)
+✔ proof wrong key prevents GET (0.7433ms)
+✔ malformed proof envelope null cannot become a request header (1.2412ms)
+✔ malformed proof envelope [] cannot become a request header (14.91ms)
+✔ malformed proof envelope {} cannot become a request header (0.6593ms)
+✔ malformed proof envelope {"header_nam cannot become a request header (8.5539ms)
+✔ malformed proof envelope {"header_nam cannot become a request header (1.6553ms)
+✔ download rejects wrong checksum without releasing a file (3.7304ms)
+✔ download rejects short file without releasing a file (1.2171ms)
+✔ download rejects weak checksum without releasing a file (0.7632ms)
+✔ download rejects HTML without releasing a file (0.802ms)
+✔ download rejects wrong operation ID without releasing a file (0.8763ms)
+✔ download rejects cacheable without releasing a file (0.7929ms)
+✔ download rejects inline without releasing a file (0.8933ms)
+✔ download rejects unexpected range without releasing a file (1.0227ms)
+✔ sensitive download requires a valid Operation header and never accepts partial transport success (1.9414ms)
+✔ response headers and streaming body both enforce the original 8 MiB bound (4.1969ms)
+✔ session changes at either await boundary discard the response (1.5661ms)
+✔ a session change while streaming the file prevents release of a completed body (2.1272ms)
+✔ cancellation prevents initial work and discards uncooperative late proof/file responses (1.981ms)
+✔ input selectors and credentials are fixed before asynchronous proof completion (47.7823ms)
+✔ missing login or malformed selectors stop before transport (0.7365ms)
+✔ browser transport confines password/token requests to configured same-origin HTTPS without redirect following (2.4681ms)
+✔ download UI remains gated, explicit, localized and absent from sample workspace (1.9858ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 273.7358

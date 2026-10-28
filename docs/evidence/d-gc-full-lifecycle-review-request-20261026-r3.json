@@ -1,0 +1,129 @@
+{
+  "kind": "d_gc_full_lifecycle_local_preparation_review_request.v1",
+  "status": "exact_tagged_delta_and_independent_harness_ready_for_A_review_native_compile_pending",
+  "files": [
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+      "sha256": "e9806c4892ac770ae2f3cf97e9bcb6ba2f123d125b6d5a00d9533e055d9bdf09",
+      "size": 23173
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_lifecycle_mysql_test.go",
+      "sha256": "cac6c2bc0be61f48d28835828b26f17d92fe9f97deeea4dea3a87c7b5354a7e2",
+      "size": 32901
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-requirements-20261026.json",
+      "sha256": "78fec2dd6cf58acdc36c2d59a46f5790ef31190e3beab546a68f711d68ccd6d4",
+      "size": 7014
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-phase-20261026.sh",
+      "sha256": "d26ea549735c2e9002b686accf2b1c8f3cb3324de310d037c6dff99e38aff552",
+      "size": 3932
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-20261026.mjs",
+      "sha256": "95b95f64c5e625ac99f166b75bd96e1c276a04491a3ef2686352c9951ccf960b",
+      "size": 7836
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-20261026.test.mjs",
+      "sha256": "c1fcdbf8b3c217180512587c3855972c2562ca0b9223f021d2b604a2d3014f2a",
+      "size": 3217
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-operator-20261026.ps1",
+      "sha256": "455cc8245b9802e4b71a3a8fb9571ba7679f635965a665b45ae33b0153b2870c",
+      "size": 3054
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-dispatch-20261026.test.ps1",
+      "sha256": "4c9891586eddceb2efcc11caabf4fdeb9a02fef4d8d745d7d2d1e86e9e61e878",
+      "size": 3062
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-receiver-20261026.mjs",
+      "sha256": "957e8767fd53dfdec82136374e1b9c48f57c58900cdf241715b655d72184e62f",
+      "size": 8272
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-receiver-20261026.test.mjs",
+      "sha256": "b2b12e70f8c817a9048c1e0eaf9bca3382d28e65097587128e7be13ad87c5930",
+      "size": 6078
+    }
+  ],
+  "cases": [
+    "killed_after_delete",
+    "holder_exit_before_begin",
+    "cancel_before_begin",
+    "takeover_after_kill",
+    "two_public_holders",
+    "foreign_holder_retained",
+    "fresh_after_rollback",
+    "fresh_after_success",
+    "stale_registry_pool_ignored",
+    "temp_shadow_other_session",
+    "bad_timezone_rejected",
+    "lock_wait_restored_to_bound",
+    "public_ddl_pending",
+    "bounded_batch_plan",
+    "oversized_program_rejected"
+  ],
+  "old_cold_pin": {
+    "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+    "sha256": "d1b0c295339e9e6e61fec08dddf7336cb499a82b9645ff250bab8ca7c9d6818f",
+    "size": 23008
+  },
+  "ordinary_source_modified_by_this_delta": false,
+  "central_scripts_modified_by_this_delta": false,
+  "local_checks": [
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-receiver-tests-20261026.txt",
+      "sha256": "59ea8ed151adce19730c1e6acd4f471fce10208a2f4f8d87a371bba1ba42f5f2",
+      "size": 1068,
+      "tests": 23,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "pure_parser_and_source_selector_no_SQL"
+    },
+    {
+      "path": "docs/evidence/d-gc-full-lifecycle-source-tests-20261026-r2.txt",
+      "sha256": "c05eaf46296b3161f77a531733d69f9b833b11844fd8bcc32d0a220fde4c64b4",
+      "size": 1102,
+      "tests": 11,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "pure_parser_and_source_selector_no_SQL"
+    }
+  ],
+  "dispatch_check": {
+    "path": "docs/evidence/d-gc-full-lifecycle-dispatch-tests-20261026.txt",
+    "sha256": "94ab43725dd1a51cb565d58f182e69fb8f5626aaf6486a3dcb961dc7d4dfdfd5",
+    "size": 148
+  },
+  "source_candidate": {
+    "path": "docs/evidence/d-gc-full-lifecycle-source-candidate-20261026-r3.json",
+    "sha256": "756a150f32331620e94eee44723e454d7c509640e57ba49d4dc100eb78d9a8b8",
+    "size": 657068
+  },
+  "preceding_A_receipt": {
+    "path": "docs/evidence/a-gc-prepared-full-reviewed-20261026.json",
+    "sha256": "6e528bb61cfa0ae5651ea0c5c125ea01d21b0901d13e5ca508960157849e654b",
+    "size": 6409
+  },
+  "original_requirements": "docs/evidence/d-download-gc-source-freeze-requirements-20261021.json",
+  "production_materials_gap": "docs/evidence/d-gc-catalog-authority-materials-request-20261026.json",
+  "normalizer_scope": "synthetic cold fixture only; strip exactly one unquoted outer positive uint64 allocator counter; retain all column/index/constraint/quoted COMMENT bytes; malformed/duplicate/unquoted comments/nested tail reject",
+  "seed_and_linux_execution": "pending exact A tag scope and single Go owner handoff; Root proposed to execute narrow three GC seeds and Linux evidence before its thirteen owner stages",
+  "actual_new_profile_cases": 0,
+  "actual_new_cold_cases": 0,
+  "actual_new_lifecycle_cases": 0,
+  "production_scale_approved": false,
+  "complete_real_domain_authority": false,
+  "twelve_groups_actually_accepted": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "historical_source_test_failure": "initial parser test incorrectly expected removal by $evidenceScratch rather than validated $resolved; source unchanged, corrected assertion in r2 passed; initial failure log retained",
+  "actual_SQL": false
+}

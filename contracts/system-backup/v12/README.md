@@ -195,14 +195,14 @@ C的artifact/catalog locator与credential均不进入响应。`admin-task-detail
 artifact lifecycle条件。剩余五个直接`Resource`和五个generic list仍全部属于A/B/C，D不代填。
 
 `metrics-alert-registry.json` 由`scripts/system-backup-metrics-registry.mjs`从主计划第15节具名指标清单
-确定性生成，当前完整登记210个指标和99个profile-specific告警实例。每个指标都有type、HELP、精确低基数
+确定性生成，当前完整登记210个指标和100个profile-specific告警实例。每个指标都有type、HELP、精确低基数
 label、aggregation、no-data和histogram buckets；每条告警都有expression language、threshold source、
 severity、for、dedupe、recovery、missing-series、counter-reset、runbook、profile及固定时钟状态机用例。
 CI用`--check`阻止主计划与registry漂移。A/B/C collector只提交观测，不拥有新增label/name/alert semantics的
 权限；在选定的生产PromQL/controller-state evaluator中完成解析执行并取得A/B评审前，registry仍为draft。
 
-`prometheus-alert-rules.yaml`是由registry确定性生成的95条PromQL规则**候选**，
-`node scripts/system-backup-prometheus-rules.mjs --check`检查来源hash和逐条内容；4条`controller_state`
+`prometheus-alert-rules.yaml`是由registry确定性生成的94条PromQL规则**候选**，
+`node scripts/system-backup-prometheus-rules.mjs --check`检查来源hash和逐条内容；6条`controller_state`
 规则不在其中。仓库尚无Prometheus规则加载器、missing-series策略执行或PromQL fixture验证，
 因此文件带有`DO NOT LOAD`标记，不可把它当作已部署告警。生产接线前还须选定并验证执行器、
 补齐no-data/counter-reset语义，并以真实采集样本验证恢复与去重。

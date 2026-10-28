@@ -40,6 +40,10 @@ type Binding struct {
 	NotBefore, ExpiresAt                               time.Time
 }
 
+func (Binding) String() string               { return "BootstrapCATrustBinding" }
+func (Binding) GoString() string             { return "BootstrapCATrustBinding" }
+func (Binding) MarshalJSON() ([]byte, error) { return nil, sec.ErrRegistrationUnavailable }
+
 type Validator struct {
 	binding       Binding
 	host, address string

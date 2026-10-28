@@ -1,0 +1,114 @@
+{
+  "kind": "a2_gc_finalizer_f4_review.v1",
+  "status": "accepted_exact_frozen_private_candidate_F4_clock_boundary",
+  "source_sha256": "41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16",
+  "source_files": 1629,
+  "request": {
+    "path": "docs/evidence/d-gc-finalizer-review-request-20261026.json",
+    "sha256": "cb2a52bce08c8aad49f57bc45ed91c78183c764d25173a2e703810f7ddd1d574"
+  },
+  "native_acceptance": {
+    "path": "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json",
+    "sha256": "083ce6049ea7e95987ae6b62c540e209e004bf38db05102471b2535b01db2acb"
+  },
+  "reviewed_requirements": [
+    "F4",
+    "A-GC-FINALIZER-01"
+  ],
+  "current_capture_keeps_last_successful_work_SQL_sample": true,
+  "original_until_not_renewed": true,
+  "final_clock_after_callbacks_and_independent_checks": true,
+  "test_advances_last_work_clock_by_microseconds": 2,
+  "test_then_rewinds_after_ticket_by_microseconds": 1,
+  "strict_T0_less_than_T2_less_than_T1_verified_in_model": true,
+  "full_package_pass_events": 3179,
+  "full_package_clock_cases_passed": [
+    "TestDownloadGCFinalizerProtectedCandidate/commit",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_advance",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_backwards",
+    "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+    "TestDownloadGCFinalizerProtectedCandidate/until_equality"
+  ],
+  "intentional_single_regression_counterexample": {
+    "target": "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+    "parent": "TestDownloadGCFinalizerProtectedCandidate",
+    "native_exit": 1,
+    "assertion_not_build_failure": true,
+    "unsafe_single_regression_commit_observed": true
+  },
+  "historical_intermediate_source_claimed": false,
+  "rollback_checks_cover_original_rows_audits_nonce_tombstone_capacity": true,
+  "sole_model_connection_transaction_commit_and_release_checked": true,
+  "original_physical_sample_replacement_rejected": true,
+  "current_whole_tree_accepted": false,
+  "current_tagged_drill_delta_pending": true,
+  "A_GC_WORK_01_production_composition_closed": false,
+  "actual_MySQL_or_real_grants_accepted": false,
+  "production_approved": false,
+  "Go_or_builds_repeated": false,
+  "dependencies_installed": false,
+  "scratch_or_build_outputs_created": false,
+  "owners_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a9b3f627a8134e5798ca12b34880d1af",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25"
+  ],
+  "inputs": [
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-source.json",
+      "sha256": "cd90768f6b3d4bc11fb870434a5335c6499c3f279719d2f4fe8ba35f2cce713a"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af.json",
+      "sha256": "07dfdb20987102c34b0265b5a2f56c66a6e9ab685b9a04a006942e87236b02d4"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25.json",
+      "sha256": "c7085acc0f28f4e848809c685349c5927bff62ef18bb082541cb4bc0970d8345"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-counterexamples-1c44af3217e3438ebbc383d231be3b25.json",
+      "sha256": "8fcd79a45d7bacfd43e355183168b249fb58501857ee22d58d3258896c1a42c5"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-1-attempt-1.log",
+      "sha256": "91a0eeffd745c77dce66d4eaecab29ca9f4db7a18aad569059e33a81bf8e368b"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-12-attempt-1.log",
+      "sha256": "55e2db7b5598c7f514ff7594ad262c328ea49a50fded5ef221895e10688fe5fa"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "sha256": "6e973153f4f2f59b891211c3ece8b782b54e277078dbeb82427351221cf968b8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "sha256": "28e93f205ee04d8692e996b709485e6f7582f63f3a15b2cf7177f72bdcb269bc"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "sha256": "085ec806d6cc0147c3c9147ec45077f847b30357bcfe7d4d9415e771b582cf48"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work.go",
+      "sha256": "5d9ec0a60074d9b2b4dfcd7e9119ce4e78e3e87c3a2a2f76ec61356f29cd4843"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work_test.go",
+      "sha256": "ea4349acdc2baa904dcd203a2de07e915094a4e746a00059c5f7fd6571861e0e"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_audit.go",
+      "sha256": "cb3115e82d7dd8d9ea5f45b840df1290ea644a74225a3362e0fdb67fef902fbd"
+    },
+    {
+      "path": "docs/evidence/a-owner-finalizer-native-20261026.mjs",
+      "sha256": "a9c64c9ccbecb7737e2ef2fd775d0b8d34094aef521d7d10970b105222fe4865"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    }
+  ],
+  "reviewer_sha256": "6c0bd8cdb09a9100b033ca2adea770b152905e40b114d83be2ad0184fba32bb6"
+}

@@ -1,0 +1,37 @@
+✖ copied selector uses lifecycle names and all three seeds, retains offline/default vet (5.169ms)
+✔ reject missing selector 'd-download-gc-full-collect.test' (1.861ms)
+✔ reject duplicate selector 'd-download-gc-full-collect.test' (1.015ms)
+✔ reject missing selector 'd-download-gc-full-collect' (1.5565ms)
+✔ reject duplicate selector 'd-download-gc-full-collect' (1.7015ms)
+✔ reject missing selector 'scripts/system-backup-d-download-gc-full-collect-phase.sh' (0.6709ms)
+✔ reject duplicate selector 'scripts/system-backup-d-download-gc-full-collect-phase.sh' (0.9295ms)
+✔ reject missing selector '^Test(DDownloadGCFullCollectMySQLSeed|DDownloadGCFullProfileMySQLSeed)$' (0.6107ms)
+✔ reject duplicate selector '^Test(DDownloadGCFullCollectMySQLSeed|DDownloadGCFullProfileMySQLSeed)$' (0.6592ms)
+✔ requirements, Go catalog and receiver agree exactly (6.9674ms)
+✔ phase verifies binary, capsule, UID, exact root, native leaves and trap (7.9635ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 10
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 174.9855
+
+✖ failing tests:
+
+test at docs\evidence\d-gc-full-lifecycle-source-20261026.test.mjs:9:1
+✖ copied selector uses lifecycle names and all three seeds, retains offline/default vet (5.169ms)
+  AssertionError [ERR_ASSERTION]: Remove-Item -Recurse -Force -LiteralPath $evidenceScratch
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/d-gc-full-lifecycle-source-20261026.test.mjs:11:677)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

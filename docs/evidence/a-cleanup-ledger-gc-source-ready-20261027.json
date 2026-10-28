@@ -1,0 +1,73 @@
+{
+  "kind": "a_cleanup_ledger_gc_private_overlays.v1",
+  "status": "source_ready_native_pending",
+  "changes": [
+    {
+      "target": "backend/internal/systembackupevidence/download_retention_gc_references.go",
+      "before": {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_references.go",
+        "size": 17443,
+        "sha256": "0557ade43cc68109444f8e90f3db7cf337e160f16b028405183889f3040eb4b9"
+      },
+      "candidate": {
+        "path": "docs/evidence/a-cleanup-ledger-gc-references-candidate-20261027.go.txt",
+        "size": 17532,
+        "sha256": "b9579eb6a0fa4bfaf76f46c3e3d0566da2a36d617ed31917f474956df747698b"
+      }
+    },
+    {
+      "target": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+      "before": {
+        "path": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+        "size": 15973,
+        "sha256": "daaf8a8278b786d002080581de0f2323e9de8e11fcb926ef8481e545a6b0f299"
+      },
+      "candidate": {
+        "path": "docs/evidence/a-cleanup-ledger-gc-early-candidate-20261027.go.txt",
+        "size": 16007,
+        "sha256": "561fe1a9f0dfd2e577113bd1efac2dc7c99ff0ccf534628525f4542c4e87ecf1"
+      }
+    },
+    {
+      "target": "backend/internal/systembackupevidence/a_cleanup_ledger_reference_test.go",
+      "before": null,
+      "candidate": {
+        "path": "docs/evidence/a-cleanup-ledger-gc-reference-test-candidate-20261027.go.txt",
+        "size": 4025,
+        "sha256": "ad4e5dcb4b82aefb57206522cfb3e3c70bfd08e527d5e0f4566ae7a6a47096bb"
+      }
+    }
+  ],
+  "test_cases": [
+    "empty",
+    "present",
+    "late_reference",
+    "missing_column",
+    "wrong_type",
+    "unknown_column",
+    "foreign_schema_fk",
+    "cascade_fk"
+  ],
+  "semantics": {
+    "stage": 5,
+    "column": "cleanup_operation_id",
+    "type": "bigint",
+    "own_group_exemption": false,
+    "installation_filter": false,
+    "query": "SELECT id FROM system_backup_cleanup_attempts WHERE cleanup_operation_id=? LIMIT 1 FOR UPDATE",
+    "new_table_grant": "SELECT only",
+    "gc_delete_tables_unchanged": true,
+    "task_evidence_reference_change": false
+  },
+  "required_same_private_source": [
+    "exact cleanup ledger migration with RESTRICT operation FK",
+    "published metadata/catalog inventory and new migration version",
+    "required read grants and role review",
+    "full systembackupevidence package plus targeted counterexamples"
+  ],
+  "live_source_changed": false,
+  "Go_executed": false,
+  "SQL_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

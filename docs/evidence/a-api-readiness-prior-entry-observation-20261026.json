@@ -1,0 +1,64 @@
+{
+  "kind": "a_prior_bootstrap_entry_observation.v1",
+  "observed_at": "2026-10-26T09:23:13.437Z",
+  "id": "ae7af3833e1f424f946638b88c7f68d8",
+  "logs": {
+    "targeted": {
+      "log": {
+        "path": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.targeted.jsonl",
+        "size": 160595,
+        "sha256": "fa5543dfac3461501749cf95b36973b865053d610b0aa9091181d737994aed88"
+      },
+      "packages": [
+        "clawreef/internal/systembackupproducer",
+        "clawreef/cmd/system-backup-bootstrap",
+        "clawreef/internal/systembackupsecurity"
+      ],
+      "roots": 33,
+      "passed_events": 164,
+      "failures": 0
+    },
+    "full": {
+      "log": {
+        "path": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.full.jsonl",
+        "size": 8073905,
+        "sha256": "6536e5268c6a4d3e89c878da2e016cdaf6fa624765f710ace1e974d86e4b7173"
+      },
+      "packages": [
+        "clawreef/internal/systembackupproducer",
+        "clawreef/internal/systembackupbootstrapsecurity",
+        "clawreef/internal/systembackupsecurity",
+        "clawreef/internal/systembackupresources",
+        "clawreef/internal/systembackupread",
+        "clawreef/internal/systembackupevidence",
+        "clawreef/cmd/server",
+        "clawreef/internal/systembackupnoncebootstrap",
+        "clawreef/internal/systembackupcatrust",
+        "clawreef/cmd/system-backup-bootstrap"
+      ],
+      "roots": 1006,
+      "passed_events": 8546,
+      "failures": 0
+    },
+    "seeds": {
+      "log": {
+        "path": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.seeds.jsonl",
+        "size": 5497,
+        "sha256": "aacdc45135fe67a2f421ababe10dd5e5910264db383869ee0f08bd20e2fce961"
+      },
+      "packages": [
+        "clawreef/internal/systembackupevidence"
+      ],
+      "roots": 4,
+      "passed_events": 4,
+      "failures": 0
+    }
+  },
+  "native_receipt_present": false,
+  "original_owner_present": true,
+  "read_scope_same_current_bytes": false,
+  "current_source_approved": false,
+  "actual_sql_approved": false,
+  "production_authorized": false,
+  "limit": "Raw historical frozen native events only; terminal source recheck, binary receipts and cleanup not accepted here."
+}

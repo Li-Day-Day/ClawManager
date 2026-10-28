@@ -1,0 +1,129 @@
+{
+  "kind": "a2_human_owner11_failed_run_terminal_review.v1",
+  "reviewed_at": "2026-10-27T07:41:07.036Z",
+  "status": "terminal_failed_10_of_11_actual_SQL_subtests_passed_negative_DDL_fixture_failed",
+  "user_attachment": {
+    "path": "C:/Users/zhanghui08/.codex/attachments/479ac25c-68fa-42de-8c22-466988baca81/已粘贴的文本.txt",
+    "size": 5957,
+    "sha256": "745333e6bd7040b65eabfa2aba033f3cd02bfdb41f6e48940a956027a60d2c46"
+  },
+  "local_transcript": {
+    "path": "docs/evidence/a-download-owners-mysql-remote-20261027-145649-489723bd.txt",
+    "size": 941677,
+    "sha256": "0d533604fb2f44752c84307e4d3eea6b6122f714994a66e2054290047bb80add"
+  },
+  "source_manifest": {
+    "path": "docs/evidence/a-download-owners-mysql-remote-source-20261027-145649-489723bd.json",
+    "size": 338539,
+    "sha256": "cc97d3c37e5f9d7a6e2762e526fe033c630e08b86e2e423ae2199bd3a9fba62f"
+  },
+  "source_sha256": "ead9218956c53a91129c83e803762a6c64d8e1c9e4f250bfe4214b0578440a5d",
+  "source_files": 1720,
+  "failing_test_input_pin": {
+    "path": "backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go",
+    "size": 14522,
+    "sha256": "19a5705a62f378a24f34d751405a8e37d9d9dee46c7138fe5632633c328a41ae"
+  },
+  "case_results": [
+    {
+      "name": "backup",
+      "status": "PASS"
+    },
+    {
+      "name": "drill",
+      "status": "PASS"
+    },
+    {
+      "name": "preflight",
+      "status": "PASS"
+    },
+    {
+      "name": "artifact_verify",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong_installation",
+      "status": "PASS"
+    },
+    {
+      "name": "revoked_actor",
+      "status": "PASS"
+    },
+    {
+      "name": "changed_original_deadline",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown_reference_column",
+      "status": "PASS"
+    },
+    {
+      "name": "missing_reference_column",
+      "status": "FAIL"
+    },
+    {
+      "name": "original_owner_lock",
+      "status": "PASS"
+    },
+    {
+      "name": "empty_reference_range",
+      "status": "PASS"
+    }
+  ],
+  "parent_test_status": "FAIL",
+  "remote_test_exit_code": 1,
+  "wrapper_exit_code": 1,
+  "failed_case_stage": "negative-schema fixture ALTER before owner.preview assertion",
+  "failed_statement": "ALTER TABLE system_backup_dependency_health RENAME COLUMN evidence_id TO hidden_reference, ALGORITHM=INPLACE",
+  "mysql_error_number": 1845,
+  "mysql_version": "8.4.8",
+  "migration_catalog_sha256": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+  "reported_fresh_migrations": 96,
+  "reported_migration_replay": "PASS",
+  "actual_lock_observations": [
+    "system_backups",
+    "system_backup_dependency_health"
+  ],
+  "namespace": {
+    "name": "sbk-mig-261027073149-559f",
+    "uid": "c22ac8ea-a207-4ba3-8fca-bf9967370f83",
+    "cleanup_recorded": true,
+    "remote_absence_independently_queried_by_A2": false
+  },
+  "owned_test_databases": {
+    "count": 11,
+    "unique_names": [
+      "amfa_c5ea8d89c10feabeb9ef661995110dec",
+      "amfa_9cf25a4a3ddfbe290b910c80f71e6da0",
+      "amfa_4f6b71d7566ef713d02aead8346376ba",
+      "amfa_76f8426c40ca73959922186a1dceef7f",
+      "amfa_ac0e5e7310efa2edeed629a41fe38911",
+      "amfa_b899e04df636828108995fdda109321b",
+      "amfa_132d5311f3cc37a2b7b9e022399a6814",
+      "amfa_b2ee0fdfbde6264a81d539046dc71113",
+      "amfa_28ab0643fd3b4ca7332ca4ea419bfddb",
+      "amfa_d0ca7cd071396f632398aa7be76a6272",
+      "amfa_99ea8218a067063206de9eeb401398c4"
+    ],
+    "cleanup_recorded": true
+  },
+  "remote_registration_scratch_cleanup_recorded": true,
+  "local_build_cache_cleanup_recorded": true,
+  "exact_local_source_owner": ".tmp-d-index-cache-df29c8583e314f9db24075d9b954f7a3",
+  "exact_local_source_owner_independently_absent": true,
+  "actual_cleanup_pending_records": [],
+  "generic_exception_CLEANUP_PENDING_word_is_not_a_pending_cleanup_record": true,
+  "socket_close_lines_not_used_as_root_failure_reason": true,
+  "end_of_run_frozen_source_postcheck_proven": false,
+  "previous_during_run_selected_source_observation": "docs/evidence/a2-owner-live-frozen-source-order-equivalence-20261027.json",
+  "retained_failure_not_relabelled_PASS": true,
+  "repair_owner": "A1",
+  "repair_and_affected_real_SQL_retest_required": true,
+  "agent_Go_executed_this_turn": false,
+  "agent_SSH": false,
+  "dependencies_installed": false,
+  "test_build_products_created_by_A2": false,
+  "whole_owner_suite_accepted": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

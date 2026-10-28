@@ -1,0 +1,45 @@
+**********************
+PowerShell transcript start
+Start time: 20261023163539
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$nonceR2Stem = 'docs/evidence/a-nonce-ca-r2-local-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+$nonceR2Exit = 1
+Start-Transcript -LiteralPath ($nonceR2Stem + '.txt') -NoClobber | Out-Null
+try {
+ & ./scripts/system-backup-a-nonce-ca-r2-validation.ps1 -BuildParallelism 4 -SeedCacheOwner (Join-Path (Get-Location) '.tmp-d-index-cache-becb8b4d45194f83bcd50d6423f8e8b4')
+ $nonceR2Exit = 0
+} catch {
+ Write-Output $_.Exception.Message
+} finally {
+ Write-Output ('NONCE_CA_R2_EXIT=' + $nonceR2Exit)
+ Write-Output ('NONCE_CA_R2_STEM=' + $nonceR2Stem)
+ Stop-Transcript | Out-Null
+}
+if ($nonceR2Exit -ne 0) { throw 'Nonce/CA r2 failed; preserve exact evidence and cleanup' }
+Process ID: 2728
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_PASS isolated-go-telemetry=off
+
+NONCE_CLEANUP verified=True owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-3fd2d436c3db4885b5e4d43947854581
+NONCE_RECEIPT C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-nonce-ca-r2-candidate-20261023-163540-606e73a9.json
+PS>TerminatingError(): "Read-only compilation cache seed failed"
+Read-only compilation cache seed failed
+NONCE_CA_R2_EXIT=1
+NONCE_CA_R2_STEM=docs/evidence/a-nonce-ca-r2-local-20261023-163535
+**********************
+PowerShell transcript end
+End time: 20261023164039
+**********************

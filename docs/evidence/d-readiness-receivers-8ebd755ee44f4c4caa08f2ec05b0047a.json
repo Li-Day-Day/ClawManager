@@ -1,0 +1,106 @@
+{
+  "kind": "d_readiness_receiver_validation.v1",
+  "started_at": "2026-10-23T08:38:25.547Z",
+  "command": "C:\\Program Files\\nodejs\\node.exe",
+  "inputs": [
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.test.mjs",
+      "sha256": "c80112312bbc78f3286bffc9033a1feaaa02fddceaf0e1ebf02e8c8bbf9a602c"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-review-20261023.mjs",
+      "sha256": "b7e337ba69c227ce7f5e7462c85ae263bdf123b4b889f48b2ff1aeef9e1b3809"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-review-20261023.test.mjs",
+      "sha256": "18409ad0f6402043e7a3c3e4d717c3ed622d95f589162da7ffb1537ca7997cbb"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-fk-actual-review-20261023.mjs",
+      "sha256": "7ce5c5d75483bde39fa5a69211db2a099fc1a5aecc82c491e08276cca9ddef0e"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-fk-actual-review-20261023.test.mjs",
+      "sha256": "931c137af65bf3230f268c1cfe91e143a470b2a5e23e8d7b05934b009a20e097"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-actual-review-20261023.mjs",
+      "sha256": "a0d5bdc570f68f15147343777bf97f44285c891df46411d7973a240a48e86af2"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-actual-review-20261023.test.mjs",
+      "sha256": "5bc3324723e1e71a1dcf31757d843449b30a7d064be05ba1403b073df95f7830"
+    },
+    {
+      "path": "docs/evidence/d-readiness-receiver-validation-20261023.mjs",
+      "sha256": "329db044af786e58c8f810887bdd302f7374ebecddbeaa74f5ce12d64a4363c0"
+    }
+  ],
+  "steps": [
+    {
+      "suite": "resources",
+      "args": [
+        "--test",
+        "--test-isolation=none",
+        "docs/evidence/d-resources-mysql-actual-review-20261023.test.mjs"
+      ],
+      "tests": 64,
+      "exit_code": 0,
+      "log": {
+        "path": "docs/evidence/d-readiness-receivers-8ebd755ee44f4c4caa08f2ec05b0047a-resources.txt",
+        "sha256": "651881e16452bab9a81cb273a8e404124fd3b088f1a41cba6020d3a4f3f6755b"
+      }
+    },
+    {
+      "suite": "drill",
+      "args": [
+        "--test",
+        "--test-isolation=none",
+        "docs/evidence/d-drill-http-review-20261023.test.mjs"
+      ],
+      "tests": 52,
+      "exit_code": 0,
+      "log": {
+        "path": "docs/evidence/d-readiness-receivers-8ebd755ee44f4c4caa08f2ec05b0047a-drill.txt",
+        "sha256": "c71c0ca39782344d9d178e0ace853b9d347d55d7442c31894ebdf03cae20bc95"
+      }
+    },
+    {
+      "suite": "A_FK_compatibility",
+      "args": [
+        "--test",
+        "--test-isolation=none",
+        "docs/evidence/a-resources-writer-fk-actual-review-20261023.test.mjs"
+      ],
+      "tests": 27,
+      "exit_code": 0,
+      "log": {
+        "path": "docs/evidence/d-readiness-receivers-8ebd755ee44f4c4caa08f2ec05b0047a-A_FK_compatibility.txt",
+        "sha256": "e1aa45e32118ae640e365db182468833a0b56a35f6bc317d63b1809641e4ae78"
+      }
+    },
+    {
+      "suite": "A_writer_compatibility",
+      "args": [
+        "--test",
+        "--test-isolation=none",
+        "docs/evidence/a-resources-writer-actual-review-20261023.test.mjs"
+      ],
+      "tests": 14,
+      "exit_code": 0,
+      "log": {
+        "path": "docs/evidence/d-readiness-receivers-8ebd755ee44f4c4caa08f2ec05b0047a-A_writer_compatibility.txt",
+        "sha256": "19c79bea4368cf0313901c37fda448cf2c2fb065edd044d097ce7d201a0f5346"
+      }
+    }
+  ],
+  "inputs_stable": true,
+  "error": null,
+  "actual_mysql": false,
+  "dependencies_installed": false,
+  "completed_at": "2026-10-23T08:40:32.636Z"
+}

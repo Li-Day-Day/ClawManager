@@ -1,0 +1,137 @@
+{
+  "kind": "a2_nonimplementer_metrics_registry_controller_r3_source_review.v1",
+  "status": "exact_registry_metadata_and_rendering_reviewed_native_and_collector_integration_pending",
+  "inputs": [
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-dedupe-proposal-candidate-20261027-r1.json",
+      "size": 195203,
+      "sha256": "e647ef1ff736428279c329a12d71111066afef2415aeb49f23f2e82051ff6e1b"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-controller-registry-candidate-20261027-r3.json",
+      "size": 195161,
+      "sha256": "59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-controller-rules-candidate-20261027-r3.yaml",
+      "size": 69960,
+      "sha256": "af3a2917e8f8c455c142c4ede16399edbc6b1af78a63fc4a8d9f2a3bb7212b72"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-controller-registry-generator-candidate-20261027-r3.mjs.txt",
+      "size": 41662,
+      "sha256": "bd99200411dbf1ab3a757e57f424e1d145c60d5a06e2e9ec9a38e9dbb76f6a39"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-contract-tests-candidate-20261027-r3.mjs.txt",
+      "size": 214718,
+      "sha256": "d2f37befbda4db3c9d8ea342d2624197203421b96dc62384afdbb5bb96d02bc6"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-prometheus-tests-candidate-20261027-r3.mjs.txt",
+      "size": 3331,
+      "sha256": "8e26caf7127d02091f8f365639fb2dd3e4d392d3fdc86df27ea3290c6825e339"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-contract-readme-candidate-20261027-r3.md.txt",
+      "size": 18605,
+      "sha256": "cbc0b73767d9f2ac29210eacd388966fc6dbdf44329e34992ad2fad6179fdd1f"
+    },
+    {
+      "path": "docs/evidence/a2-cleanup-controller-candidate-source-reviewed-20261027-r2.json",
+      "size": 4176,
+      "sha256": "804839ad87b9e64d36a24ff95ead9335640ae02808f6f2ede4bea5937bf2bacb"
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.mjs",
+      "size": 4307,
+      "sha256": "0e5b1ef127e84d358fe24fc2c752eef77e3f76321e85c2e5c2adf67060d23606"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-controller-candidate-20261027-r3.contract-tests.log",
+      "size": 596,
+      "sha256": "a43d130d00b537cb0c1d59cf54fd5dd7e8c65b71ffca8addf9335174a5aa1388"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-controller-candidate-20261027-r3.rules-tests.log",
+      "size": 397,
+      "sha256": "2491b32f8b9780efce5d39679f4e6a769605204d93a85ee2f9b353e3d5163ab8"
+    }
+  ],
+  "counts": {
+    "metrics": 210,
+    "alerts": 100,
+    "promql": 94,
+    "controller_state": 6
+  },
+  "delta_from_combined_nine": {
+    "unchanged_alert_rows": 96,
+    "changed_existing_ids": [
+      "cleanup-overdue",
+      "restore-residual-volume-overdue"
+    ],
+    "removed_ids": [
+      "signature-or-checksum-failure"
+    ],
+    "added_ids": [
+      "signature-operation-failure",
+      "checksum-or-signature-verifier-failure"
+    ],
+    "metrics_and_other_metadata_preserved": true,
+    "inverse_restores_base": true
+  },
+  "new_signature_rules_match_reviewed_D_proposal": true,
+  "two_cleanup_predicates_match_reviewed_Go_direction": true,
+  "original_fixed_clock_cases_and_immediate_critical_profiles_preserved": true,
+  "unknown_collection_metadata_explicit": true,
+  "render_function_actually_executed_in_process": true,
+  "exact_generated_YAML_matches": true,
+  "controller_rules_excluded_from_Prometheus_candidate": true,
+  "both_test_counts_and_contract_readme_updated": true,
+  "Root_Node_log_observations": {
+    "logs": [
+      {
+        "path": "docs/evidence/d2-metrics-controller-candidate-20261027-r3.contract-tests.log",
+        "size": 596,
+        "sha256": "a43d130d00b537cb0c1d59cf54fd5dd7e8c65b71ffca8addf9335174a5aa1388"
+      },
+      {
+        "path": "docs/evidence/d2-metrics-controller-candidate-20261027-r3.rules-tests.log",
+        "size": 397,
+        "sha256": "2491b32f8b9780efce5d39679f4e6a769605204d93a85ee2f9b353e3d5163ab8"
+      }
+    ],
+    "both_report_zero_failures": true,
+    "not_a_PromQL_or_native_receipt": true
+  },
+  "required_application_targets": [
+    "backend/internal/systembackupcontroller/controller_state_alerts.go",
+    "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+    "scripts/system-backup-metrics-registry.mjs",
+    "contracts/system-backup/v12/metrics-alert-registry.json",
+    "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+    "scripts/system-backup-prometheus-rules.test.mjs",
+    "scripts/system-backup-contract-artifacts.test.mjs",
+    "contracts/system-backup/v12/README.md"
+  ],
+  "limitations": [
+    "A2 executed the pure renderer against the exact candidate; the registry generator and Node test logs are separately observed Root results.",
+    "Typed controller facts do not prove collector completeness, frozen automatic cleanup start/budget or real residual-volume classification.",
+    "The four singleton gate metric projections and raw PromQL evaluator remain unproven.",
+    "Required actual current Go package/caller/Linux evidence and final source-scope acceptance are separate pending gates."
+  ],
+  "full_JSON_schema_validator_executed": false,
+  "Go_executed_by_A2": false,
+  "SQL_executed": false,
+  "PromQL_executed": false,
+  "live_sources_modified": false,
+  "dependencies_installed": false,
+  "contract_frozen": false,
+  "whole_baseline_accepted": false,
+  "production_approved": false
+}

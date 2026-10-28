@@ -134,7 +134,7 @@ func recordColumns(s storageDefinition) []string {
 // before exposing data. Absent records leave out unchanged. Any read/scan/close
 // or validation error is latched so ignored errors cannot lead to commit.
 func (t *Transaction) LockRecord(ctx context.Context, key RecordKey, out any) (*LockedRecord, error) {
-	if t == nil {
+	if t.rejectCopy() {
 		return nil, ErrGuardRequired
 	}
 	t.mu.Lock()
@@ -228,7 +228,7 @@ func (t *Transaction) ReplaceRecord(ctx context.Context, locked *LockedRecord, r
 }
 
 func (t *Transaction) writeRecord(ctx context.Context, locked *LockedRecord, record any, replace bool) error {
-	if t == nil {
+	if t.rejectCopy() {
 		return ErrGuardRequired
 	}
 	t.mu.Lock()

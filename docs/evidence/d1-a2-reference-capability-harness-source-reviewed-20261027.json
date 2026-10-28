@@ -1,0 +1,57 @@
+{
+  "kind": "d1_a2_reference_capability_harness_source_review.v1",
+  "scope": "read_only_harness_source_review_not_native_acceptance",
+  "disposition": "no_source_objection_to_the_exact_candidate_validation_run",
+  "pins": [
+    {
+      "path": "docs/evidence/a2-reference-capability-validation-20261027.ps1",
+      "size": 17485,
+      "sha256": "decb2e046c591d5d33c2725babafd7556c56dded8fefcfb8a632e168571c83d5"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-go-scope-20261026.mjs",
+      "size": 5752,
+      "sha256": "8f2a7b31fb7339802afe3196078c50cd5438806ce676a9c1430bcf5b264b0024"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-before-20261026.go.txt",
+      "size": 7804,
+      "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-candidate-20261026.go.txt",
+      "size": 7736,
+      "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-test-candidate-20261026.go.txt",
+      "size": 3372,
+      "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+    },
+    {
+      "path": "docs/evidence/d1-a2-reference-capability-source-reviewed-20261026.json",
+      "size": 4704,
+      "sha256": "a1b2af038d5e4b359ff4e3f915a2d531ac4d7fbce05d3f5e429c2eff23c6011f"
+    }
+  ],
+  "reviewed_boundaries": [
+    "Original decoder and candidate/test are pinned to the prior D1 reviewed bytes; only the owned frozen copy is changed.",
+    "Actual go-list captures for windows/linux and ordinary/MySQL tags derive runtime reverse imports and separate test-only callers; list exit and source provenance still require the native receipt.",
+    "Original-source regression must expose four forbidden capabilities as failed leaves and retain the four permitted controls.",
+    "Fixed regression requires eight leaves plus parent; complete ordinary runtime packages use count=1 and default vet, then exactly one local original-materials seed and Linux compile-only checks.",
+    "Finally verifies the expected snapshot and staged reviewed inputs even on failure, restores environment, checks driver hash, and removes the exact owned directory.",
+    "Compiler cache copying is not test-result reuse; serial Go window and offline module settings remain required."
+  ],
+  "native_acceptance_must_independently_check": [
+    "Old phase native exit exactly 1, exact four failed leaves plus failed parent/package, four passed controls, no additional test failures, build-fail, skips, panic or tool crash.",
+    "All fixed/full/seed run-pass pairs and completed packages match actual go-list closure; no skipped or missing roots.",
+    "All Linux compile phase exits and binary hashes, driver/input/snapshot postchecks, receipt terminal success and independent owner absence.",
+    "Candidate success does not prove the patch is applied to live source or approve later API/material source changes."
+  ],
+  "native_result_reviewed": false,
+  "native_tests_executed_by_D1": false,
+  "live_source_modified_by_D1": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false
+}

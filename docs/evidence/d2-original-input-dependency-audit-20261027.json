@@ -1,0 +1,140 @@
+{
+  "kind": "d2_original_input_dependency_revalidation.v1",
+  "date": "2026-10-27",
+  "status": "awaiting_original_owner_inputs_for_remaining_nonremote_implementation",
+  "previous_goal_turn": "implementation_and_governance_progress",
+  "this_goal_turn": "no_independent_implementation_progress_available_after_current_source_audit",
+  "consecutive_input_blocker_audits": 1,
+  "source_sha256": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+  "source_files": 1720,
+  "current_source_and_registration_checks_replayed_this_turn": true,
+  "root_actual_registration_check_exit": 0,
+  "root_actual_GC_formal_check_exit": 0,
+  "requirements": [
+    {
+      "item": "authoritative_cleanup_collector",
+      "D_work_still_required": "Implement bounded original-source read integration after approved time/resource mappings exist.",
+      "missing_inputs": "Automatic cleanup durable start anchor, frozen budget provenance, complete origin/type/target/resource-operation binding, residual-volume classification.",
+      "input_owners": [
+        "D original specification",
+        "B resource authority"
+      ],
+      "forbidden_substitutes": [
+        "updated_at",
+        "active configuration",
+        "claim restart",
+        "arbitrary new SQL columns",
+        "Complete boolean as authority"
+      ]
+    },
+    {
+      "item": "four_gate_hold_metric_projections",
+      "D_work_still_required": "Project the same active gate immutable timeout/hold facts with matching labels.",
+      "missing_inputs": "Actual reviewed collector/projection and owner access binding.",
+      "input_owners": [
+        "D orchestration",
+        "relevant resource owners"
+      ]
+    },
+    {
+      "item": "catalog_and_restore_relay_contracts",
+      "D_work_still_required": "Assemble machine contracts, schema and integration after original owner semantics are supplied.",
+      "missing_artifacts": [
+        "recovery_catalog_records",
+        "restore_target",
+        "status_relay",
+        "catalog_scan_record"
+      ],
+      "planned_control_tables_missing": [
+        "system_backup_catalog_imports",
+        "system_backup_catalog_records",
+        "system_backup_catalog_scan_states"
+      ],
+      "input_owners": {
+        "catalog": "C provider/record/scan semantics",
+        "restore_target_and_status_relay": "B resource identity/types, Job/relay envelope and progress field semantics"
+      },
+      "ownership_limit": "D retains machine-contract and system-table assembly responsibility; absence of upstream semantics is not permission to invent them."
+    },
+    {
+      "item": "bootstrap_and_production_API_composition",
+      "D_work_still_required": "Compose all trusted typed owners and production task writer/details at the existing explicit links.",
+      "missing_inputs": "27 default CLI slots span A/B/C/D; original authority, controlled material mapping and real provider/runner/domain implementations remain missing.",
+      "owner_policy_pending": {
+        "B": 24,
+        "C": 16
+      },
+      "production_task_writer_and_details_are_nil": true
+    }
+  ],
+  "input_request_presented_to_user": true,
+  "source_files_changed": false,
+  "Go_or_build_started": false,
+  "remote_SQL_or_SSH": false,
+  "PromQL_executed": false,
+  "dependencies_installed": false,
+  "test_build_products_created": false,
+  "whole_goal_complete": false,
+  "evidence": [
+    {
+      "path": "docs/system-backup-restore-execution-readable-plan.md",
+      "size": 3939,
+      "sha256": "f368950c9557d0fc2393f780e5b7d366b04fa734309d4ec9eb38d61e37bd8304"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "contracts/system-backup/v12/contract-manifest.json",
+      "size": 5256,
+      "sha256": "0df58467415015293f2cd4f5ca04db2182a2fb585b11c2e4a15128a3eb7114ba"
+    },
+    {
+      "path": "contracts/system-backup/v12/schema-registry.json",
+      "size": 98179,
+      "sha256": "8b72c233d83844e8d36e64b75d0bb690b27aa902ef99c28f38b61f5dedeae9f8"
+    },
+    {
+      "path": "contracts/system-backup/v12/job-observation-cursor.schema.json",
+      "size": 7927,
+      "sha256": "818d6dca16ef7dc26b99e64f6cb8cbc045c32da71460c44ad189a9a5419cfa80"
+    },
+    {
+      "path": "contracts/system-backup/v12/restore-drill-resource-lifecycle.schema.json",
+      "size": 6910,
+      "sha256": "6b1850b2fce2a8b0907d77a0deb30ca732ddcb0cdf767149018776de876e8d87"
+    },
+    {
+      "path": "docs/system-backup-restore-schema-inventory.json",
+      "size": 41692,
+      "sha256": "04c958f4b9f9ebd3cf345e3b2c173edacef51296fba5e393e0954fd451cacc3a"
+    },
+    {
+      "path": "docs/evidence/d2-cleanup-collector-handoff-20261027.json",
+      "size": 4463,
+      "sha256": "5b8311ba64624e7c0a7df50f82894b6f6b7c42ff70952711701c822c1af037c7"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/materials.go",
+      "size": 2708,
+      "sha256": "d8c39383bf6fab0943da519ac27f4e1a1e98f7e4d5376956b16335f3b7d869d8"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_tasks_live.go",
+      "size": 2658,
+      "sha256": "e5407ae4ebde00e9b0b6137a728f08cdecd765df7b67397448b81ca7e2b6cba6"
+    },
+    {
+      "path": "docs/system-backup-a2-bootstrap-27-slot-matrix-20261027.md",
+      "size": 25829,
+      "sha256": "685b845e2c1649fd853016dd0b8daa25717765af3fb0025e4418fabb30b76a33"
+    },
+    {
+      "path": "docs/evidence/a-owner-current-full-source-composed-reviewed-20261027-r2.json",
+      "size": 332655,
+      "sha256": "3555b4257818218a37c6099111d36907f37f124a3cd83ff0e866889963220760"
+    }
+  ]
+}

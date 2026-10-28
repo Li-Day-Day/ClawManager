@@ -1,0 +1,133 @@
+{
+  "kind": "a2_closeout_source_format_fix_review.v1",
+  "decision": "exact_format_fix_reviewed_full_owner_gate_not_accepted",
+  "positive_actual_manifests": 2,
+  "rejection_cases": [
+    "wrong_format",
+    "copy_unverified",
+    "dependencies_installed",
+    "extra_top_field",
+    "missing_top_field",
+    "empty_files",
+    "duplicate_path",
+    "unsorted_paths",
+    "extra_entry_field",
+    "missing_entry_field",
+    "null_entry",
+    "unknown_root",
+    "traversal",
+    "absolute_path",
+    "backslash",
+    "drive_or_stream_colon",
+    "control_character",
+    "empty_segment",
+    "dot_segment",
+    "excluded_directory",
+    "unsupported_extension",
+    "negative_size",
+    "fractional_size",
+    "unsafe_size",
+    "string_size",
+    "upper_case_hash",
+    "short_hash",
+    "wrong_aggregate_digest",
+    "changed_file_hash_without_reseal",
+    "changed_file_size_without_reseal"
+  ],
+  "rejections_with_recomputed_digest": [
+    "empty_files",
+    "duplicate_path",
+    "unsorted_paths",
+    "extra_entry_field",
+    "missing_entry_field",
+    "unknown_root",
+    "traversal",
+    "absolute_path",
+    "backslash",
+    "drive_or_stream_colon",
+    "control_character",
+    "empty_segment",
+    "dot_segment",
+    "excluded_directory",
+    "unsupported_extension",
+    "negative_size",
+    "fractional_size",
+    "unsafe_size",
+    "string_size",
+    "upper_case_hash",
+    "short_hash"
+  ],
+  "execution": "in_process_cli_modules_no_child_process",
+  "supplement_check": {
+    "command": [
+      "docs/evidence/a-owner-profile-supplement-review-20261023.mjs",
+      "docs/evidence/a-owner-profile-supplement-a1af4a2e2f5645c79fadfade1051f398.json",
+      "--check"
+    ],
+    "completed_without_error": true
+  },
+  "incomplete_gate_check": {
+    "command": [
+      "docs/evidence/a-owner-current-composed-review-20261023.mjs",
+      "docs/evidence/a2-incomplete-owner-control-20261026.json",
+      "docs/evidence/a-owner-profile-supplement-a1af4a2e2f5645c79fadfade1051f398.json",
+      "--write"
+    ],
+    "assertion_rejected": true,
+    "acceptance_outputs_unchanged": true,
+    "control_file_created": false
+  },
+  "source_files": 1625,
+  "source_sha256": "ede12e280a902b194bb729727d8b3dac8c13d38a830eb3605a25a33d10ee2e7e",
+  "backend_contracts_including_tagged_match": true,
+  "Go_or_builds_run": false,
+  "network_contacted": false,
+  "test_scratch_created": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "current_owner_baseline_accepted": false,
+  "GC_finalizer_approved": false,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-source.json",
+      "size": 311104,
+      "sha256": "23ca648c8e0c1c8a781c833a21c5b33c22116e7c14bac514daf54cb6e2468717"
+    },
+    {
+      "path": "docs/evidence/a-owner-profile-supplement-a1af4a2e2f5645c79fadfade1051f398.json",
+      "size": 3510,
+      "sha256": "c9d008ba3c51ffea05d4ae588fafe6b5b02f494041226862f57f4f474ba3d3a4"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a-owner-profile-supplement-a1af4a2e2f5645c79fadfade1051f398-source.json",
+      "size": 311104,
+      "sha256": "23ca648c8e0c1c8a781c833a21c5b33c22116e7c14bac514daf54cb6e2468717"
+    },
+    {
+      "path": "docs/evidence/a-owner-closeout-source-20261023.mjs",
+      "size": 1675,
+      "sha256": "b51e3d6d2c84a64f1f6abe25e535ee2d91e3f9c62c10935feb00b93a795c7908"
+    },
+    {
+      "path": "docs/evidence/a-owner-profile-supplement-review-20261023.mjs",
+      "size": 5000,
+      "sha256": "2d53ff06eae2c0e595eea955c6200d495baa22796eddb2b993be01d2acdac48c"
+    },
+    {
+      "path": "docs/evidence/a-owner-current-composed-review-20261023.mjs",
+      "size": 10441,
+      "sha256": "f68f6627cf531d429d0946c407c05b63b2d61899960d291d6b1086ff309c363e"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "size": 26152,
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    },
+    {
+      "path": "docs/evidence/a2-owner-closeout-source-review-20261026.mjs",
+      "size": 5954,
+      "sha256": "fa5e14bd800e5d3edc30d9846e01cee84c07768d76f2917387a8d40a66d972cd"
+    }
+  ]
+}

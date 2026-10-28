@@ -1,0 +1,78 @@
+{
+  "kind": "d_readback_coordination.v1",
+  "recorded_at": "2026-10-23T08:35:51.881Z",
+  "receiver": {
+    "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+    "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+  },
+  "receiver_tests": {
+    "path": "docs/evidence/d-resources-mysql-actual-review-20261023.test.mjs",
+    "sha256": "c80112312bbc78f3286bffc9033a1feaaa02fddceaf0e1ebf02e8c8bbf9a602c"
+  },
+  "regression": {
+    "tests": 64,
+    "passed": 64,
+    "failed": 0,
+    "exit_code": 0,
+    "isolation": "none",
+    "log": {
+      "path": "docs/evidence/d-resources-readback-evidence-repair-tests-20261023-r3.txt",
+      "sha256": "35c0593dd9d5db9bd415159fcb8553805f54d89bb1f2c768e22717554e614fd5"
+    },
+    "prior_capture_failure_log": {
+      "path": "docs/evidence/d-resources-readback-evidence-repair-tests-20261023.txt",
+      "sha256": "beff6a54797e2314c011d054814f6400173760798e33eed9f52b18d0083d1b43"
+    },
+    "prior_capture_failure": "Nested Node test-runner spawn EPERM; retained. Direct test run with isolation=none passed."
+  },
+  "actual_readback": {
+    "status": "accepted_isolated_synthetic_only",
+    "receipt": {
+      "path": "docs/evidence/d-resources-readback-actual-accepted-20261023.json",
+      "sha256": "64c327ea482c668830c742f65f93915497eb3858656a73cb28ee0b3a600fd876"
+    },
+    "cases": 12,
+    "namespace": "sbk-mig-261023075431-1421",
+    "namespace_uid": "d08b3576-0aa6-4cbe-a412-5c1ce983af96",
+    "remote_rerun_required": false,
+    "original_local_log_valid_json": false,
+    "original_log_rewritten": false,
+    "local_supplement": {
+      "path": "docs/evidence/d-resources-local-recheck-c5fe0b025c054ef4b239bc8cc6c71f81.json",
+      "sha256": "5497a3f811bfbc610c53e7eebb7ab45eee249e01f87c067e8adf1a1b4b688f45"
+    },
+    "local_roots": 71,
+    "local_pass_events": 843,
+    "source_inputs": 122,
+    "owner_removed": true,
+    "foreign_keys_accepted": false,
+    "full_restore_accepted": false,
+    "production_approved": false,
+    "A_independent_signoff_claimed": false
+  },
+  "operator_attachments": [
+    {
+      "path": "docs/evidence/d-resources-readback-operator-20261023-part-1.txt",
+      "sha256": "368b0ca6a4ee3fc4926367e23f8740931ca5e8beff7235daefe9f8564593f2f4"
+    },
+    {
+      "path": "docs/evidence/d-resources-readback-operator-20261023-part-2.txt",
+      "sha256": "eb0017594954ee52abd10bac1b6b972da09374433ea59a889f8ffc68b5387f83"
+    },
+    {
+      "path": "docs/evidence/d-resources-readback-operator-20261023-part-3.txt",
+      "sha256": "c81005034ce769ef7ce9b0fca6212e6284c806e73e6ba84c4102b919f72be0ff"
+    }
+  ],
+  "unrelated_source_drift": [
+    "backend/internal/systembackupcatrust/ca_test.go",
+    "backend/internal/systembackupcatrust/ca.go",
+    "backend/internal/systembackupevidence/download_retention_gc.go",
+    "scripts/system-backup-d-gc-freeze-candidate-validation.ps1",
+    "scripts/system-backup-d-gc-freeze-review-request.mjs",
+    "scripts/system-backup-d-independent-work-review.mjs"
+  ],
+  "dependencies_installed": false,
+  "remote_executed_by_this_repair": false,
+  "scope": "readback receipt repair only; writer/FK/drill and other remote suites are independent"
+}

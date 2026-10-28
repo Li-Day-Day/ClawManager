@@ -97,6 +97,8 @@ func TestLiveBackupReadHTTPFailsClosedWithoutCurrentAuthorization(t *testing.T) 
 		{"/api/v1/admin/system-backup-operations", http.StatusUnauthorized},
 		{"/api/v1/admin/system-backup-artifact-verifications/sav_00000000-0000-4000-8000-000000000001", http.StatusUnauthorized},
 		{"/api/v1/admin/system-backup-artifact-verifications/sav_00000000-0000-4000-8000-000000000001?ignored=1", http.StatusBadRequest},
+		{"/api/v1/admin/system-restore-drills/sdr_00000000-0000-4000-8000-000000000001", http.StatusUnauthorized},
+		{"/api/v1/admin/system-restore-drills/sdr_00000000-0000-4000-8000-000000000001?ignored=1", http.StatusBadRequest},
 		{"/api/v1/admin/system-backup-operations/sop_00000000-0000-4000-8000-000000000001", http.StatusUnauthorized},
 		{"/api/v1/admin/system-backup-config", http.StatusUnauthorized},
 		{"/api/v1/admin/system-backup-config/versions", http.StatusUnauthorized},

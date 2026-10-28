@@ -1,0 +1,55 @@
+{
+  "kind": "a2_entry_parent_byte_recovery_independent_source_review.v1",
+  "status": "all_1741_parent_bytes_reproducible_not_native_or_retrospective_postcheck",
+  "parent_receipt": {
+    "path": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+    "sha256": "fb27a21187e66442dc80191279fc225d5c857d8fd7c78891905b20e958ed0c1f"
+  },
+  "recovery_manifest": {
+    "path": "docs/evidence/d2-entry-parent-recovery-20261027.json",
+    "sha256": "6d9cd02197b81ce45fa148e4c2bd9dde41438018a74cdce00264683e779a92a3"
+  },
+  "parent_frozen_input_count": 1741,
+  "current_live_matching_inputs": 1737,
+  "staged_archive_inputs": [
+    {
+      "path": "backend/cmd/server/main.go",
+      "restored_from": "docs/evidence/d2-entry-parent-recovery-20261027/backend__cmd__server__main.go.txt",
+      "size": 50341,
+      "sha256": "372036c016b28db6fecc8a6112c2e0f19073d0ea2b5368ce6b411744c1fafc5c"
+    },
+    {
+      "path": "backend/cmd/server/system_backup_read_live.go",
+      "restored_from": "docs/evidence/d2-entry-parent-recovery-20261027/backend__cmd__server__system_backup_read_live.go.txt",
+      "size": 11020,
+      "sha256": "775e0d72dc46b556d935dbd38901b94962adb806fa33f4f76f145bc249f11b84"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_gc_full_collect_mysql_test.go",
+      "restored_from": "docs/evidence/d2-entry-parent-recovery-20261027/backend__internal__systembackupevidence__download_gc_full_collect_mysql_test.go.txt",
+      "size": 23008,
+      "sha256": "d1b0c295339e9e6e61fec08dddf7336cb499a82b9645ff250bab8ca7c9d6818f"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/read_scope.go",
+      "restored_from": "docs/evidence/d2-entry-parent-recovery-20261027/backend__internal__systembackupsecurity__read_scope.go.txt",
+      "size": 6062,
+      "sha256": "cb25978ed8ec4765cc8090728eb2fe73d860cfeaf8c1ad53e839a4caf40c49cc"
+    }
+  ],
+  "live_source_modified": false,
+  "scratch_created": false,
+  "recovery_owner_independently_absent": true,
+  "Go_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "parent_native_status_still_failed": true,
+  "parent_postcheck_retroactively_claimed": false,
+  "whole_native_accepted": false,
+  "limitations": [
+    "Verifies recoverability of original input bytes only. Does not prove the deleted original snapshot stayed unchanged during native tests.",
+    "New API/materials and other added files are outside the closed original manifest.",
+    "Linux/new-source native validation and its own source postcheck/cleanup remain mandatory."
+  ]
+}

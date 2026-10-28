@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import path from 'node:path';
+import {describeOrdinaryScope} from './d2-current-ordinary-go-scope-20261027.mjs';
+const source=path.resolve('synthetic-source'),dir=path.join(source,'backend/internal/systembackupproducer'),bytes=Buffer.from('package producer\n');
+const pin={path:'backend/internal/systembackupproducer/a.go',size:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')};
+const row={ImportPath:'clawreef/internal/systembackupproducer',Dir:dir,GoFiles:['a.go'],TestGoFiles:['a.go'],Imports:['context'],TestImports:['testing']};
+const check=(rows=[row],pins=[pin],read=()=>bytes)=>describeOrdinaryScope(rows,['internal/systembackupproducer'],source,pins,read);
+test('selected production and test files stay distinct; generated main excluded',()=>{const j=check([row,{ImportPath:'clawreef/internal/systembackupproducer.test',Dir:'/generated',GoFiles:['main.go']}]);assert.equal(j.generated_or_test_variant_rows,1);assert.equal(j.selected_files.length,1);assert.equal(j.project_packages[0].production_files.length,1);assert.equal(j.project_packages[0].test_files.length,1);});
+for(const [name,rows] of [['package error',[{...row,Error:{Err:'failure'}}]],['dependency error',[{...row,DepsErrors:[{}]}]],['incomplete',[{...row,Incomplete:true}]],['missing package',[]],['duplicate original',[row,row]],['escaping input',[{...row,GoFiles:['../a.go']}]]])test(name+' rejected',()=>assert.throws(()=>check(rows)));
+test('unmanifested source rejected',()=>assert.throws(()=>check([row],[])));
+test('source byte drift rejected',()=>assert.throws(()=>check([row],[pin],()=>Buffer.from('changed'))));

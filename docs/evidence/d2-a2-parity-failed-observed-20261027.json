@@ -1,0 +1,79 @@
+{
+  "kind": "d2_a2_candidate_failed_phase_observation.v1",
+  "status": "failed_native_with_preserved_actual_ordinary_phase_observations",
+  "inputs": [
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.json",
+      "size": 697568,
+      "sha256": "67c12fd8e695c9778d69478f5b25cbb933faddb84da32399bf95e306853d5dc9"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.scope.json",
+      "size": 41771,
+      "sha256": "b5d180425485ce1f8f96c9b160cf557167e0ba260e330ddf5721cec8faa4d7be"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.full.jsonl",
+      "size": 348324,
+      "sha256": "6d26dd95567d83e01b50db0cf123616968c68f68a07089af048c700f91f8e802"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-native-9c2f727f86c548a38792cebd423489e7.tagged_seed.jsonl",
+      "size": 4686,
+      "sha256": "e214bbad06f1743e490dcb2fea615f38b2271f11a2c19f061e21cb7739a05c03"
+    }
+  ],
+  "actual_go_scope_check_exit": 0,
+  "complete_ordinary_packages": [
+    {
+      "package": "clawreef/cmd/system-backup-bootstrap",
+      "roots": 3,
+      "events": 3
+    },
+    {
+      "package": "clawreef/internal/systembackupbootstrapmaterials",
+      "roots": 2,
+      "events": 13
+    },
+    {
+      "package": "clawreef/internal/systembackupbootstrapsecurity",
+      "roots": 21,
+      "events": 202
+    },
+    {
+      "package": "clawreef/internal/systembackupcatrust",
+      "roots": 8,
+      "events": 56
+    },
+    {
+      "package": "clawreef/internal/systembackupnoncebootstrap",
+      "roots": 8,
+      "events": 73
+    }
+  ],
+  "full_pass_events": 347,
+  "fixed_pass_events": 9,
+  "expected_old_failures": [
+    "append_record",
+    "exact_delete",
+    "inventory_read",
+    "snapshot_list"
+  ],
+  "tagged_seed_exit": 1,
+  "tagged_failure": "Two private lifecycle helper declarations collide in the combined tagged package",
+  "original_candidate_source_postcheck": true,
+  "reviewed_inputs_unchanged": true,
+  "owner_cleanup": true,
+  "linux_reached": false,
+  "live_parser_promoted": false,
+  "native_run_accepted": false,
+  "current_source_scope_accepted": false,
+  "Go_started_by_observer": false,
+  "actual_mysql": false,
+  "scope_check_prefix_form": "Exact absolute prefix recorded in original scope artifact",
+  "observer_relative_prefix_check": {
+    "exit": 1,
+    "reason": "Relative invocation produced relative input.path values; original artifact records absolute paths",
+    "native_failure": false
+  }
+}

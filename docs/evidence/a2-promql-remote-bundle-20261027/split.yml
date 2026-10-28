@@ -1,0 +1,655 @@
+rule_files: []
+evaluation_interval: 1m
+tests:
+  - name: split/signature/capture_certificate/success
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="success"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/capture_certificate/failure
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="failure"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 1
+  - name: split/signature/capture_certificate/rejected
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="rejected"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/capture_certificate/timeout
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="timeout"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/capture_certificate/conflict
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="conflict"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/capture_certificate/canceled
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="canceled"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/acceptance_record/success
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="success"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/acceptance_record/failure
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="failure"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="acceptance_record",metric_result="failure"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="acceptance_record",metric_result="failure"}'
+            value: 1
+  - name: split/signature/acceptance_record/rejected
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="rejected"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/acceptance_record/timeout
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="timeout"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/acceptance_record/conflict
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="conflict"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/acceptance_record/canceled
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="canceled"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/catalog_record/success
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="success"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/catalog_record/failure
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="failure"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="catalog_record",metric_result="failure"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="catalog_record",metric_result="failure"}'
+            value: 1
+  - name: split/signature/catalog_record/rejected
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="rejected"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/catalog_record/timeout
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="timeout"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/catalog_record/conflict
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="conflict"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/signature/catalog_record/canceled
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="canceled"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/backup/checksum_mismatch
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/backup/signature_invalid
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="signature_invalid",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/backup/internal_error
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="internal_error",metric_result="failure",task_type="backup",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/backup/none
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="none",metric_result="success",task_type="backup",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/drill/checksum_mismatch
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/drill/signature_invalid
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="signature_invalid",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/drill/internal_error
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="internal_error",metric_result="failure",task_type="drill",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/drill/none
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="none",metric_result="success",task_type="drill",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/preflight/checksum_mismatch
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="preflight",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="preflight",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="preflight",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/preflight/signature_invalid
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="signature_invalid",metric_result="failure",task_type="preflight",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="preflight",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="preflight",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/preflight/internal_error
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="internal_error",metric_result="failure",task_type="preflight",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/preflight/none
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="none",metric_result="success",task_type="preflight",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/artifact_verify/checksum_mismatch
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="artifact_verify",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="artifact_verify",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="artifact_verify",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/artifact_verify/signature_invalid
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="signature_invalid",metric_result="failure",task_type="artifact_verify",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="artifact_verify",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="artifact_verify",warning_category="data-integrity-warning"}'
+            value: 1
+  - name: split/verifier/artifact_verify/internal_error
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="internal_error",metric_result="failure",task_type="artifact_verify",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/verifier/artifact_verify/none
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="none",metric_result="success",task_type="artifact_verify",warning_category="operational-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/simultaneous_original_scopes
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="failure"}
+        values: 0 0 0 0 0 1
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="acceptance_record",metric_result="failure"}
+        values: 0 0 0 0 0 1
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="catalog_record",metric_result="failure"}
+        values: 0 0 0 0 0 1
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="signature_invalid",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 1
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="acceptance_record",metric_result="failure"}'
+            value: 1
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 1
+          - labels: '{key_purpose="catalog_record",metric_result="failure"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 1
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}'
+            value: 1
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 1
+          - labels: '{failure_category="signature_invalid",metric_result="failure",task_type="drill",warning_category="data-integrity-warning"}'
+            value: 1
+          - labels: '{key_purpose="acceptance_record",metric_result="failure"}'
+            value: 1
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 1
+          - labels: '{key_purpose="catalog_record",metric_result="failure"}'
+            value: 1
+  - name: split/empty
+    interval: 1m
+    input_series: []
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/present_zero
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="failure"}
+        values: 0 0 0 0 0 0
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}
+        values: 0 0 0 0 0 0
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples: []
+  - name: split/independent_counter_resets
+    interval: 1m
+    input_series:
+      - series: clawmanager_system_backup_signature_operations_total{key_purpose="capture_certificate",metric_result="failure"}
+        values: 0 0 1 0 1 2
+      - series: clawmanager_system_backup_verifier_checks_total{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}
+        values: 0 0 1 0 1 2
+    promql_expr_test:
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 3
+      - expr: increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 3
+      - expr: increase(clawmanager_system_backup_signature_operations_total{metric_result="failure"}[5m]) > 0 or increase(clawmanager_system_backup_verifier_checks_total{failure_category=~"checksum_mismatch|signature_invalid"}[5m]) > 0
+        eval_time: 5m
+        exp_samples:
+          - labels: '{failure_category="checksum_mismatch",metric_result="failure",task_type="backup",warning_category="data-integrity-warning"}'
+            value: 3
+          - labels: '{key_purpose="capture_certificate",metric_result="failure"}'
+            value: 3

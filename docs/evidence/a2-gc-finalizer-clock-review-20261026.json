@@ -1,0 +1,46 @@
+{
+  "kind": "a2_gc_finalizer_incremental_clock_review.v1",
+  "date": "2026-10-26",
+  "criterion": "A-GC-FINALIZER-01",
+  "status": "current_source_captures_last_work_SQL_sample_runtime_verification_pending",
+  "document": "docs/system-backup-a2-finalizer-clock-review-20261026.md",
+  "requirement_ids": [
+    "F1",
+    "F4",
+    "A-GC-WORK-01"
+  ],
+  "old_intermediate_source_bytes_frozen": false,
+  "old_runtime_counterexample_run": false,
+  "current_assignment_preserves_last_sample": true,
+  "requested_model_case": "T0 < T2 < T1 where work last sample=T1 and finalizer sample=T2 must deny; T2>=T1 may pass within original bounds",
+  "Go_or_builds_run": false,
+  "production_vulnerability_claimed": false,
+  "production_approved": false,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "size": 33161,
+      "sha256": "6e973153f4f2f59b891211c3ece8b782b54e277078dbeb82427351221cf968b8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_finalize.go",
+      "size": 2684,
+      "sha256": "c296e07ba594f6815c3d2a0073935a68d9fb28f5e37255ade36974ec924a425c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_work.go",
+      "size": 1820,
+      "sha256": "5d9ec0a60074d9b2b4dfcd7e9119ce4e78e3e87c3a2a2f76ec61356f29cd4843"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_admission_audit.go",
+      "size": 7928,
+      "sha256": "cb3115e82d7dd8d9ea5f45b840df1290ea644a74225a3362e0fdb67fef902fbd"
+    },
+    {
+      "path": "docs/system-backup-a2-finalizer-clock-review-20261026.md",
+      "size": 2758,
+      "sha256": "66c902af79020674cadad1469b3da155d383c00dd95267b883a5f6f0bb56ff36"
+    }
+  ]
+}

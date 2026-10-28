@@ -1,0 +1,922 @@
+{
+  "kind": "a_owner_final_local_preparation_acceptance.v1",
+  "status": "complete_exact_current_local_owner_profile",
+  "source_sha256": "2099a08cb03ebf57e9c9411765ff166ac189e097dedb153971fb46b72f8133b0",
+  "source_files": 1629,
+  "tested_owner_source_sha256": "41b8e16788574aeebc44ec42890ed596624ea70bf179bd7708ca515e88d9dd16",
+  "current_source_composition": {
+    "path": "docs/evidence/d-local-current-source-composed-20261026.json",
+    "size": 316912,
+    "sha256": "e5853c2ef9e668955d22620ca5a7f7493c89672d7fbe5356aa802255e45b821b"
+  },
+  "source": {
+    "path": "docs/evidence/a-owner-final-source-20261026.json",
+    "size": 313202,
+    "sha256": "977aac1c9e74bdf27738ccc832534f7530d9708130d8f74cb2a863e632ae2d67"
+  },
+  "events": {
+    "path": "docs/evidence/a-owner-final-native-20261026.jsonl",
+    "size": 4942601,
+    "sha256": "2fcf2b6420ea728024ba6ac6a3c203d226126ff3472967f39ce9cedfad4ba6e5"
+  },
+  "events_origin": "concatenated_original_native_JSON_two_packages_no_test_rerun_claimed",
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "roots": 255,
+      "pass_events": 2011
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "roots": 392,
+      "pass_events": 3179
+    }
+  ],
+  "owner_baseline": {
+    "main": 647,
+    "all": 5190
+  },
+  "old_5138_tests_preserved": 5138,
+  "previous_5148_tests_preserved": 5148,
+  "packaged_seed_checks": 13,
+  "detached_seed_checks": 13,
+  "Linux_owner_probe_built": true,
+  "Linux_migration_runner_built": true,
+  "catalog": {
+    "algorithm": "sha256-length-prefixed-filename-normalized-content-v1",
+    "file_count": 96,
+    "hash": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"
+  },
+  "private_finalizer_static_review": {
+    "path": "docs/evidence/a-gc-finalizer-static-reviewed-20261026.json",
+    "size": 7501,
+    "sha256": "28092c56b51f5a684408a15da9f2c29e5e3e48e44c1a0ae4ae1937d0f69748a4"
+  },
+  "single_regression_counterexamples": [
+    {
+      "target": "TestDownloadGCFinalizerProtectedCandidate/worker_claim",
+      "parent": "TestDownloadGCFinalizerProtectedCandidate",
+      "native_exit": 1,
+      "assertion_not_build_failure": true,
+      "unsafe_single_regression_commit_observed": true
+    },
+    {
+      "target": "TestDownloadGCFinalizerProtectedCandidate/clock_intermediate_rollback",
+      "parent": "TestDownloadGCFinalizerProtectedCandidate",
+      "native_exit": 1,
+      "assertion_not_build_failure": true,
+      "unsafe_single_regression_commit_observed": true
+    }
+  ],
+  "standalone_explicit_files": [
+    "download_retention_gc_freeze.go",
+    "download_retention_gc_freeze_test.go",
+    "download_retention_gc_freeze_a_test.go",
+    "download_retention_gc_finalize.go",
+    "download_retention_gc_finalize_test.go"
+  ],
+  "standalone_pass_events": 49,
+  "frozen_segment_binaries": [
+    {
+      "sha256": "fe2302875b60966f56b881f538915883fc7edcfcb7dbc8ad2efc30bb671c1eae",
+      "name": "admin-read.test"
+    },
+    {
+      "sha256": "c4a9b7d4437f5f76b558f5b418619f5a819b6b4d07a93be38cec21059a2ec616",
+      "name": "drill-http.test"
+    },
+    {
+      "sha256": "f7fb302236380b5fbc82fb5fb083d37e4a40469fd3cfbed69d06fb67cf557abf",
+      "name": "freeze-finalizer.test"
+    },
+    {
+      "sha256": "6b3b5db09775e00204d91209a429536ddd8278347d7b5ec8f5213b6cb250901a",
+      "name": "owner-seeds.exe"
+    },
+    {
+      "sha256": "6335d8a729c3d5f86dc368b9a57802f283642470fbb2dddbd50f10320e434222",
+      "name": "owners.test"
+    },
+    {
+      "sha256": "47472c3e84a85a8c1ef06e2a8ec65cf6f51b107ce116c580d8b7f4446265558a",
+      "name": "resources.test"
+    },
+    {
+      "sha256": "aa78d5c15b64fb8aa37f0d3940bfb084e8ea58c07ad80ad147b860d4c102df21",
+      "name": "server"
+    },
+    {
+      "sha256": "a65f27b51701cb4b1684f9b2fe03e4de1e5f2c2c3d24447fecc5736b937dd998",
+      "name": "system-backup-migrate"
+    }
+  ],
+  "current_tagged_HTTP_binary": {
+    "sha256": "1606b3997598862e77cea8c7cf063943aa64198b5f5e77605bf8856e74dd3efe",
+    "acceptance": {
+      "path": "docs/evidence/d-drill-http-current-increment-received-20261026.json",
+      "size": 1485,
+      "sha256": "f16e75f58a6c119c6418a8a5f73a93b25998c8678c252c3e052652f3ebd09647"
+    },
+    "replaces_frozen_binary": "drill-http.test"
+  },
+  "stages": [
+    {
+      "stage": 0,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=10m",
+        "-run",
+        "^(TestDownloadGCFinalizer.*|TestDownloadGCFreezeFinalizationFollowsTicket|TestAdmittedHTTPFixtureStillRejectsStaleSQLClock|TestAdmittedDownloadHTTPCompleteRangeAuditAndNoReplay|TestAdmittedDownloadHTTPInterruptionRevocationAndResultFailure|TestAdmittedDownloadHTTPPublicInternalAndClassificationRace|TestADownloadNativeBufferedOutputKeepsOriginalDeadline|TestGCProducerResultCapacitySamplingDoesNotRenewAdmission|TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback)$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-0-attempt-1.log",
+        "size": 67991,
+        "sha256": "867cf7814393e0a4cae003f6e2c07541079230f29ea495bfc2202ce8e980fd5a"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 1,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=45m",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-1-attempt-1.log",
+        "size": 2945439,
+        "sha256": "91a0eeffd745c77dce66d4eaecab29ca9f4db7a18aad569059e33a81bf8e368b"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 2,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=45m",
+        "./internal/systembackupproducer"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-2-attempt-1.log",
+        "size": 687432,
+        "sha256": "83bf6fc6f3e66b45ba32c7886d145f6aab61deb50016d6f2cfb56022779171cf"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 3,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=45m",
+        "./internal/systembackupresources"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-3-attempt-1.log",
+        "size": 779398,
+        "sha256": "8690625e38cdc1ea926a385d478f903d29dd65116b27298a158b4c833037da62"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 4,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=45m",
+        "./internal/systembackupread"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-4-attempt-1.log",
+        "size": 912061,
+        "sha256": "46e92327dbd3549589a3ce664989c88192679af53a0c6cc601f988524560c709"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 5,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=45m",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-5-attempt-1.log",
+        "size": 1997164,
+        "sha256": "6d9ff144acc94117ea3a09e16961c5339c0eeec3c2872ff4c060348df6bdbb60"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 6,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=45m",
+        "./cmd/server"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-6-attempt-1.log",
+        "size": 18299,
+        "sha256": "6f19a413ba4b9f99635880dad75edc0432aa4315b61e58494b1ca4733628e754"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 7,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(DResources(Readback|Write)|AResourcesWriteFK)MySQLSeed$",
+        "-count=1",
+        "./internal/systembackupresources"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-7-attempt-1.log",
+        "size": 3724,
+        "sha256": "9b6dda2a200b2a7f962c01cf194abcd5d83ab40e080616214c99a44d898a0c78"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 8,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDDrillDetailHTTPSeed$",
+        "-count=1",
+        "./cmd/server/system_backup_read_live.go",
+        "./cmd/server/system_backup_read_cursor_key.go",
+        "./cmd/server/system_backup_read_live_test.go",
+        "./cmd/server/system_backup_read_cursor_key_test.go",
+        "./cmd/server/system_backup_read_live_mysql_test.go",
+        "./cmd/server/system_backup_read_verification_history_mysql_test.go",
+        "./cmd/server/system_backup_read_drill_history_mysql_test.go"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-8-attempt-1.log",
+        "size": 1430,
+        "sha256": "447ddd2f7f2415c0d93852ef1e7eafa2f41bd56d36e93de1a618ee5b13f073b9"
+      },
+      "scope": "frozen_segment_superseded_by_independently_tested_current_tagged_increment",
+      "current_replacement": {
+        "path": "docs/evidence/d-drill-http-current-increment-received-20261026.json",
+        "size": 1485,
+        "sha256": "f16e75f58a6c119c6418a8a5f73a93b25998c8678c252c3e052652f3ebd09647"
+      }
+    },
+    {
+      "stage": 9,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestAAdminReadMySQLSeed$",
+        "-count=1",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-0-attempt-1.log",
+        "size": 1259,
+        "sha256": "b352093850476b6189900ff69b2bd11520f5bc9d0afec7712c8b3909f2012d15"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 10,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-count=1",
+        "-timeout=180s",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-10-attempt-1.log",
+        "size": 12009,
+        "sha256": "4ffe43bc86e5a47dc48fa5da987c9c4fb8fca06228291e209b4dcb97ed7507b6"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 11,
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\owner-seeds.exe",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-1-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 12,
+      "command": [
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\owner-seeds.exe",
+        "-test.run",
+        "^Test(ASQLTaskDownloadOwnersMySQLSeed|ADownloadAdmissionMySQLSeed|ASensitiveDownloadMFAMySQLSeed)$",
+        "-test.v",
+        "-test.count=1",
+        "-test.timeout=60s"
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-detached.log",
+        "size": 1924,
+        "sha256": "169816d1482ef889a982d549b3e98b4d74b8561d68f52e83a1290e056457ca30"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 13,
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\owners.test",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-3-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 14,
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\resources.test",
+        "./internal/systembackupresources"
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-4-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 15,
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\drill-http.test",
+        "./cmd/server/system_backup_read_live.go",
+        "./cmd/server/system_backup_read_cursor_key.go",
+        "./cmd/server/system_backup_read_live_test.go",
+        "./cmd/server/system_backup_read_cursor_key_test.go",
+        "./cmd/server/system_backup_read_live_mysql_test.go",
+        "./cmd/server/system_backup_read_verification_history_mysql_test.go",
+        "./cmd/server/system_backup_read_drill_history_mysql_test.go"
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-5-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "frozen_segment_superseded_by_independently_tested_current_tagged_increment",
+      "current_replacement": {
+        "path": "docs/evidence/d-drill-http-current-increment-received-20261026.json",
+        "size": 1485,
+        "sha256": "f16e75f58a6c119c6418a8a5f73a93b25998c8678c252c3e052652f3ebd09647"
+      }
+    },
+    {
+      "stage": 16,
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\admin-read.test",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-6-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 17,
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\system-backup-migrate",
+        "./cmd/system-backup-migrate"
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-7-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 18,
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\server",
+        "./cmd/server"
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-8-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 19,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "."
+      ],
+      "platform": "windows",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-9-attempt-1.log",
+        "size": 58773,
+        "sha256": "10e3c9cba5842029c9abd083631279768aaa599137098bad8e078674dbf9bc4e"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 20,
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\binary\\freeze-finalizer.test",
+        "."
+      ],
+      "platform": "linux",
+      "native_exit": 0,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-10-attempt-1.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 21,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "-overlay",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\counterexamples\\missing_finalizer.json",
+        "-run",
+        "^TestDownloadGCFinalizerProtectedCandidate$/^worker_claim$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "native_exit": 1,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-11-attempt-1.log",
+        "size": 2632,
+        "sha256": "2be3e4748679a6b73a2308540e7071610927118ec71fd8c088495af8a530eb5f"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    },
+    {
+      "stage": 22,
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "-overlay",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25\\counterexamples\\earlier_clock_floor.json",
+        "-run",
+        "^TestDownloadGCFinalizerProtectedCandidate$/^clock_intermediate_rollback$",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "native_exit": 1,
+      "log": {
+        "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-12-attempt-1.log",
+        "size": 2734,
+        "sha256": "55e2db7b5598c7f514ff7594ad262c328ea49a50fded5ef221895e10688fe5fa"
+      },
+      "scope": "current_dependencies_byte_identical_to_frozen_segment"
+    }
+  ],
+  "segmented_source_composition": true,
+  "primary_wrapper_failure_preserved": true,
+  "current_composed_source_set_and_bytes_match": true,
+  "one_new_whole_source_native_run_claimed": false,
+  "all_test_owners_independently_absent": [
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-1c44af3217e3438ebbc383d231be3b25",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-53f39288bb914e1ca2f2bd9287e7874a",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a9b3f627a8134e5798ca12b34880d1af"
+  ],
+  "current_baseline_registration_permitted": true,
+  "actual_SQL": false,
+  "production_Collect_freeze_linked": false,
+  "joint_protocol_approved": false,
+  "production_approved": false,
+  "whole_worktree_approved": false,
+  "dependencies_installed": false,
+  "parser_dependency_prefix": {
+    "path": "docs/evidence/a-download-owners-actual-review-20261020.mjs",
+    "bytes": 17933,
+    "sha256": "96235b39ce08d98fe95330dc5af066c8f7a467a7808cfb2e23f1edf4706679cc"
+  },
+  "inputs": [
+    {
+      "path": "docs/evidence/d-gc-finalizer-first-segment-checkpoint-20261026.log",
+      "size": 35,
+      "sha256": "2e6553224bc3a941f3eb62e1c7a513207280857336bbdc16ded2c34abe3d1c7b"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-supplement-validation-20261026.ps1",
+      "size": 15126,
+      "sha256": "9567fc03ff06a5c7ec82fcc316d012cbc0d27b8d95b61781357a3abae0d924b5"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-validation-20261026.ps1",
+      "size": 16025,
+      "sha256": "32f5859ebd45de412a44592e2298e129716ade5a030c830a63b2af3b76c94bfb"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-detached.log",
+      "size": 1924,
+      "sha256": "169816d1482ef889a982d549b3e98b4d74b8561d68f52e83a1290e056457ca30"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-source.json",
+      "size": 311940,
+      "sha256": "cd90768f6b3d4bc11fb870434a5335c6499c3f279719d2f4fe8ba35f2cce713a"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-0-attempt-1.log",
+      "size": 1259,
+      "sha256": "b352093850476b6189900ff69b2bd11520f5bc9d0afec7712c8b3909f2012d15"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-1-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-10-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-11-attempt-1.log",
+      "size": 2632,
+      "sha256": "2be3e4748679a6b73a2308540e7071610927118ec71fd8c088495af8a530eb5f"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-12-attempt-1.log",
+      "size": 2734,
+      "sha256": "55e2db7b5598c7f514ff7594ad262c328ea49a50fded5ef221895e10688fe5fa"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-3-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-4-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-5-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-6-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-7-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-8-attempt-1.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25-step-9-attempt-1.log",
+      "size": 58773,
+      "sha256": "10e3c9cba5842029c9abd083631279768aaa599137098bad8e078674dbf9bc4e"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-detached.log",
+      "size": 2864,
+      "sha256": "c6ec40236a222a8f866749b7ececf5a1761df307db36985d392fc27a18539b44"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-source.json",
+      "size": 311940,
+      "sha256": "cd90768f6b3d4bc11fb870434a5335c6499c3f279719d2f4fe8ba35f2cce713a"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-0-attempt-1.log",
+      "size": 67991,
+      "sha256": "867cf7814393e0a4cae003f6e2c07541079230f29ea495bfc2202ce8e980fd5a"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-1-attempt-1.log",
+      "size": 2945439,
+      "sha256": "91a0eeffd745c77dce66d4eaecab29ca9f4db7a18aad569059e33a81bf8e368b"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-10-attempt-1.log",
+      "size": 12009,
+      "sha256": "4ffe43bc86e5a47dc48fa5da987c9c4fb8fca06228291e209b4dcb97ed7507b6"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-2-attempt-1.log",
+      "size": 687432,
+      "sha256": "83bf6fc6f3e66b45ba32c7886d145f6aab61deb50016d6f2cfb56022779171cf"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-3-attempt-1.log",
+      "size": 779398,
+      "sha256": "8690625e38cdc1ea926a385d478f903d29dd65116b27298a158b4c833037da62"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-4-attempt-1.log",
+      "size": 912061,
+      "sha256": "46e92327dbd3549589a3ce664989c88192679af53a0c6cc601f988524560c709"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-5-attempt-1.log",
+      "size": 1997164,
+      "sha256": "6d9ff144acc94117ea3a09e16961c5339c0eeec3c2872ff4c060348df6bdbb60"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-6-attempt-1.log",
+      "size": 18299,
+      "sha256": "6f19a413ba4b9f99635880dad75edc0432aa4315b61e58494b1ca4733628e754"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-7-attempt-1.log",
+      "size": 3724,
+      "sha256": "9b6dda2a200b2a7f962c01cf194abcd5d83ab40e080616214c99a44d898a0c78"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-8-attempt-1.log",
+      "size": 1430,
+      "sha256": "447ddd2f7f2415c0d93852ef1e7eafa2f41bd56d36e93de1a618ee5b13f073b9"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-step-9-attempt-1.log",
+      "size": 629,
+      "sha256": "8be96b7a41833f3a30bcd766eb078e60275d2fb6b7490a9fe37f124fca4b6b04"
+    },
+    {
+      "path": "docs/evidence/a-gc-finalizer-static-reviewed-20261026.json",
+      "size": 7501,
+      "sha256": "28092c56b51f5a684408a15da9f2c29e5e3e48e44c1a0ae4ae1937d0f69748a4"
+    },
+    {
+      "path": "docs/evidence/a-owner-closeout-source-20261023.mjs",
+      "size": 1675,
+      "sha256": "b51e3d6d2c84a64f1f6abe25e535ee2d91e3f9c62c10935feb00b93a795c7908"
+    },
+    {
+      "path": "docs/evidence/a-owner-final-local-review-20261026.mjs",
+      "size": 24221,
+      "sha256": "c640a8fc8ad9a989ee13d6e74b1a97972a21ebb41e37ad72715b01637e5130df"
+    },
+    {
+      "path": "docs/evidence/a-owner-finalizer-native-20261026.mjs",
+      "size": 2654,
+      "sha256": "a9c64c9ccbecb7737e2ef2fd775d0b8d34094aef521d7d10970b105222fe4865"
+    },
+    {
+      "path": "docs/evidence/a-owner-gc-full-local-20261023-111154-inventory.json",
+      "size": 389069,
+      "sha256": "2985bb09929aec33e6afa0d7c5ebb49b90b18ac7caf4adb69932cf8894addcd6"
+    },
+    {
+      "path": "docs/evidence/a2-gc-finalizer-f4-reviewed-20261026.json",
+      "size": 5287,
+      "sha256": "bd13e92bd06a4efa91787025d107dc4099ce45c0ea8b6b26581e10d18f2ea5eb"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-current-increment-received-20261026.json",
+      "size": 1485,
+      "sha256": "f16e75f58a6c119c6418a8a5f73a93b25998c8678c252c3e052652f3ebd09647"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.json",
+      "size": 320300,
+      "sha256": "77251752e1bc47ebd611229432228017555e9adcb0ff4f027e07232985807008"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.json.native.log",
+      "size": 1846,
+      "sha256": "d289a4e03900a4c1f33b9025e0bc89e957098521ac6a685ac38e7e6bffe43625"
+    },
+    {
+      "path": "docs/evidence/d-drill-http-repair-local-20261026.json.result.json",
+      "size": 875,
+      "sha256": "c14a711d36f8d2b22e07af89db7f3201c32f5e6edc5d3528f96be9ad803b0e76"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-cache-transfer-20261026.json",
+      "size": 1300729,
+      "sha256": "e64c46eb8d33299158f17b3608a1e206d9f36acdfecc3180c0b00ef92e660b91"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-counterexamples-1c44af3217e3438ebbc383d231be3b25.json",
+      "size": 55371,
+      "sha256": "8fcd79a45d7bacfd43e355183168b249fb58501857ee22d58d3258896c1a42c5"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-counterexamples-prepare-20261026.mjs",
+      "size": 2741,
+      "sha256": "b5c1b16ad82f06aa1b9f11485eb192c6baa0e36458727d04b99a9354b2066b0b"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-first-segment-checkpoint-20261026.json",
+      "size": 870,
+      "sha256": "e073b536cdf05a6753b71489c0659008f42d3a7bbb63016f59898a960fbdc3c7"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-independent-reviewed-20261026.json",
+      "size": 8633,
+      "sha256": "256b349d6011ac81a6ad11865069f0f82ab4223d05c03112f720105744463020"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-native-frozen-reviewed-20261026.json",
+      "size": 32932,
+      "sha256": "083ce6049ea7e95987ae6b62c540e209e004bf38db05102471b2535b01db2acb"
+    },
+    {
+      "path": "docs/evidence/d-gc-finalizer-preparation-20261026.json",
+      "size": 1273749,
+      "sha256": "71d916f0d668bf2fa25ca085c992e3ecacd8b77c56ed6b523e39674ad1fccbcd"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-1c44af3217e3438ebbc383d231be3b25.json",
+      "size": 17309,
+      "sha256": "c7085acc0f28f4e848809c685349c5927bff62ef18bb082541cb4bc0970d8345"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-step-1.log",
+      "size": 2907153,
+      "sha256": "b2e4c4376ae646a5816e1ba24d4820b951f7d4cdecb139c9bcc5a849862a51a3"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-step-5.log",
+      "size": 1996867,
+      "sha256": "43e548789a0fd8ff1f89f6991e5029d66800f3de9f701011d294b84a49fbeaa6"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-source.json",
+      "size": 311940,
+      "sha256": "cd90768f6b3d4bc11fb870434a5335c6499c3f279719d2f4fe8ba35f2cce713a"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af.json",
+      "size": 15422,
+      "sha256": "07dfdb20987102c34b0265b5a2f56c66a6e9ab685b9a04a006942e87236b02d4"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-interruption-recovery-20261026.json",
+      "size": 1084,
+      "sha256": "455ae8af5cb8aee15233662b70817d463343ad004cc882e59803688f3c554ead"
+    },
+    {
+      "path": "docs/evidence/d-local-closeout-snapshot-20261023.mjs",
+      "size": 3886,
+      "sha256": "d993e6772372e90d43f76327e503d669fd907497ad73c6319853d9d9abe6fbec"
+    },
+    {
+      "path": "docs/evidence/d-local-current-source-composed-20261026.json",
+      "size": 316912,
+      "sha256": "e5853c2ef9e668955d22620ca5a7f7493c89672d7fbe5356aa802255e45b821b"
+    },
+    {
+      "path": "docs/evidence/d-local-current-source-composition-20261026.mjs",
+      "size": 9571,
+      "sha256": "28c14fe2aec190782730a8357641e7e383e80cc5cb72a4439158f9c35eb15615"
+    },
+    {
+      "path": "docs/evidence/d-local-current-source-composition-20261026.test.mjs",
+      "size": 1302,
+      "sha256": "3110b49a0b5f70f6b6e8721c6befb63e359d48eb0b0192e19406b54ca4e62e3d"
+    }
+  ]
+}

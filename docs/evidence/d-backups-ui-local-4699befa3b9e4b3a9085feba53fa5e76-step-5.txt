@@ -1,0 +1,29 @@
+▶ all four live details use the validated read client and preserve distinct decisions
+  ✔ backups (106.0769ms)
+  ✔ drills (1.9764ms)
+  ✔ preflights (1.4189ms)
+  ✔ verifications (1.0701ms)
+✔ all four live details use the validated read client and preserve distinct decisions (113.7867ms)
+▶ detail reads allow a newer task row and reject an older one for every task kind
+  ✔ backups (1.4427ms)
+  ✔ drills (0.2937ms)
+  ✔ preflights (0.6796ms)
+  ✔ verifications (7.5603ms)
+✔ detail reads allow a newer task row and reject an older one for every task kind (11.5217ms)
+✔ a well-formed detail from another installation cannot replace the selected task (3.8389ms)
+▶ detail errors and leaked owner fields never fall back to preview data
+  ✔ 401 (2.0085ms)
+  ✔ 403 (0.986ms)
+  ✔ 503 (0.7495ms)
+✔ detail errors and leaked owner fields never fall back to preview data (14.943ms)
+✔ canceled detail selection does not issue a request (0.6665ms)
+✔ late detail completion cannot publish after cancellation even when transport ignores abort (0.4709ms)
+✔ the requested identity is frozen before awaiting the client (0.2284ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 172.1642

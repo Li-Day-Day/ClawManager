@@ -1,0 +1,135 @@
+{
+  "kind": "a2_metrics_strict_controller_private_native_review.v1",
+  "status": "passed_exact_private_eight_file_candidate_scope",
+  "receipt": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.json",
+    "size": 8312,
+    "sha256": "c0f92e43e11680049d3ff9b600d173b5b282e9fe059a1a9d6d42d4999c16436d"
+  },
+  "source_manifest": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.source.json",
+    "size": 337319,
+    "sha256": "554b074615e4d73c5e0f58b38c7221786f2ecdaa669d74328d24a4c185718b96"
+  },
+  "scope": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.go-scope.json",
+    "size": 73854,
+    "sha256": "ad9a8525e46ada81bcebc3de3332203a02aee810bd91927e05f547f26f4ac800"
+  },
+  "inventory": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.inventory.json",
+    "size": 1655,
+    "sha256": "1ea89dca4d71c62a25d35982becdebbf31d1bbad9cfbff01905326cb431eb893"
+  },
+  "candidate_source_sha256": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+  "base_source_sha256": "4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964",
+  "physical_source_set": {
+    "selected_files": 1718,
+    "node_extra_inputs": 1,
+    "physical_files": 1719,
+    "paths_sha256": "bffe7245ebbf00dde975b72a1963f8aa62cdd022b5f4e6d6d3cd72c38e10c213"
+  },
+  "recorded_pre_and_post_complete_set_checks": true,
+  "all_control_pins_currently_match": true,
+  "exact_changed_files": [
+    "backend/internal/systembackupcontroller/controller_state_alerts.go",
+    "backend/internal/systembackupcontroller/controller_state_alerts_test.go",
+    "scripts/system-backup-metrics-registry.mjs",
+    "contracts/system-backup/v12/metrics-alert-registry.json",
+    "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+    "scripts/system-backup-prometheus-rules.test.mjs",
+    "scripts/system-backup-contract-artifacts.test.mjs",
+    "contracts/system-backup/v12/README.md"
+  ],
+  "unchanged_base_files": 1710,
+  "Go_scope_variants": [
+    {
+      "platform": "windows",
+      "tags": "ordinary",
+      "source_files": 68,
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.windows.ordinary.go-list.jsonl",
+        "size": 497210,
+        "sha256": "a65b7ca297c7262ba2ed64b3b6b7f480b4ff4e02f1caa07140563b780f6789e8"
+      }
+    },
+    {
+      "platform": "windows",
+      "tags": "systembackup_mysql",
+      "source_files": 98,
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.windows.systembackup_mysql.go-list.jsonl",
+        "size": 519617,
+        "sha256": "6b8a9109a1e3f7f33bf27908a02dafa9d33022925f8506ef66a02c34588c7e12"
+      }
+    },
+    {
+      "platform": "linux",
+      "tags": "ordinary",
+      "source_files": 68,
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.linux.ordinary.go-list.jsonl",
+        "size": 492175,
+        "sha256": "f82128710cdb575eecf09162cbb1045aa09ff8df2c3cd70a2cf954d0a29ebe27"
+      }
+    },
+    {
+      "platform": "linux",
+      "tags": "systembackup_mysql",
+      "source_files": 98,
+      "log": {
+        "path": "docs/evidence/d2-metrics-controller-candidate-6eb295fa53fa4b299fc506a66bc76960-20261027-r2.linux.systembackup_mysql.go-list.jsonl",
+        "size": 514481,
+        "sha256": "4db1cdbf01653bc8fbf5e3ad5edf7931bb52265504791b1fe3e32fc7e1104919"
+      }
+    }
+  ],
+  "Windows": {
+    "package": "clawreef/internal/systembackupcontroller",
+    "roots": 147,
+    "pass_events": 237,
+    "old_failed_window_names_preserved": true
+  },
+  "Linux": {
+    "ordinary_and_tagged_build_exits": [
+      0,
+      0
+    ],
+    "binaries": [
+      {
+        "platform": "linux",
+        "tags": "ordinary",
+        "sha256": "daf9c411c674b7b2993eff46c58fd49e524bbbb0ea56c909d84967366c526a49",
+        "size": 8519444,
+        "header64_hex": "7f454c4602010100000000000000000002003e0001000000e0fa480000000000400000000000000090010000000000000000000040003800060040001a001900",
+        "executed": false
+      },
+      {
+        "platform": "linux",
+        "tags": "systembackup_mysql",
+        "sha256": "b3a2f72b9109827a34d68f4120846c33bce14aeeef59e0d4536d1bc2f0f309fd",
+        "size": 11284677,
+        "header64_hex": "7f454c4602010100000000000000000002003e0001000000e007490000000000400000000000000090010000000000000000000040003800060040001a001900",
+        "executed": false
+      }
+    ],
+    "recorded_headers_independently_validated": true,
+    "deleted_binaries_reconstructed_or_reread": false,
+    "executed": false
+  },
+  "old_failed_e08f_receipt_preserved": true,
+  "owner_independently_absent": true,
+  "ready_for_exact_eight_file_application": true,
+  "whole_baseline_accepted": false,
+  "limitations": [
+    "The full binary bytes were hashed and headers checked by the pinned runner inventory before cleanup; A2 independently verifies those retained records and actual build exits.",
+    "This permits exact candidate application, not whole baseline registration, collector authority, automatic-cleanup clock mapping, real residual-volume classification or production use.",
+    "PromQL fixtures remain prepared but unexecuted; B cross-review and four frozen singleton gate metric projections remain open."
+  ],
+  "Go_executed_by_A2": false,
+  "SQL_executed": false,
+  "PromQL_executed": false,
+  "dependencies_installed": false,
+  "live_sources_modified_by_A2": false,
+  "production_approved": false
+}

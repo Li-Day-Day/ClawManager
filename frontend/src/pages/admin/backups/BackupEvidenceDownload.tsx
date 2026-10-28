@@ -63,7 +63,7 @@ export function EvidenceDownloadForm({ installation, evidenceId, download = syst
   const field = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-rose-400 focus:outline-none focus:ring-1 focus:ring-rose-400 disabled:bg-slate-50';
   return <section className="rounded-xl border border-slate-200 bg-white p-5" aria-labelledby={`${id}-heading`}>
     <h3 id={`${id}-heading`} className="font-semibold text-slate-900">{b('evidenceDownloadTitle')}</h3>
-    <p className="mt-2 text-sm leading-6 text-slate-500">{localTest ? '本机测试报告：仅含合成数据的 A 校验结果，无需输入业务账户密码或验证码。' : b('evidenceDownloadNote')}</p>
+    <p className="mt-2 text-sm leading-6 text-slate-500">{localTest ? '本机测试报告：仅含本轮合成测试数据，无需输入业务账户密码或验证码。' : b('evidenceDownloadNote')}</p>
     <form onSubmit={submit} className="mt-4 space-y-4" autoComplete="off">
       <div><label htmlFor={`${id}-target`} className="text-sm text-slate-700">{b('evidenceDownloadId')}</label>
         <input id={`${id}-target`} className={`${field} font-mono`} value={target} readOnly={evidenceId !== undefined} disabled={busy}

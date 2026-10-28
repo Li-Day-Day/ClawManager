@@ -142,7 +142,8 @@ export function validateOwnerEvidence({logBytes, sourceBytes, baselineSource, ba
   for (const marker of ['CLEANED remote-registration-scratch=yes', 'CLEANED local-registration-build-cache=True', 'LOCAL_PASS config-writer-frozen-postcheck=yes default-vet=yes dependencies-installed=no remote-requested=True']) check(remote.includes(marker), 'final_' + marker.split(' ').slice(0, 2).join('_'));
   const exit = [...remote.matchAll(/^a_download_owners_mysql_remote_exit=(-?\d+)$/gm)];
   check(exit.length === 1 && exit[0][1] === '0', 'one_outer_exit_zero');
-  check(/(?:PowerShell transcript end|Windows PowerShell 脚本结束)/.test(remote) && /(?:End time:|结束时间:)/.test(remote), 'transcript_completed');
+  const localizedFooter = /\n\*{10,}\nPowerShell 记录结束\n结束时间: \d{14}\n\*{10,}\n?$/.test(remote);
+  check((/(?:PowerShell transcript end|Windows PowerShell 脚本结束)/.test(remote) && /(?:End time:|结束时间:)/.test(remote)) || localizedFooter, 'transcript_completed');
   const drift = source.files.filter(f => { try { const b = readFile(f.path); return b.length !== f.size || sha256(b) !== f.sha256; } catch { return true; } }).map(f => f.path);
   return {kind: 'a_download_sql_task_owners_actual_mysql_independent_acceptance', recorded_at: new Date().toISOString(), status: 'accepted_exact_eleven_task_owner_cases_only',
     log_sha256: sha256(logBytes), source_manifest_sha256: sha256(sourceBytes), source_sha256: source.source_sha256, source_files: source.files.length,
@@ -227,7 +228,59 @@ export function loadReviewedOwnerBaseline(sourceBytes) {
       sourcePin: '82d99363dcf0dd7be2a31576fb601089b02df9799903f198224de6e80fa65098',
       eventsPin: '990aae2b00cf723d7c520d28843d667909f414f6872f196104faafc6db2f9c67',
       acceptance: 'docs/evidence/a-owner-cost-context-baseline-accepted-20261021.json',
-      acceptancePin: '6d90236573a4680ba703dc25f0774830568f7007e067ff7e275d1ea0984d64ef'}
+      acceptancePin: '6d90236573a4680ba703dc25f0774830568f7007e067ff7e275d1ea0984d64ef'},
+    {sourcePath: 'docs/evidence/a-owner-current-full-local-20261023-093734-source.json',
+      eventsPath: 'docs/evidence/a-owner-current-full-local-20261023-093734-inventory.json', derivedInventory: true,
+      sourcePin: '44356e4c741add7b330dc0b616bcae776c4fece91c44f5219b3e0a83c42366ec',
+      eventsPin: '91915db1aa359370e67bfd5a7aa1cb3da9906f1ed2fed2cc6e7b5005700eadc4',
+      acceptance: 'docs/evidence/a-owner-current-full-accepted-20261023.json',
+      acceptancePin: '815ec8f60fd755880f2046fe7bd6df52bec2776df91c066e8559bf79cd0f1b75'},
+    {sourcePath: 'docs/evidence/a-owner-dependency-freeze-20261023-source.json',
+      eventsPath: 'docs/evidence/a-owner-current-full-local-20261023-093734-inventory.json', derivedInventory: true,
+      // Only the two reviewed resources files changed outside the actual
+      // owner graph. Preserve the inventory's original tested source identity.
+      inventorySourceSHA256: 'd27224a655b1dbb2f332f77a06f0fc412043b3e5daa25a9c25f5fd7301e71885',
+      sourcePin: '998bee558d1707b7c46b68ec6afb59150b04f8be35b0654c1d7d8c4968621c7a',
+      eventsPin: '91915db1aa359370e67bfd5a7aa1cb3da9906f1ed2fed2cc6e7b5005700eadc4',
+      acceptance: 'docs/evidence/a-owner-readback-dependency-accepted-20261023.json',
+      acceptancePin: 'a059985f3d54c9318a5acae46bfdc2875b02bbbad6b2873d944eb12a8de116d4'},
+    {sourcePath: 'docs/evidence/a-owner-dependency-freeze-20261023-r2-source.json',
+      eventsPath: 'docs/evidence/a-owner-current-full-local-20261023-093734-inventory.json', derivedInventory: true,
+      inventorySourceSHA256: 'd27224a655b1dbb2f332f77a06f0fc412043b3e5daa25a9c25f5fd7301e71885',
+      sourcePin: '5c8bd979bd1b90e14d86499c4d8906a3a8721495cf9c2528eca3200e90aeab88',
+      eventsPin: '91915db1aa359370e67bfd5a7aa1cb3da9906f1ed2fed2cc6e7b5005700eadc4',
+      acceptance: 'docs/evidence/a-owner-readback-dependency-accepted-20261023-r2.json',
+      acceptancePin: 'a52b77083e0b141e2272058100d3074d50cdc68c56640e74de15b711b7a673f9'},
+    {sourcePath: 'docs/evidence/a-owner-gc-full-local-20261023-111154-source.json',
+      eventsPath: 'docs/evidence/a-owner-gc-full-local-20261023-111154-inventory.json', derivedInventory: true,
+      sourcePin: '121d6586f0ce06eda7887e40e21e5dbca12591e8c29a736336262b04481503bd',
+      eventsPin: '2985bb09929aec33e6afa0d7c5ebb49b90b18ac7caf4adb69932cf8894addcd6',
+      acceptance: 'docs/evidence/a-owner-gc-full-accepted-20261023.json',
+      acceptancePin: '73058cc7276e80eef360c71cccf40154bdc9e858d46fa7f2740053ba4bd96978'},
+    {sourcePath: 'docs/evidence/a-owner-dependency-freeze-20261023-r3-source.json',
+      eventsPath: 'docs/evidence/a-owner-gc-full-local-20261023-111154-inventory.json', derivedInventory: true,
+      inventorySourceSHA256: 'a2e69921b109dbf12fa7ed9b40689332feb93f99834e3c3ad97a8016e9f4246b',
+      sourcePin: 'db80f7e33e3cb5d72efb2cebd3ea2b3856b28e9663977a35cbb2712bee89d588',
+      eventsPin: '2985bb09929aec33e6afa0d7c5ebb49b90b18ac7caf4adb69932cf8894addcd6',
+      acceptance: 'docs/evidence/a-owner-gc-dependency-accepted-20261023-r3.json',
+      acceptancePin: '293b0530be1efea88f3ea39fe3ce6f8a830f4819d3f67cde7840b305cb9ddbef'},
+    {sourcePath: 'docs/evidence/a-owner-final-source-20261026.json',
+      eventsPath: 'docs/evidence/a-owner-final-native-20261026.jsonl',
+      // Native owner events remain bound to the unchanged owner dependencies;
+      // the sole nonowner tagged HTTP delta has its own compiled/seed receipt.
+      sourcePin: '977aac1c9e74bdf27738ccc832534f7530d9708130d8f74cb2a863e632ae2d67',
+      eventsPin: '2fcf2b6420ea728024ba6ac6a3c203d226126ff3472967f39ce9cedfad4ba6e5',
+      acceptance: 'docs/evidence/a-owner-final-local-accepted-20261026.json',
+      acceptancePin: '3605ddebcac81ef1ce806da6a9199f1bc6a8147277e36dc738e70381f42fe289'},
+    {sourcePath: 'docs/evidence/a-owner-current-reviewed-source-20261027.json',
+      eventsPath: 'docs/evidence/a-owner-current-native-20261027.jsonl',
+      // Original complete 4003 native owner events: all 5190 historical names
+      // retained. Exact metrics and affected tagged contexts have separate
+      // stable native supplements; this does not claim a new ordinary rerun.
+      sourcePin: 'a115790cd1b8eaf1ffc92d2ae9b30784b4d4cd088568c1116bf53f6c6e6b7c8a',
+      eventsPin: '69674bc9b805b89945066131caa87c1e5033d0a0a1cd98f516b0a4a8dcd9d65b',
+      acceptance: 'docs/evidence/a-owner-current-local-accepted-20261027.json',
+      acceptancePin: 'e5117c2d438d9ec6f9b3d62243601e43e78796faf33720490a57a6b485dcb46c'}
   ];
   const ordinary = m => m.files.filter(f => /^(backend|contracts)\//.test(f.path) && !f.path.endsWith('_mysql_test.go')).map(f => `${f.path}\0${f.size}\0${f.sha256}`).sort();
   const baselines = definitions.map(d => {
@@ -237,7 +290,11 @@ export function loadReviewedOwnerBaseline(sourceBytes) {
     if (d.acceptance) {
       requireEvidence(sha256(fs.readFileSync(path.join(workspace, d.acceptance))) === d.acceptancePin, 'independent_batch_acceptance_pin');
     }
-    return {baselineSource: JSON.parse(decode(sourceRaw)), baselineEvents: decode(eventRaw).trim().split('\n').map(JSON.parse)};
+    const baselineSource = JSON.parse(decode(sourceRaw));
+    const baselineEvents = d.derivedInventory
+      ? ownerInventoryEvents(JSON.parse(decode(eventRaw)), d.inventorySourceSHA256 ?? baselineSource.source_sha256)
+      : decode(eventRaw).trim().split('\n').map(JSON.parse);
+    return {baselineSource, baselineEvents};
   });
   // No matching ordinary source is still rejected by validateOwnerEvidence;
   // selecting the newest inventory here does not exempt any input from checks.

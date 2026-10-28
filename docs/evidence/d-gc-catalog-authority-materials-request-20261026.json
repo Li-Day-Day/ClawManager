@@ -1,0 +1,43 @@
+{
+  "kind": "d_gc_original_catalog_authority_materials_request.v1",
+  "status": "missing_original_sources_for_A_to_review_and_route",
+  "scope": "Required evidence for future domain adapters; no invented SQL columns, migration, permission or production approval",
+  "source_reference": "docs/evidence/d-download-gc-source-freeze-requirements-20261021.json",
+  "tables": [
+    {"table": "system_backup_catalog_imports", "formal_create_table_found": false, "inventory_entry_found": false, "owner_reviewed_lifecycle_source_supplied": false},
+    {"table": "system_backup_catalog_records", "formal_create_table_found": false, "inventory_entry_found": false, "owner_reviewed_lifecycle_source_supplied": false},
+    {"table": "system_backup_catalog_scan_states", "formal_create_table_found": false, "inventory_entry_found": false, "owner_reviewed_lifecycle_source_supplied": false}
+  ],
+  "required_original_evidence": [
+    {"id": "schema", "need": "Owner-reviewed canonical CREATE/ALTER statements, migration/catalog lineage, exact deployed presence rules, keys, indexes, FKs and inventory. Field names must come from that source rather than a guessed adapter."},
+    {"id": "identity", "need": "Authoritative installation, public/numeric key and row-version bindings, source/parent relationships, evidence and operation associations; rules for foreign installations and contradictory identities."},
+    {"id": "original_authority", "need": "Original owner/write authority and deadline provenance. A download child deadline, receipt expiry, new worker claim or later observation cannot stand in for the original domain authority."},
+    {"id": "lifecycle", "need": "Defined terminal/nonterminal states and original timestamps, retention lower bounds, artifact/deletion states, holds, leases, cleanup and pending work, including how unknown or inconsistent values deny collection."},
+    {"id": "all_uses", "need": "Complete incoming and outgoing use graph: logical references, retries, promotions and dependent tasks, evidence/audit/nonce references, foreign-schema FKs and program effects. An absent unimplemented table is not a no-reference proof."},
+    {"id": "locking", "need": "Reviewed exact range/index predicates and global lock order under the original RR transaction; phantom protection and late recheck rules. No replacement transaction, renewed reservation, new authority or in-transaction LOCK TABLES callback."},
+    {"id": "actual_controls", "need": "Canonical positive expired terminal groups and active/held/leased/foreign/conflicting/late-reference controls in an exact owned SQL fixture, with original group and capacity restored on rejection."},
+    {"id": "approval", "need": "Named owner review of the original schema/lifecycle/authority sources and their immutable hashes; separate actual protocol and physical-volume evidence. A digest by itself does not supply the missing semantics."}
+  ],
+  "D_followup_after_sources_arrive": [
+    "Implement the missing domain adapters with Early/Lock/Recheck on the original scope and transaction, retaining the reviewed canonical predicates and lock order.",
+    "Compose task, producer, catalog/import and direct-reference eligibility into the mandatory real Policy; deny missing or conflicting domain facts.",
+    "Add native regression controls and actual complete cold-group SQL cases, then submit the exact new source and raw outcomes to A. Existing synthetic task authority is not reused as real catalog approval."
+  ],
+  "current_local_candidate": {
+    "public_full_freeze_owner_wired": true,
+    "capacity_report_pinned_before_connection_lock_and_begin": true,
+    "protocol_catalog_cases": 33,
+    "public_cold_group_catalog_cases": 7,
+    "actual_protocol_cases_executed_in_this_chat": 0,
+    "actual_cold_group_cases_executed_in_this_chat": 0,
+    "domain_authority_in_cold_probe": "explicit synthetic UID-scoped published task fixture",
+    "physical_report_in_probe": "synthetic",
+    "complete_real_domain_policy_implemented": false
+  },
+  "A_approval": false,
+  "production_approved": false,
+  "twelve_protocol_groups_complete": false,
+  "goal_complete": false,
+  "dependencies_installed": false,
+  "remote_executed": false
+}

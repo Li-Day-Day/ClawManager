@@ -1,0 +1,43 @@
+{
+  "kind": "a_nonce_ca_local_acceptance.v1",
+  "status": "exact_local_preparation_only",
+  "receipt": {
+    "path": "docs/evidence/a-nonce-bootstrap-candidate-20261023-153724-cd693e2c.json",
+    "size": 78790,
+    "sha256": "98dadade294f31904b072129002dd0c14da97089559e992762b3233ccb5fdc7f"
+  },
+  "transcript": {
+    "path": "docs/evidence/a-nonce-ca-final-local-20261023-153722.txt",
+    "size": 10614,
+    "sha256": "9170292d3355afaac051670fff706172558a698c25bbf013fae7620ce4eb1338"
+  },
+  "source_sha256": "c8cd927fb10133cabab70dd00f58dce092534d1d6e05a33a59314488a99d1e34",
+  "source_files": 383,
+  "tests": [
+    "TestNoncePrepareAndTransactionRetention",
+    "TestNonceRejectsIncompleteOrChangedHistory",
+    "TestNoncePrepareRejectsBadMaterialAndBinding",
+    "TestNonceMappingCopyAndOutputIsolation",
+    "TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit",
+    "TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs",
+    "TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead",
+    "TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting"
+  ],
+  "exact_owner_absent": true,
+  "default_vet": true,
+  "Linux_builds": [
+    "nonce-bootstrap.test",
+    "ca-trust.test"
+  ],
+  "current_source_set_and_bytes_match": true,
+  "actual_SQL": false,
+  "external_provider": false,
+  "non_implementer_review": false,
+  "production_linked": false,
+  "production_approved": false,
+  "receiver": {
+    "path": "docs/evidence/a-nonce-ca-local-review-20261023.mjs",
+    "size": 6644,
+    "sha256": "173d8219050e527ccc6f311af0688d239ac38a0f6304dc9d9039a08258bfa72d"
+  }
+}

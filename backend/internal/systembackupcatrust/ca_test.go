@@ -274,6 +274,33 @@ func TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting(t *testing.T) {
 	}
 }
 
+func TestCATrustBindingNeverFormatsOrSerializesDeploymentPins(t *testing.T) {
+	b := Binding{
+		InstallationID: "PRIVATE_INSTALLATION_SENTINEL", ServerUUID: "PRIVATE_SERVER_SENTINEL", Database: "PRIVATE_DATABASE_SENTINEL", ConfigSHA256: "PRIVATE_CONFIG_SENTINEL",
+		Purpose: "evidence_ca", ProviderIdentityHash: "PRIVATE_PROVIDER_SENTINEL", ScopeHash: "PRIVATE_SCOPE_SENTINEL",
+		DescriptorFile: "PRIVATE_DESCRIPTOR_SENTINEL", DescriptorSHA256: "PRIVATE_DESCRIPTOR_PIN_SENTINEL", CAFile: "PRIVATE_CA_SENTINEL", CASHA256: "PRIVATE_CA_PIN_SENTINEL",
+		Endpoint: "https://PRIVATE_ENDPOINT_SENTINEL.invalid", TargetIP: netip.MustParseAddr("192.0.2.42"), NotBefore: time.Unix(1000, 0), ExpiresAt: time.Unix(2000, 0),
+	}
+	for _, item := range []struct {
+		name  string
+		value any
+	}{{"value", b}, {"pointer", &b}} {
+		for _, format := range []struct{ name, verb string }{{"default", "%v"}, {"detailed", "%+v"}, {"Go", "%#v"}} {
+			t.Run(item.name+"/"+format.name, func(t *testing.T) {
+				if fmt.Sprintf(format.verb, item.value) != "BootstrapCATrustBinding" {
+					t.Fatal("deployment Binding escaped constant formatting boundary")
+				}
+			})
+		}
+		t.Run(item.name+"/json", func(t *testing.T) {
+			raw, err := json.Marshal(item.value)
+			if err == nil || len(raw) != 0 || strings.Contains(err.Error(), "PRIVATE_") {
+				t.Fatal("deployment Binding escaped JSON rejection boundary")
+			}
+		})
+	}
+}
+
 type sqlState struct {
 	server, database            string
 	queries, commits, rollbacks int

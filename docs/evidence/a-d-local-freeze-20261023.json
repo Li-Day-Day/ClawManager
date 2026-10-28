@@ -1,0 +1,212 @@
+{
+  "kind": "a_d_local_coordination_freeze.v1",
+  "recorded_at": "2026-10-23T09:00:46.6790689Z",
+  "owner": "A",
+  "owned_files": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_a_test.go",
+      "size": 2788,
+      "sha256": "ff26954ff8e337d2eb3657fdc6b3d2b1cb483286f882312dd7c5b50ace1cb082"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_write_fk_a_test.go",
+      "size": 8040,
+      "sha256": "12f92e999b3b339f5e001072ca8fb90025d4ddda7c0175d6511fa72e180a3883"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_write_fk_mysql_test.go",
+      "size": 9548,
+      "sha256": "faf55ef231d2953be86560de0258729fe9b18445e38c5db144df3f8e8b22e924"
+    },
+    {
+      "path": "backend/internal/systembackupresources/restore_write.go",
+      "size": 8180,
+      "sha256": "b53d77d41d2f270b1ff4df18671dcdbef938abd9e0525e974f1213d6be7e630d"
+    },
+    {
+      "path": "docs/evidence/a-owner-final-full-review-20261023.mjs",
+      "size": 4128,
+      "sha256": "e8dcc6d1e412b61519cd79928d70469605a4f8391b35b5db7e81dcef1441a0c8"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-actual-review-20261023.mjs",
+      "size": 905,
+      "sha256": "a0d5bdc570f68f15147343777bf97f44285c891df46411d7973a240a48e86af2"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-actual-review-20261023.test.mjs",
+      "size": 3125,
+      "sha256": "5bc3324723e1e71a1dcf31757d843449b30a7d064be05ba1403b073df95f7830"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-fk-actual-review-20261023.mjs",
+      "size": 10979,
+      "sha256": "7ce5c5d75483bde39fa5a69211db2a099fc1a5aecc82c491e08276cca9ddef0e"
+    },
+    {
+      "path": "docs/evidence/a-resources-writer-fk-actual-review-20261023.test.mjs",
+      "size": 8409,
+      "sha256": "931c137af65bf3230f268c1cfe91e143a470b2a5e23e8d7b05934b009a20e097"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-final-review-20261023.mjs",
+      "size": 5498,
+      "sha256": "8e3610817f526078a57692d7b6ba471703191147f653d675806fcc590021639b"
+    },
+    {
+      "path": "scripts/system-backup-a-writer-fk-final-validation.ps1",
+      "size": 6819,
+      "sha256": "43da45287428cedccfa2154905d844a447014fc374b2a295d1503d201879e9c1"
+    }
+  ],
+  "D_owned_scopes": [
+    "drill nineteen wrapper and receiver",
+    "resources common readback/writer receiver",
+    "resources phase test.list and dispatch regression",
+    "D closeout verification and documentation"
+  ],
+  "do_not_repeat_D_gates": true,
+  "A_live_gates": [],
+  "completed_local_preparation": {
+    "Linux_probe": true,
+    "Linux_migrate": true,
+    "ordinary_roots": 71,
+    "receipt": "docs/evidence/d-resources-mysql-20261023-151943-85007e0b.json",
+    "seeds": 3,
+    "ordinary_pass_events": 843,
+    "scope": "resource_and_migration_dependency_closure_only",
+    "owner_removed": true,
+    "independent_review": "docs/evidence/a-resources-current-preparation-reviewed-20261023.json"
+  },
+  "actual_mysql_executed_this_round": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "coordination_messages_sent_to_other_chats": true,
+  "A_receiver_validation": {
+    "FK": {
+      "native_exit": 0,
+      "first_integration_failure_preserved": "docs/evidence/a-resources-writer-fk-receiver-tests-20261023-r1-failed.txt",
+      "log": "docs/evidence/a-resources-writer-fk-receiver-tests-20261023-r2.txt",
+      "cause": "Synthetic integration fixture used 096 as last migration filename; real 96-file catalog ends at 081. Fixture now derives both from the pinned capsule.",
+      "tests": 27
+    },
+    "writer": {
+      "native_exit": 0,
+      "log": "docs/evidence/a-resources-writer-receiver-tests-20261023.txt",
+      "tests": 14
+    },
+    "common_receiver_dependency": {
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc",
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs"
+    }
+  },
+  "GC_candidate_observation": {
+    "review": "docs/evidence/a-gc-freeze-current-reviewed-20261023.json",
+    "production_wired": false,
+    "joint_approved": false,
+    "roots": 4,
+    "status": "terminal_success_candidate_only_independently_reviewed",
+    "pass_events": 33,
+    "owner_removed": true,
+    "result": "docs/evidence/d-gc-freeze-protocol-d49501bd26ef47a4ba1ad6d27f9c69fd.json"
+  },
+  "GC_D2_observed_files": [
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc.go",
+      "size": 31451,
+      "sha256": "77718ddf597105ca73544bd270024e3f5c8fa989316471122ef27468df303417"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_work_test.go",
+      "size": 5152,
+      "sha256": "f445d6b7648a8948e37217cf531ec040c25e358a52b2b4b6b0bd09ab64366b64"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_connection.go",
+      "size": 3232,
+      "sha256": "964b5d9cd2d7bb71e3201003c2538edfe45b550b585d19428cf7991ece6a9cf5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_early.go",
+      "size": 15973,
+      "sha256": "daaf8a8278b786d002080581de0f2323e9de8e11fcb926ef8481e545a6b0f299"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze.go",
+      "size": 6357,
+      "sha256": "a0ea232611d1ea7b6878b23c04da18500f896fcaa281228eebda408cbf7312b0"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/download_retention_gc_freeze_test.go",
+      "size": 8725,
+      "sha256": "c567e6db30ad77e7e7a68cb0c6b0d4a0917fc2bb5bd331df496621db0c75fcb8"
+    },
+    {
+      "path": "scripts/system-backup-d-gc-freeze-candidate-validation.ps1",
+      "size": 5291,
+      "sha256": "24346f38ec4de94d3825166adc7e21cccd32967296139f298d6b42e46c7658f6"
+    }
+  ],
+  "GC_source_ownership": {
+    "authored_by_this_chat": false,
+    "author_chat": "01a1678e-27d8-7823-af8d-ea362169a481",
+    "author_chat_title": "在BC介入之前，D还有什么必须做但是没做的",
+    "change": "Extract collectInTransaction and add actual collector/freeze synthetic integration cases; private production Collect remains without freeze wiring",
+    "current_collector_sha256": "77718ddf597105ca73544bd270024e3f5c8fa989316471122ef27468df303417",
+    "A_144309_frozen_collector_sha256": "f919c6b2f13e111e3bebf95ca239787a22baee6321f3f9a4c2a33af8e20fae29",
+    "current_matches_A_owner_freeze": false,
+    "A_owner_gate_scope": "original_frozen_profile_only_current_GC_not_covered",
+    "no_current_baseline_registration": true,
+    "D2_current_full_six_package_run": "docs/evidence/d-local-closeout-validation-20261023.ps1",
+    "required_next": "Receive D2 exact current full package/native results, then satisfy the complete latest owner profile including original packaged/detached seeds, Linux tagged owner probe, migration runner, source and cleanup. Do not restart D2 jobs or register the old A snapshot as current."
+  },
+  "A2_resource_candidate_observation": {
+    "chat": "01a1678d-6a44-73a2-bab5-3382fa10fa67",
+    "progress": "docs/evidence/a-pre-bc-local-progress-20261023.json",
+    "scope": "nonce HMAC candidate plus current CA scope validation",
+    "A1_did_not_modify_A2_files": true,
+    "note": "Original CA listed bytes match, but full set adds drill_detail.go. A2 owns the final nonce/CA test and Linux build round; A1 will review exact delivered evidence without duplicating that build."
+  },
+  "A_terminal_gates": [
+    {
+      "cleanup_confirmed": true,
+      "baseline_registered": false,
+      "session": 12955,
+      "review": "docs/evidence/a-owner-final-failure-reviewed-20261023.json",
+      "status": "failed_three_assertion_leaves_and_timeout"
+    },
+    {
+      "accepted": false,
+      "result": "docs/evidence/a-writer-fk-final-20261023-145605-7d41cb5f.json",
+      "session": 51955,
+      "status": "failed_grouped_source_file_set_drift",
+      "cleanup_confirmed": true
+    }
+  ],
+  "A_capacity_diagnostic": {
+    "pass_events": 3,
+    "result": "docs/evidence/a-gc-result-capacity-43226e65d0834ec19ae29a4c5464b1b5.json",
+    "original_deadline_preserved": true,
+    "stale_report_rejected": true,
+    "native_exit": 0,
+    "production_deadlines_changed": false,
+    "fresh_report_succeeds": true,
+    "permanent_fixture_change_owner": "D2",
+    "repository_Go_edited": false,
+    "owner_removed": true
+  },
+  "D2_owner_supplement_reply": {
+    "source_sha256": "ede12e280a902b194bb729727d8b3dac8c13d38a830eb3605a25a33d10ee2e7e",
+    "cache_copy_now_allowed": true,
+    "path": "docs/evidence/d-a-owner-supplement-reply-20261023.json",
+    "wrapper_session": 88351,
+    "decision": "A1_copy_exact_frozen_source_and_cache_read_only_and_run_only_missing_owner_stages"
+  },
+  "status": "historical_coordination_record_superseded_by_current_owner_acceptance_20261026",
+  "historical_arrays_not_current_frozen_source": true,
+  "note": "Original arrays and failures retained as history. Current owner acceptance 2099/647/5190 is registered; new bootstrap consumer remains local pending. Do not delete another chat active run owner.",
+  "current_owner_acceptance": "docs/evidence/a-owner-final-local-accepted-20261026.json",
+  "current_source_composition": "docs/evidence/d-local-current-source-composed-20261026.json",
+  "current_A2_review": "docs/evidence/a2-owner-final-current-reviewed-20261026.json",
+  "next_local_item": "A-BOOT-CONSUME-01"
+}

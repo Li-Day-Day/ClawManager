@@ -1,0 +1,73 @@
+{
+  "kind": "d_bootstrap_entry_linux_terminal_observation.v1",
+  "native_receipt": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+  "native_sha256": "8394b5383e885585368c930898a91acca58b71afe596202295e305ea73fd160a",
+  "status": "passed_exact_linux_supplement",
+  "input_count": 1741,
+  "original_final_postcheck_observed": false,
+  "original_run_accepted": false,
+  "current_tree_accepted": false,
+  "source_precheck": true,
+  "source_postcheck": true,
+  "exact_owner_absent": true,
+  "linux_steps": [
+    {
+      "name": "server",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-server",
+        "./cmd/server"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "8e5f1198b2691fa4c58421542d83a409ea5b7595ac98b95da683f62feb9d253e",
+      "binary_size": 98459012,
+      "binary_removed": true
+    },
+    {
+      "name": "bootstrap",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-bootstrap",
+        "./cmd/system-backup-bootstrap"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "5c678b4f35144cdd043d88d9b96670277967ac9d88e7943b96a312640eb99bd0",
+      "binary_size": 9877966,
+      "binary_removed": true
+    },
+    {
+      "name": "migration-runner",
+      "arguments": [
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-migration-runner",
+        "./cmd/system-backup-migrate"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "da6e6b30eeab136e2f754e2f00be77a0e0677198584c779378f672d9e4f9a3fd",
+      "binary_size": 9100627,
+      "binary_removed": true
+    },
+    {
+      "name": "tagged-evidence-test-compile-only",
+      "arguments": [
+        "test",
+        "-tags",
+        "systembackup_mysql",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-bootstrap-linux-d846e3793f0242cd96da1912a39c49de\\linux-tagged-evidence-test-compile-only",
+        "./internal/systembackupevidence"
+      ],
+      "exit_code": 0,
+      "binary_sha256": "8865af7792727037e8c518c36e6daff4edf09020e9171b7e7e1b35bc936a172f",
+      "binary_size": 24126346,
+      "binary_removed": true
+    }
+  ],
+  "dependencies_installed": false,
+  "actual_mysql_executed": false,
+  "production_approved": false
+}

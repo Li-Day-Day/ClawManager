@@ -1,0 +1,66 @@
+RUN namespace=sbk-mig-261026022412-229b uid=5ef5cdba-24f1-4cf0-b579-04ef0ac53e5d app_image=10.130.14.23:5000/clawmanager@sha256:be41b024860e917705cd8ed631c78e32d49196236c5e086f43f571c8919a79ea mysql_image=10.130.14.23:5000/mysql@sha256:5ea882b1859d3a61814e527215563d809a9f2bf70ffa24c9280f2ff6798f1977 mysql_version=8.4.8
+{"config_activated":false,"historical_equivalence_verified":false,"history_review_sha256":"","human_mfa_verified":false,"migration_catalog_sha256":"0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe","migration_count":96,"result":"PASS"}
+PASS pinned-migration-runner binary_sha256=b4de6c83fb74e3c9e079353b16eefddd0d5b05888cfd7478441a11a9102d035f catalog_sha256=0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe
+PASS fresh-migration-replay=001..081 applied=96 exact_filenames=yes d_columns=blob/blob/blob/char
+=== RUN   TestDAdminReadLiveHTTPMySQL
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_pending_no_attempt
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_current_attempt_history
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_catalog_import
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_parallel_jobs
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_parallel_phases
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_single_job
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_heartbeat_only
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_summary_drift
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_report_hash_drift
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_report_wrong_owner
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_report_before_attempt
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_historical_preflight_before_retry
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_shared_reference_strict_cutoff
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_expired_evidence_history
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_foreign_installation
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_missing_task
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_unknown_query
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_missing_auth
+=== RUN   TestDAdminReadLiveHTTPMySQL/drill_history_revoked_session
+=== NAME  TestDAdminReadLiveHTTPMySQL
+    system_backup_read_live_mysql_test.go:239: PASS drill-history-http-mysql synthetic_cases=19 actual_provider=no production_approval=no
+--- PASS: TestDAdminReadLiveHTTPMySQL (0.48s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_pending_no_attempt (0.03s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_current_attempt_history (0.04s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_catalog_import (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_parallel_jobs (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_parallel_phases (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_single_job (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_heartbeat_only (0.04s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_summary_drift (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_report_hash_drift (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_report_wrong_owner (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_report_before_attempt (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_historical_preflight_before_retry (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_shared_reference_strict_cutoff (0.04s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_expired_evidence_history (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_foreign_installation (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_missing_task (0.01s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_unknown_query (0.03s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_missing_auth (0.02s)
+    --- PASS: TestDAdminReadLiveHTTPMySQL/drill_history_revoked_session (0.01s)
+PASS
+PASS d-drill-detail-http-mysql synthetic_cases=19 binary_sha256=a0d3575f7e9dea08eb8b302b1427d202bb84bdff7e0bd86a55e7a2526db618dd actual_provider=no production_approval=no
+CLEANED namespace=sbk-mig-261026022412-229b uid=5ef5cdba-24f1-4cf0-b579-04ef0ac53e5d
+close - IO is still pending on closed socket. read:1, write:0, io:00000288A5D642A0
+root@10.130.14.23's password:
+close - IO is still pending on closed socket. read:1, write:0, io:0000029A43E933B0
+CLEANED remote-registration-scratch=yes
+CLEANED local-registration-build-cache=True
+LOCAL_PASS drill-detail-frozen-postcheck=yes freeze-only=False dependencies-installed=no remote-requested=True
+LOCAL_CLEANUP drill-detail-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-0c4e8294037d492b8e5e44708ad891b5 removed=True
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager>
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> $drillExit = $LASTEXITCODE
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> "drill_detail_http_exit=$drillExit" | Tee-Object -FilePath $drillLog -Append
+drill_detail_http_exit=0
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "日志=$drillLog"
+日志=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-drill-http-repaired-20261026-100156-c5f6a4a2.txt
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "来源清单=$drillSource"
+来源清单=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-drill-http-repaired-20261026-100156-c5f6a4a2-source.json
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> Write-Host "本轮结果=$drillSource.result.json"
+本轮结果=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\d-drill-http-repaired-20261026-100156-c5f6a4a2-source.json.result.json

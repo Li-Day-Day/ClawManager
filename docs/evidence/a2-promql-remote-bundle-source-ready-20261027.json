@@ -1,0 +1,75 @@
+{
+  "kind": "a2_human_run_remote_PromQL_bundle.v1",
+  "status": "prepared_not_executed",
+  "remote_target_authorized_by_human": "root@10.130.14.23",
+  "execution_owner": "human user",
+  "agent_remote_connection_performed": false,
+  "source_fixtures": [
+    {
+      "path": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+      "size": 38608,
+      "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-split-promtool-raw-series-20261027-r3.yml",
+      "size": 40520,
+      "sha256": "ca30557e658c18938fc53dce6e1a9cbe296b21ec4d957131bbb3340cbc7ffcde"
+    }
+  ],
+  "prepared_groups": 97,
+  "prepared_expression_checks": 231,
+  "files": [
+    {
+      "source": "docs/evidence/a2-metrics-promtool-raw-series-20261027-r2.yml",
+      "path": "docs/evidence/a2-promql-remote-bundle-20261027/thresholds.yml",
+      "name": "thresholds.yml",
+      "size": 38608,
+      "sha256": "c69f9e5762ab234a2523f7b7f760a0e8d24252a8674a8ea2515dc03c68bdcb39"
+    },
+    {
+      "source": "docs/evidence/a2-metrics-split-promtool-raw-series-20261027-r3.yml",
+      "path": "docs/evidence/a2-promql-remote-bundle-20261027/split.yml",
+      "name": "split.yml",
+      "size": 40520,
+      "sha256": "ca30557e658c18938fc53dce6e1a9cbe296b21ec4d957131bbb3340cbc7ffcde"
+    },
+    {
+      "source": "docs/evidence/a2-promql-remote-run-20261027.sh",
+      "path": "docs/evidence/a2-promql-remote-bundle-20261027/run.sh",
+      "name": "run.sh",
+      "size": 3926,
+      "sha256": "df4ab1808b8ac89c76e2944a3442293a71bd41f0e931f8619db24c33dd32fe44"
+    }
+  ],
+  "checksum_manifest": {
+    "path": "docs/evidence/a2-promql-remote-bundle-20261027/SHA256SUMS",
+    "sha256": "813667aa255e11cecd513ef0895c0f9663591606803deb6a314516f7e85335ef"
+  },
+  "runtime_policy": {
+    "existing_binary_or_cached_official_Prometheus_image_only": true,
+    "installation": false,
+    "pull": false,
+    "daemon_start": false,
+    "container_network": "none",
+    "container_filesystem": "read-only with temporary tmpfs",
+    "test_temp_and_named_containers_cleaned_on_exit": true
+  },
+  "PromQL_executed": false,
+  "expected_results_proven": false,
+  "remote_outputs_expected": [
+    "results/runtime.txt",
+    "results/payload.sha256",
+    "results/version.log",
+    "results/thresholds.yml.log",
+    "results/split.yml.log",
+    "results/summary.txt"
+  ],
+  "local_bash_syntax_check": {
+    "attempted": true,
+    "actual_exit": -1073741502,
+    "error": "Git Bash could not create signal pipe: Win32 error 5",
+    "script_executed": false,
+    "syntax_proven": false,
+    "remote_command_runs_bash_n_before_execution": true
+  }
+}

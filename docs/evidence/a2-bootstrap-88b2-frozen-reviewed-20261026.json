@@ -1,0 +1,67 @@
+{
+  "kind": "a2_bootstrap_88b2_frozen_review.v1",
+  "status": "accepted_only_exact_frozen_seven_packages_and_recorded_two_Linux_builds",
+  "receipt": "docs/evidence/d-bootstrap-consumer-native-88b2cfd9f32b454183e60d9f0f1259ec.json",
+  "receipt_sha256": "e1a74f00c5d3cd9ef4aeb76eab5ee39d72d7082748d426f22ebf38160b97c028",
+  "source_files": 1706,
+  "source_file_manifest_sha256": "9f086bd0682c00fc98a727eb5bca61709adfa923a45f6d6885ec95271b84bb49",
+  "targeted": {
+    "roots": 35,
+    "test_pass_events": 256,
+    "sha256": "92702e23e1fa0274e8f1abbef2b62b994e378b799bdbb4af1dff599fb80cd009"
+  },
+  "full": {
+    "roots": 956,
+    "test_pass_events": 8246,
+    "package_passes": [
+      "clawreef/cmd/server",
+      "clawreef/internal/systembackupbootstrapsecurity",
+      "clawreef/internal/systembackupevidence",
+      "clawreef/internal/systembackupproducer",
+      "clawreef/internal/systembackupread",
+      "clawreef/internal/systembackupresources",
+      "clawreef/internal/systembackupsecurity"
+    ],
+    "sha256": "0954b0ba0951c02153d89d64b3f860fdd29d369fd169bbee618742dbef401a24"
+  },
+  "authority_roots": 10,
+  "authority_test_pass_events": 108,
+  "original_capture_passes_preserved": 51,
+  "frozen_A2_inputs_still_match_current": [
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_authority.go",
+      "size": 16557,
+      "sha256": "56d4a4f436729b2fa3f42753c21af7b73320f2664b2c2a9ad21482f174cd1be3"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_authority_test.go",
+      "size": 27959,
+      "sha256": "e4c722221fd92ee3303d258242a957da72a89577314c6054ae1264b088ce5c6c"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+      "size": 8000,
+      "sha256": "d18cdf9bcceae8d444c7e98514f9f559e9df3b4f77422466adbed5271469a78d"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding_test.go",
+      "size": 16011,
+      "sha256": "66a3cb8fa78caef977e777145abe96a0c5914042e1c99692107764f329a893d9"
+    }
+  ],
+  "frozen_source_postcheck_recorded_by_runner": true,
+  "Linux_builds_recorded_by_runner": [
+    "server",
+    "system-backup-bootstrap"
+  ],
+  "Linux_binary_hashes_independently_observed": false,
+  "owner_absence_independently_checked": true,
+  "current_whole_source_accepted": false,
+  "next_six_file_candidates_covered": false,
+  "late_current_grant_RBAC_gap_closed_by_this_run": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "production_approved": false,
+  "goal_complete": false
+}

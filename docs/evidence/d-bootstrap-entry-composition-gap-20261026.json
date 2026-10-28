@@ -1,0 +1,184 @@
+{
+  "kind": "d_bootstrap_deployment_entry_gap_review.v1",
+  "status": "local_entry_implementation_native_composition_and_baseline_registered",
+  "date": "2026-10-26",
+  "source_inputs": [
+    {
+      "path": "contracts/system-backup/v12/producer-authority-transactions.json",
+      "size": 18415,
+      "sha256": "b4a295f24c4a45962d374b9c8df0973bc4d1df8898fda4280605aa537ae280cb"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "size": 9116,
+      "sha256": "88b5a7c8e0e4c60d22da3e465dffd76cfa0e6acd2061086a5f943921e3d9a703"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "size": 11017,
+      "sha256": "8d3463a30c9d8db94d311d7a44428511e764ef72007dc19b8e01586f585fc6da"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 17470,
+      "sha256": "feac22552e1ffc5ab04ac624dd1b0690fce641f9e55b8a40ab13711cea7ab8a0"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "size": 3609,
+      "sha256": "6309733321361c08ba45afb98811d4eee3b539c6b8c6f07c5cd82a65ee29f27d"
+    }
+  ],
+  "primary_contract": "existing_entry_changes config_bootstrap_transaction.go requires the common domain/candidate prefix and atomic disabled-v1 + epoch close",
+  "observed_facts": [
+    "BootstrapDeployment.Apply invokes ConfigBootstrapService with DB and legacy Admission only; no Candidates is passed",
+    "CLI linkedOwnerAdapters supplies only RBAC and two issuer registry validators; current CLI still rejects missing owner adapters before SQL",
+    "The typed ConfigBootstrapCandidates constructor exists and is explicitly composed in Go; library/service integration tests do not prove the real deployment Apply selects it",
+    "Existing deployment Apply promises owner/provider preparation before reading DSN/openDatabase; candidate service currently requires DB at construction and prepares inside bootstrap",
+    "No producer-domain formal migration was found under backend/internal/db; candidate SQL alone is not a schema deployment approval"
+  ],
+  "local_work_required": [
+    "Explicit trusted Go deployment candidate composition, preserving all original owner/resource mapping requirements; no JSON authority/approved flags/default allow or placeholder for remaining adapters",
+    "Legacy path domain fencing under the common early prefix so an existing unconfigured candidate domain cannot be bypassed by grant-only initialization",
+    "Preserve preparation-before-credentials and one original bounded attempt context across file/provider preparation, DB open, SQL and sole commit",
+    "Meaningful deployment/entry tests for current source, including first use, same-key retry, current revocation, rollback, missing owner and no credential open on preparation failure",
+    "Independent review and exact affected-source validation after the already-frozen a2e7 run; do not expand that run to later entry bytes"
+  ],
+  "contract_decisions_to_resolve": [
+    "Exact handling of a genuinely absent C1 table while preserving the original legacy path; arbitrary SQL errors must never be treated as absence",
+    "Whether a validated configured-domain row may retain the original exact grant-only historical result read; unconfigured-domain rows must require candidate handling",
+    "Which narrow A preparation API permits D to keep the existing prepare-before-DSN boundary without minting or renewing authority"
+  ],
+  "ownership": {
+    "D_deployment_composition": "01a1678e-27d8-7823-af8d-ea362169a481",
+    "A_legacy_service_and_candidate_attempt": "01a1676e-1c7a-7cd3-89fe-f188be645950"
+  },
+  "production_exploitable_bypass_claimed": false,
+  "current_CLI_complete": false,
+  "entry_implementation_complete": true,
+  "dependencies_installed": false,
+  "remote_executed": false,
+  "goal_complete": false,
+  "source_stage": "Original source_inputs and observed_facts above are the immutable pre-entry audit context. Later exact source/native compositions below do not retroactively repair ae7 final postcheck.",
+  "agreed_policy": [
+    "Only all eight core tables independently proven absent permit legacy first initialization; zero metadata rows alone never prove absence",
+    "Any partial/non-InnoDB/view/unknown or permission error rejects fallback; zero metadata triggers exact closed-name SELECT LIMIT0 probes requiring typed MySQL1146 for every table",
+    "With full C1 storage, first legacy initialization rejects even when the scope domain is absent",
+    "Exact current-authorized historical legacy read may retain absent domain or matching configured v1/hash; all unconfigured domains, corruption or wrong scope reject; expired/revoked producer execution state alone is not historical-read revocation",
+    "Prepare errors cannot read DSN; non-authorizing physical errors retained privately may reach DB only to select the original locked history versus new-use branch"
+  ],
+  "implemented_source_not_native_accepted": [
+    "D producer BootstrapInlineDomainFence and three test roots",
+    "D fixed Go BootstrapDeploymentCandidates plus Apply dispatch, late-file reinspection and three deployment integration roots",
+    "A opaque prepared candidate attempt and legacy gate/final SQL checks",
+    "CLI candidate Apply delegates non-authorizing missing-file decisions to the original locked branch; missing owner implementations still block"
+  ],
+  "remaining_local_before_entry_acceptance": [],
+  "resolved_source_only_not_acceptance": [
+    "Legacy deployment now calls bootstrapLegacyPrepared with the same original bounded preparation context through sole commit",
+    "Root/A1/D1 immutable r2 source-ready artifacts capture the implemented entry and corrected original-vector fixture lookup",
+    "Dedicated entry probe and three previous probe sources are prepared; actual local seeds/Linux completion still requires the new native receipt"
+  ],
+  "source_implementation_ready": true,
+  "entry_native_terminal": {
+    "receipt": "docs/evidence/d-bootstrap-entry-native-ae7af3833e1f424f946638b88c7f68d8.json",
+    "status": "failed",
+    "reason": "Entry Linux build/compile failed: server; raw compiler output reports insufficient disk space",
+    "targeted_exit": 0,
+    "full_exit": 0,
+    "seeds_exit": 0,
+    "successful_linux_steps": 0,
+    "snapshot_verified": true,
+    "snapshot_unchanged_reached": false,
+    "cleaned": true
+  },
+  "entry_linux_supplement": {
+    "receipt": "docs/evidence/d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+    "sha256": "8394b5383e885585368c930898a91acca58b71afe596202295e305ea73fd160a",
+    "status": "passed_exact_linux_supplement",
+    "files": 1741,
+    "recovered_inputs": 4,
+    "linux_steps": 4,
+    "precheck": true,
+    "postcheck": true,
+    "cleaned": true,
+    "A1_review": "docs/evidence/a-bootstrap-entry-linux-independent-reviewed-20261027-d846.json",
+    "D1_review": "docs/evidence/d1-bootstrap-entry-linux-reviewed-20261027-d846.json",
+    "original_final_postcheck_retroactively_claimed": false,
+    "current_source_scope_accepted": false
+  },
+  "updated_date": "2026-10-27",
+  "entry_current_native_composition": {
+    "ordinary_eight": {
+      "path": "docs/evidence/d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.json",
+      "size": 13032,
+      "sha256": "df629ed882ee8262559bef0dc5ed9efa00ddd84178c7875c9c89ad4e60592a05"
+    },
+    "fifteen": {
+      "path": "docs/evidence/d2-owner-entry-supplement-2d061b75213d45d1af1b29acfda4ee95.json",
+      "size": 27354,
+      "sha256": "d9645cef72d962b1dc6c30852c374df9ba6a121eac5f22828d7e6948f5374332"
+    },
+    "A_fifteen": {
+      "path": "docs/evidence/a-current-fifteen-stage-reviewed-20261027-r1.json",
+      "size": 2556,
+      "sha256": "f4453167078d7eac453ef9f7b72c0f8f0f227f08e53cb66fa9cb251d9ec293a2"
+    },
+    "D1_fifteen": {
+      "path": "docs/evidence/d1-current-fifteen-stage-reviewed-20261027-2d061.json",
+      "size": 11010,
+      "sha256": "0a1866235611a7563349a7e7130e0ae2f7673f475e8c0f3c57b4a87714de085b"
+    },
+    "A_parent_closure": {
+      "path": "docs/evidence/a-current-entry-repair-closure-reviewed-20261027-r1.json",
+      "size": 223822,
+      "sha256": "f59f04adc8b21ddd283948d2f483b805d0f354ff355eb41378d5940d20164dc3"
+    },
+    "metrics_composition": {
+      "path": "docs/evidence/a-metrics-current-candidate-composed-reviewed-20261027-r1.json",
+      "size": 8692,
+      "sha256": "a93df13888e11dbc01f17102381cfefc8ed09933350ca73fdf7e5ac61917201c"
+    },
+    "metrics_promotion": {
+      "path": "docs/evidence/d2-metrics-controller-live-promotion-20261027.json",
+      "size": 7922,
+      "sha256": "6eeba4cdd7fbb9fad1509b498b40fe02f6e78bf740b4c1c922b064538c6661e1"
+    },
+    "accepted_source_at_promotion": "7c428878d41c3f648baae9e1e65bd2c5e3dc0b12603ffe0c6f2231028e6ff101",
+    "later_support_files_require_separate_review": true,
+    "original_ae7_final_postcheck_retroactively_claimed": false,
+    "production_adapters_or_27_missing_slots_completed": false,
+    "remote_SQL_executed_by_Root": false
+  },
+  "final_complete_source": {
+    "path": "docs/evidence/a-owner-current-full-source-composed-reviewed-20261027-r2.json",
+    "files": 1720,
+    "source_sha256": "6bf973bd11709b14fa04c13175aadfbd126020be3a10a8c514596b5dd29cb9ca",
+    "Root_actual_check_exit": 0
+  },
+  "owner_baseline_registration": {
+    "path": "docs/evidence/a-owner-current-baseline-registered-reviewed-20261027.json",
+    "roots": 703,
+    "pass_events": 5530,
+    "original_5190_names_preserved": true,
+    "Node": 25,
+    "synthetic_parser_controls": 131,
+    "Root_actual_check_exit": 0,
+    "actual_SQL": false
+  },
+  "final_GC_operator_source_review": {
+    "path": "docs/evidence/a-gc-lifecycle-operator-source-reviewed-20261027-r3.json",
+    "size": 664726,
+    "sha256": "7425805a56e061e999956777845c472eb330b89b3cbf7981f9bf95237255fc2b",
+    "Root_actual_check_exit": 0,
+    "original_files": 1720,
+    "operator_files": 1721,
+    "operator_executed": false,
+    "actual_SQL": false
+  },
+  "remaining_original_material_and_production_work": [
+    "27 unlinked default CLI owner slots require original typed validator/mapping implementations and trusted materials.",
+    "Formal missing contracts/schema/policy/cross-owner decisions and production owner/adapters remain external prerequisites.",
+    "Actual collector, automatic cleanup start mapping, residual classification and frozen gate projection require original source authority; a typed predicate is not a production collector."
+  ]
+}

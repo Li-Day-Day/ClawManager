@@ -1,0 +1,30 @@
+{
+  "kind": "d_gc_finalizer_diagnostic_history.v1",
+  "r1": {
+    "log": {
+      "path": "docs/evidence/d-gc-finalizer-diagnostic-20261026-r1.jsonl",
+      "sha256": "a38438a4408425cb582b256b84b032770355296ec58c57a1d57a5504a443c88e"
+    },
+    "native_exit": 1,
+    "failed_tests": [
+      "TestDownloadGCFinalizerProtectedCandidate/capacity",
+      "TestDownloadGCFinalizerProtectedCandidate"
+    ],
+    "cause": "test changed replacement report file; reservation intentionally pins original report and until",
+    "production_guard_changed": false
+  },
+  "r2": {
+    "log": {
+      "path": "docs/evidence/d-gc-finalizer-diagnostic-20261026-r2.jsonl",
+      "sha256": "21e2edc2aa6f124ea0bd9c7f7267cc731312d0f08ef9f022fff81ab4a20b86aa"
+    },
+    "native_exit": 0,
+    "roots": 7,
+    "pass_events": 39,
+    "scope": "diagnostic version before late reference cases; current source needs full gate"
+  },
+  "full_current_source": "docs/evidence/d-local-closeout-a9b3f627a8134e5798ca12b34880d1af-source.json",
+  "full_gate_accepted": false,
+  "dependencies_installed": false,
+  "remote_contacted": false
+}

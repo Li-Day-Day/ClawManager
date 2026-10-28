@@ -1,0 +1,310 @@
+{
+  "kind": "a2_bootstrap_entry_probe_independent_source_review.v1",
+  "status": "source_review_complete_native_and_actual_SQL_unproven",
+  "probe": {
+    "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+    "size": 21773,
+    "sha256": "fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c"
+  },
+  "planned_actual_cases": [
+    "schema_absent_first",
+    "schema_partial_first",
+    "schema_full_no_domain_first",
+    "schema_full_unconfigured_first",
+    "hidden_c1_a_only",
+    "history_schema_absent",
+    "history_full_no_domain",
+    "history_configured_open",
+    "history_configured_closed",
+    "history_configured_revoked",
+    "history_wrong_hash",
+    "history_wrong_version",
+    "history_unconfigured_open",
+    "history_unconfigured_closed",
+    "history_unconfigured_revoked",
+    "history_admin_revoked",
+    "history_authority_revoked",
+    "late_domain_mutation",
+    "scope_gap_lock",
+    "wrong_context",
+    "wrong_transaction",
+    "commit_lost"
+  ],
+  "ready_manifests": [
+    {
+      "path": "docs/evidence/a-bootstrap-entry-source-ready-20261026-r2.json",
+      "size": 3758,
+      "sha256": "fb9ee1dbd66068fcd5214ecff17aa0f307d780d7eabace3b58853b22a2f593b4",
+      "kind": "a_bootstrap_entry_source_ready.v1",
+      "owner": "01a1676e-1c7a-7cd3-89fe-f188be645950",
+      "files": 7
+    },
+    {
+      "path": "docs/evidence/d2-bootstrap-entry-source-ready-20261026.json",
+      "size": 5460,
+      "sha256": "1b756723b727767c470c2ce602cce02b4785911b8c4af4c7f9722df5f705f8b6",
+      "kind": "d_bootstrap_entry_source_ready.v1",
+      "owner": "01a1678e-27d8-7823-af8d-ea362169a481",
+      "files": 8
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-source-ready-20261026.json",
+      "size": 2830,
+      "sha256": "2976dd707d1e6d74f966b3bd9b4381623a46f3c8de9d3255ea86aa262bb8643e",
+      "kind": "d_bootstrap_entry_probe_source_ready.v1",
+      "owner": "01a1676d-ff9a-7a71-9df5-bfb6b97c3f84",
+      "files": 9
+    }
+  ],
+  "ready_files_union": [
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main.go",
+      "size": 3917,
+      "sha256": "b62ada7f8cdb876290c59e6565f35b6570118f1ecc664f2e1602ba63998c6e7d"
+    },
+    {
+      "path": "backend/cmd/system-backup-bootstrap/main_test.go",
+      "size": 1633,
+      "sha256": "b860617abd5e93fe6487084be7d570e696e487f91a056a94f271a7df1d3b3224"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_mysql_test.go",
+      "size": 24994,
+      "sha256": "269a95323d81ce11ebbd262f788404cda74ad27e7ce7aa3a138366d1b91f6fc7"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_consumer_ranges_mysql_test.go",
+      "size": 15917,
+      "sha256": "462fc97e5bb9531b241f7d94bbeffd2a87c7764c126a9d7706de79756d7fbae5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_entry_mysql_test.go",
+      "size": 21773,
+      "sha256": "fe6fce771300f6393b216b2e9cff6b2a6ff6ee4b4ec9f39b4758e3c96ed3f09c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/bootstrap_original_materials_mysql_test.go",
+      "size": 25537,
+      "sha256": "19b1c83160c3cc93f707ed90dfbe06155e2ae6a5f04d727a8d1e3e97496ee2ad"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/d_producer_mysql_test.go",
+      "size": 35080,
+      "sha256": "a15ad457a3e582bb661f907cd9933bcd218678dab2ad0d5a698821abf07b9b6a"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_inline_domain.go",
+      "size": 8230,
+      "sha256": "33988165713a32d07d4b2f32b8eba91634c0fc16c9c5b3956377b7e6ce959b47"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_inline_domain_test.go",
+      "size": 9304,
+      "sha256": "b89d371554e2e3d11c335903bd46714a0fe75445950d1a0708adc665e93bee8d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment.go",
+      "size": 10733,
+      "sha256": "074f2cc9c8439a625bed0ddbc305fb279f0e64fc0acb0284be2c0779ef1d38d0"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_candidates.go",
+      "size": 4833,
+      "sha256": "80dd9b2f6e84369ca39f465926ccbffffb2a875f44f354c39f64720db0b94783"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_candidates_test.go",
+      "size": 10698,
+      "sha256": "a481cd496fcb4ab5309ee4e823386cb06dfd58a3fc18674bb5285b642e98fb7d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_deployment_test.go",
+      "size": 12493,
+      "sha256": "1862afc186752fd6a9e5b68e510b59427394535d2eee5df0bab9ba90d1a182b6"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt.go",
+      "size": 5752,
+      "sha256": "42cf8b3bf73bd93462308e2d14eb35d1ecf11f7fca0af4b0f64c1a6be1325436"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidate_attempt_test.go",
+      "size": 7575,
+      "sha256": "35ac4fda494698f72f14bab97b74e09297820fc48257ab48c286dc951bcf918e"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 18777,
+      "sha256": "0dd61b6dafb78ebc9bc755ef3087bb52fd61b69cc71e040f848ded443c041cc8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates_test.go",
+      "size": 18361,
+      "sha256": "c7c43a905c41693b1eb8591d9e4646af2fca3db9ea2e16cba39d9cc0c0395fce"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_inline_gate_test.go",
+      "size": 6114,
+      "sha256": "1c8374f0eff545913749b2c23117eb3556a62a6406314172152abdf1f15bfe5d"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction.go",
+      "size": 17202,
+      "sha256": "f68bbb98aff199fdb1a54e1ed598d4d0f2dcfe52bc635b78e0cdd6b356a26773"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_transaction_test.go",
+      "size": 13280,
+      "sha256": "c7d15ceadf19db0c0958efa425634e5a08deadc9b4543df4a4098faa5674b74e"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-mysql-review-20261026.mjs",
+      "size": 11995,
+      "sha256": "8de864dfa2e3f0d83ba027344b3afbdb6eaafb746cc0a0f583bf3ff67d81709b"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-mysql-review-20261026.test.mjs",
+      "size": 6838,
+      "sha256": "1f068cdff48dae64a1a2b5455c22e362da2fab7cd19721cc740c22abc9958d20"
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-entry-mysql-validation.ps1",
+      "size": 13991,
+      "sha256": "31ebe1a1a0e1809dc5b732a677568ed23dcfc00bcefddbed43ad28e9b75b3c19"
+    },
+    {
+      "path": "scripts/system-backup-d-bootstrap-entry-phase.sh",
+      "size": 2633,
+      "sha256": "9ff25c3f5d76aab40958cb9fd681d8263d1020d22e14db43d30b32f129a639f4"
+    }
+  ],
+  "ready_schema_collision_resolved": true,
+  "A1_r2_matrix_source_checked": true,
+  "checkpoints": [
+    {
+      "name": "pre_C1_history",
+      "evidence": "bootstrapEntryNew invokes the original A Bootstrap inside beforeDDL with C1 absent; dProducerMySQLDB installs the requested original C1 DDL afterward. Canonical A tables are SHOW CREATE clones from the exact 96-migration ledger and retain real FKs."
+    },
+    {
+      "name": "hidden_C1_identity",
+      "evidence": "A real random run-owned account receives only eight A table grants. Metadata must show zero C1 tables and direct SELECT must return typed 1142. Actual A prefix access and exported fence rejection are both checked."
+    },
+    {
+      "name": "history_authorization",
+      "evidence": "Exact successful original operation, disabled v1/config and compatible configured domain are required. Real users revocation and synthetic current authority denial are negatives. A1 r2 now checks persistent matrix_key in initial history and final readback."
+    },
+    {
+      "name": "late_domain_mutation",
+      "evidence": "The second Authorize callback changes canonical domain epoch/row version in the original transaction; RowsAffected must be one. The rejected call is checked against full A/D row snapshots."
+    },
+    {
+      "name": "domain_PK_gap",
+      "evidence": "The original A service holds the domain absence range. A direct writer omits installation locks. performance_schema must show the exact requester/blocker, domains PRIMARY RECORD INSERT_INTENTION edge. Cancellation releases it and only the deliberate domain row may remain."
+    },
+    {
+      "name": "binding_and_commit_unknown",
+      "evidence": "Wrong context/transaction negatives call the exported fence. COMMIT acknowledgement is hidden only after actual driver Commit succeeds; retry must be read-only history without a second reservation."
+    },
+    {
+      "name": "cleanup",
+      "evidence": "The low-privilege connection closes before its account is dropped. Per-case DB teardown confirms absence under the pinned server UUID. Gap workers have bounded cancel/rollback/wait cleanup; receiver rejects CLEANUP_PENDING, failures and skips."
+    },
+    {
+      "name": "receiver",
+      "evidence": "Exactly 22 child runs/passes and scoped fixture/DomainOpener/variant/visibility/mutation/waitgraph/result/cleanup markers are required. Parent PASS, pinned migrations/images/binaries, UID, cleanup and exit order are checked."
+    }
+  ],
+  "Go_probe_source_findings": [],
+  "nonblocking_wrapper_finding": {
+    "priority": 3,
+    "path": "scripts/system-backup-d-bootstrap-entry-mysql-validation.ps1",
+    "line": 110,
+    "description": "Entry wrapper still prints BOOTSTRAP_ORIGINAL_MATERIALS_MYSQL_RESULT. Its JSON kind/suite/file prefix are correct and no current parser consuming this label was found. Use an entry-specific label and update the ready pin before future use; do not modify an in-flight snapshot."
+  },
+  "independent_receiver_regression": {
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "docs/evidence/d-bootstrap-entry-mysql-review-20261026.test.mjs"
+    ],
+    "native_exit": 0,
+    "synthetic_tests": 33,
+    "pass": 33,
+    "fail": 0,
+    "skipped": 0,
+    "log": {
+      "path": "docs/evidence/a2-bootstrap-entry-receiver-tests-no-isolation-20261026.txt",
+      "size": 4320,
+      "sha256": "e05a42c626e3dc90a9b1639690e94f5d5ed39f6cf002519cd550643e03401aeb"
+    },
+    "build_products_created": false,
+    "first_harness_attempt": {
+      "native_exit": 1,
+      "reason": "Sandbox denied child-process spawn before receiver assertions; EPERM preserved.",
+      "log": {
+        "path": "docs/evidence/a2-bootstrap-entry-receiver-tests-20261026.txt",
+        "size": 1052,
+        "sha256": "3abda0f7e14719583ec8064b3a24593a31423de91cbcdb67ee2c0ee352b283ac"
+      }
+    }
+  },
+  "not_proven": [
+    "New entry Go seed/full packages/Linux/terminal cleanup need their own accurate gate.",
+    "These 22 MySQL cases were not executed by this review.",
+    "The SQL suite calls ConfigBootstrapService and the fence, not the deployed CLI/candidate Apply path.",
+    "Resource/deployment authority and domain state variants are synthetic; real current grant/RBAC/material composition is separate.",
+    "Views/wrong-engine/unknown-metadata negatives and all common-prefix protocols are not all actual SQL cases in this suite.",
+    "Provider permissions, physical capacity, 27 owner slots and production readiness remain unaccepted."
+  ],
+  "Go_executed": false,
+  "actual_SQL": false,
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "credentials_read": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "inputs": [
+    {
+      "path": "docs/evidence/a-bootstrap-entry-source-ready-20261026-r2.json",
+      "size": 3758,
+      "sha256": "fb9ee1dbd66068fcd5214ecff17aa0f307d780d7eabace3b58853b22a2f593b4"
+    },
+    {
+      "path": "docs/evidence/d2-bootstrap-entry-source-ready-20261026.json",
+      "size": 5460,
+      "sha256": "1b756723b727767c470c2ce602cce02b4785911b8c4af4c7f9722df5f705f8b6"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-source-ready-20261026.json",
+      "size": 2830,
+      "sha256": "2976dd707d1e6d74f966b3bd9b4381623a46f3c8de9d3255ea86aa262bb8643e"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-entry-receiver-tests-20261026.txt",
+      "size": 1052,
+      "sha256": "3abda0f7e14719583ec8064b3a24593a31423de91cbcdb67ee2c0ee352b283ac"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-entry-receiver-tests-no-isolation-20261026.txt",
+      "size": 4320,
+      "sha256": "e05a42c626e3dc90a9b1639690e94f5d5ed39f6cf002519cd550643e03401aeb"
+    },
+    {
+      "path": "docs/evidence/d-bootstrap-entry-independent-requirements-20261026.json",
+      "size": 3997,
+      "sha256": "aafbd0d2ddb337e8d37cafbaa802b24837768a00be621fb3094d9564ba180866"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "size": 26152,
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-entry-source-review-20261026.mjs",
+      "size": 7679,
+      "sha256": "028f5664f63bad7da781f7db28a853304d923d793f2c46800c5388b15ed7b0b6"
+    }
+  ]
+}

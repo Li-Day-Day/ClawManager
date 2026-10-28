@@ -1,0 +1,523 @@
+// Candidate for backend/internal/systembackupcleanup/database_test.go.
+package systembackupcleanup
+
+import (
+	"context"
+	"database/sql"
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"reflect"
+	"strings"
+	"testing"
+	"time"
+)
+
+type dbStep struct {
+	match    string
+	values   [][]driver.Value
+	columns  int
+	err      error
+	rowsErr  error
+	exec     bool
+	affected int64
+}
+
+func automaticRecordScript(t *testing.T) (*dbScript, RecordRequest, time.Time) {
+	t.Helper()
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	b := candidateBinding("drill")
+	budget := candidateBudget(t)
+	ledger := []driver.Value{uint64(77), uint64(1), "drill", b.ParentPublicID, string(AutomaticDrill), nil, uint64(3), budget.sha256, now, now.Add(time.Duration(budget.seconds) * time.Second), now}
+	s := &dbScript{steps: []dbStep{
+		parentStep(t, time.Time{}),
+		{match: "SELECT version,config_sha256,cleanup_deadline_seconds", values: [][]driver.Value{{uint64(3), budget.sha256, budget.seconds}}},
+		{match: "SELECT status,row_version,controller_owner", values: [][]driver.Value{{"verifying", uint64(7), "controller_test", now.Add(time.Hour), nil, "delete-on-success", "not_started"}}},
+		clockStep(now),
+		{match: "ORDER BY public_id LIMIT", values: [][]driver.Value{{b.ResourcePublicID, uint64(3), "created", "", nil, "namespace"}}},
+		{match: "SELECT id,attempt_sequence", columns: 11},
+		{match: "INSERT INTO system_backup_cleanup_attempts", exec: true, affected: 1},
+		{match: "UPDATE system_restore_drills", exec: true, affected: 1},
+		{match: "UPDATE system_restore_drill_resources", exec: true, affected: 1},
+		{match: "SELECT status,row_version,finished_at", values: [][]driver.Value{{"succeeded", uint64(8), now, "pending"}}},
+		parentStep(t, now),
+		{match: "SELECT lifecycle,", values: [][]driver.Value{{"created", "", uint64(4), nil}}},
+		{match: "SELECT id,attempt_sequence", values: [][]driver.Value{ledger}},
+		{match: "SELECT UTC_TIMESTAMP(6)", values: [][]driver.Value{{now.Add(time.Microsecond)}}},
+	}}
+	return s, RecordRequest{Installation: b.Installation, ParentKind: "drill", ParentPublicID: b.ParentPublicID, ParentRowVersion: 7, ControllerOwner: "controller_test", Source: AutomaticDrill}, now
+}
+
+func TestCleanupRecorderCommitsOnlyOriginalAtomicStateAndClock(t *testing.T) {
+	s, req, _ := automaticRecordScript(t)
+	db := scriptDB(t, s)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var retained MutationExecutor
+	err = RecordInTx(ctx, tx, req, func(executor MutationExecutor, view StartView) error {
+		retained = executor
+		if len(view.Resources) != 1 || view.Resources[0].Binding.ParentPublicID != req.ParentPublicID {
+			t.Fatal("wrong original resource selection")
+		}
+		// A callback's copy of the view cannot replace the internal plan.
+		view.Resources[0].Binding.ResourcePublicID = "srr_00000000-0000-0000-0000-000000000002"
+		return executor.Apply()
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = tx.Commit(); err != nil {
+		t.Fatal(err)
+	}
+	if !s.committed || s.rolledBack || len(s.steps) != 0 {
+		t.Fatalf("wrong original transaction end: %+v", s)
+	}
+	before := len(s.seen)
+	if retained.Apply() == nil || len(s.seen) != before {
+		t.Fatal("retained mutation could execute after its boundary")
+	}
+}
+
+func TestCleanupRecorderRejectsClockRemovalAndRetiming(t *testing.T) {
+	for _, name := range []string{"removed", "start_changed", "deadline_changed", "extra_attempt", "parent_unchanged", "zero_resource_CAS", "callback_error", "panic", "duplicate_Apply"} {
+		t.Run(name, func(t *testing.T) {
+			s, req, now := automaticRecordScript(t)
+			switch name {
+			case "removed":
+				s.steps[12].values = nil
+				s.steps[12].columns = 11
+			case "start_changed":
+				s.steps[12].values[0][8] = now.Add(-time.Microsecond)
+			case "deadline_changed":
+				s.steps[12].values[0][9] = now.Add(time.Duration(candidateBudget(t).seconds)*time.Second + time.Second)
+			case "extra_attempt":
+				extra := append([]driver.Value(nil), s.steps[12].values[0]...)
+				extra[0] = uint64(78)
+				extra[1] = uint64(2)
+				s.steps[12].values = append(s.steps[12].values, extra)
+			case "parent_unchanged":
+				s.steps[9].values[0][1] = uint64(7)
+			case "zero_resource_CAS":
+				s.steps[8].affected = 0
+			}
+			db := scriptDB(t, s)
+			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			defer cancel()
+			tx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			called := false
+			var gotPanic any
+			func() {
+				defer func() { gotPanic = recover() }()
+				err = RecordInTx(ctx, tx, req, func(executor MutationExecutor, _ StartView) error {
+					called = true
+					if name == "panic" {
+						panic("original callback panic")
+					}
+					if name == "callback_error" {
+						return errors.New("original validation failed")
+					}
+					applyErr := executor.Apply()
+					if name == "duplicate_Apply" {
+						_ = executor.Apply()
+						return nil
+					}
+					return applyErr
+				})
+			}()
+			if !called {
+				t.Fatalf("failed before intended original callback: %v", err)
+			}
+			if name == "panic" {
+				if gotPanic != "original callback panic" {
+					t.Fatalf("panic lost: %v", gotPanic)
+				}
+			} else if err == nil {
+				t.Fatal("invalid/corrupted metadata transition accepted")
+			}
+			if s.committed || !s.rolledBack || !errors.Is(tx.Commit(), sql.ErrTxDone) {
+				t.Fatal("ignored failure can commit the original transaction")
+			}
+		})
+	}
+}
+
+func TestCleanupRecorderInvalidInputsCloseOriginalTransaction(t *testing.T) {
+	for _, name := range []string{"nil_context", "nil_callback", "unbounded_context"} {
+		t.Run(name, func(t *testing.T) {
+			s := &dbScript{}
+			db := scriptDB(t, s)
+			tx, err := db.BeginTx(context.Background(), nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := context.Background()
+			var mutation ClockMutation = func(MutationExecutor, StartView) error { return nil }
+			if name == "nil_context" {
+				ctx = nil
+			}
+			if name == "nil_callback" {
+				mutation = nil
+			}
+			if RecordInTx(ctx, tx, RecordRequest{}, mutation) == nil || !s.rolledBack || !errors.Is(tx.Commit(), sql.ErrTxDone) {
+				t.Fatal("invalid call left caller transaction committable")
+			}
+		})
+	}
+}
+
+func TestCleanupMutationBoundaryCannotExpressTransactionSQL(t *testing.T) {
+	boundary := reflect.TypeOf(MutationExecutor{})
+	for _, name := range []string{"Exec", "ExecContext", "Query", "QueryContext", "Commit", "Rollback", "Begin", "BeginTx", "Conn"} {
+		if _, ok := boundary.MethodByName(name); ok {
+			t.Fatalf("arbitrary transaction/SQL capability exposed: %s", name)
+		}
+	}
+	if err := (MutationExecutor{}).Apply(); err == nil {
+		t.Fatal("zero boundary executed")
+	}
+	if _, err := json.Marshal(MutationExecutor{}); err == nil {
+		t.Fatal("SQL boundary serialized")
+	}
+}
+
+func TestAutomaticBackupClockPrecedesTaskTerminalState(t *testing.T) {
+	s, req, now := automaticRecordScript(t)
+	b := candidateBinding("backup")
+	budget := candidateBudget(t)
+	req.ParentKind = "backup"
+	req.ParentPublicID = b.ParentPublicID
+	req.Source = AutomaticBackup
+	s.steps[2].values = [][]driver.Value{{"publishing", uint64(7), "controller_test", now.Add(time.Hour), nil, "", ""}}
+	s.steps[4].values = [][]driver.Value{{b.ResourcePublicID, uint64(3), "sealed", "not_started", nil, "pvc"}}
+	s.steps[7].match = "UPDATE system_backups"
+	s.steps[8].match = "UPDATE system_backup_staging_resources"
+	s.steps[9].values = [][]driver.Value{{"publishing", uint64(8), nil, ""}}
+	s.steps[10] = parentStep(t, time.Time{})
+	s.steps[11].values = [][]driver.Value{{"deleting", "running", uint64(4), nil}}
+	s.steps[12].values = [][]driver.Value{{uint64(77), uint64(1), "backup", b.ParentPublicID, string(AutomaticBackup), nil, uint64(3), budget.sha256, now, now.Add(time.Duration(budget.seconds) * time.Second), now}}
+	db := scriptDB(t, s)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = RecordInTx(ctx, tx, req, func(e MutationExecutor, _ StartView) error { return e.Apply() }); err != nil {
+		t.Fatal(err)
+	}
+	if err = tx.Commit(); err != nil || len(s.steps) != 0 || !s.committed {
+		t.Fatalf("backup cleanup was tied to a nonexistent terminal clock: %v", err)
+	}
+}
+
+func explicitRecordScript(t *testing.T) (*dbScript, RecordRequest, time.Time) {
+	t.Helper()
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	b := candidateBinding("drill")
+	budget := candidateBudget(t)
+	oldStart := now.Add(-time.Hour * 2)
+	opStart := now.Add(-10 * time.Second)
+	op := []driver.Value{uint64(9), b.Installation, "sop_00000000-0000-0000-0000-000000000001", "cleanup", "drill", b.ParentPublicID, opStart, opStart.Add(time.Minute), uint64(2), "pending", nil}
+	old := []driver.Value{uint64(77), uint64(1), "drill", b.ParentPublicID, string(AutomaticDrill), nil, uint64(3), budget.sha256, oldStart, oldStart.Add(time.Duration(budget.seconds) * time.Second), oldStart}
+	current := []driver.Value{uint64(78), uint64(2), "drill", b.ParentPublicID, string(ExplicitOperation), uint64(9), uint64(3), budget.sha256, opStart, opStart.Add(time.Minute), now}
+	s := &dbScript{steps: []dbStep{
+		parentStep(t, oldStart),
+		{match: "SELECT version,config_sha256,cleanup_deadline_seconds", values: [][]driver.Value{{uint64(3), budget.sha256, budget.seconds}}},
+		{match: "SELECT id,origin_installation_id,public_id", values: [][]driver.Value{append([]driver.Value(nil), op...)}},
+		{match: "SELECT status,row_version,controller_owner", values: [][]driver.Value{{"succeeded", uint64(7), nil, nil, oldStart, "delete-on-success", "failed"}}},
+		clockStep(now),
+		{match: "ORDER BY public_id LIMIT", values: [][]driver.Value{{b.ResourcePublicID, uint64(3), "delete_failed", "", nil, "namespace"}}},
+		{match: "SELECT id,attempt_sequence", values: [][]driver.Value{append([]driver.Value(nil), old...)}},
+		{match: "INSERT INTO system_backup_cleanup_attempts", exec: true, affected: 1},
+		{match: "UPDATE system_restore_drills", exec: true, affected: 1},
+		{match: "UPDATE system_restore_drill_resources", exec: true, affected: 1},
+		{match: "SELECT status,row_version,finished_at", values: [][]driver.Value{{"succeeded", uint64(8), oldStart, "pending"}}},
+		parentStep(t, oldStart),
+		{match: "SELECT lifecycle,", values: [][]driver.Value{{"delete_failed", "", uint64(4), uint64(9)}}},
+		{match: "SELECT id,origin_installation_id,public_id", values: [][]driver.Value{append([]driver.Value(nil), op...)}},
+		{match: "SELECT id,attempt_sequence", values: [][]driver.Value{append([]driver.Value(nil), old...), current}},
+		{match: "SELECT UTC_TIMESTAMP(6)", values: [][]driver.Value{{now.Add(time.Microsecond)}}},
+	}}
+	return s, RecordRequest{Installation: b.Installation, ParentKind: "drill", ParentPublicID: b.ParentPublicID, ParentRowVersion: 7, Source: ExplicitOperation, OperationID: 9, OperationRowVersion: 2}, now
+}
+
+func TestExplicitCleanupRetryPreservesAllOriginalBindings(t *testing.T) {
+	for _, name := range []string{"valid", "prior_clock_changed", "operation_retargeted", "parent_snapshot_changed"} {
+		t.Run(name, func(t *testing.T) {
+			s, req, _ := explicitRecordScript(t)
+			switch name {
+			case "prior_clock_changed":
+				s.steps[14].values[0][9] = s.steps[14].values[0][9].(time.Time).Add(time.Second)
+			case "operation_retargeted":
+				s.steps[13].values[0][5] = "sdr_00000000-0000-0000-0000-000000000002"
+			case "parent_snapshot_changed":
+				s.steps[11].values[0][7] = int64(60)
+			}
+			db := scriptDB(t, s)
+			ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+			defer cancel()
+			tx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			applied := false
+			err = RecordInTx(ctx, tx, req, func(e MutationExecutor, view StartView) error {
+				age, window, clockErr := view.Resources[0].Clock.AlertWindow(view.Now)
+				if clockErr != nil || age != 10*time.Second || window != time.Minute {
+					t.Fatal("explicit attempt substituted the task budget or queue start")
+				}
+				applyErr := e.Apply()
+				applied = applyErr == nil
+				return applyErr
+			})
+			if !applied {
+				t.Fatalf("failed before intended final check: %v", err)
+			}
+			if name == "valid" {
+				if err != nil || tx.Commit() != nil || !s.committed || len(s.steps) != 0 {
+					t.Fatalf("valid retry failed: %v", err)
+				}
+			} else if err == nil || !s.rolledBack || !errors.Is(tx.Commit(), sql.ErrTxDone) {
+				t.Fatal("changed original clock/config/operation committed")
+			}
+		})
+	}
+}
+
+type dbScript struct {
+	steps                 []dbStep
+	readOnly              bool
+	committed, rolledBack bool
+	commitErr             error
+	seen                  []string
+}
+type scriptConnector struct{ s *dbScript }
+
+func (c scriptConnector) Connect(context.Context) (driver.Conn, error) { return &scriptConn{c.s}, nil }
+func (c scriptConnector) Driver() driver.Driver                        { return scriptDriver{c.s} }
+
+type scriptDriver struct{ s *dbScript }
+
+func (d scriptDriver) Open(string) (driver.Conn, error) { return &scriptConn{d.s}, nil }
+
+type scriptConn struct{ s *dbScript }
+
+func (*scriptConn) Prepare(string) (driver.Stmt, error) { return nil, errors.New("unexpected prepare") }
+func (*scriptConn) Close() error                        { return nil }
+func (*scriptConn) Begin() (driver.Tx, error) {
+	return nil, errors.New("explicit transaction options required")
+}
+func (c *scriptConn) BeginTx(_ context.Context, options driver.TxOptions) (driver.Tx, error) {
+	if options.ReadOnly != c.s.readOnly || c.s.readOnly && options.Isolation != driver.IsolationLevel(sql.LevelRepeatableRead) {
+		return nil, errors.New("wrong transaction boundary")
+	}
+	return &scriptTx{c.s}, nil
+}
+func (c *scriptConn) next(query string, exec bool) (dbStep, error) {
+	c.s.seen = append(c.s.seen, query)
+	if strings.Contains(query, "canonical_config_json") {
+		return dbStep{}, errors.New("unknown column in original 066 schema")
+	}
+	if len(c.s.steps) == 0 {
+		return dbStep{}, fmt.Errorf("unexpected SQL %s", query)
+	}
+	step := c.s.steps[0]
+	c.s.steps = c.s.steps[1:]
+	if step.exec != exec || !strings.Contains(query, step.match) {
+		return dbStep{}, fmt.Errorf("SQL order/statement mismatch: want %s got %s", step.match, query)
+	}
+	return step, step.err
+}
+func (c *scriptConn) QueryContext(_ context.Context, query string, _ []driver.NamedValue) (driver.Rows, error) {
+	step, err := c.next(query, false)
+	if err != nil {
+		return nil, err
+	}
+	return &scriptRows{step: step}, nil
+}
+func (c *scriptConn) ExecContext(_ context.Context, query string, _ []driver.NamedValue) (driver.Result, error) {
+	step, err := c.next(query, true)
+	if err != nil {
+		return nil, err
+	}
+	return driver.RowsAffected(step.affected), nil
+}
+
+type scriptTx struct{ s *dbScript }
+
+func (t *scriptTx) Commit() error   { t.s.committed = true; return t.s.commitErr }
+func (t *scriptTx) Rollback() error { t.s.rolledBack = true; return nil }
+
+type scriptRows struct {
+	step  dbStep
+	index int
+}
+
+func (r *scriptRows) Columns() []string {
+	n := r.step.columns
+	if n == 0 && len(r.step.values) > 0 {
+		n = len(r.step.values[0])
+	}
+	names := make([]string, n)
+	for i := range names {
+		names[i] = fmt.Sprintf("column_%d", i)
+	}
+	return names
+}
+func (*scriptRows) Close() error { return nil }
+func (r *scriptRows) Next(dest []driver.Value) error {
+	if r.index >= len(r.step.values) {
+		if r.step.rowsErr != nil {
+			err := r.step.rowsErr
+			r.step.rowsErr = nil
+			return err
+		}
+		return io.EOF
+	}
+	copy(dest, r.step.values[r.index])
+	r.index++
+	return nil
+}
+func scriptDB(t *testing.T, s *dbScript) *sql.DB {
+	t.Helper()
+	db := sql.OpenDB(scriptConnector{s})
+	db.SetMaxOpenConns(1)
+	t.Cleanup(func() { db.Close() })
+	return db
+}
+
+func clockStep(now time.Time) dbStep {
+	return dbStep{match: "SELECT UTC_TIMESTAMP(6),", values: [][]driver.Value{{now, int64(0)}}}
+}
+func emptyParents(kind string) dbStep {
+	match := "SELECT DISTINCT b.public_id"
+	if kind == "drill" {
+		match = "SELECT public_id FROM system_restore_drills"
+	}
+	return dbStep{match: match, columns: 1}
+}
+func parentStep(t *testing.T, finished time.Time) dbStep {
+	t.Helper()
+	raw := candidateCanonical(t)
+	budget := candidateBudget(t)
+	var finish driver.Value
+	if !finished.IsZero() {
+		finish = finished
+	}
+	return dbStep{match: "JOIN system_backup_configs", values: [][]driver.Value{{uint64(3), raw, int64(len(raw)), budget.sha256, finish, budget.sha256, int64(len(raw)), budget.seconds}}}
+}
+
+type residualModel struct {
+	value    *bool
+	misbound bool
+	err      error
+	calls    int
+}
+
+func (m *residualModel) ReadPersisted(_ context.Context, _ *sql.Tx, identity ResourceIdentity, _ time.Time) (ResidualObservation, error) {
+	m.calls++
+	if m.misbound {
+		identity.LocationSHA256 = strings.Repeat("b", 64)
+	}
+	return ResidualObservation{identity, m.value}, m.err
+}
+
+func TestCleanupReaderConfirmedEmptySnapshotAndFailureBoundary(t *testing.T) {
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	for _, tc := range []struct {
+		name      string
+		clock     dbStep
+		commitErr error
+		valid     bool
+	}{
+		{"complete_empty", clockStep(now), nil, true},
+		{"clock_error", dbStep{match: "SELECT UTC_TIMESTAMP(6),", err: errors.New("clock failed")}, nil, false},
+		{"non_utc", dbStep{match: "SELECT UTC_TIMESTAMP(6),", values: [][]driver.Value{{now, int64(1)}}}, nil, false},
+		{"commit_failed", clockStep(now), errors.New("commit failed"), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s := &dbScript{readOnly: true, steps: []dbStep{tc.clock}, commitErr: tc.commitErr}
+			if tc.name == "complete_empty" || tc.name == "commit_failed" {
+				s.steps = append(s.steps, emptyParents("backup"), emptyParents("drill"))
+			}
+			collection, err := (Reader{DB: scriptDB(t, s)}).Collect(context.Background(), "installation_test")
+			if tc.valid {
+				if err != nil || collection == nil || !collection.Complete || len(collection.Owners) != 0 || !collection.ObservedAt.Equal(now) || !s.committed {
+					t.Fatalf("invalid empty snapshot: %+v %v", collection, err)
+				}
+			} else if err == nil || collection != nil {
+				t.Fatal("failed/unknown snapshot became a healthy partial result")
+			}
+		})
+	}
+}
+
+func TestCleanupReaderActiveParentWithoutResourcesIsUnknown(t *testing.T) {
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	b := candidateBinding("drill")
+	s := &dbScript{readOnly: true, steps: []dbStep{clockStep(now), emptyParents("backup"), {match: "SELECT public_id FROM system_restore_drills", values: [][]driver.Value{{b.ParentPublicID}}}, parentStep(t, now.Add(-time.Hour)), {match: "FROM system_restore_drill_resources", columns: 8}}}
+	collection, err := (Reader{DB: scriptDB(t, s)}).Collect(context.Background(), b.Installation)
+	if err == nil || collection != nil || s.committed || !s.rolledBack || len(s.steps) != 0 {
+		t.Fatalf("active owner disappeared into empty health: %v %+v", err, s)
+	}
+}
+
+func TestCleanupReaderRetainsFailedAttemptResidualAfterNewRetry(t *testing.T) {
+	now := time.Date(2026, 10, 27, 1, 2, 3, 0, time.UTC)
+	binding := candidateBinding("drill")
+	budget := candidateBudget(t)
+	start := now.Add(-time.Duration(budget.seconds)*time.Second - time.Second)
+	for _, name := range []string{"residual_true", "settled_medium", "unknown_medium", "misbound_medium", "foreign_operation", "history_read_error", "missing_history"} {
+		t.Run(name, func(t *testing.T) {
+			resource := []driver.Value{binding.ResourcePublicID, "namespace", "deleted", "namespace-uid", nil, strings.Repeat("a", 64), strings.Repeat("c", 64), uint64(9)}
+			old := []driver.Value{uint64(1), string(AutomaticDrill), uint64(3), budget.sha256, start, start.Add(time.Duration(budget.seconds) * time.Second), start, nil, nil, nil, nil, nil, nil, nil, nil, nil}
+			opStart := now.Add(-10 * time.Second)
+			install := binding.Installation
+			if name == "foreign_operation" {
+				install = "installation_foreign"
+			}
+			current := []driver.Value{uint64(2), string(ExplicitOperation), uint64(3), budget.sha256, opStart, opStart.Add(60 * time.Second), opStart, uint64(9), uint64(9), install, "sop_00000000-0000-0000-0000-000000000001", "cleanup", "drill", binding.ParentPublicID, opStart, opStart.Add(60 * time.Second)}
+			truth := name != "settled_medium"
+			observer := &residualModel{value: &truth, misbound: name == "misbound_medium"}
+			if name == "unknown_medium" {
+				observer.value = nil
+			}
+			s := &dbScript{readOnly: true, steps: []dbStep{clockStep(now), emptyParents("backup"), {match: "SELECT public_id FROM system_restore_drills", values: [][]driver.Value{{binding.ParentPublicID}}}, parentStep(t, start), {match: "FROM system_restore_drill_resources", values: [][]driver.Value{resource}}}}
+			if name != "unknown_medium" && name != "misbound_medium" {
+				history := dbStep{match: "FROM system_backup_cleanup_attempts", values: [][]driver.Value{old, current}}
+				if name == "history_read_error" {
+					history.rowsErr = errors.New("late history error")
+				}
+				if name == "missing_history" {
+					history.values = nil
+					history.columns = 16
+				}
+				s.steps = append(s.steps, history)
+			}
+			collection, err := (Reader{DB: scriptDB(t, s), Residual: observer}).Collect(context.Background(), binding.Installation)
+			if name == "residual_true" {
+				if err != nil || collection == nil || len(collection.Owners) != 2 || collection.Owners[0].Age <= collection.Owners[0].ImmutableDeadline || !collection.Owners[0].ResidualVolume || collection.Owners[1].Age >= collection.Owners[1].ImmutableDeadline {
+					t.Fatalf("failed old medium disappeared on retry: %+v %v", collection, err)
+				}
+			} else if name == "settled_medium" {
+				if err != nil || collection == nil || len(collection.Owners) != 0 {
+					t.Fatalf("verified settlement did not recover: %+v %v", collection, err)
+				}
+			} else if err == nil || collection != nil || s.committed {
+				t.Fatalf("unknown/partial/misbound facts published: %+v %v", collection, err)
+			}
+			if len(s.steps) != 0 {
+				t.Fatalf("failed before the intended observation: %d remaining", len(s.steps))
+			}
+		})
+	}
+}

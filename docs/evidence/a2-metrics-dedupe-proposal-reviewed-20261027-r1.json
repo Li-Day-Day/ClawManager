@@ -1,0 +1,157 @@
+{
+  "kind": "a2_nonimplementer_metrics_dedupe_D_proposal_source_review.v1",
+  "decision": "split_branch_and_global_dedupe_corrections_source_compatible; preservation_count_correction_and_cleanup_deadline_semantics_remain_open",
+  "inputs": [
+    {
+      "path": "docs/evidence/d2-metrics-dedupe-proposal-20261027-r1.json",
+      "size": 9191,
+      "sha256": "f93428d2d7175ca0fb3db13ac381b3ed993c56c2c775ab149c4c06a168e1b088"
+    },
+    {
+      "path": "docs/evidence/d2-metrics-dedupe-proposal-candidate-20261027-r1.json",
+      "size": 195203,
+      "sha256": "e647ef1ff736428279c329a12d71111066afef2415aeb49f23f2e82051ff6e1b"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-combined-candidate-20261027-r2.json",
+      "size": 194141,
+      "sha256": "3a1654ffd892e65e1ea020b01538ad60722efb9e59c635ad180431aa6ab90a8a"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.schema.json",
+      "size": 6859,
+      "sha256": "6f3e30a1ee322170edbe17f156854317ac9b2ce480a1843a4710910e12803b58"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    }
+  ],
+  "exact_delta": {
+    "unchanged_alert_rows": 97,
+    "changed_existing_alert_ids": [
+      "cleanup-overdue"
+    ],
+    "removed_ids": [
+      "signature-or-checksum-failure"
+    ],
+    "added_ids": [
+      "signature-operation-failure",
+      "checksum-or-signature-verifier-failure"
+    ],
+    "metrics_unchanged": true,
+    "other_top_level_metadata_unchanged_except_alert_count": true,
+    "inverse_restores_base": true,
+    "alerts": 100,
+    "promql": 96,
+    "controller_state": 4
+  },
+  "proposal_preservation_claim": {
+    "claimed_other_98_rows_preserved": true,
+    "exact_unchanged": 97,
+    "correction_required": "97 byte-equivalent alert objects; cleanup is a separate one-field edit; old signature rule is replaced by two rules"
+  },
+  "split_rule_findings": {
+    "severity_for_profiles_reset_and_fixed_clock_inherited": true,
+    "expressions_are_exact_old_corrected_OR_branches": true,
+    "dedupe_keys_supported_by_existing_declared_labels": true,
+    "rule_keys_and_runbooks_are_changed": true
+  },
+  "split_post_predicate_models": [
+    {
+      "signature_condition": false,
+      "verifier_condition": false,
+      "corrected_combined_fires": false,
+      "any_split_rule_fires": false
+    },
+    {
+      "signature_condition": false,
+      "verifier_condition": true,
+      "corrected_combined_fires": true,
+      "any_split_rule_fires": true
+    },
+    {
+      "signature_condition": true,
+      "verifier_condition": false,
+      "corrected_combined_fires": true,
+      "any_split_rule_fires": true
+    },
+    {
+      "signature_condition": true,
+      "verifier_condition": true,
+      "corrected_combined_fires": true,
+      "any_split_rule_fires": true
+    }
+  ],
+  "cleanup_dedupe_finding": "Empty dedupe matches the current unlabeled global expression output; this alone does not prove owner-immutable deadline semantics.",
+  "cleanup_immutable_deadline_countermodels": {
+    "assumption": "Each task cleanup retains its own immutable deadline; global oldest age is max age, configured deadline is current config.",
+    "original_plan_pointer": "docs/system-backup-restore-division-plan.md:806",
+    "models": [
+      {
+        "name": "heterogeneous_immutable_deadline_false_negative",
+        "ages": [
+          700,
+          100
+        ],
+        "immutable_deadlines": [
+          900,
+          60
+        ],
+        "current_deadline": 900,
+        "global_oldest_age": 700,
+        "current_global_predicate": false,
+        "any_owner_immutable_deadline_exceeded": true
+      },
+      {
+        "name": "config_change_false_positive",
+        "ages": [
+          700,
+          100
+        ],
+        "immutable_deadlines": [
+          900,
+          900
+        ],
+        "current_deadline": 600,
+        "global_oldest_age": 700,
+        "current_global_predicate": true,
+        "any_owner_immutable_deadline_exceeded": false
+      },
+      {
+        "name": "same_global_inputs_without_overdue",
+        "ages": [
+          700,
+          100
+        ],
+        "immutable_deadlines": [
+          900,
+          900
+        ],
+        "current_deadline": 900,
+        "global_oldest_age": 700,
+        "current_global_predicate": false,
+        "any_owner_immutable_deadline_exceeded": false
+      }
+    ],
+    "conclusion": "The same two global gauge inputs can represent both an overdue and a non-overdue owner set. A current-global comparison alone cannot distinguish them under this assumption.",
+    "source_projection_or_metric_contract_selected": false
+  },
+  "required_followup": [
+    "Correct preservation count in a new proposal revision while preserving r1 bytes",
+    "Original A/D owners resolve whether task-immutable cleanup semantics require a separate source/metric correction; do not claim resolved by dedupe=[]",
+    "Generate exact candidate scripts/JSON/YAML, update both affected test counts and README, run actual affected checks",
+    "Validate raw PromQL cases with an existing evaluator; add split-rule label and cleanup cases, preserving historical r2 fixture"
+  ],
+  "full_JSON_schema_validator_executed": false,
+  "bounded_closed_field_and_label_checks_executed": true,
+  "PromQL_evaluator_executed": false,
+  "collector_runtime_tested": false,
+  "notification_dedupe_executed": false,
+  "live_sources_modified": false,
+  "Go_or_SQL_executed": false,
+  "dependencies_installed": false,
+  "contract_frozen": false,
+  "production_approved": false
+}

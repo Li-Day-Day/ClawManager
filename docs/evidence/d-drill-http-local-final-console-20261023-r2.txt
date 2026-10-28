@@ -1,0 +1,24 @@
+LOCAL_OWNER drill-detail-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-016b5ce97d4a42ea8d8cbe10c00f17df
+LOCAL_SOURCE drill-detail-frozen=yes source_sha256=78017e480f5580a22592c8a9d8445467bd579074411df80dcafe78d05207622e files=1617
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE admin-read-auth-local=yes full-task-query-local=no remote-full-schema-probe=yes real_mysql=not_run
+ok  	clawreef/internal/systembackupsecurity	3.835s
+ok  	clawreef/internal/systembackupread	18.811s
+ok  	command-line-arguments	5.662s
+VALIDATION_SCOPE drill-history-only=yes synthetic_cases=19 real_mysql=not_run production=no
+=== RUN   TestDDrillDetailHTTPSeed
+    system_backup_read_drill_history_mysql_test.go:57: PASS drill-history-http-seed synthetic_cases=19 actual_mysql=not_run actual_provider=no production_approval=no
+--- PASS: TestDDrillDetailHTTPSeed (0.00s)
+PASS
+ok  	command-line-arguments	5.314s
+=== RUN   TestAAdminReadMySQLSeed
+--- PASS: TestAAdminReadMySQLSeed (0.05s)
+PASS
+ok  	clawreef/internal/systembackupsecurity	21.660s
+LOCAL_PASS admin-read-seed=yes real_mysql=not_run
+LOCAL_PASS a-admin-read-unit-tests=yes linux-mysql-probe-compiled=yes real_mysql=not_run binary_sha256=33f1ec4364be5de767230c1644077fd7bc174b2c41064574ae318ae21fa7f75d ddl_sha256=1a6abd1c8d01155184b8fa8c7cc8d6527201ed157cba1f80b4ccefc6218483f2
+LOCAL_PASS pinned-migration-runner-compiled=yes migration_binary_sha256=62dc14e42ddd25eccb0f5fe9b0768f74e6bceed02d6b160513e78d4c443ac91b
+LOCAL_PASS d-admin-read-http-probe-compiled=yes http_binary_sha256=279ba394a64345890adbbd0be094f8cc46750149bb33a583a067598db3e90db3 real_mysql=not_run
+CLEANED local-registration-build-cache=True
+LOCAL_PASS drill-detail-frozen-postcheck=yes freeze-only=False dependencies-installed=no remote-requested=False
+LOCAL_CLEANUP drill-detail-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-016b5ce97d4a42ea8d8cbe10c00f17df removed=True

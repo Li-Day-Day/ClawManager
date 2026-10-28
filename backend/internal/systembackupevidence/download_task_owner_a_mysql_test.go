@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"errors"
 	"os"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -219,21 +220,29 @@ func TestASQLTaskDownloadOwnersMySQL(t *testing.T) {
 			case "unknown_reference_column":
 				_, err = x.db.ExecContext(x.ctx, "CREATE TABLE system_owner_probe_extra(id BIGINT PRIMARY KEY,evidence_public_id CHAR(40)) ENGINE=InnoDB")
 			case "missing_reference_column":
-				// MySQL refuses to rename a column while a CHECK uses it. Only
-				// this disposable negative-schema fixture drops that exact CHECK;
-				// production migrations and all FK enforcement remain unchanged.
+				if !regexp.MustCompile(`^amfa_[a-f0-9]{32}$`).MatchString(x.identity.Database) {
+					t.Fatal("negative schema fixture requires its owned database")
+				}
+				// Only this disposable negative-schema fixture drops the exact
+				// dependent CHECK and temporarily rebuilds its named FK. MySQL
+				// 8.4 cannot rename this FK column with ALGORITHM=INPLACE.
+				// Keep FK checks enabled and restore the same RESTRICT edge before
+				// exercising the actual owner reader. Production DDL is unchanged.
 				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health DROP CHECK chk_sb_dependency_evidence")
 				mustSQL(t, err)
-				// Explicit INPLACE permits renaming the FK column on MySQL 8.4;
-				// the default algorithm may reject it with error 1846.
-				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health RENAME COLUMN evidence_id TO hidden_reference, ALGORITHM=INPLACE")
+				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health DROP FOREIGN KEY fk_sb_dependency_evidence")
 				mustSQL(t, err)
-				var original, hidden, foreignKey int
+				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health RENAME COLUMN evidence_id TO hidden_reference, ALGORITHM=COPY")
+				mustSQL(t, err)
+				_, err = x.db.ExecContext(x.ctx, "ALTER TABLE system_backup_dependency_health ADD CONSTRAINT fk_sb_dependency_evidence FOREIGN KEY (hidden_reference) REFERENCES system_backup_evidence(id) ON DELETE RESTRICT, ALGORITHM=COPY")
+				mustSQL(t, err)
+				var original, hidden, foreignKey, sessionChecks, globalChecks int
 				mustSQL(t, x.db.QueryRowContext(x.ctx, `SELECT
 					(SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_dependency_health' AND COLUMN_NAME='evidence_id'),
 					(SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_dependency_health' AND COLUMN_NAME='hidden_reference'),
-					(SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_dependency_health' AND CONSTRAINT_NAME='fk_sb_dependency_evidence' AND COLUMN_NAME='hidden_reference' AND REFERENCED_TABLE_NAME='system_backup_evidence' AND REFERENCED_COLUMN_NAME='id')`).Scan(&original, &hidden, &foreignKey))
-				if original != 0 || hidden != 1 || foreignKey != 1 {
+					(SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE k JOIN information_schema.REFERENTIAL_CONSTRAINTS r ON r.CONSTRAINT_SCHEMA=k.CONSTRAINT_SCHEMA AND r.TABLE_NAME=k.TABLE_NAME AND r.CONSTRAINT_NAME=k.CONSTRAINT_NAME WHERE k.TABLE_SCHEMA=DATABASE() AND k.TABLE_NAME='system_backup_dependency_health' AND k.CONSTRAINT_NAME='fk_sb_dependency_evidence' AND k.COLUMN_NAME='hidden_reference' AND k.REFERENCED_TABLE_SCHEMA=DATABASE() AND k.REFERENCED_TABLE_NAME='system_backup_evidence' AND k.REFERENCED_COLUMN_NAME='id' AND r.DELETE_RULE='RESTRICT'),
+					@@session.foreign_key_checks, @@global.foreign_key_checks`).Scan(&original, &hidden, &foreignKey, &sessionChecks, &globalChecks))
+				if original != 0 || hidden != 1 || foreignKey != 1 || sessionChecks != 1 || globalChecks != 1 {
 					t.Fatal("missing reference fixture did not preserve its renamed FK")
 				}
 				t.Log("OBSERVED missing reference fixture renamed column with FK retained")

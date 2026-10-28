@@ -1,0 +1,54 @@
+✔ model: login, config, creation/replay, negative sessions, progress and independent execution result (165.0333ms)
+✔ model: failed execution is inspected through HTTP 200 and persisted category (13.2873ms)
+✖ model: backup reads manifest and binds independent result checksum (21.1779ms)
+✔ model refuses disabled config (3.0377ms)
+✔ model refuses fixture data (1.6618ms)
+✔ model refuses unwired runtime (3.4893ms)
+✔ model refuses replay hash drift (4.2366ms)
+✔ model refuses duplicate durable queue (2.691ms)
+✔ model refuses foreign visibility (5.6564ms)
+✔ model refuses no executor claim (15.9624ms)
+✔ model refuses result reference drift (41.1968ms)
+✖ model refuses unwired backup manifest (5.5898ms)
+✔ model refuses endless pending and hanging observer with bounded waits (191.6982ms)
+✔ missing SQL/executor observer and unsupported public HTTP origin fail before any mutation (13.9442ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 12
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 564.7322
+
+✖ failing tests:
+
+test at scripts\system-backup-d-api-smoke.test.mjs:62:1
+✖ model: backup reads manifest and binds independent result checksum (21.1779ms)
+  SmokeFailure [Error]: system-backup smoke: poll-status (assertion_failed)
+      at invariant (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-api-smoke.mjs:5:51)
+      at runSmoke (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-api-smoke.mjs:117:5)
+      at async TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-api-smoke.test.mjs:63:18)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    stage: 'poll-status',
+    code: 'assertion_failed'
+  }
+
+test at scripts\system-backup-d-api-smoke.test.mjs:76:4
+✖ model refuses unwired backup manifest (5.5898ms)
+  AssertionError [ERR_ASSERTION]: The validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  Error: system-backup smoke: poll-status (assertion_failed)
+      at async TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/scripts/system-backup-d-api-smoke.test.mjs:78:3)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [SmokeFailure],
+    expected: [Function (anonymous)],
+    operator: 'rejects',
+    diff: 'simple'
+  }

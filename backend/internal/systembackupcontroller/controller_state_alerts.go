@@ -7,7 +7,7 @@ import (
 )
 
 // ControllerStateAlertSnapshot contains only the already-aggregated D-side
-// facts needed by the four non-PromQL registry rules. Owner collection,
+// facts needed by the six non-PromQL registry rules. Owner collection,
 // persistence, alert delivery, and alert-state CAS are outside this predicate.
 type ControllerStateAlertSnapshot struct {
 	Profile             string
@@ -15,11 +15,27 @@ type ControllerStateAlertSnapshot struct {
 	AcceptanceAnomalies map[TargetKind]uint64
 	EvidenceWrites      []EvidenceWriteAlertCandidate
 	ProviderProofIssuer *ProviderProofIssuerAlertCandidate
+	CleanupOwners       *CleanupAlertCollection
 }
 
 type EvidenceWriteAlertCandidate struct {
 	Age               time.Duration
 	ImmutableDeadline time.Duration
+}
+
+// CleanupAlertCollection is an explicit complete read of cleanup owner facts.
+// Collection and original immutable-clock bindings remain the collector's job;
+// this predicate does not manufacture SQL authority or a production-ready source.
+type CleanupAlertCollection struct {
+	Complete   bool
+	ObservedAt time.Time
+	Owners     []CleanupAlertCandidate
+}
+
+type CleanupAlertCandidate struct {
+	Age               time.Duration
+	ImmutableDeadline time.Duration
+	ResidualVolume    *bool
 }
 
 type ProviderProofIssuerAlertCandidate struct {
@@ -38,13 +54,30 @@ type ControllerStateAlertDecision struct {
 
 // EvaluateControllerStateAlerts evaluates the closed controller_state rule
 // set. Missing acceptance rows and a missing provider-proof issuer are
-// fail-closed; no pending evidence rows are a healthy zero.
+// fail-closed; no pending evidence rows are a healthy zero. Cleanup requires a
+// complete collection at this snapshot clock; a confirmed empty one is healthy.
 func EvaluateControllerStateAlerts(snapshot ControllerStateAlertSnapshot) ([]ControllerStateAlertDecision, error) {
 	if snapshot.Profile != "production" && snapshot.Profile != "development" {
 		return nil, errors.New("invalid controller-state alert profile")
 	}
 	if snapshot.Now.IsZero() {
 		return nil, errors.New("controller-state alert clock is required")
+	}
+	cleanup := snapshot.CleanupOwners
+	if cleanup == nil || !cleanup.Complete || cleanup.ObservedAt.IsZero() || !cleanup.ObservedAt.Equal(snapshot.Now) {
+		return nil, errors.New("complete cleanup owner collection for the alert snapshot clock is required")
+	}
+	cleanupOverdue := false
+	residualVolumeOverdue := false
+	for _, candidate := range cleanup.Owners {
+		if candidate.Age < 0 || candidate.ImmutableDeadline <= 0 || candidate.ResidualVolume == nil {
+			return nil, errors.New("invalid cleanup owner age, immutable deadline or residual-volume fact")
+		}
+		// Strictly after the original per-owner deadline; never use a current
+		// global configuration value or stop before validating later owners.
+		residualVolume := *candidate.ResidualVolume
+		cleanupOverdue = cleanupOverdue || candidate.Age > candidate.ImmutableDeadline
+		residualVolumeOverdue = residualVolumeOverdue || residualVolume && candidate.Age > candidate.ImmutableDeadline
 	}
 	decisions, err := evaluateAcceptanceAnomalyDecisions(snapshot.Profile, snapshot.AcceptanceAnomalies)
 	if err != nil {
@@ -75,6 +108,12 @@ func EvaluateControllerStateAlerts(snapshot ControllerStateAlertSnapshot) ([]Con
 	}
 	decisions = append(decisions, ControllerStateAlertDecision{
 		RuleID: "provider-proof-issuer-key-expiring", Severity: "warning", Firing: proofKeyExpiring,
+	})
+	decisions = append(decisions, ControllerStateAlertDecision{
+		RuleID: "cleanup-overdue", Severity: "critical", Firing: cleanupOverdue,
+	})
+	decisions = append(decisions, ControllerStateAlertDecision{
+		RuleID: "restore-residual-volume-overdue", Severity: "critical", Firing: residualVolumeOverdue,
 	})
 	return decisions, nil
 }

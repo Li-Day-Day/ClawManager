@@ -1,0 +1,24 @@
+{
+  "kind": "a2_probe_comparison_invalidation.v1",
+  "invalidated_report": {
+    "path": "docs/evidence/a2-owner-detached-argv-observed-20261026.json",
+    "size": 1767,
+    "sha256": "28e984af54de1e25e26a990b8e6ad91286996077beaa59117e0ee786750ffa38"
+  },
+  "invalidated_fields": [
+    "literal_matches_expected",
+    "variable_executable_bare_pipeline_matches_expected"
+  ],
+  "reason": "NUL-joined comparison reported equality despite different argument vector boundaries; raw argv was correct, the equality conclusion was not.",
+  "replacement": {
+    "path": "docs/evidence/a2-owner-detached-argv-observed-20261026-r2.json",
+    "size": 2155,
+    "sha256": "f51f2e8d0c69a862aae6b42c6f93843c25f95cb42114df9f9e4069db00818c7b"
+  },
+  "replacement_checked_with": "array lengths and each string by Ordinal; independent Node assertions",
+  "original_report_preserved": true,
+  "Go_or_test_binary_executed": false,
+  "peer_runner_modified": false,
+  "peer_process_stopped": false,
+  "production_approved": false
+}

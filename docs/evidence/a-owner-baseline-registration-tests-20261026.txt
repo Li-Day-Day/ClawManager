@@ -1,0 +1,585 @@
+✖ current finalizer source selects all 5190 native owner names without approving SQL (2494.4332ms)
+✖ current finalizer code drift still rejects before tests or SSH (8.5259ms)
+✔ both exact reviewed sources retain all 5105 names with original inventory lineage (3402.7268ms)
+✖ new GC sources retain the complete 5138 names and original tested inventory identity (1620.5975ms)
+✖ new GC code is still an owner dependency and cannot be silently excluded (8.3879ms)
+✖ reviewed composed-source snapshot is ready but does not start tests or SQL (7.7659ms)
+✖ actual current worktree enumeration and bytes match the approved ordinary source (2.6486ms)
+✖ changed ordinary Go bytes still rejects before tests or SSH (8.7329ms)
+✖ new unreviewed ordinary Go file still rejects before tests or SSH (7.3315ms)
+✖ removed ordinary Go input still rejects before tests or SSH (8.9482ms)
+✔ historical 5019-name source still selects its original native inventory (1263.6122ms)
+✖ owner actual receiver rejects complete local preparation a-owner-current-full-local-20261023-093734.txt and writes no SQL acceptance (12.8314ms)
+✖ owner actual receiver rejects complete local preparation a-owner-gc-full-local-20261023-111154.txt and writes no SQL acceptance (8.593ms)
+✖ role actual receiver rejects complete local preparation a-owner-current-full-local-20261023-093734.txt and writes no SQL acceptance (10.6176ms)
+✖ role actual receiver rejects complete local preparation a-owner-gc-full-local-20261023-111154.txt and writes no SQL acceptance (7.8652ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 2
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9012.3587
+
+✖ failing tests:
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:17:1
+✖ current finalizer source selects all 5190 native owner names without approving SQL (2494.4332ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:23:11)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.start (node:internal/test_runner/test:1096:17)
+  +     at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:23:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.start (node:internal/test_runner/test:1096:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:26:1
+✖ current finalizer code drift still rejects before tests or SSH (8.5259ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:28:11)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:28:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:34:1
+✖ new GC sources retain the complete 5138 names and original tested inventory identity (1620.5975ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:35:263)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:35:263)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:38:1
+✖ new GC code is still an owner dependency and cannot be silently excluded (8.3879ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:41:11)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:41:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:43:1
+✖ reviewed composed-source snapshot is ready but does not start tests or SQL (7.7659ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:44:11)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:44:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:46:1
+✖ actual current worktree enumeration and bytes match the approved ordinary source (2.6486ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync rg EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:47:11)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12)
+  +     at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'rg',
+  +   spawnargs: [
+  +     '--files',
+  +     '--hidden',
+  +     'backend',
+  +     'contracts'
+  +   ],
+  +   syscall: 'spawnSync rg'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:47:111)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:56:3
+✖ changed ordinary Go bytes still rejects before tests or SSH (8.7329ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:56:116)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:56:116)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:56:3
+✖ new unreviewed ordinary Go file still rejects before tests or SSH (7.3315ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:56:116)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:56:116)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:56:3
+✖ removed ordinary Go input still rejects before tests or SSH (8.9482ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:36)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:56:116)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-retest-source-preflight-20261021.mjs'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at preflight (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:15:137)
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:56:116)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:60:285
+✖ owner actual receiver rejects complete local preparation a-owner-current-full-local-20261023-093734.txt and writes no SQL acceptance (12.8314ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:35)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12)
+  +     at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-owners-actual-review-20261020.mjs',
+  +     '--log',
+  +     'a-owner-current-full-local-20261023-093734.txt',
+  +     '--source',
+  +     'a-owner-current-full-local-20261023-093734-source.json',
+  +     '--write'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:128)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:60:285
+✖ owner actual receiver rejects complete local preparation a-owner-gc-full-local-20261023-111154.txt and writes no SQL acceptance (8.593ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:35)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12)
+  +     at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-owners-actual-review-20261020.mjs',
+  +     '--log',
+  +     'a-owner-gc-full-local-20261023-111154.txt',
+  +     '--source',
+  +     'a-owner-gc-full-local-20261023-111154-source.json',
+  +     '--write'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:128)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:60:285
+✖ role actual receiver rejects complete local preparation a-owner-current-full-local-20261023-093734.txt and writes no SQL acceptance (10.6176ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:35)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12)
+  +     at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-gc-role-actual-review-20261021.mjs',
+  +     '--log',
+  +     'a-owner-current-full-local-20261023-093734.txt',
+  +     '--source',
+  +     'a-owner-current-full-local-20261023-093734-source.json',
+  +     '--write'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:128)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs\evidence\a-owner-baseline-registration-20261023.test.mjs:60:285
+✖ role actual receiver rejects complete local preparation a-owner-gc-full-local-20261023-111154.txt and writes no SQL acceptance (7.8652ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Error: spawnSync C:\Program Files\nodejs\node.exe EPERM
+  +     at Object.spawnSync (node:internal/child_process:1143:20)
+  +     at spawnSync (node:child_process:911:24)
+  +     at cli (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:14:33)
+  +     at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:35)
+  +     at Test.runInAsyncScope (node:async_hooks:227:14)
+  +     at Test.run (node:internal/test_runner/test:1201:25)
+  +     at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+  +     at Test.postRun (node:internal/test_runner/test:1330:19)
+  +     at Test.run (node:internal/test_runner/test:1258:12)
+  +     at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+  +   code: 'EPERM',
+  +   errno: -4048,
+  +   path: 'C:\\Program Files\\nodejs\\node.exe',
+  +   spawnargs: [
+  +     'docs/evidence/a-download-gc-role-actual-review-20261021.mjs',
+  +     '--log',
+  +     'a-owner-gc-full-local-20261023-111154.txt',
+  +     '--source',
+  +     'a-owner-gc-full-local-20261023-111154-source.json',
+  +     '--write'
+  +   ],
+  +   syscall: 'spawnSync C:\\Program Files\\nodejs\\node.exe'
+  + }
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/a-owner-baseline-registration-20261023.test.mjs:62:128)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Error],
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

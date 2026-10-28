@@ -1,0 +1,175 @@
+**********************
+PowerShell transcript start
+Start time: 20261023164638
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -NoProfile -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$nonceR2Stem = 'docs/evidence/a-nonce-ca-r2-local-' + (Get-Date -Format 'yyyyMMdd-HHmmss')
+$nonceR2Exit = 1
+Start-Transcript -LiteralPath ($nonceR2Stem + '.txt') -NoClobber | Out-Null
+try {
+ & ./scripts/system-backup-a-nonce-ca-r2-validation.ps1 -BuildParallelism 4 -SeedCacheOwner (Join-Path (Get-Location) '.tmp-d-index-cache-becb8b4d45194f83bcd50d6423f8e8b4')
+ $nonceR2Exit = 0
+} catch {
+ Write-Output $_.Exception.Message
+} finally {
+ Write-Output ('NONCE_CA_R2_EXIT=' + $nonceR2Exit)
+ Write-Output ('NONCE_CA_R2_STEM=' + $nonceR2Stem)
+ Stop-Transcript | Out-Null
+}
+if ($nonceR2Exit -ne 0) { throw 'Nonce/CA r2 failed; preserve exact evidence and cleanup' }
+Process ID: 43904
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_PASS isolated-go-telemetry=off
+
+NONCE_FROZEN source_sha256=3f10b7cb687f2ecb666b428600b44850436afb051b72673d7d0a30aa604710bb files=385 owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-f0e5e5f638c14886af1763ac54f949d0
+ORIGINAL_CA_COUNTEREXAMPLE expected_failures=8 native_exit=1 log=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-nonce-ca-r2-candidate-20261023-164639-61dbbaab.old.jsonl
+=== RUN   TestNoncePrepareAndTransactionRetention
+--- PASS: TestNoncePrepareAndTransactionRetention (0.19s)
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/missing-version
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/conflicting-identity
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/retention-too-short
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/null-facts
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/wrong-db
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/wrong-server
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/sql-failure
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/changed-active
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/changed-history
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/changed-descriptor
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/deleted-history
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/expired
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/sql-clock-backwards
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/wall-clock-backwards
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/late-read
+=== RUN   TestNonceRejectsIncompleteOrChangedHistory/cancel
+--- PASS: TestNonceRejectsIncompleteOrChangedHistory (5.97s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/missing-version (0.07s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/conflicting-identity (0.09s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/retention-too-short (0.03s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/null-facts (0.05s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/wrong-db (0.06s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/wrong-server (0.05s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/sql-failure (0.06s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/changed-active (0.03s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/changed-history (0.15s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/changed-descriptor (1.00s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/deleted-history (1.52s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/expired (0.25s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/sql-clock-backwards (0.84s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/wall-clock-backwards (0.46s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/late-read (0.53s)
+    --- PASS: TestNonceRejectsIncompleteOrChangedHistory/cancel (0.79s)
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/short-key
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/long-key
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/bad-descriptor
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/wrong-grant
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/expired
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/cancel
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/no-active
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/alias
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/relative-file
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/duplicate-version
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/short-retention
+=== RUN   TestNoncePrepareRejectsBadMaterialAndBinding/kubernetes-ref
+--- PASS: TestNoncePrepareRejectsBadMaterialAndBinding (3.23s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/short-key (0.35s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/long-key (0.56s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/bad-descriptor (0.17s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/wrong-grant (1.12s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/expired (0.25s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/cancel (0.15s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/no-active (0.12s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/alias (0.21s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/relative-file (0.11s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/duplicate-version (0.04s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/short-retention (0.07s)
+    --- PASS: TestNoncePrepareRejectsBadMaterialAndBinding/kubernetes-ref (0.10s)
+=== RUN   TestNonceMappingCopyAndOutputIsolation
+--- PASS: TestNonceMappingCopyAndOutputIsolation (0.05s)
+PASS
+ok  	clawreef/internal/systembackupnoncebootstrap	13.343s
+=== RUN   TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit
+--- PASS: TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit (1.04s)
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/expired_leaf
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_hostname
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_CA
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/junk_CA
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/private_key_block
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/changed_descriptor
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_scope
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_installation
+=== RUN   TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/canceled
+--- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs (3.13s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/expired_leaf (2.35s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_hostname (0.06s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_CA (0.36s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/junk_CA (0.06s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/private_key_block (0.10s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/changed_descriptor (0.03s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_scope (0.03s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/wrong_installation (0.08s)
+    --- PASS: TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs/canceled (0.05s)
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/removed_CA
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_CA
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_descriptor
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/database
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/server
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/canceled_during_SQL
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expiry_during_SQL
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expired_mapping
+=== RUN   TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/old_SQL_clock
+--- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead (0.64s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/removed_CA (0.04s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_CA (0.05s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/changed_descriptor (0.07s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/database (0.08s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/server (0.06s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/canceled_during_SQL (0.05s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expiry_during_SQL (0.14s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/expired_mapping (0.05s)
+    --- PASS: TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead/old_SQL_clock (0.07s)
+=== RUN   TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting
+--- PASS: TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting (0.06s)
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/default
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/detailed
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/Go
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/json
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/default
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/detailed
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/Go
+=== RUN   TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/json
+--- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/default (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/detailed (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/Go (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/value/json (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/default (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/detailed (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/Go (0.00s)
+    --- PASS: TestCATrustBindingNeverFormatsOrSerializesDeploymentPins/pointer/json (0.00s)
+PASS
+ok  	clawreef/internal/systembackupcatrust	13.070s
+NONCE_CLEANUP verified=True owner=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-a-evidence-f0e5e5f638c14886af1763ac54f949d0
+NONCE_RECEIPT C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\docs\evidence\a-nonce-ca-r2-candidate-20261023-164639-61dbbaab.json
+NONCE_CA_R2_EXIT=0
+NONCE_CA_R2_STEM=docs/evidence/a-nonce-ca-r2-local-20261023-164638
+**********************
+PowerShell transcript end
+End time: 20261023165507
+**********************

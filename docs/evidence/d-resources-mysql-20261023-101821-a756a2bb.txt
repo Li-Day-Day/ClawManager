@@ -1,0 +1,25 @@
+**********************
+PowerShell transcript start
+Start time: 20261023101821
+Username: HOME\zhanghui08
+RunAs User: HOME\zhanghui08
+Configuration Name: 
+Machine: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Users\zhanghui08\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+$probePath='backend/internal/systembackupresources/restore_readback_mysql_test.go'; $probeText=[IO.File]::ReadAllText((Join-Path $PWD $probePath)); $probeText=$probeText.Replace("VALUES('resources_probe','installation',30)","VALUES('installation_resources_probe','installation',30)"); [IO.File]::WriteAllText((Join-Path $PWD $probePath),$probeText); & ./scripts/system-backup-d-resources-mysql-validation.ps1 | Select-Object -Last 6
+Process ID: 23140
+PSVersion: 7.6.5
+PSEdition: Core
+GitCommitId: 7.6.5
+OS: Microsoft Windows 10.0.26100
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+LOCAL_SNAPSHOT config-proof-attempt=1 max=3 build-started=no remote-started=no
+**********************
+PowerShell transcript end
+End time: 20261023102818
+**********************

@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	ContractMigrationCatalogHash      = "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"
-	ContractMigrationCatalogFileCount = 96
+	ContractMigrationCatalogHash      = "dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441"
+	ContractMigrationCatalogFileCount = 136
 	MinBootstrapCheckInterval         = time.Second
 	DefaultBootstrapCheckInterval     = 10 * time.Second
 	MaxBootstrapCheckInterval         = 60 * time.Second

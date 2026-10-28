@@ -1,0 +1,278 @@
+{
+  "kind": "d_owner_frozen_baseline_gate_mock_regression.v1",
+  "error": null,
+  "cases": [
+    {
+      "name": "predecessor_ready_then_retry_new_source_reaches_dispatch",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK",
+        "RECEIVER_MOCK_NO_SQL_ACCEPTANCE"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-predecessor_ready_then_retry_new_source_reaches_dispatch.log",
+        "sha256": "4e8b438c6df1119dc67a7703887931376137f541726bc98d1ba7ea29607d2af4"
+      }
+    },
+    {
+      "name": "owners_ready_then_retry_new_source_rejected",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-owners_ready_then_retry_new_source_rejected.log",
+        "sha256": "3d92cf9b36c36f098bf3cff132206b3616674646cca8b9bcaa460492ba2924d6"
+      }
+    },
+    {
+      "name": "role_ready_then_retry_new_source_rejected",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-role_ready_then_retry_new_source_rejected.log",
+        "sha256": "307ef5d512fac2fec2c086f6da723fcd09b40d58df81c2ab77e80b30d852facf"
+      }
+    },
+    {
+      "name": "approved_owners_snapshot",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "none",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK",
+        "RECEIVER_MOCK_NO_SQL_ACCEPTANCE"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-approved_owners_snapshot.log",
+        "sha256": "4c9804b4b3af581bad36f77d765b0e27d3a70bb55d1826a2c61f9001744b27e7"
+      }
+    },
+    {
+      "name": "approved_role_snapshot",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "none",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK",
+        "RECEIVER_MOCK_NO_SQL_ACCEPTANCE"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-approved_role_snapshot.log",
+        "sha256": "ee864e033068feec9806b089cf890ce9e6771cbef6a88662e2d27189a301f374"
+      }
+    },
+    {
+      "name": "script_only_snapshot_change_is_not_ordinary_drift",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "script",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK",
+        "RECEIVER_MOCK_NO_SQL_ACCEPTANCE"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-script_only_snapshot_change_is_not_ordinary_drift.log",
+        "sha256": "8eaff187d4a77bc3a843b2c23184ed642f78148362ba370cc310db5af105050a"
+      }
+    },
+    {
+      "name": "checker_disappears_after_early_ready",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "missing_checker",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-checker_disappears_after_early_ready.log",
+        "sha256": "6e9c5a0d0e8fa1e4fc0abd570fcf6378cc60413f25c6a37676ed66f583dbb615"
+      }
+    },
+    {
+      "name": "checker_invalid_json",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "invalid_json",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-checker_invalid_json.log",
+        "sha256": "f493058250b6bf051849b351df57e2a3b6b097e67f7b26eedeb0f7e6ac7c9f5a"
+      }
+    },
+    {
+      "name": "checker_nonzero_with_ready_json",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "nonzero_ready",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-checker_nonzero_with_ready_json.log",
+        "sha256": "6d28a756b1b12c97d441613618cfbdbb9684e87ab09e8c05028f01b5d680d7b5"
+      }
+    },
+    {
+      "name": "checker_wrong_boolean_type",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "typed_false",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-checker_wrong_boolean_type.log",
+        "sha256": "48f46a7882f36369fb5eddc59800023b5a6befc85bdb56e8619951d198b4c25e"
+      }
+    },
+    {
+      "name": "node_unavailable_after_early_ready",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "missing_node",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-node_unavailable_after_early_ready.log",
+        "sha256": "c40a8998762d511f59f1d068cc6f739cee688aa9ea8d300ea4cca76584df920f"
+      }
+    },
+    {
+      "name": "malformed_frozen_snapshot",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "malformed_snapshot",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": "SNAPSHOT_MOCK",
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-malformed_frozen_snapshot.log",
+        "sha256": "bfca58a1846e3cdb2a67faf4afcf90276d5ff3ca1d3b58f53b5e7a6458edf3b1"
+      }
+    },
+    {
+      "name": "local_new_source_preparation_does_not_require_old_baseline",
+      "expected_mock_dispatch": true,
+      "invocation_succeeded": true,
+      "snapshot_mutation": "ordinary",
+      "fault": "none",
+      "dispatch_mock_calls": 1,
+      "validation_mock_calls": 1,
+      "events": [
+        "SNAPSHOT_MOCK",
+        "COMMON_DISPATCH_MOCK",
+        "DISPATCH_MOCK",
+        "VALIDATION_MOCK_NO_GO_NO_SSH",
+        "POSTCHECK_MOCK"
+      ],
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-local_new_source_preparation_does_not_require_old_baseline.log",
+        "sha256": "fb0ae3834775d8428f19dd62f8246579df4fd47788fb64b6058d5e5cc2295691"
+      }
+    },
+    {
+      "name": "require_gate_on_nonremote_profile_rejected",
+      "expected_mock_dispatch": false,
+      "invocation_succeeded": false,
+      "snapshot_mutation": "none",
+      "fault": "none",
+      "dispatch_mock_calls": 0,
+      "validation_mock_calls": 0,
+      "events": null,
+      "runner_owner_absent": true,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-owner-frozen-gate-regression-20261026-r3-require_gate_on_nonremote_profile_rejected.log",
+        "sha256": "4ec2c67c56a7801dde073cf925181dcd0586d6659f02407b127e49da7b005316"
+      }
+    }
+  ],
+  "input_pins": [
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "sha256": "07937556bba05020d6a6194540f0ef4a774c3797e274bc3a8c9468ed17064d98"
+    },
+    {
+      "path": "docs/evidence/a-download-owner-role-retest-20261021.ps1",
+      "sha256": "09bbe126025dd574aa3145b6d59fb619f55489e49413d17bd93b14c71ce8146d"
+    },
+    {
+      "path": "docs/evidence/a-download-retest-source-preflight-20261021.mjs",
+      "sha256": "983e0ed0c5f6bebfd30553ab668de84f8068402fb9daf5fd2f7d7af3782697e2"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-regression-20261026.ps1",
+      "sha256": "a62475127c90941fd02b14c9595c7e994b935874f13fa34e4fe0ad3291420f02"
+    }
+  ],
+  "inputs_stable": true,
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-a15e815b80284be38ddf469affe8878c",
+  "owner_removed": true,
+  "real_snapshot_copy_executed": false,
+  "real_registered_baseline_parser_executed": true,
+  "predecessor_counterexample_is_mock_only": true,
+  "Go_or_builds_run": false,
+  "SSH_or_SQL_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false
+}

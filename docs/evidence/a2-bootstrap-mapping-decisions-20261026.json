@@ -1,0 +1,526 @@
+{
+  "kind": "a2_bootstrap_mapping_contract_decision_audit.v1",
+  "status": "existing_contract_coverage_and_precise_missing_decisions_not_new_policy_or_authority",
+  "schema_status": "draft_unchanged",
+  "schema_variants": [
+    {
+      "definition": "ExternalKMSKeyRef",
+      "ref_kinds": [
+        "external_kms_key"
+      ],
+      "purposes": [
+        "data_key_generation",
+        "kek_unwrap"
+      ],
+      "declared_purpose_policy": null
+    },
+    {
+      "definition": "ExternalSecretRef",
+      "ref_kinds": [
+        "external_secret"
+      ],
+      "purposes": [
+        "secret_bundle_part",
+        "strong_auth_nonce_hmac",
+        "kek_wrap",
+        "kek_unwrap"
+      ],
+      "declared_purpose_policy": "Nonce HMAC is HMAC-SHA256 with an immutable exact-version resource; never latest/default fallback. Secret KEK wrap/unwrap is AES-256-KW and functional-test only. Material is resolved locally by the authorized task identity, never serialized in this ref."
+    },
+    {
+      "definition": "KubernetesSecretRef",
+      "ref_kinds": [
+        "kubernetes_secret"
+      ],
+      "purposes": [
+        "secret_bundle_part",
+        "strong_auth_nonce_hmac",
+        "kek_wrap",
+        "kek_unwrap"
+      ],
+      "declared_purpose_policy": "Nonce HMAC is HMAC-SHA256 with an immutable exact-version resource; never latest/default fallback. Secret KEK wrap/unwrap is AES-256-KW and functional-test only. Material is resolved locally by the authorized task identity, never serialized in this ref."
+    },
+    {
+      "definition": "SigningKeyRef",
+      "ref_kinds": [
+        "signing_key"
+      ],
+      "purposes": [
+        "capture_certificate",
+        "acceptance_record",
+        "catalog_record",
+        "provider_proof_issuer",
+        "strong_auth_issuer"
+      ],
+      "declared_purpose_policy": null
+    },
+    {
+      "definition": "ProviderCredentialRef",
+      "ref_kinds": [
+        "artifact_credential",
+        "catalog_credential",
+        "evidence_credential"
+      ],
+      "purposes": [
+        "artifact_write",
+        "artifact_read",
+        "artifact_delete",
+        "catalog_append",
+        "catalog_read",
+        "catalog_discovery",
+        "evidence_read_write",
+        "evidence_read",
+        "evidence_write",
+        "evidence_delete"
+      ],
+      "declared_purpose_policy": null
+    },
+    {
+      "definition": "CATrustRef",
+      "ref_kinds": [
+        "ca_bundle"
+      ],
+      "purposes": [
+        "artifact_ca",
+        "catalog_ca",
+        "evidence_ca"
+      ],
+      "declared_purpose_policy": null
+    }
+  ],
+  "schema_purposes": [
+    "acceptance_record",
+    "artifact_ca",
+    "artifact_delete",
+    "artifact_read",
+    "artifact_write",
+    "capture_certificate",
+    "catalog_append",
+    "catalog_ca",
+    "catalog_discovery",
+    "catalog_read",
+    "catalog_record",
+    "data_key_generation",
+    "evidence_ca",
+    "evidence_delete",
+    "evidence_read",
+    "evidence_read_write",
+    "evidence_write",
+    "kek_unwrap",
+    "kek_wrap",
+    "provider_proof_issuer",
+    "secret_bundle_part",
+    "strong_auth_issuer",
+    "strong_auth_nonce_hmac"
+  ],
+  "bootstrap_purposes": [
+    "artifact_write",
+    "artifact_read",
+    "artifact_delete",
+    "artifact_upload_issuer",
+    "artifact_ca",
+    "evidence_store",
+    "evidence_write",
+    "evidence_read",
+    "evidence_delete",
+    "evidence_ca",
+    "evidence_kek",
+    "kek",
+    "capture_signing",
+    "acceptance_signing",
+    "catalog_signing",
+    "catalog_read",
+    "catalog_append",
+    "catalog_snapshot",
+    "nonce_hmac",
+    "status_relay"
+  ],
+  "metadata_correspondences": {
+    "nonce_hmac": "strong_auth_nonce_hmac",
+    "capture_signing": "capture_certificate",
+    "acceptance_signing": "acceptance_record",
+    "catalog_signing": "catalog_record",
+    "artifact_write": "artifact_write",
+    "artifact_read": "artifact_read",
+    "artifact_delete": "artifact_delete",
+    "artifact_ca": "artifact_ca",
+    "evidence_write": "evidence_write",
+    "evidence_read": "evidence_read",
+    "evidence_delete": "evidence_delete",
+    "evidence_ca": "evidence_ca",
+    "catalog_read": "catalog_read",
+    "catalog_append": "catalog_append",
+    "catalog_snapshot": "catalog_discovery"
+  },
+  "metadata_correspondence_count": 15,
+  "no_single_SecretRef_mapping": [
+    "artifact_upload_issuer",
+    "evidence_store",
+    "evidence_kek",
+    "kek",
+    "status_relay"
+  ],
+  "schema_purposes_without_direct_bootstrap_correspondence": [
+    {
+      "purpose": "catalog_ca",
+      "classification": "需原 catalog transport 绑定决定；不新增或别名 bootstrap 槽"
+    },
+    {
+      "purpose": "data_key_generation",
+      "classification": "KEK 多操作组合的一部分，不直接等于 kek/evidence_kek"
+    },
+    {
+      "purpose": "evidence_read_write",
+      "classification": "组合读写 metadata，不替代三个精确证据凭据槽"
+    },
+    {
+      "purpose": "kek_unwrap",
+      "classification": "KEK 变体/历史解封组合的一部分"
+    },
+    {
+      "purpose": "kek_wrap",
+      "classification": "原 Secret KEK 声明为 AES-256-KW functional-test only"
+    },
+    {
+      "purpose": "provider_proof_issuer",
+      "classification": "已有 issuer registry 途径，不自动变成缺失 reference 的授权"
+    },
+    {
+      "purpose": "secret_bundle_part",
+      "classification": "源 part/allowlist/工作身份合同，不是独立 bootstrap reference"
+    },
+    {
+      "purpose": "strong_auth_issuer",
+      "classification": "已有 issuer registry 途径；公钥配置检查不证明本人 MFA"
+    }
+  ],
+  "current_CLI_missing_slots": 27,
+  "slots_cleared": 0,
+  "decisions": [
+    {
+      "id": "M1",
+      "scope": "全部 15 种 metadata 对应与其余资源",
+      "coordination_owner": "A/D；资源原 owner",
+      "status": "original_authority_origin_unverified",
+      "sources": [
+        "backend/internal/systembackupbootstrapsecurity/reference.go",
+        "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+        "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+        "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+        "docs/system-backup-a-capability-producer-admission-request-20260929.md"
+      ],
+      "existing_local_semantics": "DecodeSecurityReference 校验完整字节/闭集；MatchesBootstrapPin 仅比 purpose/identity/version；CaptureCandidateRelation 明确是关系 DATA，原 authority 必须独立认证部署、用途、provider/scope、候选及当前状态。",
+      "precise_missing_decision": "必须指出现有哪一条独立受控来源认证完整 ref→provider/scope/purpose→C1 admission/target/profile 关系，以及当前撤销/期限如何复核。摘要、构造成功和 receipt 不得自证这一来源。",
+      "next_local_action": "给原 authority 的已有接口逐方法标出实际来源和未实现接点；可复用固定 grant/RBAC/文件及关系检查，不增加新 grant/approved DTO。",
+      "original_source_or_fact_needed": "原部署/provisioning 的受控映射路径、准确版本、独立认证方式和当前授权/撤销来源。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M2",
+      "scope": "kek / evidence_kek 的操作组合与变体",
+      "coordination_owner": "A；B/C 数据使用路径，D 事务组合",
+      "status": "composite_contract_choice_required",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "contracts/system-backup/v12/a-capability-role-mapping.json",
+        "backend/internal/systembackupevidence/transit.go",
+        "backend/internal/systembackupevidence/transit_keyring.go"
+      ],
+      "existing_local_semantics": "SecretRef 分别描述 data_key_generation、kek_unwrap、kek_wrap；Secret KEK wrap/unwrap 的原 purpose-policy 明确为 AES-256-KW、functional-test only。TransitKeyring 消费已准入的完整历史 mapping，不认证它。",
+      "precise_missing_decision": "分别选择 backup/evidence 的原生产 provider/variant、所需 generate/wrap/unwrap 操作集合、调用身份和全部 retained 引用覆盖；不能将单个 SecretRef 别名成整个 KEK，也不能将 functional-test profile 自动升为生产。",
+      "next_local_action": "把现有操作/历史路由字段与两个用途逐项对照，保留错误变体和缺历史拒绝；生产选择须沿原 owner 合同给出。",
+      "original_source_or_fact_needed": "原 key provider/ref/version、操作权限、工作身份、完整保留引用及原变体政策。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M3",
+      "scope": "artifact_upload_issuer",
+      "coordination_owner": "C issuer；A 身份，D pre-config admission",
+      "status": "issuer_authorization_contract_required",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "backend/internal/systembackupevidence/s3_sts.go",
+        "backend/internal/systembackupevidence/system_sts.go",
+        "backend/internal/systembackupevidence/system_execution.go"
+      ],
+      "existing_local_semantics": "没有单一 SecretRef 对应；现有 S3 STS 依赖逐次授权，System STS 已绑定原 Execution/claim。普通 task/download/gc/recovery 身份不能自动成为首次 bootstrap issuer。",
+      "precise_missing_decision": "明确该用途采用的原 issuer/STS/OIDC 机制、issuer/subject/audience/policy、原 scope/期限/撤销，以及初始化前由哪条独立来源或原 C1 执行授权承接。",
+      "next_local_action": "复用现有客户端和有界生命周期，对齐原授权字段；不新增一个 alias、AccessKind 或全局 grant 来绕过缺口。",
+      "original_source_or_fact_needed": "原 issuer 和工作身份策略、受限短凭据 scope/有效期及初始化前的独立授权来源。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M4",
+      "scope": "evidence_store",
+      "coordination_owner": "A；D evidence channel",
+      "status": "store_identity_composition_required",
+      "sources": [
+        "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+        "backend/internal/systembackupevidence/s3.go",
+        "backend/internal/systembackupevidence/system_execution.go",
+        "backend/internal/systembackupevidence/system_sts.go"
+      ],
+      "existing_local_semantics": "S3Config 已有 installation、Identity、Version、endpoint/bucket/root/CA；store identity 不是某一个 credential，SecretRef 没有 store-kind。运行组件仍消费已准入映射。",
+      "precise_missing_decision": "指出原 typed store/root 的来源，并把对象不可变版本/完整性/保留、故障域和权限隔离与原 evidence channel profile 完整关联；不能从连接成功或 store hash 推导授权。",
+      "next_local_action": "对照现有 S3Config/Ref/channel 字段列出 mandatory resolver 输入和拒绝条件，复用已有读写/缺失协议。",
+      "original_source_or_fact_needed": "原 store/root/provider 不可变身份、受控解析来源及隔离/保留/能力的原观察。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M5",
+      "scope": "status_relay",
+      "coordination_owner": "B 服务；D 当前 Job cursor；A 工作身份",
+      "status": "relay_contract_mapping_required",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "contracts/system-backup/v12/runner-data-interfaces.schema.json",
+        "contracts/system-backup/v12/job-observation-cursor.schema.json",
+        "contracts/system-backup/v12/a-capability-role-mapping.json"
+      ],
+      "existing_local_semantics": "SecretRef 无 status_relay purpose/kind；Job cursor 已有 job_uid/generation、relay_identity_ref/version/bound_at/expires_at、sequence/body hash。六类 capability role 中没有可自动替代 relay 的新角色。",
+      "precise_missing_decision": "明确真实 relay 服务/客户端 mTLS 身份与原 Job UID/generation/task/attempt、绑定期限/序列/撤销的权威关联；不能以 relay 自报或普通 Secret 名称代替。",
+      "next_local_action": "把 runner/Job cursor 的现有字段对照到 B 原服务合同，保留重放、错 attempt 和撤销拒绝；不扩 provider enum 或硬塞 SecretRef alias。",
+      "original_source_or_fact_needed": "B 原 relay 身份/版本与 TLS/工作身份来源，D 当前 Job/attempt/cursor 权威事实。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M6",
+      "scope": "catalog_snapshot → catalog_discovery",
+      "coordination_owner": "C；A 来源复审",
+      "status": "discovery_mode_and_coverage_decision_required",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "contracts/system-backup/v12/artifact-index.schema.json",
+        "backend/internal/systembackupbootstrapsecurity/reference.go",
+        "backend/internal/systembackupevidence/s3.go"
+      ],
+      "existing_local_semantics": "已有 draft metadata 对应，credential_capability 可为 snapshot_list 或 inventory_read；evidence S3 Store 的 Stat/Range/Put/Delete/Absent 不提供 catalog discovery 完整性。",
+      "precise_missing_decision": "在原 ref/version/provider profile 下明确选择哪一种发现模式、精确 manifest/version/checksum、覆盖和缺失证明规则；不能从 supported 列表自动挑模式或在失败时换模式。",
+      "next_local_action": "按两种原模式列出所需输入及拒绝分支，接 C 原 discovery adapter；不混用 inventory 与 snapshot 结果。",
+      "original_source_or_fact_needed": "原 discovery 模式及授权，精确 manifest/version/checksum、覆盖边界和原观察期限。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M7",
+      "scope": "catalog transport 的 CA 来源",
+      "coordination_owner": "C 传输；A 信任复审",
+      "status": "nested_transport_binding_required",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+        "backend/internal/systembackupcatrust/ca.go"
+      ],
+      "existing_local_semantics": "Schema CA purpose 有 catalog_ca，但 bootstrap 20 refs 没有 catalog_ca；现有具体 CA validator 只接受 artifact_ca/evidence_ca。这不是自动增加第 21 个槽位的授权。",
+      "precise_missing_decision": "明确 catalog adapter 在现有合同下从哪里取得并验证原 CA bundle、hostname/允许目标及其 provider/scope/版本绑定；不得擅自将 catalog_ca 折成 artifact_ca。",
+      "next_local_action": "核对 C 原 catalog 连接 profile 的 trust 字段和 A 可复用的校验接点；需要合同决定时写明原来源。",
+      "original_source_or_fact_needed": "原 catalog endpoint/CA/目标 allowlist、provider/scope 映射和有效期来源。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M8",
+      "scope": "capture / acceptance / catalog signing",
+      "coordination_owner": "A signer；B capture/C catalog payload，D 组合",
+      "status": "signer_identity_version_and_probe_contract_required",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "contracts/system-backup/v12/a-capability-role-mapping.json",
+        "backend/internal/systembackupsecurity/transit_signer.go",
+        "backend/internal/systembackupsecurity/artifact_signing_history.go",
+        "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go"
+      ],
+      "existing_local_semantics": "三 purpose 映射、EdDSA/domain、三用途 key history/retention 和 capture 关系已实现。SecretRef identity_version 可为非数字 token；TransitSigner 的 Vault version 必须是规范正整数。Capability 正文不是签名授权或实际 challenge 认证。",
+      "precise_missing_decision": "由原来源明确 ref identity/version→provider key ID/numeric version/public key、purpose/domain/payload、调用身份/权限，以及实际探针输入/验证与原 C1 run/profile 的关系；不能剥 version 前缀、使用 latest 或仅凭 healthy 认证。",
+      "next_local_action": "复用 signer、原历史隔离和关系比较，准备准确 typed 关联及独立原 authority 接点；未有原探针合同就不自造签名授权/challenge grant。",
+      "original_source_or_fact_needed": "原 signer/key mapping、ACL、专用用途/签名域、实际探针合同及完整历史引用/撤销政策。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M9",
+      "scope": "nonce_hmac 的 profile 与全局版本归属",
+      "coordination_owner": "A",
+      "status": "supported_local_profile_implemented_original_facts_unverified",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "backend/internal/systembackupnoncebootstrap/nonce.go",
+        "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+        "contracts/system-backup/v12/strong-auth-nonce-ledger.schema.json"
+      ],
+      "existing_local_semantics": "具体 validator 支持受控 exact-version external_secret 文件，真实 32 字节/wipe/原期限；candidate 锁全局配置及固定 cutoff retained 行。版本映射按原 ledger 的 version 定位，冲突 identity 会拒绝。",
+      "precise_missing_decision": "原部署必须明确采用已支持的文件 profile，并给出所有受保留版本的唯一/一致 identity 归属与保护期；Kubernetes Secret UID/API profile 不能由文件或哈希外观冒充。",
+      "next_local_action": "保留已实现的全局歧义/撤销/期限拒绝并显式组合；若原部署使用其他 profile，需要它的真实 owner adapter。",
+      "original_source_or_fact_needed": "原 descriptor/material 路径和版本映射、provider/scope 授权、全局 retained key 版本及保护/撤销事实。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    },
+    {
+      "id": "M10",
+      "scope": "evidence_read_write 与三个精确 evidence credential 槽",
+      "coordination_owner": "A",
+      "status": "local_decoder_contract_drift_fix_staged",
+      "sources": [
+        "contracts/system-backup/v12/secret-ref.schema.json",
+        "backend/internal/systembackupbootstrapsecurity/reference.go",
+        "docs/evidence/a2-reference-capability-parity-candidate-20261026.json"
+      ],
+      "existing_local_semantics": "该 Schema purpose 只允许 exact_write/exact_read/conditional_create/range_read，不包含 delete/append/discovery；也不在 15 个 bootstrap metadata 对应中。已发现 Go 多收四项，精确窄修和 schema 驱动回归已暂存。",
+      "precise_missing_decision": "先使 parser 符合现有合同；再沿原 evidence_write/read/delete 分离策略给出真实权限，不得以 combined descriptor 填三槽或从 metadata decoder 推导授权。",
+      "next_local_action": "当前冻结运行结束后，在协调的 Go 窗口做 old 四反例、fixed 八项/完整 helper 与实际 import caller 验证、独立接收和产物清理。",
+      "original_source_or_fact_needed": "三个精确凭据用途的原身份/scope/权限及撤销来源；当前本地 parser 修复本身不依赖现场秘密。",
+      "authority_source_verified": false,
+      "slots_cleared": 0
+    }
+  ],
+  "boundary": "只核对原合同与实现/原来源缺失决定；不批准 alias、grant、变体、生产权限或真实映射，也不把现场尚未核实说成不存在。",
+  "Go_tests_or_builds_executed": false,
+  "dependencies_installed": false,
+  "credentials_or_material_read": false,
+  "remote_contacted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+      "size": 8000,
+      "sha256": "d18cdf9bcceae8d444c7e98514f9f559e9df3b4f77422466adbed5271469a78d"
+    },
+    {
+      "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+      "size": 7804,
+      "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "size": 10529,
+      "sha256": "780be82610a39d306577537a3981d1a3444c9fea82e412621b078aed36d3407c"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3.go",
+      "size": 13592,
+      "sha256": "3e3039b369e7e677186c79d92aff7227b6a0fb74e00ed2ab3cd093c123c1cffe"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/s3_sts.go",
+      "size": 16624,
+      "sha256": "a527a97a8c666cb34c8d742ca28d7a60e2b054d81b6ed515c1513e5713f0ad13"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_execution.go",
+      "size": 10969,
+      "sha256": "2fb9dce5737444772b442e8d88626108dd978d5622c34e30c5845f4cd5b3b1e5"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/system_sts.go",
+      "size": 11945,
+      "sha256": "293bfae0492a2a02358edb8a25bff0bd14f0d72882d7a3f6e80711443091fbc4"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit.go",
+      "size": 9335,
+      "sha256": "80eafd8403608de6a106705144372938d3b2c6d0c71aef4c1543918f40f34a6f"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/transit_keyring.go",
+      "size": 2543,
+      "sha256": "0f9766f6750d7e83cd719cf5b85135dfc366a870c04381c4f22107db6bca3208"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+      "size": 12360,
+      "sha256": "0ccfbd5a465e1a69aa848b83d17253dcf158dc273baed869b0da3c78e4d488cc"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "size": 9634,
+      "sha256": "46e695c7c0b9efa819f6f60f7fba52587ce74d1348912f1c57fe9782126e57f1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+      "size": 6432,
+      "sha256": "3b0ae3770437afec0af7e68376a2d589cb9a6262d0c8d8714ac0dee5f617b2ab"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+      "size": 10160,
+      "sha256": "f9325dd859d8073b0710cf93f58eccb52a80dded6eef5940a3df56d466f288dd"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 18777,
+      "sha256": "0dd61b6dafb78ebc9bc755ef3087bb52fd61b69cc71e040f848ded443c041cc8"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_rules.go",
+      "size": 7176,
+      "sha256": "4c73858c02c59e25a562b1a956f28765ee7063db85cba3f52360c589756c6666"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/transit_signer.go",
+      "size": 6296,
+      "sha256": "04bf4ccfc3f891888dbbb48b78a05afc7039705d64cd85542c6ef4440902f62b"
+    },
+    {
+      "path": "contracts/system-backup/v12/a-capability-role-mapping.json",
+      "size": 3422,
+      "sha256": "4a12262121fa4ccbcd93bb1ea10c181fd68542bde8a34a8d3f32b6e034d7cfdf"
+    },
+    {
+      "path": "contracts/system-backup/v12/artifact-index.schema.json",
+      "size": 1786,
+      "sha256": "46a9ed4e3dd75719a2172ef041bd329f4a4b19af69ca9833cb935ea596fcd3d0"
+    },
+    {
+      "path": "contracts/system-backup/v12/dependency-provider-capability.schema.json",
+      "size": 14436,
+      "sha256": "b1c596590f182577511e5e888786798d5c246d33e47b29e8f9bf068cf555ed12"
+    },
+    {
+      "path": "contracts/system-backup/v12/job-observation-cursor.schema.json",
+      "size": 7927,
+      "sha256": "818d6dca16ef7dc26b99e64f6cb8cbc045c32da71460c44ad189a9a5419cfa80"
+    },
+    {
+      "path": "contracts/system-backup/v12/runner-data-interfaces.schema.json",
+      "size": 4237,
+      "sha256": "16c968886bbdc7c7c86cebf3391ccd5b932d5ac0ba0d2d670b61d8e82a309b3e"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "size": 23434,
+      "sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9"
+    },
+    {
+      "path": "contracts/system-backup/v12/strong-auth-nonce-ledger.schema.json",
+      "size": 3653,
+      "sha256": "d08a8eb8f1f542458a2238d02c496bc14edb2fbe799b90d18da3638aafff3da5"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-27-slot-audit-20261026.json",
+      "size": 83855,
+      "sha256": "21b5ebe546a447d8d9475ee9232a3ea906863849d37f6131c00088e65cb04add"
+    },
+    {
+      "path": "docs/evidence/a2-bootstrap-mapping-decisions-20261026.mjs",
+      "size": 17675,
+      "sha256": "39c361e3057887dd341e3b900d70186f0047043cec28e12acc79711f57be4949"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-candidate-20261026.json",
+      "size": 7365,
+      "sha256": "f11428ea7a6a8ca46917a51dec9cd181e4a5a787997d551ae05e9d12c238ae8a"
+    },
+    {
+      "path": "docs/system-backup-a-capability-producer-admission-request-20260929.md",
+      "size": 5799,
+      "sha256": "60a9cf6ff86600593e2cbe9f27c1b2fe3dbff05f107cd54685dcc49caea4094d"
+    }
+  ]
+}

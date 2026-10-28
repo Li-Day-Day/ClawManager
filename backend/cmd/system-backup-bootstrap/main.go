@@ -91,7 +91,10 @@ func run(ctx context.Context, args []string, out io.Writer, owners security.Boot
 	if err != nil {
 		return 1
 	}
-	if r.Status == "blocked" {
+	// Candidate Apply defers non-authorizing physical registry failures until
+	// the locked history/new-use branch. Check remains a complete input report;
+	// missing owner implementations always block before credentials/providers.
+	if r.Status == "blocked" && (!*apply || !d.UsesCandidateConsumption() || len(r.MissingAdapters) != 0) {
 		return emit(r, 2)
 	}
 	if *check {

@@ -1,0 +1,98 @@
+{
+  "kind": "a_nonce_ca_non_implementer_review_request.v1",
+  "status": "pending_independent_owner_review",
+  "source_sha256": "c8cd927fb10133cabab70dd00f58dce092534d1d6e05a33a59314488a99d1e34",
+  "source_files": 383,
+  "tests": [
+    "TestNoncePrepareAndTransactionRetention",
+    "TestNonceRejectsIncompleteOrChangedHistory",
+    "TestNoncePrepareRejectsBadMaterialAndBinding",
+    "TestNonceMappingCopyAndOutputIsolation",
+    "TestCAAdmissionUsesActualTLSAndRechecksWithoutNetworkOrCommit",
+    "TestCAAdmissionRejectsUntrustedTLSAndChangedLocalInputs",
+    "TestCARecheckRejectsRevokedBytesWrongDatabaseAndCanceledRead",
+    "TestCATrustBindingRejectsUncontrolledEndpointsAndFormatting"
+  ],
+  "local_preparation_accepted": true,
+  "actual_SQL": false,
+  "production_approved": false,
+  "reviewer_decision": null,
+  "scope": [
+    "nonce original installation/database/config/purpose/version binding",
+    "nonce exact 32-byte local material and owned-copy erasure",
+    "complete persisted global nonce/config historical identities and maximum retention per version",
+    "same-transaction read-only Recheck and original observation deadline",
+    "CA exact controlled target IP/hostname, TLS certificate validation and immutable local pins",
+    "CA transaction-local identity/file/time recheck without provider network or transaction completion",
+    "redacted errors/formatting and no bootstrap authority from constructor success",
+    "explicit future composition only after original material authority, cross-resource policy and peer review"
+  ],
+  "remaining_actual_evidence": [
+    "original controlled mappings/material authority and permissions",
+    "historical key lifecycle and retained material policy",
+    "actual MySQL snapshot/identity/retention failures",
+    "production composition and cross-resource constraints"
+  ],
+  "evidence": [
+    {
+      "path": "docs/evidence/a-nonce-bootstrap-candidate-20261023-153724-cd693e2c.json",
+      "size": 78790,
+      "sha256": "98dadade294f31904b072129002dd0c14da97089559e992762b3233ccb5fdc7f"
+    },
+    {
+      "path": "docs/evidence/a-nonce-ca-final-local-20261023-153722.txt",
+      "size": 10614,
+      "sha256": "9170292d3355afaac051670fff706172558a698c25bbf013fae7620ce4eb1338"
+    },
+    {
+      "path": "docs/evidence/a-nonce-ca-local-accepted-20261023.json",
+      "size": 1590,
+      "sha256": "8a4171f43ada79a3cdfa6713a84150e0c5d3f01f7f76d77219791672f031a497"
+    },
+    {
+      "path": "docs/evidence/a-nonce-ca-local-review-20261023.mjs",
+      "size": 6644,
+      "sha256": "173d8219050e527ccc6f311af0688d239ac38a0f6304dc9d9039a08258bfa72d"
+    },
+    {
+      "path": "docs/evidence/a-nonce-ca-local-review-20261023.test.mjs",
+      "size": 4970,
+      "sha256": "eea7e8fdc7a235a03e4dda916d74a0bcb3c99bd558fdba9c665bc01463a080a9"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "size": 9634,
+      "sha256": "46e695c7c0b9efa819f6f60f7fba52587ce74d1348912f1c57fe9782126e57f1"
+    },
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce_test.go",
+      "size": 10807,
+      "sha256": "696b4f87883bc699d81c999b0e2c465b2769dcbb4956c35cd4c4dc750ce848c3"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "size": 10272,
+      "sha256": "e2b34a1318d0ddbe2266fb1be9cafb1a0e399b070e8a14190348ea0b54d114aa"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca_test.go",
+      "size": 11918,
+      "sha256": "0c5f8ac429bc014d91f3aa92e11dca3f7cbaf6f1a50010039352a69efc5429c5"
+    },
+    {
+      "path": "docs/system-backup-a-nonce-bootstrap-20261023.md",
+      "size": 3810,
+      "sha256": "3a209ac11fe0677c27124138716c645020ed8543b9d592bc88d2361113a0399e"
+    },
+    {
+      "path": "docs/system-backup-a-ca-trust-adapter-20261022.md",
+      "size": 4175,
+      "sha256": "7aa76e4500f81222e68f43bbc352b56c2e7758b3d9fba6c7dd5250cc5fd4044c"
+    },
+    {
+      "path": "docs/evidence/a-nonce-ca-peer-review-request-20261023.mjs",
+      "size": 2885,
+      "sha256": "6151cf1accd2b813bb4ebe9cd80a3fd1ea11ef15a2b36f4b26a9361045303ed3"
+    }
+  ]
+}

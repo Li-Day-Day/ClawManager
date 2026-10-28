@@ -1,0 +1,178 @@
+{
+  "kind": "d1_a2_reference_capability_candidate_source_review.v1",
+  "status": "narrow_candidate_matches_existing_contract_native_not_reviewed",
+  "before_sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022",
+  "candidate_sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183",
+  "original_schema_sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9",
+  "exact_one_literal_change": true,
+  "provider_purposes_checked": 10,
+  "other_nine_sets_unchanged": true,
+  "removed": [
+    "exact_delete",
+    "append_record",
+    "snapshot_list",
+    "inventory_read"
+  ],
+  "rows": [
+    {
+      "purpose": "artifact_write",
+      "original_schema": [
+        "conditional_create",
+        "exact_write"
+      ],
+      "candidate": [
+        "conditional_create",
+        "exact_write"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "artifact_read",
+      "original_schema": [
+        "exact_read",
+        "range_read"
+      ],
+      "candidate": [
+        "exact_read",
+        "range_read"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "artifact_delete",
+      "original_schema": [
+        "exact_delete"
+      ],
+      "candidate": [
+        "exact_delete"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "catalog_append",
+      "original_schema": [
+        "append_record"
+      ],
+      "candidate": [
+        "append_record"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "catalog_read",
+      "original_schema": [
+        "exact_read"
+      ],
+      "candidate": [
+        "exact_read"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "catalog_discovery",
+      "original_schema": [
+        "inventory_read",
+        "snapshot_list"
+      ],
+      "candidate": [
+        "inventory_read",
+        "snapshot_list"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "evidence_read_write",
+      "original_schema": [
+        "conditional_create",
+        "exact_read",
+        "exact_write",
+        "range_read"
+      ],
+      "candidate": [
+        "conditional_create",
+        "exact_read",
+        "exact_write",
+        "range_read"
+      ],
+      "old_extra": [
+        "append_record",
+        "exact_delete",
+        "inventory_read",
+        "snapshot_list"
+      ]
+    },
+    {
+      "purpose": "evidence_read",
+      "original_schema": [
+        "exact_read",
+        "range_read"
+      ],
+      "candidate": [
+        "exact_read",
+        "range_read"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "evidence_write",
+      "original_schema": [
+        "conditional_create",
+        "exact_write"
+      ],
+      "candidate": [
+        "conditional_create",
+        "exact_write"
+      ],
+      "old_extra": []
+    },
+    {
+      "purpose": "evidence_delete",
+      "original_schema": [
+        "exact_delete"
+      ],
+      "candidate": [
+        "exact_delete"
+      ],
+      "old_extra": []
+    }
+  ],
+  "regression_expected_from_original_schema": true,
+  "planned_regression_children": 8,
+  "old_negative_failures_executed": false,
+  "new_native_tests_executed": false,
+  "live_source_not_modified_by_reviewer": true,
+  "source_only_not_admission": true,
+  "original_draft_contract_not_promoted": true,
+  "actual_mysql": false,
+  "production_approved": false,
+  "remaining": [
+    "After ae7 terminal/cleanup, old-source actual four negative failures and fixed-source complete package plus dependent material/integration checks",
+    "Exact new frozen source, native exit and cleanup receipts; no expansion of ae7 snapshot"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-candidate-20261026.json",
+      "sha256": "f11428ea7a6a8ca46917a51dec9cd181e4a5a787997d551ae05e9d12c238ae8a"
+    },
+    {
+      "path": "contracts/system-backup/v12/secret-ref.schema.json",
+      "sha256": "4e94aaf89fd43644c59f00dc24df79e9f5a82356b2b22ad0734f7e08517afcc9"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-before-20261026.go.txt",
+      "sha256": "99de31e723c22e1b3f8cbf33f0689054ae7ec589bab0c4c3e3666c26ca083022"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-candidate-20261026.go.txt",
+      "sha256": "bf76dcb6301fa2ffc331d45231e458e2806f1f7b01026cac02422c51510ea183"
+    },
+    {
+      "path": "docs/evidence/a2-reference-capability-parity-test-candidate-20261026.go.txt",
+      "sha256": "6c7e3e9a7d7d0f507b1799c2941d9ce83ab55cc95e11b214798fd3a260a24340"
+    },
+    {
+      "path": "docs/evidence/d1-a2-reference-capability-source-review-20261026.mjs",
+      "sha256": "d96f20e6d26ab6102e66e525b6d16f7e3c8d391aff0aedacb07cf4e3f738937e"
+    }
+  ]
+}

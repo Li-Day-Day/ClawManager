@@ -1,0 +1,185 @@
+{
+  "kind": "a_owner_current_frozen_gate_review.v1",
+  "status": "accepted_exact_current_mock_gate_not_owner_baseline",
+  "native_report": "docs/evidence/a-owner-frozen-gate-current-20261026-r1.json",
+  "native_report_sha256": "845cf7337ae21a3c16cd304095031058a988dc281985589e51457588fdfac1e1",
+  "native_log": "docs/evidence/a-owner-frozen-gate-current-20261026-r1.txt",
+  "native_log_sha256": "609a450b7da9e158d19fa883d3a941eeae472c75806e6a9a62288c938753a0c8",
+  "native_outer_exit": 0,
+  "cases": [
+    {
+      "name": "predecessor_ready_then_retry_new_source_reaches_dispatch",
+      "mutation": "ordinary",
+      "fault": "none",
+      "expected_dispatch": true,
+      "succeeded": true,
+      "dispatched": 1,
+      "validated": 1
+    },
+    {
+      "name": "owners_ready_then_retry_new_source_rejected",
+      "mutation": "ordinary",
+      "fault": "none",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "role_ready_then_retry_new_source_rejected",
+      "mutation": "ordinary",
+      "fault": "none",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "approved_owners_snapshot",
+      "mutation": "none",
+      "fault": "none",
+      "expected_dispatch": true,
+      "succeeded": true,
+      "dispatched": 1,
+      "validated": 1
+    },
+    {
+      "name": "approved_role_snapshot",
+      "mutation": "none",
+      "fault": "none",
+      "expected_dispatch": true,
+      "succeeded": true,
+      "dispatched": 1,
+      "validated": 1
+    },
+    {
+      "name": "script_only_snapshot_change_is_not_ordinary_drift",
+      "mutation": "script",
+      "fault": "none",
+      "expected_dispatch": true,
+      "succeeded": true,
+      "dispatched": 1,
+      "validated": 1
+    },
+    {
+      "name": "checker_disappears_after_early_ready",
+      "mutation": "none",
+      "fault": "missing_checker",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "checker_invalid_json",
+      "mutation": "none",
+      "fault": "invalid_json",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "checker_nonzero_with_ready_json",
+      "mutation": "none",
+      "fault": "nonzero_ready",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "checker_wrong_boolean_type",
+      "mutation": "none",
+      "fault": "typed_false",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "node_unavailable_after_early_ready",
+      "mutation": "none",
+      "fault": "missing_node",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "malformed_frozen_snapshot",
+      "mutation": "none",
+      "fault": "malformed_snapshot",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    },
+    {
+      "name": "local_new_source_preparation_does_not_require_old_baseline",
+      "mutation": "ordinary",
+      "fault": "none",
+      "expected_dispatch": true,
+      "succeeded": true,
+      "dispatched": 1,
+      "validated": 1
+    },
+    {
+      "name": "require_gate_on_nonremote_profile_rejected",
+      "mutation": "none",
+      "fault": "none",
+      "expected_dispatch": false,
+      "succeeded": false,
+      "dispatched": 0,
+      "validated": 0
+    }
+  ],
+  "current_input_pins": [
+    {
+      "path": "scripts/system-backup-d-config-writer-validation.ps1",
+      "sha256": "ae4385bed6874835a53c7d95606e57a5b1c301ad8857694d362e0deaacf2ffc0"
+    },
+    {
+      "path": "docs/evidence/a-download-owner-role-retest-20261021.ps1",
+      "sha256": "09bbe126025dd574aa3145b6d59fb619f55489e49413d17bd93b14c71ce8146d"
+    },
+    {
+      "path": "docs/evidence/a-download-retest-source-preflight-20261021.mjs",
+      "sha256": "983e0ed0c5f6bebfd30553ab668de84f8068402fb9daf5fd2f7d7af3782697e2"
+    },
+    {
+      "path": "docs/evidence/a-download-owners-actual-review-20261020.mjs",
+      "sha256": "69dfb9d6c0d43115aa21825134e9217554dc8c555c49e01a4cee06478bc62c18"
+    },
+    {
+      "path": "docs/evidence/a-owner-final-source-20261026.json",
+      "sha256": "977aac1c9e74bdf27738ccc832534f7530d9708130d8f74cb2a863e632ae2d67"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-predecessor-wrapper-20261026.txt",
+      "sha256": "8c469c6fedf4a0a30e0491a47b22cde1ebdbb8ce9319950647cdc7be1f4737f3"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-predecessor-entry-20261026.txt",
+      "sha256": "1c18abec57f0c57b8884492c62219d5fb1855dbbe4b16e82e7efa241d9914abf"
+    },
+    {
+      "path": "docs/evidence/d-owner-frozen-gate-regression-20261026.ps1",
+      "sha256": "a86d5387dcccf48b6beaf6eae26205fbe4c0f9fcb06ad9032e0694d1422eee44"
+    }
+  ],
+  "historical_reference": "docs/evidence/a-owner-frozen-baseline-gate-reviewed-20261026.json",
+  "historical_reference_sha256": "03a45dc8305f8e1d4f3360d4bbb61ecd93687f56e5d56f6be4a20bf8c67f21ea",
+  "historical_inline_outer_exit_preserved": 1,
+  "historical_whole_script_pin_not_reused": true,
+  "frozen_snapshot_checked_before_dispatch": true,
+  "live_tree_not_rescanned_for_frozen_gate": true,
+  "owner_absent": true,
+  "actual_snapshot_copy_performed": false,
+  "actual_Go_SSH_SQL_executed": false,
+  "current_owner_baseline_ready": false,
+  "actual_owner_eleven_accepted": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "goal_complete": false
+}

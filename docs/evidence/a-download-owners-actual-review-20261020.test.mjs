@@ -52,11 +52,17 @@ function accept(name, logBytes, extra = {}) {
   assert.equal(result.production_approved, false); passed.push(name);
 }
 accept('synthetic UTF-8 complete fixture (not SQL evidence)', Buffer.from(fixture));
+const chineseFooterFixture = fixture.replace('PowerShell transcript end\nEnd time: 20261020000100\n', 'PowerShell 记录结束\n结束时间: 20261020000100\n**********************\n');
+accept('synthetic PowerShell 7 simplified-Chinese complete footer UTF-8', Buffer.from(chineseFooterFixture));
+accept('synthetic PowerShell 7 simplified-Chinese complete footer UTF-16LE', Buffer.concat([Buffer.from([255, 254]), Buffer.from(chineseFooterFixture, 'utf16le')]));
 accept('synthetic UTF-16LE transcript and manifest', Buffer.concat([Buffer.from([255, 254]), Buffer.from(fixture, 'utf16le')]), {sourceBytes: Buffer.concat([Buffer.from([255, 254]), Buffer.from(decode(sourceBytes), 'utf16le')])});
 function rejected(name, log, extra = {}, code) {
   assert.throws(() => validate(log, extra), e => e instanceof Error && (!code || e.message === code), name); passed.push(name);
 }
 function replace(old, next) { assert.ok(fixture.includes(old), 'mutation target exists: ' + old); return fixture.replace(old, next); }
+rejected('localized footer without end time is incomplete', chineseFooterFixture.slice(0, chineseFooterFixture.indexOf('结束时间:')), {}, 'transcript_completed');
+rejected('localized footer embedded in test output is not the footer', chineseFooterFixture.replace('PowerShell 记录结束', '    test.go:1: PowerShell 记录结束'), {}, 'transcript_completed');
+rejected('localized footer followed by extra output is incomplete', chineseFooterFixture + 'more output\n', {}, 'transcript_completed');
 rejected('real local-only successful preparation is not actual SQL', actualLocal, {}, 'one_actual_remote_run');
 rejected('real 15:29 snapshot failure is not actual SQL', decode(fromEvidence('a-download-owners-mysql-remote-20261020-152911-f87d0e35.txt')), {}, 'one_frozen_source');
 rejected('real 13:34 failed Go gate is not actual SQL', decode(fromEvidence('a-download-owners-mysql-remote-20261020-133409-ebbf810b.txt')), {}, 'no_test_failure_skip_panic_or_pending_cleanup');
@@ -212,7 +218,14 @@ const composedSource = JSON.parse(decode(fromEvidence('a-download-gc-role-mysql-
 assert.equal(inplaceBaseline.baselineSource.source_sha256, composedSource.source_sha256);
 assert.equal(inplaceBaseline.baselineEvents.filter(e => packageNames.includes(e.Package) && e.Test && e.Action === 'pass').length, 5019);
 const inplaceFixture = bindingFixture.replace(`source_sha256=${bindingSource.source_sha256} files=${bindingSource.files.length}`, `source_sha256=${inplaceSource.source_sha256} files=${inplaceSource.files.length}`);
-accept('synthetic composed business source and current tagged INPLACE fixture retain all 5019 checks (not SQL evidence)', Buffer.from(inplaceFixture), {sourceBytes: inplaceSourceBytes, ...inplaceBaseline});
+// This historical synthetic fixture names old INPLACE bytes. Verify their
+// retained archive instead of reading the later COPY repair from the worktree.
+const historicalOwnerPath = 'backend/internal/systembackupevidence/download_task_owner_a_mysql_test.go';
+const historicalOwnerBytes = fromEvidence('a-owner-copy-fixture-before-20261027.go.txt');
+const historicalOwnerPin = inplaceSource.files.find(f => f.path === historicalOwnerPath);
+assert.equal(historicalOwnerBytes.length, historicalOwnerPin.size);
+assert.equal(sha256(historicalOwnerBytes), historicalOwnerPin.sha256);
+accept('synthetic composed business source and current tagged INPLACE fixture retain all 5019 checks (not SQL evidence)', Buffer.from(inplaceFixture), {sourceBytes: inplaceSourceBytes, ...inplaceBaseline, readFile: p => p === historicalOwnerPath ? historicalOwnerBytes : readFile(p)});
 const pruneSourceBytes=fromEvidence('d-prune-identity-published-context-20261021.json'),pruneSource=JSON.parse(decode(pruneSourceBytes)),pruneBaseline=loadReviewedOwnerBaseline(pruneSourceBytes),pruneCatalog=frozenMigrationCatalog(pruneSource);
 assert.equal(pruneBaseline.baselineSource.source_sha256,pruneSource.source_sha256);assert.equal(pruneCatalog.file_count,96);
 const newCapsule=pruneSource.files.find(f=>f.path==='backend/internal/systembackupevidence/testdata/download_mfa_probe_inputs.json').sha256;

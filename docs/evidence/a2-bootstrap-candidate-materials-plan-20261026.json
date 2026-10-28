@@ -1,0 +1,119 @@
+{
+  "kind": "a2_bootstrap_candidate_materials_source_plan.v1",
+  "created_at": "2026-10-26T04:10:33.887305Z",
+  "status": "source_plan_not_implementation_or_authentication",
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+      "size": 9634,
+      "sha256": "46e695c7c0b9efa819f6f60f7fba52587ce74d1348912f1c57fe9782126e57f1"
+    },
+    {
+      "path": "backend/internal/systembackupcatrust/ca.go",
+      "size": 10529,
+      "sha256": "780be82610a39d306577537a3981d1a3444c9fea82e412621b078aed36d3407c"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/bootstrap_admission.go",
+      "size": 7037,
+      "sha256": "7826175e8e59cf6ea2a0371d45060bb6465ebedc6f1e02e25b136ada05f6f4b1"
+    },
+    {
+      "path": "backend/internal/systembackupsecurity/config_bootstrap_candidates.go",
+      "size": 16041,
+      "sha256": "268af71aee9412c360bf860ee2cb09f809976abfeba9554229cf76005f12cbff"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume.go",
+      "size": 13332,
+      "sha256": "0415a46e1bbd995cd08af1f086b2ff28c630b226c7369b4730d04d1c07d917b5"
+    },
+    {
+      "path": "backend/internal/systembackupproducer/bootstrap_consume_contract.go",
+      "size": 6673,
+      "sha256": "e9f7ae2c8a23deee734560362d1a33f048017797c57dd2eba36bab143135dcab"
+    },
+    {
+      "path": "backend/internal/db/migrations/066_add_system_backup_config_and_operations.sql",
+      "size": 31699,
+      "sha256": "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae"
+    },
+    {
+      "path": "backend/internal/db/migrations/075_add_system_backup_strong_auth_nonces.sql",
+      "size": 3157,
+      "sha256": "c24af0413ff6b8dd98c3b7eb59b8c6dade70c385c5f49e48302bb07b98b1ed84"
+    },
+    {
+      "path": "docs/system-backup-a-bootstrap-retry-materials-20261026.md",
+      "size": 2818,
+      "sha256": "a49b60cb97b8c45431bf58fe3ad8c8fc583996fdf2606d744844d7d73f4cbaa0"
+    }
+  ],
+  "authority_wrapper": {
+    "state": "first_native_failed_copy_fix_now_awaits_joint",
+    "source_files": 413,
+    "source_sha256": "1915fa93d2b24f2e3247a5beb071f23b4803f5b07318dfe0b337ae5bce584f14",
+    "session": 58003,
+    "owner": ".tmp-a-evidence-361dcc523056415ca8c2baa12efaebd1",
+    "own_source_changed_after_freeze": false,
+    "terminal_receipt": "docs/evidence/a2-bootstrap-authority-native-20261026-120305-61d51903.json",
+    "owner_removed": true
+  },
+  "shared_rules": [
+    "Keep original independently authenticated deployment/purpose/material mapping mandatory. DTO/hash/constructor data never establish permission.",
+    "Read real original files and perform original TLS only before transaction locks; snapshot immutable original scope, pins, material validation result and unrenewed windows. Wipe nonce material bytes immediately.",
+    "Original grant/RBAC/mapping are current authority on BOTH branches. Resource physical failures are captured before locks and deny new consumption after the exact L3 historical branch; they never authorize a new consume.",
+    "Keep legacy raw-sql.Tx resource adapters unchanged; add an explicit separate candidate API and synthetic evidence without claiming actual production wiring.",
+    "Original C1 L10 has no external I/O and FinalGuard forbids subsequent network/file/audit/new locks. A/D must explicitly review any pre-FinalGuard local-file stage; a blanket transaction-wide file ban is not established by the cited original passages. Snapshot-only admission remains withdrawn because current material semantics were not preserved."
+  ],
+  "CA": {
+    "existing": "Validator.Prepare performs descriptor/public CA validation, exact-IP original-hostname TLS, chain expiry, original <=30-second window, and final source recheck before returning legacy check.",
+    "unsafe_reuse": "legacy check.Recheck calls validator.files and validator.now inside caller transaction.",
+    "proposed_api": "Implemented candidate API: PrepareCandidateAttempt -> owned PreparedCandidateCA.DependencyDeadline/CheckCandidate -> CandidateCACheck.Recheck; no native acceptance yet",
+    "late_checks": [
+      "Original exact database identity through the original narrow read/time capability.",
+      "Original bounded files() recheck preserves late removed/changed descriptor/CA refusal. It runs under the private source read view after public write closure, before fixed SQL-only FinalGuard.",
+      "Original observation/binding/chain expiry with shared SQL SampleTime before/after, strict equality denies, no wall-clock/provider/TLS/new locks or observation renewal.",
+      "Original dependency deadline is intersected into D admission and checked after all source callbacks.",
+      "PrepareCandidateAttempt may perform original TLS before L3 on each invocation; historical branch does not consume the new material observation, execute old producer probes, or refresh original receipt observation. Whole-attempt zero TLS is not claimed."
+    ],
+    "planned_tests": [
+      "Original files changed/deleted after Prepare cannot be accepted solely because a TLS observation exists; deny when original independent immutable-version/current revocation source is absent.",
+      "After a reviewed concrete original immutable-version/lifecycle/current revocation source exists, exercise actual loopback TLS and its original unrenewed expiry, late SQL wait/rollback, context/transaction identity and redaction.",
+      "Physical failure remains closed for new use; current original grant/RBAC/independent mapping still mandatory for historical read."
+    ],
+    "semantic_gap": "Original CA Recheck re-reads exact descriptor/CA bytes and rejects removed/changed input. A memory observation plus SQL clock alone cannot prove immutable material or current revocation; dropping that check would change source semantics.",
+    "snapshot_only_draft": "withdrawn_before_testing; docs/evidence/a2-bootstrap-ca-snapshot-withdrawn-20261026.json",
+    "unresolved_authority_source": "Resolved local-file stage design: preserve concrete original file verification before fixed SQL-only guard instead of inventing immutable grant/approved flags. Independent original deployment/material authorization still mandatory; code awaits native and real composition/SQL evidence.",
+    "current_resolution": "Correct candidate adapter retains original late files() verification, after public write closure under private read/time view before fixed SQL FinalGuard. Superseded snapshot-only draft remains withdrawn history. Source implementation only, no native acceptance yet."
+  },
+  "nonce": {
+    "existing_union": "All global system_backup_configs nonce identity/version rows UNION retained strong_auth_nonces key-version/MAX(retain_until); no installation filter.",
+    "unsafe_reuse": "legacy check.Recheck re-reads all key descriptors/material and uses non-locking UNION/GROUP BY under caller raw transaction.",
+    "schema": "configs PRIMARY(id), scoped version unique; nonce idx_sb_auth_nonce_retention(retain_until,id) and idx_sb_auth_nonce_key_retention(key_version,retain_until,id).",
+    "required_global_prefix": [
+      "Global config nonce identity/version rows and complete relevant insertion gap must already be locked at the config layer; current A1 bridge locks only origin_installation_id config range.",
+      "Global retained nonce rows and relevant gaps must be locked at L5 before capacity/evidence; no installation filter, no narrowing to active key or current installation.",
+      "Use concrete ordered raw-row/index range locks and stream validation/aggregation. UNION or MAX locking syntax alone does not establish underlying rows/gaps.",
+      "Retain unknown-version, conflicting global identity, missing/null facts, and ProtectedUntil < maximum retained expiry refusal.",
+      "Later checks only read already-held global rows/ranges and immutable key-validation snapshots; no new business locks, local files or renewal."
+    ],
+    "coordination_required": "A1/D2 must place the complete global config/nonce prefix concretely. Original authority session has no L1 hook; do not hide a new global config lock inside L5 or final Recheck. No nonce candidate code yet.",
+    "proposed_global_config_query": "SELECT id,origin_installation_id,version,config_sha256,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE",
+    "proposed_retained_query": "SELECT id,nonce_hmac_key_version,retain_until FROM system_backup_strong_auth_nonces FORCE INDEX(idx_sb_auth_nonce_retention) WHERE retain_until>? ORDER BY retain_until,id FOR UPDATE",
+    "proposed_contract_details": [
+      "A1 L1 concrete bridge locks full global configs ordered by existing unique installation/version index after global installation prefix, before producer domain. Config row content is observed facts; resource validity failure must not block L3 history.",
+      "A2 L5 material adapter samples one original shared cutoff, locks complete GLOBAL retention range and its gaps, streams all raw rows; no raw-row count cap replacing original UNION distinct limit.",
+      "Late shared SampleTime cannot precede original cutoff. Recheck uses same original cutoff/ranges and validates unrenewed windows; filter applicable retention semantics without extending scope or reacquiring new ranges.",
+      "Final global config post-state is exact original global tuples plus only intended disabled-v1 nonce/config tuple under original installation/version; insertion id is observed, not fabricated. Global nonce ledger has no authorized bootstrap consume mutation.",
+      "No API/source changes until A1/D2 confirm concrete prefix and ownership. Exact indexes/gap guarantees require actual InnoDB verification later."
+    ],
+    "current_material_semantic_gap": "Original nonce Recheck reads all original active/retained descriptor/material bytes, so its candidate adapter must address the same current-material truth source in addition to the global lock prefix.",
+    "current_resolution": "Candidate adapter retains original validateKey actual32byte read/wipe/current file checks, full global config/retained prefixes, fixed cutoff and original deadline. Source implementation only, no native acceptance yet."
+  },
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "production_approved": false,
+  "IO_contract_review": "docs/evidence/a2-bootstrap-material-IO-contract-reviewed-20261026.json",
+  "current_implementation": "docs/evidence/a2-bootstrap-original-files-material-adapters-ready-20261026.json; six files/12 roots, gofmt only, next native scope pending"
+}

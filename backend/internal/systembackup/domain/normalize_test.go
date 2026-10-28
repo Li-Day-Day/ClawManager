@@ -82,6 +82,38 @@ func TestNormalizeKeepsLoginQuotaOwnershipAndStopsWork(t *testing.T) {
 		t.Fatal("source mutated")
 	}
 }
+func TestNormalizeDoesNotReplayRolloutCheckpointsOrWorkspaceWrites(t *testing.T) {
+	source, target, policy := fixture()
+	checkpoint := table("runtime_rollout_checkpoints", Row{
+		"rollout_id": Text("3"), "state_json": Text(`{"phase":"executing"}`), "updated_at": Text("2026-10-28 00:00:00"),
+	})
+	checkpoint.PrimaryKey = []string{"rollout_id"}
+	intent := table("instance_workspace_write_intents", Row{
+		"operation_id": Text(strings.Repeat("a", 32)), "instance_id": Text("7"), "owner_user_id": Text("4"),
+		"generation": Text("2"), "action": Text("write"), "created_at": Text("2026-10-28 00:00:00"),
+	})
+	intent.PrimaryKey = []string{"operation_id"}
+	intent.ForeignKeys = []ForeignKey{{"instance_id", "instances", "id"}}
+	source.Tables = append(source.Tables, checkpoint, intent)
+	target = append(target, checkpoint, intent)
+	before, err := Digest(source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plan, err := Normalize(context.Background(), source, target, policy)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"runtime_rollout_checkpoints", "instance_workspace_write_intents"} {
+		if len(find(plan.Data, name).Rows) != 0 || len(find(source, name).Rows) != 1 {
+			t.Fatalf("source coordination state replayed or lost: %s", name)
+		}
+	}
+	if after, err := Digest(source); err != nil || after != before {
+		t.Fatal("archived source changed")
+	}
+}
+
 func TestNormalizeFailsClosed(t *testing.T) {
 	for _, test := range []string{"orphan", "no-admin", "unknown-field", "missing-target-field", "missing-placement", "windows", "missing-secret-adapter", "new-target-executor"} {
 		t.Run(test, func(t *testing.T) {

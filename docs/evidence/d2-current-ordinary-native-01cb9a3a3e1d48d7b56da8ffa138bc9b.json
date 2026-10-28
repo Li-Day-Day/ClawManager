@@ -1,0 +1,307 @@
+{
+  "kind": "d2_current_ordinary_complete_native.v1",
+  "status": "passed_selected_complete_ordinary_packages",
+  "id": "01cb9a3a3e1d48d7b56da8ffa138bc9b",
+  "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-01cb9a3a3e1d48d7b56da8ffa138bc9b",
+  "Go_started": true,
+  "tests_started": true,
+  "packages": [
+    "internal/systembackupproducer",
+    "internal/systembackupsecurity",
+    "internal/systembackupresources",
+    "internal/systembackupread",
+    "internal/systembackupevidence",
+    "cmd/server"
+  ],
+  "dependencies_installed": false,
+  "remote_contacted": false,
+  "actual_mysql": false,
+  "production_approved": false,
+  "source_scope_accepted": false,
+  "owner_removed": true,
+  "steps": [
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupproducer",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupresources",
+        "./internal/systembackupread",
+        "./internal/systembackupevidence",
+        "./cmd/server"
+      ],
+      "platform": "windows",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.windows.ordinary.jsonl",
+      "sha256": "398d460edf65f13e678f06c8845a6e8d96f8805dd82e5fa3d04f44ed9b69f32e",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.windows.ordinary.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupproducer",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupresources",
+        "./internal/systembackupread",
+        "./internal/systembackupevidence",
+        "./cmd/server"
+      ],
+      "platform": "windows",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.windows.systembackup_mysql.jsonl",
+      "sha256": "64ecb6cfe46d87c4f546ecc857cd11cd4fff43b8a514990bcfb1b046473e0301",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.windows.systembackup_mysql.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupproducer",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupresources",
+        "./internal/systembackupread",
+        "./internal/systembackupevidence",
+        "./cmd/server"
+      ],
+      "platform": "linux",
+      "tags": "ordinary",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux.ordinary.jsonl",
+      "sha256": "628c254003d0f19afa1ea5b7135c5a427e539f2ddb947a0d338ac36f8185fed7",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux.ordinary.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupproducer",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupresources",
+        "./internal/systembackupread",
+        "./internal/systembackupevidence",
+        "./cmd/server"
+      ],
+      "platform": "linux",
+      "tags": "systembackup_mysql",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux.systembackup_mysql.jsonl",
+      "sha256": "b70f45cb3e24ba6b6b78a1c3a8f747817527c66f0d5e248f80cff1155a0869d9",
+      "stderr": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux.systembackup_mysql.jsonl.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupproducer",
+        "./internal/systembackupsecurity",
+        "./internal/systembackupresources",
+        "./internal/systembackupread",
+        "./internal/systembackupevidence",
+        "./cmd/server"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.full.jsonl",
+      "sha256": "2ed6bc15b5804ac76d72fdb06e4308dc89d07324c19d0b6d1446656c2cbf0c78"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestDBootstrap(Consumer|ConsumerRanges|Entry)MySQLSeed$",
+        "-count=1",
+        "-timeout=2700s",
+        "./internal/systembackupevidence"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.bootstrap-seeds.jsonl",
+      "sha256": "cea9cb1c05236c4dc8210cc23b29435d7239930063d71482f04405f9e8b51839"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-buildvcs=false",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-01cb9a3a3e1d48d7b56da8ffa138bc9b\\binary\\server",
+        "./cmd/server"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux-server.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-buildvcs=false",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-01cb9a3a3e1d48d7b56da8ffa138bc9b\\binary\\system-backup-bootstrap",
+        "./cmd/system-backup-bootstrap"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.linux-system-backup-bootstrap.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "error": null,
+  "parity_composition_check": {
+    "status": "passed_exact_candidate_windows_and_supplement",
+    "output": {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.composed.json",
+      "size": 348359,
+      "sha256": "ea4e1176716a1c0735a8cc77315fd50cf9b6b392c17ef010f7941785011855ed"
+    }
+  },
+  "prerequisites": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\a2-reference-capability-supplement-b53eccbdc25449d1947e7bf90b179b92.composed.json",
+      "sha256": "ea4e1176716a1c0735a8cc77315fd50cf9b6b392c17ef010f7941785011855ed"
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d-bootstrap-entry-linux-d846e3793f0242cd96da1912a39c49de.json",
+      "sha256": "8394b5383e885585368c930898a91acca58b71afe596202295e305ea73fd160a"
+    }
+  ],
+  "prepared_cache": {
+    "kind": "d2_current_ordinary_compilation_cache_handoff.v1",
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-01cb9a3a3e1d48d7b56da8ffa138bc9b",
+    "report": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-cache-handoff-01cb9a3a3e1d48d7b56da8ffa138bc9b.json",
+    "report_sha256": "0b3a6469bf1763967870069c39b70d66fa8a8b233a0cced7856ad3489e2c0800",
+    "updates": [],
+    "cache_only": true,
+    "tests_started": false,
+    "test_result_reuse": false
+  },
+  "source_manifest": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.source.json",
+  "source_manifest_sha256": "9f420f4aa4b8839ed9dd64207c8f9bd0b627dd37c02c5c211638ae40cbea7a13",
+  "source_precheck": true,
+  "actual_go_scope": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.scope.json",
+  "actual_go_scope_sha256": "e7ebcd0a72155f3ccd624eeb88be4022668ae29eb216a77c7e5a8b4e46c05e64",
+  "go_list_source_postcheck": true,
+  "native_inventory": {
+    "kind": "d2_current_ordinary_inventory.v1",
+    "packages": [
+      {
+        "package": "clawreef/internal/systembackupproducer",
+        "roots": 89,
+        "pass_events": 883,
+        "parent_names_preserved": 883
+      },
+      {
+        "package": "clawreef/internal/systembackupsecurity",
+        "roots": 304,
+        "pass_events": 2302,
+        "parent_names_preserved": 2270
+      },
+      {
+        "package": "clawreef/internal/systembackupresources",
+        "roots": 71,
+        "pass_events": 843,
+        "parent_names_preserved": 843
+      },
+      {
+        "package": "clawreef/internal/systembackupread",
+        "roots": 102,
+        "pass_events": 976,
+        "parent_names_preserved": 976
+      },
+      {
+        "package": "clawreef/internal/systembackupevidence",
+        "roots": 399,
+        "pass_events": 3228,
+        "parent_names_preserved": 3228
+      },
+      {
+        "package": "clawreef/cmd/server",
+        "roots": 9,
+        "pass_events": 24,
+        "parent_names_preserved": 22
+      }
+    ],
+    "all_selected_packages_complete": true,
+    "parent_scope_accepted": false,
+    "actual_mysql": false
+  },
+  "windows_source_postcheck": true,
+  "windows_checkpoint": {
+    "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.windows-postcheck.json",
+    "sha256": "abdee8b86a7b02879b841cda93c4bcc07f0cbc93627f6954d71963b9b8ef8641"
+  },
+  "bootstrap_seed_inventory": {
+    "kind": "d2_bootstrap_repair_seed_inventory.v1",
+    "names": [
+      "TestDBootstrapConsumerMySQLSeed",
+      "TestDBootstrapConsumerRangesMySQLSeed",
+      "TestDBootstrapEntryMySQLSeed"
+    ],
+    "actual_mysql": false,
+    "source_scope_accepted": false
+  },
+  "bootstrap_seed_source_postcheck": true,
+  "bootstrap_seed_checkpoint": {
+    "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.bootstrap-seeds-postcheck.json",
+    "sha256": "3f43e858dc6489fe826e7453514ae96bddff07a54622d4553dcc26e67ec18160"
+  },
+  "linux_binaries": [
+    {
+      "program": "server",
+      "format": "ELF",
+      "sha256": "6b41603bf2fdeaf6038c46524d0992b2ffdacdef17754e5bdb1ec8b067530400",
+      "size": 98544111,
+      "executed": false,
+      "removed": true
+    },
+    {
+      "program": "system-backup-bootstrap",
+      "format": "ELF",
+      "sha256": "674785517283bfbb006634c9edebb95f8513111bd8344d2862d5459499aad9ce",
+      "size": 9881543,
+      "executed": false,
+      "removed": true
+    }
+  ],
+  "frozen_source_unchanged": true,
+  "prepared_owner_retained_before_adoption": false,
+  "driver_sha256": "9c750cf8f9cd127d46b5bac8634bd995ad18c28da24739ff7542cf12db9e1f7f",
+  "snapshotter_sha256": "d993e6772372e90d43f76327e503d669fd907497ad73c6319853d9d9abe6fbec",
+  "inventory_sha256": "e15cca9e3203d34b3f265cccdfc5bf43cfc6a2cf381cf739e780dbadc1856096",
+  "scope_reader_sha256": "835c38ba5f01ee99cedbd7b29885c8f0644ea0b4a6d1ecf2fea2c930c2ccd9fa",
+  "go_list_parser_sha256": "8f2a7b31fb7339802afe3196078c50cd5438806ce676a9c1430bcf5b264b0024",
+  "native_event_reader_sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc",
+  "parity_composition_validator_sha256": "0548c99c73456eccab36e721f9ad5d616f374a0451347e0dca144973a68f91a0"
+}

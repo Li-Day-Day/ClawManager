@@ -1,0 +1,80 @@
+﻿**********************
+Windows PowerShell 脚本开始
+开始时间: 20261027153541
+用户名: HOME\zhanghui08
+RunAs 用户: HOME\zhanghui08
+配置名称: 
+计算机: PC00101934 (Microsoft Windows NT 10.0.26100.0)
+主机应用程序: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+进程 ID: 2480
+PSVersion: 5.1.26100.6899
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6899
+BuildVersion: 10.0.26100.6899
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> try {
+    & .\docs\evidence\d-gc-full-lifecycle-operator-20261026.ps1 `
+        -ReviewedSourcePath $gcReview `
+        -SourceManifestPath $gcSource `
+        -BuildParallelism 1 `
+        -Remote
+} finally {
+    Stop-Transcript | Out-Null
+}
+LOCAL_OWNER config-writer-source=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-30aeebbc9276412d9a9db923c632e424
+LOCAL_SOURCE config-writer-frozen=yes source_sha256=46bcb2758c1aabb0839f2b6452aec53c2642b136d1f0f55601ef31118b4156f5 files=1721
+PASS production-dispatch-config-proof
+PASS config-proof-exclusive-remote-test
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“ConfigProofOnly requires its dedicated validation profile”
+PASS reject-mixed-config-proof-profile
+PASS production-dispatch-index-page
+PASS production-dispatch-index-status
+PASS production-dispatch-index-all
+PASS production-dispatch-default
+PASS production-dispatch-history
+PASS production-dispatch-restore
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Missing exact KUBE_CONTEXT environment assignment: history”
+PASS reject-original-dispatch-defect-history
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Missing exact KUBE_CONTEXT environment assignment: restore”
+PASS reject-original-dispatch-defect-restore
+PASS evidence remote dispatch: 11 cases; no remote actions, dependencies or build artifacts
+LOCAL_PASS isolated-go-telemetry=off
+VALIDATION_SCOPE config-writer-candidate=yes synthetic-readiness=yes synthetic-capacity=yes production-approval=no backfill=no real_mysql=not_run
+LIFECYCLE_SCOPE dedicated_selector_overlay=yes historical_freeze_dispatch=not_selected
+VALIDATION_SCOPE download-gc-full-lifecycle-only=yes public_collect=yes authority=synthetic_known_tasks physical=synthetic production-approval=no real_mysql=not_run
+
+LIFECYCLE_SCOPE ordinary_full_not_repeated=yes tagged_seeds_default_vet_and_linux_only=yes
+=== RUN   TestDDownloadGCFullCollectMySQLSeed
+    download_gc_full_collect_mysql_test.go:96: PASS full_collect_seed cases=7 actual_mysql=not_run schema=candidate_only authority=synthetic_known_task_domain physical_capacity=no production=no
+--- PASS: TestDDownloadGCFullCollectMySQLSeed (0.32s)
+=== RUN   TestDDownloadGCFullLifecycleMySQLSeed
+    download_gc_full_lifecycle_mysql_test.go:175: PASS full_lifecycle_seed cases=15 actual_mysql=not_run domain=synthetic_known_tasks physical_capacity=no production=no
+--- PASS: TestDDownloadGCFullLifecycleMySQLSeed (0.00s)
+=== RUN   TestDDownloadGCFullProfileMySQLSeed
+    download_gc_full_profile_mysql_test.go:63: PASS full_profile_seed cases=33 actual_mysql=not_run public_collect=no full_group=no production_approval=no
+--- PASS: TestDDownloadGCFullProfileMySQLSeed (0.01s)
+PASS
+ok  	clawreef/internal/systembackupevidence	1.979s
+=== RUN   TestDDownloadGCFullCollectMySQLSeed
+    download_admission_transaction_model_test.go:748: open ../../../docs/evidence/a-config-canonical-request-vectors-20261014.json: The system cannot find the path specified.
+--- FAIL: TestDDownloadGCFullCollectMySQLSeed (0.00s)
+=== RUN   TestDDownloadGCFullLifecycleMySQLSeed
+    download_gc_full_lifecycle_mysql_test.go:175: PASS full_lifecycle_seed cases=15 actual_mysql=not_run domain=synthetic_known_tasks physical_capacity=no production=no
+--- PASS: TestDDownloadGCFullLifecycleMySQLSeed (0.00s)
+=== RUN   TestDDownloadGCFullProfileMySQLSeed
+    download_gc_full_profile_mysql_test.go:63: PASS full_profile_seed cases=33 actual_mysql=not_run public_collect=no full_group=no production_approval=no
+--- PASS: TestDDownloadGCFullProfileMySQLSeed (0.01s)
+FAIL
+CLEANED local-registration-build-cache=True
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Standalone config proof seed failed; remote validation has not started”
+LOCAL_CLEANUP config-writer-source-owned=C:\Users\zhanghui08\Desktop\clawmanager\ClawManager\.tmp-d-index-cache-30aeebbc9276412d9a9db923c632e424 removed=True
+gc_full_lifecycle_exit=1
+PS C:\Users\zhanghui08\Desktop\clawmanager\ClawManager> TerminatingError():“Standalone config proof seed failed; remote validation has not started”
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261027154504
+**********************

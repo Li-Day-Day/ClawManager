@@ -1,0 +1,65 @@
+{
+  "kind": "d2_metrics_dedupe_original_D_draft_revision.v1",
+  "status": "signature_split_source_scope_reviewed_cleanup_threshold_redesign_required",
+  "previous_proposal": {
+    "path": "docs/evidence/d2-metrics-dedupe-proposal-20261027-r1.json",
+    "size": 9191,
+    "sha256": "f93428d2d7175ca0fb3db13ac381b3ed993c56c2c775ab149c4c06a168e1b088"
+  },
+  "unchanged_draft_candidate": {
+    "path": "docs/evidence/d2-metrics-dedupe-proposal-candidate-20261027-r1.json",
+    "size": 195203,
+    "sha256": "e647ef1ff736428279c329a12d71111066afef2415aeb49f23f2e82051ff6e1b"
+  },
+  "A_nonimplementer_review": {
+    "path": "docs/evidence/a2-metrics-dedupe-proposal-reviewed-20261027-r1.json",
+    "size": 5646,
+    "sha256": "157bec0df843ec84a8a8653e19916ddc19d6a48bd894e8906111a6691bb0d84d"
+  },
+  "r1_metadata_correction": {
+    "field": "other_98_alert_rows_preserved",
+    "original_value": true,
+    "corrected": "97 completely unchanged rows, one cleanup metadata row changed, one signature row replaced by two",
+    "r1_preserved_unchanged": true
+  },
+  "rows": {
+    "base": 99,
+    "candidate": 100,
+    "completely_identical": 97,
+    "cleanup_changed": 1,
+    "signature_before": 1,
+    "signature_after": 2
+  },
+  "signature_split": {
+    "source_scope_reviewed": true,
+    "production_or_PromQL_approved": false
+  },
+  "cleanup": {
+    "dedupe_field_mismatch_only_addressed": true,
+    "immutable_deadline_semantics_addressed": false,
+    "counterexample": {
+      "ages_seconds": [
+        700,
+        100
+      ],
+      "frozen_deadlines_seconds": [
+        900,
+        60
+      ],
+      "global_oldest_age_seconds": 700,
+      "current_deadline_seconds": 900,
+      "global_alert": false,
+      "correct_any_owner_alert": true
+    },
+    "information_loss": "The same global gauges can represent owners with no exceeded immutable deadline or owners with an exceeded one.",
+    "next_design_under_review": "Use the existing controller_state mechanism with authoritative per-owner immutable cleanup deadlines and a proven complete read, rather than inventing a new metric or deriving per-owner truth from two global gauges.",
+    "source_mapping_not_assumed": "Operation deadline_at is not assumed equivalent to frozen cleanup deadline until original owner/config bindings are reviewed."
+  },
+  "generator_candidate_prepared": false,
+  "live_sources_modified": false,
+  "Go_executed": false,
+  "PromQL_executed": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "contract_frozen": false
+}

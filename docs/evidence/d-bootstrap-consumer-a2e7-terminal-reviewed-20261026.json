@@ -1,0 +1,51 @@
+{
+  "kind": "d_bootstrap_consumer_a2e7_terminal_review.v1",
+  "run_id": "a2e7cbc234ca4e0e9ea79ec7adce1f49",
+  "whole_run_passed": false,
+  "status": "targeted_passed_full_eight_packages_passed_evidence_harness_timeout",
+  "outer_exit": 1,
+  "test_exit": 1,
+  "targeted_exit": 0,
+  "targeted_package_passes": [
+    "clawreef/internal/systembackupproducer",
+    "clawreef/internal/systembackupsecurity",
+    "clawreef/internal/systembackupbootstrapsecurity",
+    "clawreef/internal/systembackupnoncebootstrap",
+    "clawreef/internal/systembackupcatrust"
+  ],
+  "targeted_pass_events": 393,
+  "integration_passed_scenarios": 19,
+  "identity_overlay": "single_Run_seal_removal_caused_real_committed_assertion_failure",
+  "full_package_passes": [
+    "clawreef/internal/systembackupproducer",
+    "clawreef/internal/systembackupsecurity",
+    "clawreef/internal/systembackupbootstrapsecurity",
+    "clawreef/internal/systembackupresources",
+    "clawreef/internal/systembackupread",
+    "clawreef/cmd/server",
+    "clawreef/internal/systembackupnoncebootstrap",
+    "clawreef/internal/systembackupcatrust"
+  ],
+  "full_failures": [
+    {
+      "Time": "2026-10-26T14:25:03.4666128+08:00",
+      "Action": "fail",
+      "Package": "clawreef/internal/systembackupevidence",
+      "Elapsed": 604.327
+    }
+  ],
+  "timeout_10m_observed": true,
+  "cleanup_stack_observed": true,
+  "snapshot_verified_before_tests": true,
+  "snapshot_postcheck_reached": false,
+  "cleaned": true,
+  "exact_owner_absent": true,
+  "dependencies_installed": false,
+  "actual_mysql_executed": false,
+  "linux_builds_started": false,
+  "production_approved": false,
+  "receipt_sha256": "d7187d55aef27598017341782470410f328b80df1f25e365d681e8b0eba87c60",
+  "full_log_sha256": "77d2213727c1526f935998c6c4209b5161974d71e8fd9895b7a90fb80bb39061",
+  "targeted_log_sha256": "bd4fa692ee71beb7f6e6b8cec6025c036ba974cce4c04fe77e355d471176d30a",
+  "next_scope": "Frozen ordinary source evidence-only test with 45m harness, three explicitly selected local seeds and five Linux builds/compiles; entry source requires a separate affected-source gate"
+}

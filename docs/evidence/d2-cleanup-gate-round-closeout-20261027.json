@@ -1,0 +1,139 @@
+{
+  "kind": "d2_cleanup_gate_verified_round_closeout.v1",
+  "status": "verified_native_preparation_complete_pause_requested",
+  "finished_at_UTC": "2026-10-27T09:19:21.280Z",
+  "deadline_17_00_met": false,
+  "terminal": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.r2.terminal.json",
+    "size": 56489,
+    "sha256": "704391217980b1addac0b48b4884f60050fb2a3e1b9acc056e70d05a1b700a4e"
+  },
+  "source_manifest": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.source.json",
+    "size": 666726,
+    "sha256": "5e0c8f4bc782c8fce92ce53095fd37829eb2879a3e1527e88e17d543e2c6e754"
+  },
+  "A_independent_review": {
+    "path": "docs/evidence/a-cleanup-gate-joint-terminal-reviewed-20261027.json",
+    "size": 3548,
+    "sha256": "d48f62c6c1225030c770a5def5ba5b607370bfa49c847cc0e0e4962a82f38b68"
+  },
+  "private_source_files": 1727,
+  "physical_files": 1728,
+  "private_source_sha256": "fd71b0aff897210a9c2e830167b74f1085bdc1aed9ae41c0d960e3be4abedade",
+  "Windows_packages": {
+    "cleanup": {
+      "roots": 14,
+      "pass_events": 60
+    },
+    "controller": {
+      "roots": 155,
+      "pass_events": 284
+    }
+  },
+  "tagged_security_seed": {
+    "roots": 1,
+    "pass_events": 1,
+    "actual_SQL": false
+  },
+  "actual_Go_contexts": {
+    "windows.ordinary": {
+      "files": 210,
+      "sha256": "5cedd1222e607e1db3248df9aa0c52844bc2d92ed4972215ac9a2d4f3916610a",
+      "roots": [
+        "clawreef/internal/systembackupcleanup",
+        "clawreef/internal/systembackupcontroller"
+      ]
+    },
+    "windows.tagged_security": {
+      "files": 271,
+      "sha256": "c7f5e29a285945c7eace3ae9f69b897089cca8417bb91822ba4846d3bb369028",
+      "roots": [
+        "clawreef/internal/systembackupsecurity"
+      ]
+    },
+    "linux.ordinary": {
+      "files": 330,
+      "sha256": "2ff9b515a49ce697937788012d9aba516f8b08bd01cb7e627a7c55c1510a8192",
+      "roots": [
+        "clawreef/internal/systembackupcleanup",
+        "clawreef/internal/systembackupcontroller",
+        "clawreef/cmd/system-backup-controller"
+      ]
+    },
+    "linux.tagged_security": {
+      "files": 271,
+      "sha256": "b47594228ecf43423c788cd8132199658e166b10ea4db342a3610d2c43825b43",
+      "roots": [
+        "clawreef/internal/systembackupsecurity"
+      ]
+    }
+  },
+  "binary_metadata": [
+    {
+      "name": "system-backup-controller.exe",
+      "size": 67585024,
+      "sha256": "853febfa5529ea5327ec4aa98daa9a3cec0bed7bad07c3990a8119e12547d079",
+      "header64": "4d5a90000300000004000000ffff00008b0000000000000040000000000000000000000000000000000000000000000000000000000000000000000080000000",
+      "executed": false
+    },
+    {
+      "name": "cleanup.linux.test",
+      "size": 12539385,
+      "sha256": "e7d86c925e35a84311536b006cc87d8a9534496bc2ab941353589c0b44f2aa47",
+      "header64": "7f454c4602010100000000000000000002003e00010000000054490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "controller.linux.test",
+      "size": 8634874,
+      "sha256": "922240e99ee2d238f828775adbc0c3b94cf8b0ad16ff5d21ca0a0f7b7ee0f059",
+      "header64": "7f454c4602010100000000000000000002003e0001000000e0fa480000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "security.tagged.linux.test",
+      "size": 18797751,
+      "sha256": "daf7fb8abb266749b67639a54c9eef182481ea0e1fdfde0aa5fae4e1645c98d4",
+      "header64": "7f454c4602010100000000000000000002003e00010000000015490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "system-backup-controller.linux",
+      "size": 66765084,
+      "sha256": "3ffb4fa83ba849062cf4cf1171f47debd08a86e32ba6e70bcb25c43f4178b4f7",
+      "header64": "7f454c4602010100000000000000000002003e0001000000400b490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    }
+  ],
+  "old_serial_build_failure_preserved": true,
+  "serial_build_recovery": {
+    "path": "docs/evidence/d2-owned-controller-build-recovery-20261027.json",
+    "size": 329,
+    "sha256": "c50fd78f55dcd502f6a18415379d168e6e0e9b20f7cf188c885e43ab40b0c10a"
+  },
+  "current_live_source_files": 1720,
+  "current_live_source_sha256": "dc79d81f74d6d6c293372f6c5404b2a673c3f469da1c4d14d4adc763199efa8e",
+  "candidates_promoted": false,
+  "ledger_schema_installed": false,
+  "production_provider_source_proven": false,
+  "actual_SQL_or_SSH_by_Root": false,
+  "dependencies_installed": false,
+  "owned_directories": [
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd",
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-7cff48608d7249aead59a1f0e8123e06",
+      "absent": true
+    },
+    {
+      "path": ".tmp-d-cleanup-clock-162d0356874f4d05800bb8d852d0889d",
+      "absent": true
+    }
+  ],
+  "pause_requested": true,
+  "next_action": "Pause; no new implementation, native round, source promotion, GC source refresh or remote run.",
+  "whole_goal_complete": false
+}

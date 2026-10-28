@@ -1,0 +1,102 @@
+{
+  "kind": "a2_cleanup_persistence_candidate_source_review.v2",
+  "reviewed_at": "2026-10-27T07:28:47.332Z",
+  "status": "window_parity_and_zero_clock_findings_closed_in_exact_source_only",
+  "previous_review": {
+    "path": "docs/evidence/a2-cleanup-persistence-candidate-reviewed-20261027-r1.json",
+    "size": 5255,
+    "sha256": "18313e4e9b767c82887374f5386f1e30935da394a84bf56dd0e894bd2cd3fdd7"
+  },
+  "inputs": [
+    {
+      "original_path": "docs/evidence/d2-cleanup-clock-candidate-20261027.go.txt",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r2/d2-cleanup-clock-candidate-20261027.go.txt",
+      "size": 8203,
+      "sha256": "84bf3b5b73f1f7c372e54446b21c2dd12b9f32b572d4251544b754faa5259870"
+    },
+    {
+      "original_path": "docs/evidence/d2-cleanup-clock-tests-candidate-20261027.go.txt",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r2/d2-cleanup-clock-tests-candidate-20261027.go.txt",
+      "size": 7787,
+      "sha256": "310e34ee4c4dce50a5ba8218cb93e882a6bd20612af29e08eb613db2f08f089e"
+    },
+    {
+      "original_path": "docs/evidence/d2-cleanup-attempt-ledger-candidate-20261027.sql",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r2/d2-cleanup-attempt-ledger-candidate-20261027.sql",
+      "size": 6275,
+      "sha256": "3db93c85f7b3059b582ad593531220de1f452ea4df53809db35e575d43488d05"
+    },
+    {
+      "original_path": "contracts/system-backup/v12/admin-control-resources.schema.json",
+      "archived_path": "docs/evidence/a2-cleanup-persistence-reviewed-inputs-20261027-r2/admin-control-resources.schema.json",
+      "size": 25084,
+      "sha256": "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+    }
+  ],
+  "operation_window_contract_pointer": "admin-control-resources.schema.json#/$defs/DurationConfig/properties/operation_deadline_seconds",
+  "operation_window_contract": {
+    "type": "integer",
+    "minimum": 60,
+    "default": 7200,
+    "maximum": 86400
+  },
+  "A2_CLEANUP_PERSISTENCE_01": "closed_in_archived_source_not_native_acceptance",
+  "A1_C1_zero_clock_replay": "source_now_validates_both_clocks_and_declares_zero_valid_corruption_tests",
+  "source_predicate_arithmetic_cases": [
+    {
+      "window_microseconds": "1",
+      "Go_source_predicate": false,
+      "SQL_source_predicate": false,
+      "original_config_window": false
+    },
+    {
+      "window_microseconds": "1000000",
+      "Go_source_predicate": false,
+      "SQL_source_predicate": false,
+      "original_config_window": false
+    },
+    {
+      "window_microseconds": "59000000",
+      "Go_source_predicate": false,
+      "SQL_source_predicate": false,
+      "original_config_window": false
+    },
+    {
+      "window_microseconds": "60000000",
+      "Go_source_predicate": true,
+      "SQL_source_predicate": true,
+      "original_config_window": true
+    },
+    {
+      "window_microseconds": "60000001",
+      "Go_source_predicate": false,
+      "SQL_source_predicate": false,
+      "original_config_window": false
+    },
+    {
+      "window_microseconds": "86400000000",
+      "Go_source_predicate": true,
+      "SQL_source_predicate": true,
+      "original_config_window": true
+    },
+    {
+      "window_microseconds": "86401000000",
+      "Go_source_predicate": false,
+      "SQL_source_predicate": false,
+      "original_config_window": false
+    }
+  ],
+  "Go_SQL_contract_predicate_disagreements": 0,
+  "boundary_Go_tests_declared": 7,
+  "Go_tests_executed_by_A2": false,
+  "SQL_executed_by_A2": false,
+  "arithmetic_comparison_does_not_execute_Go_or_SQL": true,
+  "future_reader_requirement": "Do not remove a still-proven residual medium from the complete owner collection solely because its cleanup operation becomes failed or terminal; registry recovery requires no residual volume and plan637 requires disposal proof.",
+  "integration_accepted": false,
+  "live_source_changed_by_A2": false,
+  "agent_SSH": false,
+  "dependencies_installed": false,
+  "build_products_created": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

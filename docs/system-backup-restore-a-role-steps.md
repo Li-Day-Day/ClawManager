@@ -1,5 +1,16 @@
 # A 角色开发步骤：users 与 AI Gateway 系统备份/恢复
 
+【2026-10-23 当前状态更正】最新完整 owner 本地门禁已[独立接收](evidence/a-owner-current-full-accepted-20261023.json)：632 根/5,105 条通过事件，原 5,102 条逐名保留，两位置各 13 项 seed、Linux 探针/迁移构建、默认 vet、冻结后检、退出 0 和准确产物清理齐全。下载时钟夹具修复已验证，生产期限未改。后来新增的 GC freeze 普通代码/测试属于 owner 依赖，当前源预检仍准确拒绝，不能借 resources 元数据适配绕过。空连接器边界正在定向验证；新 GC 输入仍需完整门禁覆盖，owner 十一项实际 SQL 尚未接收。
+
+[只读 readback 组合复审](system-backup-a-resources-readback-review-20261023.md)已完成，限原冻结版本 63 根/678 条合成通过事件；不认证新五表组合或真实 MySQL、B/C proof。现场材料按用户“不知道”记为尚未核实，十类本地计划缺项与 27 项真实资源准入继续保留。下文旧“运行中”“未准备”及暂停描述仅为历史记录，以本段和机器进度为准。
+
+
+【2026-10-23 09:49 最新进度】双审计、egress、北向四张表的离线候选已由 A 增量复审，分别限各自冻结版本的合成测试；北向 57 根/602 条通过事件及旧 489 条保留已独立核对，真实 CAS/持久启动门禁仍未证明。原 owner 历史完整门禁与最新 runtime 三根/24 条诊断已 [分范围接收](evidence/a-owner-local-preparation-reviewed-20261023.json)，原 5,019 条逐名保留，两轮准确产物清理确认。最新源码的原完整门禁另在运行，security 包已通过，evidence/seed/Linux 构建/后检/退出与清理仍须按本轮实际回执验收；不拼接替代新 baseline。扫描领域、27 项真实资源准入、B/C proof、owner 实际十一项及现场整链继续，完整状态见[执行记录](system-backup-a-all-remaining-work-20261022.md)。
+
+【2026-10-23 09:20 当前状态】[双审计表候选的离线验证](evidence/a-resources-audit-validated-20261023.json)已由 A 独立接收，限 158 份请求输入与 46 根/421 条合成通过事件，旧 388 条逐名保留。EOF 定向 15 叶子通过，但其后完整 evidence 包发生独立 runtime success 503 失败，已以 [退出 1 / 准确清理回执](evidence/a-runtime-full-failure-reviewed-20261023.json)保留，不能接收新 owner baseline。原 owner 门禁与较早 runtime 诊断仍按各自冻结来源运行；当前 SQL 提交后时钟采样/provider 等待对照及 proof/期限不变断言尚待最新源码验证。完整范围与来源边界见[当前执行记录](system-backup-a-all-remaining-work-20261022.md)，未远测、安装依赖或批准生产。
+
+【2026-10-23 用户恢复原范围】[当前执行记录](system-backup-a-all-remaining-work-20261022.md)接续 EOF/403 定位、D v2 复审、真实安全资源和现场整链。六表安全约束与 report 正文边界已出具 [独立复审](system-backup-a-resources-v2-review-20261023.md)；[历史十六项/GC 四十二项的 A 复核](evidence/a-d-actual-receipts-reviewed-20261023.json)已完成，无需重复远测。EOF 夹具修订的隔离本地验证仍进行，以实际日志/退出/产物清理为准；旧暂停与旧失败记录保留，不改判。未安装依赖、未执行远测、未批准生产或减少 27 项准入缺口。
+
 【2026-10-22 本轮收尾后按用户要求暂停】以本条和[收尾记录](evidence/a-round-pause-reviewed-20261022.json)为最新状态，以下“进行中”条目保留历史。CA 候选本包测试及 Linux 构建通过，准确临时 owner 已清理；未装配生产，非实现 owner 评审和 27 项真实资源准入仍待完成。owner 新门禁真实断言失败：空请求体 EOF 场景预期 206、实际 403，未进入远程 SQL，准确 outer owner 已清理；夹具时钟新鲜度仅为待证假设，尚未修复或接收新 baseline。现场材料“未准备”；实际 owner 十一项、历史十六项、完整 GC 四十二项及整链仍待验。本轮不再启动新测试或远测，恢复后按[原完整范围](system-backup-a-all-remaining-work-20261022.md)继续。
 
 【2026-10-22 历史详情构建修复已接收，实际十六项仍待验】[独立回执](evidence/a-verification-detail-build-repair-accepted-20261022.json)确认原 1,569 份冻结输入、普通/游标测试与 seed、Linux 管理/HTTP 历史探针和迁移工具构建、退出 0、冻结复核及两层清理。后续 owner-only 总预算修改已精确反向还原原 harness 字节，未扩大到当前整树或实际 SQL；旧 15:02 失败仍保留。CA 候选 loopback TLS 包测试已通过，Linux 构建/最终清理仍在进行；owner 2700 秒框架预算新轮仍运行，现场材料仍未准备。新远测日志未取得完整结束/退出/清理前保持待验，不启动重复远测。

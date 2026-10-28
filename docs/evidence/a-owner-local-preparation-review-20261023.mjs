@@ -1,0 +1,38 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {deriveOwnerPreparationInventory} from './a-owner-preparation-inventory-20261022.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const read=f=>fs.readFileSync(path.join(root,f));
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const json=f=>JSON.parse(read(f).toString('utf8').replace(/^\uFEFF/,''));
+const pin=f=>{const b=read(f);return {path:f,size:b.length,sha256:sha(b)};};
+const full='docs/evidence/a-owner-full-local-20261023-085715',diag='docs/evidence/a-owner-eof-20261023-092528';
+const prior='docs/evidence/a-prune-identity-owner-baseline-20261021.jsonl';
+assert.equal(sha(read(prior)),'990aae2b00cf723d7c520d28843d667909f414f6872f196104faafc6db2f9c67');
+const inventory=deriveOwnerPreparationInventory({logBytes:read(full+'.txt'),sourceBytes:read(full+'-source.json'),priorNativeEventsBytes:read(prior)});
+assert.equal(inventory.packages.reduce((n,p)=>n+p.previous_tests_preserved,0),5019);
+const fullLog=read(full+'.txt').toString('utf8');assert.match(fullLog,/a_owner_full_local_exit=0/);assert.match(fullLog,/End time: 20261023093628/);
+const r=json(diag+'.json');assert.equal(r.passed,true);assert.equal(r.cleanup,true);assert.equal(r.profile,'runtime_diagnostic_only');
+assert.deepEqual(r.stages,['targeted_tests_passed','frozen_input_bytes_postchecked']);
+assert.equal(path.dirname(r.owner),root);assert.match(path.basename(r.owner),/^\.tmp-a-evidence-[a-f0-9]{32}$/);assert.equal(fs.existsSync(r.owner),false);
+const events=read(diag+'.txt').toString('utf8').split(/\r?\n/).flatMap(l=>{try{return [JSON.parse(l)];}catch{return [];}}).filter(e=>e.Action);
+assert.equal(events.filter(e=>['fail','skip','build-fail'].includes(e.Action)).length,0);
+assert.equal(events.filter(e=>e.Action==='start').length,1);assert.equal(events.filter(e=>e.Action==='pass'&&!e.Test).length,1);
+const passed=events.filter(e=>e.Action==='pass'&&e.Test).map(e=>e.Test),ran=events.filter(e=>e.Action==='run'&&e.Test).map(e=>e.Test);
+assert.equal(passed.length,24);assert.equal(new Set(passed).size,24);assert.deepEqual([...passed].sort(),[...ran].sort());
+assert.equal(passed.filter(n=>!n.includes('/')).length,3);
+for(const leaf of ['success','revoked_after_decrypt','revoked_after_headers','stale_sql_after_provider_wait','fresh_sql_after_provider_wait','stale_capacity_after_provider_wait'])assert.ok(passed.includes('TestDownloadRuntimeAdmittedHTTPWithAtomicSQLSTSAndTransit/'+leaf));
+const candidatePaths=['backend/internal/systembackupevidence/download_output_deadline_a_test.go','backend/internal/systembackupevidence/download_runtime_test.go','backend/internal/systembackupevidence/download_result_test.go','scripts/system-backup-a-owner-eof-validation.ps1'];
+const candidates=candidatePaths.map(f=>{const p=r.source.find(p=>p.path===f);assert.ok(p);assert.deepEqual(pin(f),p);return {...p,bytes_base64:read(f).toString('base64')};});
+const inventoryPath='docs/evidence/a-owner-local-20261023-085715-inventory.json';
+const inventoryBytes=Buffer.from(JSON.stringify(inventory,null,2)+'\n');
+const result={kind:'a_owner_local_preparation_split_review.v1',date:'2026-10-23',status:'historical_complete_owner_gate_and_current_runtime_diagnostic_accepted_separately',historical_full_gate:{evidence:[full+'.txt',full+'-source.json',prior].map(pin),inventory:{path:inventoryPath,size:inventoryBytes.length,sha256:sha(inventoryBytes)},packages:inventory.packages.map(p=>({package:p.package,roots:p.roots,pass_events:p.pass_events,previous_preserved:p.previous_tests_preserved})),seed_checks_each_location:13,Linux_probe_and_migration_built:true,frozen_postcheck:true,cleanup_verified:true,current_runtime_changes_not_covered:true},current_diagnostic:{evidence:[diag+'.txt',diag+'.json'].map(pin),roots:3,pass_events:24,all_six_runtime_leaves_passed:true,frozen_bytes_postchecked:true,frozen_file_set_postchecked:false,owner:r.owner,owner_independently_absent:true,candidate_capsule:candidates},reviewers:['docs/evidence/a-owner-local-preparation-review-20261023.mjs','docs/evidence/a-owner-preparation-inventory-20261022.mjs'].map(pin),current_complete_owner_baseline_accepted:false,actual_SQL:false,dependencies_installed:false,production_approved:false};
+const output='docs/evidence/a-owner-local-preparation-reviewed-20261023.json';
+if(process.argv.includes('--write')){
+  assert.equal(fs.existsSync(path.join(root,output)),false);assert.equal(fs.existsSync(path.join(root,inventoryPath)),false);
+  fs.writeFileSync(path.join(root,inventoryPath),inventoryBytes,{flag:'wx'});fs.writeFileSync(path.join(root,output),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+}else {assert.ok(process.argv.includes('--check'));assert.deepEqual(json(inventoryPath),inventory);assert.deepEqual(json(output),result);}
+console.log('A_OWNER_SPLIT_REVIEW prior=5019 diagnostic=24 complete_current_baseline=no');

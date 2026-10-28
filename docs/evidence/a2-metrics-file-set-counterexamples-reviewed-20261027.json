@@ -1,0 +1,71 @@
+{
+  "kind": "a2_metrics_strict_namespace_checker_counterexamples.v1",
+  "status": "passed_isolated_source_namespace_counterexamples",
+  "helper": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-review-20261027-r2.mjs",
+    "size": 11545,
+    "sha256": "11ecea37b66165b4598060535bbbc70ea46747636bd919827100aeefd4654ea8"
+  },
+  "driver": {
+    "path": "docs/evidence/d2-metrics-controller-candidate-native-20261027-r2.ps1",
+    "size": 9946,
+    "sha256": "96d194e95b7eecb5121717443220a00f88602138f74c8a2f92fa0ec9c197dd26"
+  },
+  "extracted_function_sha256": "58cad6de8d5c8f752bc5fdb89e1fcfc563752f7df3b76b2689dd7e72dee0455d",
+  "actual_original_function_executed": true,
+  "scope": "Exact new verifyCompleteFileSet function, injected only with an A2-owned minimal filesystem root and the original standard-library dependencies",
+  "positive": {
+    "physical_files": 5,
+    "manifest_docs_input_included": true,
+    "node_extra_plan_input_included": true
+  },
+  "counterexamples": [
+    {
+      "case": "extra_go",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Extra, missing, duplicate or escaping source input\n+ actual - expected\n\n  [\n    'backend/pkg/main.go',\n+   'backend/pkg/unregistered.go',\n    'contracts/schema.json',\n    'docs/evidence/frozen-vector.json',\n    'docs/plan.md',\n    'scripts/build.mjs'\n  ]\n"
+    },
+    {
+      "case": "extra_root",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Extra, missing, duplicate or escaping source input\n+ actual - expected\n\n  [\n    'backend/pkg/main.go',\n    'contracts/schema.json',\n    'docs/evidence/frozen-vector.json',\n    'docs/plan.md',\n    'scripts/build.mjs',\n+   'unregistered.go'\n  ]\n"
+    },
+    {
+      "case": "extra_docs",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Extra, missing, duplicate or escaping source input\n+ actual - expected\n\n  [\n    'backend/pkg/main.go',\n    'contracts/schema.json',\n    'docs/evidence/frozen-vector.json',\n    'docs/plan.md',\n+   'docs/unknown.json',\n    'scripts/build.mjs'\n  ]\n"
+    },
+    {
+      "case": "extra_testdata",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Extra, missing, duplicate or escaping source input\n+ actual - expected\n\n  [\n    'backend/pkg/main.go',\n+   'backend/pkg/testdata/unknown.json',\n    'contracts/schema.json',\n    'docs/evidence/frozen-vector.json',\n    'docs/plan.md',\n    'scripts/build.mjs'\n  ]\n"
+    },
+    {
+      "case": "missing_input",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Extra, missing, duplicate or escaping source input\n+ actual - expected\n\n  [\n-   'backend/pkg/main.go',\n    'contracts/schema.json',\n    'docs/evidence/frozen-vector.json',\n    'docs/plan.md',\n    'scripts/build.mjs'\n  ]\n"
+    },
+    {
+      "case": "duplicate_expected_input",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 6\n"
+    },
+    {
+      "case": "escaping_expected_input",
+      "rejected": true,
+      "error": "AssertionError [ERR_ASSERTION]: Extra, missing, duplicate or escaping source input\n+ actual - expected\n\n  [\n-   '../outside.go',\n    'backend/pkg/main.go',\n    'contracts/schema.json',\n    'docs/evidence/frozen-vector.json',\n    'docs/plan.md',\n    'scripts/build.mjs'\n"
+    }
+  ],
+  "restored_positive_after_each_case": true,
+  "empty_log_precreation_source_order_verified": true,
+  "PowerShell_pipeline_or_Go_command_executed": false,
+  "symlink_or_junction_rejection_executed": false,
+  "Root_actual_1719_file_snapshot_or_native_receipt_accepted": false,
+  "peer_files_modified": false,
+  "Go_executed": false,
+  "SQL_executed": false,
+  "PromQL_executed": false,
+  "dependencies_installed": false,
+  "whole_baseline_accepted": false,
+  "scratch_removed_and_independently_absent": true
+}

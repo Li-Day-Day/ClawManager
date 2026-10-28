@@ -1,0 +1,79 @@
+✔ accept complete synthetic parser input only; CRLF/BOM and local versus actual scope (35.6713ms)
+✔ reject synthetic log: missing case (3.9057ms)
+✖ reject synthetic log: duplicate case (1.4425ms)
+✔ reject synthetic log: skipped case (1.2986ms)
+✔ reject synthetic log: failed case (1.3465ms)
+✔ reject synthetic log: unknown case (2.6627ms)
+✔ reject synthetic log: wrong root (1.2911ms)
+✔ reject synthetic log: extra old authority root (2.4683ms)
+✔ reject synthetic log: missing root pass (2.5849ms)
+✔ reject synthetic log: JSON encoded root pass (2.1969ms)
+✔ reject synthetic log: no native PASS (8.3362ms)
+✔ reject synthetic log: duplicate native PASS (1.2853ms)
+✔ reject synthetic log: semantic summary missing (0.7621ms)
+✔ reject synthetic log: cleanup pending (0.3971ms)
+✔ reject synthetic log: cleanup skipped (0.3396ms)
+✔ reject synthetic log: missing namespace cleanup (10.8954ms)
+✔ reject synthetic log: missing remote scratch cleanup (1.1186ms)
+✔ reject synthetic log: missing inner cleanup (0.5888ms)
+✔ reject synthetic log: wrong UID (1.2018ms)
+✔ reject synthetic log: wrong namespace (1.0191ms)
+✔ reject synthetic log: duplicate run identity (0.602ms)
+✔ reject synthetic log: wrong HTTP binary (1.2128ms)
+✔ reject synthetic log: wrong migration binary (0.5564ms)
+✔ reject synthetic log: wrong catalog (0.5587ms)
+✔ reject synthetic log: partial migration (2.0526ms)
+✔ reject synthetic log: wrong last migration (2.668ms)
+✔ reject synthetic log: wrong fixture (0.593ms)
+✔ reject synthetic log: incomplete local read package (0.2984ms)
+✔ reject synthetic log: no tests actually run (0.2487ms)
+✔ reject synthetic log: skipped local seed (0.2218ms)
+✔ reject synthetic log: case pass before run (0.7853ms)
+✔ reject synthetic log: root before phase replay (0.8156ms)
+✔ reject synthetic log: namespace cleanup before phase (0.7357ms)
+✔ reject synthetic log: duplicate seed summary (0.3776ms)
+✔ synthetic metadata alone is accepted only by the metadata parser (1.7811ms)
+✔ reject synthetic metadata: local cannot prove remote (0.5382ms)
+✔ reject synthetic metadata: child failure (0.3968ms)
+✔ reject synthetic metadata: postcheck missing (0.3845ms)
+✔ reject synthetic metadata: freeze only (0.3806ms)
+✔ reject synthetic metadata: outer cleanup absent (0.4894ms)
+✔ reject synthetic metadata: build cleanup absent (0.4032ms)
+✔ reject synthetic metadata: wrong cleanup owner (0.4023ms)
+✔ reject synthetic metadata: insufficient files removed (0.432ms)
+✔ reject synthetic metadata: source mixed (0.4571ms)
+✔ reject synthetic metadata: log digest absent (0.5723ms)
+✔ reject synthetic metadata: duplicate pin (0.562ms)
+✔ reject synthetic metadata: unsafe pin (0.7825ms)
+✔ reject synthetic metadata: pin removed (0.5937ms)
+✔ reject synthetic metadata: bytes changed (0.5445ms)
+✔ reject synthetic metadata: unreviewed approval (0.3766ms)
+✔ reject synthetic metadata: dependency installation (8.9246ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 50
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 156.1985
+
+✖ failing tests:
+
+test at docs\evidence\d-drill-http-review-20261023.test.mjs:82:57
+✖ reject synthetic log: duplicate case (1.4425ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/zhanghui08/Desktop/clawmanager/ClawManager/docs/evidence/d-drill-http-review-20261023.test.mjs:82:108)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1201:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:831:18)
+      at Test.postRun (node:internal/test_runner/test:1330:19)
+      at Test.run (node:internal/test_runner/test:1258:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }

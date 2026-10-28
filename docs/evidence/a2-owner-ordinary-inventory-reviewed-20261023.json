@@ -1,0 +1,81 @@
+{
+  "kind": "a2_owner_ordinary_native_inventory_review.v1",
+  "status": "two_complete_ordinary_packages_only_full_owner_profile_pending",
+  "source": {
+    "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-source.json",
+    "size": 311104,
+    "sha256": "23ca648c8e0c1c8a781c833a21c5b33c22116e7c14bac514daf54cb6e2468717"
+  },
+  "source_sha256": "ede12e280a902b194bb729727d8b3dac8c13d38a830eb3605a25a33d10ee2e7e",
+  "source_snapshot_format_validated": true,
+  "prior_inventory": {
+    "path": "docs/evidence/a-owner-gc-full-local-20261023-111154-inventory.json",
+    "size": 389069,
+    "sha256": "2985bb09929aec33e6afa0d7c5ebb49b90b18ac7caf4adb69932cf8894addcd6"
+  },
+  "packages": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "log": {
+        "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-step-5.log",
+        "size": 1996867,
+        "sha256": "43e548789a0fd8ff1f89f6991e5029d66800f3de9f701011d294b84a49fbeaa6"
+      },
+      "roots": 255,
+      "pass_events": 2011,
+      "previous_checks_preserved": 2011,
+      "added": []
+    },
+    {
+      "package": "clawreef/internal/systembackupevidence",
+      "log": {
+        "path": "docs/evidence/d-local-closeout-53f39288bb914e1ca2f2bd9287e7874a-step-1.log",
+        "size": 2907153,
+        "sha256": "b2e4c4376ae646a5816e1ba24d4820b951f7d4cdecb139c9bcc5a849862a51a3"
+      },
+      "roots": 385,
+      "pass_events": 3137,
+      "previous_checks_preserved": 3127,
+      "added": [
+        "TestAdmittedHTTPFixtureStillRejectsStaleSQLClock",
+        "TestDownloadRetentionGCProtectedWorkRejectsUnboundContext",
+        "TestDownloadRetentionGCProtectedWorkWithFreezeOwner",
+        "TestDownloadRetentionGCProtectedWorkWithFreezeOwner/caller_late_failure",
+        "TestDownloadRetentionGCProtectedWorkWithFreezeOwner/commit",
+        "TestDownloadRetentionGCProtectedWorkWithFreezeOwner/final_lock_loss",
+        "TestDownloadRetentionGCProtectedWorkWithFreezeOwner/last_delete_failure",
+        "TestGCProducerResultCapacitySamplingDoesNotRenewAdmission",
+        "TestGCProducerResultCapacitySamplingDoesNotRenewAdmission/fresh_report",
+        "TestGCProducerResultCapacitySamplingDoesNotRenewAdmission/stale_report"
+      ]
+    }
+  ],
+  "roots": 640,
+  "pass_events": 5148,
+  "original_checks_preserved": 5138,
+  "failures": 0,
+  "skips": 0,
+  "Go_repeated_by_this_review": false,
+  "remaining": [
+    "D terminal fifteen-stage receipt, source postcheck and cleanup",
+    "A1 successful packaged/detached owner seeds, Linux owner probe, postcheck and cleanup",
+    "exact combined current source and full profile review before baseline registration"
+  ],
+  "owner_profile_accepted": false,
+  "current_baseline_registration_permitted": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "dependencies_installed": false,
+  "reviewer_inputs": [
+    {
+      "path": "docs/evidence/a2-owner-ordinary-inventory-review-20261023.mjs",
+      "size": 3727,
+      "sha256": "0d7d21ff1c3e15b02b80dedc504019f6850fced2492afd5780f0edd714b97e8a"
+    },
+    {
+      "path": "docs/evidence/d-resources-mysql-actual-review-20261023.mjs",
+      "size": 26152,
+      "sha256": "147a9a9cbca5ce03cb6cdcc3eeb21c8e45ab26afd694716cdfa68514593b69bc"
+    }
+  ]
+}

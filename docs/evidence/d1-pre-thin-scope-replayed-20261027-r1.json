@@ -1,0 +1,61 @@
+{
+  "kind": "d1_pre_thin_scope_replay_and_start_observation.v1",
+  "status": "relative_artifact_gate_replayed_successfully_fifteen_stage_in_progress",
+  "target": {
+    "path": "docs/evidence/a-owner-pre-thin-target-20261027-r2.json",
+    "sha256": "c76f49ff9200e5ad7704ead7924efd97dc3e5a14794cde5237969bba570a025a"
+  },
+  "scope": {
+    "path": "docs/evidence/a-owner-pre-thin-scope-reviewed-20261027-r1.json",
+    "sha256": "c6510f8d1625c99233798b8b1d27c2c3af636579e817e3bd27f6bb44b22843d3"
+  },
+  "scope_checker": {
+    "path": "docs/evidence/a-owner-pre-thin-scope-review-20261027.mjs",
+    "sha256": "44fb0810212fe041f2dca7b0ae34644e8c985f79567325e7518559e0e212168c"
+  },
+  "command": [
+    "node",
+    "docs/evidence/a-owner-pre-thin-scope-review-20261027.mjs",
+    "--check",
+    "--target",
+    "docs/evidence/a-owner-pre-thin-target-20261027-r2.json",
+    "--scope",
+    "docs/evidence/a-owner-pre-thin-scope-reviewed-20261027-r1.json",
+    "--source-root",
+    "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager"
+  ],
+  "native_check_exit": 0,
+  "source_files": 1718,
+  "source_sha256": "4003f0f06aae84ff8d2da3640203cf4a14de97cdc5c8b05e3523808004c95964",
+  "native_start_authorized_for_local_fifteen_stage_only": true,
+  "current_baseline_ready": false,
+  "actual_sql_authorized": false,
+  "security_Linux_compile_replay": {
+    "native": "docs/evidence/a-security-linux-compile-native-bac9b1ac4dbf4bbaa0281fbf02a5dd10.json",
+    "checker": "docs/evidence/a-security-linux-compile-review-20261027.mjs",
+    "replay_exit": 0,
+    "frozen_postcheck": true,
+    "cleanup": true
+  },
+  "previous_startup_rejected_before_Go": {
+    "receipt": {
+      "path": "docs/evidence/d2-owner-entry-supplement-350432a64996420e85b3e9625b8208e0.json",
+      "sha256": "7d77553df1b3da1d648be2418a13296200d5745cadd02709daaaacb4eabcf70e"
+    },
+    "steps": 0,
+    "Go_started": false,
+    "tests_started": false,
+    "owner_independently_absent": true,
+    "wrong_absolute_artifact_arguments_preserved": true
+  },
+  "observed_new_handle": {
+    "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-2d061b75213d45d1af1b29acfda4ee95",
+    "exec_session_id": 45743,
+    "Go_pid_verified_live": 44192,
+    "observation_only_not_terminal_acceptance": true
+  },
+  "new_Go_started_by_D1": false,
+  "Root_fifteen_stages_accepted": false,
+  "production_approved": false,
+  "whole_goal_complete": false
+}

@@ -1,0 +1,38 @@
+{
+  "kind": "d2_current_bootstrap_seed_checkpoint.v1",
+  "source_manifest": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.source.json",
+  "source_manifest_sha256": "9f420f4aa4b8839ed9dd64207c8f9bd0b627dd37c02c5c211638ae40cbea7a13",
+  "source_postcheck": true,
+  "step": {
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "-tags",
+      "systembackup_mysql",
+      "-run",
+      "^TestDBootstrap(Consumer|ConsumerRanges|Entry)MySQLSeed$",
+      "-count=1",
+      "-timeout=2700s",
+      "./internal/systembackupevidence"
+    ],
+    "platform": "windows",
+    "exit_code": 0,
+    "log": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-current-ordinary-native-01cb9a3a3e1d48d7b56da8ffa138bc9b.bootstrap-seeds.jsonl",
+    "sha256": "cea9cb1c05236c4dc8210cc23b29435d7239930063d71482f04405f9e8b51839"
+  },
+  "inventory": {
+    "kind": "d2_bootstrap_repair_seed_inventory.v1",
+    "names": [
+      "TestDBootstrapConsumerMySQLSeed",
+      "TestDBootstrapConsumerRangesMySQLSeed",
+      "TestDBootstrapEntryMySQLSeed"
+    ],
+    "actual_mysql": false,
+    "source_scope_accepted": false
+  },
+  "driver_sha256": "9c750cf8f9cd127d46b5bac8634bd995ad18c28da24739ff7542cf12db9e1f7f",
+  "inventory_sha256": "e15cca9e3203d34b3f265cccdfc5bf43cfc6a2cf381cf739e780dbadc1856096",
+  "actual_mysql": false,
+  "source_scope_accepted": false
+}

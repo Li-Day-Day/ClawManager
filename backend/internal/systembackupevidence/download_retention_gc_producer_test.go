@@ -456,6 +456,15 @@ func TestDownloadRetentionGCOriginalManifestAndCreation(t *testing.T) {
 // original deadline or weaken the production five-second clock constraint.
 func newGCProducerCollectorFixture(t *testing.T) (*retentionGCFixture, *producerDownloadModel) {
 	t.Helper()
+	gc, producer, err := newGCProducerCollectorFixtureWithResultReport(t, false)
+	if err != nil {
+		t.Fatal("paired independent producer result", err)
+	}
+	return gc, producer
+}
+
+func newGCProducerCollectorFixtureWithResultReport(t *testing.T, staleReport bool) (*retentionGCFixture, *producerDownloadModel, error) {
+	t.Helper()
 	f, authority, owners, producer := producerDownloadFixture(t)
 	receipt := seedGCProducerRows(t, producer)
 	receipt.Request.ExpectedEvidenceVersion = pd.Counter(strconv.FormatInt(f.initial.RowVersion, 10))
@@ -477,6 +486,7 @@ func newGCProducerCollectorFixture(t *testing.T) (*retentionGCFixture, *producer
 	if err != nil {
 		t.Fatal("paired producer admission", err)
 	}
+	var sampleResultCapacity func(time.Time) error
 	baseQuery := f.db.ownerQuery
 	f.db.ownerQuery = func(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, bool, error) {
 		if strings.HasPrefix(q, "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6)") || strings.HasPrefix(q, "SELECT UTC_TIMESTAMP(6)") || strings.HasPrefix(q, "SELECT user_id,subject,credential_hash,expires_at,revoked,UTC_TIMESTAMP(6)") {
@@ -485,14 +495,37 @@ func newGCProducerCollectorFixture(t *testing.T) (*retentionGCFixture, *producer
 				t.Fatal("paired SQL clock moved backwards")
 			}
 			f.db.now = at
+			if !staleReport && sampleResultCapacity != nil {
+				if err := sampleResultCapacity(at); err != nil {
+					t.Fatal(err)
+				}
+			}
 		}
 		return baseQuery(ctx, q, args)
 	}
-	results := resultFixture(t, f)
+	results, sampleResultCapacity := resultFixtureWithReportSampler(t, f)
+	// Deterministic stale control: only the independent result observation is
+	// sampled fresh below. Original admission/claim/deadline facts stay sealed.
+	if err := sampleResultCapacity(f.db.now.Add(-time.Minute)); err != nil {
+		t.Fatal(err)
+	}
 	results.c.Registry, results.c.Owners = owners.Registry(), owners
 	f.db.sessionRevoked, f.db.userActive = true, false
-	if err = results.Finish(context.Background(), committed, DownloadResultObservation{Outcome: "interrupted"}); err != nil {
-		t.Fatal("paired independent producer result", err)
+	beforeDeadline := committed.localDeadline
+	beforeOperation := append([]driver.Value(nil), f.db.m.op...)
+	beforeReceipt := append([]driver.Value(nil), f.db.m.receipt...)
+	if !staleReport {
+		if err := sampleResultCapacity(time.Now().UTC().Truncate(time.Microsecond)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	err = results.Finish(context.Background(), committed, DownloadResultObservation{Outcome: "interrupted"})
+	sampleResultCapacity = nil
+	if !beforeDeadline.Equal(committed.localDeadline) || !reflect.DeepEqual(beforeOperation, f.db.m.op) || !reflect.DeepEqual(beforeReceipt, f.db.m.receipt) {
+		t.Fatal("result observation sampling changed original admission facts")
+	}
+	if err != nil {
+		return nil, producer, err
 	}
 	oldCreated, _ := producer.history.CreatedAt.Time()
 	groupRemaining := f.db.m.receipt[15].(time.Time).Sub(f.db.now)
@@ -551,7 +584,26 @@ func newGCProducerCollectorFixture(t *testing.T) (*retentionGCFixture, *producer
 		m.tables = append(m.tables, []driver.Value{table, "BASE TABLE", "InnoDB"})
 	}
 	gc.d.producerEligibility = m
-	return gc, producer
+	return gc, producer, nil
+}
+
+func TestGCProducerResultCapacitySamplingDoesNotRenewAdmission(t *testing.T) {
+	for _, stale := range []bool{true, false} {
+		name := "fresh_report"
+		if stale {
+			name = "stale_report"
+		}
+		t.Run(name, func(t *testing.T) {
+			gc, producer, err := newGCProducerCollectorFixtureWithResultReport(t, stale)
+			if stale {
+				if gc != nil || producer == nil || !errors.Is(err, ErrCapacity) {
+					t.Fatal("stale result capacity observation accepted", err)
+				}
+			} else if err != nil || gc == nil || producer == nil {
+				t.Fatal("fresh independent result observation rejected", err)
+			}
+		})
+	}
 }
 
 func TestDownloadRetentionGCProducerCollectorOriginalResultAndRollback(t *testing.T) {

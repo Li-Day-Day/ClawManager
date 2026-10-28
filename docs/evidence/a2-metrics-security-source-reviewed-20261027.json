@@ -1,0 +1,531 @@
+{
+  "kind": "a2_metrics_security_non_implementer_source_review.v1",
+  "status": "changes_requested_for_security_alert_semantics_source_scope_only",
+  "review_scope": "A-side declared label names, security threshold aggregation, and available dedupe label information; no B signoff or runtime approval.",
+  "metrics": 210,
+  "alerts": 99,
+  "declared_label_names": [
+    "alert_profile",
+    "artifact_state",
+    "budget_dimension",
+    "capability",
+    "capability_state",
+    "catalog_record_type",
+    "cleanup_status",
+    "dependency_kind",
+    "external_action_state",
+    "external_action_type",
+    "failure_category",
+    "gate_state",
+    "health_reason",
+    "health_state",
+    "key_purpose",
+    "matrix",
+    "metric_result",
+    "operation_type",
+    "part",
+    "participant_state",
+    "preflight_mode",
+    "profile",
+    "provider",
+    "provider_role",
+    "resource_lifecycle",
+    "runner",
+    "status",
+    "task_purpose",
+    "task_type",
+    "verification_scope",
+    "warning_category"
+  ],
+  "declared_label_names_within_original_closed_schema": true,
+  "runtime_label_value_enforcement_proven": false,
+  "findings": [
+    {
+      "id": "A-METRICS-01",
+      "status": "candidate_staged",
+      "scope": "Four declared-label rejection families, eight alert expressions",
+      "problem": "The original expressions compare individual post-increase series to 5/20 while registry aggregation is sum and dedupe_key is empty; split-series totals can cross the declared total threshold without an individual series doing so.",
+      "changes": [
+        {
+          "alert": "confirmation-rejections-warning",
+          "metric": "clawmanager_system_backup_confirmation_rejections_total",
+          "declared_labels": [
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 5",
+          "after": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 5"
+        },
+        {
+          "alert": "confirmation-rejections-critical",
+          "metric": "clawmanager_system_backup_confirmation_rejections_total",
+          "declared_labels": [
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_confirmation_rejections_total[5m]) >= 20",
+          "after": "sum(increase(clawmanager_system_backup_confirmation_rejections_total[5m])) >= 20"
+        },
+        {
+          "alert": "redaction-failures-warning",
+          "metric": "clawmanager_system_backup_redaction_failures_total",
+          "declared_labels": [
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 5",
+          "after": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 5"
+        },
+        {
+          "alert": "redaction-failures-critical",
+          "metric": "clawmanager_system_backup_redaction_failures_total",
+          "declared_labels": [
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_redaction_failures_total[5m]) >= 20",
+          "after": "sum(increase(clawmanager_system_backup_redaction_failures_total[5m])) >= 20"
+        },
+        {
+          "alert": "isolation-rejections-warning",
+          "metric": "clawmanager_system_backup_isolation_rejections_total",
+          "declared_labels": [
+            "profile",
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 5",
+          "after": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 5"
+        },
+        {
+          "alert": "isolation-rejections-critical",
+          "metric": "clawmanager_system_backup_isolation_rejections_total",
+          "declared_labels": [
+            "profile",
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_isolation_rejections_total[5m]) >= 20",
+          "after": "sum(increase(clawmanager_system_backup_isolation_rejections_total[5m])) >= 20"
+        },
+        {
+          "alert": "strong-auth-rejections-warning",
+          "metric": "clawmanager_system_backup_strong_auth_rejections_total",
+          "declared_labels": [
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 5",
+          "after": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 5"
+        },
+        {
+          "alert": "strong-auth-rejections-critical",
+          "metric": "clawmanager_system_backup_strong_auth_rejections_total",
+          "declared_labels": [
+            "failure_category"
+          ],
+          "declared_aggregation": "sum",
+          "declared_dedupe_key": [],
+          "before": "increase(clawmanager_system_backup_strong_auth_rejections_total[5m]) >= 20",
+          "after": "sum(increase(clawmanager_system_backup_strong_auth_rejections_total[5m])) >= 20"
+        }
+      ]
+    },
+    {
+      "id": "A-METRICS-02",
+      "status": "original_owner_decision_required",
+      "alert": "signature-or-checksum-failure",
+      "declared_dedupe_key": [
+        "task_type",
+        "failure_category"
+      ],
+      "signature_branch_metric_labels": [
+        "key_purpose",
+        "metric_result"
+      ],
+      "missing_signature_branch_dedupe_labels": [
+        "task_type",
+        "failure_category"
+      ],
+      "problem": "The signature branch cannot supply task_type/failure_category from its declared metric labels. The original owner must define compatible grouping or a reviewed mapping; this candidate does not invent labels or remove dedupe requirements."
+    }
+  ],
+  "single_declared_series_families": [
+    {
+      "family": "idempotency-conflicts",
+      "declared_labels": [],
+      "scope": "No declared-label split counterexample; preserve its original expressions. Runtime scrape grouping is separate."
+    }
+  ],
+  "post_increase_model_cases": [
+    {
+      "family": "confirmation-rejections",
+      "id": "warning_split",
+      "samples": [
+        4,
+        4
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "confirmation-rejections",
+      "id": "warning_boundary",
+      "samples": [
+        2,
+        3
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "confirmation-rejections",
+      "id": "critical_split",
+      "samples": [
+        12,
+        12
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "confirmation-rejections",
+      "id": "critical_boundary",
+      "samples": [
+        10,
+        10
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "confirmation-rejections",
+      "id": "below_total",
+      "samples": [
+        2,
+        2
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": false,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "confirmation-rejections",
+      "id": "single_series",
+      "samples": [
+        20
+      ],
+      "threshold": 20,
+      "old": true,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "redaction-failures",
+      "id": "warning_split",
+      "samples": [
+        4,
+        4
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "redaction-failures",
+      "id": "warning_boundary",
+      "samples": [
+        2,
+        3
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "redaction-failures",
+      "id": "critical_split",
+      "samples": [
+        12,
+        12
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "redaction-failures",
+      "id": "critical_boundary",
+      "samples": [
+        10,
+        10
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "redaction-failures",
+      "id": "below_total",
+      "samples": [
+        2,
+        2
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": false,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "redaction-failures",
+      "id": "single_series",
+      "samples": [
+        20
+      ],
+      "threshold": 20,
+      "old": true,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "isolation-rejections",
+      "id": "warning_split",
+      "samples": [
+        4,
+        4
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "isolation-rejections",
+      "id": "warning_boundary",
+      "samples": [
+        2,
+        3
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "isolation-rejections",
+      "id": "critical_split",
+      "samples": [
+        12,
+        12
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "isolation-rejections",
+      "id": "critical_boundary",
+      "samples": [
+        10,
+        10
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "isolation-rejections",
+      "id": "below_total",
+      "samples": [
+        2,
+        2
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": false,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "isolation-rejections",
+      "id": "single_series",
+      "samples": [
+        20
+      ],
+      "threshold": 20,
+      "old": true,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "strong-auth-rejections",
+      "id": "warning_split",
+      "samples": [
+        4,
+        4
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "strong-auth-rejections",
+      "id": "warning_boundary",
+      "samples": [
+        2,
+        3
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "strong-auth-rejections",
+      "id": "critical_split",
+      "samples": [
+        12,
+        12
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "strong-auth-rejections",
+      "id": "critical_boundary",
+      "samples": [
+        10,
+        10
+      ],
+      "threshold": 20,
+      "old": false,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "strong-auth-rejections",
+      "id": "below_total",
+      "samples": [
+        2,
+        2
+      ],
+      "threshold": 5,
+      "old": false,
+      "total": false,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    },
+    {
+      "family": "strong-auth-rejections",
+      "id": "single_series",
+      "samples": [
+        20
+      ],
+      "threshold": 20,
+      "old": true,
+      "total": true,
+      "scope": "Comparison of post-increase vector samples; not a PromQL parser or increase/raw-series execution."
+    }
+  ],
+  "model_cases_passed": 24,
+  "model_is_not_PromQL_runtime": true,
+  "PromQL_parser_or_evaluator_executed": false,
+  "production_rule_loader_or_missing_series_behavior_validated": false,
+  "existing_candidate_generator_tests": {
+    "passed": 2,
+    "failed": 0,
+    "coverage": "Preservation/rejection tests; not split-series PromQL execution."
+  },
+  "existing_generator_and_rules_check_exit": 0,
+  "official_operator_semantics_source": "https://prometheus.io/docs/prometheus/latest/querying/operators/",
+  "candidate_generator_inverse_exact": true,
+  "candidate_only_expression_changes": 8,
+  "candidates": [
+    {
+      "path": "docs/evidence/a2-metrics-security-threshold-candidate-20261027.json",
+      "size": 194140,
+      "sha256": "ad08c669e86e079d1a66f989be078193efae786992199ea62d24bd3b05d32f4f"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-generator-candidate-20261027.mjs.txt",
+      "size": 41280,
+      "sha256": "a36cfd35228aac2a012839085b9c976dc6e98eb429e7f88cd97b3220598abe64"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-rules-candidate-20261027.yaml",
+      "size": 70798,
+      "sha256": "78734c94f6ff6ab76bf0dbfa7b8afcf34e822a4b5846301287262af3f15ff8f0"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.json",
+      "size": 194100,
+      "sha256": "f87f24e137c467cc1961a38168400e0750cf13fc548ca9690cfa9af52d8697fe"
+    },
+    {
+      "path": "contracts/system-backup/v12/metrics-alert-registry.schema.json",
+      "size": 6859,
+      "sha256": "6f3e30a1ee322170edbe17f156854317ac9b2ce480a1843a4710910e12803b58"
+    },
+    {
+      "path": "scripts/system-backup-metrics-registry.mjs",
+      "size": 41174,
+      "sha256": "a9029514b16e3fc5e1de2da583aa98443e0994e1c30528904d1778ce218e6bef"
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.mjs",
+      "size": 4307,
+      "sha256": "0e5b1ef127e84d358fe24fc2c752eef77e3f76321e85c2e5c2adf67060d23606"
+    },
+    {
+      "path": "scripts/system-backup-prometheus-rules.test.mjs",
+      "size": 2496,
+      "sha256": "97f4a6f4bf6df93edc37a67ca9413784d792fd8592f521d32cc3e7d8ba2e4011"
+    },
+    {
+      "path": "contracts/system-backup/v12/prometheus-alert-rules.yaml",
+      "size": 70758,
+      "sha256": "5338368bc01c1ec0237d4b80f27e55f3dd0827d8344c6ff1ef6367abff493965"
+    },
+    {
+      "path": "docs/system-backup-restore-division-plan.md",
+      "size": 269090,
+      "sha256": "9f836bb3dafd36a6f5b69b585d136ebcf044a7b23e90a4f803f99a94641284a8"
+    },
+    {
+      "path": "docs/evidence/a2-metrics-security-source-review-20261027.mjs",
+      "size": 11192,
+      "sha256": "e8502d2f5ff09af8efedc8d1b2d37e7bdf54ac3e9c7e984db6f308f6e684c631"
+    }
+  ],
+  "live_contract_or_script_modified": false,
+  "Go_executed": false,
+  "dependencies_installed": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false
+}

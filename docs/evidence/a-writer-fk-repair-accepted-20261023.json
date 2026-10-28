@@ -1,0 +1,64 @@
+{
+  "kind": "a_writer_FK_repair_acceptance.v1",
+  "date": "2026-10-23",
+  "status": "declared_scan_job_FK_reparenting_repaired_and_complete_offline_package_verified",
+  "finding": "A-WRITER-FK-01",
+  "frozen_inputs": 43,
+  "old_failure_leaves": 4,
+  "old_failure_root": true,
+  "roots": 71,
+  "pass_events": 843,
+  "prior_pass_names_preserved": 826,
+  "added_Go_test_events": 17,
+  "fault_leaves": 10,
+  "original_writer_sha256": "acf046d364e68703b67f87b09ee6fc0803e8a69c4155edd8ef8ee3537b72f7f6",
+  "fixed_writer_sha256": "b53d77d41d2f270b1ff4df18671dcdbef938abd9e0525e974f1213d6be7e630d",
+  "default_vet": true,
+  "frozen_and_current_postcheck": true,
+  "owner_independently_absent": true,
+  "dependencies_installed": false,
+  "tagged_writer_compiled_or_run": false,
+  "actual_MySQL": false,
+  "real_FK_server_observation_pending": true,
+  "B_C_domain_rules_approved": false,
+  "generic_FK_UNIQUE_planner": false,
+  "production_approved": false,
+  "scope": "migration-063 job_id CASCADE relations only; synthetic driver calls actual Go writer; per-side row budgets unchanged, physical reservation must account for parent overlap",
+  "inputs": [
+    {
+      "path": "docs/evidence/a-writer-fk-20261023-134215-75d1f525.json",
+      "size": 1151,
+      "sha256": "8bfad486d89f3100f6aa9ab224010606e3683c08a15b48ab5aa2f5229eb9aef7"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-20261023-134215-75d1f525-source.json",
+      "size": 675602,
+      "sha256": "2240a5cf8372f95bebc2296ef92419c535bdd0ffe0ef4ba25da8c70f37f6ed00"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-20261023-134215-75d1f525-old.jsonl",
+      "size": 9464,
+      "sha256": "3c52cee0125a603df824525a0fe05ab10ee8eb64e2f9887d148348e4d14c930c"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-20261023-134215-75d1f525-fixed.jsonl",
+      "size": 1150863,
+      "sha256": "53900185217d620cc37a4839fcc524e685274d912f7172134298427c38585a83"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-d25149d0a27c4a7395680767a8f40802.jsonl",
+      "size": 1148382,
+      "sha256": "6ee43ec29b5da5046ebed2e8168f955aa9a95de2bcd5d9da99a94040d59ebccb"
+    },
+    {
+      "path": "docs/evidence/d-resources-rules-local-d25149d0a27c4a7395680767a8f40802-source.json",
+      "size": 625840,
+      "sha256": "a66e5017e5d97df68dc18f287bafdd2cf578f4643651ae0072a3f2aa63edaf5b"
+    },
+    {
+      "path": "docs/evidence/a-writer-fk-repair-review-20261023.mjs",
+      "size": 6373,
+      "sha256": "5b75e2742833e76d5794cfbbeae0e56b0c52099a8bb824ec0859da5b18647709"
+    }
+  ]
+}

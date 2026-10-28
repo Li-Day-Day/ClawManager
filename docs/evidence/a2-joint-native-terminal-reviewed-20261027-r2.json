@@ -1,0 +1,318 @@
+{
+  "kind": "a2_joint_native_terminal_composition_review.v1",
+  "reviewed_at": "2026-10-27T09:20:37.086Z",
+  "status": "accepted_exact_private_joint_Windows_tests_and_Windows_Linux_compilation_owned_cleanup_complete",
+  "terminal": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.r2.terminal.json",
+    "size": 56489,
+    "sha256": "704391217980b1addac0b48b4884f60050fb2a3e1b9acc056e70d05a1b700a4e"
+  },
+  "source_manifest": {
+    "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.source.json",
+    "size": 666726,
+    "sha256": "5e0c8f4bc782c8fce92ce53095fd37829eb2879a3e1527e88e17d543e2c6e754"
+  },
+  "source_sha256": "fd71b0aff897210a9c2e830167b74f1085bdc1aed9ae41c0d960e3be4abedade",
+  "source_files": 1727,
+  "physical_files": 1728,
+  "Windows_full_package_leaf": {
+    "path": "docs/evidence/a2-joint-windows-package-native-reviewed-20261027-r1.json",
+    "size": 3159,
+    "sha256": "105ec457792cd273f4a29857cfcc74365f55bb9acfa45c8ed782a6f995bdb591"
+  },
+  "Windows_full_package_roots": 169,
+  "Windows_full_package_pass_events": 344,
+  "additional_Windows_tagged_seed": "TestAAdminReadMySQLSeed",
+  "additional_seed_pass_events": 1,
+  "successful_followup_steps": [
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\binary\\system-backup-controller.exe",
+        "./cmd/system-backup-controller"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.windows.recovery-build.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.windows.recovery-build.log.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.windows.tagged-security.list.jsonl",
+        "size": 549629,
+        "sha256": "52efadbed5538be81e1ea75fb16e2de4641308e1a377ab206d5bf3cda19f824d"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.windows.tagged-security.list.jsonl.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-json",
+        "-count=1",
+        "-timeout=180s",
+        "-tags",
+        "systembackup_mysql",
+        "-run",
+        "^TestAAdminReadMySQLSeed$",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "windows",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.windows.tagged-security.seed.jsonl",
+        "size": 1250,
+        "sha256": "538a935b18611ca38aa0e29b3933846de775ba1a2e53e057e1b20062a4fae52d"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.windows.tagged-security.seed.jsonl.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "./internal/systembackupcleanup",
+        "./internal/systembackupcontroller",
+        "./cmd/system-backup-controller"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.ordinary.list.jsonl",
+        "size": 6275841,
+        "sha256": "668aef92ca4d28b65a43e17216094ce9da82004f96371b499baf6de16199c221"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.ordinary.list.jsonl.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "list",
+        "-deps",
+        "-test",
+        "-json",
+        "-tags",
+        "systembackup_mysql",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.tagged-security.list.jsonl",
+        "size": 559427,
+        "sha256": "a3fac3c00bdcb4e9728776c5aed90391f10b204ad93b8ec25dd9f329c9b8ae70"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.tagged-security.list.jsonl.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\binary\\cleanup.linux.test",
+        "./internal/systembackupcleanup"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.cleanup-compile.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.cleanup-compile.log.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\binary\\controller.linux.test",
+        "./internal/systembackupcontroller"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.controller-compile.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.controller-compile.log.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-c",
+        "-tags",
+        "systembackup_mysql",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\binary\\security.tagged.linux.test",
+        "./internal/systembackupsecurity"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.security-compile.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.security-compile.log.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd\\binary\\system-backup-controller.linux",
+        "./cmd/system-backup-controller"
+      ],
+      "platform": "linux",
+      "exit_code": 0,
+      "log": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.controller-build.log",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\docs\\evidence\\d2-cleanup-gate-joint-c6e41-20261027.r2.linux.controller-build.log.stderr",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "binary_header_metadata": [
+    {
+      "name": "system-backup-controller.exe",
+      "size": 67585024,
+      "sha256": "853febfa5529ea5327ec4aa98daa9a3cec0bed7bad07c3990a8119e12547d079",
+      "header64": "4d5a90000300000004000000ffff00008b0000000000000040000000000000000000000000000000000000000000000000000000000000000000000080000000",
+      "executed": false
+    },
+    {
+      "name": "cleanup.linux.test",
+      "size": 12539385,
+      "sha256": "e7d86c925e35a84311536b006cc87d8a9534496bc2ab941353589c0b44f2aa47",
+      "header64": "7f454c4602010100000000000000000002003e00010000000054490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "controller.linux.test",
+      "size": 8634874,
+      "sha256": "922240e99ee2d238f828775adbc0c3b94cf8b0ad16ff5d21ca0a0f7b7ee0f059",
+      "header64": "7f454c4602010100000000000000000002003e0001000000e0fa480000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "security.tagged.linux.test",
+      "size": 18797751,
+      "sha256": "daf7fb8abb266749b67639a54c9eef182481ea0e1fdfde0aa5fae4e1645c98d4",
+      "header64": "7f454c4602010100000000000000000002003e00010000000015490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    },
+    {
+      "name": "system-backup-controller.linux",
+      "size": 66765084,
+      "sha256": "3ffb4fa83ba849062cf4cf1171f47debd08a86e32ba6e70bcb25c43f4178b4f7",
+      "header64": "7f454c4602010100000000000000000002003e0001000000400b490000000000400000000000000090010000000000000000000040003800060040001a001900",
+      "executed": false
+    }
+  ],
+  "Linux_binaries_executed": false,
+  "actual_cmd_binaries_executed": false,
+  "source_postcheck_recorded": true,
+  "old_interrupted_or_failed_attempts_retained": [
+    {
+      "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.terminal.json",
+      "size": 655,
+      "sha256": "6fe119c0f59c2213040ea39e8728a356328eb28e3a6b64c50aca4129baa24e88"
+    },
+    {
+      "path": "docs/evidence/d2-cleanup-gate-joint-c6e41-20261027.windows.json",
+      "size": 46534,
+      "sha256": "d220f9cd3ed78711889c950f46d276b38959e2cd8dd38d5e1bb3ac0862ebdd32"
+    }
+  ],
+  "owned_joint_directory": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd",
+  "owned_joint_directory_independently_absent": true,
+  "peer_Windows_cleanup": {
+    "path": "docs/evidence/d1-joint-windows-cleaned-20261027.json",
+    "size": 530,
+    "sha256": "c7bc1100d4034e4375c47c038d9998ee433da604713d98cb79d4da59c4f31218"
+  },
+  "peer_Windows_owner_independently_absent": true,
+  "cache_seed_owners": [
+    {
+      "report": {
+        "path": "docs/evidence/d2-joint-cache-seed-c6e41c5d9a4548c1afa7b154def28ebd.json",
+        "size": 536612,
+        "sha256": "e5c29419b944f6fe15a2475d2fc82426eb535b1b8e4dd27547d2ee50a0cb6c3b"
+      },
+      "owner": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-index-cache-c6e41c5d9a4548c1afa7b154def28ebd",
+      "independently_absent": true
+    }
+  ],
+  "actual_SQL": false,
+  "new_ledger_installed": false,
+  "new_candidates_promoted_to_live": false,
+  "dependencies_installed": false,
+  "agent_Go_started_by_A2": false,
+  "agent_SSH": false,
+  "test_build_products_created_by_A2": false,
+  "production_approved": false,
+  "whole_goal_complete": false,
+  "pause_requested_by_human_after_this_round": true
+}

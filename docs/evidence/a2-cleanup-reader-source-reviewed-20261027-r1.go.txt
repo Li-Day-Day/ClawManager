@@ -1,0 +1,373 @@
+// Candidate for backend/internal/systembackupcleanup/reader.go.
+package systembackupcleanup
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"math"
+	"time"
+)
+
+const MaxSnapshotRows = 10000
+
+// ResourceIdentity is read from the original inventory, including nullable
+// identity fields. It is not a delete selector or a new provider capability.
+type ResourceIdentity struct {
+	Binding         Binding
+	ResourceType    string
+	Lifecycle       string
+	UID             sql.NullString
+	Version         sql.NullString
+	LocationSHA256  string
+	OwnerMarkerHMAC string
+}
+
+type ResidualObservation struct {
+	Identity       ResourceIdentity
+	ResidualVolume *bool
+}
+
+// ResidualReader must read already-persisted, verified owner/provider facts
+// using this same read-only snapshot. It must verify original proof validity,
+// UID/version/location/marker and medium disposition. No network probe, new
+// authority, namespace-deleted inference, or unverified 404 is permitted.
+type ResidualReader interface {
+	ReadPersisted(context.Context, *sql.Tx, ResourceIdentity, time.Time) (ResidualObservation, error)
+}
+
+type Window struct {
+	Age               time.Duration
+	ImmutableDeadline time.Duration
+	ResidualVolume    bool
+}
+type Collection struct {
+	Complete   bool
+	ObservedAt time.Time
+	Owners     []Window
+}
+type Reader struct {
+	DB       *sql.DB
+	Residual ResidualReader
+}
+
+type parentSnapshot struct {
+	budget   Budget
+	finished sql.NullTime
+}
+type resourceRow struct {
+	identity  ResourceIdentity
+	operation sql.Null[uint64]
+}
+
+func (r Reader) Collect(ctx context.Context, installation string) (*Collection, error) {
+	if ctx == nil || r.DB == nil || !installationPattern.MatchString(installation) {
+		return nil, ErrClock
+	}
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	tx, err := r.DB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+	var now time.Time
+	var offset int64
+	if err = tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6), TIMESTAMPDIFF(MICROSECOND, UTC_TIMESTAMP(6), CURRENT_TIMESTAMP(6))").Scan(&now, &offset); err != nil || offset != 0 || !databaseTime(now) {
+		return nil, errors.Join(ErrClock, err)
+	}
+	remaining := MaxSnapshotRows
+	result := &Collection{ObservedAt: now}
+	seen := map[Binding]bool{}
+	for _, kind := range []string{"backup", "drill"} {
+		parents, err := listCleanupParents(ctx, tx, installation, kind, &remaining)
+		if err != nil {
+			return nil, err
+		}
+		for _, parent := range parents {
+			snapshot, err := readCleanupParent(ctx, tx, installation, kind, parent)
+			if err != nil {
+				return nil, err
+			}
+			resources, err := readCleanupResources(ctx, tx, installation, kind, parent, &remaining)
+			if err != nil {
+				return nil, err
+			}
+			if len(resources) == 0 {
+				return nil, errors.New("active cleanup parent has no complete resource/clock inventory")
+			}
+			for _, resource := range resources {
+				if seen[resource.identity.Binding] {
+					return nil, ErrClock
+				}
+				seen[resource.identity.Binding] = true
+				residual := false
+				if kind == "drill" {
+					if r.Residual == nil {
+						return nil, errors.New("original residual-medium source is unavailable")
+					}
+					observation, err := r.Residual.ReadPersisted(ctx, tx, resource.identity, now)
+					if err != nil {
+						return nil, err
+					}
+					if observation.Identity != resource.identity || observation.ResidualVolume == nil {
+						return nil, ErrClock
+					}
+					residual = *observation.ResidualVolume
+				}
+				// An absent/deleted authority can still have residual media (for
+				// example a namespace whose derived PV has not been reclaimed).
+				settled := resource.identity.Lifecycle == "absent" || resource.identity.Lifecycle == "deleted"
+				clocks, err := readCleanupClocks(ctx, tx, resource, snapshot, now, &remaining)
+				if err != nil {
+					return nil, err
+				}
+				if len(clocks) == 0 {
+					return nil, errors.New("unsettled cleanup resource has no durable original clock")
+				}
+				if settled && !residual {
+					continue
+				}
+				// Failed older attempts remain relevant until current bound
+				// disposition facts prove the resource and residual media settled.
+				for _, clock := range clocks {
+					age, window, err := clock.AlertWindow(now)
+					if err != nil {
+						return nil, err
+					}
+					result.Owners = append(result.Owners, Window{age, window, residual})
+				}
+			}
+		}
+	}
+	if err = ctx.Err(); err != nil {
+		return nil, err
+	}
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+	if err = ctx.Err(); err != nil {
+		return nil, err
+	}
+	result.Complete = true
+	return result, nil
+}
+
+func takeRow(remaining *int) error {
+	if *remaining <= 0 {
+		return errors.New("cleanup snapshot exceeds bounded complete-read limit")
+	}
+	*remaining--
+	return nil
+}
+
+func listCleanupParents(ctx context.Context, tx *sql.Tx, installation, kind string, remaining *int) ([]string, error) {
+	query := "SELECT DISTINCT b.public_id FROM system_backups b JOIN system_backup_staging_resources r ON r.origin_installation_id=b.origin_installation_id AND r.backup_public_id=b.public_id WHERE b.origin_installation_id=? AND r.cleanup_result IN ('running','failed') ORDER BY b.public_id LIMIT ?"
+	if kind == "drill" {
+		query = "SELECT public_id FROM system_restore_drills WHERE origin_installation_id=? AND cleanup_status IN ('pending','running','failed','partial_failed') ORDER BY public_id LIMIT ?"
+	}
+	rows, err := tx.QueryContext(ctx, query, installation, *remaining+1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var ids []string
+	seen := map[string]bool{}
+	for rows.Next() {
+		if err = takeRow(remaining); err != nil {
+			return nil, err
+		}
+		var id string
+		if err = rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		if seen[id] {
+			return nil, ErrClock
+		}
+		seen[id] = true
+		ids = append(ids, id)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	if err = rows.Close(); err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+
+func readCleanupParent(ctx context.Context, tx *sql.Tx, installation, kind, id string) (parentSnapshot, error) {
+	table := "system_backups"
+	prefix := "sbk_"
+	if kind == "drill" {
+		table = "system_restore_drills"
+		prefix = "sdr_"
+	}
+	if !validID(id, prefix) {
+		return parentSnapshot{}, ErrClock
+	}
+	query := "SELECT t.config_version,t.config_snapshot_json,t.config_snapshot_size_bytes,t.config_snapshot_sha256,t.finished_at,c.config_sha256,c.config_size_bytes,c.cleanup_deadline_seconds FROM " + table + " t JOIN system_backup_configs c ON c.origin_installation_id=t.origin_installation_id AND c.version=t.config_version WHERE t.origin_installation_id=? AND t.public_id=?"
+	var version uint64
+	var raw []byte
+	var size, originalSize, originalBudgetSeconds int64
+	var digest, originalDigest string
+	var finished sql.NullTime
+	if err := tx.QueryRowContext(ctx, query, installation, id).Scan(&version, &raw, &size, &digest, &finished, &originalDigest, &originalSize, &originalBudgetSeconds); err != nil {
+		return parentSnapshot{}, err
+	}
+	if size != originalSize || digest != originalDigest {
+		return parentSnapshot{}, ErrClock
+	}
+	budget, err := DecodeBudget(raw, size, digest, version)
+	if err != nil {
+		return parentSnapshot{}, err
+	}
+	if budget.seconds != originalBudgetSeconds {
+		return parentSnapshot{}, ErrClock
+	}
+	return parentSnapshot{budget, finished}, nil
+}
+
+func knownRestoreType(value string) bool {
+	switch value {
+	case "namespace", "volume_snapshot", "mysql_instance", "redis_instance", "redis_keyspace", "object_prefix", "workspace_root":
+		return true
+	}
+	return false
+}
+func knownLifecycle(value string, staging bool) bool {
+	switch value {
+	case "creating", "absent", "deleting", "deleted", "delete_failed", "ownership_unknown":
+		return true
+	case "ready", "sealed":
+		return staging
+	case "created":
+		return !staging
+	}
+	return false
+}
+
+func readCleanupResources(ctx context.Context, tx *sql.Tx, installation, kind, parent string, remaining *int) ([]resourceRow, error) {
+	query := "SELECT public_id,resource_type,lifecycle,observed_uid,immutable_version,location_sha256,owner_marker_hmac,cleanup_operation_id FROM system_backup_staging_resources WHERE origin_installation_id=? AND backup_public_id=? AND cleanup_result IN ('running','failed') ORDER BY id LIMIT ?"
+	resourceKind := "backup_staging"
+	if kind == "drill" {
+		resourceKind = "restore_resource"
+		query = "SELECT public_id,resource_type,lifecycle,observed_uid,immutable_version,location_sha256,owner_token_hmac,cleanup_operation_id FROM system_restore_drill_resources WHERE origin_installation_id=? AND drill_public_id=? ORDER BY id LIMIT ?"
+	}
+	rows, err := tx.QueryContext(ctx, query, installation, parent, *remaining+1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var resources []resourceRow
+	for rows.Next() {
+		if err = takeRow(remaining); err != nil {
+			return nil, err
+		}
+		row := resourceRow{}
+		row.identity.Binding = Binding{Installation: installation, ParentKind: kind, ParentPublicID: parent, ResourceKind: resourceKind}
+		if err = rows.Scan(&row.identity.Binding.ResourcePublicID, &row.identity.ResourceType, &row.identity.Lifecycle, &row.identity.UID, &row.identity.Version, &row.identity.LocationSHA256, &row.identity.OwnerMarkerHMAC, &row.operation); err != nil {
+			return nil, err
+		}
+		if !row.identity.Binding.valid() || !knownLifecycle(row.identity.Lifecycle, kind == "backup") || !hexDigest(row.identity.LocationSHA256) || !hexDigest(row.identity.OwnerMarkerHMAC) {
+			return nil, ErrClock
+		}
+		if kind == "drill" && !knownRestoreType(row.identity.ResourceType) {
+			return nil, ErrClock
+		}
+		if kind == "backup" && row.identity.ResourceType != "pvc" && row.identity.ResourceType != "hostpath" && row.identity.ResourceType != "remote_manifest_candidate" {
+			return nil, ErrClock
+		}
+		resources = append(resources, row)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	if err = rows.Close(); err != nil {
+		return nil, err
+	}
+	return resources, nil
+}
+
+func readCleanupClocks(ctx context.Context, tx *sql.Tx, resource resourceRow, parent parentSnapshot, now time.Time, remaining *int) ([]Clock, error) {
+	const query = `SELECT c.attempt_sequence,c.clock_source,c.config_version,c.config_sha256,c.started_at,c.deadline_at,c.created_at,c.cleanup_operation_id,
+ o.id,o.origin_installation_id,o.public_id,o.operation_type,o.target_type,o.target_public_id,o.created_at,o.deadline_at
+FROM system_backup_cleanup_attempts c LEFT JOIN system_backup_operations o ON o.id=c.cleanup_operation_id
+WHERE c.origin_installation_id=? AND c.resource_type=? AND c.resource_public_id=? AND c.parent_type=? AND c.parent_public_id=?
+ORDER BY c.attempt_sequence LIMIT ?`
+	b := resource.identity.Binding
+	rows, err := tx.QueryContext(ctx, query, b.Installation, b.ResourceKind, b.ResourcePublicID, b.ParentKind, b.ParentPublicID, *remaining+1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var result []Clock
+	var previous uint64
+	for rows.Next() {
+		if err = takeRow(remaining); err != nil {
+			return nil, err
+		}
+		var sequence, version uint64
+		var source Source
+		var digest string
+		var start, deadline, created time.Time
+		var operationID, joinedID sql.Null[uint64]
+		var install, publicID, opType, targetType, targetID sql.NullString
+		var opCreated, opDeadline sql.NullTime
+		if err = rows.Scan(&sequence, &source, &version, &digest, &start, &deadline, &created, &operationID, &joinedID, &install, &publicID, &opType, &targetType, &targetID, &opCreated, &opDeadline); err != nil {
+			return nil, err
+		}
+		if previous == math.MaxUint64 || sequence != previous+1 || version != parent.budget.version || digest != parent.budget.sha256 || !databaseTime(created) || created.Before(start) || created.After(now) {
+			return nil, ErrClock
+		}
+		previous = sequence
+		var clock Clock
+		switch source {
+		case AutomaticBackup, AutomaticDrill:
+			if operationID.Valid || joinedID.Valid || !created.Equal(start) {
+				return nil, ErrClock
+			}
+			finished := time.Time{}
+			if source == AutomaticDrill {
+				if !parent.finished.Valid {
+					return nil, ErrClock
+				}
+				finished = parent.finished.Time
+			}
+			clock, err = NewAutomaticClock(b, parent.budget, start, finished)
+		case ExplicitOperation:
+			if !operationID.Valid || !joinedID.Valid || operationID.V != joinedID.V || !install.Valid || !publicID.Valid || !opType.Valid || !targetType.Valid || !targetID.Valid || !opCreated.Valid || !opDeadline.Valid {
+				return nil, ErrClock
+			}
+			clock, err = NewOperationClock(b, parent.budget, OperationFacts{ID: joinedID.V, Installation: install.String, PublicID: publicID.String, OperationType: opType.String, TargetType: targetType.String, TargetPublicID: targetID.String, CreatedAt: opCreated.Time, DeadlineAt: opDeadline.Time}, now)
+		default:
+			return nil, ErrClock
+		}
+		if err != nil {
+			return nil, err
+		}
+		if clock.source != source || !clock.started.Equal(start) || !clock.deadline.Equal(deadline) {
+			return nil, ErrClock
+		}
+		result = append(result, clock)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	if err = rows.Close(); err != nil {
+		return nil, err
+	}
+	if len(result) > 0 {
+		last := result[len(result)-1]
+		if resource.operation.Valid != (last.source == ExplicitOperation) || resource.operation.Valid && resource.operation.V != last.operationID {
+			return nil, fmt.Errorf("current resource operation is not its latest persisted cleanup attempt")
+		}
+	}
+	return result, nil
+}
+
+func hexDigest(value string) bool { return regexpDigest.MatchString(value) }

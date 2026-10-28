@@ -27,7 +27,7 @@ import (
 
 // Every case receives a separate run-owned database after the existing isolated
 // pod marker and UUID have been verified. Never accepts an arbitrary DSN.
-func dProducerMySQLDB(t *testing.T) (*sql.DB, *atomic.Bool) {
+func dProducerMySQLDB(t *testing.T, beforeDDL ...func(*sql.DB)) (*sql.DB, *atomic.Bool) {
 	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
 	t.Cleanup(cancel)
 	run, uid := os.Getenv("D_INVARIANT_RUN"), os.Getenv("D_INVARIANT_NAMESPACE_UID")
@@ -96,6 +96,11 @@ func dProducerMySQLDB(t *testing.T) (*sql.DB, *atomic.Bool) {
 	db := sql.OpenDB(dLostConnector{Connector: connector, lost: lost})
 	mustSQL(t, e)
 	t.Cleanup(func() { db.Close() })
+	// Test-owned migration ordering: initialize real legacy fixtures before the
+	// original C1 schema is installed. Never remove an already-present domain.
+	for _, initialize := range beforeDDL {
+		initialize(db)
+	}
 	_, e = db.ExecContext(ctx, string(ddl))
 	mustSQL(t, e)
 	_, e = db.ExecContext(ctx, "CREATE TABLE synthetic_guard_marker (n INT NOT NULL) ENGINE=InnoDB")
