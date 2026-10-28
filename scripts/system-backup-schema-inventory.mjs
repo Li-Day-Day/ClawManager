@@ -50,10 +50,15 @@ function readPlannedControlTables() {
   return sorted(names);
 }
 
-function scanCreateStatements(directory, extension) {
+// Go test fixtures are not application startup/runtime DDL. Keep production
+// .go files (including platform-specific sources) and all migration SQL files.
+const isSource = (name, extension) => name.endsWith(extension)
+  && (extension !== '.go' || !name.endsWith('_test.go'));
+
+export function scanCreateStatements(directory, extension) {
   const objects = new Map();
   const create = /^\s*CREATE\s+(?:OR\s+REPLACE\s+)?(TABLE|VIEW|TRIGGER|PROCEDURE|FUNCTION|EVENT)\s+(?:IF\s+NOT\s+EXISTS\s+)?`?([a-z][a-z0-9_]*)`?\b/gim;
-  for (const filename of sorted(readdirSync(directory).filter((name) => name.endsWith(extension)))) {
+  for (const filename of sorted(readdirSync(directory).filter((name) => isSource(name, extension)))) {
     const fullPath = join(directory, filename);
     const raw = readFileSync(fullPath, 'utf8');
     // Comments are stripped only for discovery; this is not a SQL parser.
@@ -85,10 +90,10 @@ function scanDeploymentCreates() {
   return objects;
 }
 
-function scanRepositoryAlters() {
+export function scanRepositoryAlters(directory = repositoryDir) {
   const alters = new Map();
-  for (const filename of sorted(readdirSync(repositoryDir).filter((name) => name.endsWith('.go')))) {
-    const fullPath = join(repositoryDir, filename);
+  for (const filename of sorted(readdirSync(directory).filter((name) => isSource(name, '.go')))) {
+    const fullPath = join(directory, filename);
     const raw = readFileSync(fullPath, 'utf8');
     for (const match of raw.matchAll(/\bALTER\s+TABLE\s+`?([a-z][a-z0-9_]*)`?\b/gim)) {
       const name = match[1].toLowerCase();
@@ -116,7 +121,7 @@ function readDbObjects(path) {
   return objects;
 }
 
-function buildReport() {
+export function buildReport() {
   const { version, owners } = readOwnership();
   const plannedControlTables = readPlannedControlTables();
   const migrationObjects = scanCreateStatements(migrationDir, '.sql');
@@ -181,7 +186,7 @@ function buildReport() {
   return report;
 }
 
-try {
+function main() {
   const report = buildReport();
   const output = `${JSON.stringify(report, null, 2)}\n`;
   if (has('--write')) writeFileSync(reportPath, output);
@@ -208,7 +213,11 @@ try {
   if (has('--strict') && (report.summary.plan_control_without_inventory || report.summary.without_migration || report.summary.unassigned || report.summary.repository_runtime_create || report.summary.repository_runtime_alter || report.summary.deployment_bootstrap_create || report.database_comparison?.missing_from_database.length || report.database_comparison?.runtime_only_in_database.length || report.database_comparison?.unexpected_in_database.length || report.database_comparison?.unknown_applied_migrations.length)) {
     process.exitCode = 1;
   }
-} catch (error) {
-  process.stderr.write(`${error.message}\n`);
-  process.exitCode = 1;
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try { main(); } catch (error) {
+    process.stderr.write(`${error.message}\n`);
+    process.exitCode = 1;
+  }
 }

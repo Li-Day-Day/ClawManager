@@ -1,0 +1,574 @@
+✔ draft machine artifacts use one contract version and local references resolve (89.2538ms)
+✔ Admin OpenAPI route inventory exactly matches plan v12 and has unique operation IDs (1.5303ms)
+✔ Admin mutations require bounded idempotency keys and common envelopes are closed (0.5243ms)
+✔ Admin path IDs are resource-prefixed instead of generic database IDs (0.9249ms)
+✔ Admin list, event and log routes use bounded opaque cursor pagination (0.4567ms)
+✔ Admin synchronous and asynchronous mutation status codes match the plan (0.6082ms)
+✔ Admin 201 and 202 responses publish Location and task-producing routes return tasks (0.68ms)
+✔ Admin operation policy covers OpenAPI exactly and preserves D orchestration boundaries (0.8134ms)
+✔ Admin API error codes have one frozen HTTP status mapping (0.8856ms)
+✔ Admin operation error profiles cover every route once and keep exceptional codes scoped (1.2607ms)
+✔ D-owned Admin mutation bodies are closed and owner authentication fields stay external (0.7266ms)
+✔ Go and TypeScript DTO snapshots match enum and field schemas (8.4867ms)
+✔ D-owned Admin resources replace only D placeholders and bind the existing manifest contract (0.631ms)
+✔ D-owned task detail routes use typed closed projections without claiming owner payloads (0.6929ms)
+✔ D-owned task detail conditions preserve eligibility, cleanup and artifact-state authority (0.2429ms)
+✔ D-owned task detail examples assemble into exact redacted response shapes (0.562ms)
+✔ D-owned config wire records all defaults, redacted references and cross-field safety rules (0.8885ms)
+✔ D-owned control examples are closed snapshots of their response schemas (0.302ms)
+✔ D-owned activity routes use typed task, operation, event, log, prune and promotion lists (0.3544ms)
+✔ D-owned event and log envelopes are bounded, redacted and non-authoritative (0.3256ms)
+✔ D-owned prune item and promotion views preserve lifecycle and derived-health boundaries (0.3593ms)
+✔ redacted examples are closed against DTO fields and contain no credential material (0.4451ms)
+✔ module interfaces keep ownership boundaries and source-writer state is closed (0.1752ms)
+✔ D-owned controller claim primitive is DB-time CAS only and has no owner execution dependency (2.1432ms)
+✔ D-owned pending deadline transition is transactional, evidence-guarded and task-only (1.2437ms)
+✔ D-owned pending deadline sweep is bounded, fair and has no runner surface (1.1849ms)
+✔ D-owned gate and mutation lease core preserves row-lock order and explicit participant proof (2.9511ms)
+✔ D-owned controller skeleton is feature-gated and uses a lease-only ServiceAccount (8.0654ms)
+✔ D-owned system image schema is migration-owned instead of repository runtime DDL (8.714ms)
+✔ D-owned audit log table is created by embedded migration, not four deployment init scripts (4.1686ms)
+✔ core applies embedded migrations before constructing D repositories (0.7632ms)
+✔ D-owned control metadata core is migration-owned and remains metadata-only (1.6944ms)
+✔ D-owned config and operation authorities materialize the closed machine contracts (6.5678ms)
+✔ D-owned task and attempt authorities preserve typed cross-owner boundaries (2.6554ms)
+✔ D-owned staging resource intent is migration-owned and follows the plan lifecycle (2.2908ms)
+✔ D-owned maintenance participant ACK is migration-owned and generation-scoped (2.6379ms)
+✔ D-owned strong-auth nonce ledger stores consumed HMACs without defining A proof verification (3.7863ms)
+✔ A-owned secret ref union carries only typed redacted identities (1.4163ms)
+✔ A-owned strong-auth contract is closed and matches the redacted runtime fixture (0.7733ms)
+✔ A-owned provider-proof registration is closed, bounded and target-bound (0.7791ms)
+✔ A-owned capability evidence is closed, redacted and cleanup-proven (0.9325ms)
+✔ D-owned Job observation cursor is migration-owned while B status relay stays missing (3.9757ms)
+✔ D-owned restore drill resource intent records cleanup without B target behavior (5.2194ms)
+✔ D-owned coordination and observability tables stay closed and owner-neutral (3.6878ms)
+✔ D-owned promotion authority binds one active baseline without caching current health (2.3616ms)
+✔ D-owned prune authority freezes candidates and owner-neutral item retries (3.5585ms)
+✔ D-owned external action authority persists exact bytes without provider execution (2.9702ms)
+✔ D-owned check authorities persist summaries without owner discovery or verifier registries (4.1895ms)
+✖ cross-owner request covers every pending owner decision and required D/C review without inventing approvals (3.3659ms)
+✔ publication schemas exclude self-references and post-commit eligibility (0.1776ms)
+✔ external action persists exact immutable bytes without a replayable credential (1.2974ms)
+✔ acceptance signs payload only and keeps local reason codes canonical (3.3099ms)
+✔ installation state preserves first-enable and matrix transition authority (0.2307ms)
+✔ live schema-hash evidence cannot satisfy the gate before cleanup, registration and three-owner review (0.8399ms)
+✔ compact tombstone separates permanent destructive keys from standard expiry (0.1893ms)
+✔ verifier shell owns aggregation and keeps A business checks as draft (0.6337ms)
+✔ metrics registry shape rejects high-cardinality labels and requires complete alert metadata (0.235ms)
+✔ D-owned metrics registry materializes every section-15 metric exactly once (10.4619ms)
+✔ D-owned alert registry closes section-15 defaults and profile behavior (2.5353ms)
+✔ D alert expressions preserve labeled series when joined to singleton guards and config (0.665ms)
+✔ D queue budget reader is bound to registered low-cardinality metric names (0.7785ms)
+✔ D controller queue metrics outlet uses registered HELP and leader-only fail-closed scrape (1.0166ms)
+✔ D controller self telemetry is wired to the loop and remains leader-only (1.6552ms)
+✔ D controller-state predicates cover the six non-PromQL registry rules (2.1103ms)
+✔ D-owned dependency and provider capability records are closed and fail closed (0.5696ms)
+✔ D-owned dependency and capability fixtures prove expiry and exact-role projections (0.4433ms)
+✔ D-owned control-evidence sidecar is a closed encrypted summary envelope (0.3338ms)
+✔ control-evidence example keeps A/B/C payloads external and binds only registered evidence (0.3855ms)
+✔ D-owned evidence, chunk and log persistence contract is closed and fail-closed (1.0434ms)
+✔ evidence and log examples bind contiguous chunks and redacted inline bytes (0.6858ms)
+✔ migration catalog hash is deterministic and content-addressed (106.9433ms)
+✔ migration catalog hash is independent of checkout line endings (6.1214ms)
+✔ draft registry covers inventory and records every D decision (53.1977ms)
+✔ P0-0a inventory exposes planned control tables absent from owner and migration coverage (64.347ms)
+✔ strict blockers keep the draft contract from being reported as frozen (63.3425ms)
+✔ live schema-hash evidence stays pending until cleanup, registration and A/B/C review (151.9803ms)
+✔ independent hand-written byte frames pin tags, length units, ordering and SHA domains (3.7769ms)
+✔ codec refuses lossy/ambiguous JavaScript values (1.1204ms)
+✔ synthetic ResultRequest unconfigured_artifact (13.5463ms)
+✔ synthetic ResultRequest unconfigured_catalog (5.6915ms)
+✔ synthetic ResultRequest unconfigured_evidence (6.5264ms)
+✔ synthetic ResultRequest unconfigured_kms (3.9457ms)
+✔ synthetic ResultRequest unconfigured_secret (2.1386ms)
+✔ synthetic ResultRequest unconfigured_signing (3.1378ms)
+✔ synthetic ResultRequest disabled_artifact (6.0405ms)
+✔ synthetic ResultRequest disabled_catalog (5.173ms)
+✔ synthetic ResultRequest disabled_evidence (2.9604ms)
+✔ synthetic ResultRequest disabled_kms (2.7694ms)
+✔ synthetic ResultRequest disabled_secret (2.2148ms)
+✔ synthetic ResultRequest disabled_signing (2.3529ms)
+✔ synthetic ResultRequest enabled_artifact (3.0254ms)
+✔ synthetic ResultRequest enabled_catalog (2.4972ms)
+✔ synthetic ResultRequest enabled_evidence (2.3197ms)
+✔ synthetic ResultRequest enabled_kms (2.4734ms)
+✔ synthetic ResultRequest enabled_secret (2.6598ms)
+✔ synthetic ResultRequest enabled_signing (1.8397ms)
+✔ synthetic CommandRequest acquire (2.4054ms)
+✔ synthetic CommandRequest renew (1.3693ms)
+✔ synthetic CommandRequest revoke (0.9368ms)
+✔ synthetic CommandRequest takeover (2.1379ms)
+✔ record DomainRecord closed shape and bounds (1.1855ms)
+✔ record GrantRecord closed shape and bounds (2.7802ms)
+✔ record RunRecord closed shape and bounds (1.9067ms)
+✔ record TargetRecord closed shape and bounds (2.018ms)
+✔ record HistoricalBindingRecord closed shape and bounds (6.425ms)
+✔ record ReceiptRecord closed shape and bounds (13.5632ms)
+✔ record CommandReceiptRecord closed shape and bounds (4.8703ms)
+✔ record ReferenceRecord closed shape and bounds (0.7143ms)
+✔ reject unknown_field (1.012ms)
+✔ reject case_alias (0.815ms)
+✔ reject zero_config (0.4998ms)
+✔ reject fake_config_unconfigured (1.0446ms)
+✔ reject disabled_inherits_deployment (0.7589ms)
+✔ reject scope_owner_mismatch (1.6173ms)
+✔ reject fake_task_owner (0.4456ms)
+✔ reject missing_ref (0.7218ms)
+✔ reject missing_object_version (1.0354ms)
+✔ reject wrong_evidence_id (0.4166ms)
+✔ reject noncanonical_integer (0.7711ms)
+✔ reject integer_overflow (1.2144ms)
+✔ reject numeric_integer (0.4426ms)
+✔ reject non_utc (0.7592ms)
+✔ reject lost_microseconds (0.4862ms)
+✔ reject bad_calendar (0.8993ms)
+✔ reject expiry_equal (0.8895ms)
+✔ reject hash_uppercase (0.4173ms)
+✔ reject lone_surrogate (0.4992ms)
+✔ reject extra_capability (1.2893ms)
+✔ reject duplicate_result (1.3515ms)
+✔ reject missing_result (1.269ms)
+✔ reject sorted_slots (1.1097ms)
+✔ reject wrong_evaluator (0.3837ms)
+✔ reject wrong_purpose (0.8439ms)
+✔ reject healthy_from_upload (0.7098ms)
+✔ reject supported_wrong_reason (1.1661ms)
+✔ reject unsupported_wrong_reason (0.844ms)
+✔ reject missing_required (0.4885ms)
+✔ reject renew_missing_expected (0.3421ms)
+✔ reject renew_extends_owner (0.5078ms)
+✔ reject revoke_has_lease (0.6276ms)
+✔ reject takeover_reuses_run (0.6215ms)
+✔ reject acquire_wrong_actor (0.4618ms)
+✔ reject target_cas_mismatch (0.3206ms)
+✔ complete request is hashed; same idempotency key does not hide a changed payload (45.6871ms)
+✔ target fence survives evaluator revision but separates exact identity/ref/scope/role (4.625ms)
+✔ max uint64 survives roundtrip without number coercion and invalid dates stay invalid (10.84ms)
+✔ stored receipts reject tampering; observation and original pending binding remain separate (16.0474ms)
+✔ relational dictionary resolves every record/key/FK and excludes live catalog writes (4.3095ms)
+✔ reservation charges bounded retained rows and rejects unknown or overflowing costs (5.2896ms)
+✔ shared enum sets agree with existing contracts and package stays unapproved (7.2267ms)
+✖ candidate Prometheus rules preserve every PromQL alert without claiming controller-state execution (13.634ms)
+✔ candidate generator rejects duplicate or unassigned rules (5.5908ms)
+✔ literal metric_result selectors use the original plan closed values (3.0396ms)
+✔ schema hash has a fixed canonical test vector (4.2356ms)
+✔ schema hash ignores observation order and non-table line-ending style (1.7503ms)
+✔ schema hash changes when a structural table field changes (0.7542ms)
+✔ schema hash rejects ambiguous or open observations (1.0122ms)
+✔ read-only capture records assemble to the same canonical observation (1.4764ms)
+✔ capture records fail closed on non-boolean information_schema flags (0.2926ms)
+✔ inventory excludes Go test fixture DDL but still detects production DDL (29.7292ms)
+✔ current repository test ALTER fixtures do not claim runtime DDL (86.6927ms)
+✔ new ownership routing stays pending and cannot grant P0 capture (198.0555ms)
+ℹ tests 162
+ℹ suites 0
+ℹ pass 160
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 643.8017
+
+✖ failing tests:
+
+test at scripts\system-backup-contract-artifacts.test.mjs:2543:1
+✖ cross-owner request covers every pending owner decision and required D/C review without inventing approvals (3.3659ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'table:audit_events',
+      'table:chat_messages',
+      'table:chat_sessions',
+      'table:cost_records',
+      'table:enterprise_auth_settings',
+  -   'table:gateway_image_artifacts',
+  -   'table:gateway_image_jobs',
+  -   'table:gateway_key_budget_ledger',
+  -   'table:gateway_key_budget_reservations',
+  -   'table:gateway_keys',
+      'table:instance_gateway_token_aliases',
+  -   'table:llm_model_user_grants',
+      'table:llm_models',
+      'table:model_invocations',
+      'table:northbound_auth_challenges',
+      'table:northbound_caller_policies',
+  -   'table:northbound_owner_records',
+      'table:northbound_sessions',
+      'table:risk_hits',
+      'table:risk_rules',
+  -   'table:routing_classifier_settings',
+      'table:user_quotas',
+      'table:users'
+    ]
+  
+      at TestContext.<anonymous> (file:///D:/litiantian/project/github/cm-backup/ClawManager/scripts/system-backup-contract-artifacts.test.mjs:2551:12)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'table:audit_events', 'table:chat_messages', 'table:chat_sessions', 'table:cost_records', 'table:enterprise_auth_settings', 'table:instance_gateway_token_aliases', 'table:llm_models', 'table:model_invocations', 'table:northbound_auth_challenges', 'table:northbound_caller_policies', 'table:northbound_sessions', 'table:risk_hits', 'table:risk_rules', 'table:user_quotas', 'table:users' ],
+    expected: [ 'table:audit_events', 'table:chat_messages', 'table:chat_sessions', 'table:cost_records', 'table:enterprise_auth_settings', 'table:gateway_image_artifacts', 'table:gateway_image_jobs', 'table:gateway_key_budget_ledger', 'table:gateway_key_budget_reservations', 'table:gateway_keys', 'table:instance_gateway_token_aliases', 'table:llm_model_user_grants', 'table:llm_models', 'table:model_invocations', 'table:northbound_auth_challenges', 'table:northbound_caller_policies', 'table:northbound_owner_records', 'table:northbound_sessions', 'table:risk_hits', 'table:risk_rules', 'table:routing_classifier_settings', 'table:user_quotas', 'table:users' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-prometheus-rules.test.mjs:15:1
+✖ candidate Prometheus rules preserve every PromQL alert without claiming controller-state execution (13.634ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '# Generated from metrics-alert-registry.json. Do not edit this file directly.\r\n' +
+  +   '# DO NOT LOAD: no rule loader, missing-series execution, or PromQL fixture validation exists yet.\r\n' +
+  +   '# Source SHA-256: 59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade\r\n' +
+  +   'groups:\r\n' +
+  +   '  - name: clawmanager-system-backup\r\n' +
+  +   '    rules:\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_warning\r\n' +
+  +   '        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\r\n' +
+  +   '        for: 900s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "warning"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "backup-disabled-after-monitoring-armed.warning"\r\n' +
+  +   '          runbook: "system-backup/backup-disabled-after-monitoring-armed-warning"\r\n' +
+  +   '          profiles: "production"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: ""\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_critical\r\n' +
+  +   '        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\r\n' +
+  +   '        for: 86400s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "critical"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "backup-disabled-after-monitoring-armed.critical"\r\n' +
+  +   '          runbook: "system-backup/backup-disabled-after-monitoring-armed-critical"\r\n' +
+  +   '          profiles: "production"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: ""\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_production\r\n' +
+  +   '        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n' +
+  +   '        for: 0s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "critical"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "eligible-recovery-point-missing.production"\r\n' +
+  +   '          runbook: "system-backup/eligible-recovery-point-missing-production"\r\n' +
+  +   '          profiles: "production"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "an eligible usable recovery point exists for the current matrix"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_development\r\n' +
+  +   '        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n' +
+  +   '        for: 0s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "info"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "eligible-recovery-point-missing.development"\r\n' +
+  +   '          runbook: "system-backup/eligible-recovery-point-missing-development"\r\n' +
+  +   '          profiles: "development"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "an eligible usable recovery point exists for the current matrix"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_production\r\n' +
+  +   '        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n' +
+  +   '        for: 300s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "critical"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "eligible-recovery-point-rpo-exceeded.production"\r\n' +
+  +   '          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-production"\r\n' +
+  +   '          profiles: "production"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "task_type,task_purpose,matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_development\r\n' +
+  +   '        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n' +
+  +   '        for: 300s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "info"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "eligible-recovery-point-rpo-exceeded.development"\r\n' +
+  +   '          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-development"\r\n' +
+  +   '          profiles: "development"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "task_type,task_purpose,matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_production\r\n' +
+  +   '        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n' +
+  +   '        for: 300s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "critical"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "recovery-point-failure-domain-shortage.production"\r\n' +
+  +   '          runbook: "system-backup/recovery-point-failure-domain-shortage-production"\r\n' +
+  +   '          profiles: "production"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "every required failure domain has the configured minimum recovery points"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_development\r\n' +
+  +   '        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n' +
+  +   '        for: 300s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "info"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "recovery-point-failure-domain-shortage.development"\r\n' +
+  +   '          runbook: "system-backup/recovery-point-failure-domain-shortage-development"\r\n' +
+  +   '          profiles: "development"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "every required failure domain has the configured minimum recovery points"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_promotion_baseline_missing_production\r\n' +
+  +   '        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n' +
+  +   '        for: 0s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "critical"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "promotion-baseline-missing.production"\r\n' +
+  +   '          runbook: "system-backup/promotion-baseline-missing-production"\r\n' +
+  +   '          profiles: "production"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "an active promotion baseline exists for the current matrix"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_promotion_baseline_missing_development\r\n' +
+  +   '        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n' +
+  +   '        for: 0s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "info"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "promotion-baseline-missing.development"\r\n' +
+  +   '          runbook: "system-backup/promotion-baseline-missing-development"\r\n' +
+  +   '          profiles: "development"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix"\r\n' +
+  +   '          missing_series: "firing"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "an active promotion baseline exists for the current matrix"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_promotion_baseline_degraded\r\n' +
+  +   '        expr: "clawmanager_system_backup_promotion_health{health_state=~\\"degraded|stale|unknown\\"} == 1"\r\n' +
+  +   '        for: 0s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "critical"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "promotion-baseline-degraded"\r\n' +
+  +   '          runbook: "system-backup/promotion-baseline-degraded"\r\n' +
+  +   '          profiles: "production,development"\r\n' +
+  +   '          threshold_source: "current_system_config"\r\n' +
+  +   '          dedupe_key: "matrix,health_state"\r\n' +
+  +   '          missing_series: "unknown"\r\n' +
+  +   '          counter_reset: "not_applicable"\r\n' +
+  +   '          recovery_condition: "all seven promotion dependency groups derive healthy"\r\n' +
+  +   '      - alert: ClawManagerSystemBackup_task_queue_age_warning_production\r\n' +
+  +   '        expr: "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5"\r\n' +
+  +   '        for: 300s\r\n' +
+  +   '        labels:\r\n' +
+  +   '          severity: "warning"\r\n' +
+  +   '        annotations:\r\n' +
+  +   '          contract_rule_id: "task-que'... 61282 more characters
+  - '# Generated from metrics-alert-registry.json. Do not edit this file directly.\n' +
+  -   '# DO NOT LOAD: no rule loader, missing-series execution, or PromQL fixture validation exists yet.\n' +
+  -   '# Source SHA-256: 32dc4d89018220e3d43f280cc281b3c1d6d75d60cf6af324b1b35c29b4288c8a\n' +
+  -   'groups:\n' +
+  -   '  - name: clawmanager-system-backup\n' +
+  -   '    rules:\n' +
+  -   '      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_warning\n' +
+  -   '        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\n' +
+  -   '        for: 900s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "warning"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "backup-disabled-after-monitoring-armed.warning"\n' +
+  -   '          runbook: "system-backup/backup-disabled-after-monitoring-armed-warning"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: ""\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\n' +
+  -   '      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_critical\n' +
+  -   '        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\n' +
+  -   '        for: 86400s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "critical"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "backup-disabled-after-monitoring-armed.critical"\n' +
+  -   '          runbook: "system-backup/backup-disabled-after-monitoring-armed-critical"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: ""\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\n' +
+  -   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_production\n' +
+  -   '        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n' +
+  -   '        for: 0s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "critical"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "eligible-recovery-point-missing.production"\n' +
+  -   '          runbook: "system-backup/eligible-recovery-point-missing-production"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "an eligible usable recovery point exists for the current matrix"\n' +
+  -   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_development\n' +
+  -   '        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n' +
+  -   '        for: 0s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "info"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "eligible-recovery-point-missing.development"\n' +
+  -   '          runbook: "system-backup/eligible-recovery-point-missing-development"\n' +
+  -   '          profiles: "development"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "an eligible usable recovery point exists for the current matrix"\n' +
+  -   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_production\n' +
+  -   '        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n' +
+  -   '        for: 300s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "critical"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "eligible-recovery-point-rpo-exceeded.production"\n' +
+  -   '          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-production"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "task_type,task_purpose,matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\n' +
+  -   '      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_development\n' +
+  -   '        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n' +
+  -   '        for: 300s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "info"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "eligible-recovery-point-rpo-exceeded.development"\n' +
+  -   '          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-development"\n' +
+  -   '          profiles: "development"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "task_type,task_purpose,matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\n' +
+  -   '      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_production\n' +
+  -   '        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n' +
+  -   '        for: 300s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "critical"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "recovery-point-failure-domain-shortage.production"\n' +
+  -   '          runbook: "system-backup/recovery-point-failure-domain-shortage-production"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "every required failure domain has the configured minimum recovery points"\n' +
+  -   '      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_development\n' +
+  -   '        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n' +
+  -   '        for: 300s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "info"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "recovery-point-failure-domain-shortage.development"\n' +
+  -   '          runbook: "system-backup/recovery-point-failure-domain-shortage-development"\n' +
+  -   '          profiles: "development"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "every required failure domain has the configured minimum recovery points"\n' +
+  -   '      - alert: ClawManagerSystemBackup_promotion_baseline_missing_production\n' +
+  -   '        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n' +
+  -   '        for: 0s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "critical"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "promotion-baseline-missing.production"\n' +
+  -   '          runbook: "system-backup/promotion-baseline-missing-production"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "an active promotion baseline exists for the current matrix"\n' +
+  -   '      - alert: ClawManagerSystemBackup_promotion_baseline_missing_development\n' +
+  -   '        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n' +
+  -   '        for: 0s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "info"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "promotion-baseline-missing.development"\n' +
+  -   '          runbook: "system-backup/promotion-baseline-missing-development"\n' +
+  -   '          profiles: "development"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix"\n' +
+  -   '          missing_series: "firing"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "an active promotion baseline exists for the current matrix"\n' +
+  -   '      - alert: ClawManagerSystemBackup_promotion_baseline_degraded\n' +
+  -   '        expr: "clawmanager_system_backup_promotion_health{health_state=~\\"degraded|stale|unknown\\"} == 1"\n' +
+  -   '        for: 0s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "critical"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "promotion-baseline-degraded"\n' +
+  -   '          runbook: "system-backup/promotion-baseline-degraded"\n' +
+  -   '          profiles: "production,development"\n' +
+  -   '          threshold_source: "current_system_config"\n' +
+  -   '          dedupe_key: "matrix,health_state"\n' +
+  -   '          missing_series: "unknown"\n' +
+  -   '          counter_reset: "not_applicable"\n' +
+  -   '          recovery_condition: "all seven promotion dependency groups derive healthy"\n' +
+  -   '      - alert: ClawManagerSystemBackup_task_queue_age_warning_production\n' +
+  -   '        expr: "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5"\n' +
+  -   '        for: 300s\n' +
+  -   '        labels:\n' +
+  -   '          severity: "warning"\n' +
+  -   '        annotations:\n' +
+  -   '          contract_rule_id: "task-queue-age-warning.production"\n' +
+  -   '          runbook: "system-backup/task-queue-age-warning-production"\n' +
+  -   '          profiles: "production"\n' +
+  -   '          threshold_source: "immutabl'... 59960 more characters
+  
+      at TestContext.<anonymous> (file:///D:/litiantian/project/github/cm-backup/ClawManager/scripts/system-backup-prometheus-rules.test.mjs:18:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '# Generated from metrics-alert-registry.json. Do not edit this file directly.\r\n# DO NOT LOAD: no rule loader, missing-series execution, or PromQL fixture validation exists yet.\r\n# Source SHA-256: 59755b65c384d612c0bd96b04e5149e84da6c096945a5f4d6e6fa35d929feade\r\ngroups:\r\n  - name: clawmanager-system-backup\r\n    rules:\r\n      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_warning\r\n        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\r\n        for: 900s\r\n        labels:\r\n          severity: "warning"\r\n        annotations:\r\n          contract_rule_id: "backup-disabled-after-monitoring-armed.warning"\r\n          runbook: "system-backup/backup-disabled-after-monitoring-armed-warning"\r\n          profiles: "production"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: ""\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\r\n      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_critical\r\n        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\r\n        for: 86400s\r\n        labels:\r\n          severity: "critical"\r\n        annotations:\r\n          contract_rule_id: "backup-disabled-after-monitoring-armed.critical"\r\n          runbook: "system-backup/backup-disabled-after-monitoring-armed-critical"\r\n          profiles: "production"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: ""\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\r\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_production\r\n        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n        for: 0s\r\n        labels:\r\n          severity: "critical"\r\n        annotations:\r\n          contract_rule_id: "eligible-recovery-point-missing.production"\r\n          runbook: "system-backup/eligible-recovery-point-missing-production"\r\n          profiles: "production"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "an eligible usable recovery point exists for the current matrix"\r\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_development\r\n        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n        for: 0s\r\n        labels:\r\n          severity: "info"\r\n        annotations:\r\n          contract_rule_id: "eligible-recovery-point-missing.development"\r\n          runbook: "system-backup/eligible-recovery-point-missing-development"\r\n          profiles: "development"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "an eligible usable recovery point exists for the current matrix"\r\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_production\r\n        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n        for: 300s\r\n        labels:\r\n          severity: "critical"\r\n        annotations:\r\n          contract_rule_id: "eligible-recovery-point-rpo-exceeded.production"\r\n          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-production"\r\n          profiles: "production"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "task_type,task_purpose,matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\r\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_development\r\n        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n        for: 300s\r\n        labels:\r\n          severity: "info"\r\n        annotations:\r\n          contract_rule_id: "eligible-recovery-point-rpo-exceeded.development"\r\n          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-development"\r\n          profiles: "development"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "task_type,task_purpose,matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\r\n      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_production\r\n        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n        for: 300s\r\n        labels:\r\n          severity: "critical"\r\n        annotations:\r\n          contract_rule_id: "recovery-point-failure-domain-shortage.production"\r\n          runbook: "system-backup/recovery-point-failure-domain-shortage-production"\r\n          profiles: "production"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "every required failure domain has the configured minimum recovery points"\r\n      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_development\r\n        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\r\n        for: 300s\r\n        labels:\r\n          severity: "info"\r\n        annotations:\r\n          contract_rule_id: "recovery-point-failure-domain-shortage.development"\r\n          runbook: "system-backup/recovery-point-failure-domain-shortage-development"\r\n          profiles: "development"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "every required failure domain has the configured minimum recovery points"\r\n      - alert: ClawManagerSystemBackup_promotion_baseline_missing_production\r\n        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n        for: 0s\r\n        labels:\r\n          severity: "critical"\r\n        annotations:\r\n          contract_rule_id: "promotion-baseline-missing.production"\r\n          runbook: "system-backup/promotion-baseline-missing-production"\r\n          profiles: "production"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "an active promotion baseline exists for the current matrix"\r\n      - alert: ClawManagerSystemBackup_promotion_baseline_missing_development\r\n        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\r\n        for: 0s\r\n        labels:\r\n          severity: "info"\r\n        annotations:\r\n          contract_rule_id: "promotion-baseline-missing.development"\r\n          runbook: "system-backup/promotion-baseline-missing-development"\r\n          profiles: "development"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix"\r\n          missing_series: "firing"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "an active promotion baseline exists for the current matrix"\r\n      - alert: ClawManagerSystemBackup_promotion_baseline_degraded\r\n        expr: "clawmanager_system_backup_promotion_health{health_state=~\\"degraded|stale|unknown\\"} == 1"\r\n        for: 0s\r\n        labels:\r\n          severity: "critical"\r\n        annotations:\r\n          contract_rule_id: "promotion-baseline-degraded"\r\n          runbook: "system-backup/promotion-baseline-degraded"\r\n          profiles: "production,development"\r\n          threshold_source: "current_system_config"\r\n          dedupe_key: "matrix,health_state"\r\n          missing_series: "unknown"\r\n          counter_reset: "not_applicable"\r\n          recovery_condition: "all seven promotion dependency groups derive healthy"\r\n      - alert: ClawManagerSystemBackup_task_queue_age_warning_production\r\n        expr: "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5"\r\n        for: 300s\r\n        labels:\r\n          severity: "warning"\r\n        annotations:\r\n          contract_rule_id: "task-que'... 61282 more characters,
+    expected: '# Generated from metrics-alert-registry.json. Do not edit this file directly.\n# DO NOT LOAD: no rule loader, missing-series execution, or PromQL fixture validation exists yet.\n# Source SHA-256: 32dc4d89018220e3d43f280cc281b3c1d6d75d60cf6af324b1b35c29b4288c8a\ngroups:\n  - name: clawmanager-system-backup\n    rules:\n      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_warning\n        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\n        for: 900s\n        labels:\n          severity: "warning"\n        annotations:\n          contract_rule_id: "backup-disabled-after-monitoring-armed.warning"\n          runbook: "system-backup/backup-disabled-after-monitoring-armed-warning"\n          profiles: "production"\n          threshold_source: "current_system_config"\n          dedupe_key: ""\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\n      - alert: ClawManagerSystemBackup_backup_disabled_after_monitoring_armed_critical\n        expr: "clawmanager_system_backup_backup_monitoring_armed == 1 and clawmanager_system_backup_effective_enabled == 0 and on() (clawmanager_system_backup_alert_profile_info{alert_profile=\\"production\\"} == 1)"\n        for: 86400s\n        labels:\n          severity: "critical"\n        annotations:\n          contract_rule_id: "backup-disabled-after-monitoring-armed.critical"\n          runbook: "system-backup/backup-disabled-after-monitoring-armed-critical"\n          profiles: "production"\n          threshold_source: "current_system_config"\n          dedupe_key: ""\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "effective_enabled returns to 1; monitoring armed is irreversible and kill switch does not suppress this alert"\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_production\n        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n        for: 0s\n        labels:\n          severity: "critical"\n        annotations:\n          contract_rule_id: "eligible-recovery-point-missing.production"\n          runbook: "system-backup/eligible-recovery-point-missing-production"\n          profiles: "production"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "an eligible usable recovery point exists for the current matrix"\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_missing_development\n        expr: "clawmanager_system_backup_eligible_usable_recovery_points == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n        for: 0s\n        labels:\n          severity: "info"\n        annotations:\n          contract_rule_id: "eligible-recovery-point-missing.development"\n          runbook: "system-backup/eligible-recovery-point-missing-development"\n          profiles: "development"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "an eligible usable recovery point exists for the current matrix"\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_production\n        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n        for: 300s\n        labels:\n          severity: "critical"\n        annotations:\n          contract_rule_id: "eligible-recovery-point-rpo-exceeded.production"\n          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-production"\n          profiles: "production"\n          threshold_source: "current_system_config"\n          dedupe_key: "task_type,task_purpose,matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\n      - alert: ClawManagerSystemBackup_eligible_recovery_point_rpo_exceeded_development\n        expr: "clawmanager_system_backup_last_eligible_usable_timestamp_seconds > 0 and (time() - clawmanager_system_backup_last_eligible_usable_timestamp_seconds > scalar(clawmanager_system_backup_configured_recovery_point_objective_seconds)) and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n        for: 300s\n        labels:\n          severity: "info"\n        annotations:\n          contract_rule_id: "eligible-recovery-point-rpo-exceeded.development"\n          runbook: "system-backup/eligible-recovery-point-rpo-exceeded-development"\n          profiles: "development"\n          threshold_source: "current_system_config"\n          dedupe_key: "task_type,task_purpose,matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "the latest eligible usable recovery point is within the configured RPO"\n      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_production\n        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n        for: 300s\n        labels:\n          severity: "critical"\n        annotations:\n          contract_rule_id: "recovery-point-failure-domain-shortage.production"\n          runbook: "system-backup/recovery-point-failure-domain-shortage-production"\n          profiles: "production"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "every required failure domain has the configured minimum recovery points"\n      - alert: ClawManagerSystemBackup_recovery_point_failure_domain_shortage_development\n        expr: "clawmanager_system_backup_recovery_point_shortage_domains > 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1)"\n        for: 300s\n        labels:\n          severity: "info"\n        annotations:\n          contract_rule_id: "recovery-point-failure-domain-shortage.development"\n          runbook: "system-backup/recovery-point-failure-domain-shortage-development"\n          profiles: "development"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "every required failure domain has the configured minimum recovery points"\n      - alert: ClawManagerSystemBackup_promotion_baseline_missing_production\n        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n        for: 0s\n        labels:\n          severity: "critical"\n        annotations:\n          contract_rule_id: "promotion-baseline-missing.production"\n          runbook: "system-backup/promotion-baseline-missing-production"\n          profiles: "production"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "an active promotion baseline exists for the current matrix"\n      - alert: ClawManagerSystemBackup_promotion_baseline_missing_development\n        expr: "clawmanager_system_backup_promotion_baseline_present == 0 and on() (clawmanager_system_backup_backup_monitoring_armed == 1) and on() (time() >= clawmanager_system_backup_recovery_alert_deadline_timestamp_seconds)"\n        for: 0s\n        labels:\n          severity: "info"\n        annotations:\n          contract_rule_id: "promotion-baseline-missing.development"\n          runbook: "system-backup/promotion-baseline-missing-development"\n          profiles: "development"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix"\n          missing_series: "firing"\n          counter_reset: "not_applicable"\n          recovery_condition: "an active promotion baseline exists for the current matrix"\n      - alert: ClawManagerSystemBackup_promotion_baseline_degraded\n        expr: "clawmanager_system_backup_promotion_health{health_state=~\\"degraded|stale|unknown\\"} == 1"\n        for: 0s\n        labels:\n          severity: "critical"\n        annotations:\n          contract_rule_id: "promotion-baseline-degraded"\n          runbook: "system-backup/promotion-baseline-degraded"\n          profiles: "production,development"\n          threshold_source: "current_system_config"\n          dedupe_key: "matrix,health_state"\n          missing_series: "unknown"\n          counter_reset: "not_applicable"\n          recovery_condition: "all seven promotion dependency groups derive healthy"\n      - alert: ClawManagerSystemBackup_task_queue_age_warning_production\n        expr: "clawmanager_system_backup_task_queue_deadline_utilization_ratio >= 0.5"\n        for: 300s\n        labels:\n          severity: "warning"\n        annotations:\n          contract_rule_id: "task-queue-age-warning.production"\n          runbook: "system-backup/task-queue-age-warning-production"\n          profiles: "production"\n          threshold_source: "immutabl'... 59960 more characters,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

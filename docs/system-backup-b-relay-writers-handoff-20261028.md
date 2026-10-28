@@ -1,5 +1,7 @@
 # B：接入 A relay 认证与具体 writer 构造
 
+后续 schema 清单 CI 修复见 [补登与严格门禁记录](system-backup-schema-intake-20261028.md)：已排除测试 SQL 误计，按源码补 22 项责任路由草案并同步 draft 生成物/策略提交请求，普通本地检查与前端构建通过。下文最后一节为修复前 CI 的历史证据；54 项策略、跨域审批与现场证据仍未放行，新 head CI 结果另行核对。
+
 ## 来源与范围
 
 本轮工作分支以 `08d15abf443511376bf1a0c9c9593caea8feef5c` 为父版本，整合实际最新 `backup@8ef5fa7fd4df45f6306e910705db01f589266ba7`。新增的 A `relay_peer.go/relay_dispatch.go` 及其测试原样保留；共享 `systembackupdispatch` ABI 没有复制或修改。准确源码 pin、命令、日志与退出码在 `docs/evidence/b-relay-writers-20261028/`。不沿用旧 `backup@d3c5715a` 宣布本轮集成成功。

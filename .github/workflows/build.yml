@@ -31,7 +31,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Check system backup schema inventory
-        run: node ../scripts/system-backup-schema-inventory.mjs --check
+        run: |
+          node --test ../scripts/system-backup-schema-inventory.test.mjs
+          node ../scripts/system-backup-schema-inventory.mjs --check
 
       - name: Check system backup draft contracts
         run: node ../scripts/system-backup-contract-check.mjs --check

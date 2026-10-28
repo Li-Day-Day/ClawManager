@@ -212,6 +212,19 @@ API code与failure category使用冻结映射表：请求格式/范围、proof s
 
 北向认证挑战、会话和调用者策略归 A 的 `users`；北向操作当前只承载实例创建、重启、重置，归 B 的 `instances`；运行时升级项和审计随 `runtime_rollouts` 归 B。北向平台管理配置同时包含认证参数和实例资源参数，整表及其专属变更审计归 D 的 `resources`，A/B 对本域字段和恢复后校验交叉评审；关联 `user_id`、`team_id` 或 `instance_id` 不改变表的唯一 owner。上述八表的 classification、备份/恢复策略、normalization 和 verifier 仍须在 P0-0a 同版本 registry 中逐项冻结，尤其不得未经登记就恢复有效会话或继续执行未完成的操作、升级任务。
 
+#### 5.1.1 新增对象责任路由草案（2026-10-28，尚未完成策略评审）
+
+以下仅根据 migration 与实际业务读写位置，为漏登记对象指定对应业务域的评审接收方；不代表 owner 已确认策略或跨域审批完成。生成 registry 中这些对象保持 `pending_owner_review`，classification/backup/restore/normalizer/verifier 为空，不新增 approved reviewer，不扩大任何 collector allowlist。各 owner 应核对归属及跨域依赖后另行提交策略。逐表源码依据与待确认项见 `docs/system-backup-schema-intake-20261028.md`。
+
+| category | owner | 表 |
+| --- | --- | --- |
+| users | A | `northbound_owner_records` |
+| ai_gateway | A | `gateway_keys`、`gateway_key_budget_reservations`、`gateway_key_budget_ledger`、`llm_model_user_grants`、`routing_classifier_settings`、`gateway_image_artifacts`、`gateway_image_jobs` |
+| instances | B | `gateway_runtime_tasks`、`gateway_runtime_task_models`、`gateway_runtime_protocols`、`gateway_runtime_maintenance`、`gateway_runtime_upgrades`、`gateway_runtime_upgrade_stops`、`instance_lifecycle_scheduler`、`instance_lifecycle_manual_guards`、`instance_lifecycle_batches`、`instance_lifecycle_batch_items`、`instance_lifecycle_batch_attempts`、`runtime_rollout_checkpoints`、`instance_workspace_write_intents` |
+| teams | C | `team_workspace_file_audits` |
+
+`gateway_image_*` 是 AI Gateway 图像生成的结果/幂等/结算记录，不是系统镜像，暂路由至 A 的 `ai_gateway`，含加密材料与模型费用的策略需 A/D 联核。`northbound_owner_records` 是按账号 owner 聚合的用量/成长/任务事实，实例只是可选关联，暂路由 A 的 `users`，由 B/C 交叉核对实例/团队事实与历史保留；不得仅因表名含 northbound 或 instance_id 就视为实例操作表。仍有异议的归属必须在 pending 状态解决，不能以此草案启动真实备份或恢复。
+
 ### 5.2 覆盖规则
 
 - registry `object_type=table|view|trigger|routine|mysql_event`，`data_classification=public|internal|confidential|secret`，`backup_strategy=mysql_dump|metadata_only|exclude`，`restore_strategy=restore|normalize|reference_only|exclude`。`excluded_reason=platform_bootstrap|derived_runtime_state|external_unmanaged|unsupported_p0|sensitive_never_backup`，仅当 strategy 为 exclude 时必填；其他自由文本只作不超过1024 UTF-8字节的redacted explanation，不参与门禁。

@@ -1,0 +1,128 @@
+✔ capacity source covers every registered backup/restore control table including base backup tasks (143.5395ms)
+✖ capacity template remains blank and validates no fabricated identities (109.5943ms)
+✔ collector pins database config, least privilege table list, node and distinct read-only data mount (99.2656ms)
+✔ unsafe source, root UID, storage reuse and unknown inputs reject (953.4812ms)
+✔ complete mocked read-only probe passes D scope without mutation or credential output (169.2321ms)
+✔ runtime capacity rejects submillisecond stale and future reports at the original SQL boundary (319.6306ms)
+✔ runtime capacity preserves valid int64 wire bytes above JS safe integer (168.8751ms)
+✔ namespace, Pod and database identity mismatches stop dependent probing (489.6006ms)
+✔ RWOP, nonshared reports, storage alias, unsafe mount and container drift block (1803.4978ms)
+✔ stale report, future clock, inaccessible report, source denial, restart and schema drift cannot pass (1126.2663ms)
+✔ missing fresh baseline and missing collector remain explicitly blocked; mismatched baseline rejects before calls (233.1518ms)
+✖ empty official template and missing owner inputs cannot render (120.0428ms)
+✔ rendered bytes match executable digest pins and mount every runtime path (83.7162ms)
+✔ registry and nonce projections preserve required content-addressed paths (56.3975ms)
+✔ wrong target, floating image, wrong paths, missing registries and shared privilege identities fail (748.0868ms)
+✔ every existing D Admin object has matching nested wire types (31.0097ms)
+✔ Go nullable, primitive, numeric and nested type changes fail (29.7217ms)
+✔ TS open enums, nullability, optional fields and nested collections fail (42.0876ms)
+✔ new objects, wrong contract version and missing referenced schema fail (24.8833ms)
+✔ all four profiles and production site use database-only init (36.3743ms)
+✔ regeneration preserves surrounding workload documents and is idempotent (0.2876ms)
+✔ drift, second init target, application SQL and wrong database are rejected (7.4518ms)
+✔ core initializes the embedded ledger before serving and keeps seeds in migrations (1.7893ms)
+✔ eight policies match actual models, canonical decisions and generated registry without runtime approval (13.299ms)
+✔ reject missing table (2.9806ms)
+✔ reject duplicate table (2.0554ms)
+✔ reject undeclared field (4.691ms)
+✔ reject missing field (6.2711ms)
+✔ reject wrong user mapping (5.8343ms)
+✔ reject missing instance dependency (2.2626ms)
+✔ reject replay pending job (5.0423ms)
+✔ reject rewrite successful job (5.8588ms)
+✔ reject omit object mapping (2.4052ms)
+✔ reject omit workspace mapping (1.8994ms)
+✔ reject invent approval (5.1308ms)
+✔ reject self-approved frozen policy (5.3726ms)
+✔ reject missing B review (2.1432ms)
+✔ reject exclude skill payload (2.3381ms)
+✔ reject generated registry drift (5.9143ms)
+✔ reject omit query-side writer (7.5999ms)
+✔ reject claim writer protection (6.4982ms)
+✔ reject unknown policy property (2.0996ms)
+✔ reject unknown model property (4.1378ms)
+✔ reject omit external security scanner (6.4093ms)
+✔ reject omit command completion writer (5.0021ms)
+✔ reject omit workspace deletion writer (4.7799ms)
+✔ a new model column requires a policy revision even if the JSON is unchanged (6.1922ms)
+✔ a new runnable job state requires a normalization revision (3.0818ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 46
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5822.1353
+
+✖ failing tests:
+
+test at scripts\system-backup-d-capacity-deployment.test.mjs:65:1
+✖ capacity template remains blank and validates no fabricated identities (109.5943ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      collector_db_user: '',
+      collector_uid: 0,
+      context: '',
+      credentials_secret: '',
+  ...
+      image: '',
+  +   migration_catalog_sha256: '0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe',
+  -   migration_catalog_sha256: 'dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441',
+      mysql_container: '',
+      mysql_data_pvc: '',
+      mysql_data_subpath: '',
+      mysql_node: '',
+      mysql_pod: '',
+  
+      at TestContext.<anonymous> (file:///D:/litiantian/project/github/cm-backup/ClawManager/scripts/system-backup-d-capacity-deployment.test.mjs:68:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { namespace: 'clawmanager-zhanghui08-system', namespace_uid: '', context: '', image: '', migration_catalog_sha256: '0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe', mysql_pod: '', mysql_pod_uid: '', mysql_container: '', mysql_node: '', mysql_data_pvc: '', mysql_data_subpath: '', data_directory: '/var/lib/mysql', server_uuid: '', database: 'clawmanager', collector_db_user: '', collector_uid: 0, report_gid: 65532, credentials_secret: '', report_pvc: '' },
+    expected: { namespace: 'clawmanager-zhanghui08-system', namespace_uid: '', context: '', image: '', migration_catalog_sha256: 'dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441', mysql_pod: '', mysql_pod_uid: '', mysql_container: '', mysql_node: '', mysql_data_pvc: '', mysql_data_subpath: '', data_directory: '/var/lib/mysql', server_uuid: '', database: 'clawmanager', collector_db_user: '', collector_uid: 0, report_gid: 65532, credentials_secret: '', report_pvc: '' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\system-backup-d-deployment.test.mjs:27:1
+✖ empty official template and missing owner inputs cannot render (120.0428ms)
+  AssertionError [ERR_ASSERTION]: template drift
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      bindings: {
+        bootstrap_credentials_secret: '',
+        bootstrap_data_configmap: '',
+        ca_configmap: '',
+  ...
+      image: '',
+  +   migration_catalog_sha256: '0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe',
+  -   migration_catalog_sha256: 'dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441',
+      namespace: 'clawmanager-zhanghui08-system',
+      nonce_items: [],
+      registry_items: [],
+      runtime: {
+        capacity_report_file: '/run/system-backup/capacity/report.json',
+  
+      at TestContext.<anonymous> (file:///D:/litiantian/project/github/cm-backup/ClawManager/scripts/system-backup-d-deployment.test.mjs:32:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { namespace: 'clawmanager-zhanghui08-system', image: '', migration_catalog_sha256: '0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe', runtime: { expected_server_uuid: '', expected_database: '', installation_id: '', config_version: 1, registry_directory: '/run/system-backup/registries', nonce_directory: '/run/system-backup/nonce', capacity_report_file: '/run/system-backup/capacity/report.json', provider_registry_version: '', provider_registry_sha256: '', strong_registry_version: '', strong_registry_sha256: '', rbac_registry_version: '', rbac_registry_sha256: '', provider_key_id: '', provider_key_version: '', strong_key_id: '', strong_key_version: '', transit_endpoint: '', transit_ca_file: '/run/system-backup/ca/transit.crt', provider_transit_key: '', strong_transit_key: '', provider_token_file: '/run/system-backup/credentials/provider-token', strong_token_file: '/run/system-backup/credentials/strong-token', jwt_secret_file: '/run/system-backup/credentials/jwt', totp_encryption_key_file: '/run/system-backup/credentials/totp-key', s3_endpoint: '', s3_bucket: '', s3_prefix: '', s3_identity_hash: '', s3_ca_file: '/run/system-backup/ca/s3.crt', s3_access_key_file: '/run/system-backup/credentials/s3-access-key', s3_secret_key_file: '/run/system-backup/credentials/s3-secret-key' }, bootstrap: { schema_version: 'system-backup-bootstrap-deployment.v1', installation_id: '', expected_server_uuid: '', expected_database: '', config_file: '/run/system-backup/bootstrap-data/config.json', config_sha256: '', grant_file: '/run/system-backup/bootstrap-data/grant.json', grant_sha256: '', registry_directory: '/run/system-backup/registries', nonce_directory: '/run/system-backup/nonce', capacity_report_file: '/run/system-backup/capacity/report.json', dsn_file: '/run/system-backup/bootstrap-credentials/dsn' }, bindings: { runtime_credentials_secret: '', bootstrap_credentials_secret: '', migration_credentials_secret: '', nonce_secret: '', tls_secret: '', ca_configmap: '', registries_configmap: '', bootstrap_data_configmap: '', capacity_pvc: '' }, registry_items: [], nonce_items: [] },
+    expected: { namespace: 'clawmanager-zhanghui08-system', image: '', migration_catalog_sha256: 'dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441', runtime: { expected_server_uuid: '', expected_database: '', installation_id: '', config_version: 1, registry_directory: '/run/system-backup/registries', nonce_directory: '/run/system-backup/nonce', capacity_report_file: '/run/system-backup/capacity/report.json', provider_registry_version: '', provider_registry_sha256: '', strong_registry_version: '', strong_registry_sha256: '', rbac_registry_version: '', rbac_registry_sha256: '', provider_key_id: '', provider_key_version: '', strong_key_id: '', strong_key_version: '', transit_endpoint: '', transit_ca_file: '/run/system-backup/ca/transit.crt', provider_transit_key: '', strong_transit_key: '', provider_token_file: '/run/system-backup/credentials/provider-token', strong_token_file: '/run/system-backup/credentials/strong-token', jwt_secret_file: '/run/system-backup/credentials/jwt', totp_encryption_key_file: '/run/system-backup/credentials/totp-key', s3_endpoint: '', s3_bucket: '', s3_prefix: '', s3_identity_hash: '', s3_ca_file: '/run/system-backup/ca/s3.crt', s3_access_key_file: '/run/system-backup/credentials/s3-access-key', s3_secret_key_file: '/run/system-backup/credentials/s3-secret-key' }, bootstrap: { schema_version: 'system-backup-bootstrap-deployment.v1', installation_id: '', expected_server_uuid: '', expected_database: '', config_file: '/run/system-backup/bootstrap-data/config.json', config_sha256: '', grant_file: '/run/system-backup/bootstrap-data/grant.json', grant_sha256: '', registry_directory: '/run/system-backup/registries', nonce_directory: '/run/system-backup/nonce', capacity_report_file: '/run/system-backup/capacity/report.json', dsn_file: '/run/system-backup/bootstrap-credentials/dsn' }, bindings: { runtime_credentials_secret: '', bootstrap_credentials_secret: '', migration_credentials_secret: '', nonce_secret: '', tls_secret: '', ca_configmap: '', registries_configmap: '', bootstrap_data_configmap: '', capacity_pvc: '' }, registry_items: [], nonce_items: [] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

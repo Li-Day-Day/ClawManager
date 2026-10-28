@@ -3,11 +3,11 @@
   "plan_version": "system-backup-plan.v12",
   "plan_source": "docs/system-backup-restore-division-plan.md",
   "summary": {
-    "plan_business_tables": 99,
+    "plan_business_tables": 121,
     "plan_control_tables": 32,
     "plan_control_without_inventory": 3,
-    "inventoried_objects": 100,
-    "migration_objects": 99,
+    "inventoried_objects": 122,
+    "migration_objects": 121,
     "without_migration": 0,
     "unassigned": 0,
     "repository_runtime_create": 0,
@@ -159,6 +159,149 @@
     },
     {
       "object_type": "table",
+      "name": "gateway_image_artifacts",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/072_add_gateway_image_artifacts.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_image_jobs",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/073_add_gateway_image_jobs.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_key_budget_ledger",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/052_add_gateway_key_budget_and_attribution.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_key_budget_reservations",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/052_add_gateway_key_budget_and_attribution.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_keys",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/050_add_gateway_keys.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_runtime_maintenance",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/065_add_runtime_maintenance.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_runtime_protocols",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/064_add_runtime_protocol.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_runtime_task_models",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/063_add_gateway_runtime_tasks.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_runtime_tasks",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/063_add_gateway_runtime_tasks.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_runtime_upgrade_stops",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/067_add_runtime_upgrade_stop.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "gateway_runtime_upgrades",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/066_add_runtime_upgrade_fence.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
       "name": "instance_agents",
       "owner": "B",
       "category": "instances",
@@ -250,6 +393,71 @@
     },
     {
       "object_type": "table",
+      "name": "instance_lifecycle_batch_attempts",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/065_add_lifecycle_batch_retry_policy.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "instance_lifecycle_batch_items",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/064_add_instance_lifecycle_batches.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "instance_lifecycle_batches",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/064_add_instance_lifecycle_batches.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "instance_lifecycle_manual_guards",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/064_add_instance_lifecycle_batches.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "instance_lifecycle_scheduler",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/064_add_instance_lifecycle_batches.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
       "name": "instance_runtime_bindings",
       "owner": "B",
       "category": "instances",
@@ -302,11 +510,37 @@
     },
     {
       "object_type": "table",
+      "name": "instance_workspace_write_intents",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/068_add_workspace_write_intents.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
       "name": "instances",
       "owner": "B",
       "category": "instances",
       "migration_sources": [
         "backend/internal/db/migrations/001_init_schema.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "llm_model_user_grants",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/062_add_model_user_access.sql"
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
@@ -385,6 +619,19 @@
       "category": "instances",
       "migration_sources": [
         "backend/internal/db/migrations/045_add_northbound_api.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "northbound_owner_records",
+      "owner": "A",
+      "category": "users",
+      "migration_sources": [
+        "backend/internal/db/migrations/067_add_northbound_owner_records.sql"
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
@@ -523,11 +770,37 @@
     },
     {
       "object_type": "table",
+      "name": "routing_classifier_settings",
+      "owner": "A",
+      "category": "ai_gateway",
+      "migration_sources": [
+        "backend/internal/db/migrations/060_add_routing_classifier_settings.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
       "name": "runtime_pods",
       "owner": "B",
       "category": "instances",
       "migration_sources": [
         "backend/internal/db/migrations/023_add_runtime_pool_v2.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "runtime_rollout_checkpoints",
+      "owner": "B",
+      "category": "instances",
+      "migration_sources": [
+        "backend/internal/db/migrations/068_add_runtime_rollout_checkpoints.sql"
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],
@@ -1268,6 +1541,19 @@
       "category": "teams",
       "migration_sources": [
         "backend/internal/db/migrations/037_add_team_workflow_ledger.sql"
+      ],
+      "repository_create_sources": [],
+      "repository_alter_sources": [],
+      "deployment_bootstrap_create_sources": [],
+      "source_exception": null
+    },
+    {
+      "object_type": "table",
+      "name": "team_workspace_file_audits",
+      "owner": "C",
+      "category": "teams",
+      "migration_sources": [
+        "backend/internal/db/migrations/072_add_team_workspace_file_audits.sql"
       ],
       "repository_create_sources": [],
       "repository_alter_sources": [],

@@ -68,7 +68,9 @@ func (businessReportDeliveryProof) VerifyCapture(context.Context, systembackupbu
 
 func businessReportDeliveryBody(t *testing.T) []byte {
 	t.Helper()
-	raw, err := os.ReadFile("../systembackupbusinessa/testdata/schema-registry.json")
+	// Positive delivery fixture uses the historical supported 15-table A scope;
+	// current expanded canonical intake remains pending and cannot be captured.
+	raw, err := os.ReadFile("../systembackupbusinessa/testdata/schema-registry-historical-15.json")
 	if err != nil {
 		t.Fatal(err)
 	}

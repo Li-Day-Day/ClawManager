@@ -14,7 +14,9 @@ import (
 
 func testLab(t *testing.T) *lab {
 	t.Helper()
-	raw, err := os.ReadFile("../../../contracts/system-backup/v12/schema-registry.json")
+	// The successful synthetic lab uses an explicit historical capability
+	// snapshot, not fabricated approvals for newly registered unsupported tables.
+	raw, err := os.ReadFile("../../internal/systembackupbusinessa/testdata/schema-registry-historical-15.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,6 +25,16 @@ func testLab(t *testing.T) *lab {
 		t.Fatal(err)
 	}
 	return l
+}
+
+func TestLabRejectsExpandedCanonicalWithoutNewACapability(t *testing.T) {
+	raw, err := os.ReadFile("../../../contracts/system-backup/v12/schema-registry.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if l, err := newLab(raw); err == nil || l != nil {
+		t.Fatal("synthetic lab approvals admitted unsupported current A tables")
+	}
 }
 func call(l *lab, method, path, body string) *httptest.ResponseRecorder {
 	r := httptest.NewRequest(method, "http://127.0.0.1:19031/verification-lab"+path, strings.NewReader(body))
