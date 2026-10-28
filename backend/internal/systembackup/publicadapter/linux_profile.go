@@ -18,6 +18,13 @@ type SourceInventory struct {
 	Users                []int
 	Instances            []InstanceIdentity
 }
+
+func cloneSourceInventory(in SourceInventory) SourceInventory {
+	in.Users = append([]int(nil), in.Users...)
+	in.Instances = append([]InstanceIdentity(nil), in.Instances...)
+	return in
+}
+
 type AgentKind struct{ Type, Mode, Variant, OS string }
 
 // LinuxProfile uses only an existing SELECT-only source connection and concrete
@@ -115,13 +122,13 @@ func (p *LinuxProfile) Discover(ctx context.Context, in d.Input) (Discovery, err
 	if out.HoldUntil.After(in.Authority.DeadlineAt) {
 		out.HoldUntil = in.Authority.DeadlineAt.UTC()
 	}
-	out.Parts, err = p.cfg.BuildParts(in, inv, out.HoldUntil)
+	out.Parts, err = p.cfg.BuildParts(cloneInput(in), cloneSourceInventory(inv), out.HoldUntil)
 	if err != nil {
 		return Discovery{}, classify(err)
 	}
 	out.Writers = []FrozenWriter{}
 	if in.Authority.TaskType == "backup" {
-		writers, err := p.cfg.BuildWriters(ctx, in, inv, nil)
+		writers, err := p.cfg.BuildWriters(ctx, cloneInput(in), cloneSourceInventory(inv), nil)
 		if err != nil {
 			return Discovery{}, classify(err)
 		}
@@ -145,7 +152,7 @@ func (p *LinuxProfile) BindWriters(ctx context.Context, in d.Input, x Discovery)
 		return nil, d.ErrNotReady
 	}
 	// Bind uses ONLY frozen source data. No SQL discovery or new UID allocation.
-	return p.cfg.BuildWriters(ctx, in, inv, append([]FrozenWriter(nil), x.Writers...))
+	return p.cfg.BuildWriters(ctx, cloneInput(in), cloneSourceInventory(inv), append([]FrozenWriter(nil), x.Writers...))
 }
 
 func (p *LinuxProfile) Preflight(ctx context.Context, in d.Input, x Discovery) ([]d.ModuleResult, error) {

@@ -1,0 +1,1241 @@
+{
+  "kind": "a_first_chain_bootstrap_slot_status.v1",
+  "date": "2026-10-28",
+  "base_head": "63a13b2771091e4ba47b691ce066a670cbc88d54",
+  "source_audit": "docs/evidence/a2-bootstrap-27-slot-audit-20261027.json",
+  "source_audit_sha256": "86aa776dd05876b3f954166ff71e100a6490d7d39416a31c4c999068de620255",
+  "total_required": 30,
+  "default_cli_missing": 27,
+  "compiled_material_link_remaining": 24,
+  "production_original_authority_verified": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "goal_complete": false,
+  "latest_pr_source_review": "docs/evidence/a-b-pr1-security-delta-20261028.json",
+  "latest_pr_review_commit": "0a4bdc19a1ab8b979523d4c2161c9b08074a4f26",
+  "rows": [
+    {
+      "slot": "registry:parts",
+      "owner": "A/B/C 分项；D 合同/组合",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "config",
+          "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+          "symbol": "DecodeBootstrapConfig",
+          "line": 60,
+          "role": "结构、数值、闭集校验；不证明资源存在或授权"
+        },
+        {
+          "id": "files",
+          "path": "backend/internal/systembackupsecurity/registration_files.go",
+          "symbol": "RegistryBytes",
+          "line": 19,
+          "role": "原 registry 完整字节 SHA 和受控路径读取；不等于业务 schema/授权"
+        },
+        {
+          "id": "current_files",
+          "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+          "symbol": "NewBootstrapCandidateFileAuthority",
+          "line": 24,
+          "role": "原 grant/RBAC 与 registry 当前来源；强制保留独立原 authority"
+        }
+      ],
+      "original_facts_required": [
+        "当前安装完整必选 parts、各源不可变身份和 owner",
+        "实际 collector/runner 能力及支持矩阵"
+      ],
+      "original_gap": "已存在 manifest/runner 正文合同和 ref/字节校验；本轮未找到 parts registry 的独立业务 validator。SQL schema registry 不能替代 parts inventory。"
+    },
+    {
+      "slot": "registry:redis_sources",
+      "owner": "C 资源；B 关联 workload",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "config",
+          "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+          "symbol": "DecodeBootstrapConfig",
+          "line": 60,
+          "role": "结构、数值、闭集校验；不证明资源存在或授权"
+        },
+        {
+          "id": "files",
+          "path": "backend/internal/systembackupsecurity/registration_files.go",
+          "symbol": "RegistryBytes",
+          "line": 19,
+          "role": "原 registry 完整字节 SHA 和受控路径读取；不等于业务 schema/授权"
+        }
+      ],
+      "original_facts_required": [
+        "原 Redis topology/实例身份与受控连接引用",
+        "允许的 TTL/一致性策略、真实权限与 collector 能力"
+      ],
+      "original_gap": "ConfigValues 只固定 kind/version/SHA，未建立 Redis topology、TTL/一致性策略至真实 collector 的准入映射。"
+    },
+    {
+      "slot": "registry:failure_domains",
+      "owner": "A/B/C 事实；D 合同",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "config",
+          "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+          "symbol": "DecodeBootstrapConfig",
+          "line": 60,
+          "role": "结构、数值、闭集校验；不证明资源存在或授权"
+        },
+        {
+          "id": "files",
+          "path": "backend/internal/systembackupsecurity/registration_files.go",
+          "symbol": "RegistryBytes",
+          "line": 19,
+          "role": "原 registry 完整字节 SHA 和受控路径读取；不等于业务 schema/授权"
+        }
+      ],
+      "original_facts_required": [
+        "稳定故障域 ID 与源/目标关系",
+        "当前管理员 attestation、原始期限及物理隔离来源"
+      ],
+      "original_gap": "manifest 中风险/attestation 字段不是故障域 registry 授权；未找到完整真实域、历史及 source overlap validator。"
+    },
+    {
+      "slot": "registry:disaster_identity_mapping",
+      "owner": "A 安全映射；B/C 恢复语义",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "config",
+          "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+          "symbol": "DecodeBootstrapConfig",
+          "line": 60,
+          "role": "结构、数值、闭集校验；不证明资源存在或授权"
+        },
+        {
+          "id": "files",
+          "path": "backend/internal/systembackupsecurity/registration_files.go",
+          "symbol": "RegistryBytes",
+          "line": 19,
+          "role": "原 registry 完整字节 SHA 和受控路径读取；不等于业务 schema/授权"
+        },
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        }
+      ],
+      "original_facts_required": [
+        "原身份→灾难身份的版本化受控映射",
+        "安装、资源用途、灾难身份权限及有效期来源"
+      ],
+      "original_gap": "SecretRef 的 purpose/身份只是 draft metadata，未建立原身份至灾难身份的完整、无歧义、有权使用的 typed registry。"
+    },
+    {
+      "slot": "registry:source_writers",
+      "owner": "B 主 writer 清单；A/C 提供各源 writer",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "config",
+          "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+          "symbol": "DecodeBootstrapConfig",
+          "line": 60,
+          "role": "结构、数值、闭集校验；不证明资源存在或授权"
+        },
+        {
+          "id": "files",
+          "path": "backend/internal/systembackupsecurity/registration_files.go",
+          "symbol": "RegistryBytes",
+          "line": 19,
+          "role": "原 registry 完整字节 SHA 和受控路径读取；不等于业务 schema/授权"
+        }
+      ],
+      "original_facts_required": [
+        "MySQL/Redis/object/workspace/runtime 全量实际 writer",
+        "各 writer 不可变身份、quiesce/恢复策略与观察来源"
+      ],
+      "original_gap": "现有 check-state 是结果格式，不能证明 writer inventory 完整或实际 quiesce 覆盖。"
+    },
+    {
+      "slot": "registry:secret_allowlist",
+      "owner": "A；B/C 实际使用方",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "broker_parser",
+          "path": "backend/internal/services/k8s/secret_broker_server.go",
+          "symbol": "ParseSecretBrokerReadAllowlist",
+          "line": 504,
+          "role": "comma/newline 名称清单 parser；不消费 JSON registry 的版本/完整摘要/UID"
+        },
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "files",
+          "path": "backend/internal/systembackupsecurity/registration_files.go",
+          "symbol": "RegistryBytes",
+          "line": 19,
+          "role": "原 registry 完整字节 SHA 和受控路径读取；不等于业务 schema/授权"
+        }
+      ],
+      "original_facts_required": [
+        "当前安装 namespace/Secret 不可变身份及准确版本",
+        "用途、工作身份、最小权限与原 broker 解析来源"
+      ],
+      "original_gap": "broker parser 接受字符串名单，JSON staging registry entries=0，functional-test 仅一项；均不是当前安装 UID/版本/用途/工作身份授权。"
+    },
+    {
+      "slot": "reference:artifact_write",
+      "owner": "C provider；A 凭据安全",
+      "missing_implementation": true,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        },
+        {
+          "id": "capability",
+          "path": "backend/internal/systembackupsecurity/capability.go",
+          "symbol": "ValidateCapabilityEvidence",
+          "line": 72,
+          "role": "capability 正文校验；不是 producer/资源认证"
+        }
+      ],
+      "original_facts_required": [
+        "原 artifact provider/root 身份、限定写 scope 与凭据版本",
+        "条件创建/checksum 的原授权观察及原始期限"
+      ],
+      "original_gap": "artifact_write→artifact_write 仅 metadata 对应；evidence S3 客户端不能认证 artifact scope、条件创建或 checksum 能力。"
+    },
+    {
+      "slot": "reference:artifact_read",
+      "owner": "C；A 安全复审",
+      "missing_implementation": true,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3_observer",
+          "path": "backend/internal/systembackupsecurity/providerproof_s3.go",
+          "symbol": "NewS3ExternalActionObserver",
+          "line": 26,
+          "role": "已有 active-config 外部动作 presence 观察；不覆盖首次 bootstrap 准入"
+        }
+      ],
+      "original_facts_required": [
+        "准确对象/历史版本对应的只读身份",
+        "受控 provider/root 与不扩大写删权的授权来源"
+      ],
+      "original_gap": "现有 S3 observer 限 active-config external-action presence，不是首次 bootstrap 的精确历史只读凭据准入。"
+    },
+    {
+      "slot": "reference:artifact_delete",
+      "owner": "C；A 安全复审",
+      "missing_implementation": true,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        }
+      ],
+      "original_facts_required": [
+        "受限删除身份、对象/版本 scope",
+        "原 provider 缺失证明、版本和 delete-marker 语义"
+      ],
+      "original_gap": "运行时 Delete/Absent 及请求正文不证明 artifact 精确版本删除授权/缺失证明；业务 GC 门禁另属原 owner。"
+    },
+    {
+      "slot": "reference:artifact_upload_issuer",
+      "owner": "C issuer；A 身份/短凭据策略",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "sts",
+          "path": "backend/internal/systembackupevidence/s3_sts.go",
+          "symbol": "NewS3STSCredentials",
+          "line": 74,
+          "role": "运行时受限 STS 凭据解析；仍要求独立 WebIdentity authority"
+        },
+        {
+          "id": "system_sts",
+          "path": "backend/internal/systembackupevidence/system_sts.go",
+          "symbol": "NewSystemExecutionSTSCredentials",
+          "line": 92,
+          "role": "原 C1 execution/claim 绑定的 STS；不是初始化授权"
+        }
+      ],
+      "original_facts_required": [
+        "真实 issuer/STS/OIDC 机制与调用身份",
+        "原短凭据 scope、期限、撤销及 artifact 用途授权"
+      ],
+      "original_gap": "无单一 SecretRef purpose 对应；现有 STS 客户端与 C1 execution 绑定不能自行扩大为 artifact 首次 issuer 授权。"
+    },
+    {
+      "slot": "reference:artifact_ca",
+      "owner": "C 传输；A 信任复审",
+      "missing_implementation": false,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": true,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "ca",
+          "path": "backend/internal/systembackupcatrust/ca.go",
+          "symbol": "New",
+          "line": 65,
+          "role": "artifact_ca/evidence_ca 真实 legacy validator；受控固定 IP+原 hostname TLS"
+        },
+        {
+          "id": "ca_prepare",
+          "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+          "symbol": "PrepareCandidateAttempt",
+          "line": 49,
+          "role": "每次 attempt 锁前真实 TLS 与原文件观察；不认证原部署映射"
+        },
+        {
+          "id": "ca_check",
+          "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+          "symbol": "CheckCandidate",
+          "line": 99,
+          "role": "原准备状态、共同 SQL 时间、晚文件检查；不再拨 TLS"
+        },
+        {
+          "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+          "symbol": "New",
+          "line": 38,
+          "role": "必须委托独立原 authority 的 nonce/两 CA 真实材料组合；不生成新授权"
+        },
+        {
+          "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+          "symbol": "Owners",
+          "line": 70,
+          "role": "复制 owners 并增加三材料 validator，拒绝覆盖和冲突，保留其他必需槽"
+        },
+        {
+          "path": "backend/cmd/system-backup-bootstrap/materials.go",
+          "symbol": "composeBootstrapMaterialOwners",
+          "line": 40,
+          "role": "非 JSON typed original/真实材料输入的组合；不批准其他槽"
+        }
+      ],
+      "original_facts_required": [
+        "原 descriptor 与 CA 精确字节/版本及可信解析路径",
+        "原安装/provider/scope 授权、准确 hostname+固定允许 IP",
+        "原始有效期与撤销/替换规则"
+      ],
+      "original_gap": "真实 validator 和 candidate API 已实现；Binding 来源的原安装/provider/scope、原 CA 版本、固定 IP/hostname allowlist 仍须独立认证，CLI 未装配。"
+    },
+    {
+      "slot": "reference:evidence_store",
+      "owner": "A",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        },
+        {
+          "id": "system_prepare",
+          "path": "backend/internal/systembackupevidence/system_execution.go",
+          "symbol": "NewSystemExecutionPreparer",
+          "line": 50,
+          "role": "已有独立执行授权后的正文/Wrap 准备；不产生 bootstrap authority"
+        }
+      ],
+      "original_facts_required": [
+        "独立 typed store/root、安装/provider 身份",
+        "对象版本/完整性/保留语义与隔离来源"
+      ],
+      "original_gap": "store identity 无单一 SecretRef 对应；已有 S3/system 运行组件消费已准入输入，不建立独立 store/root 或故障域权限隔离。"
+    },
+    {
+      "slot": "reference:evidence_write",
+      "owner": "A",
+      "missing_implementation": true,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        },
+        {
+          "id": "system_sts",
+          "path": "backend/internal/systembackupevidence/system_sts.go",
+          "symbol": "NewSystemExecutionSTSCredentials",
+          "line": 92,
+          "role": "原 C1 execution/claim 绑定的 STS；不是初始化授权"
+        },
+        {
+          "id": "system_prepare",
+          "path": "backend/internal/systembackupevidence/system_execution.go",
+          "symbol": "NewSystemExecutionPreparer",
+          "line": 50,
+          "role": "已有独立执行授权后的正文/Wrap 准备；不产生 bootstrap authority"
+        }
+      ],
+      "original_facts_required": [
+        "原 evidence 写 scope/凭据准确版本",
+        "真实 conditional-create/checksum 权限和原观察期限"
+      ],
+      "original_gap": "evidence 写入、STS、publication 组件已存在；首次 bootstrap 仍缺原 write ref 的 purpose/scope/权限/能力准入 adapter。"
+    },
+    {
+      "slot": "reference:evidence_read",
+      "owner": "A",
+      "missing_implementation": true,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        }
+      ],
+      "original_facts_required": [
+        "准确 evidence 对象/版本与只读身份",
+        "受控 locator、checksum、撤销及历史读取策略"
+      ],
+      "original_gap": "Stat/Range 和下载链已有运行实现；不能从请求 URI 或读成功反推原 bootstrap 只读准入。"
+    },
+    {
+      "slot": "reference:evidence_delete",
+      "owner": "A",
+      "missing_implementation": true,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        }
+      ],
+      "original_facts_required": [
+        "原受限删除身份及精确对象/版本权限",
+        "原缺失证明能力、unknown/retention 语义"
+      ],
+      "original_gap": "Delete/Absent 与 GC 候选门禁存在；仍缺首次资源准入的原删除身份、版本权限和缺失证明 authority，不能以 GC helper 直接填槽。"
+    },
+    {
+      "slot": "reference:evidence_ca",
+      "owner": "A",
+      "missing_implementation": false,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": true,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "ca",
+          "path": "backend/internal/systembackupcatrust/ca.go",
+          "symbol": "New",
+          "line": 65,
+          "role": "artifact_ca/evidence_ca 真实 legacy validator；受控固定 IP+原 hostname TLS"
+        },
+        {
+          "id": "ca_prepare",
+          "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+          "symbol": "PrepareCandidateAttempt",
+          "line": 49,
+          "role": "每次 attempt 锁前真实 TLS 与原文件观察；不认证原部署映射"
+        },
+        {
+          "id": "ca_check",
+          "path": "backend/internal/systembackupcatrust/candidate_adapter.go",
+          "symbol": "CheckCandidate",
+          "line": 99,
+          "role": "原准备状态、共同 SQL 时间、晚文件检查；不再拨 TLS"
+        },
+        {
+          "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+          "symbol": "New",
+          "line": 38,
+          "role": "必须委托独立原 authority 的 nonce/两 CA 真实材料组合；不生成新授权"
+        },
+        {
+          "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+          "symbol": "Owners",
+          "line": 70,
+          "role": "复制 owners 并增加三材料 validator，拒绝覆盖和冲突，保留其他必需槽"
+        },
+        {
+          "path": "backend/cmd/system-backup-bootstrap/materials.go",
+          "symbol": "composeBootstrapMaterialOwners",
+          "line": 40,
+          "role": "非 JSON typed original/真实材料输入的组合；不批准其他槽"
+        }
+      ],
+      "original_facts_required": [
+        "原 descriptor 与 CA 精确字节/版本及可信解析路径",
+        "原安装/provider/scope 授权、准确 hostname+固定允许 IP",
+        "原始有效期与撤销/替换规则"
+      ],
+      "original_gap": "真实 validator 和 candidate API 已实现；Binding 来源的原安装/provider/scope、原 CA 版本、固定 IP/hostname allowlist 仍须独立认证，CLI 未装配。"
+    },
+    {
+      "slot": "reference:evidence_kek",
+      "owner": "A",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "transit",
+          "path": "backend/internal/systembackupevidence/transit.go",
+          "symbol": "NewTransitKeys",
+          "line": 71,
+          "role": "运行时 wrap/unwrap 客户端；不是资源准入"
+        },
+        {
+          "id": "keyring",
+          "path": "backend/internal/systembackupevidence/transit_keyring.go",
+          "symbol": "NewTransitKeyring",
+          "line": 23,
+          "role": "消费已准入的历史 key mapping，不能倒过来认证 mapping"
+        },
+        {
+          "id": "system_prepare",
+          "path": "backend/internal/systembackupevidence/system_execution.go",
+          "symbol": "NewSystemExecutionPreparer",
+          "line": 50,
+          "role": "已有独立执行授权后的正文/Wrap 准备；不产生 bootstrap authority"
+        }
+      ],
+      "original_facts_required": [
+        "安装绑定的原 evidence KEK identity/ref/version",
+        "wrap/unwrap 工作身份权限及所有 retained evidence 的历史映射"
+      ],
+      "original_gap": "无单一 SecretRef 对应；NewTransitKeyring 明确消费 admission-validated 历史 mapping，不会认证其输入。"
+    },
+    {
+      "slot": "reference:kek",
+      "owner": "A；B/C 使用路径",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "transit",
+          "path": "backend/internal/systembackupevidence/transit.go",
+          "symbol": "NewTransitKeys",
+          "line": 71,
+          "role": "运行时 wrap/unwrap 客户端；不是资源准入"
+        },
+        {
+          "id": "keyring",
+          "path": "backend/internal/systembackupevidence/transit_keyring.go",
+          "symbol": "NewTransitKeyring",
+          "line": 23,
+          "role": "消费已准入的历史 key mapping，不能倒过来认证 mapping"
+        }
+      ],
+      "original_facts_required": [
+        "原 backup KEK variant/provider/ref/version",
+        "生成/解封/包裹精确权限和历史保留事实"
+      ],
+      "original_gap": "bootstrap KEK 不能直接对应一个 generate/unwrap/wrap descriptor；备份 variant/调用权限/历史数据引用需要独立规则。"
+    },
+    {
+      "slot": "reference:capture_signing",
+      "owner": "A；B capture 输入",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "capture_relation",
+          "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+          "symbol": "NewCaptureCandidateRelation",
+          "line": 78,
+          "role": "原 capture ref/候选关系比较与副本；不是 authority/validator"
+        },
+        {
+          "id": "signer",
+          "path": "backend/internal/systembackupsecurity/transit_signer.go",
+          "symbol": "NewTransitSigner",
+          "line": 28,
+          "role": "真实签名运行客户端与公钥校验；构造不等于 signer 准入"
+        },
+        {
+          "id": "sign_history",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "NewArtifactSigningKeyHistory",
+          "line": 53,
+          "role": "三类签名用途、公钥隔离与复制；输入仍需独立认证"
+        },
+        {
+          "id": "sign_retention",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "ValidateArtifactSigningRetention",
+          "line": 123,
+          "role": "消费完整已认证引用扫描的历史保留检查"
+        }
+      ],
+      "original_facts_required": [
+        "原 capture 专用 key/version/public key 及 domain/payload",
+        "原调用身份、三类用途隔离和完整历史验证/retention 引用"
+      ],
+      "original_gap": "capture_signing→capture_certificate 比较及候选关系实现已存在，但关系 DATA、摘要和 signer 构造不是原 signer 认证/运行授权。"
+    },
+    {
+      "slot": "reference:acceptance_signing",
+      "owner": "A；D acceptance 组合",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "signer",
+          "path": "backend/internal/systembackupsecurity/transit_signer.go",
+          "symbol": "NewTransitSigner",
+          "line": 28,
+          "role": "真实签名运行客户端与公钥校验；构造不等于 signer 准入"
+        },
+        {
+          "id": "sign_history",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "NewArtifactSigningKeyHistory",
+          "line": 53,
+          "role": "三类签名用途、公钥隔离与复制；输入仍需独立认证"
+        },
+        {
+          "id": "sign_retention",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "ValidateArtifactSigningRetention",
+          "line": 123,
+          "role": "消费完整已认证引用扫描的历史保留检查"
+        },
+        {
+          "id": "acceptance",
+          "path": "backend/internal/systembackupsecurity/artifact_acceptance_candidate.go",
+          "symbol": "VerifyAcceptanceCandidate",
+          "line": 59,
+          "role": "draft acceptance 签名验证候选；不授予 signer 调用权"
+        }
+      ],
+      "original_facts_required": [
+        "原 acceptance 专用 signer/key/version",
+        "payload/domain、授权调用方与历史验签/撤销策略"
+      ],
+      "original_gap": "acceptance_record 的 draft 签名验证候选和三用途 key history 已有；真实 acceptance signer 的授权/能力准入尚未装配。"
+    },
+    {
+      "slot": "reference:catalog_signing",
+      "owner": "A；C catalog 内容",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "signer",
+          "path": "backend/internal/systembackupsecurity/transit_signer.go",
+          "symbol": "NewTransitSigner",
+          "line": 28,
+          "role": "真实签名运行客户端与公钥校验；构造不等于 signer 准入"
+        },
+        {
+          "id": "sign_history",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "NewArtifactSigningKeyHistory",
+          "line": 53,
+          "role": "三类签名用途、公钥隔离与复制；输入仍需独立认证"
+        },
+        {
+          "id": "sign_retention",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "ValidateArtifactSigningRetention",
+          "line": 123,
+          "role": "消费完整已认证引用扫描的历史保留检查"
+        }
+      ],
+      "original_facts_required": [
+        "原 catalog 专用 signer/key/version",
+        "受审 record/domain、调用范围和完整历史验证来源"
+      ],
+      "original_gap": "catalog_record 对应和三用途隔离 helper 存在；catalog signer 的实际 record/domain 能力与原资源授权未组合。"
+    },
+    {
+      "slot": "reference:catalog_read",
+      "owner": "C；A 身份安全",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        }
+      ],
+      "original_facts_required": [
+        "原 catalog provider/root 与只读 ref/version",
+        "准确 record/version、签名/完整性和发现授权边界"
+      ],
+      "original_gap": "metadata exact_read 对应存在；evidence 的 S3 运行组件不证明 catalog 签名记录读取与发现边界。"
+    },
+    {
+      "slot": "reference:catalog_append",
+      "owner": "C；A 身份安全",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "s3",
+          "path": "backend/internal/systembackupevidence/s3.go",
+          "symbol": "NewS3Store",
+          "line": 93,
+          "role": "evidence 的版本化 S3 运行客户端；构造不批准 capability 或 artifact/catalog 用途"
+        }
+      ],
+      "original_facts_required": [
+        "原 append 身份/版本和受审 root",
+        "不可覆盖 record key、条件创建/checksum 原能力来源"
+      ],
+      "original_gap": "append_record 元数据对应不是 catalog 追加授权；evidence Put 不能证明 record key 不可覆盖及 catalog checksum 语义。"
+    },
+    {
+      "slot": "reference:catalog_snapshot",
+      "owner": "C；A 来源复审",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        }
+      ],
+      "original_facts_required": [
+        "原 snapshot/inventory 模式及精确 manifest/version/checksum",
+        "原覆盖范围、来源权限与观察期限"
+      ],
+      "original_gap": "catalog_snapshot→catalog_discovery 的 metadata 对应不选择 snapshot_list/inventory_read 模式，也不证明覆盖完整。"
+    },
+    {
+      "slot": "reference:nonce_hmac",
+      "owner": "A",
+      "missing_implementation": false,
+      "missing_contract_decision": false,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": true,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "pin_match",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "MatchesBootstrapPin",
+          "line": 143,
+          "role": "十五种 purpose 的 draft 元数据对应；不是准入"
+        },
+        {
+          "id": "nonce",
+          "path": "backend/internal/systembackupnoncebootstrap/nonce.go",
+          "symbol": "New",
+          "line": 70,
+          "role": "真实 legacy BootstrapResourceValidator；只支持受控 exact-version external_secret 文件 profile"
+        },
+        {
+          "id": "nonce_prepare",
+          "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+          "symbol": "PrepareCandidateAttempt",
+          "line": 62,
+          "role": "锁前读取真实 nonce 材料；物理失败保留闭合状态供 L3 判别"
+        },
+        {
+          "id": "nonce_lock",
+          "path": "backend/internal/systembackupnoncebootstrap/candidate_adapter.go",
+          "symbol": "LockReferences",
+          "line": 237,
+          "role": "全局配置/固定 cutoff retained nonce 范围与原材料绑定"
+        },
+        {
+          "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+          "symbol": "New",
+          "line": 38,
+          "role": "必须委托独立原 authority 的 nonce/两 CA 真实材料组合；不生成新授权"
+        },
+        {
+          "path": "backend/internal/systembackupbootstrapmaterials/materials.go",
+          "symbol": "Owners",
+          "line": 70,
+          "role": "复制 owners 并增加三材料 validator，拒绝覆盖和冲突，保留其他必需槽"
+        },
+        {
+          "path": "backend/cmd/system-backup-bootstrap/materials.go",
+          "symbol": "composeBootstrapMaterialOwners",
+          "line": 40,
+          "role": "非 JSON typed original/真实材料输入的组合；不批准其他槽"
+        }
+      ],
+      "original_facts_required": [
+        "原 exact-version external_secret descriptor/material 受控路径与 byte pins",
+        "安装/provider/scope/purpose 授权及原有效期",
+        "全部 control retention 内历史 key/version、ProtectedUntil 与撤销策略"
+      ],
+      "original_gap": "legacy 与 candidate 真实文件/32字节/wipe/global-retention 校验已实现；原受控 external_secret identity/purpose/安装映射和 CLI 组合仍未完成。Kubernetes UID/API profile 不由此实现。"
+    },
+    {
+      "slot": "reference:status_relay",
+      "owner": "B relay 合同；D 公共 SQL/handler 装配；A 工作身份安全",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "capability",
+          "path": "backend/internal/systembackupsecurity/capability.go",
+          "symbol": "ValidateCapabilityEvidence",
+          "line": 72,
+          "role": "capability 正文校验；不是 producer/资源认证"
+        }
+      ],
+      "original_facts_required": [
+        "真实 relay 服务身份/版本、mTLS/客户端身份",
+        "Job UID/generation/task/attempt 与终止/接管/撤销的原权威事实"
+      ],
+      "original_gap": "无单一 SecretRef relay 对应；通用 descriptor/capability 正文不能认证 relay 身份或 Job/task/attempt。A 已提供 runtime mTLS 与公共 dispatch ABI 安全桥接；完整 bootstrap relay owner、原授权/材料及 B/D handler/SQL guard 仍缺。",
+      "A_transport_implementation": {
+        "source": "backend/internal/systembackupevidence/relay_peer.go",
+        "api": [
+          "NewRelayPeerAuthenticator",
+          "AuthenticateRequest",
+          "Bind",
+          "Recheck"
+        ],
+        "verification": "docs/evidence/a-relay-peer-recovery-e1659ffde3e4406a81979396272bcf16.json",
+        "production_wired": false,
+        "remaining": [
+          "B/D actual public SQL claim/fence and Job cursor handler composition",
+          "formal B wire/sequence contract",
+          "original trust/workload authorization and shared revocation",
+          "controlled site materials and production owner composition"
+        ]
+      },
+      "A_dispatch_implementation": {
+        "source": "backend/internal/systembackupevidence/relay_dispatch.go",
+        "api": ["RelayPeerAuthenticator.BindDispatch", "DispatchRelayCheck.RecheckDispatch"],
+        "independent_source_review": "docs/evidence/a-relay-dispatch-independent-review-20261028.json",
+        "source_reviewer": "D",
+        "inputs": ["original admitted RelayPeerConfig", "public producer.Scope", "D dispatch.Authority", "D dispatch.JobBinding", "same context/SQL transaction and DB UTC(6)"],
+        "verification": "docs/evidence/a-dispatch-relay-validation-20261028.json",
+        "production_wired": false,
+        "grants_authority": false,
+        "field_slots_closed": 0
+      },
+      "A_message_implementation": {
+        "source": "backend/internal/systembackupevidence/relay_message.go",
+        "api": ["RelayPeerAuthenticator.BindDispatchMessage", "DispatchRelayMessageCheck.RecheckDispatchMessage"],
+        "B_message_source": "backend/internal/systembackup/publicadapter/relay.go",
+        "validation_status": "native_2_roots_20_passes_linux_compiled_cleanup_verified",
+        "validation_snapshot": "docs/evidence/a-relay-message-native-123e09588521409191676ff54581f1b2.json",
+        "verification": "docs/evidence/a-relay-message-validation-20261028.json",
+        "independent_source_review": "docs/evidence/d-a-relay-message-source-review-20261028.json",
+        "production_wired": false,
+        "grants_authority": false,
+        "field_slots_closed": 0
+      }
+    },
+    {
+      "slot": "cross_resources",
+      "owner": "A 安全；B/C 分项事实；D 组合",
+      "missing_implementation": true,
+      "missing_contract_decision": true,
+      "missing_field_material": true,
+      "entry_path_connected_for_compiled_deployment": false,
+      "production_link_present": false,
+      "field_closed": false,
+      "existing_helpers": [
+        {
+          "id": "config",
+          "path": "backend/internal/systembackupsecurity/config_bootstrap.go",
+          "symbol": "DecodeBootstrapConfig",
+          "line": 60,
+          "role": "结构、数值、闭集校验；不证明资源存在或授权"
+        },
+        {
+          "id": "descriptor",
+          "path": "backend/internal/systembackupbootstrapsecurity/reference.go",
+          "symbol": "DecodeSecurityReference",
+          "line": 42,
+          "role": "draft SecretRef 字节与闭集解析；无材料/locator/授权"
+        },
+        {
+          "id": "capture_relation",
+          "path": "backend/internal/systembackupbootstrapsecurity/producer_candidate_binding.go",
+          "symbol": "NewCaptureCandidateRelation",
+          "line": 78,
+          "role": "原 capture ref/候选关系比较与副本；不是 authority/validator"
+        },
+        {
+          "id": "sign_history",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "NewArtifactSigningKeyHistory",
+          "line": 53,
+          "role": "三类签名用途、公钥隔离与复制；输入仍需独立认证"
+        },
+        {
+          "id": "sign_retention",
+          "path": "backend/internal/systembackupsecurity/artifact_signing_history.go",
+          "symbol": "ValidateArtifactSigningRetention",
+          "line": 123,
+          "role": "消费完整已认证引用扫描的历史保留检查"
+        },
+        {
+          "id": "current_files",
+          "path": "backend/internal/systembackupsecurity/bootstrap_candidate_files.go",
+          "symbol": "NewBootstrapCandidateFileAuthority",
+          "line": 24,
+          "role": "原 grant/RBAC 与 registry 当前来源；强制保留独立原 authority"
+        }
+      ],
+      "original_facts_required": [
+        "同一原 installation/config/grant 下全部可信观察",
+        "原故障域/灾难身份/allowlist/用途隔离和完整历史引用",
+        "原独立 authority 对 C1 admission、原资源期限及实际容量的绑定"
+      ],
+      "original_gap": "已有局部配置约束、三用途公钥隔离、retention 和 capture 关系检查；完整同安装、故障域、灾难身份、Secret allowlist、凭据/签名用途与保留关系尚无真实总组合。"
+    }
+  ],
+  "handoff": "docs/system-backup-a-first-chain-20261028.md"
+}

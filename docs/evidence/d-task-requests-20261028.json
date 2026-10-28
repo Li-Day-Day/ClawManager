@@ -1,0 +1,66 @@
+{
+  "kind": "d_task_requests_implementation.v1",
+  "status": "implemented_and_locally_verified",
+  "production_backup_passed": false,
+  "dependencies_installed": false,
+  "native_receipt": "docs/evidence/d-first-chain-native-d0a3b6cf201b4619b3af42a2b72b9922.json",
+  "native_phase_exits": [
+    0,
+    0,
+    0
+  ],
+  "native_root_tests": 21,
+  "native_pass_events": 86,
+  "native_fail": 0,
+  "native_skip": 0,
+  "native_scope": "API full package, server task composition tests, server native build",
+  "source_pins": [
+    {
+      "path": "backend/internal/systembackupapi/task_requests.go",
+      "sha256": "d5461fe21e3340e79abb87b6a174653fd9edd8802ac795aa9552a0ae7aefd090",
+      "matches_native_source": true
+    },
+    {
+      "path": "backend/internal/systembackupapi/task_requests_test.go",
+      "sha256": "0ac1b77423172a577148fb2bb1016760952f32b2931c42dd18300bcaafb51062",
+      "matches_native_source": true
+    },
+    {
+      "path": "backend/cmd/server/system_backup_tasks_live.go",
+      "sha256": "5ef11b42981eb9688892f083c9ff0827b19156614997fab56f3069af1c19ac49",
+      "matches_native_source": true
+    },
+    {
+      "path": "contracts/system-backup/v12/admin-mutation-requests.schema.json",
+      "sha256": "46560bec562cba43c8b0d5b904c753ec2bce35f1800cf14e21ebcb8b91ac4a46",
+      "matches_native_source": true
+    },
+    {
+      "path": "contracts/system-backup/v12/admin.openapi.json",
+      "sha256": "f0761d94a14cc9c5d2a5441c5fab45e741c5d2376eb44181d93a4f50ffac3028",
+      "matches_native_source": true
+    }
+  ],
+  "whole_workspace_current_match": false,
+  "whole_workspace_note": "Shared checkout changed during frozen validation; the five request implementation/schema files above exactly match native inputs. Redacted request examples were added afterward and checked by Node.",
+  "contract_tests": {
+    "log": "docs/evidence/d-task-requests-contract-20261028.tap",
+    "pass": 69,
+    "fail": 1,
+    "remaining_failure": "Existing pending-deadline static assertion expects ClaimCoordinator.Acquire; current primary-D code uses AcquireWithReceipt. Handed to primary D, outside this change."
+  },
+  "composition": "composeOwnedSystemBackupTaskApplication -> NewSQLTaskWriter(NewTaskRequestContract(), owners.Admission, enabled) -> SQLTaskWriter.Prepare -> Decode",
+  "remaining_owners": [
+    "Admission",
+    "CurrentFacts",
+    "Manifest",
+    "execution owner/store/A authorization/C publication"
+  ],
+  "unavailable_paths": [
+    "non-null retry_of_public_id",
+    "preflight source_artifact_type=catalog_import"
+  ],
+  "cleanup": true,
+  "native_owner_absent": true,
+  "discarded_inventory_work_clean": true
+}

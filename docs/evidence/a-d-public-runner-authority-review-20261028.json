@@ -1,0 +1,70 @@
+{
+  "kind": "a_d_public_runner_authority_recovery_source_review.v1",
+  "date": "2026-10-28",
+  "pr_head": "08d15abf443511376bf1a0c9c9593caea8feef5c",
+  "import_receipt": "docs/evidence/d-b-public-adapter-import-20261028.json",
+  "scope": "task wrapper and forward/recovery authority boundaries, not all imported domains",
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupdispatch/task_binding.go",
+      "sha256": "169e88024682f691b2f8430532a2c445c4dafdc1536437fa26b5ea9c30a99706"
+    },
+    {
+      "path": "backend/internal/systembackupdispatch/task_binding_test.go",
+      "sha256": "e4af0b9e0424bc107936cb7ee99a87d96a2453bccd08518d252f124344adbb3b"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/task_execution_live.go",
+      "sha256": "25aae0641b840af1b6f3ebad2e28e156d58cc596117ec186a332c3d2b2718f09"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/runner.go",
+      "sha256": "edb89bc7e79fd02de8adc4c91f12500c7ece5acf25b3392b955140b4fc715f4d"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/capture.go",
+      "sha256": "2f0c72d5ab02cf89149242832d068e3db2257aee9099f073f41d9884570d7a90"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/relay.go",
+      "sha256": "8829a0f9a97d15d5c4f57d3b0fb63575835214c87f193b6c8c3dadd1ffc75d8b"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/jobs.go",
+      "sha256": "cfc589fcdf51a1d9c5976eb51f62af215d29552b1bbec1fc0c98d247fb48f539"
+    },
+    {
+      "path": "backend/internal/systembackup/publicadapter/linux_profile.go",
+      "sha256": "f82de6e7aa6c1dc702635965056b55302a297daf384cca52123b73775f2c509d"
+    },
+    {
+      "path": "backend/internal/systembackup/flow/recovery.go",
+      "sha256": "49850f21528889f1233d66971019ab56fdf569feb9f1f5ba0ac1b3f8319bc446"
+    }
+  ],
+  "source_findings_requiring_rejection": [],
+  "source_confirmed": [
+    "real main constructs LinuxProfile and PublicRunner, then mandatory BindTaskRunner",
+    "outer task/config/spec/profile/attempt/original deadline preserved; raw B plan bytes retained",
+    "renewable claim/fence excluded from stored plan identity but passed current on each call",
+    "Recover skips forward Ports.Check; validates complete recovery Job/Undispatched inventory and original writer states",
+    "all collector StopJob results must succeed before source Resume; each resumed writer uses fresh CheckRecovery",
+    "source writer factory binds frozen source identities, not rediscovered current power state"
+  ],
+  "required_before_production": [
+    "independent original forward and recovery resource/workload authorization, revocation and expiry",
+    "real encrypted WorkStore plan custody; no alias to existing job_log_chunk or capability_snapshot grants",
+    "complete admitted recovery journal, Job intent/UID ledger and StopJob revocation/termination proof",
+    "current registry admission compatible with recovery during cancellation/expiry/disabled forward work",
+    "formal relay contract, A pinned peer proof, current locked message/Job equality and original cursor CAS",
+    "C artifact/evidence/provider dependencies and exact retained signing/KEK inputs"
+  ],
+  "A_additional_adapter": "backend/internal/systembackupevidence/relay_message.go",
+  "tests_reused_from_older_bytes": false,
+  "new_A_message_tests_pending": false,
+  "tests_rerun_by_A_for_D_code": false,
+  "actual_SQL": false,
+  "production_approved": false,
+  "field_slots_closed": 0,
+  "A_message_validation": "docs/evidence/a-relay-message-validation-20261028.json"
+}

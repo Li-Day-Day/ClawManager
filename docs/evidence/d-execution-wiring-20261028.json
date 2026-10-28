@@ -1,0 +1,184 @@
+{
+  "kind": "d_public_execution_wiring.v1",
+  "date": "2026-10-28",
+  "head": "d3c5715a05a80c1134edd3ad0132a6c292ee1672",
+  "pr_head": "0a4bdc19a1ab8b979523d4c2161c9b08074a4f26",
+  "native": "docs/evidence/d-first-chain-native-a74d9157f9b94a74ab1dec38904e7099.json",
+  "native_steps": [
+    {
+      "phase": "execution-controller",
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "-p=2",
+        "-count=1",
+        "-json",
+        "-run",
+        "Test(ExecutionAuthority|TaskExecutionLoop|LeaderLoop)",
+        "./internal/systembackupcontroller"
+      ],
+      "exit": 0
+    },
+    {
+      "phase": "execution-dispatch",
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "-p=2",
+        "-count=1",
+        "-json",
+        "./internal/systembackupdispatch"
+      ],
+      "exit": 0
+    },
+    {
+      "phase": "execution-main",
+      "command": [
+        "go",
+        "test",
+        "-mod=readonly",
+        "-p=2",
+        "-count=1",
+        "-json",
+        "-run",
+        "Test(TaskExecutionProduction|LeaderControlLoop)",
+        "./cmd/system-backup-controller"
+      ],
+      "exit": 0
+    },
+    {
+      "phase": "execution-build",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-p=2",
+        "-o",
+        "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\.tmp-d-first-chain-a74d9157f9b94a74ab1dec38904e7099\\system-backup-controller.exe",
+        "./cmd/system-backup-controller"
+      ],
+      "exit": 0
+    }
+  ],
+  "current_source_match": true,
+  "native_roots": 21,
+  "native_pass_events": 33,
+  "fail_skip": 0,
+  "binary": {
+    "size": 67627008,
+    "sha256": "97d9f576b044af8912831a8264a7e530a0359738146fa37cce6a0719a528e549"
+  },
+  "cleanup": true,
+  "dependencies_installed": false,
+  "real_sql": false,
+  "real_chain_passed": false,
+  "production_execution_caller_registered": true,
+  "production_execution_complete": false,
+  "task_owner_link_bound": false,
+  "execution_owner_link_bound": false,
+  "authority_check_implemented": true,
+  "full_ports_implemented": false,
+  "durable_execution_store_implemented": false,
+  "background_execution_authorization_available": false,
+  "prior_native": [
+    "3f2ad6a9e0e74cc5ab19b7b5f5b7d1e2",
+    "c88a46ad536c4d7a87ae3befc9c9d2f9",
+    "838a12af4f4c4b838735c6281695159d"
+  ],
+  "prior_runs_do_not_replace_final": true,
+  "sources": [
+    {
+      "path": "backend/internal/systembackupdispatch/contract.go",
+      "sha256": "a0f1c6393a10f818e0f5ea4929efcab780c6a7a06564f78a1a64949c1538b101"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "c9d9b6af772da796ddc0710a418484feb27b1ea428f5e809cf8e4d5a025f64c3"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports_test.go",
+      "sha256": "26d600fed65b17fddfe275680f592e701fc0b25c8f7246a380407be909e10ad9"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/task_execution_loop.go",
+      "sha256": "63748ce821e165c404ecd3c0698bcaf78c755966aa338e1f05ef491a947dc28c"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/task_execution_loop_test.go",
+      "sha256": "02d4acb32a7cc6c98c962f548ebf85293405812a9e867975d570652245f1f9fb"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/task_execution_live.go",
+      "sha256": "79c721d2d92fb8ae4635185ccf9664fe0ed8ad8c0712d5ed48f4c6977e786b30"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/task_execution_live_test.go",
+      "sha256": "dd52c2522ce137c30fff64955abf9c9955177406581ae3d1a680c08ecc05e5c4"
+    },
+    {
+      "path": "backend/cmd/system-backup-controller/main.go",
+      "sha256": "1e4743812b6a10e701ba8363470cbae00a9f077d42986ad1ba05ec1932cdb7b0"
+    },
+    {
+      "path": "scripts/system-backup-d-first-chain-validation.ps1",
+      "sha256": "5fe88089b8e0849c71b826cbc5653b91887e6e871609401c677973c168502745"
+    },
+    {
+      "path": "docs/system-backup-b-implementation-instructions-20261028.md",
+      "sha256": "5399644164c8be49daceadce4f7d78aad613be4b7c40dea47c873a54eb5b9d3e"
+    },
+    {
+      "path": "docs/evidence/d-public-dispatch-backup-spec-20261028.patch",
+      "sha256": "4e34c87cb5132d8ba059faa2b50744d4d640131417df23c4b379d4c8d62919ac"
+    }
+  ],
+  "remaining": [
+    "D production SQL scheduling/claim-attempt/state and encrypted-plan/Job-intent/WorkerGrant/pause-result ledgers",
+    "D/A original controller identity/resource-purpose mappings and same-transaction revocation/expiry authority",
+    "D renewable current claim vs immutable Job identity mapping",
+    "B NewPublicRunner adapter, status_relay and restore_target contracts",
+    "C public artifact/finalizer/catalog/manifest and current facts",
+    "Requests/Admission/CurrentFacts production links, three catalog tables/four contracts and original stage/security gates",
+    "zhanghui08 original bootstrap/config/materials, independent read-only SQL account/pins and same-version deployment"
+  ],
+  "prior_native_results": [
+    {
+      "id": "3f2ad6a9e0e74cc5ab19b7b5f5b7d1e2",
+      "status": "passed",
+      "cleanup": true,
+      "superseded": true
+    },
+    {
+      "id": "c88a46ad536c4d7a87ae3befc9c9d2f9",
+      "status": "passed",
+      "cleanup": true,
+      "superseded": true
+    },
+    {
+      "id": "838a12af4f4c4b838735c6281695159d",
+      "status": "passed",
+      "cleanup": true,
+      "superseded": true
+    }
+  ],
+  "owned_test_products": [
+    {
+      "id": "3f2ad6a9e0e74cc5ab19b7b5f5b7d1e2",
+      "absent": true
+    },
+    {
+      "id": "c88a46ad536c4d7a87ae3befc9c9d2f9",
+      "absent": true
+    },
+    {
+      "id": "838a12af4f4c4b838735c6281695159d",
+      "absent": true
+    },
+    {
+      "id": "a74d9157f9b94a74ab1dec38904e7099",
+      "absent": true
+    }
+  ]
+}

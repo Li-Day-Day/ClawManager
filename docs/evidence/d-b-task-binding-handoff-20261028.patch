@@ -1,0 +1,571 @@
+diff --git a/backend/internal/systembackupdispatch/contract.go b/backend/internal/systembackupdispatch/contract.go
+--- a/backend/internal/systembackupdispatch/contract.go
++++ b/backend/internal/systembackupdispatch/contract.go
+@@ -37,6 +37,16 @@
+ 	ConfigSnapshot             json.RawMessage
+ 	ProfileID, ProfileRevision string
+ 	Jobs                       []JobBinding
++	Backup                     *BackupSpec
++}
++
++// BackupSpec is the admitted public system_backups projection. RequestedParts
++// and TaskPurpose come from the original task, never inferred from an empty
++// request, the current config, a profile name or B's lab functional_test default.
++type BackupSpec struct {
++	SourceOrchestrator, SourceProfile, MatrixKey string
++	DatasourceTopology, Runner, TaskPurpose      string
++	RequestedParts                               []string
+ }
+ 
+ // Plan is B's versioned immutable execution plan. D must encrypt/persist it
+diff --git a/backend/internal/systembackupdispatch/backup_spec.go b/backend/internal/systembackupdispatch/backup_spec.go
+new file mode 100644
+--- /dev/null
++++ b/backend/internal/systembackupdispatch/backup_spec.go
+@@ -0,0 +1,44 @@
++package systembackupdispatch
++
++// ValidateBackupSpec validates the explicit admitted task projection. It does
++// not decode a create request, apply defaults, authorize resources or prove
++// profile coverage. Partial parts require the original explicit test purpose.
++func ValidateBackupSpec(b *BackupSpec) error {
++	if b == nil || b.DatasourceTopology != "in_cluster" || (b.TaskPurpose != "acceptance" && b.TaskPurpose != "functional_test") || len(b.RequestedParts) == 0 || len(b.RequestedParts) > 6 {
++		return ErrNotReady
++	}
++	want := ""
++	switch b.SourceOrchestrator {
++	case "kubernetes":
++		if b.Runner != "k8s" {
++			return ErrNotReady
++		}
++		want = "k8s-"
++	case "k3s":
++		if b.Runner != "k3s" {
++			return ErrNotReady
++		}
++		want = "k3s-"
++	default:
++		return ErrNotReady
++	}
++	if (b.SourceProfile != "cluster" && b.SourceProfile != "single-node") || b.MatrixKey != want+b.SourceProfile {
++		return ErrNotReady
++	}
++	seen := map[string]bool{}
++	for _, part := range b.RequestedParts {
++		switch part {
++		case "mysql", "redis", "object_storage", "workspace", "deployment_resources", "secret_bundle":
++		default:
++			return ErrNotReady
++		}
++		if seen[part] {
++			return ErrNotReady
++		}
++		seen[part] = true
++	}
++	if b.TaskPurpose == "acceptance" && len(seen) != 6 {
++		return ErrNotReady
++	}
++	return nil
++}
+diff --git a/backend/internal/systembackupdispatch/task_binding.go b/backend/internal/systembackupdispatch/task_binding.go
+new file mode 100644
+--- /dev/null
++++ b/backend/internal/systembackupdispatch/task_binding.go
+@@ -0,0 +1,170 @@
++package systembackupdispatch
++
++import (
++	"bytes"
++	"context"
++	"crypto/sha256"
++	"encoding/hex"
++	"encoding/json"
++	"io"
++	"regexp"
++	"time"
++)
++
++const TaskPlanVersion = "system-backup-task-plan.v1"
++const maxInnerPlan = 4 << 20
++const maxTaskPlan = 8 << 20
++
++var taskPlanHash = regexp.MustCompile(`^[0-9a-f]{64}$`)
++var taskPlanToken = regexp.MustCompile(`^[A-Za-z0-9._:-]{1,128}$`)
++var taskPlanInstallation = regexp.MustCompile(`^installation_[A-Za-z0-9._:-]{1,115}$`)
++var taskPlanID = regexp.MustCompile(`^(sbk|spf)_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
++
++type taskPlanBinding struct {
++	InstallationID   string    `json:"installation_id"`
++	PublicID         string    `json:"task_public_id"`
++	Kind             string    `json:"task_type"`
++	RequestID        string    `json:"request_id"`
++	ConfigVersion    uint64    `json:"config_version"`
++	ConfigSHA256     string    `json:"config_sha256"`
++	AttemptNo        uint64    `json:"attempt_no"`
++	Phase            string    `json:"phase"`
++	ProfileID        string    `json:"profile_id"`
++	ProfileRevision  string    `json:"profile_revision"`
++	Deadline         time.Time `json:"deadline_at"`
++	BackupSpecSHA256 string    `json:"backup_spec_sha256"`
++}
++type taskPlanEnvelope struct {
++	Version      string          `json:"schema_version"`
++	Binding      taskPlanBinding `json:"binding"`
++	InnerVersion string          `json:"runner_plan_version"`
++	InnerSHA256  string          `json:"runner_plan_sha256"`
++	// Base64 through []byte deliberately preserves every original B byte.
++	// RawMessage would compact/re-encode a differently formatted inner plan.
++	InnerBytes []byte `json:"runner_plan_bytes"`
++}
++type taskBoundRunner struct {
++	inner   Runner
++	version string
++}
++
++func taskPlanDigest(b []byte) string { sum := sha256.Sum256(b); return hex.EncodeToString(sum[:]) }
++
++func planBinding(in Input) (taskPlanBinding, error) {
++	a := in.Authority
++	if !taskPlanInstallation.MatchString(a.InstallationID) || !taskPlanID.MatchString(a.TaskPublicID) || !taskPlanToken.MatchString(a.RequestID) || !taskPlanToken.MatchString(a.ClaimOwner) || a.ClaimRowVersion == 0 || a.ConfigVersion == 0 || a.AttemptNo == 0 || !taskPlanHash.MatchString(a.ConfigSHA256) || a.DeadlineAt.IsZero() || !taskPlanToken.MatchString(in.ProfileID) || !taskPlanToken.MatchString(in.ProfileRevision) || len(in.ConfigSnapshot) < 2 || len(in.ConfigSnapshot) > 262144 || !json.Valid(in.ConfigSnapshot) || taskPlanDigest(in.ConfigSnapshot) != a.ConfigSHA256 {
++		return taskPlanBinding{}, ErrNotReady
++	}
++	if a.TaskType == "backup" {
++		if a.TaskPublicID[:4] != "sbk_" || a.Phase != "capture" || ValidateBackupSpec(in.Backup) != nil {
++			return taskPlanBinding{}, ErrNotReady
++		}
++	} else if a.TaskType != "preflight" || a.TaskPublicID[:4] != "spf_" || a.Phase != "preflight" {
++		return taskPlanBinding{}, ErrNotReady
++	}
++	raw, err := json.Marshal(in.Backup)
++	if err != nil {
++		return taskPlanBinding{}, ErrNotReady
++	}
++	return taskPlanBinding{a.InstallationID, a.TaskPublicID, a.TaskType, a.RequestID, a.ConfigVersion, a.ConfigSHA256, a.AttemptNo, a.Phase, in.ProfileID, in.ProfileRevision, a.DeadlineAt.UTC().Round(0), taskPlanDigest(raw)}, nil
++}
++
++func cloneTaskInput(in Input) Input {
++	in.ConfigSnapshot = bytes.Clone(in.ConfigSnapshot)
++	in.Jobs = append([]JobBinding(nil), in.Jobs...)
++	if in.Backup != nil {
++		b := *in.Backup
++		b.RequestedParts = append([]string(nil), b.RequestedParts...)
++		in.Backup = &b
++	}
++	return in
++}
++
++// BindTaskRunner is D's mandatory adapter around the real B runner. It binds
++// original task purpose/parts/source specification in addition to B's plan
++// binding. It does NOT alter B's private version or raw plan bytes/signature.
++// The returned plan is integrity metadata, not a custody proof or a grant:
++// the real WorkStore must still encrypt/persist it through A-owned facilities.
++func BindTaskRunner(inner Runner, expectedInnerVersion string) (Runner, error) {
++	if missing(inner) || !taskPlanToken.MatchString(expectedInnerVersion) {
++		return nil, ErrNotReady
++	}
++	return &taskBoundRunner{inner: inner, version: expectedInnerVersion}, nil
++}
++
++func validInnerPlan(p Plan, version string) bool {
++	b := bytes.TrimSpace(p.CanonicalJSON)
++	return p.SchemaVersion == version && len(p.CanonicalJSON) > 0 && len(p.CanonicalJSON) <= maxInnerPlan && len(b) > 0 && b[0] == '{' && json.Valid(b) && taskPlanHash.MatchString(p.SHA256) && taskPlanDigest(p.CanonicalJSON) == p.SHA256
++}
++
++func (r *taskBoundRunner) Prepare(ctx context.Context, in Input, ports Ports) (Plan, error) {
++	if r == nil || missing(ctx) || ctx.Err() != nil || missing(ports) {
++		return Plan{}, ErrNotReady
++	}
++	binding, err := planBinding(in)
++	if err != nil {
++		return Plan{}, err
++	}
++	call := cloneTaskInput(in)
++	inner, err := r.inner.Prepare(ctx, call, ports)
++	if err != nil {
++		return Plan{}, err
++	}
++	after, checkErr := planBinding(call)
++	if checkErr != nil || after != binding || ctx.Err() != nil || !validInnerPlan(inner, r.version) {
++		return Plan{}, ErrNotReady
++	}
++	raw, err := json.Marshal(taskPlanEnvelope{TaskPlanVersion, binding, inner.SchemaVersion, inner.SHA256, bytes.Clone(inner.CanonicalJSON)})
++	if err != nil || len(raw) > maxTaskPlan {
++		return Plan{}, ErrNotReady
++	}
++	return Plan{TaskPlanVersion, raw, taskPlanDigest(raw)}, nil
++}
++
++// UnwrapTaskPlan is D's materializer boundary before B DescribePlan. It checks
++// the exact original task/config/profile/spec and inner version/SHA, returns a
++// detached copy of the SAME B bytes, and grants no Job/capture/read authority.
++func UnwrapTaskPlan(in Input, p Plan, expectedInnerVersion string) (Plan, error) {
++	binding, err := planBinding(in)
++	if err != nil || !taskPlanToken.MatchString(expectedInnerVersion) || p.SchemaVersion != TaskPlanVersion || len(p.CanonicalJSON) == 0 || len(p.CanonicalJSON) > maxTaskPlan || !taskPlanHash.MatchString(p.SHA256) || taskPlanDigest(p.CanonicalJSON) != p.SHA256 {
++		return Plan{}, ErrNotReady
++	}
++	var e taskPlanEnvelope
++	dec := json.NewDecoder(bytes.NewReader(p.CanonicalJSON))
++	dec.DisallowUnknownFields()
++	if dec.Decode(&e) != nil || dec.Decode(new(any)) != io.EOF {
++		return Plan{}, ErrNotReady
++	}
++	canonical, err := json.Marshal(e)
++	if err != nil || !bytes.Equal(canonical, p.CanonicalJSON) || e.Version != TaskPlanVersion || e.Binding != binding {
++		return Plan{}, ErrNotReady
++	}
++	inner := Plan{e.InnerVersion, bytes.Clone(e.InnerBytes), e.InnerSHA256}
++	if !validInnerPlan(inner, expectedInnerVersion) {
++		return Plan{}, ErrNotReady
++	}
++	return inner, nil
++}
++
++func (r *taskBoundRunner) Capture(ctx context.Context, in Input, p Plan, ports Ports) ([]ModuleResult, error) {
++	if r == nil || missing(ctx) || ctx.Err() != nil || missing(ports) {
++		return nil, ErrNotReady
++	}
++	inner, err := UnwrapTaskPlan(in, p, r.version)
++	if err != nil {
++		return nil, err
++	}
++	return r.inner.Capture(ctx, cloneTaskInput(in), inner, ports)
++}
++func (r *taskBoundRunner) Recover(ctx context.Context, in Input, p Plan, ports Ports) (RecoveryResult, error) {
++	if r == nil || missing(ctx) || ctx.Err() != nil || missing(ports) {
++		return RecoveryResult{}, ErrNotReady
++	}
++	inner, err := UnwrapTaskPlan(in, p, r.version)
++	if err != nil {
++		return RecoveryResult{}, err
++	}
++	// Recovery deliberately delegates to the fresh recovery scope/ports; it
++	// cannot be authorized by a saved plan or a stale forward-work claim.
++	return r.inner.Recover(ctx, cloneTaskInput(in), inner, ports)
++}
+diff --git a/backend/internal/systembackupdispatch/task_binding_test.go b/backend/internal/systembackupdispatch/task_binding_test.go
+new file mode 100644
+--- /dev/null
++++ b/backend/internal/systembackupdispatch/task_binding_test.go
+@@ -0,0 +1,156 @@
++package systembackupdispatch
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"testing"
++	"time"
++)
++
++type bindingRunner struct {
++	Runner
++	prepares, captures, recoveries int
++	plan                           Plan
++	seen                           Input
++	mutate                         bool
++}
++
++func (r *bindingRunner) Prepare(_ context.Context, in Input, _ Ports) (Plan, error) {
++	r.prepares++
++	if r.mutate {
++		in.Backup.RequestedParts[0] = "workspace"
++	}
++	return r.plan, nil
++}
++func (r *bindingRunner) Capture(_ context.Context, in Input, p Plan, _ Ports) ([]ModuleResult, error) {
++	r.captures++
++	r.seen = in
++	if !bytes.Equal(p.CanonicalJSON, r.plan.CanonicalJSON) || p.SchemaVersion != r.plan.SchemaVersion || p.SHA256 != r.plan.SHA256 {
++		return nil, ErrNotReady
++	}
++	return []ModuleResult{}, nil
++}
++func (r *bindingRunner) Recover(_ context.Context, in Input, p Plan, _ Ports) (RecoveryResult, error) {
++	r.recoveries++
++	r.seen = in
++	if !bytes.Equal(p.CanonicalJSON, r.plan.CanonicalJSON) {
++		return RecoveryResult{}, ErrNotReady
++	}
++	return RecoveryResult{}, nil
++}
++func bindingFixture(t *testing.T) (Input, *bindingRunner, Runner, Plan) {
++	t.Helper()
++	config := []byte(`{"fixture":true}`)
++	in := Input{Authority: Authority{InstallationID: "installation_test", TaskPublicID: "sbk_01234567-89ab-cdef-0123-456789abcdef", TaskType: "backup", RequestID: "request-1", ConfigVersion: 1, ConfigSHA256: taskPlanDigest(config), AttemptNo: 1, Phase: "capture", ClaimOwner: "controller-1", ClaimRowVersion: 3, DeadlineAt: time.Now().UTC().Add(time.Minute)}, ConfigSnapshot: config, ProfileID: "linux", ProfileRevision: "r1", Backup: &BackupSpec{SourceOrchestrator: "kubernetes", SourceProfile: "cluster", MatrixKey: "k8s-cluster", DatasourceTopology: "in_cluster", Runner: "k8s", TaskPurpose: "functional_test", RequestedParts: []string{"mysql"}}}
++	raw := []byte(" { \"fixture\": 1 } \n")
++	inner := &bindingRunner{plan: Plan{"test-b-plan.v1", raw, taskPlanDigest(raw)}}
++	r, err := BindTaskRunner(inner, inner.plan.SchemaVersion)
++	if err != nil {
++		t.Fatal(err)
++	}
++	p, err := r.Prepare(context.Background(), in, &testPorts{})
++	if err != nil {
++		t.Fatal(err)
++	}
++	return in, inner, r, p
++}
++func TestTaskBindingPreservesEveryOriginalRunnerByte(t *testing.T) {
++	in, inner, r, p := bindingFixture(t)
++	if p.SchemaVersion != TaskPlanVersion || p.SHA256 == inner.plan.SHA256 {
++		t.Fatal("outer and B identities conflated")
++	}
++	unwrapped, err := UnwrapTaskPlan(in, p, inner.plan.SchemaVersion)
++	if err != nil || !bytes.Equal(unwrapped.CanonicalJSON, inner.plan.CanonicalJSON) {
++		t.Fatal("B original bytes changed")
++	}
++	if _, err := r.Capture(context.Background(), in, p, &testPorts{}); err != nil || inner.captures != 1 {
++		t.Fatal("original B plan not called", err)
++	}
++}
++func TestTaskBindingRejectsChangedTaskSpecBeforeRunner(t *testing.T) {
++	for _, change := range []string{"purpose", "parts", "profile", "attempt", "config", "deadline"} {
++		t.Run(change, func(t *testing.T) {
++			in, inner, r, p := bindingFixture(t)
++			switch change {
++			case "purpose":
++				in.Backup.TaskPurpose = "acceptance"
++				in.Backup.RequestedParts = []string{"mysql", "redis", "object_storage", "workspace", "deployment_resources", "secret_bundle"}
++			case "parts":
++				in.Backup.RequestedParts = []string{"workspace"}
++			case "profile":
++				in.ProfileRevision = "r2"
++			case "attempt":
++				in.Authority.AttemptNo++
++			case "config":
++				in.ConfigSnapshot = []byte(`{"changed":true}`)
++				in.Authority.ConfigSHA256 = taskPlanDigest(in.ConfigSnapshot)
++			case "deadline":
++				in.Authority.DeadlineAt = in.Authority.DeadlineAt.Add(time.Second)
++			}
++			if _, err := r.Capture(context.Background(), in, p, &testPorts{}); err == nil || inner.captures != 0 {
++				t.Fatal("changed semantic identity reached B")
++			}
++			if _, err := r.Recover(context.Background(), in, p, &testPorts{}); err == nil || inner.recoveries != 0 {
++				t.Fatal("changed semantic recovery identity reached B")
++			}
++		})
++	}
++}
++func TestTaskBindingPassesFreshClaimAndRecoveryAuthorityToB(t *testing.T) {
++	in, inner, r, p := bindingFixture(t)
++	in.Authority.ClaimOwner = "controller-new"
++	in.Authority.ClaimRowVersion = 7
++	in.Authority.MaintenanceOwner = "gate-new"
++	in.Authority.MaintenanceFencingToken = 11
++	if _, err := r.Capture(context.Background(), in, p, &testPorts{}); err != nil || inner.seen.Authority != in.Authority {
++		t.Fatal("fresh current authority replaced by plan observations")
++	}
++	if _, err := r.Recover(context.Background(), in, p, &testPorts{}); err != nil || inner.seen.Authority != in.Authority {
++		t.Fatal("recovery current scope replaced")
++	}
++}
++func TestTaskBindingRejectsNoncanonicalOrCorruptEnvelopes(t *testing.T) {
++	for _, change := range []string{"outer_hash", "inner_hash", "duplicate", "unknown", "version"} {
++		t.Run(change, func(t *testing.T) {
++			in, inner, r, p := bindingFixture(t)
++			switch change {
++			case "outer_hash":
++				p.CanonicalJSON = append(p.CanonicalJSON, ' ')
++			case "duplicate":
++				p.CanonicalJSON = append([]byte(`{"schema_version":"system-backup-task-plan.v1",`), p.CanonicalJSON[1:]...)
++				p.SHA256 = taskPlanDigest(p.CanonicalJSON)
++			case "unknown":
++				p.CanonicalJSON = append([]byte(`{"extra":1,`), p.CanonicalJSON[1:]...)
++				p.SHA256 = taskPlanDigest(p.CanonicalJSON)
++			default:
++				var e taskPlanEnvelope
++				if json.Unmarshal(p.CanonicalJSON, &e) != nil {
++					t.Fatal("fixture")
++				}
++				if change == "inner_hash" {
++					e.InnerBytes = []byte(`{"different":1}`)
++				} else {
++					e.InnerVersion = "other.v1"
++				}
++				p.CanonicalJSON, _ = json.Marshal(e)
++				p.SHA256 = taskPlanDigest(p.CanonicalJSON)
++			}
++			if _, err := r.Capture(context.Background(), in, p, &testPorts{}); err == nil || inner.captures != 0 {
++				t.Fatal("corrupt envelope reached B")
++			}
++		})
++	}
++}
++func TestTaskBindingRequiresExplicitSpecAndIsolatesPrepareObservations(t *testing.T) {
++	in, inner, r, _ := bindingFixture(t)
++	in.Backup = nil
++	if _, err := r.Prepare(context.Background(), in, &testPorts{}); err == nil || inner.prepares != 1 {
++		t.Fatal("missing spec was defaulted")
++	}
++	in, inner, r, _ = bindingFixture(t)
++	inner.mutate = true
++	if _, err := r.Prepare(context.Background(), in, &testPorts{}); err == nil || in.Backup.RequestedParts[0] != "mysql" {
++		t.Fatal("mutated discovery input persisted or escaped")
++	}
++}
+diff --git a/backend/internal/systembackup/publicadapter/runner.go b/backend/internal/systembackup/publicadapter/runner.go
+--- a/backend/internal/systembackup/publicadapter/runner.go
++++ b/backend/internal/systembackup/publicadapter/runner.go
+@@ -99,7 +99,7 @@
+ 	}
+ 	r := reflect.ValueOf(v)
+ 	switch r.Kind() {
+-	case reflect.Pointer, reflect.Interface, reflect.Map, reflect.Func, reflect.Slice:
++	case reflect.Pointer, reflect.Interface, reflect.Map, reflect.Func, reflect.Slice, reflect.Chan:
+ 		return r.IsNil()
+ 	}
+ 	return false
+@@ -178,7 +178,7 @@
+ }
+ 
+ func (r *runner) admit(ctx context.Context, in d.Input, ports d.Ports, recovery bool) (Profile, error) {
+-	if ctx == nil || nilValue(ports) {
++	if nilValue(ctx) || nilValue(ports) {
+ 		return nil, d.ErrNotReady
+ 	}
+ 	if err := ctx.Err(); err != nil {
+@@ -402,6 +402,11 @@
+ func cloneInput(in d.Input) d.Input {
+ 	in.ConfigSnapshot = bytes.Clone(in.ConfigSnapshot)
+ 	in.Jobs = append([]d.JobBinding(nil), in.Jobs...)
++	if in.Backup != nil {
++		b := *in.Backup
++		b.RequestedParts = append([]string(nil), b.RequestedParts...)
++		in.Backup = &b
++	}
+ 	return in
+ }
+ 
+diff --git a/backend/internal/systembackup/publicadapter/linux_profile.go b/backend/internal/systembackup/publicadapter/linux_profile.go
+--- a/backend/internal/systembackup/publicadapter/linux_profile.go
++++ b/backend/internal/systembackup/publicadapter/linux_profile.go
+@@ -18,6 +18,13 @@
+ 	Users                []int
+ 	Instances            []InstanceIdentity
+ }
++
++func cloneSourceInventory(in SourceInventory) SourceInventory {
++	in.Users = append([]int(nil), in.Users...)
++	in.Instances = append([]InstanceIdentity(nil), in.Instances...)
++	return in
++}
++
+ type AgentKind struct{ Type, Mode, Variant, OS string }
+ 
+ // LinuxProfile uses only an existing SELECT-only source connection and concrete
+@@ -115,13 +122,13 @@
+ 	if out.HoldUntil.After(in.Authority.DeadlineAt) {
+ 		out.HoldUntil = in.Authority.DeadlineAt.UTC()
+ 	}
+-	out.Parts, err = p.cfg.BuildParts(in, inv, out.HoldUntil)
++	out.Parts, err = p.cfg.BuildParts(cloneInput(in), cloneSourceInventory(inv), out.HoldUntil)
+ 	if err != nil {
+ 		return Discovery{}, classify(err)
+ 	}
+ 	out.Writers = []FrozenWriter{}
+ 	if in.Authority.TaskType == "backup" {
+-		writers, err := p.cfg.BuildWriters(ctx, in, inv, nil)
++		writers, err := p.cfg.BuildWriters(ctx, cloneInput(in), cloneSourceInventory(inv), nil)
+ 		if err != nil {
+ 			return Discovery{}, classify(err)
+ 		}
+@@ -145,7 +152,7 @@
+ 		return nil, d.ErrNotReady
+ 	}
+ 	// Bind uses ONLY frozen source data. No SQL discovery or new UID allocation.
+-	return p.cfg.BuildWriters(ctx, in, inv, append([]FrozenWriter(nil), x.Writers...))
++	return p.cfg.BuildWriters(ctx, cloneInput(in), cloneSourceInventory(inv), append([]FrozenWriter(nil), x.Writers...))
+ }
+ 
+ func (p *LinuxProfile) Preflight(ctx context.Context, in d.Input, x Discovery) ([]d.ModuleResult, error) {
+diff --git a/backend/internal/systembackup/publicadapter/d_spec_integration_test.go b/backend/internal/systembackup/publicadapter/d_spec_integration_test.go
+new file mode 100644
+--- /dev/null
++++ b/backend/internal/systembackup/publicadapter/d_spec_integration_test.go
+@@ -0,0 +1,86 @@
++package publicadapter
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"clawreef/internal/systembackup/flow"
++
++	d "clawreef/internal/systembackupdispatch"
++)
++
++func TestDTaskPlanWrapsRealBRunnerAndPreservesBDescribePlan(t *testing.T) {
++	f, r, _ := setup(t)
++	f.in.Backup = &d.BackupSpec{SourceOrchestrator: "kubernetes", SourceProfile: "cluster", MatrixKey: "k8s-cluster", DatasourceTopology: "in_cluster", Runner: "k8s", TaskPurpose: "functional_test", RequestedParts: []string{"mysql", "workspace"}}
++	bound, err := d.BindTaskRunner(r, PlanVersion)
++	if err != nil {
++		t.Fatal(err)
++	}
++	p, err := bound.Prepare(context.Background(), f.in, f)
++	if err != nil {
++		t.Fatal(err)
++	}
++	inner, err := d.UnwrapTaskPlan(f.in, p, PlanVersion)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err := DescribePlan(f.in, inner); err != nil {
++		t.Fatal("original B materializer bytes not reusable", err)
++	}
++	if _, err := bound.Capture(context.Background(), f.in, p, f); err != nil {
++		t.Fatal(err)
++	}
++	if f.ensures != 1 || f.reads != 1 {
++		t.Fatal("B actual capture adapter was not invoked")
++	}
++}
++func TestDBackupSpecCallbacksReceiveDetachedObservations(t *testing.T) {
++	f, r, _ := setup(t)
++	f.in.Backup = &d.BackupSpec{TaskPurpose: "functional_test", RequestedParts: []string{"mysql"}}
++	r.(*runner).deps.Admission = func(_ context.Context, in d.Input) error {
++		in.Backup.TaskPurpose = "forged"
++		in.Backup.RequestedParts[0] = "forged"
++		return d.ErrNotReady
++	}
++	if _, err := r.Prepare(context.Background(), f.in, f); err == nil || f.in.Backup.TaskPurpose != "functional_test" || f.in.Backup.RequestedParts[0] != "mysql" {
++		t.Fatal("B owner callback mutated D's original task observation")
++	}
++}
++
++func TestDProfileBuildersCannotChangeOriginalSQLInventoryOrTask(t *testing.T) {
++	f, _, _ := setup(t)
++	f.in.Backup = &d.BackupSpec{TaskPurpose: "functional_test", RequestedParts: []string{"mysql"}}
++	p := linuxFixture(t, f, &sourceFixture{})
++	originalParts, originalWriters := p.cfg.BuildParts, p.cfg.BuildWriters
++	p.cfg.BuildParts = func(in d.Input, inv SourceInventory, hold time.Time) ([]JobPart, error) {
++		parts, err := originalParts(in, inv, hold)
++		in.Backup.TaskPurpose = "forged"
++		in.Backup.RequestedParts[0] = "forged"
++		inv.Users[0] = 99
++		inv.Instances[0].ID = 99
++		return parts, err
++	}
++	p.cfg.BuildWriters = func(ctx context.Context, in d.Input, inv SourceInventory, frozen []FrozenWriter) ([]flow.Writer, error) {
++		if in.Backup.TaskPurpose != "functional_test" || in.Backup.RequestedParts[0] != "mysql" || inv.Users[0] != 1 {
++			t.Fatal("earlier builder changed frozen task/source observation")
++		}
++		writers, err := originalWriters(ctx, in, inv, frozen)
++		in.Backup.RequestedParts[0] = "forged"
++		inv.Users[0] = 99
++		return writers, err
++	}
++	x, err := p.Discover(context.Background(), f.in)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := p.CheckSource(context.Background(), f.in, x); err != nil {
++		t.Fatal("builder altered original SQL snapshot", err)
++	}
++	if _, err := p.BindWriters(context.Background(), f.in, x); err != nil {
++		t.Fatal(err)
++	}
++	if f.in.Backup.TaskPurpose != "functional_test" || f.in.Backup.RequestedParts[0] != "mysql" {
++		t.Fatal("builder changed original D task spec")
++	}
++}

@@ -1,0 +1,132 @@
+name: K8s Installation Smoke (Manual)
+
+# Installation smoke only. This is not public backup/restore acceptance.
+on:
+  workflow_dispatch:
+    inputs:
+      minio_image:
+        description: 'Reachable MinIO image with a fixed release tag or optional sha256 digest'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  k8s-smoke:
+    name: K8s Installation Smoke (Manual)
+    runs-on: ubuntu-latest
+    env:
+      K8S_SMOKE_MINIO_IMAGE: ${{ inputs.minio_image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test isolated install fixtures
+        run: python3 -B -m unittest discover -s scripts/ci -p test_k8s_smoke.py -v
+
+      - name: Validate chosen MinIO reference
+        run: python3 -B scripts/ci/prepare_k8s_smoke.py --validate-inputs
+
+      - name: Verify MinIO can be pulled on this runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker pull "$K8S_SMOKE_MINIO_IMAGE"
+          docker image inspect "$K8S_SMOKE_MINIO_IMAGE" --format '{{json .RepoDigests}}'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build local application image
+        run: docker build --build-arg VERSION=ci-${GITHUB_SHA} --build-arg VCS_REF=${GITHUB_SHA} -t clawmanager:ci .
+
+      - name: Create kind cluster
+        id: kind
+        uses: helm/kind-action@v1.12.0
+        with:
+          cluster_name: clawmanager-ci
+          ignore_failed_clean: true
+
+      - name: Load image into kind
+        run: kind load docker-image clawmanager:ci --name clawmanager-ci
+
+      - name: Prepare disposable kind install
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(kubectl config current-context)" = kind-clawmanager-ci
+          fixture_dir="$(mktemp -d "${RUNNER_TEMP}/clawmanager-ci.XXXXXX")"
+          echo "SMOKE_FIXTURE_DIR=${fixture_dir}" >> "$GITHUB_ENV"
+          python3 -B scripts/ci/prepare_k8s_smoke.py --output "${fixture_dir}/install.yaml"
+          kubectl --context=kind-clawmanager-ci label node clawmanager-ci-control-plane clawmanager.io/storage-node=true --overwrite
+          kubectl --context=kind-clawmanager-ci apply -f "${fixture_dir}/install.yaml"
+
+      - name: Wait for Secret Broker deployment
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/clawmanager-secret-broker --timeout=300s
+
+      - name: Wait for object storage deployment
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/minio --timeout=300s
+
+      - name: Wait for MySQL deployment
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/mysql --timeout=300s
+
+      - name: Start ClawManager after MySQL is ready
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system scale deployment/clawmanager-app --replicas=1
+
+      - name: Wait for ClawManager deployment
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/clawmanager-app --timeout=300s
+
+      - name: Show cluster status on failure
+        if: failure() && steps.kind.outcome == 'success'
+        run: |
+          kubectl --context=kind-clawmanager-ci get pods -A || true
+          kubectl --context=kind-clawmanager-ci get pvc -A || true
+          kubectl --context=kind-clawmanager-ci get events -A --sort-by=.lastTimestamp || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe deployment mysql || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe deployment clawmanager-app || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=mysql || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=clawmanager-app || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/mysql --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/clawmanager-app --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=clawmanager-secret-broker || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=minio || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/clawmanager-secret-broker --all-containers --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/clawmanager-app -c wait-secret-broker --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/minio --tail=200 || true
+
+      - name: Start port-forward
+        run: |
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system port-forward svc/clawmanager-frontend 8443:443 > /tmp/clawmanager-port-forward.log 2>&1 &
+          echo $! > /tmp/clawmanager-port-forward.pid
+          sleep 10
+
+      - name: Verify health endpoint
+        run: curl --fail --insecure https://127.0.0.1:8443/healthz
+
+      - name: Verify version endpoint
+        run: curl --fail --insecure https://127.0.0.1:8443/api/v1/version | grep -F "ci-${GITHUB_SHA}"
+
+      - name: Verify web page is reachable
+        run: curl --fail --insecure https://127.0.0.1:8443/ | grep -i "<!doctype html>"
+
+      - name: Stop port-forward
+        if: always()
+        run: |
+          if [ -f /tmp/clawmanager-port-forward.pid ]; then
+            kill "$(cat /tmp/clawmanager-port-forward.pid)" || true
+          fi
+
+      - name: Remove disposable certificate manifest
+        if: always()
+        shell: bash
+        run: |
+          if [[ -n "${SMOKE_FIXTURE_DIR:-}" ]]; then
+            case "$SMOKE_FIXTURE_DIR" in
+              "$RUNNER_TEMP"/clawmanager-ci.*)
+                rm -f -- "$SMOKE_FIXTURE_DIR/install.yaml"
+                rmdir -- "$SMOKE_FIXTURE_DIR"
+                ;;
+              *) echo "Unexpected fixture path; refusing cleanup" >&2; exit 1 ;;
+            esac
+          fi

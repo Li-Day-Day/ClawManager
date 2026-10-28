@@ -9,44 +9,25 @@ import (
 	"net/http"
 	"strconv"
 
+	"clawreef/internal/systembackup/relaywire"
 	d "clawreef/internal/systembackupdispatch"
 	"k8s.io/apimachinery/pkg/util/validation"
 )
 
-const RelayVersion = "system-backup-status-relay.v1"
+const RelayVersion = relaywire.RelayVersion
 
-// RelayMessage is B's proposed closed message payload. D must bind these exact
-// fields to the original public Job/attempt/cursor. This is NOT an authority,
-// acceptance certificate, worker grant, or a new public API route.
-type RelayMessage struct {
-	SchemaVersion        string         `json:"schema_version"`
-	InstallationID       string         `json:"installation_id"`
-	TaskPublicID         string         `json:"task_public_id"`
-	TaskType             string         `json:"task_type"`
-	AttemptNo            string         `json:"attempt_no"`
-	Phase                string         `json:"phase"`
-	JobUnitKey           string         `json:"job_unit_key"`
-	Namespace            string         `json:"namespace"`
-	JobName              string         `json:"job_name"`
-	JobUID               string         `json:"job_uid"`
-	JobGeneration        string         `json:"job_generation"`
-	RelayIdentityRef     string         `json:"relay_identity_ref"`
-	RelayIdentityVersion string         `json:"relay_identity_version"`
-	Sequence             string         `json:"sequence"`
-	Status               string         `json:"status"`
-	ResultEvidence       *RelayEvidence `json:"result_evidence"`
-}
-type RelayEvidence struct {
-	PublicID string `json:"public_id"`
-	SHA256   string `json:"sha256"`
-}
+// RelayMessage retains the same closed JSON payload. Shared data aliases break
+// the A message-binding -> B runner -> A peer-auth dependency cycle; they grant
+// no authority. B still owns decoding/validation and A owns authenticated proof.
+type RelayMessage = relaywire.RelayMessage
+type RelayEvidence = relaywire.RelayEvidence
 
 func positiveDecimal(s string) (uint64, bool) {
 	n, e := strconv.ParseUint(s, 10, 64)
 	return n, e == nil && n > 0 && strconv.FormatUint(n, 10) == s
 }
 
-func (m RelayMessage) validate() bool {
+func validRelayMessage(m RelayMessage) bool {
 	_, attempt := positiveDecimal(m.AttemptNo)
 	_, generation := positiveDecimal(m.JobGeneration)
 	_, seq := positiveDecimal(m.Sequence)
@@ -99,7 +80,7 @@ func RelaySequence(last uint64, lastBody string, next uint64, body string) (Rela
 // a new sequence can never reopen or replace terminal worker facts. This is
 // worker progress only, never a public task/attempt status transition.
 func RelayProgress(previous string, next RelayMessage, decision RelayDecision) error {
-	if !next.validate() {
+	if !validRelayMessage(next) {
 		return &Failure{"control_evidence_invalid"}
 	}
 	if decision == RelayReplay && previous == next.Status && previous != "" {
@@ -166,7 +147,7 @@ func (h relayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var fields map[string]json.RawMessage
 	_ = json.Unmarshal(raw, &fields)
 	_, hasResult := fields["result_evidence"]
-	if decodeRequiredObject(raw, &message) != nil || !hasResult || !message.validate() {
+	if decodeRequiredObject(raw, &message) != nil || !hasResult || !validRelayMessage(message) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

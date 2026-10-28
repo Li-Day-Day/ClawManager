@@ -1,0 +1,70 @@
+{
+  "schema_version": "b-observer-validation.v1",
+  "date": "2026-10-28",
+  "head": "63a13b2771091e4ba47b691ce066a670cbc88d54",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupobserver/observer.go",
+      "bytes": 9851,
+      "sha256": "0d87c43222646c64db63128ab285bd95b9f78d55dabbb25fa070daa4bd635f3c"
+    },
+    {
+      "path": "backend/internal/systembackupobserver/observer_test.go",
+      "bytes": 7551,
+      "sha256": "780f1c705bdc0f71f5d1c62cc409b39c4a8e5757f32a2721b6585404edbff129"
+    },
+    {
+      "path": "backend/cmd/system-backup-observer/main.go",
+      "bytes": 2172,
+      "sha256": "ad8d6e612de7b895999acd242a1b7eb9429a68024644d687ba6fb92341a5cc75"
+    },
+    {
+      "path": "scripts/system-backup-d-sql-observer.mjs",
+      "bytes": 1982,
+      "sha256": "1baf58327e3d459241c9aefe9942a94b3e4239a78fb4a5c8e9b717c86d01a52f"
+    },
+    {
+      "path": "scripts/system-backup-d-sql-observer.test.mjs",
+      "bytes": 1514,
+      "sha256": "23a2759e27b211525153c0da5e5f6d12fb481baba68c87ef0012b5025ca0c74f"
+    },
+    {
+      "path": "docs/system-backup-b-first-chain-20261028.md",
+      "bytes": 7389,
+      "sha256": "b5d2938c20ee327eae6de30aa96958b97c3d592d4e6e8763aa2fe85ede18ee92"
+    }
+  ],
+  "go_test_exit": 0,
+  "go_test_command": "go test ./internal/systembackupobserver ./cmd/system-backup-observer -count=1 -json",
+  "go_test_root_pass": 6,
+  "go_test_pass_events": 13,
+  "go_test_fail_events": 0,
+  "cli_package_has_no_tests": true,
+  "windows_build_exit": 0,
+  "windows_binary_bytes": 8403456,
+  "windows_binary_sha256": "f72484031929e441339945ee2f3146cca6ecbbc826ee3598e1d3188f3765a6f3",
+  "missing_inputs_cli_exit": 1,
+  "node_test_runner_exit": 1,
+  "node_test_runner_reason": "spawn EPERM",
+  "node_direct_exit": 0,
+  "node_direct_tests": 2,
+  "toolchain": "local",
+  "GOPROXY": "off",
+  "GOSUMDB": "off",
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "actual_remote": false,
+  "real_chain_passed": false,
+  "cleanup_target": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\backend\\.tmp-b-observer-20261028",
+  "cleanup_files": 1790,
+  "cleanup_bytes": 102391194.0,
+  "cleanup_absent": true,
+  "claim_history": "Requires real B atomic receipt producer; no count inferred from leases/attempts",
+  "logs": [
+    "docs/evidence/b-observer-native-20261028.jsonl",
+    "docs/evidence/b-observer-native-20261028.status.json",
+    "docs/evidence/b-observer-node-20261028.log",
+    "docs/evidence/b-observer-node-direct-20261028.log",
+    "docs/evidence/b-observer-cli-negative-20261028.log"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "scope-final-inventory": {
+    "exit": 1,
+    "command": [
+      "node",
+      "scripts/system-backup-schema-inventory.mjs",
+      "--check"
+    ]
+  },
+  "scope-final-contract": {
+    "exit": 1,
+    "command": [
+      "node",
+      "scripts/system-backup-contract-check.mjs",
+      "--check"
+    ]
+  },
+  "scope-final-node": {
+    "exit": 0,
+    "command": [
+      "node",
+      "--test",
+      "scripts/system-backup-contract-artifacts.test.mjs",
+      "scripts/system-backup-contract-check.test.mjs"
+    ]
+  }
+}

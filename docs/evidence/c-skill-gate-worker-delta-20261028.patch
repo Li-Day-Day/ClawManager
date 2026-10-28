@@ -1,0 +1,69 @@
+diff --git a/backend/internal/services/skill_package_materialize_worker.go b/backend/internal/services/skill_package_materialize_worker.go
+index be3fa89d..183c33c1 100644
+--- a/backend/internal/services/skill_package_materialize_worker.go
++++ b/backend/internal/services/skill_package_materialize_worker.go
+@@ -25,6 +25,7 @@ type skillMaterializeWorkerRun struct {
+ }
+ 
+ type SkillPackageMaterializeWorker struct {
++	BackupGate       BackupMutationGate
+ 	service          skillMaterializeWorkerService
+ 	tick             time.Duration
+ 	batchSize        int
+@@ -143,13 +144,7 @@ func (w *SkillPackageMaterializeWorker) loop(run *skillMaterializeWorkerRun) {
+ 	if run.ctx.Err() != nil {
+ 		return
+ 	}
+-	if count, err := w.service.BackfillOnce(run.ctx, 500); err != nil {
+-		if run.ctx.Err() == nil {
+-			log.Printf("skill package materialize backfill failed: %v", err)
+-		}
+-	} else if count > 0 {
+-		log.Printf("skill package materialize backfill enqueued %d jobs", count)
+-	}
++	run.err = w.backfill(run.ctx)
+ 	ticker := time.NewTicker(w.tick)
+ 	defer ticker.Stop()
+ 	for {
+@@ -169,7 +164,40 @@ func (w *SkillPackageMaterializeWorker) loop(run *skillMaterializeWorkerRun) {
+ 	}
+ }
+ 
+-func (w *SkillPackageMaterializeWorker) processBatch(ctx context.Context) error {
++// The permit spans the entire backfill, including cancellation. A release
++// failure is retained in the drain result, just like incomplete job cleanup.
++func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) (releaseErr error) {
++	if ctx.Err() != nil {
++		return nil
++	}
++	release, err := enterBackupMutation(ctx, w.BackupGate, "skill-backfill")
++	if err != nil {
++		return nil // admission is closed; no work has started
++	}
++	defer func() { releaseErr = release() }()
++	if ctx.Err() != nil {
++		return nil
++	}
++	if count, err := w.service.BackfillOnce(ctx, 500); err != nil {
++		if ctx.Err() == nil {
++			log.Printf("skill package materialize backfill failed: %v", err)
++		}
++	} else if count > 0 {
++		log.Printf("skill package materialize backfill enqueued %d jobs", count)
++	}
++	return nil
++}
++
++func (w *SkillPackageMaterializeWorker) processBatch(ctx context.Context) (resultErr error) {
++	if ctx.Err() != nil {
++		return nil
++	}
++	releasePermit, gateErr := enterBackupMutation(ctx, w.BackupGate, "skill-materialize")
++	if gateErr != nil {
++		return nil // a closed gate is not an incomplete claim
++	}
++	// Release only after all child jobs and cancellation cleanup have joined.
++	defer func() { resultErr = errors.Join(resultErr, releasePermit()) }()
+ 	if ctx.Err() != nil {
+ 		return nil
+ 	}

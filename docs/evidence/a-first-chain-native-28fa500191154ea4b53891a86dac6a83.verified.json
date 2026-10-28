@@ -1,0 +1,39 @@
+{
+  "kind": "a_first_chain_exact_snapshot_verified.v1",
+  "receipt": "docs/evidence/a-first-chain-native-28fa500191154ea4b53891a86dac6a83.json",
+  "receipt_sha256": "995123990b6a1390af7ebbb867eb19e41c72ea0d11875e4cd4fa11029e45c09f",
+  "counts": [
+    {
+      "package": "clawreef/internal/systembackupsecurity",
+      "roots": 307,
+      "passes": 2310
+    },
+    {
+      "package": "clawreef/cmd/system-backup-bootstrap",
+      "roots": 3,
+      "passes": 3
+    }
+  ],
+  "current_A_changed_files_match": true,
+  "current_driver_matches": true,
+  "actual_windows_cli_missing": 27,
+  "configured_model_remaining": 24,
+  "windows_and_linux_builds_exit_zero": true,
+  "owned_directory_absent": true,
+  "source_unchanged": false,
+  "other_source_changes": [
+    "backend/cmd/server/system_backup_read_live.go",
+    "backend/cmd/server/system_backup_tasks_live_test.go",
+    "backend/cmd/server/system_backup_tasks_live.go",
+    "backend/internal/systembackupapi/submission.go",
+    "backend/internal/systembackupapi/tasks.go",
+    "scripts/system-backup-d-api-smoke.mjs",
+    "scripts/system-backup-d-api-smoke.test.mjs"
+  ],
+  "source_paths_changed": true,
+  "non_implementer_signoff": false,
+  "actual_SQL": false,
+  "production_link_provided": false,
+  "original_production_authority_verified": false,
+  "goal_complete": false
+}

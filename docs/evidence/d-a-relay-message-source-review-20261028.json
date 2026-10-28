@@ -1,0 +1,32 @@
+{
+  "kind": "d_a_relay_message_source_review.v1",
+  "reviewer": "D",
+  "status": "accepted_with_existing_boundaries",
+  "actual_sql": false,
+  "wire_cursor_tested": false,
+  "production_resource_grant": false,
+  "source_only": true,
+  "files": [
+    {
+      "path": "backend/internal/systembackupevidence/relay_message.go",
+      "sha256": "1f6125fce50eda3b6c35edd66246e98d434ebe1accfddcad67c224ff12c2964a"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_message_test.go",
+      "sha256": "9e4df475762331c91f89edb231e4f5d805ca259f6854a902a1a46e846bbae42f"
+    }
+  ],
+  "checks": [
+    "13 original authority/Job identity fields matched before base BindDispatch; wrong message consumes one-shot proof",
+    "Full typed message including detached optional evidence identity/hash frozen across final recheck",
+    "Shared private state failure latch prevents repaired/copy guards from reviving failed proof",
+    "Original BindDispatch/RecheckDispatch enforce same context/tx, current peer binding and unextended original SQL-clock expiry",
+    "No SQL/HTTP registration/task mutation, signing, KEK or new grant added"
+  ],
+  "required_D": [
+    "Use B closed decoder and exact original raw bytes/body SHA before invoking A",
+    "Load namespace/name/UID/generation/result refs from original authoritative Job intent/ledger, not message",
+    "Apply RelaySequence+RelayProgress, cursor CAS, original revocation/authority and final clock in same transaction",
+    "Do not treat transport/message projection as worker grant, business progress or evidence authentication"
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "kind": "a_d_controller_start_grant_source_review.v1",
+  "date": "2026-10-28",
+  "scope": "current visible start SQL against unchanged default controller grant matrix",
+  "inputs": [
+    {
+      "path": "backend/internal/systembackupcontroller/database_grants.go",
+      "sha256": "3e7c2a21e56d067b3875dc16a00c2125b917cb5989c6009cdfd1e28a64e766b2"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports.go",
+      "sha256": "db4a5bdaa0f0efd54b0f2ba76e8e1613ecf1fdd50ba525a5af89b78f3c9cacc2"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/execution_ports_test.go",
+      "sha256": "318f35f7203114105f6b67fe4c7d985fc7d0ce978e9bf3853760b3bbc725005f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store.go",
+      "sha256": "ee92cd4b8c98d76b6dbc7d894b626585ee198034f87ba802ae68f13f163f592f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_backup_start_store_test.go",
+      "sha256": "3f2239d5f8a3e627584df509ecae8f159b768b3718af1b8a4a1ab0b9945db6cf"
+    }
+  ],
+  "official_source": "https://dev.mysql.com/doc/refman/8.0/en/innodb-locking-reads.html",
+  "mysql_version_condition": "SELECT-only FOR SHARE requires MySQL >=8.0.22; generic 8.0 is insufficient evidence; verify actual server identity/version before production enablement",
+  "source_lock_review": "installation remains FOR UPDATE; configs, attempts and event validation use FOR SHARE; no history UPDATE/DELETE/LOCK TABLES grant inferred",
+  "candidate_delta": [
+    {
+      "table": "system_backup_events",
+      "original_verbs": [
+        "INSERT"
+      ],
+      "required_by_visible_start_queries": [
+        "INSERT",
+        "SELECT"
+      ],
+      "missing_verbs": [
+        "SELECT"
+      ],
+      "reason": "append claim/core events and lock-read the three original event IDs"
+    },
+    {
+      "table": "system_backup_attempts",
+      "original_verbs": [
+        "SELECT"
+      ],
+      "required_by_visible_start_queries": [
+        "SELECT",
+        "INSERT"
+      ],
+      "missing_verbs": [
+        "INSERT"
+      ],
+      "reason": "insert initial capture/secret_capture units and share-lock their current state"
+    },
+    {
+      "table": "system_backup_job_observations",
+      "original_verbs": [],
+      "required_by_visible_start_queries": [
+        "SELECT"
+      ],
+      "missing_verbs": [
+        "SELECT"
+      ],
+      "reason": "initial-start NOT EXISTS guard"
+    },
+    {
+      "table": "system_backup_staging_resources",
+      "original_verbs": [],
+      "required_by_visible_start_queries": [
+        "SELECT"
+      ],
+      "missing_verbs": [
+        "SELECT"
+      ],
+      "reason": "initial-start NOT EXISTS guard"
+    }
+  ],
+  "decision": "four visible-query deltas documented for explicit D/A matrix review and new real positive/negative grant tests; no runtime matrix or authority changed",
+  "test_requirements": [
+    "old exact grants refuse initial start without partial writes",
+    "candidate exact grants permit the reviewed SQL under same RR transaction and real server version",
+    "remove each of the four new privileges individually and verify denial/rollback",
+    "reject extra history UPDATE/DELETE, LOCK TABLES, wildcard/global grants, role/delegation expansion",
+    "confirm shared-lock current-read/concurrent configuration and attempt semantics under real MySQL"
+  ],
+  "excludes": [
+    "full future ExecutionWorkStore permissions",
+    "A original resource authorization and grant/source SQL",
+    "B runner/Job/cursor writes",
+    "C provider/finalizer/catalog privileges"
+  ],
+  "matrix_changed": false,
+  "grants_executed": false,
+  "real_grant_tests_performed": false,
+  "tests_rerun_by_A": false,
+  "dependencies_installed": false,
+  "production_approved": false,
+  "field_slots_closed": 0,
+  "new_lock_shape_final_receipt_verified": true,
+  "prior_38_96_does_not_cover_new_lock_bytes": true,
+  "final_receipt": {
+    "receipt": "docs/evidence/d-backup-start-atomic-20261028.json",
+    "native": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.json",
+    "verified": true,
+    "logs": [
+      {
+        "roots": 36,
+        "sha256": "d53d0b1c3eb46a35e88b2682faf5c714d3677679a176d5122d60267cbd9c1bc1",
+        "phase": "execution-controller",
+        "passes": 94,
+        "path": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.execution-controller.jsonl"
+      },
+      {
+        "roots": 1,
+        "sha256": "5cade814322e76e1fce2f72f7853c925983815c94d3388e26340df3d93faea1c",
+        "phase": "execution-dispatch",
+        "passes": 1,
+        "path": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.execution-dispatch.jsonl"
+      },
+      {
+        "roots": 3,
+        "sha256": "ed0d5c49303589dcd80b18f7dd66055250ee85de865fc67412b38787a6a9946a",
+        "phase": "execution-main",
+        "passes": 3,
+        "path": "docs/evidence/d-first-chain-native-8bd0243724f441f4b1f9bc86f91a9f7a.execution-main.jsonl"
+      }
+    ],
+    "roots": 40,
+    "pass_events": 98,
+    "fail_skip": 0,
+    "all_four_phase_exits": 0,
+    "current_record_pins_match": true,
+    "A_lock_grant_source_pins_match": true,
+    "original_matrix_unchanged": true,
+    "cleanup": true,
+    "five_owner_directories_absent": true,
+    "tests_rerun_by_A": false,
+    "real_MySQL_grant_tests": false,
+    "field_grants_authorized": false,
+    "field_preflight_test_results_reviewed_by_A": false
+  }
+}

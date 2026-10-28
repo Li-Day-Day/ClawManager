@@ -1,0 +1,79 @@
+{
+  "schema_version": "b-claim-receipt-validation.v1",
+  "date": "2026-10-28",
+  "head": "63a13b2771091e4ba47b691ce066a670cbc88d54",
+  "sources": [
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store.go",
+      "bytes": 6155,
+      "sha256": "921c46cf8b90bb89d4aac189e0702a4c3620f1ebade0b2b90a80b5acd75964dd"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_task_claim_store_test.go",
+      "bytes": 12011,
+      "sha256": "e7c9e8e8fead7aa2257940a6c803be55b3d7669135e218d83c1f617c2465d588"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/sql_deadline_store.go",
+      "bytes": 4684,
+      "sha256": "eabac2dfc0a4e77bc69ee851221c5672ede211d4aa490156d4dc19bd5e160d37"
+    },
+    {
+      "path": "backend/internal/systembackupobserver/observer.go",
+      "bytes": 9851,
+      "sha256": "876b88e9bf5346951cea60e5b8c251aaa2025ddb65164617abcf34322d13ef0f"
+    },
+    {
+      "path": "backend/internal/systembackupcontroller/bootstrap.go",
+      "bytes": 18666,
+      "sha256": "4371dd0d6f4376fc6d1f383a52434847e28489d97c6d68d391f566de51d99589"
+    },
+    {
+      "path": "docs/system-backup-d-task-claim-receipt-20261028.md",
+      "bytes": 5950,
+      "sha256": "c52fa4116d762e49748d8fd11229970f98bc9274c30da951da68a1ecdcbb6a9c"
+    }
+  ],
+  "source_capture": "post-run affected scope; live workspace invocation, not parent R2 frozen-source acceptance",
+  "command": "go test ./internal/systembackupcontroller ./internal/systembackupobserver -count=1 -json",
+  "test_exit": 1,
+  "default_vet": true,
+  "controller_root_pass": 152,
+  "controller_pass_events": 261,
+  "new_claim_root_pass": 6,
+  "new_claim_pass_events": 25,
+  "observer_root_pass": 6,
+  "observer_pass_events": 13,
+  "failed_root_tests": [
+    {
+      "Package": "clawreef/internal/systembackupcontroller",
+      "Test": "TestRepositoryMigrationCatalogMatchesControllerAdmission"
+    }
+  ],
+  "catalog_observed_files": 136,
+  "catalog_observed_hash": "dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441",
+  "catalog_gate_files": 96,
+  "catalog_gate_hash": "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe",
+  "head_migration_files": 136,
+  "migration_and_bootstrap_diff_against_HEAD_exit": 0,
+  "gate_modified": false,
+  "filtered_retry": false,
+  "toolchain": "local",
+  "GOPROXY": "off",
+  "GOSUMDB": "off",
+  "dependencies_installed": false,
+  "actual_mysql": false,
+  "actual_remote": false,
+  "real_B_execution": false,
+  "claim_event": "diagnostic.d.task_claim_acquired",
+  "production_caller": "SQLDeadlineStore.Acquire: pending deadline, not B execution",
+  "B_adapter_confirmation": "pending",
+  "cleanup_target": "C:\\Users\\zhanghui08\\Desktop\\clawmanager\\ClawManager\\backend\\.tmp-b-claim-20261028",
+  "cleanup_files": 1944,
+  "cleanup_bytes": 111140863.0,
+  "cleanup_absent": true,
+  "logs": [
+    "docs/evidence/b-claim-receipt-native-20261028.jsonl",
+    "docs/evidence/b-claim-receipt-native-20261028.status.json"
+  ]
+}

@@ -43,13 +43,21 @@ class ManifestTests(unittest.TestCase):
             with self.subTest(original=original), self.assertRaisesRegex(ValueError, "source drift"):
                 smoke.render_manifest(source.replace(original, "drifted"), IMAGE)
 
-    def test_missing_mutable_malformed_or_inline_credentials_rejected(self):
+    def test_missing_floating_malformed_or_inline_credentials_rejected(self):
         for image in ("", "minio/minio:latest", "quay.io/minio/minio:latest", "minio/minio",
-                      "minio/minio@sha256:" + "a" * 64,
+                      "minio/minio:stable", "quay.io/minio/minio:edge",
                       "https://" + IMAGE, "user:password@" + IMAGE, IMAGE + "\n",
                       IMAGE[:-1], IMAGE.replace("a" * 64, "g" * 64)):
             with self.subTest(image=image), self.assertRaises(ValueError):
                 smoke.validate_minio_image(image)
+
+    def test_release_tag_and_optional_digest_need_no_repository_variable(self):
+        for image in ("minio/minio:RELEASE.2025-09-07T16-13-09Z",
+                      "registry.example.test:5000/minio/minio:RELEASE.2025-09-07T16-13-09Z",
+                      "minio/minio@sha256:" + "a" * 64, IMAGE):
+            with self.subTest(image=image), patch.dict(smoke.os.environ, {}, clear=True):
+                self.assertEqual(smoke.validate_minio_image(image), image)
+                smoke.main(["--validate-inputs", "--minio-image", image])
 
     def test_validation_never_generates_keys_or_calls_cluster(self):
         with patch.object(smoke, "tls_resources", side_effect=AssertionError("must not create keys")):

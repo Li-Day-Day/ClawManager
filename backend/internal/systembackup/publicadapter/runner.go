@@ -99,7 +99,7 @@ func nilValue(v any) bool {
 	}
 	r := reflect.ValueOf(v)
 	switch r.Kind() {
-	case reflect.Pointer, reflect.Interface, reflect.Map, reflect.Func, reflect.Slice:
+	case reflect.Pointer, reflect.Interface, reflect.Map, reflect.Func, reflect.Slice, reflect.Chan:
 		return r.IsNil()
 	}
 	return false
@@ -178,7 +178,7 @@ type frozen struct {
 }
 
 func (r *runner) admit(ctx context.Context, in d.Input, ports d.Ports, recovery bool) (Profile, error) {
-	if ctx == nil || nilValue(ports) {
+	if nilValue(ctx) || nilValue(ports) {
 		return nil, d.ErrNotReady
 	}
 	if err := ctx.Err(); err != nil {
@@ -402,6 +402,11 @@ func validateDiscovery(in d.Input, x Discovery) error {
 func cloneInput(in d.Input) d.Input {
 	in.ConfigSnapshot = bytes.Clone(in.ConfigSnapshot)
 	in.Jobs = append([]d.JobBinding(nil), in.Jobs...)
+	if in.Backup != nil {
+		b := *in.Backup
+		b.RequestedParts = append([]string(nil), b.RequestedParts...)
+		in.Backup = &b
+	}
 	return in
 }
 

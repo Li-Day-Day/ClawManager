@@ -1,0 +1,42 @@
+{
+  "relay-merge-final": {
+    "exit": 0,
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "-p=2",
+      "-count=1",
+      "-timeout=3m",
+      "./internal/systembackup/publicadapter",
+      "./internal/systembackupevidence"
+    ]
+  },
+  "controller-merge-final": {
+    "exit": 0,
+    "command": [
+      "go",
+      "test",
+      "-json",
+      "-p=2",
+      "-count=1",
+      "-timeout=3m",
+      "-run",
+      "Test(Execution|TaskExecution|TaskClaim|BackupStart|SQLDeadline)",
+      "./internal/systembackupcontroller",
+      "./cmd/system-backup-controller"
+    ]
+  },
+  "merged-vet": {
+    "exit": 0,
+    "command": [
+      "go",
+      "vet",
+      "./internal/systembackup/publicadapter",
+      "./internal/systembackup/relaywire",
+      "./internal/systembackupevidence",
+      "./internal/systembackupcontroller",
+      "./cmd/system-backup-controller"
+    ]
+  }
+}

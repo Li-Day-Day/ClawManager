@@ -1,0 +1,779 @@
+{
+  "kind": "a_b_pr1_security_delta_review.v1",
+  "date": "2026-10-28",
+  "commit": "0a4bdc19a1ab8b979523d4c2161c9b08074a4f26",
+  "workspace_head": "d3c5715a05a80c1134edd3ad0132a6c292ee1672",
+  "prior_mapping_commit": "14768599f30846e9cfe22c121059ecf698e1b048",
+  "inputs": [
+    {
+      "path": "docs/users-instances-backup-branch-integration.zh-CN.md",
+      "prior_blob": "86fa0ade472f7986f295b18005abfe3ac3dca076",
+      "current_blob": "a63a2020e7ada5ccf31df4a065b01b497a5ca82c",
+      "unchanged": false
+    },
+    {
+      "path": "backend/internal/systembackup/README.md",
+      "prior_blob": "825f485a352bd6796cb9f9751cc37037f96e74b4",
+      "current_blob": "825f485a352bd6796cb9f9751cc37037f96e74b4",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/control/credentials.go",
+      "prior_blob": "231a813065d57a37fc3a88525cf2a8657673d254",
+      "current_blob": "231a813065d57a37fc3a88525cf2a8657673d254",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/control/vault.go",
+      "prior_blob": "83bad91f7a47f502928fe19c685df471c018ec4a",
+      "current_blob": "83bad91f7a47f502928fe19c685df471c018ec4a",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/control/worker.go",
+      "prior_blob": "e5791ee3afbe37ab51783b6fb7689d8eced71a92",
+      "current_blob": "e5791ee3afbe37ab51783b6fb7689d8eced71a92",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/control/worker_status.go",
+      "prior_blob": "5c035b1331cce1b1704ae42a049699b13e04ec54",
+      "current_blob": "5c035b1331cce1b1704ae42a049699b13e04ec54",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/worker/control.go",
+      "prior_blob": "ec2646f5eb96c323bfba6de5c2e169cba6916afa",
+      "current_blob": "ec2646f5eb96c323bfba6de5c2e169cba6916afa",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/recovery/signature.go",
+      "prior_blob": "08a1e4cc6309371e673d916c19887d7ed28bdbc5",
+      "current_blob": "08a1e4cc6309371e673d916c19887d7ed28bdbc5",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/host/config.go",
+      "prior_blob": "d0fa521b364aa70f670fbce4da63bde4fcefcfd0",
+      "current_blob": "d0fa521b364aa70f670fbce4da63bde4fcefcfd0",
+      "unchanged": true
+    },
+    {
+      "path": "backend/internal/systembackup/control/config.go",
+      "prior_blob": "a5e0e177af1bcd4d7b5f9a44f23777821dcddd56",
+      "current_blob": "a5e0e177af1bcd4d7b5f9a44f23777821dcddd56",
+      "unchanged": true
+    }
+  ],
+  "gate_source": {
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/health"
+      },
+      {
+        "method": "GET",
+        "path": "/healthz"
+      },
+      {
+        "method": "GET",
+        "path": "/readyz"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-overview"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-config"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-config/versions"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-config/versions/:version"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/events"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/logs"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/manifest"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/staging-resources"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id/events"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id/logs"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id/restore-diff"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id/events"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id/logs"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id/resources"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id/events"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id/logs"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-evidence/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-operations"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-operations/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-scans"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-scans/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-records"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-records/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-imports"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-imports/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id/items"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id/events"
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-promotions"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/auth/logout"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/cancel"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-preflights/:id/cancel"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-restore-drills/:id/cancel"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id/cancel"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/resolve-finalization"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/cleanup-staging"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/staging-resources/:resource_id/resolve-ownership"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-restore-drills/:id/cleanup"
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/admin/system-restore-drills/:id/resources/:resource_id/resolve-ownership"
+      }
+    ],
+    "path": "backend/internal/middleware/system_backup_gate.go",
+    "git_blob": "a3e64f3191f713b485779dc78cb25889022ea776"
+  },
+  "public_policy": {
+    "sha256": "1ac9a8bc15dd69cf691134498ad5387c3a2410c8fb162fe2da8a91fc3b32c429",
+    "path": "contracts/system-backup/v12/admin-operation-policy.json",
+    "status": "draft",
+    "operations": [
+      {
+        "operation_id": "getSystemBackupOverview",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-overview",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupEvidence",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-evidence/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "registerSystemBackupProviderProof",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-provider-proofs",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "getSystemBackupOperation",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-operations/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupConfig",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-config",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "updateSystemBackupConfig",
+        "method": "PUT",
+        "path": "/api/v1/admin/system-backup-config",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "listSystemBackupConfigVersions",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-config/versions",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupConfigVersion",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-config/versions/:version",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "rollbackSystemBackupConfig",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-config/rollback",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "listSystemBackupCatalogScans",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-scans",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemBackupCatalogScan",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-catalog-scans",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "getSystemBackupCatalogScan",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-scans/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupCatalogRecords",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-records",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupCatalogRecord",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-records/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupCatalogImports",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-imports",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemBackupCatalogImport",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-catalog-imports",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "getSystemBackupCatalogImport",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-catalog-imports/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "verifyImportedSystemBackupArtifact",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-catalog-imports/:id/verify-artifact",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "createImportedSystemRestoreDrill",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-catalog-imports/:id/restore-drills",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "listSystemBackups",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemBackup",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "getSystemBackup",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupEvents",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/events",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupLogs",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/logs",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupManifest",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/manifest",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "cancelSystemBackup",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/cancel",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "resolveSystemBackupFinalization",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/resolve-finalization",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupStagingResources",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backups/:id/staging-resources",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "resolveSystemBackupStagingOwnership",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/staging-resources/:resource_id/resolve-ownership",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "cleanupSystemBackupStaging",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/cleanup-staging",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "updateSystemBackupManualHold",
+        "method": "PUT",
+        "path": "/api/v1/admin/system-backups/:id/manual-hold",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "verifySystemBackupArtifact",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/verify-artifact",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "listSystemBackupArtifactVerifications",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupArtifactVerification",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupArtifactVerificationEvents",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id/events",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupArtifactVerificationLogs",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id/logs",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "cancelSystemBackupArtifactVerification",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-artifact-verifications/:id/cancel",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemRestoreDrill",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backups/:id/restore-drills",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "listSystemRestoreDrills",
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemRestoreDrill",
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemRestoreDrillEvents",
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id/events",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemRestoreDrillLogs",
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id/logs",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "cancelSystemRestoreDrill",
+        "method": "POST",
+        "path": "/api/v1/admin/system-restore-drills/:id/cancel",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "cleanupSystemRestoreDrill",
+        "method": "POST",
+        "path": "/api/v1/admin/system-restore-drills/:id/cleanup",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemRestoreDrillResources",
+        "method": "GET",
+        "path": "/api/v1/admin/system-restore-drills/:id/resources",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "resolveSystemRestoreDrillResourceOwnership",
+        "method": "POST",
+        "path": "/api/v1/admin/system-restore-drills/:id/resources/:resource_id/resolve-ownership",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupPreflights",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemBackupPreflight",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-preflights",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "getSystemBackupPreflight",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupPreflightEvents",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id/events",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupPreflightLogs",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id/logs",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "getSystemBackupPreflightRestoreDiff",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-preflights/:id/restore-diff",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "cancelSystemBackupPreflight",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-preflights/:id/cancel",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemBackupPruneDryRun",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-prune/dry-run",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "listSystemBackupPruneRuns",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "issueSystemBackupPruneConfirmation",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id/confirmation",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "executeSystemBackupPrune",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-prune/execute",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "retrySystemBackupPrune",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id/retry",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "getSystemBackupPruneRun",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupPruneItems",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id/items",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupPruneEvents",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-prune-runs/:id/events",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupOperations",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-operations",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "listSystemBackupPromotions",
+        "method": "GET",
+        "path": "/api/v1/admin/system-backup-promotions",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": true
+      },
+      {
+        "operation_id": "createSystemBackupPromotion",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-promotions",
+        "kill_switch": "requires_effective_enabled",
+        "candidate_business_gate_bypass": false
+      },
+      {
+        "operation_id": "revokeSystemBackupPromotion",
+        "method": "POST",
+        "path": "/api/v1/admin/system-backup-promotions/:matrix_key/revoke",
+        "kill_switch": "allowed_when_disabled",
+        "candidate_business_gate_bypass": false
+      }
+    ]
+  },
+  "allowed_when_disabled_without_candidate_bypass": [
+    "registerSystemBackupProviderProof",
+    "updateSystemBackupConfig",
+    "rollbackSystemBackupConfig",
+    "createSystemBackupCatalogScan",
+    "createSystemBackupCatalogImport",
+    "updateSystemBackupManualHold",
+    "issueSystemBackupPruneConfirmation",
+    "revokeSystemBackupPromotion"
+  ],
+  "requires_effective_enabled_with_candidate_bypass": [],
+  "public_runner_source_present": false,
+  "relay_test_receipt": "docs/evidence/a-dispatch-relay-validation-20261028.json",
+  "relay_source_matches_prior_tested_bytes": true,
+  "relay_sources": [
+    {
+      "path": "backend/internal/systembackupevidence/relay_peer.go",
+      "sha256": "43b62779243cb94a46f0301e5ee0aa5758ae74e349dd48b44cef58d035447de8"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_peer_test.go",
+      "sha256": "b663337bffdf3ff63f07a2ab8c1975d137d4cbb1ece4dc6ee4ae80e8b4ba79b6"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_dispatch.go",
+      "sha256": "139e87c5b4ccad7e66b79c12d6b1fcc3c33fe11fc961137ffb30a306588e0aef"
+    },
+    {
+      "path": "backend/internal/systembackupevidence/relay_dispatch_test.go",
+      "sha256": "72515c9bd61b3eeee6a5d360a7584cea1f2b2c40fb54610607a29aaa456049af"
+    }
+  ],
+  "source_review_only": true,
+  "tests_rerun": false,
+  "dependencies_installed": false,
+  "checkout_or_merge": false,
+  "production_approved": false,
+  "field_slots_closed": 0
+}

@@ -1,0 +1,97 @@
+{
+  "schema_version": "a-field-public-inventory-review.v1",
+  "review_date": "2026-10-28",
+  "source_kind": "operator_pasted_output_not_independent_collection",
+  "source_attachment": "98cb09e1-c24f-47bf-a230-b5abab08db03/已粘贴的文本.txt",
+  "source_sha256": "e299a6110aa3e80569063988c1a0d54aa7c677e34a55111e31752729ea0e917c",
+  "source_limitations": [
+    "Leading pasted command fragment is malformed; output includes PUBLIC_PREFLIGHT_OK but no independently captured process exit code.",
+    "Resource state is an operator snapshot, not a current live observation by A.",
+    "Volume/env reference projection does not enumerate arbitrary files, projected Secret sources, init-container copies or baked image content."
+  ],
+  "application": {
+    "namespace": "clawmanager-zhanghui08-system",
+    "namespace_uid": "337cfe30-2c17-4b8e-b32a-760778b8098e",
+    "pod": "clawmanager-app-788b97b78f-l8k5f",
+    "pod_uid": "aabba383-5db9-48a7-a3b7-2b92624c2f3a",
+    "service_account": "clawmanager-app",
+    "image_digest": "sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d",
+    "deployment_generation": 96,
+    "dedicated_backup_material_mount_observed": false
+  },
+  "provider_lab": {
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "bao_pod_uid": "a9e53b50-905a-446e-8edc-7361c45b269d",
+    "minio_pod_uid": "6b4c3daa-d1a9-4bc7-8b63-ee46914798d9",
+    "bao_endpoint": "10.244.166.187:8200",
+    "minio_endpoint": "10.244.166.180:9000",
+    "policy": "lab-isolation",
+    "policy_uid": "96f1c808-bc3c-4c92-a8c9-43c024522b12",
+    "ingress_peer": "podSelector:{} in the same namespace",
+    "application_namespace_allow_rule_observed": false,
+    "cni_enforcement_verified": false
+  },
+  "operator_reported_network_control_experiment": {
+    "source": "User pasted command output in this chat; not independently collected by A",
+    "baseline": "Both Bao and lab MinIO curl exit 28, time_connect=0, HTTP 000",
+    "temporary_policies": ["a-netcheck-c988897693f3-bao", "a-netcheck-c988897693f3-minio"],
+    "allowed_source": "Application namespace plus all observed application Pod labels; may match other Pods with the same labels",
+    "allowed_destinations": "Observed provider Pod label groups; Bao TCP 8200 and MinIO TCP 9000 respectively",
+    "two_rounds": "Both services curl exit 60, unable to get local issuer certificate, verify=20, time_connect > 0",
+    "conclusion": "Controlled ingress addition changed connection timeout to TLS issuer-validation failure; supports ingress policy as the observed connectivity blocker. Application default curl trust did not validate either service chain.",
+    "cleanup": "User output reports both TEMP_POLICY_REMOVED entries and CLEANUP_OK=true",
+    "permanent_network_access_configured": false,
+    "hostname_and_trust_verified": false,
+    "provider_acl_verified": false
+  },
+  "operator_reported_ca_locations": {
+    "bao": {
+      "configmap": "bao-trust-recovery2-20261028",
+      "uid": "dfa905e3-e00d-4c45-a955-b8547e806757",
+      "resource_version": "119752785",
+      "key": "ca.crt",
+      "pem_sha256": "e7ff215f4fb96613cba2c0c89e9b28afe19b412b5d63be0593843a45fe99f518"
+    },
+    "minio": {
+      "configmap": "minio-trust-recovery-20261028",
+      "uid": "d8059048-e355-4549-81de-753c81c74f41",
+      "resource_version": "119778274",
+      "key": "ca.crt",
+      "pem_sha256": "a8f7a9e77cb410a669fef288b1fc8584ed2dbc49938f22c4923c821043792510"
+    },
+    "matches_per_provider": 1,
+    "source": "Operator pasted ConfigMap discovery output; matches historical PEM bytes, not production admission"
+  },
+  "operator_reported_explicit_ca_tls_check": {
+    "source": "Operator pasted full test output in this chat; not independently collected by A",
+    "script": "scripts/system-backup-a-field-tls-check.py",
+    "source_pod": "clawmanager-app-788b97b78f-l8k5f",
+    "ca_delivery": "Pinned public PEM passed through kubectl exec stdin to curl --cacert /dev/stdin; no persistent trust change",
+    "bao": {"http": 200, "verify": 0, "kubectl_exec_exit": 0},
+    "minio": {"http": 200, "verify": 0, "kubectl_exec_exit": 0},
+    "tls_health_check_ok": true,
+    "temporary_policies_removed": ["a-tlscheck-1148aa2a29a7-minio", "a-tlscheck-1148aa2a29a7-bao"],
+    "cleanup_ok": true,
+    "accepted_scope": "This pinned application Pod reached both lab health endpoints with explicit pinned CA and hostname validation under temporary narrow ingress",
+    "not_proven": ["permanent network policy", "deployed CA mounts", "production workload identity", "provider operation ACL", "bootstrap admission", "end-to-end backup"]
+  },
+  "related_thread_review": {
+    "thread_id": "01a18073-6231-7481-9dd0-c45209779c65",
+    "key_creation_receipt_turn": "01a18139-5cac-7c30-98fc-239ed33ab693",
+    "scope_correction_turn": "01a18158-e590-72c1-b255-c76b4f4c49b9",
+    "findings": [
+      "Five new-installation candidate keys were created; that chat explicitly deferred issuing runtime tokens pending trusted resolver and operation contracts.",
+      "Existing controlled lab administration references are lab-recovery/root_token and minio-admin/username,password in sbk-provider-zh-7474d6e0b052. This review read references only, not credential values; these are not runtime workload identities.",
+      "Old evidence bucket has no versioning enabled; old evidence users exist. No new-installation bucket or restricted storage identity creation receipt was found in the reviewed subsequent turns.",
+      "User questioned excessive environment preparation, then requested B/D/A code integration review. Further resource creation was deferred until execution dependencies are fixed.",
+      "Current local source search still finds bootstrap, task and execution owner link declarations without production assignments; execution test assignments do not establish production wiring."
+    ]
+  },
+  "next_remote_check": "Deferred: first resolve actual bootstrap authority, runtime resolver/operation contracts and execution/artifact composition. Related chat already explains credential status and controlled administration references; do not ask user to repeat these inputs or create more buckets/tokens speculatively. Reuse the accepted TLS receipt unless inputs change.",
+  "bootstrap_admitted": false,
+  "execution_authorized": false,
+  "end_to_end_verified": false,
+  "remote_executed_by_A": false,
+  "goal_remains_paused_for_user_remote_test": true
+}

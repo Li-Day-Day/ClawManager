@@ -21,16 +21,17 @@ BROKER_DNS = f"clawmanager-secret-broker.{NAMESPACE}.svc.cluster.local"
 
 
 def validate_minio_image(image):
-    # Explicit registry and immutable digest; no guessed fallback or inline auth.
-    pattern = (r"[a-z0-9]+(?:[.-][a-z0-9]+)*(?::[0-9]+)?/"
-               r"[a-z0-9]+(?:[._-][a-z0-9]+)*"
-               r"(?:/[a-z0-9]+(?:[._-][a-z0-9]+)*)*@sha256:[0-9a-f]{64}")
-    registry = image.split("/", 1)[0]
-    explicit_registry = "." in registry or ":" in registry or registry == "localhost"
-    if not re.fullmatch(pattern, image) or not explicit_registry:
-        raise ValueError("Set K8S_SMOKE_MINIO_IMAGE to a reviewed, anonymously pullable "
-                         "registry/repository@sha256:<64 lowercase hex> reference; "
-                         "Docker Hub latest is unavailable. No fallback is selected.")
+    # The operator supplies a versioned image for a MANUAL run, not a repository
+    # variable for every PR. A release tag is enough; a digest is optional.
+    repository = (r"[a-z0-9]+(?:[._-][a-z0-9]+)*(?::[0-9]+)?/"
+                  r"[a-z0-9]+(?:[._-][a-z0-9]+)*"
+                  r"(?:/[a-z0-9]+(?:[._-][a-z0-9]+)*)*")
+    match = re.fullmatch(repository + r"(?::(?P<tag>[A-Za-z0-9_][A-Za-z0-9_.-]{0,127})|@sha256:[0-9a-f]{64})", image)
+    moving_tags = {"latest", "stable", "edge", "nightly", "main", "master", "dev", "canary"}
+    if not match or (match.group("tag") or "").lower() in moving_tags:
+        raise ValueError("Choose an accessible MinIO image with an explicit release tag "
+                         "or sha256 digest via --minio-image (or K8S_SMOKE_MINIO_IMAGE). "
+                         "No image source is assumed available and no fallback is selected.")
     return image
 
 
@@ -112,7 +113,7 @@ def main(argv=None):
     except ValueError as error:
         parser.error(str(error))
     if args.validate_inputs:
-        print("CI MinIO immutable reference format accepted; availability is checked by rollout.")
+        print("MinIO reference format accepted; actual pull and rollout are still required.")
         return
     if args.output is None:
         parser.error("--output is required unless --validate-inputs is set")

@@ -498,6 +498,8 @@ test('Admin operation error profiles cover every route once and keep exceptional
 
 test('D-owned Admin mutation bodies are closed and owner authentication fields stay external', () => {
   const expectedBodies = new Map([
+    ['createSystemBackup', 'BackupCreate'],
+    ['createSystemBackupPreflight', 'PreflightCreate'],
     ['updateSystemBackupConfig', 'ConfigUpdate'],
     ['rollbackSystemBackupConfig', 'ConfigRollback'],
     ['cancelSystemBackup', 'Cancel'],
@@ -1064,7 +1066,7 @@ test('D-owned pending deadline sweep is bounded, fair and has no runner surface'
   ]) assert.match(sweeper, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
   for (const required of [
-    'ClaimCoordinator{Executor: s.DB, InstallationID: installationID}).Acquire(',
+    'SQLTaskClaimStore{DB: s.DB, InstallationID: installationID}).AcquireWithReceipt(',
     'ClaimCoordinator{Executor: s.DB, InstallationID: installationID}).Release(',
     'ExpirePendingClaim(ctx, tx, installationID, token)',
     'func expiredPendingCandidateSQL(kind TargetKind)',

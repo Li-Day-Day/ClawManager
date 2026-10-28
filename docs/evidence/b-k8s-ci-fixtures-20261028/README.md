@@ -1,5 +1,7 @@
 # K8s CI 安装缺项修复与验证
 
+本文为 47f3d011 时的历史记录。此后已取消通用 CI 的必填 MinIO 仓库变量/digest 要求，安装检查改为独立手动 workflow，支持 release tag；最新行为与未验收项见 [交付说明](../../system-backup-install-smoke-and-acceptance-20261028.md)。旧日志和源码 pin 保留，不改写当时结果。
+
 本轮功能父版本 `f53ecb1dc86d84cabf6a74871881803fb1270e03`；只读核对公共 `backup` 仍为 `8ef5fa7fd4df45f6306e910705db01f589266ba7`。本轮只修改 CI 安装准备和诊断，没有修改生产部署 YAML、公共备份 ABI、认证授权、控制面门禁或生产配置。
 
 ## 失败依据
