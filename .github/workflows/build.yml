@@ -178,12 +178,22 @@ jobs:
   k8s-smoke:
     name: Kubernetes Deploy Smoke Test
     runs-on: ubuntu-latest
+    env:
+      # Reviewed, anonymously pullable registry/repository@sha256:<digest>.
+      # Required repository variable; never fall back to an unavailable latest.
+      K8S_SMOKE_MINIO_IMAGE: ${{ vars.K8S_SMOKE_MINIO_IMAGE }}
     needs:
       - frontend
       - backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Test isolated install fixtures
+        run: python3 -B -m unittest discover -s scripts/ci -p test_k8s_smoke.py -v
+
+      - name: Validate required CI storage image
+        run: python3 -B scripts/ci/prepare_k8s_smoke.py --validate-inputs
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -192,6 +202,7 @@ jobs:
         run: docker build --build-arg VERSION=ci-${GITHUB_SHA} --build-arg VCS_REF=${GITHUB_SHA} -t clawmanager:ci .
 
       - name: Create kind cluster
+        id: kind
         uses: helm/kind-action@v1.12.0
         with:
           cluster_name: clawmanager-ci
@@ -200,96 +211,53 @@ jobs:
       - name: Load image into kind
         run: kind load docker-image clawmanager:ci --name clawmanager-ci
 
-      - name: Deploy manifest to cluster
+      - name: Prepare disposable kind install
         shell: bash
         run: |
-          kubectl label node clawmanager-ci-control-plane clawmanager.io/storage-node=true --overwrite
-          cp deployments/k8s/single-node/clawmanager.yaml /tmp/clawmanager-ci.yaml
+          set -euo pipefail
+          test "$(kubectl config current-context)" = kind-clawmanager-ci
+          fixture_dir="$(mktemp -d "${RUNNER_TEMP}/clawmanager-ci.XXXXXX")"
+          echo "SMOKE_FIXTURE_DIR=${fixture_dir}" >> "$GITHUB_ENV"
+          python3 -B scripts/ci/prepare_k8s_smoke.py --output "${fixture_dir}/install.yaml"
+          kubectl --context=kind-clawmanager-ci label node clawmanager-ci-control-plane clawmanager.io/storage-node=true --overwrite
+          kubectl --context=kind-clawmanager-ci apply -f "${fixture_dir}/install.yaml"
 
-          python - <<'PY'
-          from pathlib import Path
-          import re
+      - name: Wait for Secret Broker deployment
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/clawmanager-secret-broker --timeout=300s
 
-          path = Path("/tmp/clawmanager-ci.yaml")
-          text = path.read_text(encoding="utf-8")
-
-          text = text.replace(
-              "image: ghcr.io/yuan-lab-llm/clawmanager:latest",
-              "image: clawmanager:ci",
-          )
-
-          text = re.sub(
-              r"(kind: Deployment\s+metadata:\s+name: mysql\s+namespace: clawmanager-system\s+spec:\s+replicas: 1\s+selector:\s+matchLabels:\s+app: mysql\s+template:\s+metadata:\s+labels:\s+app: mysql\s+spec:\s+containers:\s+- name: mysql.*?volumeMounts:\s+- name: mysql-data\s+mountPath: /var/lib/mysql\s+- name: mysql-init\s+mountPath: /docker-entrypoint-initdb.d\s+readinessProbe:.*?periodSeconds: 10\s+)volumes:\s+- name: mysql-data\s+persistentVolumeClaim:\s+claimName: mysql-data\s+- name: mysql-init\s+configMap:\s+name: clawmanager-mysql-init",
-              r"\1volumes:\n        - name: mysql-data\n          emptyDir: {}\n        - name: mysql-init\n          configMap:\n            name: clawmanager-mysql-init",
-              text,
-              flags=re.S,
-          )
-
-          text = re.sub(
-              r"(kind: Deployment\s+metadata:\s+name: clawmanager-app\s+namespace: clawmanager-system\s+spec:\s+)replicas: 1",
-              r"\1replicas: 0",
-              text,
-              count=1,
-              flags=re.S,
-          )
-
-          text = re.sub(
-              r"(kind: Service\s+metadata:\s+name: clawmanager-frontend\s+namespace: clawmanager-system\s+spec:\s+)type: NodePort",
-              r"\1type: ClusterIP",
-              text,
-              count=1,
-              flags=re.S,
-          )
-
-          text = re.sub(
-              r"\n\s+nodePort:\s+\d+",
-              "",
-              text,
-              count=1,
-          )
-
-          text = re.sub(
-              r"(\n\s+- name: workspaces\s+)nfs:\s+server: workspace-store\.clawmanager-system\.svc\.cluster\.local\s+path: /exports/workspaces",
-              r"\1emptyDir: {}",
-              text,
-          )
-
-          text = re.sub(
-              r"(\n\s+- name: workspaces\s+)persistentVolumeClaim:\s+claimName: clawmanager-workspaces",
-              r"\1emptyDir: {}",
-              text,
-          )
-
-          path.write_text(text, encoding="utf-8")
-          PY
-
-          kubectl apply -f /tmp/clawmanager-ci.yaml
+      - name: Wait for object storage deployment
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/minio --timeout=300s
 
       - name: Wait for MySQL deployment
-        run: kubectl -n clawmanager-system rollout status deployment/mysql --timeout=300s
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/mysql --timeout=300s
 
       - name: Start ClawManager after MySQL is ready
-        run: kubectl -n clawmanager-system scale deployment/clawmanager-app --replicas=1
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system scale deployment/clawmanager-app --replicas=1
 
       - name: Wait for ClawManager deployment
-        run: kubectl -n clawmanager-system rollout status deployment/clawmanager-app --timeout=300s
+        run: kubectl --context=kind-clawmanager-ci -n clawmanager-system rollout status deployment/clawmanager-app --timeout=300s
 
       - name: Show cluster status on failure
-        if: failure()
+        if: failure() && steps.kind.outcome == 'success'
         run: |
-          kubectl get pods -A || true
-          kubectl get pvc -A || true
-          kubectl get events -A --sort-by=.lastTimestamp || true
-          kubectl -n clawmanager-system describe deployment mysql || true
-          kubectl -n clawmanager-system describe deployment clawmanager-app || true
-          kubectl -n clawmanager-system describe pod -l app=mysql || true
-          kubectl -n clawmanager-system describe pod -l app=clawmanager-app || true
-          kubectl -n clawmanager-system logs deployment/mysql --tail=200 || true
-          kubectl -n clawmanager-system logs deployment/clawmanager-app --tail=200 || true
+          kubectl --context=kind-clawmanager-ci get pods -A || true
+          kubectl --context=kind-clawmanager-ci get pvc -A || true
+          kubectl --context=kind-clawmanager-ci get events -A --sort-by=.lastTimestamp || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe deployment mysql || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe deployment clawmanager-app || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=mysql || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=clawmanager-app || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/mysql --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/clawmanager-app --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=clawmanager-secret-broker || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system describe pod -l app=minio || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/clawmanager-secret-broker --all-containers --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/clawmanager-app -c wait-secret-broker --tail=200 || true
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system logs deployment/minio --tail=200 || true
 
       - name: Start port-forward
         run: |
-          kubectl -n clawmanager-system port-forward svc/clawmanager-frontend 8443:443 > /tmp/clawmanager-port-forward.log 2>&1 &
+          kubectl --context=kind-clawmanager-ci -n clawmanager-system port-forward svc/clawmanager-frontend 8443:443 > /tmp/clawmanager-port-forward.log 2>&1 &
           echo $! > /tmp/clawmanager-port-forward.pid
           sleep 10
 
@@ -307,4 +275,18 @@ jobs:
         run: |
           if [ -f /tmp/clawmanager-port-forward.pid ]; then
             kill "$(cat /tmp/clawmanager-port-forward.pid)" || true
+          fi
+
+      - name: Remove disposable certificate manifest
+        if: always()
+        shell: bash
+        run: |
+          if [[ -n "${SMOKE_FIXTURE_DIR:-}" ]]; then
+            case "$SMOKE_FIXTURE_DIR" in
+              "$RUNNER_TEMP"/clawmanager-ci.*)
+                rm -f -- "$SMOKE_FIXTURE_DIR/install.yaml"
+                rmdir -- "$SMOKE_FIXTURE_DIR"
+                ;;
+              *) echo "Unexpected fixture path; refusing cleanup" >&2; exit 1 ;;
+            esac
           fi
