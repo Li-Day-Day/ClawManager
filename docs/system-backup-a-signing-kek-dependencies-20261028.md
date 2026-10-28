@@ -10,6 +10,8 @@
 
 定向验证入口：`scripts/system-backup-a-signing-credentials-validation.ps1`。冻结输入、原生测试、Linux 编译与清理的最终状态见本轮原始回执，不以本段文档代替通过证据。
 
+本轮最终回执为 `evidence/a-signing-credentials-native-28495e7380954de596934c9835ebe3fb.json`：Windows 原生定向测试退出 0，3 个根/23 条通过事件，无 fail/skip；Linux 测试程序交叉编译退出 0、ELF 已核对，未执行 Linux 二进制。冻结源码前后未变化，三份签名 Go 文件当前 SHA 均匹配被测字节；本轮独立源码副本、编译缓存、临时文件、telemetry 与二进制已清理，owner 目录独立核对不存在。未安装依赖、未远测，也未接入真实 resolver 或执行初始化。按用户要求，本轮至此暂停，不启动下一轮。
+
 本次沿用 v12 合同；现有签名历史、Transit signer 和 evidence Transit keyring 均不认证其输入来源或构造调用授权。新增 `ValidateTransitKeyRetention` 只比较 evidence 路由与完整引用扫描，尚未接入事务或 bootstrap，因此不代表生产就绪。
 
 | 接点 | 精确缺项与责任 |
