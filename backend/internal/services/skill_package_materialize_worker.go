@@ -170,7 +170,7 @@ func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) (releaseEr
 	if ctx.Err() != nil {
 		return nil
 	}
-	release, err := enterBackupMutation(ctx, w.BackupGate, "skill-backfill")
+	ctx, release, err := enterBackupMutationContext(ctx, w.BackupGate, "skill-backfill")
 	if err != nil {
 		return nil // admission is closed; no work has started
 	}
@@ -192,7 +192,7 @@ func (w *SkillPackageMaterializeWorker) processBatch(ctx context.Context) (resul
 	if ctx.Err() != nil {
 		return nil
 	}
-	releasePermit, gateErr := enterBackupMutation(ctx, w.BackupGate, "skill-materialize")
+	ctx, releasePermit, gateErr := enterBackupMutationContext(ctx, w.BackupGate, "skill-materialize")
 	if gateErr != nil {
 		return nil // a closed gate is not an incomplete claim
 	}

@@ -783,7 +783,7 @@ func (w *OperationWorker) advanceLifecycleBatches(ctx context.Context) (resultEr
 	if err := ctx.Err(); err != nil {
 		return err
 	}
-	release, err := mutation.Enter(ctx, "northbound-lifecycle-batches")
+	ctx, release, err := mutation.EnterContext(ctx, "northbound-lifecycle-batches")
 	if err != nil {
 		return err
 	}
@@ -823,7 +823,7 @@ func (w *OperationWorker) processNext(ctx context.Context, batchOnly bool) {
 	if ctx.Err() != nil {
 		return
 	}
-	release, gateErr := mutation.Enter(ctx, "northbound-operations")
+	ctx, release, gateErr := mutation.EnterContext(ctx, "northbound-operations")
 	if gateErr != nil {
 		return
 	}
@@ -1196,7 +1196,7 @@ func (w *OperationWorker) finishOrContinueLifecycle(ctx context.Context, item *m
 }
 
 func (w *OperationWorker) runLifecycleActionWithLease(ctx context.Context, item *models.NorthboundOperation, action func() error) error {
-	release, gateErr := mutation.Enter(ctx, "northbound-lifecycle")
+	ctx, release, gateErr := mutation.EnterContext(ctx, "northbound-lifecycle")
 	if gateErr != nil {
 		return gateErr
 	}

@@ -1,5 +1,4 @@
 import React from 'react';
-import SystemBackupPage from '../pages/admin/SystemBackupPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { useI18n } from '../contexts/I18nContext';
@@ -510,7 +509,7 @@ function AppRoutes() {
       />
       <Route path="/admin/backups" element={<AdminRoute><SystemBackupsPage /></AdminRoute>} />
       {/* Default Redirect */}
-      <Route path="/admin/system-backup" element={<AdminRoute><SystemBackupPage /></AdminRoute>} />
+      <Route path="/admin/system-backup" element={<AdminRoute><Navigate to="/admin/backups" replace /></AdminRoute>} />
       <Route path="/" element={<DashboardRedirect />} />
     </Routes>
   );

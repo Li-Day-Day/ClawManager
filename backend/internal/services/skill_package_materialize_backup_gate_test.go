@@ -13,6 +13,60 @@ import (
 
 type materializeBackupGateFunc func(context.Context, string) (func() error, error)
 
+type contextualMaterializeGate struct {
+	enter func(context.Context, string) (context.Context, func() error, error)
+}
+
+func (g contextualMaterializeGate) Enter(context.Context, string) (func() error, error) {
+	return nil, errors.New("context admission required")
+}
+
+func (g contextualMaterializeGate) EnterContext(ctx context.Context, name string) (context.Context, func() error, error) {
+	return g.enter(ctx, name)
+}
+
+func TestMaterializeGateContextLossJoinsChildrenAndCleanup(t *testing.T) {
+	started, cleaning, finish, done := make(chan struct{}), make(chan struct{}), make(chan struct{}), make(chan error, 1)
+	var finishOnce sync.Once
+	t.Cleanup(func() { finishOnce.Do(func() { close(finish) }) })
+	var released atomic.Bool
+	ctx, lose := context.WithCancel(context.Background())
+	defer lose()
+	w := lifecycleWorker(&materializeLifecycleStub{
+		claim: func(context.Context, int) ([]models.SkillPackageMaterializeJob, error) {
+			return []models.SkillPackageMaterializeJob{{ID: 1, InstanceID: 1}}, nil
+		},
+		process: func(ctx context.Context, _ int) error { close(started); <-ctx.Done(); return ctx.Err() },
+		release: func(int) error {
+			close(cleaning)
+			<-finish
+			if released.Load() {
+				t.Error("released before cleanup")
+			}
+			return nil
+		},
+	})
+	w.BackupGate = contextualMaterializeGate{enter: func(context.Context, string) (context.Context, func() error, error) {
+		return ctx, func() error { released.Store(true); return nil }, nil
+	}}
+	go func() { done <- w.processBatch(context.Background()) }()
+	awaitMaterializeSignal(t, started)
+	lose()
+	awaitMaterializeSignal(t, cleaning)
+	if released.Load() {
+		t.Fatal("lost context prematurely released permit")
+	}
+	finishOnce.Do(func() { close(finish) })
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("children/cleanup did not join")
+	}
+	if !released.Load() {
+		t.Fatal("joined work leaked permit")
+	}
+}
+
 func (f materializeBackupGateFunc) Enter(ctx context.Context, name string) (func() error, error) {
 	return f(ctx, name)
 }

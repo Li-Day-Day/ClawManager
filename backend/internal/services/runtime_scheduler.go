@@ -1334,7 +1334,7 @@ func runtimePodsAlreadyAtImage(pods []models.RuntimePod, runtimeType, targetImag
 }
 
 func (s *RuntimeScheduler) reconcileIfLeader(ctx context.Context) {
-	release, err := enterBackupMutation(ctx, s.BackupGate, "runtime-scheduler")
+	ctx, release, err := enterBackupMutationContext(ctx, s.BackupGate, "runtime-scheduler")
 	if err != nil {
 		return
 	}

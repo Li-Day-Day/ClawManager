@@ -1,0 +1,319 @@
+{
+  "certifies_writer_coverage": false,
+  "shared_dispatch_abi_present": false,
+  "source_writer_hooks": [
+    {
+      "path": "backend/internal/northbound/core_service.go",
+      "line": 786,
+      "operation": "northbound-lifecycle-batches",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/northbound/core_service.go",
+      "line": 826,
+      "operation": "northbound-operations",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/northbound/core_service.go",
+      "line": 1199,
+      "operation": "northbound-lifecycle",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/services/instance_service.go",
+      "line": 3226,
+      "operation": "legacy-deletion",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/instance_service.go",
+      "line": 3240,
+      "operation": "pending-deletions",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/openclaw_config_service.go",
+      "line": 2244,
+      "operation": "config-cascade",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/runtime_proxy_policy.go",
+      "line": 199,
+      "operation": "runtime-proxy-policy-renewal",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/services/runtime_scheduler.go",
+      "line": 1337,
+      "operation": "runtime-scheduler",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/services/security_scan_service.go",
+      "line": 291,
+      "operation": "security-scan",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/skill_package_materialize_worker.go",
+      "line": 173,
+      "operation": "skill-backfill",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/services/skill_package_materialize_worker.go",
+      "line": 195,
+      "operation": "skill-materialize",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/services/sync_service.go",
+      "line": 97,
+      "operation": "instance-sync",
+      "contextual": true
+    },
+    {
+      "path": "backend/internal/services/team_service.go",
+      "line": 448,
+      "operation": "team-deletions",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/team_service.go",
+      "line": 3702,
+      "operation": "team-event",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/team_service.go",
+      "line": 3758,
+      "operation": "team-outbox",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/team_service.go",
+      "line": 3850,
+      "operation": "team-stale-tasks",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/team_service.go",
+      "line": 3877,
+      "operation": "team-consistency",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/team_service.go",
+      "line": 4167,
+      "operation": "team-assignments",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/k8s/pvc_service.go",
+      "line": 282,
+      "operation": "team-pvc-binding",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/k8s/pvc_service.go",
+      "line": 709,
+      "operation": "instance-pvc-binding",
+      "contextual": false
+    },
+    {
+      "path": "backend/internal/services/k8s/workbuddy_prewarm.go",
+      "line": 94,
+      "operation": "workbuddy-prewarm",
+      "contextual": false
+    }
+  ],
+  "remaining_private_profile_dependencies": [
+    {
+      "path": "backend/internal/systembackup/profile/applications.go",
+      "line": 66,
+      "dependency": "registered, e := d.Store.Applications(ctx)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/applications.go",
+      "line": 156,
+      "dependency": "permits, e := d.Store.PendingMutations(ctx)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/applications.go",
+      "line": 160,
+      "dependency": "apps, e := d.Store.Applications(ctx)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/applications.go",
+      "line": 184,
+      "dependency": "if e = d.Store.ResolveLegacyMutation(ctx, t, permit.Token, p, func(ctx context.Context, p control.AppProcess, v control.MutationPermit) error {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/applications.go",
+      "line": 211,
+      "dependency": "e = d.Store.ResolveApplication(ctx, t, a, func(ctx context.Context, a control.AppProcess, permits []control.MutationPermit) error {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 38,
+      "dependency": "j, e = d.Store.CleanupJournal(t)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 40,
+      "dependency": "j, e = d.Store.ResourceJournal(t)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 53,
+      "dependency": "return control.DatabaseCredentials{Vault: c.d.Vault, Admin: db}"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 63,
+      "dependency": "status, e := c.d.Store.WorkerStatus(ctx, c.t, hash)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 327,
+      "dependency": "live := control.LiveWorkers{Store: c.d.Store, Observer: kube.WorkerObserver{Client: c.d.Client}, Proof: c.d.Proof, CheckEvidence: c.d.EvidenceCheck}"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 328,
+      "dependency": "c.inner = &control.JobCollector{Store: c.d.Store, Task: c.t, Runner: runner, CleanupRunner: cleanup, Job: job, Grant: g, PartID: w.ID, StopProof: live.Stopped, RevokeCredential: func(ctx context.Context, ref string) error { return c.credentials().Revoke(ctx, c.t, ref) }}"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 382,
+      "dependency": "if c.d.Store.DB.QueryRowContext(ctx, \"SELECT uid FROM system_backup_resources WHERE task_id=? AND kind='PersistentVolumeClaim' AND namespace_name=? AND resource_name=? AND lifecycle='created' AND dispatched=TRUE\", c.t.ID, job.Namespace, pvc.Name).Scan(&uid) != nil || uid != string(pvc.UID) {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 415,
+      "dependency": "e := c.d.Store.DB.QueryRowContext(ctx, \"SELECT request_json,uid,lifecycle FROM system_backup_resources WHERE task_id=? AND kind='Job' AND namespace_name=? AND resource_name=?\", c.t.ID, c.w.Namespace, c.identity(\"\").Name).Scan(&request, &uid, &lifecycle)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 429,
+      "dependency": "e = c.d.Store.DB.QueryRowContext(ctx, \"SELECT grant_json FROM system_backup_workers WHERE task_id=? AND JSON_UNQUOTE(JSON_EXTRACT(grant_json,'$.job_name'))=?\", c.t.ID, job.Name).Scan(&raw)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 440,
+      "dependency": "live := control.LiveWorkers{Store: c.d.Store, Proof: c.d.Proof}"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 441,
+      "dependency": "inner := control.JobCollector{Store: c.d.Store, Task: c.t, Job: &job, Grant: grant, PartID: c.w.ID, CleanupRunner: cleanup, StopProof: func(ctx context.Context, g control.WorkerGrant, r kube.ResourceRecord) error {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/collector.go",
+      "line": 451,
+      "dependency": "raw, e := c.d.Vault.Get(ctx, c.t, ref, \"database-credential\")"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 180,
+      "dependency": "if d.Config.Validate() != nil || d.Store.DB == nil || d.Client == nil || d.Dynamic == nil || d.Proof == nil || d.Staging == nil || d.Evidence == nil || len(d.Keys[d.Config.KeyVersion]) != 32 || len(d.Publisher.Signers[d.Config.SignerID]) != ed25519.PrivateKeySize {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 202,
+      "dependency": "if d.Store.DB.QueryRowContext(ctx, \"SELECT @@server_uuid\").Scan(&uuid) != nil || (d.Config.Mode != \"target\" && uuid != d.Config.Source.ServerUUID) {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 232,
+      "dependency": "if d.Store.DB.QueryRowContext(ctx, \"SELECT COUNT(*) FROM \"+table+\" WHERE 1=0\").Scan(&n) != nil {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 237,
+      "dependency": "if d.Store.DB.QueryRowContext(ctx, \"SELECT COUNT(process_id) FROM system_backup_mutations WHERE 1=0\").Scan(&n) != nil {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 240,
+      "dependency": "if d.Store.DB.QueryRowContext(ctx, \"SELECT COUNT(restart_result) FROM system_backup_pauses WHERE 1=0\").Scan(&n) != nil {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 252,
+      "dependency": "current, e := d.Store.Get(ctx, t.ID)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 257,
+      "dependency": "tx, e := d.Store.DB.BeginTx(ctx, nil)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/config.go",
+      "line": 262,
+      "dependency": "if e = d.Store.Fence(ctx, tx, t); e != nil {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/discovery.go",
+      "line": 476,
+      "dependency": "raw, e := d.Vault.Get(ctx, t, \"execution-plan\", \"plan\")"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/execution.go",
+      "line": 194,
+      "dependency": "rows, e := d.Store.DB.QueryContext(ctx, \"SELECT kind,namespace_name,resource_name,owner_marker,request_sha256,request_json FROM system_backup_resources WHERE task_id=? ORDER BY CASE kind WHEN 'Job' THEN 0 WHEN 'PersistentVolumeClaim' THEN 2 WHEN 'VolumeSnapshot' THEN 3 ELSE 1 END\", t.ID)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/execution.go",
+      "line": 252,
+      "dependency": "raw, e := d.Vault.Get(ctx, t, name, \"worker-identity\")"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/six_domain.go",
+      "line": 85,
+      "dependency": "if raw, e := d.Vault.Get(ctx, t, \"six-domain-publication\", \"plan\"); e == nil {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/six_domain.go",
+      "line": 99,
+      "dependency": "if e = control.FreezeSixDomainPlan(ctx, d.Vault, t, p); e != nil {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/six_domain.go",
+      "line": 115,
+      "dependency": "return control.AuthorizeSixDomainAcceptance(ctx, d.Vault, t, p, a)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/six_domain.go",
+      "line": 133,
+      "dependency": "return (control.SixDomainPublisher{Store: d.Store, Vault: d.Vault, Publisher: p, AcceptanceVerifier: a}).Publish(ctx, t)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/target.go",
+      "line": 255,
+      "dependency": "if job.Labels[kube.OwnerLabel] != t.ID || d.Store.DB.QueryRowContext(ctx, \"SELECT uid FROM system_backup_resources WHERE task_id=? AND kind='Job' AND namespace_name=? AND resource_name=? AND lifecycle='created' AND dispatched=TRUE\", t.ID, ns.Name, job.Name).Scan(&uid) != nil || uid != string(job.UID) {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/target.go",
+      "line": 300,
+      "dependency": "if d.Store.DB.QueryRowContext(ctx, \"SELECT request_json,uid FROM system_backup_resources WHERE task_id=? AND kind='NetworkPolicy' AND namespace_name=? AND resource_name=? AND lifecycle='created'\", t.ID, ns.Name, policy.Name).Scan(&raw, &uid) != nil || uid != string(policy.UID) {"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/target.go",
+      "line": 327,
+      "dependency": "return d.Store.DB.QueryRowContext(ctx, \"SELECT uid FROM system_backup_resources WHERE task_id=? AND kind='Job' AND namespace_name=? AND resource_name=? AND lifecycle='created' AND dispatched=TRUE\", task, p.Namespace, owner.Name).Scan(&uid) == nil && uid == string(owner.UID)"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/writers.go",
+      "line": 85,
+      "dependency": "j := control.PauseJournal{Store: d.Store, Task: t, Identity: p.Identity}"
+    },
+    {
+      "path": "backend/internal/systembackup/profile/writers.go",
+      "line": 261,
+      "dependency": "t, e := d.Store.Get(ctx, g.TaskID)"
+    }
+  ]
+}

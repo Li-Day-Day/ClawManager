@@ -27,3 +27,26 @@ func TestOfflineDiagnosticsAndMaterialsNeedNoRuntime(t *testing.T) {
 		t.Fatal("ambiguous command")
 	}
 }
+
+func TestPrivateControllerRequiresSeparateExplicitLab(t *testing.T) {
+	for _, tc := range []struct {
+		explicit    bool
+		name, value string
+		allowed     bool
+	}{
+		{false, "", "", false}, {true, "", "", true},
+		{true, "SYSTEM_BACKUP_ENABLED", "true", false},
+		{true, "SYSTEM_BACKUP_ENABLED", "false", false},
+		{true, "SYSTEM_BACKUP_ORIGIN_INSTALLATION_ID", "installation_public", false},
+	} {
+		err := validateLabExecution(tc.explicit, func(key string) string {
+			if key == tc.name {
+				return tc.value
+			}
+			return ""
+		})
+		if (err == nil) != tc.allowed {
+			t.Fatalf("explicit=%v key=%s err=%v", tc.explicit, tc.name, err)
+		}
+	}
+}

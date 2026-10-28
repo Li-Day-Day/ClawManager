@@ -30,6 +30,7 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 	check := f.Bool("check-config", false, "validate configuration without network or writes")
 	diagnose := f.Bool("diagnose", false, "emit redacted offline configuration and policy coverage report")
 	materials := f.Bool("materials-template", false, "emit credential-free materials checklist without reading configuration")
+	experimental := f.Bool("experimental-isolated-lab", false, "allow the retired private controller only in an isolated lab")
 	if f.Parse(args) != nil || f.NArg() != 0 {
 		return control.ErrInvalid
 	}
@@ -69,8 +70,18 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 		_, e = fmt.Fprintln(out, "configuration structure valid; no connections opened")
 		return e
 	}
+	if validateLabExecution(*experimental, os.Getenv) != nil {
+		return control.ErrNotReady
+	}
 	if runtime.GOOS != "linux" {
 		return control.ErrNotReady
 	}
 	return host.Run(ctx, cfg, func(code string) { fmt.Fprintln(out, code) })
+}
+
+func validateLabExecution(explicit bool, getenv func(string) string) error {
+	if !explicit || getenv == nil || getenv("SYSTEM_BACKUP_ENABLED") != "" || getenv("SYSTEM_BACKUP_ORIGIN_INSTALLATION_ID") != "" {
+		return control.ErrNotReady
+	}
+	return nil
 }

@@ -25,8 +25,6 @@ import (
 	"clawreef/internal/services"
 	"clawreef/internal/services/k8s"
 	"clawreef/internal/services/leader"
-	"clawreef/internal/systembackup/control"
-	"clawreef/internal/systembackup/mutation"
 	"clawreef/internal/systembackupapi"
 	"clawreef/internal/systembackupsecurity"
 	"clawreef/internal/teamtemplate"
@@ -45,29 +43,12 @@ func main() {
 	}
 
 	// Initialize database
-	var backupStore *control.SQLStore
-	var backupGate middleware.BackupMutationGate
-	var startupRelease func() error
-	if filename := strings.TrimSpace(os.Getenv("CLAWMANAGER_BACKUP_CONTROL_CONFIG")); filename != "" {
-		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-		controlDB, openErr := control.OpenControlDatabase(ctx, filename)
-		cancel()
-		if openErr != nil {
-			log.Fatal("Backup control database unavailable")
-		}
-		defer controlDB.Close()
-		backupStore = &control.SQLStore{DB: controlDB}
-		ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
-		backupGate, openErr = control.ApplicationGate(ctx, *backupStore)
-		if openErr == nil {
-			mutation.Configure(backupGate)
-			startupRelease, openErr = backupGate.Enter(ctx, "app-startup")
-		}
-		cancel()
-		if openErr != nil {
-			log.Fatal("Backup maintenance prevents application startup mutations")
-		}
+	if strings.TrimSpace(os.Getenv("CLAWMANAGER_BACKUP_CONTROL_CONFIG")) != "" {
+		log.Fatal("Experimental backup control configuration is not supported by the production server")
 	}
+	// D owns public mutation-gate composition. Until its reviewed adapter is
+	// linked, nil is absence of coverage and grants no capture qualification.
+	var backupGate middleware.BackupMutationGate
 	database, err := db.Initialize(cfg.Database)
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
@@ -220,7 +201,6 @@ func main() {
 		}
 		coreHandler := northbound.NewCoreHandler(northboundCoreService, cfg.Northbound.InternalJWTSecret)
 		coreRouter := gin.New()
-		coreRouter.Use(middleware.SystemBackupGate(backupGate))
 		_ = coreRouter.SetTrustedProxies(nil)
 		coreRouter.Use(gin.Logger(), gin.Recovery(), northbound.RequestContext(), northbound.BodyLimit(64<<10))
 		northbound.RegisterCoreRoutes(coreRouter, coreHandler)
@@ -581,7 +561,6 @@ func main() {
 
 	// Setup router
 	r := gin.New()
-	r.Use(middleware.SystemBackupGate(backupGate))
 	r.Use(handlers.HermesDesktopRedactTickets(), gin.Logger(), gin.Recovery())
 
 	// Middleware
@@ -596,20 +575,8 @@ func main() {
 
 	api := r.Group("/api/v1")
 	{
-		backupHandler := handlers.SystemBackupHandler{}
-		if backupStore != nil {
-			backupHandler.Store = backupStore
-		}
-		backups := api.Group("/admin/system-backup")
-		backups.Use(middleware.Auth(), middleware.SetUserInfo(userRepo), middleware.NewAdminAuth(userRepo))
-		backups.GET("/profiles", backupHandler.Profiles)
-		backups.GET("/tasks", backupHandler.List)
-		backups.GET("/tasks/:id", backupHandler.Get)
-		backups.GET("/tasks/:id/catalog", backupHandler.Catalog)
-		backups.GET("/tasks/:id/catalog/:record", backupHandler.CatalogRecord)
-		backups.GET("/tasks/:id/report", backupHandler.Report)
-		backups.POST("/tasks", backupHandler.Create)
-		backups.POST("/tasks/:id/cancel", backupHandler.Cancel)
+		// The former experimental /admin/system-backup control API is retired.
+		// Public system-backups/preflights routes below retain A authorization.
 		// Build information is intentionally public so operators can identify the
 		// running control-plane version even when authentication is unavailable.
 		api.GET("/version", versionHandler.Get)
@@ -1149,9 +1116,6 @@ func main() {
 	}
 
 	// Start server with graceful shutdown
-	if startupRelease != nil && startupRelease() != nil {
-		log.Fatal("Backup startup permit release failed")
-	}
 	if northboundCoreServer != nil {
 		go func() {
 			log.Printf("Northbound Core mTLS server starting on %s", cfg.Northbound.CoreInternalAddress)

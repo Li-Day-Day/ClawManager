@@ -196,7 +196,7 @@ func (s *RuntimeScheduler) renewRuntimeProxyPolicies(ctx context.Context) (resul
 	}
 	// Renewal runs independently of the main scheduler, but writes Agent config.
 	// Hold admission through the entire renewal, including failure cleanup.
-	release, err := enterBackupMutation(ctx, s.BackupGate, "runtime-proxy-policy-renewal")
+	ctx, release, err := enterBackupMutationContext(ctx, s.BackupGate, "runtime-proxy-policy-renewal")
 	if err != nil {
 		return err
 	}

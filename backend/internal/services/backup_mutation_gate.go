@@ -17,3 +17,14 @@ func enterBackupMutation(ctx context.Context, g BackupMutationGate, name string)
 	}
 	return g.Enter(ctx, name)
 }
+
+func enterBackupMutationContext(ctx context.Context, g BackupMutationGate, name string) (context.Context, func() error, error) {
+	if g == nil {
+		return mutation.EnterContext(ctx, name)
+	}
+	if contextual, ok := g.(mutation.ContextGate); ok {
+		return contextual.EnterContext(ctx, name)
+	}
+	release, err := g.Enter(ctx, name)
+	return ctx, release, err
+}

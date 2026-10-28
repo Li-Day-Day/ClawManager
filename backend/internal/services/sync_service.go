@@ -94,7 +94,7 @@ func (s *SyncService) syncLoop(stop <-chan struct{}) {
 // syncAllInstances synchronizes the state of all instances
 func (s *SyncService) syncAllInstances() {
 	ctx := context.Background()
-	release, err := enterBackupMutation(ctx, s.BackupGate, "instance-sync")
+	ctx, release, err := enterBackupMutationContext(ctx, s.BackupGate, "instance-sync")
 	if err != nil {
 		return
 	}

@@ -11,6 +11,24 @@ import (
 type Gate interface {
 	Enter(context.Context, string) (func() error, error)
 }
+
+// ContextGate cancels cooperative work when its public mutation lease is lost.
+// Release still belongs to the writer after its children/cleanup have joined.
+type ContextGate interface {
+	EnterContext(context.Context, string) (context.Context, func() error, error)
+}
+
+func EnterContext(ctx context.Context, name string) (context.Context, func() error, error) {
+	h := configured.Load()
+	if h != nil && h.gate != nil {
+		if g, ok := h.gate.(ContextGate); ok {
+			return g.EnterContext(ctx, name)
+		}
+	}
+	release, err := Enter(ctx, name)
+	return ctx, release, err
+}
+
 type holder struct{ gate Gate }
 
 var configured atomic.Pointer[holder]
