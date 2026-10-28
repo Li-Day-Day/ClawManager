@@ -144,7 +144,8 @@ func (w *SkillPackageMaterializeWorker) loop(run *skillMaterializeWorkerRun) {
 	if run.ctx.Err() != nil {
 		return
 	}
-	run.err = w.backfill(run.ctx)
+	backfillAdmitted, backfillErr := w.backfillAttempt(run.ctx)
+	run.err = backfillErr
 	ticker := time.NewTicker(w.tick)
 	defer ticker.Stop()
 	for {
@@ -152,6 +153,18 @@ func (w *SkillPackageMaterializeWorker) loop(run *skillMaterializeWorkerRun) {
 		case <-run.ctx.Done():
 			return
 		case <-ticker.C:
+			if run.ctx.Err() != nil {
+				return
+			}
+			if !backfillAdmitted {
+				backfillAdmitted, backfillErr = w.backfillAttempt(run.ctx)
+				if backfillErr != nil && run.err == nil {
+					run.err = backfillErr
+				}
+				if !backfillAdmitted {
+					continue
+				}
+			}
 			if run.ctx.Err() != nil {
 				return
 			}
@@ -166,17 +179,25 @@ func (w *SkillPackageMaterializeWorker) loop(run *skillMaterializeWorkerRun) {
 
 // The permit spans the entire backfill, including cancellation. A release
 // failure is retained in the drain result, just like incomplete job cleanup.
-func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) (releaseErr error) {
+func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) error {
+	_, err := w.backfillAttempt(ctx)
+	return err
+}
+
+// An admission refusal defers this once-per-run attempt until a later tick.
+// Only entering a permit completes the attempt; its release (including failure)
+// finishes before any subsequent claim. Cancellation never acquires a permit.
+func (w *SkillPackageMaterializeWorker) backfillAttempt(ctx context.Context) (admitted bool, releaseErr error) {
 	if ctx.Err() != nil {
-		return nil
+		return false, nil
 	}
 	ctx, release, err := enterBackupMutationContext(ctx, w.BackupGate, "skill-backfill")
 	if err != nil {
-		return nil // admission is closed; no work has started
+		return false, nil // admission is closed; no work has started
 	}
 	defer func() { releaseErr = release() }()
 	if ctx.Err() != nil {
-		return nil
+		return true, nil
 	}
 	if count, err := w.service.BackfillOnce(ctx, 500); err != nil {
 		if ctx.Err() == nil {
@@ -185,7 +206,7 @@ func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) (releaseEr
 	} else if count > 0 {
 		log.Printf("skill package materialize backfill enqueued %d jobs", count)
 	}
-	return nil
+	return true, nil
 }
 
 func (w *SkillPackageMaterializeWorker) processBatch(ctx context.Context) (resultErr error) {

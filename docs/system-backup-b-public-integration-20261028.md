@@ -1,5 +1,15 @@
 # B 接入公共 v12：本轮范围、差异及待交付输入
 
+## 最新同步：d3c5715a
+
+后续按用户通知重新 fetch，公共 `backup` 更新为 `d3c5715a05a80c1134edd3ad0132a6c292ee1672`。已取得原 `systembackupdispatch/contract.go`、Dispatcher 测试及 Skill gate 交接，不再将共享 ABI 或 Skill 原增量列为缺失。下文 `680b0ce1` / `63a13b27` 及“ABI 未到齐”是上一轮准确历史状态。
+
+本次合入解决四处冲突，保留公共 ABI 原定义不复制类型；Skill 使用 D 的 backfillAttempt/重开后恰一次回填/释放后再 claim，同时保留 B 的 ContextGate、取消子任务、等待清理后释放 permit。两边回归用例均保留。
+
+这个 commit 尚未包含 `controller/sql_task_claim_store.go`、`controller/task_execution_loop.go`、`controller/execution_ports.go` 或 `cmd/system-backup-controller/task_execution_live.go`；已按实际 tree 核对。因此共享 ABI 到齐不等于生产执行 loop/Ports 已装配。A1 私有 profile 依赖抽离、B publicadapter 和后续 A2—A6 继续属于待开发工作，不以本次同步宣布完成。
+
+本轮组合回归记录见 `shared-abi-merge-tests.jsonl`、`shared-abi-merge-exit.txt` 及单独 registry 测试记录；准确来源 overlay 见 `shared-abi-source-pin.json`，不覆盖上一轮原始日志或源码快照。沿用本聊天专用缓存，未安装依赖、未进行真实迁移。此前专用目录清理的策略拒绝仍未解除，不能记为已完成清理。
+
 ## 来源与判定
 
 2026-10-28 实际 fetch 后：PR #1 / 功能分支基线为 `680b0ce164daeb71dafc166f632f22fa6dab2fb4`，公共 `backup` 为 `63a13b2771091e4ba47b691ce066a670cbc88d54`，后者已被前者整合。转发说明中 `14768599` / `52117dee` 属于旧来源，不能作为本轮集成通过依据。

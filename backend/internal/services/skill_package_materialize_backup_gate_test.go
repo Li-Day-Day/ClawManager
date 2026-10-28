@@ -245,3 +245,100 @@ func stopMaterializeWorkerIgnoringExpectedError(w *SkillPackageMaterializeWorker
 	defer cancel()
 	_ = w.StopAndWait(ctx)
 }
+
+func TestMaterializeBackupGateReopensDeferredBackfillExactlyOnceBeforeClaims(t *testing.T) {
+	denied, claimedTwice := make(chan struct{}), make(chan struct{})
+	var deniedOnce sync.Once
+	var open, backfillActive, backfillReleased atomic.Bool
+	var backfills, claims, backfillReleases atomic.Int32
+	w := lifecycleWorker(&materializeLifecycleStub{
+		backfill: func(ctx context.Context, _ int) (int, error) {
+			if ctx.Err() != nil || !backfillActive.Load() || backfills.Add(1) != 1 {
+				t.Error("backfill canceled, outside permit, or repeated after admission")
+			}
+			return 1, nil
+		},
+		claim: func(context.Context, int) ([]models.SkillPackageMaterializeJob, error) {
+			if backfills.Load() != 1 || !backfillReleased.Load() || backfillActive.Load() {
+				t.Error("claim preceded the admitted backfill and permit release")
+			}
+			if claims.Add(1) == 2 {
+				close(claimedTwice)
+			}
+			return nil, nil
+		},
+	})
+	w.tick = time.Millisecond
+	w.BackupGate = materializeBackupGateFunc(func(_ context.Context, name string) (func() error, error) {
+		if !open.Load() {
+			deniedOnce.Do(func() { close(denied) })
+			return nil, errors.New("gate closed")
+		}
+		if name == "skill-backfill" {
+			backfillActive.Store(true)
+			return func() error {
+				backfillActive.Store(false)
+				backfillReleased.Store(true)
+				backfillReleases.Add(1)
+				return nil
+			}, nil
+		}
+		return func() error { return nil }, nil
+	})
+	if err := w.StartContext(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	defer stopMaterializeWorker(t, w)
+	awaitMaterializeSignal(t, denied)
+	if backfills.Load() != 0 || claims.Load() != 0 {
+		t.Fatal("closed gate allowed initial backfill or claims")
+	}
+	open.Store(true)
+	awaitMaterializeSignal(t, claimedTwice)
+	stopMaterializeWorker(t, w)
+	if backfills.Load() != 1 || backfillReleases.Load() != 1 || claims.Load() < 2 {
+		t.Fatal("deferred backfill was dropped or retried after admission")
+	}
+}
+
+func TestMaterializeBackupGateStopCancelsDeferredBackfillWithoutWrites(t *testing.T) {
+	denied := make(chan struct{})
+	var deniedOnce sync.Once
+	var permits atomic.Int32
+	w := lifecycleWorker(&materializeLifecycleStub{
+		backfill: func(context.Context, int) (int, error) {
+			t.Error("backfill wrote during deferred admission")
+			return 0, nil
+		},
+		claim: func(context.Context, int) ([]models.SkillPackageMaterializeJob, error) {
+			t.Error("claim wrote during deferred admission")
+			return nil, nil
+		},
+	})
+	w.BackupGate = materializeBackupGateFunc(func(ctx context.Context, name string) (func() error, error) {
+		if name != "skill-backfill" {
+			t.Error("claim crossed deferred backfill")
+		}
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		permits.Add(1)
+		deniedOnce.Do(func() { close(denied) })
+		return nil, errors.New("gate closed")
+	})
+	if err := w.StartContext(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	defer stopMaterializeWorker(t, w)
+	awaitMaterializeSignal(t, denied)
+	stopMaterializeWorker(t, w)
+	before := permits.Load()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := w.backfill(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.processBatch(ctx); err != nil || permits.Load() != before {
+		t.Fatal("canceled deferred run acquired a permit")
+	}
+}
