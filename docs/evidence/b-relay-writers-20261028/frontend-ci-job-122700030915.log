@@ -1,0 +1,213 @@
+﻿2026-10-28T08:01:20.4892302Z Current runner version: '2.338.0'
+2026-10-28T08:01:20.4913860Z ##[group]Runner Image Provisioner
+2026-10-28T08:01:20.4914595Z Hosted Compute Agent
+2026-10-28T08:01:20.4915092Z Version: 20261021.618
+2026-10-28T08:01:20.4915598Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-10-28T08:01:20.4916239Z Build Date: 2026-10-21T00:45:21Z
+2026-10-28T08:01:20.4916822Z Worker ID: {2ab19c36-ba94-4ce9-86da-0acf1e1226ac}
+2026-10-28T08:01:20.4917397Z Region: eastus
+2026-10-28T08:01:20.4917905Z Cloud: Azure
+2026-10-28T08:01:20.4918357Z ##[endgroup]
+2026-10-28T08:01:20.4919720Z ##[group]Operating System
+2026-10-28T08:01:20.4920270Z Ubuntu
+2026-10-28T08:01:20.4920690Z 24.04.5
+2026-10-28T08:01:20.4921173Z LTS
+2026-10-28T08:01:20.4921630Z ##[endgroup]
+2026-10-28T08:01:20.4922114Z ##[group]Runner Image
+2026-10-28T08:01:20.4922655Z Image: ubuntu-24.04
+2026-10-28T08:01:20.4923128Z Version: 20261012.334.1
+2026-10-28T08:01:20.4924230Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-28T08:01:20.4925469Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-28T08:01:20.4926292Z ##[endgroup]
+2026-10-28T08:01:20.4927248Z ##[group]GITHUB_TOKEN Permissions
+2026-10-28T08:01:20.4928997Z Contents: read
+2026-10-28T08:01:20.4929730Z Metadata: read
+2026-10-28T08:01:20.4930333Z ##[endgroup]
+2026-10-28T08:01:20.4932356Z Secret source: None
+2026-10-28T08:01:20.4933162Z Cache mode: write
+2026-10-28T08:01:20.4933873Z Prepare workflow directory
+2026-10-28T08:01:20.5243066Z Prepare all required actions
+2026-10-28T08:01:20.5282158Z Getting action download info
+2026-10-28T08:01:20.7106787Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-28T08:01:21.2401161Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-28T08:01:21.4373103Z Complete job name: Frontend Build
+2026-10-28T08:01:21.5098899Z ##[group]Run actions/checkout@v4
+2026-10-28T08:01:21.5099821Z with:
+2026-10-28T08:01:21.5100269Z   repository: huihuihuizhang/ClawManager
+2026-10-28T08:01:21.5103400Z   token: ***
+2026-10-28T08:01:21.5103772Z   ssh-strict: true
+2026-10-28T08:01:21.5104151Z   ssh-user: git
+2026-10-28T08:01:21.5104532Z   persist-credentials: true
+2026-10-28T08:01:21.5104947Z   clean: true
+2026-10-28T08:01:21.5105325Z   sparse-checkout-cone-mode: true
+2026-10-28T08:01:21.5105775Z   fetch-depth: 1
+2026-10-28T08:01:21.5106145Z   fetch-tags: false
+2026-10-28T08:01:21.5106540Z   show-progress: true
+2026-10-28T08:01:21.5106933Z   lfs: false
+2026-10-28T08:01:21.5107299Z   submodules: false
+2026-10-28T08:01:21.5107694Z   set-safe-directory: true
+2026-10-28T08:01:21.5108124Z   allow-unsafe-pr-checkout: false
+2026-10-28T08:01:21.5108734Z ##[endgroup]
+2026-10-28T08:01:22.1022077Z Syncing repository: huihuihuizhang/ClawManager
+2026-10-28T08:01:22.1024010Z ##[group]Getting Git version info
+2026-10-28T08:01:22.1024932Z Working directory is '/home/runner/work/ClawManager/ClawManager'
+2026-10-28T08:01:22.1026187Z [command]/usr/bin/git version
+2026-10-28T08:01:22.1078919Z git version 2.55.0
+2026-10-28T08:01:22.1097112Z ##[endgroup]
+2026-10-28T08:01:22.1108675Z Temporarily overriding HOME='/home/runner/work/_temp/dea8ece7-47e4-4ebf-ac90-8c820d866f4f' before making global git config changes
+2026-10-28T08:01:22.1111842Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-28T08:01:22.1114347Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ClawManager/ClawManager
+2026-10-28T08:01:22.1160657Z Deleting the contents of '/home/runner/work/ClawManager/ClawManager'
+2026-10-28T08:01:22.1168121Z ##[group]Initializing the repository
+2026-10-28T08:01:22.1178193Z [command]/usr/bin/git init /home/runner/work/ClawManager/ClawManager
+2026-10-28T08:01:22.1261168Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-28T08:01:22.1263388Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-28T08:01:22.1265555Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-28T08:01:22.1267102Z hint: call:
+2026-10-28T08:01:22.1267927Z hint:
+2026-10-28T08:01:22.1268955Z hint: 	git config --global init.defaultBranch <name>
+2026-10-28T08:01:22.1270569Z hint:
+2026-10-28T08:01:22.1271771Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-28T08:01:22.1273724Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-28T08:01:22.1275294Z hint:
+2026-10-28T08:01:22.1276178Z hint: 	git branch -m <name>
+2026-10-28T08:01:22.1277174Z hint:
+2026-10-28T08:01:22.1278450Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-28T08:01:22.1283065Z Initialized empty Git repository in /home/runner/work/ClawManager/ClawManager/.git/
+2026-10-28T08:01:22.1292561Z [command]/usr/bin/git remote add origin https://github.com/huihuihuizhang/ClawManager
+2026-10-28T08:01:22.1339849Z ##[endgroup]
+2026-10-28T08:01:22.1341751Z ##[group]Disabling automatic garbage collection
+2026-10-28T08:01:22.1343683Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-28T08:01:22.1371734Z ##[endgroup]
+2026-10-28T08:01:22.1373617Z ##[group]Setting up auth
+2026-10-28T08:01:22.1377144Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-28T08:01:22.1416212Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-28T08:01:22.1785768Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-28T08:01:22.1817411Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-28T08:01:22.2006512Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-28T08:01:22.2039336Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-28T08:01:22.2229527Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-28T08:01:22.2264168Z ##[endgroup]
+2026-10-28T08:01:22.2265887Z ##[group]Fetching the repository
+2026-10-28T08:01:22.2369328Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6eb67c6e79617259fe62c169b6e68c732571d76c:refs/remotes/pull/1/merge
+2026-10-28T08:01:26.8713623Z From https://github.com/huihuihuizhang/ClawManager
+2026-10-28T08:01:26.8714142Z  * [new ref]         6eb67c6e79617259fe62c169b6e68c732571d76c -> pull/1/merge
+2026-10-28T08:01:26.8716435Z ##[endgroup]
+2026-10-28T08:01:26.8716789Z ##[group]Determining the checkout info
+2026-10-28T08:01:26.8718676Z ##[endgroup]
+2026-10-28T08:01:26.8731359Z [command]/usr/bin/git sparse-checkout disable
+2026-10-28T08:01:26.8775477Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-28T08:01:26.8801408Z ##[group]Checking out the ref
+2026-10-28T08:01:26.8804140Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/1/merge
+2026-10-28T08:01:27.9000444Z Updating files:  53% (5047/9426)
+2026-10-28T08:01:27.9524976Z Updating files:  54% (5091/9426)
+2026-10-28T08:01:28.0008538Z Updating files:  55% (5185/9426)
+2026-10-28T08:01:28.0470926Z Updating files:  56% (5279/9426)
+2026-10-28T08:01:28.0703516Z Updating files:  57% (5373/9426)
+2026-10-28T08:01:28.1074456Z Updating files:  58% (5468/9426)
+2026-10-28T08:01:28.1152126Z Updating files:  59% (5562/9426)
+2026-10-28T08:01:28.1582218Z Updating files:  60% (5656/9426)
+2026-10-28T08:01:28.1810841Z Updating files:  61% (5750/9426)
+2026-10-28T08:01:28.1909986Z Updating files:  62% (5845/9426)
+2026-10-28T08:01:28.1974965Z Updating files:  63% (5939/9426)
+2026-10-28T08:01:28.2410557Z Updating files:  64% (6033/9426)
+2026-10-28T08:01:28.2603646Z Updating files:  65% (6127/9426)
+2026-10-28T08:01:28.2883855Z Updating files:  66% (6222/9426)
+2026-10-28T08:01:28.3156204Z Updating files:  67% (6316/9426)
+2026-10-28T08:01:28.3288070Z Updating files:  68% (6410/9426)
+2026-10-28T08:01:28.3425004Z Updating files:  69% (6504/9426)
+2026-10-28T08:01:28.3673583Z Updating files:  70% (6599/9426)
+2026-10-28T08:01:28.3853463Z Updating files:  71% (6693/9426)
+2026-10-28T08:01:28.4033548Z Updating files:  72% (6787/9426)
+2026-10-28T08:01:28.4143822Z Updating files:  73% (6881/9426)
+2026-10-28T08:01:28.4194927Z Updating files:  74% (6976/9426)
+2026-10-28T08:01:28.4230747Z Updating files:  75% (7070/9426)
+2026-10-28T08:01:28.4413849Z Updating files:  76% (7164/9426)
+2026-10-28T08:01:28.4931365Z Updating files:  77% (7259/9426)
+2026-10-28T08:01:28.5151586Z Updating files:  78% (7353/9426)
+2026-10-28T08:01:28.5246690Z Updating files:  79% (7447/9426)
+2026-10-28T08:01:28.5351913Z Updating files:  80% (7541/9426)
+2026-10-28T08:01:28.5481658Z Updating files:  81% (7636/9426)
+2026-10-28T08:01:28.5672753Z Updating files:  82% (7730/9426)
+2026-10-28T08:01:28.5741354Z Updating files:  83% (7824/9426)
+2026-10-28T08:01:28.5822031Z Updating files:  84% (7918/9426)
+2026-10-28T08:01:28.6624652Z Updating files:  85% (8013/9426)
+2026-10-28T08:01:28.6687021Z Updating files:  86% (8107/9426)
+2026-10-28T08:01:28.6742905Z Updating files:  87% (8201/9426)
+2026-10-28T08:01:28.6803639Z Updating files:  88% (8295/9426)
+2026-10-28T08:01:28.6867495Z Updating files:  89% (8390/9426)
+2026-10-28T08:01:28.6955366Z Updating files:  90% (8484/9426)
+2026-10-28T08:01:28.7334565Z Updating files:  91% (8578/9426)
+2026-10-28T08:01:28.7335803Z Updating files:  92% (8672/9426)
+2026-10-28T08:01:28.7396618Z Updating files:  93% (8767/9426)
+2026-10-28T08:01:28.7479970Z Updating files:  94% (8861/9426)
+2026-10-28T08:01:28.7528515Z Updating files:  95% (8955/9426)
+2026-10-28T08:01:28.7578650Z Updating files:  96% (9049/9426)
+2026-10-28T08:01:28.7627903Z Updating files:  97% (9144/9426)
+2026-10-28T08:01:28.7670840Z Updating files:  98% (9238/9426)
+2026-10-28T08:01:28.7720800Z Updating files:  99% (9332/9426)
+2026-10-28T08:01:28.7721131Z Updating files: 100% (9426/9426)
+2026-10-28T08:01:28.7721518Z Updating files: 100% (9426/9426), done.
+2026-10-28T08:01:28.7791945Z Note: switching to 'refs/remotes/pull/1/merge'.
+2026-10-28T08:01:28.7792257Z 
+2026-10-28T08:01:28.7792673Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-28T08:01:28.7793162Z changes and commit them, and you can discard any commits you make in this
+2026-10-28T08:01:28.7793634Z state without impacting any branches by switching back to a branch.
+2026-10-28T08:01:28.7793974Z 
+2026-10-28T08:01:28.7794207Z If you want to create a new branch to retain commits you create, you may
+2026-10-28T08:01:28.7794743Z do so (now or later) by using -c with the switch command. Example:
+2026-10-28T08:01:28.7795045Z 
+2026-10-28T08:01:28.7795203Z   git switch -c <new-branch-name>
+2026-10-28T08:01:28.7795418Z 
+2026-10-28T08:01:28.7795548Z Or undo this operation with:
+2026-10-28T08:01:28.7795807Z 
+2026-10-28T08:01:28.7795913Z   git switch -
+2026-10-28T08:01:28.7796073Z 
+2026-10-28T08:01:28.7796309Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-28T08:01:28.7796659Z 
+2026-10-28T08:01:28.7797070Z HEAD is now at 6eb67c6 Merge a89b7ead62795c44a87dba48961e511b17b379d5 into 8ef5fa7fd4df45f6306e910705db01f589266ba7
+2026-10-28T08:01:28.7864113Z ##[endgroup]
+2026-10-28T08:01:28.8145492Z [command]/usr/bin/git log -1 --format=%H
+2026-10-28T08:01:28.8168399Z 6eb67c6e79617259fe62c169b6e68c732571d76c
+2026-10-28T08:01:28.8391266Z ##[group]Run actions/setup-node@v4
+2026-10-28T08:01:28.8391490Z with:
+2026-10-28T08:01:28.8391655Z   node-version: 24
+2026-10-28T08:01:28.8391826Z   cache: npm
+2026-10-28T08:01:28.8392032Z   cache-dependency-path: frontend/package-lock.json
+2026-10-28T08:01:28.8392287Z   always-auth: false
+2026-10-28T08:01:28.8392467Z   check-latest: false
+2026-10-28T08:01:28.8394350Z   token: ***
+2026-10-28T08:01:28.8394519Z ##[endgroup]
+2026-10-28T08:01:28.9679211Z (node:2086) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-28T08:01:28.9680082Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-28T08:01:28.9700802Z Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+2026-10-28T08:01:28.9701550Z ##[group]Environment details
+2026-10-28T08:01:33.0202425Z node: v24.21.0
+2026-10-28T08:01:33.0202807Z npm: 11.19.0
+2026-10-28T08:01:33.0203060Z yarn: 1.22.22
+2026-10-28T08:01:33.0204356Z ##[endgroup]
+2026-10-28T08:01:33.0220551Z [command]/opt/hostedtoolcache/node/24.21.0/x64/bin/npm config get cache
+2026-10-28T08:01:33.7148810Z /home/runner/.npm
+2026-10-28T08:01:33.9868928Z npm cache is not found
+2026-10-28T08:01:34.1082877Z ##[group]Run node ../scripts/system-backup-schema-inventory.mjs --check
+2026-10-28T08:01:34.1083375Z [36;1mnode ../scripts/system-backup-schema-inventory.mjs --check[0m
+2026-10-28T08:01:34.1350429Z shell: /usr/bin/bash -e {0}
+2026-10-28T08:01:34.1350663Z ##[endgroup]
+2026-10-28T08:01:34.1943993Z docs/system-backup-restore-schema-inventory.json is missing or stale; run with --write
+2026-10-28T08:01:34.1992251Z ##[error]Process completed with exit code 1.
+2026-10-28T08:01:34.2877794Z Post job cleanup.
+2026-10-28T08:01:34.3549576Z [command]/usr/bin/git version
+2026-10-28T08:01:34.3619442Z git version 2.55.0
+2026-10-28T08:01:34.3652098Z Temporarily overriding HOME='/home/runner/work/_temp/5cef4670-6d35-4041-aae5-00acbab3be88' before making global git config changes
+2026-10-28T08:01:34.3653205Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-28T08:01:34.3656391Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ClawManager/ClawManager
+2026-10-28T08:01:34.4064826Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-28T08:01:34.4119748Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-28T08:01:34.4340179Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-28T08:01:34.4365826Z http.https://github.com/.extraheader
+2026-10-28T08:01:34.4374559Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-28T08:01:34.4625914Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-28T08:01:34.4825708Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-28T08:01:34.4854981Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-28T08:01:34.5216488Z Cleaning up orphan processes
+2026-10-28T08:01:34.5539475Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

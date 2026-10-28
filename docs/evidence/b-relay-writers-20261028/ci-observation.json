@@ -1,0 +1,77 @@
+{
+  "head": "a89b7ead62795c44a87dba48961e511b17b379d5",
+  "base_backup": "8ef5fa7fd4df45f6306e910705db01f589266ba7",
+  "ci_merge": "6eb67c6e79617259fe62c169b6e68c732571d76c",
+  "run_id": "40653847616",
+  "frontend_job": "122700030915",
+  "frontend_conclusion": "FAILURE",
+  "failure": "ownership inventory stale before npm ci/frontend compilation",
+  "formal_inventory_objects": 100,
+  "observed_candidate_objects": 122,
+  "unassigned": [
+    "table:gateway_image_artifacts",
+    "table:gateway_image_jobs",
+    "table:gateway_key_budget_ledger",
+    "table:gateway_key_budget_reservations",
+    "table:gateway_keys",
+    "table:gateway_runtime_maintenance",
+    "table:gateway_runtime_protocols",
+    "table:gateway_runtime_task_models",
+    "table:gateway_runtime_tasks",
+    "table:gateway_runtime_upgrade_stops",
+    "table:gateway_runtime_upgrades",
+    "table:instance_lifecycle_batch_attempts",
+    "table:instance_lifecycle_batch_items",
+    "table:instance_lifecycle_batches",
+    "table:instance_lifecycle_manual_guards",
+    "table:instance_lifecycle_scheduler",
+    "table:instance_workspace_write_intents",
+    "table:llm_model_user_grants",
+    "table:northbound_owner_records",
+    "table:routing_classifier_settings",
+    "table:runtime_rollout_checkpoints",
+    "table:team_workspace_file_audits"
+  ],
+  "candidate_contract_exit": 1,
+  "candidate_contract_error": "inventory object table:gateway_image_artifacts uses a value outside registry enums",
+  "formal_inventory_modified": false,
+  "registry_or_gate_modified": false,
+  "backend_conclusion": "IN_PROGRESS at observation",
+  "other_completed_checks": [
+    "Hermes Desktop Web Build: SUCCESS",
+    "Browser Worker Build and Tests: SUCCESS"
+  ],
+  "scanner_alter_hits": [
+    {
+      "name": "instance_lifecycle_batch_items",
+      "repository_alter_sources": [
+        "backend/internal/repository/instance_lifecycle_batch_integration_test.go"
+      ]
+    },
+    {
+      "name": "instances",
+      "repository_alter_sources": [
+        "backend/internal/repository/gateway_task_mysql_test.go"
+      ]
+    },
+    {
+      "name": "llm_models",
+      "repository_alter_sources": [
+        "backend/internal/repository/gateway_task_mysql_test.go"
+      ]
+    },
+    {
+      "name": "northbound_operations",
+      "repository_alter_sources": [
+        "backend/internal/repository/instance_lifecycle_batch_integration_test.go"
+      ]
+    },
+    {
+      "name": "team_members",
+      "repository_alter_sources": [
+        "backend/internal/repository/team_icon_mysql_test.go"
+      ]
+    }
+  ],
+  "scope": "diagnostic evidence only; no policy approval; no dependency install; no real migration"
+}

@@ -24,3 +24,7 @@ writer 组合实际执行 NewLinuxDispatcher、真实 SELECT-only 发现代码�
 未执行真实 MySQL/Runtime Agent/K8s Job/VolumeSnapshot/CSI/NFS/HostPath、独立 SQL observer 与 HTTP/worker 联合验收、公共成品终态或真实迁移；没有连接只读参考服务器。现场环境及 D/A/C 实际输入尚缺，详见交接文档。
 
 清理：Go 测试自动清理其 fixture 临时文件；日志、源码 pin 与验证记录保留。本聊天专用 `.codex-temp/b-public-integration-20261028` cache/tmp 此前清理遭自动审批 `blocked by policy` 拒绝，未绕过，因此缓存清理仍未完成。未清理其他 owner 产物，未输出仓库内独立二进制。
+
+推送后的外部 CI 单列：GitHub run `40653847616` / Frontend job `122700030915` 在清单 freshness check 失败，原日志为 `frontend-ci-job-122700030915.log`。此时 CI 测试合并 commit 为 `6eb67c6e79617259fe62c169b6e68c732571d76c`，PR head 为 `a89b7ead`。本地只读诊断确认正式清单 100 对象，而 `--write` 候选为 122，22 项未分配 owner；候选 contract 检查 exit 1，原文见 `schema-candidate-contract-rejection.txt`，候选/摘要保留为 `schema-inventory-observed-*`。正式生成文件的探索性改动已恢复，未修改 registry/枚举/owner/门禁状态，不以候选更新冒充 CI 修复。全部候选只作待各域 owner/D 复核输入。
+
+GitHub workflow 会自行运行其既有构建/安装步骤；本聊天没有运行本地依赖安装或主动重跑全量测试。当地定向回归、GitHub 全量检查与现场验收分别记账。CI 观察详见 `ci-observation.json`，不将尚未完成的 Backend job 记为通过。

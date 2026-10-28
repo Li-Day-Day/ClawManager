@@ -96,3 +96,13 @@ Runtime Agent 当前复用的 Gateway 请求只携带原 instance/generation 与
 组合用例实际运行 `NewLinuxDispatcher → SELECT-only SQL driver → NewRuntimeWriterBuilder → RuntimeAgent HTTP loopback → flow.Capture → mock Job/认证报告 → stop → 原 reservation 恢复`。证明本地组合与副作用顺序，不是 MySQL server、真实 RuntimeAgent/K8s 或公共成品验收。Pod/Deployment 新构造器验证无 API 副作用及恢复 proof 权限选择，物理生命周期负例复用原 quiesce 隔离模型测试。
 
 没有安装依赖；全部使用 local Go/offline module 模式。未连接参考服务器、未执行真实迁移、未合并 PR。原生退出码与 source pin 见 evidence README。专用 `.codex-temp/b-public-integration-20261028` 缓存此前清理被自动审批拒绝 `blocked by policy`，本轮不绕过；缓存清理不计完成，日志保留，没有清理其他 owner 产物或输出仓库独立 binary。
+
+## 推送后 CI：公共 schema 清单门禁尚未通过
+
+`a89b7ead` 推送触发 GitHub Build（临时测试合并 commit `6eb67c6e79617259fe62c169b6e68c732571d76c`）。Frontend Build 在 `system-backup-schema-inventory.mjs --check` 失败，尚未进入前端依赖安装/编译。正式清单仍记录 100 对象；同一脚本扫描当前基线得到 122 对象，22 项无 owner。相关 migration/repository/deployment/plan 输入以及原生成清单与 `backup@8ef5fa7f` 无差异，不是本轮新增 Go adapter 改了 schema。
+
+只为诊断生成了候选快照，公共 contract checker 随后准确拒绝：`inventory object table:gateway_image_artifacts uses a value outside registry enums`。未猜填 owner/策略、未改枚举/正式 registry/门禁状态；已撤回对正式生成清单的探索性刷新。候选只保存于 evidence，不进入正式合同路径。
+
+需各业务域 owner（包括 B）确认候选内 22 个对象的归属、备份/恢复策略及依赖，由 D 汇总接入公共 registry 并完成相应复核。候选中 `repository_runtime_alter=5` 是扫描命中数，包含 `_test.go` fixture SQL，不能据此宣布现场有 5 个运行时 ALTER；扫描边界也需 D 联核。没有通过重写生成文件或修改预期摘要绕过此问题。
+
+原 CI job 日志、候选清单/摘要和合同拒绝原文见 evidence。本文的本地定向测试成功不代表 GitHub CI 全绿，更不代表 schema/六域准入通过。Frontend 该门禁仍是当前 PR 的已知阻断。
