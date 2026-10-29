@@ -342,3 +342,7 @@ func validBootstrapGrant(g OfflineBootstrapGrant) bool {
 		contains([]string{"k8s-cluster", "k3s-cluster", "k8s-single-node", "k3s-single-node"}, g.MatrixKey) && providerHashPattern.MatchString(g.ConfigSHA256) &&
 		regexp.MustCompile(`^[A-Za-z0-9._:-]{16,128}$`).MatchString(g.IdempotencyKey) && strings.TrimSpace(g.ChangeReason) != "" && utf8.ValidString(g.ChangeReason) && utf8.RuneCountInString(g.ChangeReason) <= 512
 }
+
+// ValidOfflineBootstrapGrant exposes the original offline grant shape to
+// deployment adapters. It does not authenticate or issue that grant.
+func ValidOfflineBootstrapGrant(g OfflineBootstrapGrant) bool { return validBootstrapGrant(g) }
