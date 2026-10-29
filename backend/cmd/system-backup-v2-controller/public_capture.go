@@ -31,7 +31,14 @@ func runConfiguredPublic(ctx context.Context, cfg *config.Config) error {
 	if e := c.ValidateControllerDatabaseCredentials(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), cfg.Database.User); e != nil {
 		return e
 	}
+	deployment, e := execution.LoadDeploymentConfig(os.Getenv("SYSTEM_BACKUP_PUBLIC_CONFIG_FILE"), os.Getenv("SYSTEM_BACKUP_PUBLIC_CONFIG_SHA256"))
+	if e != nil {
+		return errors.New("public pinned deployment config unavailable")
+	}
 	session, e := db.ConnectPublicBackupMetadata(cfg.Database, func(ctx context.Context, pool *sql.DB) error {
+		if deployment.RuntimeSources != nil {
+			return (c.SQLRuntimeControlGrantProbe{DB: pool, Schema: cfg.Database.Database, User: cfg.Database.User}).Check(ctx)
+		}
 		return (c.SQLPublicCaptureGrantProbe{DB: pool, Schema: cfg.Database.Database, User: cfg.Database.User}).Check(ctx)
 	})
 	if e != nil {

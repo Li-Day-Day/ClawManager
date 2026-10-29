@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"strings"
 	"time"
 
@@ -202,7 +203,10 @@ func (w *PodWriter) stopped(ctx context.Context, s flow.State, p podCheckpoint, 
 	if s.Running {
 		processes = []PodIdentity{p.Process}
 	}
-	if w.ConfirmStopped(ctx, s, processes) != nil {
+	if e := w.ConfirmStopped(ctx, s, processes); e != nil {
+		if errors.Is(e, ErrStopProofPending) {
+			return false, nil
+		}
 		return false, flow.ErrQuiesce
 	}
 	return true, nil

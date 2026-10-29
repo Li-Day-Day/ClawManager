@@ -51,6 +51,7 @@ type DeploymentConfig struct {
 	Workspace         WorkspaceCapture     `json:"workspace"`
 	AcquireSeconds    int                  `json:"acquire_seconds"`
 	HoldSeconds       int                  `json:"hold_seconds"`
+	RuntimeSources    *RuntimeSourceConfig `json:"runtime_sources,omitempty"`
 }
 type GrantReference struct {
 	Path      string `json:"path"`
@@ -112,7 +113,10 @@ func (cnf DeploymentConfig) Validate() error {
 			return c.ErrExecutionAuthority
 		}
 	}
-	if cnf.CaptureScope != "platform-workspace" {
+	if cnf.CaptureScope != "platform-workspace" && cnf.CaptureScope != "runtime-workspace" {
+		return c.ErrExecutionAuthority
+	}
+	if (cnf.CaptureScope == "runtime-workspace") != (cnf.RuntimeSources != nil) || (cnf.RuntimeSources != nil && cnf.RuntimeSources.validate() != nil) {
 		return c.ErrExecutionAuthority
 	}
 	if cnf.Version != "system-backup-public-deployment.v1" || cnf.InstallationID == "" || cnf.ControllerOwner == "" || cnf.ApplicationScope == "" || cnf.Namespace == "" || cnf.NamespaceUID == "" || cnf.TrustDomain == "" || strings.ContainsAny(cnf.TrustDomain, "/: ") || !strings.Contains(cnf.WorkerImage, "@sha256:") || cnf.StagingClaim == "" || cnf.Workspace.Claim == "" || cnf.Security.ServiceAccountName == "" || cnf.Security.ServiceAccountUID == "" || len(cnf.Security.NodeUIDs) == 0 || len(cnf.Writers) == 0 || len(cnf.Writers) > 1000 || cnf.AcquireSeconds < 10 || cnf.AcquireSeconds > 600 || cnf.HoldSeconds < 30 || time.Duration(cnf.HoldSeconds)*time.Second > time.Hour || cnf.Listen == "" || !strings.HasPrefix(cnf.ControlURL, "https://") || cnf.SourceUser == "" || strings.EqualFold(cnf.SourceUser, "root") || cnf.SourceDatabase == "" || cnf.SourceServerUUID == "" {

@@ -46,6 +46,19 @@ func RequiredCaptureAccess(cfg DeploymentConfig) ([]CaptureAccess, error) {
 		}
 		namespaces[ref.Namespace] = append(namespaces[ref.Namespace], ref.Name)
 	}
+	if cfg.RuntimeSources != nil {
+		for _, ref := range cfg.RuntimeSources.Deployments {
+			namespaces[ref.Namespace] = append(namespaces[ref.Namespace], ref.Name)
+		}
+		for _, ns := range cfg.RuntimeSources.Namespaces {
+			if len(validation.IsDNS1123Label(ns)) != 0 {
+				return nil, c.ErrExecutionAuthority
+			}
+			add(ns, "", "pods", []string{"get", "list", "watch", "create", "delete", "patch"}, nil)
+			add(ns, "apps", "replicasets", []string{"get"}, nil)
+			add(ns, "", "persistentvolumeclaims", []string{"get"}, nil)
+		}
+	}
 	for _, ns := range sortedKeys(namespaces) {
 		add(ns, "apps", "deployments", []string{"get", "patch"}, sortedUnique(namespaces[ns]))
 		add(ns, "apps", "replicasets", []string{"list"}, nil)

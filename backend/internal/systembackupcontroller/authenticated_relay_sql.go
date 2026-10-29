@@ -58,24 +58,23 @@ func (s SQLAuthenticatedRelayAcceptor) AcceptAuthenticatedRelay(ctx context.Cont
 	if json.Unmarshal(bindingRaw, &job) != nil || job.UID != uid || job.JobUnitKey != m.JobUnitKey || job.Namespace != m.Namespace || job.Name != m.JobName {
 		return "", ErrExecutionRecord
 	}
-	args := []any{a.InstallationID, a.TaskType, a.TaskPublicID, a.AttemptNo, a.Phase, job.JobUnitKey}
-	const cursorSQL = `SELECT job_uid,job_generation,relay_identity_ref,relay_identity_version,relay_identity_bound_at,relay_identity_expires_at,last_accepted_sequence,COALESCE(last_accepted_body_sha256,''),COALESCE(last_observed_status,''),row_version FROM system_backup_v2_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND attempt_no=? AND phase=? AND job_unit_key=? FOR UPDATE`
-	var stored d.JobBinding
+	// The immutable receipt log owns this protocol's cursor. Worker control
+	// uses running/sealed with a different sequence in job_observations.
+	// The original Job FOR UPDATE above serializes first insert, replay and
+	// revoke; this locking read observes the latest committed receipt in RR.
+	const cursorSQL = `SELECT sequence_no,body_sha256,body_json FROM system_backup_v2_relay_receipts WHERE origin_installation_id=? AND task_public_id=? AND attempt_no=? AND phase=? AND job_unit_key=? ORDER BY sequence_no DESC LIMIT 1 FOR SHARE`
 	var cursor b.RelayCursor
-	var version uint64
-	scan := func() error {
-		return tx.QueryRowContext(ctx, cursorSQL, args...).Scan(&stored.UID, &stored.Generation, &stored.RelayIdentityRef, &stored.RelayIdentityVersion, &stored.RelayBoundAt, &stored.RelayExpiresAt, &cursor.Sequence, &cursor.BodySHA256, &cursor.Status, &version)
+	var previous []byte
+	e = tx.QueryRowContext(ctx, cursorSQL, a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, job.JobUnitKey).Scan(&cursor.Sequence, &cursor.BodySHA256, &previous)
+	if e != nil && !errors.Is(e, sql.ErrNoRows) {
+		return "", e
 	}
-	e = scan()
-	if errors.Is(e, sql.ErrNoRows) {
-		_, e = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_job_observations (origin_installation_id,target_type,target_public_id,attempt_no,phase,job_unit_key,job_uid,job_generation,relay_identity_ref,relay_identity_version,relay_identity_bound_at,relay_identity_expires_at,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`, a.InstallationID, a.TaskType, a.TaskPublicID, a.AttemptNo, a.Phase, job.JobUnitKey, job.UID, job.Generation, job.RelayIdentityRef, job.RelayIdentityVersion, job.RelayBoundAt, job.RelayExpiresAt, job.RelayBoundAt)
-		if e != nil {
-			return "", e
+	if e == nil {
+		var prior b.RelayMessage
+		if cursor.Sequence == 0 || recordHash(previous) != cursor.BodySHA256 || json.Unmarshal(previous, &prior) != nil || prior.Sequence != strconv.FormatUint(cursor.Sequence, 10) || prior.JobUID != job.UID || prior.JobGeneration != strconv.FormatUint(job.Generation, 10) || prior.RelayIdentityRef != job.RelayIdentityRef || prior.RelayIdentityVersion != job.RelayIdentityVersion {
+			return "", ErrExecutionRecord
 		}
-		e = scan()
-	}
-	if e != nil || stored.UID != job.UID || stored.Generation != job.Generation || stored.RelayIdentityRef != job.RelayIdentityRef || stored.RelayIdentityVersion != job.RelayIdentityVersion || !stored.RelayBoundAt.Equal(job.RelayBoundAt) || !stored.RelayExpiresAt.Equal(job.RelayExpiresAt) {
-		return "", ErrExecutionRecord
+		cursor.Status = prior.Status
 	}
 	var now time.Time
 	if tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now) != nil {
@@ -103,13 +102,6 @@ func (s SQLAuthenticatedRelayAcceptor) AcceptAuthenticatedRelay(ctx context.Cont
 		_, e = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_relay_receipts (origin_installation_id,task_public_id,attempt_no,phase,job_unit_key,sequence_no,body_sha256,body_json) VALUES (?,?,?,?,?,?,?,?)`, a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, job.JobUnitKey, seq, digest, raw)
 		if e != nil {
 			return "", e
-		}
-		result, e := tx.ExecContext(ctx, `UPDATE system_backup_v2_job_observations SET last_accepted_sequence=?,last_accepted_body_sha256=?,last_observed_status=?,last_observed_at=?,row_version=row_version+1 WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND attempt_no=? AND phase=? AND job_unit_key=? AND row_version=? AND last_accepted_sequence=?`, seq, digest, m.Status, now, a.InstallationID, a.TaskType, a.TaskPublicID, a.AttemptNo, a.Phase, job.JobUnitKey, version, cursor.Sequence)
-		if e != nil {
-			return "", e
-		}
-		if ok, z := exactlyOneRow(result); z != nil || !ok {
-			return "", ErrExecutionRecord
 		}
 	} else {
 		var original []byte

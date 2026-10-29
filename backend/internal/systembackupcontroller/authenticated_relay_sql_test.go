@@ -102,11 +102,11 @@ func (c *relaySQLConn) QueryContext(ctx context.Context, q string, args []driver
 	case strings.HasPrefix(q, "SELECT binding_json,"):
 		raw, _ := json.Marshal(j)
 		return row(raw, j.UID, false, int64(c.m.base.a.AttemptNo))
-	case strings.HasPrefix(q, "SELECT job_uid,job_generation,"):
+	case strings.HasPrefix(q, "SELECT sequence_no,body_sha256,body_json"):
 		if !c.exists {
 			return row()
 		}
-		return row(j.UID, int64(j.Generation), j.RelayIdentityRef, j.RelayIdentityVersion, j.RelayBoundAt, j.RelayExpiresAt, int64(c.cursor.Sequence), c.cursor.BodySHA256, c.cursor.Status, int64(c.cursor.Sequence+1))
+		return row(int64(c.cursor.Sequence), c.cursor.BodySHA256, c.raw)
 	case strings.HasPrefix(q, "SELECT body_sha256,body_json"):
 		return row(c.cursor.BodySHA256, c.raw)
 	case strings.HasPrefix(q, "SELECT schema_version,owner_target_type,owner_target_public_id,content_checksum,created_at"):
@@ -125,18 +125,20 @@ func (c *relaySQLConn) ExecContext(_ context.Context, q string, args []driver.Na
 		return nil, errors.New("write escaped transaction")
 	}
 	switch {
-	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_job_observations"):
-		c.exists = true
 	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_relay_receipts"):
 		if c.m.failInsert {
 			return nil, errors.New("receipt write failed")
 		}
 		c.raw = append([]byte(nil), args[7].Value.([]byte)...)
-	case strings.HasPrefix(q, "UPDATE system_backup_v2_job_observations SET last_accepted_sequence"):
-		if args[10].Value.(int64) != int64(c.cursor.Sequence+1) || args[11].Value.(int64) != int64(c.cursor.Sequence) {
+		if args[5].Value.(int64) != int64(c.cursor.Sequence+1) {
 			return driver.RowsAffected(0), nil
 		}
-		c.cursor = b.RelayCursor{Sequence: uint64(args[0].Value.(int64)), BodySHA256: args[1].Value.(string), Status: args[2].Value.(string)}
+		var message b.RelayMessage
+		if json.Unmarshal(c.raw, &message) != nil {
+			return nil, errors.New("invalid receipt")
+		}
+		c.exists = true
+		c.cursor = b.RelayCursor{Sequence: uint64(args[5].Value.(int64)), BodySHA256: args[6].Value.(string), Status: message.Status}
 	default:
 		return nil, fmt.Errorf("unexpected SQL %s", q)
 	}

@@ -1,0 +1,112 @@
+package systembackupexecution
+
+import (
+	b "clawreef/internal/systembackup/publicadapter"
+	"context"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes/fake"
+	"net/http"
+	"net/http/httptest"
+	"slices"
+	"testing"
+)
+
+func runtimeDeploymentFixture(t *testing.T) DeploymentConfig {
+	cfg := captureAccessFixture(t)
+	cfg.CaptureScope = "runtime-workspace"
+	cfg.RuntimeSources = &RuntimeSourceConfig{Supported: []b.AgentKind{{Type: "openclaw", Mode: "pro", Variant: "linux", OS: "linux"}}, Namespaces: []string{"runtime"}, LeaseParticipants: []string{"application-mutations"}, WorkspaceRoot: "/workspaces"}
+	return cfg
+}
+func TestDeploymentRuntimeScopeAndRBACAreExplicit(t *testing.T) {
+	cfg := runtimeDeploymentFixture(t)
+	if e := cfg.Validate(); e != nil {
+		t.Fatal(e)
+	}
+	access, e := RequiredCaptureAccess(cfg)
+	if e != nil {
+		t.Fatal(e)
+	}
+	podAccess := false
+	for _, item := range access {
+		if item.Namespace == "runtime" {
+			if slices.Contains(item.Rule.Resources, "secrets") {
+				t.Fatal("source secret granted")
+			}
+			if slices.Contains(item.Rule.Resources, "pods") && slices.Contains(item.Rule.Verbs, "patch") && slices.Contains(item.Rule.Verbs, "create") {
+				podAccess = true
+			}
+		}
+	}
+	if !podAccess {
+		t.Fatal("actual Pod resume calls lack RBAC")
+	}
+	cfg.CaptureScope = "platform-workspace"
+	if cfg.Validate() == nil {
+		t.Fatal("runtime enabled implicitly")
+	}
+	cfg.CaptureScope = "runtime-workspace"
+	cfg.RuntimeSources.LeaseParticipants = nil
+	if cfg.Validate() == nil {
+		t.Fatal("missing participants accepted")
+	}
+}
+func TestDeploymentRuntimeChecksActualCapturedVolume(t *testing.T) {
+	cfg := runtimeDeploymentFixture(t)
+	s := &DeploymentService{Config: cfg}
+	source := b.InstanceIdentity{ID: 7, UserID: 2, Generation: 3, Mode: "pro", Type: "openclaw", Variant: "linux", OS: "linux", Status: "running", Namespace: "runtime", Pod: "original", Workspace: "/workspaces/2/7"}
+	for _, fault := range []string{"", "namespace", "path", "volume", "subpath", "missing", "replacement", "overlay"} {
+		t.Run(fault, func(t *testing.T) {
+			item := source
+			target := &corev1.PersistentVolumeClaim{ObjectMeta: metav1.ObjectMeta{Namespace: cfg.Namespace, Name: cfg.Workspace.Claim, UID: types.UID("source-uid")}, Spec: corev1.PersistentVolumeClaimSpec{VolumeName: "source-pv"}}
+			mounted := &corev1.PersistentVolumeClaim{ObjectMeta: metav1.ObjectMeta{Namespace: source.Namespace, Name: "runtime-work"}, Spec: corev1.PersistentVolumeClaimSpec{VolumeName: "source-pv"}}
+			pv := &corev1.PersistentVolume{ObjectMeta: metav1.ObjectMeta{Name: "source-pv", UID: types.UID("source-pv-uid")}}
+			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Namespace: source.Namespace, Name: source.Pod}, Spec: corev1.PodSpec{Volumes: []corev1.Volume{{Name: "workspace", VolumeSource: corev1.VolumeSource{PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{ClaimName: mounted.Name}}}}, Containers: []corev1.Container{{Name: "source", VolumeMounts: []corev1.VolumeMount{{Name: "workspace", MountPath: "/workspaces"}}}}}}
+			switch fault {
+			case "namespace":
+				item.Namespace = "other"
+			case "path":
+				item.Workspace = "/workspaces/../escape"
+			case "volume":
+				mounted.Spec.VolumeName = "different-pv"
+			case "subpath":
+				pod.Spec.Containers[0].VolumeMounts[0].SubPath = "different"
+			case "missing":
+				pod.Spec.Volumes = nil
+			case "replacement":
+				pv.UID = "new-pv"
+			case "overlay":
+				pod.Spec.Containers[0].VolumeMounts = append(pod.Spec.Containers[0].VolumeMounts, corev1.VolumeMount{Name: "different", MountPath: "/workspaces/2/7/nested"})
+			}
+			inv := b.SourceInventory{Database: cfg.SourceDatabase, ServerUUID: cfg.SourceServerUUID, Instances: []b.InstanceIdentity{item}}
+			e := s.validateRuntimeInventory(inv)
+			if e == nil {
+				e = s.checkRuntimeWorkspace(context.Background(), fake.NewSimpleClientset(target, mounted, pod, pv), inv.Instances)
+			}
+			if (e == nil) != (fault == "") {
+				t.Fatal("volume scope mismatch", e)
+			}
+		})
+	}
+}
+func TestDeploymentRuntimeRegistersRelayBehindWorkloadIdentity(t *testing.T) {
+	cfg := runtimeDeploymentFixture(t)
+	controlCalls := 0
+	s := &DeploymentService{Config: cfg, Runtime: &PublicCapture{Owner: &PublicJobOwner{}, Control: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { controlCalls++; w.WriteHeader(204) })}}
+	handler := s.controlHandler()
+	for _, route := range []string{"/relay", "/worker/v1"} {
+		req := httptest.NewRequest("POST", route, nil)
+		out := httptest.NewRecorder()
+		handler.ServeHTTP(out, req)
+		if route == "/relay" && out.Code != 403 {
+			t.Fatal("relay reached unprotected handler", out.Code)
+		}
+		if route == "/worker/v1" && out.Code != 204 {
+			t.Fatal("original control route lost")
+		}
+	}
+	if controlCalls != 1 {
+		t.Fatal("relay fell through to worker control")
+	}
+}

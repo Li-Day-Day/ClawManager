@@ -25,19 +25,26 @@ import (
 type RuntimeStopProof interface {
 	Confirm(context.Context, []quiesce.PodIdentity) error
 }
+type RuntimeArmedStopProof interface {
+	RuntimeStopProof
+	Arm(context.Context, []quiesce.PodIdentity) error
+}
 
 // RuntimeControlConfig is deployment-owned. GatewayOriginal is the existing
 // service's secret-bearing create request, at the ORIGINAL generation. D seals
 // it before returning a writer spec. It must never be populated from HTTP input.
 // Each non-runtime registered participant requires its actual drain/health probe.
 type RuntimeControlConfig struct {
-	Gate              SQLCaptureGate
-	Keys              ExecutionRecordKeys
-	Client            kubernetes.Interface
-	Agent             services.BackupGatewayAgent
-	StopProof         RuntimeStopProof
-	GatewayOriginal   func(context.Context, b.InstanceIdentity) (services.RuntimeAgentCreateGatewayRequest, error)
-	ParticipantChecks map[string]ReadinessProbe
+	Gate                   SQLCaptureGate
+	Keys                   ExecutionRecordKeys
+	Client                 kubernetes.Interface
+	Agent                  services.BackupGatewayAgent
+	StopProof              RuntimeStopProof
+	GatewayOriginal        func(context.Context, b.InstanceIdentity) (services.RuntimeAgentCreateGatewayRequest, error)
+	GatewayOriginalForTask func(context.Context, d.Authority, b.InstanceIdentity) (services.RuntimeAgentCreateGatewayRequest, error)
+	StopProofForTask       func(d.Authority, string) RuntimeArmedStopProof
+	AdditionalWriterIDs    []string
+	ParticipantChecks      map[string]ReadinessProbe
 	// Reconciler/HPA fencing proofs keyed by namespace/deployment name.
 	DeploymentChecks map[string]ReadinessProbe
 	PollInterval     time.Duration
@@ -45,7 +52,7 @@ type RuntimeControlConfig struct {
 type SQLRuntimeControl struct{ cfg RuntimeControlConfig }
 
 func NewSQLRuntimeControl(c RuntimeControlConfig) (*SQLRuntimeControl, error) {
-	if !c.Gate.ready() || absentExecutionDependency(c.Keys) || absentExecutionDependency(c.Client) || absentExecutionDependency(c.StopProof) || len(c.ParticipantChecks) == 0 || c.PollInterval <= 0 || c.PollInterval > time.Second {
+	if !c.Gate.ready() || absentExecutionDependency(c.Keys) || absentExecutionDependency(c.Client) || (absentExecutionDependency(c.StopProof) && c.StopProofForTask == nil) || len(c.ParticipantChecks) == 0 || c.PollInterval <= 0 || c.PollInterval > time.Second {
 		return nil, d.ErrNotReady
 	}
 	probes := map[string]ReadinessProbe{}
@@ -64,6 +71,7 @@ func NewSQLRuntimeControl(c RuntimeControlConfig) (*SQLRuntimeControl, error) {
 		deployments[id] = p
 	}
 	c.DeploymentChecks = deployments
+	c.AdditionalWriterIDs = append([]string(nil), c.AdditionalWriterIDs...)
 	return &SQLRuntimeControl{c}, nil
 }
 func runtimeWriterID(s b.RuntimeWriterSpec) string {
@@ -109,7 +117,7 @@ func (o *SQLRuntimeControl) Prepare(ctx context.Context, a d.Authority) ([]b.Run
 			spec.Stopped = flow.State{UID: fmt.Sprintf("instance/%d", source.ID), Generation: int64(source.Generation), Checkpoint: recordHash([]byte(spec.RestartRef))}
 			material = []byte("{}")
 		case source.Status == "running" && source.Mode == "lite":
-			if o.cfg.GatewayOriginal == nil || absentExecutionDependency(o.cfg.Agent) || source.Generation >= 2147483647 {
+			if (o.cfg.GatewayOriginal == nil && o.cfg.GatewayOriginalForTask == nil) || absentExecutionDependency(o.cfg.Agent) || source.Generation >= 2147483647 {
 				return nil, d.ErrNotReady
 			}
 			spec.Kind = "gateway"
@@ -124,7 +132,12 @@ func (o *SQLRuntimeControl) Prepare(ctx context.Context, a d.Authority) ([]b.Run
 			if e != nil || string(pod.UID) != spec.UID {
 				return nil, ErrExecutionRecord
 			}
-			original, e := o.cfg.GatewayOriginal(ctx, source)
+			var original services.RuntimeAgentCreateGatewayRequest
+			if o.cfg.GatewayOriginalForTask != nil {
+				original, e = o.cfg.GatewayOriginalForTask(ctx, a, source)
+			} else {
+				original, e = o.cfg.GatewayOriginal(ctx, source)
+			}
 			if e != nil || original.InstanceID != source.ID || original.UserID != source.UserID || original.Generation != source.Generation || original.WorkspacePath != source.Workspace || original.GatewayPort != spec.Port || original.UpgradeID != "" || original.UID <= 0 || original.GID <= 0 {
 				return nil, ErrExecutionRecord
 			}
@@ -341,6 +354,51 @@ func (o *SQLRuntimeControl) Guard(ctx context.Context, a d.Authority, id, point 
 	if e != nil {
 		return e
 	}
+	if o.cfg.StopProofForTask != nil && (point == "before-stop" || point == "before-resume") {
+		var namespace string
+		var pods []quiesce.PodIdentity
+		e = o.transaction(ctx, a, recovery, func(tx *sql.Tx) error {
+			if _, participant := o.cfg.ParticipantChecks[id]; participant {
+				return nil
+			}
+			r, e := readRuntimeControl(ctx, tx, a, id)
+			if e != nil {
+				return e
+			}
+			if r.Spec.Kind != "pod" && r.Spec.Kind != "deployment" {
+				return nil
+			}
+			if e = originalRuntimeState(ctx, tx, a, id, s); e != nil {
+				return e
+			}
+			var cp struct {
+				Namespace string
+				Process   quiesce.PodIdentity
+				Pods      []quiesce.PodIdentity
+			}
+			if json.Unmarshal([]byte(s.Checkpoint), &cp) != nil || cp.Namespace != r.Spec.Source.Namespace {
+				return ErrExecutionRecord
+			}
+			namespace = cp.Namespace
+			pods = cp.Pods
+			if cp.Process.UID != "" {
+				pods = []quiesce.PodIdentity{cp.Process}
+			}
+			return nil
+		})
+		if e != nil {
+			return e
+		}
+		if namespace != "" {
+			proof := o.cfg.StopProofForTask(a, namespace)
+			if absentExecutionDependency(proof) {
+				return ErrExecutionRecord
+			}
+			if e = proof.Arm(ctx, pods); e != nil {
+				return e
+			}
+		}
+	}
 	if probe, ok := o.cfg.ParticipantChecks[id]; ok {
 		if point != "observe" && point != "observed" {
 			if e = probe.Check(ctx); e != nil {
@@ -532,8 +590,19 @@ func (o *SQLRuntimeControl) ConfirmStopped(ctx context.Context, a d.Authority, i
 	if len(pods) == 0 || !bytes.Equal(raw, want) {
 		return ErrExecutionRecord
 	}
-	if e := o.cfg.StopProof.Confirm(ctx, pods); e != nil {
-		return e
+	proof := o.cfg.StopProof
+	if o.cfg.StopProofForTask != nil {
+		var cp struct{ Namespace string }
+		if json.Unmarshal([]byte(s.Checkpoint), &cp) != nil || cp.Namespace == "" {
+			return ErrExecutionRecord
+		}
+		proof = o.cfg.StopProofForTask(a, cp.Namespace)
+	}
+	if absentExecutionDependency(proof) {
+		return ErrExecutionRecord
+	}
+	if e := proof.Confirm(ctx, pods); e != nil {
+		return quiesce.ErrStopProofPending
 	}
 	write := func(tx *sql.Tx) error {
 		if e := originalRuntimeState(ctx, tx, a, id, s); e != nil {
@@ -720,6 +789,9 @@ func (o *SQLRuntimeControl) Dependencies(ctx context.Context, a d.Authority, spe
 	}
 	out := b.RuntimeWriterDependencies{Ports: o.cfg.Gate, Client: o.cfg.Client, Agent: o.cfg.Agent, Callbacks: o.Callbacks(), PollInterval: o.cfg.PollInterval}
 	physical := map[string]bool{}
+	for _, id := range o.cfg.AdditionalWriterIDs {
+		physical[id] = true
+	}
 	for _, s := range specs {
 		physical[runtimeWriterID(s)] = true
 	}

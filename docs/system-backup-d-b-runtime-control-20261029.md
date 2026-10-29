@@ -1,5 +1,7 @@
 # D → B 实际 Runtime 控制与认证 relay
 
+生产装配已继续补充，实际 caller、任务绑定 stop witness、原请求自动加密留存及 `/relay` 注册以 [D Runtime 部署交接](system-backup-d-runtime-deployment-20261029.md) 为准。下文的可选 `PublicCaptureConfig.RuntimeControl` 是直接替换 writer builder 的低层接点；实际 deployment 组合平台和 Runtime writers，不能用此替换方式丢失平台 writer。新 relay 游标保存在独立原字节 receipt log，不再共用 worker-control observation 序列。现场联调仍待用户执行。
+
 前置 C 接口更新 `f2f78aef` 已推送 `origin/codex/unified-backup-baseline`。本文件描述后续工作树中的实际代码，不把公共 C provider、六域或正式 backup KEK 成品列为完成。
 
 ## B 构造与 caller

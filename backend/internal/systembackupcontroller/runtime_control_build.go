@@ -21,6 +21,25 @@ func (o *SQLRuntimeControl) CheckGate(g SQLCaptureGate) error {
 	return nil
 }
 
+func (o *SQLRuntimeControl) Ready(ctx context.Context) error {
+	if o == nil || o.cfg.Gate.Authority.DB == nil {
+		return d.ErrNotReady
+	}
+	for _, query := range []string{
+		"SELECT task_public_id,attempt_no,writer_id,instance_id,spec_json,material_sha256,key_ref,sealed_material,restart_claimed,restart_completed,resumed_json,stopped_sha256,row_version FROM system_backup_v2_runtime_controls WHERE 1=0",
+		"SELECT origin_installation_id,task_public_id,attempt_no,phase,job_unit_key,sequence_no,body_sha256,body_json FROM system_backup_v2_relay_receipts WHERE 1=0",
+	} {
+		rows, e := o.cfg.Gate.Authority.DB.QueryContext(ctx, query)
+		if e != nil {
+			return e
+		}
+		if e = rows.Close(); e != nil {
+			return e
+		}
+	}
+	return nil
+}
+
 func runtimeStateMatches(spec b.RuntimeWriterSpec, s flow.State, point string) bool {
 	if spec.Kind == "stopped" {
 		return s == spec.Stopped

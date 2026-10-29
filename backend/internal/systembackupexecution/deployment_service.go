@@ -43,6 +43,7 @@ type DeploymentService struct {
 	ForwardEnabled           bool
 	Config                   DeploymentConfig
 	Runtime                  *PublicCapture
+	RuntimeControl           *c.SQLRuntimeControl
 	Source                   *sql.DB
 	ConfigPath, ConfigDigest string
 	Forward, Recovery        *c.PinnedExecutionIdentity
@@ -244,6 +245,11 @@ func NewDeploymentService(ctx context.Context, db *sql.DB, client kubernetes.Int
 	if e != nil {
 		return nil, e
 	}
+	stage = "runtime-sources"
+	source, e = s.attachRuntimeSources(owner, source)
+	if e != nil {
+		return nil, e
+	}
 	queue := c.SQLExecutionQueue{DB: db, InstallationID: cfg.InstallationID, Owner: cfg.ControllerOwner, Policy: c.LeasePolicy{TTL: 30 * time.Second, HeartbeatInterval: 5 * time.Second, ReconcileInterval: time.Second}, Authorization: deploymentAuthorization{Service: s}, ApplicationScope: cfg.ApplicationScope, Recovery: &recovery}
 	stage = "composition"
 	s.Runtime, e = NewPublicCapture(PublicCaptureConfig{Owner: owner, Queue: queue, Source: source, Profile: b.ProfileKey{ID: s.profile.Profile, Revision: s.profile.Revision}, Guard: deploymentBaseProbe{Service: s}, Admission: s.admit, RecoveryAdmission: s.recoveryAdmit, Inventory: s.inventory, RecoveryTimeout: 2 * time.Minute})
@@ -273,13 +279,16 @@ func (s *DeploymentService) recoveryAdmit(_ context.Context, in d.Input) error {
 	}
 	return nil // Original journal reads/effects still require SQLRecoveryAuthority.
 }
-func (s *DeploymentService) inventory(_ context.Context, _ d.Input, x b.Discovery) error {
-	if len(x.Writers) != len(s.Config.Writers) || len(x.Parts) != 1 || x.Parts[0].Part != "workspace" {
+func (s *DeploymentService) inventory(ctx context.Context, in d.Input, x b.Discovery) error {
+	if len(x.Parts) != 1 || x.Parts[0].Part != "workspace" {
 		return d.ErrNotReady
 	}
 	expected := map[string]bool{}
 	for _, w := range s.Config.Writers {
 		expected["deployment/"+w.Namespace+"/"+w.Name] = true
+	}
+	if s.Config.RuntimeSources != nil {
+		return s.runtimeInventory(ctx, in, x, expected)
 	}
 	for _, w := range x.Writers {
 		if !expected[w.ID] {
@@ -337,10 +346,18 @@ func (s *DeploymentService) RuntimeBaseReady(ctx context.Context) error {
 	if e := s.Runtime.Owner.Gate.Ready(ctx); e != nil {
 		return e
 	}
+	if s.RuntimeControl != nil {
+		if e := s.RuntimeControl.Ready(ctx); e != nil {
+			return e
+		}
+	}
 	return s.Runtime.Owner.namespace(ctx)
 }
 func (s *DeploymentService) checkControlGrants(ctx context.Context, db *sql.DB) error {
 	g := s.Forward.DeploymentBinding()
+	if s.Config.RuntimeSources != nil {
+		return (c.SQLRuntimeControlGrantProbe{DB: db, Schema: g.Database, User: strings.Split(g.DatabaseAccount, "@")[0]}).Check(ctx)
+	}
 	if e := (c.SQLPublicCaptureGrantProbe{DB: db, Schema: g.Database, User: strings.Split(g.DatabaseAccount, "@")[0]}).Check(ctx); e != nil {
 		return c.ErrExecutionAuthority
 	}
@@ -397,9 +414,13 @@ func (s *DeploymentService) PublishReadiness(ctx context.Context) (resultErr err
 		return e
 	}
 	stage = "source-scope"
-	var instances int
-	if s.Source.QueryRowContext(ctx, "SELECT COUNT(*) FROM instances").Scan(&instances) != nil || instances != 0 {
-		return d.ErrNotReady
+	if s.Config.RuntimeSources == nil {
+		var instances int
+		if s.Source.QueryRowContext(ctx, "SELECT COUNT(*) FROM instances").Scan(&instances) != nil || instances != 0 {
+			return d.ErrNotReady
+		}
+	} else if e := s.checkRuntimeSources(ctx); e != nil {
+		return e
 	}
 	stage = "writer-registry"
 	for _, w := range s.Config.Writers {
@@ -466,7 +487,7 @@ func (s *DeploymentService) Run(ctx context.Context) (resultErr error) {
 			cancel()
 			return d.ErrNotReady
 		}
-		server = &http.Server{Handler: s.Runtime.Control, TLSConfig: s.tlsConfig, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 30 * time.Second}
+		server = &http.Server{Handler: s.controlHandler(), TLSConfig: s.tlsConfig, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 30 * time.Second}
 		go func() {
 			e := server.Serve(tls.NewListener(listener, s.tlsConfig))
 			if e != http.ErrServerClosed {

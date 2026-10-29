@@ -2,6 +2,7 @@ package services
 
 import (
 	"bytes"
+	"clawreef/internal/runtimecustody"
 	"context"
 	"encoding/json"
 	"errors"
@@ -9,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 )
@@ -199,6 +201,7 @@ type runtimeAgentHTTPClient struct {
 	controlToken      string
 	httpClient        *http.Client
 	upgradeHTTPClient *http.Client
+	originalRequests  *runtimecustody.Store
 }
 
 const (
@@ -207,7 +210,12 @@ const (
 )
 
 func NewRuntimeAgentClient(controlToken string) RuntimeAgentClient {
-	return NewRuntimeAgentClientWithHTTPClient(controlToken, nil)
+	client := NewRuntimeAgentClientWithHTTPClient(controlToken, nil).(*runtimeAgentHTTPClient)
+	dir, key, installation := os.Getenv("RUNTIME_CREATE_RECEIPT_DIR"), os.Getenv("RUNTIME_CREATE_RECEIPT_KEY_FILE"), os.Getenv("RUNTIME_CREATE_RECEIPT_INSTALLATION_ID")
+	if dir != "" || key != "" || installation != "" {
+		client.originalRequests = &runtimecustody.Store{Directory: dir, KeyFile: key, Installation: installation}
+	}
+	return client
 }
 
 func NewRuntimeAgentClientWithHTTPClient(controlToken string, httpClient *http.Client) RuntimeAgentClient {
@@ -237,6 +245,22 @@ func (c *runtimeAgentHTTPClient) Health(ctx context.Context, endpoint string) er
 }
 
 func (c *runtimeAgentHTTPClient) CreateGateway(ctx context.Context, endpoint string, req RuntimeAgentCreateGatewayRequest) (*RuntimeAgentCreateGatewayResponse, error) {
+	if c.originalRequests != nil {
+		raw, err := json.Marshal(req)
+		if err != nil {
+			return nil, runtimecustody.ErrCustody
+		}
+		defer clear(raw)
+		if err = c.originalRequests.Save(ctx, raw); err != nil {
+			return nil, err
+		}
+		// Dispatch the same frozen value that was retained, including its ENV.
+		var frozen RuntimeAgentCreateGatewayRequest
+		if json.Unmarshal(raw, &frozen) != nil {
+			return nil, runtimecustody.ErrCustody
+		}
+		req = frozen
+	}
 	var resp RuntimeAgentCreateGatewayResponse
 	if err := c.do(ctx, http.MethodPost, endpoint, "/v1/gateways", req, &resp); err != nil {
 		return nil, err

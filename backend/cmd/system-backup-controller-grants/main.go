@@ -18,16 +18,21 @@ func main() {
 	host := flag.String("host", "", "MySQL account host")
 	allowAnyHost := flag.Bool("allow-any-host", false, "explicitly acknowledge host %")
 	publicCapture := flag.Bool("public-capture", false, "render the public-v1 workspace capture metadata role")
+	runtimeControl := flag.Bool("runtime-control", false, "render the opt-in public runtime control and authenticated relay role")
 	kubeConfig := flag.String("kubernetes-config", "", "render Kubernetes RBAC for this pinned public deployment JSON")
 	kubeDigest := flag.String("kubernetes-config-sha256", "", "exact public deployment JSON SHA256")
 	controllerSA := flag.String("controller-service-account", "", "pre-created dedicated capture controller ServiceAccount")
 	flag.Parse()
+	if *runtimeControl && *publicCapture {
+		fmt.Fprintln(os.Stderr, "SQL grant modes are exclusive")
+		os.Exit(2)
+	}
 	if flag.NArg() != 0 {
 		fmt.Fprintln(os.Stderr, "unexpected positional arguments")
 		os.Exit(2)
 	}
 	if *kubeConfig != "" {
-		if *publicCapture || *schema != "" || *user != "" || *host != "" || *allowAnyHost {
+		if *publicCapture || *runtimeControl || *schema != "" || *user != "" || *host != "" || *allowAnyHost {
 			fmt.Fprintln(os.Stderr, "Kubernetes and SQL grant modes are exclusive")
 			os.Exit(2)
 		}
@@ -53,6 +58,9 @@ func main() {
 	statements, err := systembackupcontroller.ControllerGrantSQL(*schema, *user, *host, *allowAnyHost)
 	if *publicCapture {
 		statements, err = systembackupcontroller.PublicCaptureGrantSQL(*schema, *user, *host, *allowAnyHost)
+	}
+	if *runtimeControl {
+		statements, err = systembackupcontroller.RuntimeControlGrantSQL(*schema, *user, *host, *allowAnyHost)
 	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
