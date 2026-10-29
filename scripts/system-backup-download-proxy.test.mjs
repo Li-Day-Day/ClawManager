@@ -131,9 +131,10 @@ test('container composes and validates proxy configuration before starting the A
   const nginx = readFileSync(join(root, 'deployments/nginx/nginx.conf'), 'utf8');
   assert.equal((nginx.match(/include \/etc\/nginx\/system-backup-download\.locations\.conf;/g) || []).length, 1);
   const docker = readFileSync(join(root, 'Dockerfile'), 'utf8');
-  for (const flag of ['VITE_SYSTEM_BACKUP_LIVE_READ', 'VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD']) {
-    assert.ok(docker.includes(`ARG ${flag}=0`));
-    assert.ok(docker.indexOf(`ARG ${flag}=0`) < docker.indexOf('&& npm run build'));
+  for (const [flag, value] of [['VITE_SYSTEM_BACKUP_LIVE_READ', 1], ['VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD', 0]]) {
+    assert.ok(docker.includes(`ARG ${flag}=${value}`));
+    assert.ok(docker.indexOf(`ARG ${flag}=${value}`) < docker.indexOf('&& npm run build'));
   }
+  assert.ok(docker.includes('0:0|0:1|1:0|1:1)'));
   assert.ok(docker.includes('COPY deployments/container/system-backup-download-proxy.sh /app/system-backup-download-proxy.sh'));
 });

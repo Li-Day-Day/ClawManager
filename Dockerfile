@@ -19,7 +19,12 @@ RUN npm ci
 COPY frontend/ ./
 COPY backend/internal/teampresentation/catalog.json /app/backend/internal/teampresentation/catalog.json
 ARG VITE_SYSTEM_BACKUP_LIVE_READ=1
-RUN VITE_SYSTEM_BACKUP_LIVE_READ=${VITE_SYSTEM_BACKUP_LIVE_READ} npm run build
+ARG VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD=0
+RUN case "${VITE_SYSTEM_BACKUP_LIVE_READ}:${VITE_SYSTEM_BACKUP_EVIDENCE_DOWNLOAD}" in \
+      0:0|0:1|1:0|1:1) ;; \
+      *) echo "Invalid system backup frontend build switches" >&2; exit 1 ;; \
+    esac \
+    && npm run build
 
 FROM --platform=$BUILDPLATFORM golang:1.26.1-alpine AS backend-builder
 
@@ -77,6 +82,8 @@ COPY --from=backend-builder /out/clawreef-northbound-gateway /usr/local/bin/claw
 COPY --from=backend-builder /out/system-backup-controller /usr/local/bin/system-backup-controller
 COPY --from=backend-builder /out/system-backup-artifact /usr/local/bin/system-backup-artifact
 COPY --from=backend-builder /out/clawmanager-secret-broker /usr/local/bin/clawmanager-secret-broker
+# Preserve the command used by the reviewed TLS/RBAC installation profiles.
+COPY --from=backend-builder /out/clawmanager-secret-broker /usr/local/bin/clawreef-secret-broker
 COPY --from=backend-builder /out/system-backup-import /usr/local/bin/system-backup-import
 COPY --from=backend-builder /out/system-backup-migrate /usr/local/bin/system-backup-migrate
 COPY --from=backend-builder /out/system-backup-bootstrap /usr/local/bin/system-backup-bootstrap
@@ -89,6 +96,7 @@ COPY --from=hermes-desktop-builder /app/frontend/public/hermes-desktop-web /usr/
 COPY deployments/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY deployments/nginx/njs/desktop_auth.js /etc/nginx/njs/desktop_auth.js
 COPY deployments/container/start.sh /app/start.sh
+COPY deployments/container/system-backup-download-proxy.sh /app/system-backup-download-proxy.sh
 
 RUN chmod +x /app/start.sh \
     && mkdir -p /etc/nginx/tls /var/log/clawreef

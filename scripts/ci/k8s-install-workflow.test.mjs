@@ -42,6 +42,37 @@ test('installation is explicitly manual with a per-run image input and independe
   assert.ok(!job.steps.some(step => step.uses?.startsWith('actions/upload-artifact@')));
 });
 
+test('unified baseline CI checks its actual migration, API and build entry points', () => {
+  assert.ok(build.on.push.branches.includes('codex/**'));
+  assert.ok(build.on.push.branches.includes('backup'));
+  const frontend = build.jobs.frontend.steps;
+  for (const token of ['test_k8s_smoke.py', 'backup-team-catalog.py']) {
+    const step = frontend.find(value => value.run?.includes(token));
+    assert.equal(step?.['working-directory'], '.', `${token} must run at repository root`);
+  }
+  for (const token of ['system-backup-d-bootstrap-rules.mjs', 'system-backup-d-init-check.mjs', 'systemBackupActions.test.mjs']) {
+    assert.ok(frontend.some(step => step.run?.includes(token)), token);
+  }
+  assert.equal(frontend.find(step => step.name === 'Build frontend').env.VITE_SYSTEM_BACKUP_LIVE_READ, '1');
+  assert.ok(build.jobs.backend.steps.some(step => step.run === 'go build ./...'));
+  assert.ok(build.jobs.backend.steps.some(step => step.run === 'go test ./...'));
+});
+
+test('the application image packages the commands referenced by the TLS install profile', () => {
+  const dockerfile = readFileSync(new URL('../../Dockerfile', import.meta.url), 'utf8');
+  const manifest = yaml.loadAll(readFileSync(new URL('../../deployments/k8s/single-node/clawmanager.yaml', import.meta.url), 'utf8'));
+  const packaged = new Set([...dockerfile.matchAll(/^COPY .* (\/usr\/local\/bin\/\S+)$/gm)].map(match => match[1]));
+  for (const document of manifest) {
+    const spec = document?.spec?.template?.spec;
+    for (const container of [...(spec?.containers ?? []), ...(spec?.initContainers ?? [])]) {
+      if (container.image !== 'ghcr.io/yuan-lab-llm/clawmanager:latest') continue;
+      const command = container.command?.[0];
+      if (command?.startsWith('/usr/local/bin/')) assert.ok(packaged.has(command), command);
+    }
+  }
+  assert.match(dockerfile, /COPY deployments\/container\/system-backup-download-proxy\.sh/);
+});
+
 test('manual shell syntax is valid and cluster writes stay bound to disposable kind', () => {
   for (const step of job.steps.filter(step => step.run)) {
     const result = spawnSync(process.env.SMOKE_BASH ?? 'bash', ['-n'], { input: step.run, encoding: 'utf8' });

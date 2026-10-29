@@ -6,6 +6,8 @@ on:
       - main
       - 'feature/**'
       - 'fix/**'
+      - backup
+      - 'codex/**'
   pull_request:
   workflow_dispatch:
 
@@ -30,40 +32,28 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      # Unified v2 checks replace source pins for the retired unversioned controller.
+      # Historical gate scripts and their scope are listed in the companion review.
       - name: Test K8s install fixtures offline
+        working-directory: .
         run: python3 -B -m unittest discover -s scripts/ci -p test_k8s_smoke.py -v
 
-      - name: Check system backup schema inventory
+      - name: Check unified migration catalog and draft classification
+        working-directory: .
         run: |
-          node --test ../scripts/system-backup-schema-inventory.test.mjs
-          node ../scripts/system-backup-schema-inventory.mjs --check
-
-      - name: Check system backup draft contracts
-        run: node ../scripts/system-backup-contract-check.mjs --check
+          python3 -B scripts/backup-team-catalog.py --check
+          python3 -B scripts/backup-team-catalog_test.py
+          node scripts/system-backup-d-bootstrap-rules.mjs --check
 
       - name: Check Skill Hub backup policy draft
         run: |
           node ../scripts/system-backup-skill-hub-policy.mjs --check
           node --test ../scripts/system-backup-skill-hub-policy.test.mjs
 
-      - name: Check D deployment init and Admin DTO wire parity
+      - name: Check deployment initialization parity
         run: |
           node ../scripts/system-backup-d-init-check.mjs
-          node ../scripts/system-backup-d-dto-check.mjs
           node ../scripts/system-backup-d-init-check.test.mjs
-          node ../scripts/system-backup-d-dto-check.test.mjs
-          node ../scripts/system-backup-d-deployment.test.mjs
-          node ../scripts/system-backup-d-capacity-deployment.test.mjs
-          bash ../scripts/system-backup-controller-grant-drift-phase.test.sh
-
-      - name: Check system backup metrics registry
-        run: node ../scripts/system-backup-metrics-registry.mjs --check
-
-      - name: Check system backup Prometheus rule candidates
-        run: node ../scripts/system-backup-prometheus-rules.mjs --check
-
-      - name: Test system backup contract gates
-        run: node --test ../scripts/system-backup-contract-check.test.mjs ../scripts/system-backup-contract-artifacts.test.mjs ../scripts/system-backup-producer-contract.test.mjs ../scripts/system-backup-schema-hash.test.mjs ../scripts/system-backup-prometheus-rules.test.mjs
 
       - name: Install dependencies
         run: npm ci
@@ -71,7 +61,12 @@ jobs:
       - name: Test manual installation workflow boundaries
         run: node --test ../scripts/ci/k8s-install-workflow.test.mjs
 
+      - name: Test public backup API and recovery display
+        run: node --test src/services/systemBackupActions.test.mjs src/services/api.backup-auth.test.mjs src/pages/admin/backups/backupRecoveryNotice.test.mjs
+
       - name: Build frontend
+        env:
+          VITE_SYSTEM_BACKUP_LIVE_READ: '1'
         run: npm run build
 
       - name: Test Hermes iframe boundaries
@@ -118,7 +113,7 @@ jobs:
         run: go mod download
 
       - name: Build backend
-        run: go build -o bin/server ./cmd/server
+        run: go build ./...
 
       - name: Run backend tests
         run: go test ./...

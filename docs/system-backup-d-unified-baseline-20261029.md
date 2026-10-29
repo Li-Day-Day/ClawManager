@@ -2,6 +2,8 @@
 
 本提交接收 C `5874d7d7fba480fcefbd8ae6e9a3ef22d61442d3` 的执行链，以本地 `4fe83bcde5a8a693dddb2635e9a3e397d6e3472e` 为父提交。所有后续 owner 从本文件所在集成提交开发，不再各自续写两套 controller。C 的历史验证见 `backup-team-integration/validation.json`；它不是本次集成字节的验证结果。本轮验证记录见 `system-backup-d-baseline-validation-20261029.md`。
 
+配套 E2E、CI、部署与本地 TLS/RBAC 保留审查见 [后续补齐记录](system-backup-d-team-companion-review-20261029.md)。该记录同时纠正了首次接收 Team 部署清单造成的旧初始化/TLS 配置回退。
+
 ## 最终选择
 
 | 项目 | 唯一选择与边界 |
