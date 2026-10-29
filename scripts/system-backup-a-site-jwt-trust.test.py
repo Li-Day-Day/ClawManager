@@ -128,6 +128,20 @@ class SiteTests(unittest.TestCase):
             {"state": {"waiting": {"reason": "private_reason", "message": "private_message"}}}]}})
         self.assertEqual(result, {"phase": "unknown", "container_state": "waiting", "reason": "other"})
 
+    def test_config_mismatch_receipt_accepts_field_names_not_values(self):
+        raw = (root / "docs/evidence/a-site-kek-jwt-trust-prepared-20261029.json").read_bytes()
+        for fields in (["jwt_validation_pubkeys"], ["private_value"], ["status", "status"], [], "bound_issuer"):
+            with self.subTest(fields=fields):
+                progress = {}
+                receipt = {"status": "failed_or_outcome_unknown", "failure_stage": "config_validate",
+                           "provider_write_attempted": False, "config_mismatch_fields": fields}
+                with self.assertRaises(s.trust.support.Rejected):
+                    s.validate_receipt(receipt, raw, True, progress)
+                if fields == ["jwt_validation_pubkeys"]:
+                    self.assertEqual(progress["config_mismatch_fields"], fields)
+                else:
+                    self.assertNotIn("config_mismatch_fields", progress)
+
     def test_no_secret_data_or_runtime_identity_mount(self):
         pod = s.manifest("a-jwt-test")
         self.assertFalse(pod["spec"]["automountServiceAccountToken"])

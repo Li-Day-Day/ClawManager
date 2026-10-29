@@ -165,8 +165,16 @@ except SystemExit as error:
 def validate_receipt(receipt, plan_raw, inspect, progress):
     require(isinstance(receipt, dict))
     if receipt.get("status") == "failed_or_outcome_unknown":
-        require(set(receipt) == {"status", "failure_stage", "provider_write_attempted"})
+        base = {"status", "failure_stage", "provider_write_attempted"}
+        require(base <= set(receipt) <= base | {"config_mismatch_fields"})
         require(receipt["failure_stage"] in trust.STAGES and type(receipt["provider_write_attempted"]) is bool)
+        if "config_mismatch_fields" in receipt:
+            fields = receipt["config_mismatch_fields"]
+            require(receipt["failure_stage"] in ("config_validate", "config_readback"))
+            require(isinstance(fields, list) and 0 < len(fields) <= len(trust.CONFIG_DIAGNOSTIC_FIELDS))
+            require(all(isinstance(f, str) and f in trust.CONFIG_DIAGNOSTIC_FIELDS for f in fields))
+            require(len(set(fields)) == len(fields))
+            progress["config_mismatch_fields"] = fields
         progress["provider_failure_stage"] = receipt["failure_stage"]
         progress["provider_write_attempted"] = receipt["provider_write_attempted"]
         require(not inspect or receipt["provider_write_attempted"] is False)

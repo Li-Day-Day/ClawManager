@@ -22,8 +22,20 @@
     "recovery_secret_immutable": true,
     "api_insecure_skip_tls_verify": "unset"
   },
-  "provider_mount_state": "not_yet_read_back",
+  "readback_attempt": {
+    "bundle_source_commit": "cf3cf30fdc944a314c791069035df991d3c76756",
+    "bundle_sha256": "3480d20558126f1889f307576251df9016c2a7a7786bdae96164374cb6dbf8df",
+    "status": "failed_or_outcome_unknown",
+    "temporary_pod_name": "a-jwt-trust-378a0fd7cc5d67f3",
+    "failure_stage": "provider_receipt",
+    "provider_failure_stage": "config_validate",
+    "cleanup_stage": "verified_absent",
+    "temporary_control_pod_removed": true,
+    "provider_write_attempted": false,
+    "mode": "inspect"
+  },
+  "provider_mount_state": "exists_type_description_ttl_verified_config_comparison_rejected",
   "provider_authorization_verified": false,
-  "failure_cause": "not_identified",
-  "next_action": "GET-only inspection of the same pinned JWT mount/config; do not replay apply blindly"
+  "failure_cause": "client_PEM_terminal_LF_comparison_defect_reproduced_locally_exact_site_mismatch_field_not_yet_observed",
+  "next_action": "GET-only inspection with narrow terminal-LF compatibility and closed mismatch-field diagnostics; no provider config write"
 }

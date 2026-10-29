@@ -15,6 +15,10 @@ require, canonical = support.require, support.canonical
 STAGES = {"plan", "provider_client", "mount_read", "mount_validate", "mount_create",
           "mount_readback", "tune_read", "tune_validate", "config_read", "config_validate",
           "config_write", "config_readback"}
+DISABLED_CONFIG_FIELDS = ("oidc_discovery_url", "jwks_url", "oidc_client_id", "oidc_client_secret",
+                          "provider_config", "override_allowed_server_names")
+CONFIG_DIAGNOSTIC_FIELDS = {"response_data", "bound_issuer", "jwt_supported_algs", "jwt_validation_pubkeys",
+                            "default_role", "status", *DISABLED_CONFIG_FIELDS}
 
 
 def mark(progress, stage):
@@ -48,7 +52,7 @@ def inspect(provider, plan, progress=None):
     if current_config is None:
         return {**result, "status": "jwt_trust_config_absent"}
     mark(progress, "config_validate")
-    matches(current_config["data"], config)
+    matches(current_config["data"], config, progress)
     return {**result, "status": "jwt_trust_readback_verified", "config_exists": True,
             "config_readback_sha256": hashlib.sha256(canonical(current_config["data"])).hexdigest()}
 
@@ -65,10 +69,34 @@ def reviewed_plan(plan):
     return plan["mount"], config
 
 
-def matches(actual, expected):
-    require(isinstance(actual, dict) and all(actual.get(k) == v for k, v in expected.items()))
-    for k in ("oidc_discovery_url", "jwks_url", "oidc_client_id", "oidc_client_secret", "provider_config", "override_allowed_server_names"):
-        require(actual.get(k) in (None, "", [], {}))
+def public_keys_match(actual, expected):
+    if not isinstance(actual, list) or len(actual) != len(expected):
+        return False
+    # OpenBao 2.6.2 TypeCommaStringSlice -> ParseCommaStringSlice -> TrimStrings
+    # removes the terminal LF of the submitted canonical PEM. Permit only that
+    # one formatting difference; retain exact bytes, order, and number of keys.
+    return all(isinstance(a, str) and (a == e or (e.endswith("\n") and a == e[:-1]))
+               for a, e in zip(actual, expected))
+
+
+def matches(actual, expected, progress=None):
+    mismatches = []
+    if not isinstance(actual, dict):
+        mismatches.append("response_data")
+    else:
+        for key, value in expected.items():
+            equal = public_keys_match(actual.get(key), value) if key == "jwt_validation_pubkeys" else actual.get(key) == value
+            if not equal:
+                mismatches.append(key)
+        for key in DISABLED_CONFIG_FIELDS:
+            if actual.get(key) not in (None, "", [], {}):
+                mismatches.append(key)
+        # This exact provider release returns the validator's public status.
+        if actual.get("status") != "valid":
+            mismatches.append("status")
+    if progress is not None and mismatches:
+        progress["config_mismatch_fields"] = sorted(mismatches)
+    require(not mismatches)
 
 
 def apply(provider, plan, progress=None):
@@ -105,11 +133,11 @@ def apply(provider, plan, progress=None):
         provider.request("POST", path, config)
     else:
         mark(progress, "config_validate")
-        matches(current_config["data"], config)
+        matches(current_config["data"], config, progress)
     mark(progress, "config_readback")
     verified = provider.request("GET", path)
     require(verified is not None)
-    matches(verified["data"], config)
+    matches(verified["data"], config, progress)
     return {"status": "jwt_trust_readback_verified", "mount": mount, "created": created,
             "config_request_sha256": plan["config_request_sha256"],
             "config_readback_sha256": hashlib.sha256(canonical(verified["data"])).hexdigest(),

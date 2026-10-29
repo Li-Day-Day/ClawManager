@@ -21,7 +21,14 @@ class Provider:
             return {}
         if path == "sys/auth": return {"data": self.mounts}
         if path.endswith("/tune"): return {"data": {"default_lease_ttl": 20, "max_lease_ttl": 20}}
-        if path.endswith("/config"): return self.config
+        if path.endswith("/config"):
+            if self.config is None: return None
+            result = copy.deepcopy(self.config)
+            # Model the pinned OpenBao release, not just the submitted JSON:
+            # framework string-list parsing trims PEM boundary whitespace.
+            result["data"]["jwt_validation_pubkeys"] = [k.strip() for k in result["data"]["jwt_validation_pubkeys"]]
+            result["data"].setdefault("status", "valid")
+            return result
         raise AssertionError("unapproved read")
 
 
@@ -106,6 +113,45 @@ class ApplyTrustTests(unittest.TestCase):
         with self.assertRaises(TimeoutError): subject.apply(provider, self.plan, progress)
         self.assertEqual(progress, {"provider_write_attempted": True, "failure_stage": "mount_create"})
         self.assertEqual(len(provider.writes), 1)
+
+    def test_exact_key_and_missing_terminal_lf_are_the_only_equivalent_forms(self):
+        expected = self.plan["config"]
+        actual = {**copy.deepcopy(expected), "status": "valid"}
+        subject.matches(actual, expected)
+        actual["jwt_validation_pubkeys"] = [k[:-1] for k in expected["jwt_validation_pubkeys"]]
+        before = copy.deepcopy(actual)
+        subject.matches(actual, expected)
+        self.assertEqual(actual, before)
+        key = expected["jwt_validation_pubkeys"][0]
+        for keys in ([], [key, key], [key.replace("MIIB", "NIIB", 1)], [key.replace("PUBLIC KEY", "CERTIFICATE")],
+                     [key + "\n"], [key.replace("\n", "\r\n")], [" " + key], [key + key], [None]):
+            with self.subTest(keys=keys):
+                actual["jwt_validation_pubkeys"] = keys
+                progress = {}
+                with self.assertRaises(subject.support.Rejected): subject.matches(actual, expected, progress)
+                self.assertEqual(progress["config_mismatch_fields"], ["jwt_validation_pubkeys"])
+
+    def test_normalized_pem_never_normalizes_other_authority_fields(self):
+        expected = self.plan["config"]
+        for field, value in (("bound_issuer", expected["bound_issuer"] + " "),
+                             ("jwt_supported_algs", ["RS256", "HS256"]), ("default_role", "other"),
+                             ("status", "invalid"), ("status", None), ("oidc_client_secret", "private_value")):
+            with self.subTest(field=field, value=value):
+                actual = {**copy.deepcopy(expected), "status": "valid"}
+                actual["jwt_validation_pubkeys"] = [k[:-1] for k in expected["jwt_validation_pubkeys"]]
+                actual[field] = value
+                progress = {}
+                with self.assertRaises(subject.support.Rejected): subject.matches(actual, expected, progress)
+                self.assertEqual(progress["config_mismatch_fields"], [field])
+                self.assertNotIn("private_value", json.dumps(progress))
+
+    def test_readback_hash_covers_provider_bytes_not_normalized_request(self):
+        provider = Provider()
+        subject.apply(provider, self.plan)
+        result = subject.inspect(provider, self.plan)
+        actual = provider.request("GET", "auth/" + self.plan["mount"] + "/config")["data"]
+        self.assertEqual(result["config_readback_sha256"], subject.hashlib.sha256(subject.canonical(actual)).hexdigest())
+        self.assertNotEqual(result["config_readback_sha256"], self.plan["config_request_sha256"])
 
 
 if __name__ == "__main__": unittest.main()

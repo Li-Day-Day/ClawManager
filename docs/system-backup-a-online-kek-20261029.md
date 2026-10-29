@@ -62,7 +62,7 @@ migration 125 只给 `system_backup_v2_runtime_resources` 增加有界 JSON 观�
 
 ### 远程执行命令
 
-**当前现场状态：首次 `--apply` 返回结果未知，后续只读采集确认原临时 Pod 已不存在。先使用新增 `--inspect` 读回同一 mount/config，不能根据 Pod 已清理推断 provider 未写入，也不要直接重跑下面的 apply。** 公开回执见 `docs/evidence/a-site-jwt-trust-first-attempt-20261029.json`。
+**当前现场状态：首次 `--apply` 返回结果未知；随后 `--inspect` 已读到同一 mount，类型/描述/TTL 通过，config 一致性校验拒绝，临时 Pod 已确认清理且本次未尝试写入。先用修正 PEM 表示比较后的 `--inspect` 再读回，不直接重跑下面的 apply。** 公开回执见 `docs/evidence/a-site-jwt-trust-first-attempt-20261029.json`。
 
 在具有本次提交文件的仓库根目录执行（Python 3.9+、kubectl；不安装依赖）：
 
@@ -78,7 +78,9 @@ python3 -B scripts/system-backup-a-site-jwt-trust.py --apply
 
 首次现场失败后增加 `python3 -B scripts/system-backup-a-site-jwt-trust.py --inspect`：仍需按原身份检查创建并删除临时管理 Pod，但 Pod 内对 OpenBao 仅使用 GET。它分别返回 `jwt_trust_mount_absent`、`jwt_trust_config_absent`、`jwt_trust_readback_verified`；前两者只证明对应配置状态缺失，不补写、不创建 role。已存在的其他类型 mount、不同 issuer/公钥、远程 JWKS 或错误 TTL 均拒绝，不覆盖。失败输出保留 `failure_stage`、可用时的 `provider_failure_stage`、`cleanup_stage` 和 `temporary_control_pod_removed`；后者为 null 时没有清理证明。容器只报告限定的状态/原因码和退出码，不报告日志、任意错误文本或凭据。apply 的 `provider_write_attempted:true` 是保守标记，表示 provider 写入可能已开始，不能据此断言成功或失败。
 
-本次补丁本地验证：site 7 项、trust apply/inspect 6 项、policy 11 项通过（含子场景）。检查了 GET-only 的缺失/部分/成功状态、漂移拒绝、未知写入后的阶段保留、错误回执拒绝、失败后原 UID 清理以及诊断不输出原始异常。使用 Python `-B`，未生成 bytecode 或构建产物。现场目前只确认 namespace/CA/Bao Pod/恢复 Secret 引用及 TLS 设置符合预期、原临时 Pod 不存在；尚无 provider mount/config 的读回结果。
+阶段诊断补丁本地验证：site 7 项、trust apply/inspect 6 项、policy 11 项通过（含子场景）。检查了 GET-only 的缺失/部分/成功状态、漂移拒绝、未知写入后的阶段保留、错误回执拒绝、失败后原 UID 清理以及诊断不输出原始异常。使用 Python `-B`，未生成 bytecode 或构建产物。现场现已取得 mount 的类型/描述/TTL 读回，完整 config 验证尚未通过。
+
+随后定位到客户端的 PEM 表示比较缺陷：[OpenBao 2.6.2 JWT 字段定义与读回](https://raw.githubusercontent.com/openbao/openbao/v2.6.2/builtin/credential/jwt/path_config.go)使用 `TypeCommaStringSlice`，经 [framework](https://raw.githubusercontent.com/openbao/openbao/v2.6.2/sdk/framework/field_data.go) 调用 [parseutil v0.2.0](https://raw.githubusercontent.com/hashicorp/go-secure-stdlib/parseutil/v0.2.0/parseutil/parseutil.go) / [strutil v0.1.2](https://raw.githubusercontent.com/hashicorp/go-secure-stdlib/strutil/v0.1.2/strutil/strutil.go) 去除字符串两端空白，因此公钥 PEM 的末尾 LF 会被去掉。校验现在只容许每个已固定 PEM 的一个末尾 LF 缺失，公钥内容/数量/顺序和其他授权字段不归一化，且要求该版本的 `status:valid`。完整 `config_readback_sha256` 仍按原始读回 data 计算，不使用归一化后的副本。失败仅增报白名单字段名 `config_mismatch_fields`，不输出值或任意错误文本。该缺陷已在模拟真实 OpenBao 返回格式的本地测试复现；现场具体差异仍待新版 GET-only 回执确认，不预先判定通过。新回归为 trust 9 项、site 8 项，覆盖换 key、额外 key、PEM 类型变更、其他空白、issuer/算法/默认 role 变更、invalid 状态及诊断字段注入的拒绝。
 
 ### 原 Job 用途策略与 role
 
@@ -113,7 +115,7 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 | D/B | 原 encrypted journal 的 C frozen request、invocation SHA、Job/Pod/SA UID、原 execution grant SHA、截止时间 | 由原授权核验，不能由 HTTP 请求自报；真实任务尚未交回 |
 | D/B | 原 Job callback writer/cmd 接线、C 冻结 context 业务来源和真实并发回执 | 原控制通道 reserve/begin/end 已有代码；缺最终 writer、实际 SQL/Pod 验收及部署启用，不能使用 functional Lease.DEK 替代 |
 | registry owner / 公共 C | identity_hash、opaque registry_version、installation、provider key ID/name、numeric version、用途、期限与撤销位置 | 已有五个候选 key 不能自动成为已签收正式映射；不能从 key 名猜 registry 字段 |
-| 部署 owner | JWT trust 公开读回；精确 policy/role 读回；受控 permit、独立 SHA/公钥 pin | trust 首次执行结果未知、待读回；本轮 policy/role 尚未下发；permit 私钥和 JWT/token 不上传 |
+| 部署 owner | JWT trust 公开读回；精确 policy/role 读回；受控 permit、独立 SHA/公钥 pin | trust mount 已读回，config 尚未通过一致性校验；本轮 policy/role 尚未下发；permit 私钥和 JWT/token 不上传 |
 | 公共 C/D/B | 三种 signing input 的原业务授权、三独立 key/version、当前 resolver、历史验签公钥 | 原字节已固定；不能仅凭调用方 purpose/hash 放行 |
 | C/D / 恢复 owner | 历史 request/envelope、旧 KEK/ref/version/CA、当前独立 recovery grant、引用扫描及水位 | forward 不可用时仍可恢复；旧 key 存在不等于当前读授权，保留历史引用期间不得销毁 |
 
@@ -126,7 +128,7 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 - 修正公开 JSON 的 LF bytes 后，重跑公钥转换、trust apply 和 runner 测试全部通过。Python `-B` 不留 bytecode，测试不创建现场资源。
 - 提交前按当前共享 HEAD 再跑四个全包：`systembackupkms` 6.762s、`systembackupcontroller` 5.110s、`systembackupsecurity` 74.357s、`systembackupexecution` 1.607s，全部通过（`-mod=readonly -p=2 -count=1 -timeout=180s`，默认 vet）；Python 20 项与 JS 18 项再次全部通过。
 - 前述 Go 临时目录 `.tmp-a-online-kms-20261029`、`.tmp-a-online-jwt-20261029`、`.tmp-a-kek-final-20261029` 已 finally 清理并独立确认不存在。未清理其他聊天产物。
-- **trust 首次现场执行结果未知，尚未取得配置读回；尚未调用现场正式 KEK、下发本轮 policy/role、取得正式 JWT batch token，亦无真实 SQL/Job/撤销完成回执。** 本地 synthetic key/token/authority 与正式材料分开。当前可提交的是可复用组件及明确交接，整体生产装配目标仍未完成。
+- **trust mount 已存在，config 读取被一致性校验拒绝，尚未验收；尚未调用现场正式 KEK、下发本轮 policy/role、取得正式 JWT batch token，亦无真实 SQL/Job/撤销完成回执。** 本地 synthetic key/token/authority 与正式材料分开。当前可提交的是可复用组件及明确交接，整体生产装配目标仍未完成。
 
 ### 原 key-use 接线本轮验证（现场尚未执行）
 
