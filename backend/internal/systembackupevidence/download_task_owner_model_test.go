@@ -12,8 +12,11 @@ import (
 	"time"
 )
 
-// Derive the metadata fixture from the actual published DDL and candidate
-// receipt DDL, not the implementation's reference catalog. No SQL is executed.
+const taskDownloadReceiptMigration = "../db/migrations/117_backup_v2_system-backup-d-download-admission-schema-proposal-20261019.sql"
+
+// Derive the metadata fixture from the actual versioned migrations, not the
+// implementation's reference catalog or historical unversioned proposal.
+// No SQL is executed.
 func taskOwnerDDLColumns(t *testing.T) map[string]string {
 	t.Helper()
 	columns := map[string]string{}
@@ -40,7 +43,7 @@ func taskOwnerDDLColumns(t *testing.T) map[string]string {
 			consume(raw)
 		}
 	}
-	raw, err := os.ReadFile("../../../docs/system-backup-d-download-admission-schema-proposal-20261019.sql")
+	raw, err := os.ReadFile(taskDownloadReceiptMigration)
 	if err != nil {
 		t.Fatal(err)
 	}

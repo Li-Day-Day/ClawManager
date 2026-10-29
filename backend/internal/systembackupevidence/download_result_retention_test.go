@@ -74,12 +74,12 @@ func TestDownloadResultRetentionFailuresRollbackWholeResult(t *testing.T) {
 }
 
 func TestDownloadResultRetentionDDLAndClosedReferences(t *testing.T) {
-	raw, err := os.ReadFile("../../../docs/system-backup-d-download-admission-schema-proposal-20261019.sql")
+	raw, err := os.ReadFile(taskDownloadReceiptMigration)
 	if err != nil {
 		t.Fatal(err)
 	}
 	ddl := string(raw)
-	start := strings.Index(ddl, "CREATE TABLE system_backup_v2_download_result_receipts (")
+	start := strings.Index(ddl, "CREATE TABLE IF NOT EXISTS system_backup_v2_download_result_receipts (")
 	if start < 0 {
 		t.Fatal("result retention migration candidate absent")
 	}

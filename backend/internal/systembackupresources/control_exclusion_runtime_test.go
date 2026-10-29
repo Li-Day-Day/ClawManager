@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -12,10 +13,10 @@ import (
 
 var runtimeControlTables = []string{"system_backup_v2_admin_revocations", "system_backup_v2_admin_sessions", "system_backup_v2_metadata_reservations", "system_backup_v2_totp_credentials"}
 
-func TestControlExclusionCurrentRegistryScope(t *testing.T) {
+func TestControlExclusionSyntheticRegistryScope(t *testing.T) {
 	tables, err := ControlExclusionAllowlist(frozenRegistryBytes(t))
 	if err != nil || len(tables) != 35 {
-		t.Fatal("incomplete current control table closure", len(tables), err)
+		t.Fatal("incomplete historical synthetic control table closure", len(tables), err)
 	}
 	seen := map[string]bool{}
 	for _, table := range tables {
@@ -28,6 +29,38 @@ func TestControlExclusionCurrentRegistryScope(t *testing.T) {
 		if !seen[table] {
 			t.Fatal("runtime control table omitted", table)
 		}
+	}
+}
+
+func TestControlExclusionCurrentRegistryRequiresExecutionRecordPolicy(t *testing.T) {
+	current := currentRegistry(t)
+	object := resourceObject(t, current, "system_backup_v2_execution_records")
+	if object["decision_status"] != "pending_owner_review" || object["backup_strategy"] != nil || object["restore_strategy"] != nil {
+		t.Fatal("execution record policy changed; review the closed control exclusion contract")
+	}
+	// A real current registry is still draft and must not reach target SQL.
+	data, err := json.Marshal(current)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state := controlFixture()
+	checks, err := (SQLControlExclusionVerifier{DB: countDatabase(t, state), Proof: fixtureTargetProof{}}).VerifyRestoreTarget(context.Background(), data, "sev_current_registry")
+	if err == nil || checks != nil || len(state.queries) != 0 {
+		t.Fatal("current unreviewed registry reached target SQL")
+	}
+	// Even a synthetic top-level frozen marker must not hide the new table's
+	// missing policy. Do not add it to the accepted fixture or production list.
+	fixture := frozenFixture(t)
+	fixture["objects"] = append(fixture["objects"].([]any), object)
+	summary := fixture["summary"].(map[string]any)
+	summary["object_count"] = len(fixture["objects"].([]any))
+	summary["policy_recorded"] = len(fixture["objects"].([]any))
+	data, err = json.Marshal(fixture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tables, err := ControlExclusionAllowlist(data); err == nil || tables != nil {
+		t.Fatal("unreviewed execution records admitted to frozen control scope")
 	}
 }
 func TestControlExclusionRuntimeTables(t *testing.T) {

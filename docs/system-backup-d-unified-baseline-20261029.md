@@ -4,6 +4,8 @@
 
 配套 E2E、CI、部署与本地 TLS/RBAC 保留审查见 [后续补齐记录](system-backup-d-team-companion-review-20261029.md)。该记录同时纠正了首次接收 Team 部署清单造成的旧初始化/TLS 配置回退。
 
+后续已提交接口增量：`f2f78aef` 的 [D→C 当前事实入口](system-backup-d-c-current-v1-20261029.md)、`af7c3ad5` 的 [D→B Runtime 回调与认证 relay](system-backup-d-b-runtime-control-20261029.md)、`a7424ce1` 的 [公共 C crypto candidate](system-backup-c-crypto-contract-20261029.md)。这些源码交付不等于现场装配、正式成品或恢复验收。原 CI 失败与补验范围见 [CI 修复记录](system-backup-d-ci-repair-20261029.md)。
+
 ## 最终选择
 
 | 项目 | 唯一选择与边界 |
@@ -18,7 +20,7 @@
 
 ## 迁移映射与现库边界
 
-正式映射：`backup-team-integration/sql-map.json`；迁移目录采用 C 完整 164 文件，catalog 由 `scripts/backup-team-catalog.py --check` 校验。不得把本地旧目录与 C 目录叠加，也不得改名后跳过 ledger/hash 校验。来源 SQL 可从父提交恢复，C 的 `reference/` 仅供审阅。
+正式映射：`backup-team-integration/sql-map.json`；原集成采用 C 完整 164 文件，后续追加原生 v2 `124_backup_v2_runtime_control.sql` 后为 165 文件，catalog 由 `scripts/backup-team-catalog.py --check` 校验。124 的 `system_backup_v2_relay_receipts`、`system_backup_v2_runtime_controls` 纳入控制元数据分类和正式 draft registry，策略审批仍待完成；它们没有旧表迁移映射，不伪造到历史 sql-map 中。不得把本地旧目录与 C 目录叠加，也不得改名后跳过 ledger/hash 校验。来源 SQL 可从父提交恢复，C 的 `reference/` 仅供审阅。
 
 - 本地公共 065–077 → C 096–108；080 registration →109；081 prune identity→110。
 - 本地 082 execution records → C 122；C 119 admission、120 plans、121 send intents、123 runtime journal 为执行链追加迁移。
@@ -33,6 +35,7 @@
 | D：`cmd/server/system_backup_tasks_live.go`、`systembackupapi/{public_sql_writer,sql_writer,deployment_admission,cancel*,sql_details}.go` | `NewAdmittedTaskWriter` → `NewSQLApplication`；API 给前端/操作者 | 请求规范化、SQL authorization/audit、capacity/readiness、幂等同事务；controller 不得绕过 admission。 |
 | D：`cmd/system-backup-v2-controller/{main,public_capture}.go` | `runConfiguredPublic` → `systembackupexecution.NewDeploymentService` → `Run` | 专用 metadata SQL pool 与精确 grants；leader election/Pod UID、独立 forward/recovery pins。 |
 | D：`systembackupcontroller/execution_*`、`sql_execution*`、`released_capture.go` | `TaskExecutionLoop`、`SQLCaptureGate`、`ExecutionJobPorts.BeforeResume` 给 B | 原 claim/attempt/generation、加密计划、原 Job UID、single-send intent、collector 停止证明；SQL gate 的状态不能由 worker 自报推进。 |
+| D→B：`systembackupcontroller/runtime_control*`、`authenticated_relay_sql.go` | `NewSQLRuntimeControl`、`BuildWriters/Prepare/Dependencies/Callbacks`、`SQLAuthenticatedRelayAcceptor` | SQL custody、恢复和认证回执已交付；部署仍须提供原配置、真实 Agent/停止证明/参与方与控制器 probes，不能默认成功。 |
 | 共享 D/B：`systembackupdispatch` | `Authority/Input/BackupSpec/Plan/Ports`；新增 `ResumeBarrier.BeforeResume(context.Context, Authority) error` | 原 Ports ABI 不变；生产 `ExecutionJobPorts` 强制内层实现 barrier，缺失拒绝。Plan 必须原字节/原 hash，禁止恢复时重新 Discover。 |
 | B：`systembackup/publicadapter`、`systembackup/relaywire` | `NewPublicRunner`、`NewRuntimeWriterBuilder`、`RuntimeWriterSpec/RuntimeWriterDependencies/WriterCallbacks`；D 注入，C 接领域模块 | `RecoveryAdmission` 独立于 forward，缺省沿用 Admission；`RecoveryOnly` 禁新发现；writer/relay 不持有控制表写权限。非空 Runtime 构造尚未进入当前 platform profile，由后续 D/B 共同接通。 |
 | A：`systembackupsecurity`、`systembackupbootstrapsecurity`、`systembackupcatrust`、`systembackupnoncebootstrap` | request-bound action/read authorizer、signer/provider/grant 适配给 D/B/C | 表名同步但原授权语义不放宽；真正 task key、KEK 包装/解包、正式用途与历史撤销读取仍需 A 接收后补齐。 |
@@ -52,4 +55,4 @@ API 使用同协议、`SYSTEM_BACKUP_READ_LIVE_ENABLED=true`、`SYSTEM_BACKUP_RE
 
 本轮 A/B/C 三个角色独立源码联审，结论已落实：A 要求同步授权 SQL、独立 recovery、专用 pool；B 确认 writer/relay 字节不变并补恢复 barrier 顺序回归；C 确认共享 gate 必须整体接收、164 迁移不能叠加、旧导入 profile 不覆盖 4fe83bcd。这是代码角色审查，不冒称现场 owner 的人类签署或现场验收。
 
-下一步：A 接真实安全适配；D 提供 Runtime 控制回调与已认证 relay SQL 接收；B 接非空实例和模块入口；Teams/Skills 接领域数据；公共 C 接正式成品出口；D 最后组合 publishing/终态和隔离还原。任何接口变化先更新本清单和对应回归，所有 owner 引用同一集成 SHA。
+下一步：A 接真实安全适配；D/B 将已交付 Runtime 控制回调和认证 relay 接入真实部署及非空实例；Teams/Skills 接领域数据；公共 C 接当前事实 provider 和正式成品出口，D 装配新读取入口；D 最后组合 publishing/终态和隔离还原。任何接口变化先更新本清单和对应回归，所有 owner 引用同一集成 SHA。

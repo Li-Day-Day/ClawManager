@@ -23,24 +23,27 @@ func currentRegistry(t *testing.T) map[string]any {
 
 func frozenFixture(t *testing.T) map[string]any {
 	t.Helper()
-	document := currentRegistry(t)
-	document["contract_status"] = "frozen"
-	// Synthetic test-only evidence exercises the collector gate; it is not a
-	// reviewed live schema-hash observation or a registry artifact.
-	schemaHash := document["schema_hash"].(map[string]any)
-	schemaHash["status"] = "observed"
-	schemaHash["hash"] = strings.Repeat("a", 64)
-	schemaHash["evidence"] = map[string]any{"public_id": "sev_fixture", "sha256": strings.Repeat("b", 64)}
-	summary := document["summary"].(map[string]any)
-	summary["policy_recorded"] = len(document["objects"].([]any))
-	summary["policy_pending"] = 0
-	summary["cross_review_pending"] = 0
-	for _, raw := range document["objects"].([]any) {
-		object := raw.(map[string]any)
-		object["decision_status"] = "frozen"
-		object["approved_cross_reviewers"] = object["required_cross_reviewers"]
+	// Reuse the explicit historical synthetic capsule shared by the SQL tests.
+	// Never manufacture approvals by freezing the current draft: newly added
+	// controls (including execution_records) still require owner policy review.
+	// This fixture exercises the existing 35-control contract, not readiness of
+	// the current migration catalog or a production restore.
+	data, err := os.ReadFile("testdata/restore-readback-mysql-inputs.json")
+	if err != nil {
+		t.Fatal(err)
 	}
-	return document
+	var capsule struct {
+		Kind               string         `json:"kind"`
+		ProductionApproved *bool          `json:"production_approved"`
+		Registry           map[string]any `json:"registry"`
+	}
+	if err := json.Unmarshal(data, &capsule); err != nil {
+		t.Fatal(err)
+	}
+	if capsule.Kind != "d_resources_mysql_synthetic_inputs.v1" || capsule.ProductionApproved == nil || *capsule.ProductionApproved || capsule.Registry["contract_status"] != "frozen" {
+		t.Fatal("explicit synthetic frozen registry fixture required")
+	}
+	return capsule.Registry
 }
 
 func captureScope(t *testing.T, document map[string]any) ([]string, error) {

@@ -44,6 +44,7 @@ jobs:
           python3 -B scripts/backup-team-catalog.py --check
           python3 -B scripts/backup-team-catalog_test.py
           node scripts/system-backup-d-bootstrap-rules.mjs --check
+          node scripts/system-backup-d-projection-rules.mjs --check
 
       - name: Check Skill Hub backup policy draft
         run: |

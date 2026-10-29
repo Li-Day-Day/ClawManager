@@ -50,7 +50,7 @@ test('unified baseline CI checks its actual migration, API and build entry point
     const step = frontend.find(value => value.run?.includes(token));
     assert.equal(step?.['working-directory'], '.', `${token} must run at repository root`);
   }
-  for (const token of ['system-backup-d-bootstrap-rules.mjs', 'system-backup-d-init-check.mjs', 'systemBackupActions.test.mjs']) {
+  for (const token of ['system-backup-d-bootstrap-rules.mjs', 'system-backup-d-projection-rules.mjs', 'system-backup-d-init-check.mjs', 'systemBackupActions.test.mjs']) {
     assert.ok(frontend.some(step => step.run?.includes(token)), token);
   }
   assert.equal(frontend.find(step => step.name === 'Build frontend').env.VITE_SYSTEM_BACKUP_LIVE_READ, '1');
