@@ -25,6 +25,6 @@
 - Windows Go 1.26.1，`go test -p 2 ./...`。首次编译进程异常退出未计成功；随后发现 Windows Python 占位程序导致 ownerrecords SQLite 测试失败，改用现有真实 Python 后通过，无业务代码修改。
 - `a7424ce1` 加本次修复的全量运行：其余包通过，evidence 在约 602 秒触发整包默认 10 分钟超时；当时正在执行 `TestWriteRecoveryUnknownAndConflictingObjectsRetainEvidence/null_version`（该子用例运行不足 1 秒），栈位于夹具 `os.WriteFile/CloseHandle`。未报告断言失败，但本轮整体退出码为 1，不能记为全量通过。CI 的超时和断言不作放宽，最终以该修复提交的 Linux Backend Build 结果为准。
 - 新目录生成检查及两项 Python 回归通过；逐对象比较确认原有 127 项策略/审批完全不变，新增两项仍未审批，正式 registry 与 businessa fixture 字节一致。
-- 远程 Linux CI 结果应按本修复提交的 Build 运行核对；本地结果不替代远程结果。
+- 修复提交 `d51484c39e3b19b0fce27f90aa4c55dccd2f4d3a` 的 [Linux Build 40814159715](https://github.com/huihuihuizhang/ClawManager/actions/runs/40814159715) 最终 `success`：Backend Build（`go build ./...`、`go test ./...`）、Frontend Build、Hermes Desktop Web Build、Browser Worker Build and Tests、Docker Build（linux/amd64、linux/arm64）五个 job 全部通过。本地超时记录保留，不改写为本地通过。Docker 构建未发布镜像，也未部署到现场。
 
-测试结束后删除本次隔离检出、编译缓存和临时日志；其他 owner 的文件及产物不属于本次清理范围。
+本次隔离检出 `.tmp-d-ci-fix/source`、编译缓存、临时构建目录及日志已删除，工作树登记已移除。其他 owner 的文件及产物未改动，不属于本次清理范围。
