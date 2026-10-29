@@ -1,7 +1,0 @@
-# Build both static Linux binaries outside this image. The release pipeline
-# must supply a reviewed crictl binary matching the cluster CRI version.
-FROM scratch
-COPY bin/backup-node-proof /backup-node-proof
-COPY bin/crictl /usr/local/bin/crictl
-USER 0:0
-ENTRYPOINT ["/backup-node-proof"]

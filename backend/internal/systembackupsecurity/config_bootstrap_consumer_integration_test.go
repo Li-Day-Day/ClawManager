@@ -235,24 +235,24 @@ func (c *consumerIntegrationConn) QueryContext(ctx context.Context, q string, ar
 	if strings.HasPrefix(q, "SELECT c.config_sha256,s.active_config_version") {
 		return registrationRow(s.bridge.base.grant.ConfigSHA256, int64(1), false, s.bridge.base.grant.MatrixKey), nil
 	}
-	if q == "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE" {
+	if q == "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE" {
 		if s.bridge.state {
 			return registrationRow(s.bridge.base.grant.InstallationID), nil
 		}
 		return &registrationTestRows{width: 1}, nil
 	}
-	if strings.Contains(q, " FROM system_backup_producer_") || strings.HasPrefix(q, "SELECT * FROM system_backup_evidence") || strings.Contains(q, " FROM system_backup_operations WHERE") || strings.Contains(q, " FROM audit_logs WHERE id=") {
+	if strings.Contains(q, " FROM system_backup_producer_") || strings.HasPrefix(q, "SELECT * FROM system_backup_v2_evidence") || strings.Contains(q, " FROM system_backup_v2_operations WHERE") || strings.Contains(q, " FROM audit_logs WHERE id=") {
 		return consumerIntegrationSelect(q, args, s.rows)
 	}
-	if strings.Contains(q, " FROM system_backup_metadata_reservations WHERE id=1") {
+	if strings.Contains(q, " FROM system_backup_v2_metadata_reservations WHERE id=1") {
 		return consumerIntegrationSelect(q, args, s.rows)
 	}
-	if strings.HasPrefix(q, "SELECT * FROM system_backup_configs") {
-		return consumerIntegrationSelect(q, args, map[string][]map[string]driver.Value{"system_backup_configs": {s.bridge.cells}})
+	if strings.HasPrefix(q, "SELECT * FROM system_backup_v2_configs") {
+		return consumerIntegrationSelect(q, args, map[string][]map[string]driver.Value{"system_backup_v2_configs": {s.bridge.cells}})
 	}
-	if strings.HasPrefix(q, "SELECT * FROM system_backup_installation_state") {
+	if strings.HasPrefix(q, "SELECT * FROM system_backup_v2_installation_state") {
 		g := s.bridge.base.grant
-		return consumerIntegrationSelect(q, args, map[string][]map[string]driver.Value{"system_backup_installation_state": {{"origin_installation_id": g.InstallationID, "active_config_version": int64(1), "matrix_key": g.MatrixKey}}})
+		return consumerIntegrationSelect(q, args, map[string][]map[string]driver.Value{"system_backup_v2_installation_state": {{"origin_installation_id": g.InstallationID, "active_config_version": int64(1), "matrix_key": g.MatrixKey}}})
 	}
 	if strings.HasPrefix(q, "SELECT public_id,result_config_version") {
 		return consumerIntegrationSelect(q, args, s.rows)
@@ -263,14 +263,14 @@ func (c *consumerIntegrationConn) QueryContext(ctx context.Context, q string, ar
 func (c *consumerIntegrationConn) ExecContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
 	s := c.integration
 	s.queries = append(s.queries, q)
-	if q == "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)" {
-		if len(s.rows["system_backup_metadata_reservations"]) == 0 {
-			s.rows["system_backup_metadata_reservations"] = []map[string]driver.Value{{"id": int64(1), "sample_at": args[0].Value, "reserved_bytes": int64(0)}}
+	if q == "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)" {
+		if len(s.rows["system_backup_v2_metadata_reservations"]) == 0 {
+			s.rows["system_backup_v2_metadata_reservations"] = []map[string]driver.Value{{"id": int64(1), "sample_at": args[0].Value, "reserved_bytes": int64(0)}}
 		}
 		return driver.RowsAffected(1), nil
 	}
-	if q == "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?" {
-		row := s.rows["system_backup_metadata_reservations"][0]
+	if q == "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?" {
+		row := s.rows["system_backup_v2_metadata_reservations"][0]
 		if !reflect.DeepEqual(row["sample_at"], args[1].Value) || !reflect.DeepEqual(row["reserved_bytes"], args[2].Value) {
 			return driver.RowsAffected(0), nil
 		}
@@ -310,8 +310,8 @@ func (c *consumerIntegrationConn) ExecContext(ctx context.Context, q string, arg
 		return nil, err
 	}
 	g := s.bridge.base.grant
-	if strings.HasPrefix(q, "INSERT INTO system_backup_operations") {
-		s.rows["system_backup_operations"] = []map[string]driver.Value{{"public_id": args[0].Value, "origin_installation_id": g.InstallationID, "operation_type": "config_update", "target_type": "system", "target_public_id": g.InstallationID, "actor_type": "admin", "actor_id": args[3].Value, "endpoint": args[4].Value, "idempotency_key": args[5].Value, "request_hash": args[6].Value, "external_action_public_ids_canonical_json": []byte("[]"), "external_action_public_ids_size_bytes": int64(2), "external_action_public_ids_sha256": registrationHash("[]"), "status": "succeeded", "result_config_version": int64(1), "http_status": int64(201)}}
+	if strings.HasPrefix(q, "INSERT INTO system_backup_v2_operations") {
+		s.rows["system_backup_v2_operations"] = []map[string]driver.Value{{"public_id": args[0].Value, "origin_installation_id": g.InstallationID, "operation_type": "config_update", "target_type": "system", "target_public_id": g.InstallationID, "actor_type": "admin", "actor_id": args[3].Value, "endpoint": args[4].Value, "idempotency_key": args[5].Value, "request_hash": args[6].Value, "external_action_public_ids_canonical_json": []byte("[]"), "external_action_public_ids_size_bytes": int64(2), "external_action_public_ids_sha256": registrationHash("[]"), "status": "succeeded", "result_config_version": int64(1), "http_status": int64(201)}}
 	}
 	if strings.HasPrefix(q, "INSERT INTO audit_logs") {
 		id, _ := result.LastInsertId()
@@ -400,7 +400,7 @@ func (a *consumerIntegrationAuthority) Recheck(ctx context.Context, tx pd.Bootst
 		a.state.bridge.cells["alert_profile"] = "synthetic-late-corruption"
 	}
 	if a.state.lateCapacity {
-		a.state.rows["system_backup_metadata_reservations"][0]["reserved_bytes"] = int64(0)
+		a.state.rows["system_backup_v2_metadata_reservations"][0]["reserved_bytes"] = int64(0)
 	}
 	if a.state.expireCapacity {
 		a.state.now = a.state.now.Add(6 * time.Second)
@@ -478,7 +478,7 @@ func consumerIntegrationFixture(t *testing.T) (ConfigBootstrapService, OfflineBo
 	observed, _ := r.ObservedAt.Time()
 	now := observed.Add(2 * time.Second)
 	s := &consumerIntegrationState{bridge: bridge, rows: map[string][]map[string]driver.Value{}, now: now, request: plan.request}
-	s.rows["system_backup_metadata_reservations"] = []map[string]driver.Value{{"id": int64(1), "sample_at": now.Add(-time.Microsecond), "reserved_bytes": int64(0)}}
+	s.rows["system_backup_v2_metadata_reservations"] = []map[string]driver.Value{{"id": int64(1), "sample_at": now.Add(-time.Microsecond), "reserved_bytes": int64(0)}}
 	data, err := os.ReadFile("../../../contracts/system-backup/v12/producer-authority-vectors.json")
 	if err != nil {
 		t.Fatal(err)
@@ -546,8 +546,8 @@ func consumerIntegrationFixture(t *testing.T) (ConfigBootstrapService, OfflineBo
 	version, _ := r.ExpectedEvidenceVersion.SQLInt64()
 	content, _ := b.ContentBytes.SQLInt64()
 	object, _ := b.ObjectBytes.SQLInt64()
-	s.rows["system_backup_evidence"] = []map[string]driver.Value{{"id": int64(101), "schema_version": "system-backup-evidence.v1", "public_id": string(b.EvidenceID), "owner_target_type": b.OwnerType, "owner_target_public_id": string(b.OwnerID), "evidence_type": b.EvidenceType, "storage_state": "ready", "evidence_failure_code": "none", "storage_provider_role": "evidence", "storage_identity_hash": string(b.StoreIdentityHash), "storage_ref_version": string(b.StoreRefVersion), "storage_relative_key_hash": string(b.RelativeKeyHash), "storage_relative_key": string(history.RelativeKey), "storage_immutable_version": string(*b.ImmutableVersion), "content_checksum": string(b.ContentHash), "content_size_bytes": content, "object_checksum": string(b.ObjectHash), "object_size_bytes": object, "redaction_classification": b.Classification, "encryption": "envelope_v1", "envelope_framing_version": "system-backup-evidence-envelope.v1", "kek_identity_hash": string(b.KEKIdentityHash), "kek_version": string(b.KEKVersion), "row_version": version, "expires_at": retention, "protected_until": retention, "claim_owner": nil, "claim_expires_at": nil, "inline_payload": nil, "chunk_count": int64(1), "plaintext_chunk_size_bytes": int64(1048576), "chunk_list_root": strings.Repeat("a", 64), "envelope_hash": strings.Repeat("b", 64), "media_type": "application/json", "created_at": observed}}
-	s.rows["system_backup_evidence_chunks"] = []map[string]driver.Value{{"evidence_id": int64(101), "chunk_index": int64(0), "plaintext_offset": int64(0), "plaintext_length": content, "plaintext_sha256": string(b.ContentHash), "object_frame_offset": int64(0), "object_frame_length": object, "ciphertext_sha256": string(b.ObjectHash), "gcm_nonce": []byte("synthetic-nonce"), "gcm_tag": []byte("synthetic-tag")}}
+	s.rows["system_backup_v2_evidence"] = []map[string]driver.Value{{"id": int64(101), "schema_version": "system-backup-evidence.v1", "public_id": string(b.EvidenceID), "owner_target_type": b.OwnerType, "owner_target_public_id": string(b.OwnerID), "evidence_type": b.EvidenceType, "storage_state": "ready", "evidence_failure_code": "none", "storage_provider_role": "evidence", "storage_identity_hash": string(b.StoreIdentityHash), "storage_ref_version": string(b.StoreRefVersion), "storage_relative_key_hash": string(b.RelativeKeyHash), "storage_relative_key": string(history.RelativeKey), "storage_immutable_version": string(*b.ImmutableVersion), "content_checksum": string(b.ContentHash), "content_size_bytes": content, "object_checksum": string(b.ObjectHash), "object_size_bytes": object, "redaction_classification": b.Classification, "encryption": "envelope_v1", "envelope_framing_version": "system-backup-evidence-envelope.v1", "kek_identity_hash": string(b.KEKIdentityHash), "kek_version": string(b.KEKVersion), "row_version": version, "expires_at": retention, "protected_until": retention, "claim_owner": nil, "claim_expires_at": nil, "inline_payload": nil, "chunk_count": int64(1), "plaintext_chunk_size_bytes": int64(1048576), "chunk_list_root": strings.Repeat("a", 64), "envelope_hash": strings.Repeat("b", 64), "media_type": "application/json", "created_at": observed}}
+	s.rows["system_backup_v2_evidence_chunks"] = []map[string]driver.Value{{"evidence_id": int64(101), "chunk_index": int64(0), "plaintext_offset": int64(0), "plaintext_length": content, "plaintext_sha256": string(b.ContentHash), "object_frame_offset": int64(0), "object_frame_length": object, "ciphertext_sha256": string(b.ObjectHash), "gcm_nonce": []byte("synthetic-nonce"), "gcm_tag": []byte("synthetic-tag")}}
 	db := sql.OpenDB(consumerIntegrationConnector{s})
 	t.Cleanup(func() { db.Close() })
 	plan.db = db
@@ -687,7 +687,7 @@ func TestBootstrapCandidateServiceConsumerIntegration(t *testing.T) {
 			if s.commits != 1 || s.reserves != 1 || len(s.bridge.base.committed) != 5 {
 				t.Fatal("not one atomic bootstrap", s.commits, s.reserves, s.bridge.base.committed)
 			}
-			if s.rows["system_backup_metadata_reservations"][0]["reserved_bytes"] != int64(8192+65536) {
+			if s.rows["system_backup_v2_metadata_reservations"][0]["reserved_bytes"] != int64(8192+65536) {
 				t.Fatal("concrete capacity reservation cost changed")
 			}
 			if s.grantReads < 1 || s.registryReads < 1 || s.rechecks != 1 {

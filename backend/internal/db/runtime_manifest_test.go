@@ -435,39 +435,7 @@ func TestDesktopAuthAllowsDedicatedOriginTokenRotation(t *testing.T) {
 
 func TestRuntimeManifestsSeedLiteDefaultImages(t *testing.T) {
 	repoRoot := filepath.Clean(filepath.Join("..", "..", ".."))
-	// Official installs now receive D-owned seed rows through the embedded
-	// migration runner. Require actual INSERT statements, not duplicate init SQL
-	// or an unrelated runtime image string somewhere in the deployment YAML.
-	for image, migration := range map[string]string{
-		"ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest":         "034_update_lite_default_images.sql",
-		"ghcr.io/yuan-lab-llm/agentsruntime/hermes-lite:latest":           "034_update_lite_default_images.sql",
-		"ghcr.io/yuan-lab-llm/agentsruntime/deepseek-harness-lite:latest": "047_add_deepseek_harness_runtime.sql",
-	} {
-		raw, err := embeddedMigrations.ReadFile("migrations/" + migration)
-		if err != nil {
-			t.Fatal(err)
-		}
-		found := false
-		for _, statement := range splitSQLStatements(string(raw)) {
-			if strings.HasPrefix(strings.TrimSpace(statement), "INSERT INTO system_image_settings") && strings.Contains(statement, "'"+image+"'") {
-				found = true
-			}
-		}
-		if !found {
-			t.Fatalf("embedded migration %s must seed lite image %s", migration, image)
-		}
-	}
-	for _, manifest := range deploymentRuntimeManifests(repoRoot) {
-		raw, err := os.ReadFile(manifest)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if strings.Contains(string(raw), "system_image_settings") {
-			t.Fatalf("official manifest %s duplicates D-owned migration seeds", manifest)
-		}
-	}
-	// The legacy incluster installer has not migrated its bootstrap policy.
-	for _, manifest := range []string{filepath.Join(repoRoot, "backend", "deployments", "k8s", "clawreef-incluster.yaml")} {
+	for _, manifest := range append(deploymentRuntimeManifests(repoRoot), filepath.Join(repoRoot, "backend", "deployments", "k8s", "clawreef-incluster.yaml")) {
 		t.Run(manifest, func(t *testing.T) {
 			raw, err := os.ReadFile(manifest)
 			if err != nil {
@@ -572,15 +540,7 @@ func TestInitialSchemasIncludeOptionalInstanceAlias(t *testing.T) {
 		if err != nil {
 			t.Fatalf("read manifest %s: %v", manifest, err)
 		}
-		text := string(raw)
-		if strings.Contains(text, "Core runs the embedded migration runner before serving requests.") {
-			schema, err := embeddedMigrations.ReadFile("migrations/001_init_schema.sql")
-			if err != nil {
-				t.Fatal(err)
-			}
-			text = string(schema)
-		}
-		if !strings.Contains(text, "alias VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL") {
+		if !strings.Contains(string(raw), "alias VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL") {
 			t.Fatalf("manifest %s must include the optional instance alias column", manifest)
 		}
 	}

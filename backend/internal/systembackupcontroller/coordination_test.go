@@ -173,10 +173,10 @@ func TestBeginGateAcquisitionLocksThenAdvancesGeneration(t *testing.T) {
 			t.Fatalf("acquire gate SQL missing %q: %s", required, query)
 		}
 	}
-	if strings.Contains(query, "NOW()") || strings.Contains(query, "system_maintenance_mutation_leases") {
+	if strings.Contains(query, "NOW()") || strings.Contains(query, "system_backup_v2_maintenance_mutation_leases") {
 		t.Fatalf("gate CAS bypasses row-lock protocol: %s", query)
 	}
-	if !strings.Contains(tx.queries[1], "INSERT INTO system_backup_events") || !strings.Contains(tx.queries[1], "'gate_changed'") {
+	if !strings.Contains(tx.queries[1], "INSERT INTO system_backup_v2_events") || !strings.Contains(tx.queries[1], "'gate_changed'") {
 		t.Fatalf("gate acquisition event = %s", tx.queries[1])
 	}
 }
@@ -427,7 +427,7 @@ func TestAcquireMutationLeaseLocksIdleGateBeforeInsert(t *testing.T) {
 		t.Fatalf("mutation acquisition order = %#v", tx.order)
 	}
 	query := tx.queries[0]
-	for _, required := range []string{"INSERT INTO system_maintenance_mutation_leases", "gate_generation", "UTC_TIMESTAMP(6)", "DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND)"} {
+	for _, required := range []string{"INSERT INTO system_backup_v2_maintenance_mutation_leases", "gate_generation", "UTC_TIMESTAMP(6)", "DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND)"} {
 		if !strings.Contains(query, required) {
 			t.Fatalf("mutation insert missing %q: %s", required, query)
 		}
@@ -478,7 +478,7 @@ func TestMutationLeaseCommitValidationRenewAndActiveRelease(t *testing.T) {
 	if !reflect.DeepEqual(tx.order, []string{"lock_gate", "lock_lease", "exec", "commit"}) {
 		t.Fatalf("mutation release order = %#v", tx.order)
 	}
-	if !strings.HasPrefix(tx.queries[0], "DELETE FROM system_maintenance_mutation_leases") {
+	if !strings.HasPrefix(tx.queries[0], "DELETE FROM system_backup_v2_maintenance_mutation_leases") {
 		t.Fatalf("mutation release is not exact delete: %s", tx.queries[0])
 	}
 

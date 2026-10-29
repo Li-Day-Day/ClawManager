@@ -119,7 +119,7 @@ type aAdmissionMySQLFixture struct {
 func TestADownloadAdmissionMySQLSeed(t *testing.T) {
 	input, err := decodeADownloadMFAInputs(aDownloadMFASeed)
 	mustSQL(t, err)
-	for _, part := range []string{"CREATE TABLE system_backup_download_admission_receipts", "CREATE TABLE system_backup_download_result_receipts", "fk_sb_download_result_group", "fk_sb_download_result_audit", "fk_sb_auth_nonce_operation_installation", "chk_sb_operation_download_admission", "retain_until > claim_expires_at"} {
+	for _, part := range []string{"CREATE TABLE system_backup_v2_download_admission_receipts", "CREATE TABLE system_backup_v2_download_result_receipts", "sbv2_fk_sb_download_result_group", "sbv2_fk_sb_download_result_audit", "sbv2_fk_sb_auth_nonce_operation_installation", "sbv2_chk_sb_operation_download_admission", "retain_until > claim_expires_at"} {
 		if !strings.Contains(input.OwnershipDDL, part) {
 			t.Fatal("full admission DDL absent from pinned capsule", part)
 		}
@@ -178,7 +178,7 @@ func newAAdmissionMySQLFixture(t *testing.T, input aDownloadMFAInputs) *aAdmissi
 	// every historical HMAC candidate are exercised by all admission cases.
 	values := aDownloadMFAConfigCells(f.admissionPinnedFixture)
 	values["version"] = 2
-	rows, err := f.db.QueryContext(f.ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' ORDER BY ORDINAL_POSITION")
+	rows, err := f.db.QueryContext(f.ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_configs' ORDER BY ORDINAL_POSITION")
 	mustSQL(t, err)
 	var columns []string
 	var args []any
@@ -192,13 +192,13 @@ func newAAdmissionMySQLFixture(t *testing.T, input aDownloadMFAInputs) *aAdmissi
 	}
 	mustSQL(t, rows.Err())
 	mustSQL(t, rows.Close())
-	_, err = f.db.ExecContext(f.ctx, "INSERT INTO system_backup_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+	_, err = f.db.ExecContext(f.ctx, "INSERT INTO system_backup_v2_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
 	mustSQL(t, err)
 	oldIdentity := hash([]byte("old-nonce-identity"))
 	oldConfig := aAdmissionHistoricalConfig(t, f.admissionPinnedFixture.db.config)
-	_, err = f.db.ExecContext(f.ctx, "UPDATE system_backup_configs SET nonce_hmac_ref_version='v1',nonce_hmac_identity_hash=?,canonical_config_json=?,config_sha256=?,config_size_bytes=? WHERE origin_installation_id=? AND version=1", oldIdentity, oldConfig.CanonicalJSON(), oldConfig.SHA256(), len(oldConfig.CanonicalJSON()), f.svc.InstallationID)
+	_, err = f.db.ExecContext(f.ctx, "UPDATE system_backup_v2_configs SET nonce_hmac_ref_version='v1',nonce_hmac_identity_hash=?,canonical_config_json=?,config_sha256=?,config_size_bytes=? WHERE origin_installation_id=? AND version=1", oldIdentity, oldConfig.CanonicalJSON(), oldConfig.SHA256(), len(oldConfig.CanonicalJSON()), f.svc.InstallationID)
 	mustSQL(t, err)
-	_, err = f.db.ExecContext(f.ctx, "UPDATE system_backup_installation_state SET active_config_version=2 WHERE origin_installation_id=?", f.svc.InstallationID)
+	_, err = f.db.ExecContext(f.ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=2 WHERE origin_installation_id=?", f.svc.InstallationID)
 	mustSQL(t, err)
 	// Replace the independent vector's metadata with an actually encrypted
 	// object, before requesting a fresh proof for this exact SQL Manifest.
@@ -213,18 +213,18 @@ func newAAdmissionMySQLFixture(t *testing.T, input aDownloadMFAInputs) *aAdmissi
 	r.Ref.Version = f.admissionPinnedFixture.db.configCells["evidence_store_ref_version"].(string)
 	r.Ref.RelativeKey, err = keyFor("evidence", m.Identity)
 	mustSQL(t, err)
-	_, err = f.db.ExecContext(f.ctx, `UPDATE system_backup_evidence SET storage_identity_hash=?,storage_ref_version=?,storage_relative_key=?,storage_relative_key_hash=?,content_checksum=?,content_size_bytes=?,object_checksum=?,object_size_bytes=?,chunk_count=?,chunk_list_root=?,kek_identity_hash=?,kek_version=?,envelope_hash=? WHERE public_id=?`, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), m.Identity.ContentHash, m.Identity.ContentSize, m.ObjectHash, m.ObjectSize, len(m.Chunks), m.ChunkRoot, m.Key.Identity, m.Key.Version, m.EnvelopeHash, m.Identity.ID)
+	_, err = f.db.ExecContext(f.ctx, `UPDATE system_backup_v2_evidence SET storage_identity_hash=?,storage_ref_version=?,storage_relative_key=?,storage_relative_key_hash=?,content_checksum=?,content_size_bytes=?,object_checksum=?,object_size_bytes=?,chunk_count=?,chunk_list_root=?,kek_identity_hash=?,kek_version=?,envelope_hash=? WHERE public_id=?`, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), m.Identity.ContentHash, m.Identity.ContentSize, m.ObjectHash, m.ObjectSize, len(m.Chunks), m.ChunkRoot, m.Key.Identity, m.Key.Version, m.EnvelopeHash, m.Identity.ID)
 	mustSQL(t, err)
 	var evidenceID int64
-	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT id FROM system_backup_evidence WHERE public_id=?", m.Identity.ID).Scan(&evidenceID))
-	_, err = f.db.ExecContext(f.ctx, "DELETE FROM system_backup_evidence_chunks WHERE evidence_id=?", evidenceID)
+	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT id FROM system_backup_v2_evidence WHERE public_id=?", m.Identity.ID).Scan(&evidenceID))
+	_, err = f.db.ExecContext(f.ctx, "DELETE FROM system_backup_v2_evidence_chunks WHERE evidence_id=?", evidenceID)
 	mustSQL(t, err)
 	for _, chunk := range m.Chunks {
 		nonce, err := base64.RawURLEncoding.DecodeString(chunk.Nonce)
 		mustSQL(t, err)
 		tag, err := base64.RawURLEncoding.DecodeString(chunk.Tag)
 		mustSQL(t, err)
-		_, err = f.db.ExecContext(f.ctx, "INSERT INTO system_backup_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)", evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
+		_, err = f.db.ExecContext(f.ctx, "INSERT INTO system_backup_v2_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)", evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
 		mustSQL(t, err)
 	}
 	f.initial = r
@@ -279,7 +279,7 @@ func (x *aAdmissionMySQLFixture) setProof(t *testing.T, p sec.Proof) {
 }
 func (x *aAdmissionMySQLFixture) requireRows(t *testing.T, admitted, results int, released bool) {
 	t.Helper()
-	for table, want := range map[string]int{"system_backup_operations": admitted, "system_backup_download_admission_receipts": admitted, "system_backup_download_result_receipts": results, "system_backup_strong_auth_nonces": admitted, "system_backup_metadata_reservations": admitted} {
+	for table, want := range map[string]int{"system_backup_v2_operations": admitted, "system_backup_v2_download_admission_receipts": admitted, "system_backup_v2_download_result_receipts": results, "system_backup_v2_strong_auth_nonces": admitted, "system_backup_v2_metadata_reservations": admitted} {
 		var got int
 		mustSQL(t, x.aDownloadMFAFixture.db.QueryRowContext(x.ctx, "SELECT COUNT(*) FROM "+table).Scan(&got))
 		if got != want {
@@ -296,7 +296,7 @@ func (x *aAdmissionMySQLFixture) requireRows(t *testing.T, admitted, results int
 	var claim sql.NullString
 	var until sql.NullTime
 	var version int64
-	mustSQL(t, x.aDownloadMFAFixture.db.QueryRowContext(x.ctx, "SELECT claim_owner,claim_expires_at,row_version FROM system_backup_evidence WHERE public_id=?", x.initial.Manifest.Identity.ID).Scan(&claim, &until, &version))
+	mustSQL(t, x.aDownloadMFAFixture.db.QueryRowContext(x.ctx, "SELECT claim_owner,claim_expires_at,row_version FROM system_backup_v2_evidence WHERE public_id=?", x.initial.Manifest.Identity.ID).Scan(&claim, &until, &version))
 	wantVersion := x.initial.RowVersion + int64(admitted)
 	if released {
 		wantVersion++
@@ -306,7 +306,7 @@ func (x *aAdmissionMySQLFixture) requireRows(t *testing.T, admitted, results int
 	}
 	if admitted > 0 {
 		var reserved int64
-		mustSQL(t, x.aDownloadMFAFixture.db.QueryRowContext(x.ctx, "SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1").Scan(&reserved))
+		mustSQL(t, x.aDownloadMFAFixture.db.QueryRowContext(x.ctx, "SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1").Scan(&reserved))
 		if reserved != 65536+int64(results)*8192 {
 			t.Fatal("actual reservation accounting", reserved)
 		}
@@ -350,7 +350,7 @@ func TestADownloadAdmissionMySQL(t *testing.T) {
 				w := admittedWriter()
 				h.ServeHTTP(w, x.request)
 				var operation string
-				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT public_id FROM system_backup_operations").Scan(&operation))
+				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT public_id FROM system_backup_v2_operations").Scan(&operation))
 				if w.Code != 200 || !bytes.Equal(w.Body.Bytes(), x.plain) || w.Header().Get("X-System-Backup-Operation-Id") != operation || len(x.store.scopes) != 3 || failures != 0 {
 					t.Fatal("actual SQL/HTTP/provider/result chain", w.Code, len(x.store.scopes), failures)
 				}
@@ -374,15 +374,15 @@ func TestADownloadAdmissionMySQL(t *testing.T) {
 				x.requireRows(t, 1, 0, false)
 				x.result(t, one.c)
 			case "retained_hmac_replay":
-				_, err := db.ExecContext(x.ctx, "UPDATE system_backup_installation_state SET active_config_version=1 WHERE origin_installation_id=?", x.registry.Installation)
+				_, err := db.ExecContext(x.ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=1 WHERE origin_installation_id=?", x.registry.Installation)
 				mustSQL(t, err)
 				x.admitted(t)
 				var version string
-				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT nonce_hmac_key_version FROM system_backup_strong_auth_nonces").Scan(&version))
+				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT nonce_hmac_key_version FROM system_backup_v2_strong_auth_nonces").Scan(&version))
 				if version != "v1" {
 					t.Fatal("first actual historical consumption did not use v1")
 				}
-				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_installation_state SET active_config_version=2 WHERE origin_installation_id=?", x.registry.Installation)
+				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=2 WHERE origin_installation_id=?", x.registry.Installation)
 				mustSQL(t, err)
 				key := "new-key-same-actual-nonce"
 				x.request.Header.Set("Idempotency-Key", key)
@@ -410,10 +410,10 @@ func TestADownloadAdmissionMySQL(t *testing.T) {
 					once.Do(func() {
 						query := "UPDATE synthetic_download_mfa_owner SET visible=FALSE"
 						if name == "final_manifest_rollback" {
-							query = "UPDATE system_backup_evidence SET content_checksum=REPEAT('c',64)"
+							query = "UPDATE system_backup_v2_evidence SET content_checksum=REPEAT('c',64)"
 						}
 						if name == "final_nonce_rollback" {
-							query = "UPDATE system_backup_strong_auth_nonces SET session_sha256=REPEAT('c',64)"
+							query = "UPDATE system_backup_v2_strong_auth_nonces SET session_sha256=REPEAT('c',64)"
 						}
 						result, err := tx.ExecContext(ctx, query)
 						injected = err
@@ -435,7 +435,7 @@ func TestADownloadAdmissionMySQL(t *testing.T) {
 				var visible bool
 				var checksum string
 				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT visible FROM synthetic_download_mfa_owner").Scan(&visible))
-				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT content_checksum FROM system_backup_evidence").Scan(&checksum))
+				mustSQL(t, db.QueryRowContext(x.ctx, "SELECT content_checksum FROM system_backup_v2_evidence").Scan(&checksum))
 				if !visible || checksum != x.initial.Manifest.Identity.ContentHash {
 					t.Fatal("actual injected write survived rollback")
 				}
@@ -527,7 +527,7 @@ func TestADownloadAdmissionMySQL(t *testing.T) {
 				hold, err := db.BeginTx(x.ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 				mustSQL(t, err)
 				defer hold.Rollback()
-				rows, err := hold.QueryContext(x.ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+				rows, err := hold.QueryContext(x.ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 				mustSQL(t, err)
 				for rows.Next() {
 					var id string
@@ -548,7 +548,7 @@ func TestADownloadAdmissionMySQL(t *testing.T) {
 				limit := time.Now().Add(time.Second)
 				for time.Now().Before(limit) {
 					var count int
-					mustSQL(t, db.QueryRowContext(x.ctx, `SELECT COUNT(*) FROM performance_schema.data_lock_waits w JOIN performance_schema.data_locks l ON l.ENGINE_LOCK_ID=w.REQUESTING_ENGINE_LOCK_ID WHERE l.OBJECT_SCHEMA=? AND l.OBJECT_NAME='system_backup_installation_state'`, x.identity.Database).Scan(&count))
+					mustSQL(t, db.QueryRowContext(x.ctx, `SELECT COUNT(*) FROM performance_schema.data_lock_waits w JOIN performance_schema.data_locks l ON l.ENGINE_LOCK_ID=w.REQUESTING_ENGINE_LOCK_ID WHERE l.OBJECT_SCHEMA=? AND l.OBJECT_NAME='system_backup_v2_installation_state'`, x.identity.Database).Scan(&count))
 					if count > 0 {
 						observed = true
 						break

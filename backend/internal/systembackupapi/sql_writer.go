@@ -3,416 +3,369 @@ package systembackupapi
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
+	"io"
+	"reflect"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	contract "clawreef/internal/systembackupcontract"
+	deployment "clawreef/internal/systembackupdeployment"
 	read "clawreef/internal/systembackupread"
-	security "clawreef/internal/systembackupsecurity"
+	uuidlib "github.com/google/uuid"
 )
 
-// TaskRequestContract owns the reviewed closed request schema, duplicate-key
-// rejection, defaults/null rules and normalization. There is deliberately no
-// built-in empty-object request. Prepare is local and must not access providers.
-type TaskRequestContract interface {
-	Decode(context.Context, read.TaskKind, string, json.RawMessage) (NormalizedTaskRequest, error)
+var profileToken = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$`)
+var profileHash = regexp.MustCompile(`^[0-9a-f]{64}$`)
+var installationToken = regexp.MustCompile(`^installation_[A-Za-z0-9._:-]{1,115}$`)
+var allBackupParts = []string{"mysql", "redis", "object_storage", "workspace", "deployment_resources", "secret_bundle"}
+
+// ExecutionProfile is deployment-owned, never accepted as a user request.
+// References are immutable identifiers, not paths, credentials or URLs.
+type ExecutionProfile deployment.ExecutionProfile
+
+func (p ExecutionProfile) canonical() ([]byte, string, error) {
+	raw, digest, e := deployment.ExecutionProfile(p).CanonicalIdentity()
+	if e != nil {
+		return nil, "", &Error{"validation_failed"}
+	}
+	return raw, digest, nil
+}
+func (p ExecutionProfile) CanonicalIdentity() ([]byte, string, error) { return p.canonical() }
+func LoadExecutionProfile(path string) (ExecutionProfile, error) {
+	p, e := deployment.LoadExecutionProfile(path)
+	if e != nil {
+		if profileError, ok := e.(*deployment.ProfileError); ok {
+			return ExecutionProfile{}, &Error{profileError.Code}
+		}
+		return ExecutionProfile{}, &Error{"not_ready"}
+	}
+	return ExecutionProfile(p), nil
 }
 
-// CanonicalJSON is the business DTO after the schema's defaults and removal of
-// explicitly excluded transport/auth fields, encoded as JCS. The original plan
-// hashes exactly these bytes; installation/actor/endpoint belong to the unique
-// tuple, and are not an additional hash frame.
-type NormalizedTaskRequest interface {
-	CanonicalJSON() []byte
+type BackupCreateRequest struct {
+	Purpose string   `json:"task_purpose"`
+	Parts   []string `json:"requested_parts"`
+}
+type PreflightCreateRequest struct {
+	SourcePublicID string `json:"source_public_id"`
+	Mode           string `json:"preflight_mode"`
 }
 
-// TaskAdmission must use ONLY the caller's SQL capability, in the established
-// domain lock order. It validates B/C readiness, trusted resource mappings,
-// source/target restrictions, concurrency and physical metadata capacity, and
-// reserves capacity for the task, full config copy, event and audit together.
-// It must not commit, dispatch work, open another connection or contact a
-// provider. Required external observations must already be deployment-owned.
-type TaskAdmission interface {
-	Admit(TaskWriteSQL, TaskSubmissionIdentity, TaskConfigSnapshot, read.TaskKind, []byte) (TaskCreation, TaskAdmissionGuard, error)
-}
-
-// Recheck checks the original reservation and all admission facts after audit.
-// ValidUntil is an ORIGINAL strict expiry, never a renewed deadline.
-type TaskAdmissionGuard interface {
-	Recheck(TaskWriteSQL) error
-	ValidUntil() time.Time
-}
-
-type TaskConfigSnapshot struct {
-	Version, InstallationRowVersion uint64
-	CanonicalJSON                   []byte
-	SHA256, Matrix                  string
-	DeadlineSeconds                 uint64
-}
-
-func (TaskConfigSnapshot) MarshalJSON() ([]byte, error) { return nil, &Error{"not_ready"} }
-
-// These are trusted admission outputs, never fields copied from HTTP JSON.
-// Every inserted column is fixed here; no caller can supply SQL identifiers.
-type TaskCreation struct {
-	Backup    *BackupCreation
-	Preflight *PreflightCreation
-}
-type BackupCreation struct {
-	Orchestrator, Profile, Runner, Purpose                                           string
-	Parts, TargetRisks                                                               []string
-	TargetClass, FailureDomain                                                       string
-	ArtifactReadIdentity, ArtifactReadVersion, ArtifactCAIdentity, ArtifactCAVersion string
-}
-type PreflightCreation struct {
-	SourceType, SourcePublicID, Mode, TargetProfile, TargetConfigRef, TargetConfigHash string
-	SourceManifest, SourceAcceptance, SourceCatalog                                    *string
-	Compatibility                                                                      string
-}
-
+// SQLTaskWriter has no provider client or Commit method. It only stages a
+// durable task inside SQLApplication's current authorized transaction.
 type SQLTaskWriter struct {
-	contract          TaskRequestContract
-	admission         TaskAdmission
-	deploymentEnabled bool
+	profile      ExecutionProfile
+	raw          []byte
+	hash         string
+	capacityFile string
 }
 
-// deploymentEnabled is the trusted deployment switch, not a request value or
-// the installation's last_effective_enabled hint. Missing owners reject
-// construction; this persistence core does not certify their readiness.
-func NewSQLTaskWriter(contract TaskRequestContract, admission TaskAdmission, deploymentEnabled bool) (*SQLTaskWriter, error) {
-	if nilDependency(contract) || nilDependency(admission) {
-		return nil, &Error{"not_ready"}
-	}
-	return &SQLTaskWriter{contract, admission, deploymentEnabled}, nil
-}
-
-type preparedSQLTaskWrite struct {
-	writer    *SQLTaskWriter
-	ctx       context.Context
-	kind      read.TaskKind
-	endpoint  string
-	request   NormalizedTaskRequest
-	canonical []byte
-	used      atomic.Bool
-}
-
-func (w *SQLTaskWriter) Prepare(ctx context.Context, kind read.TaskKind, endpoint string, raw json.RawMessage) (PreparedTaskWrite, error) {
-	_, expected, _ := taskRoute(kind)
-	if w == nil || nilDependency(w.contract) || nilDependency(w.admission) || ctx == nil || ctx.Err() != nil {
-		return nil, &Error{"not_ready"}
-	}
-	if expected == "" || endpoint != expected || len(raw) < 2 || len(raw) > maxTaskBody {
-		return nil, &Error{"validation_failed"}
-	}
-	r, err := w.contract.Decode(ctx, kind, endpoint, append(json.RawMessage(nil), raw...))
+func NewSQLTaskWriter(p ExecutionProfile) (*SQLTaskWriter, error) {
+	raw, hash, err := p.canonical()
 	if err != nil {
 		return nil, err
 	}
-	if nilDependency(r) {
-		return nil, &Error{"not_ready"}
+	// Deep-copy via canonical bytes so later caller slice edits cannot change it.
+	var immutable ExecutionProfile
+	if json.Unmarshal(raw, &immutable) != nil {
+		return nil, &Error{"validation_failed"}
 	}
-	canonical := append([]byte(nil), r.CanonicalJSON()...)
-	if len(canonical) < 2 || len(canonical) > maxTaskBody || !json.Valid(canonical) || canonical[0] != '{' || canonical[len(canonical)-1] != '}' || ctx.Err() != nil {
-		return nil, &Error{"not_ready"}
-	}
-	return &preparedSQLTaskWrite{writer: w, ctx: ctx, kind: kind, endpoint: endpoint, request: r, canonical: canonical}, nil
+	return &SQLTaskWriter{profile: immutable, raw: raw, hash: hash}, nil
 }
 
-var taskWriterInstallation = regexp.MustCompile(`^installation_[A-Za-z0-9._:-]{1,115}$`)
-var taskWriterHash = regexp.MustCompile(`^[0-9a-f]{64}$`)
-var taskWriterValue = regexp.MustCompile(`^[A-Za-z0-9._:-]{1,128}$`)
+// WithCapacityReport returns a copy bound to a trusted, read-only DB-side
+// capacity report. An absent/stale report rejects new admissions, never replay.
+func (w *SQLTaskWriter) WithCapacityReport(path string) *SQLTaskWriter {
+	if w == nil {
+		return nil
+	}
+	copy := *w
+	copy.capacityFile = path
+	return &copy
+}
 
-const writerHeaderColumns = "id,public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,request_id,retry_of_public_id,status,pending_reason,attention_reason,can_cancel,config_version,retryable,failure_category,row_version,deadline_at,created_at,updated_at"
+type preparedSQLTask struct {
+	writer                        *SQLTaskWriter
+	kind                          read.TaskKind
+	endpoint, hash, id, requestID string
+	body                          []byte
+	backup                        BackupCreateRequest
+	preflight                     PreflightCreateRequest
+}
 
-func writerTable(kind read.TaskKind) string {
+func (w *SQLTaskWriter) Prepare(ctx context.Context, kind read.TaskKind, endpoint string, raw json.RawMessage) (PreparedTaskWrite, error) {
+	_, want, prefix := taskRoute(kind)
+	if w == nil || ctx == nil || ctx.Err() != nil || want == "" || endpoint != want {
+		return nil, &Error{"not_ready"}
+	}
+	p := &preparedSQLTask{writer: w, kind: kind, endpoint: endpoint, id: prefix + uuidlib.NewString(), requestID: uuidlib.NewString()}
 	if kind == read.BackupTask {
-		return "system_backups"
+		if closedJSON(raw, &p.backup) != nil {
+			return nil, &Error{"validation_failed"}
+		}
+		if p.backup.Purpose == "" {
+			p.backup.Purpose = "acceptance"
+		}
+		if p.backup.Parts == nil {
+			p.backup.Parts = append([]string{}, allBackupParts...)
+		}
+		if !slices.Contains([]string{"acceptance", "functional_test"}, p.backup.Purpose) || len(p.backup.Parts) == 0 {
+			return nil, &Error{"validation_failed"}
+		}
+		seen := map[string]bool{}
+		for _, part := range p.backup.Parts {
+			if !slices.Contains(allBackupParts, part) || seen[part] {
+				return nil, &Error{"validation_failed"}
+			}
+			seen[part] = true
+		}
+		if p.backup.Purpose == "acceptance" && len(seen) != len(allBackupParts) {
+			return nil, &Error{"validation_failed"}
+		}
+		// SET order follows the registry, independent of request array order.
+		p.backup.Parts = []string{}
+		for _, part := range allBackupParts {
+			if seen[part] {
+				p.backup.Parts = append(p.backup.Parts, part)
+			}
+		}
+		p.body, _ = json.Marshal(p.backup)
+	} else {
+		if closedJSON(raw, &p.preflight) != nil || !validSourceBackupID(p.preflight.SourcePublicID) {
+			return nil, &Error{"validation_failed"}
+		}
+		if p.preflight.Mode == "" {
+			p.preflight.Mode = "production_readonly"
+		}
+		if !slices.Contains([]string{"production_readonly", "functional_test"}, p.preflight.Mode) {
+			return nil, &Error{"validation_failed"}
+		}
+		p.body, _ = json.Marshal(p.preflight)
 	}
-	if kind == read.PreflightTask {
-		return "system_backup_preflights"
-	}
-	return ""
+	p.hash = digestJSON(p.body)
+	return p, nil
 }
 
-func writerScan(row TaskRow, kind read.TaskKind) (read.TaskHeader, error) {
-	t := read.TaskHeader{Kind: kind}
-	err := row.Scan(&t.ID, &t.PublicID, &t.InstallationID, &t.ActorType, &t.ActorID, &t.Endpoint, &t.IdempotencyKey, &t.RequestHash, &t.RequestID, &t.RetryOfPublicID, &t.Status, &t.PendingReason, &t.AttentionReason, &t.CanCancel, &t.ConfigVersion, &t.Retryable, &t.FailureCategory, &t.RowVersion, &t.DeadlineAt, &t.CreatedAt, &t.UpdatedAt)
-	if err == nil {
-		_, err = read.ProjectTask(t)
+func validSourceBackupID(id string) bool {
+	return strings.HasPrefix(id, "sbk_") && len(id) == 40 && uuid.MatchString(id[4:])
+}
+func digestJSON(raw []byte) string { h := sha256.Sum256(raw); return hex.EncodeToString(h[:]) }
+
+// Reject duplicate keys as well as unknown fields, null, trailing JSON and
+// non-object bodies. encoding/json alone silently accepts duplicate keys.
+func closedJSON(raw []byte, out any) error {
+	if len(raw) == 0 || len(raw) > 16384 {
+		return &Error{"validation_failed"}
 	}
-	return t, err
+	d := json.NewDecoder(bytes.NewReader(raw))
+	d.UseNumber()
+	var walk func(int) error
+	walk = func(depth int) error {
+		if depth > 8 {
+			return errors.New("depth")
+		}
+		t, err := d.Token()
+		if err != nil {
+			return err
+		}
+		if delimiter, ok := t.(json.Delim); ok {
+			switch delimiter {
+			case '{':
+				keys := map[string]bool{}
+				for d.More() {
+					k, err := d.Token()
+					if err != nil {
+						return err
+					}
+					key, ok := k.(string)
+					if !ok || keys[key] {
+						return errors.New("duplicate")
+					}
+					keys[key] = true
+					if err = walk(depth + 1); err != nil {
+						return err
+					}
+				}
+			case '[':
+				for d.More() {
+					if err = walk(depth + 1); err != nil {
+						return err
+					}
+				}
+			default:
+				return errors.New("delimiter")
+			}
+			_, err = d.Token()
+			return err
+		}
+		if t == nil {
+			return errors.New("null")
+		}
+		return nil
+	}
+	trim := bytes.TrimSpace(raw)
+	if len(trim) == 0 || trim[0] != '{' || walk(0) != nil {
+		return &Error{"validation_failed"}
+	}
+	if _, err := d.Token(); err != io.EOF {
+		return &Error{"validation_failed"}
+	}
+	// encoding/json accepts case-insensitive field aliases even with
+	// DisallowUnknownFields. Our request/profile contract has exact keys.
+	typ := reflect.TypeOf(out)
+	if typ == nil || typ.Kind() != reflect.Pointer || typ.Elem().Kind() != reflect.Struct {
+		return &Error{"validation_failed"}
+	}
+	allowed := map[string]bool{}
+	for i := 0; i < typ.Elem().NumField(); i++ {
+		allowed[strings.Split(typ.Elem().Field(i).Tag.Get("json"), ",")[0]] = true
+	}
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil {
+		return &Error{"validation_failed"}
+	}
+	for key := range fields {
+		if !allowed[key] {
+			return &Error{"validation_failed"}
+		}
+	}
+	d = json.NewDecoder(bytes.NewReader(raw))
+	d.DisallowUnknownFields()
+	if err := d.Decode(out); err != nil {
+		return &Error{"validation_failed"}
+	}
+	return nil
 }
 
-func (p *preparedSQLTaskWrite) Stage(q TaskWriteSQL, identity TaskSubmissionIdentity) (read.TaskHeader, error) {
+func (p *preparedSQLTask) Stage(q TaskWriteSQL, identity TaskSubmissionIdentity) (read.TaskHeader, error) {
 	var zero read.TaskHeader
-	fail := func() (read.TaskHeader, error) { return zero, &Error{"not_ready"} }
-	if p == nil || !p.used.CompareAndSwap(false, true) || p.ctx == nil || p.ctx.Err() != nil || nilDependency(q) {
-		return fail()
+	if p == nil || q == nil || identity.InstallationID != p.writer.profile.InstallationID || identity.Endpoint != p.endpoint || !token.MatchString(identity.IdempotencyKey) {
+		return zero, &Error{"permission_denied"}
 	}
 	actor, err := strconv.ParseInt(identity.ActorID, 10, 64)
-	if err != nil || actor < 1 || strconv.FormatInt(actor, 10) != identity.ActorID || !taskWriterInstallation.MatchString(identity.InstallationID) || identity.Endpoint != p.endpoint || !token.MatchString(identity.IdempotencyKey) {
-		return fail()
+	if err != nil || actor <= 0 {
+		return zero, &Error{"permission_denied"}
 	}
-	digest := sha256.Sum256(p.canonical)
-	hash := hex.EncodeToString(digest[:])
-	if !bytes.Equal(p.canonical, p.request.CanonicalJSON()) {
-		return fail()
+	// Same lock order as engine selection and shared gate admission. Replays
+	// remain readable when the engine/config/readiness has since changed.
+	var engine string
+	if q.QueryRow("SELECT engine FROM system_backup_v2_engine_bindings WHERE scope='installation' FOR UPDATE").Scan(&engine) != nil {
+		return zero, &Error{"not_ready"}
 	}
-	// Serialize new submissions with config/kill-switch transitions before
-	// looking up the full idempotency tuple. This also closes absent-key races.
-	var active, stateVersion uint64
-	var effective bool
-	var matrix string
-	if q.QueryRow("SELECT active_config_version,row_version,last_effective_enabled,matrix_key FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", identity.InstallationID).Scan(&active, &stateVersion, &effective, &matrix) != nil || active == 0 || stateVersion == 0 {
-		return fail()
+	table := "system_backup_v2_backups"
+	if p.kind == read.PreflightTask {
+		table = "system_backup_v2_preflights"
 	}
-	table := writerTable(p.kind)
-	where := " WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=?"
-	keyArgs := []any{identity.InstallationID, identity.ActorID, identity.Endpoint, identity.IdempotencyKey}
-	original, err := writerScan(q.QueryRow("SELECT "+writerHeaderColumns+" FROM "+table+where+" FOR UPDATE", keyArgs...), p.kind)
+	replaySQL := "SELECT " + read.SubmissionTaskColumns() + " FROM " + table + " WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE"
+	previous, err := read.ScanSubmissionTask(q.QueryRow(replaySQL, identity.InstallationID, identity.ActorID, identity.Endpoint, identity.IdempotencyKey), p.kind, identity.InstallationID)
 	if err == nil {
-		if original.RequestHash != hash {
+		if previous.RequestHash != p.hash {
 			return zero, &Error{"idempotency_conflict"}
 		}
-		// Original task/deadline/config/schedule are immutable on replay, also
-		// after a lost commit response. A reauthorizes before and after Stage.
-		return original, nil
+		return previous, nil
 	}
 	if !errors.Is(err, sql.ErrNoRows) {
-		return fail()
+		return zero, &Error{"not_ready"}
 	}
-	var retiredHash, retiredKind, retiredID, retiredStatus, retiredFailure string
-	err = q.QueryRow("SELECT request_hash,source_type,source_public_id,terminal_status,failure_category FROM system_backup_compact_tombstones"+where+" FOR UPDATE", keyArgs...).Scan(&retiredHash, &retiredKind, &retiredID, &retiredStatus, &retiredFailure)
-	if err == nil {
-		if retiredHash != hash {
-			return zero, &Error{"idempotency_conflict"}
-		}
-		_, _, prefix := taskRoute(p.kind)
-		if retiredKind != string(p.kind) || len(retiredID) != 40 || !strings.HasPrefix(retiredID, prefix) || !uuid.MatchString(retiredID[4:]) || !writerEnum(retiredStatus, "succeeded", "failed", "canceled") || !writerEnum(retiredFailure, contract.FailureCategories...) {
-			return fail()
-		}
-		return zero, &ExpiredTaskError{retiredID, retiredStatus, retiredFailure}
+	if engine != "v2" {
+		return zero, &Error{"not_ready"}
 	}
-	if !errors.Is(err, sql.ErrNoRows) {
-		return fail()
-	}
-	// The original plan checks authorized history before the new-work kill
-	// switch. An exact replay above creates no reservation, event or work.
-	if !p.writer.deploymentEnabled || !effective {
-		return fail()
-	}
-	config, err := writerConfig(q, identity.InstallationID, p.kind, active, stateVersion, matrix)
+	cfg, err := read.ReadAdmissionConfig(func(s string, args ...any) read.AdmissionRow { return q.QueryRow(s, args...) }, identity.InstallationID)
 	if err != nil {
-		return fail()
+		return zero, &Error{"not_ready"}
 	}
-	admissionConfig := config
-	admissionConfig.CanonicalJSON = append([]byte(nil), config.CanonicalJSON...)
-	creation, guard, err := p.writer.admission.Admit(q, identity, admissionConfig, p.kind, append([]byte(nil), p.canonical...))
-	if err != nil {
+	var values contract.ConfigValues
+	if json.Unmarshal(cfg.Canonical, &values) != nil || !values.Enabled {
+		return zero, &Error{"not_ready"}
+	}
+	runner := "k8s"
+	if p.writer.profile.Orchestrator == "k3s" {
+		runner = "k3s"
+	}
+	matrix := runner + "-" + p.writer.profile.Profile
+	var actualMatrix string
+	if q.QueryRow("SELECT matrix_key FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", identity.InstallationID).Scan(&actualMatrix) != nil || actualMatrix != matrix {
+		return zero, &Error{"not_ready"}
+	}
+	if p.kind == read.BackupTask && p.backup.Purpose == "acceptance" && (p.writer.profile.TargetClass != "dr-ready-external" || len(p.writer.profile.TargetRisks) != 0) {
+		return zero, &Error{"backup_target_risk_rejected"}
+	}
+	// Read the database clock; neither caller timestamps nor stale process
+	// health can make an execution adapter ready.
+	var now time.Time
+	if q.QueryRow("SELECT UTC_TIMESTAMP(6)").Scan(&now) != nil {
+		return zero, &Error{"not_ready"}
+	}
+	if err = p.ready(q, identity.InstallationID, cfg.Version); err != nil {
 		return zero, err
 	}
-	if nilDependency(guard) {
-		return fail()
+	var pending uint64
+	const countSQL = `SELECT (SELECT COUNT(*) FROM system_backup_v2_backups WHERE origin_installation_id=? AND status='pending') + (SELECT COUNT(*) FROM system_backup_v2_preflights WHERE origin_installation_id=? AND status='pending') + (SELECT COUNT(*) FROM system_backup_v2_restore_drills WHERE origin_installation_id=? AND status='pending') + (SELECT COUNT(*) FROM system_backup_v2_artifact_verifications WHERE origin_installation_id=? AND status='pending')`
+	if q.QueryRow(countSQL, identity.InstallationID, identity.InstallationID, identity.InstallationID, identity.InstallationID).Scan(&pending) != nil {
+		return zero, &Error{"not_ready"}
 	}
-	until := guard.ValidUntil()
-	if until.IsZero() {
-		return fail()
+	if values.Concurrency.MaxPendingTasks < 1 || pending >= uint64(values.Concurrency.MaxPendingTasks) {
+		return zero, &Error{"capacity_exceeded"}
 	}
-	now, err := writerClock(q, time.Time{}, until)
-	if err != nil {
-		return fail()
+	if err = p.reserveCapacity(q, values.Capacity.ControlMetadataCapacityBytes, len(cfg.Canonical)); err != nil {
+		return zero, err
 	}
-	_, _, prefix := taskRoute(p.kind)
-	id, err := writerID(prefix)
-	if err != nil {
-		return fail()
+	seconds := values.Durations.BackupTaskDeadlineSeconds
+	if p.kind == read.PreflightTask {
+		seconds = values.Durations.PreflightTaskDeadlineSeconds
 	}
-	requestID, _ := p.ctx.Value(taskRequestIDKey{}).(string)
-	if !taskWriterValue.MatchString(requestID) {
-		requestID, err = writerID("")
-		if err != nil {
-			return fail()
+	if seconds <= 0 || seconds > 7*24*3600 {
+		return zero, &Error{"not_ready"}
+	}
+	deadline := now.Add(time.Duration(seconds) * time.Second)
+	columns := "public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,request_id,config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,deadline_at,next_reconcile_at,created_at,updated_at"
+	args := []any{p.id, identity.InstallationID, "admin", identity.ActorID, identity.Endpoint, identity.IdempotencyKey, p.hash, p.requestID, cfg.Version, []byte(cfg.Canonical), len(cfg.Canonical), cfg.SHA256, deadline, now, now, now}
+	if p.kind == read.BackupTask {
+		ref := map[string]contract.ConfigReference{}
+		for _, r := range values.References {
+			ref[r.Purpose] = r
 		}
+		columns += ",source_orchestrator,source_profile,matrix_key,runner,task_purpose,requested_parts,artifact_read_identity_hash,artifact_read_ref_version,artifact_ca_identity_hash,artifact_ca_ref_version,target_class,target_risks,target_failure_domain_id"
+		args = append(args, p.writer.profile.Orchestrator, p.writer.profile.Profile, matrix, runner, p.backup.Purpose, strings.Join(p.backup.Parts, ","), ref["artifact_read"].IdentityHash, ref["artifact_read"].Version, ref["artifact_ca"].IdentityHash, ref["artifact_ca"].Version, p.writer.profile.TargetClass, strings.Join(p.writer.profile.TargetRisks, ","), p.writer.profile.FailureDomain)
+	} else {
+		var manifest, acceptance sql.NullString
+		var usable bool
+		if q.QueryRow("SELECT manifest_checksum,acceptance_checksum,artifact_usable FROM system_backup_v2_backups WHERE origin_installation_id=? AND public_id=? AND status='succeeded' AND artifact_state='committed' FOR SHARE", identity.InstallationID, p.preflight.SourcePublicID).Scan(&manifest, &acceptance, &usable) != nil || !usable || !manifest.Valid {
+			return zero, &Error{"artifact_unavailable"}
+		}
+		columns += ",source_artifact_type,source_public_id,source_manifest_checksum,source_acceptance_checksum,preflight_mode,target_profile,restore_target_config_ref,restore_target_config_hash,artifact_compatibility"
+		// Compatibility is only a format capability, never a report success.
+		args = append(args, "backup", p.preflight.SourcePublicID, manifest, acceptance, p.preflight.Mode, p.writer.profile.Profile, p.writer.profile.RestoreTargetRef, p.writer.profile.RestoreTargetHash, "supported")
 	}
-	columns := []string{"public_id", "origin_installation_id", "actor_type", "actor_id", "endpoint", "idempotency_key", "request_hash", "request_id", "config_version", "config_snapshot_json", "config_snapshot_size_bytes", "config_snapshot_sha256", "next_reconcile_at", "deadline_at", "created_at", "updated_at"}
-	args := []any{id, identity.InstallationID, "admin", identity.ActorID, identity.Endpoint, identity.IdempotencyKey, hash, requestID, config.Version, config.CanonicalJSON, len(config.CanonicalJSON), config.SHA256, now, now.Add(time.Duration(config.DeadlineSeconds) * time.Second), now, now}
-	ownerColumns, ownerArgs, err := writerCreation(p.kind, config, creation)
-	if err != nil {
-		return fail()
+	marks := strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")
+	if _, err = q.Exec("INSERT INTO "+table+" ("+columns+") VALUES ("+marks+")", args...); err != nil {
+		return zero, &Error{"not_ready"}
 	}
-	columns = append(columns, ownerColumns...)
-	args = append(args, ownerArgs...)
-	marks := strings.TrimSuffix(strings.Repeat("?,", len(columns)), ",")
-	if !writerOne(q.Exec("INSERT INTO "+table+" ("+strings.Join(columns, ",")+") VALUES ("+marks+")", args...)) {
-		return fail()
+	if _, err = q.Exec("INSERT INTO system_backup_v2_execution_inputs(origin_installation_id,task_public_id,task_type,profile_json,profile_sha256,request_json) VALUES(?,?,?,?,?,?)", identity.InstallationID, p.id, string(p.kind), p.writer.raw, p.writer.hash, p.body); err != nil {
+		return zero, &Error{"not_ready"}
 	}
-	// This durable receipt observes the initial scheduling decision even after
-	// the controller clears next_reconcile_at at terminal. Replays add no row.
-	if !writerOne(q.Exec("INSERT INTO system_backup_events (origin_installation_id,target_type,target_public_id,event_type,level,task_status,message,request_id,created_at) VALUES (?,?,?,'diagnostic.d.task_enqueued','info','pending','Task durably scheduled',?,?)", identity.InstallationID, string(p.kind), id, requestID, now)) {
-		return fail()
+	if _, err = q.Exec("INSERT INTO system_backup_v2_events(origin_installation_id,target_type,target_public_id,event_type,level,task_status,message,request_id) VALUES(?,?,?,'task_status_changed','info','pending','Task admitted',?)", identity.InstallationID, string(p.kind), p.id, p.requestID); err != nil {
+		return zero, &Error{"not_ready"}
 	}
-	audit, _ := json.Marshal(map[string]any{"origin_installation_id": identity.InstallationID, "task_public_id": id, "task_type": p.kind, "endpoint": identity.Endpoint, "request_hash": hash, "config_version": config.Version, "request_id": requestID})
-	if !writerOne(q.Exec("INSERT INTO audit_logs (user_id,action,resource_type,details) VALUES (?,?,'system_backup',?)", actor, "system_backup.task_create", string(audit))) {
-		return fail()
+	if err = p.ready(q, identity.InstallationID, cfg.Version); err != nil {
+		return zero, err
 	}
-	if guard.Recheck(q) != nil || !guard.ValidUntil().Equal(until) {
-		return fail()
-	}
-	// No owner callback follows these fixed final guards.
-	var finalActive, finalVersion uint64
-	var finalEffective bool
-	var finalMatrix string
-	if q.QueryRow("SELECT active_config_version,row_version,last_effective_enabled,matrix_key FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", identity.InstallationID).Scan(&finalActive, &finalVersion, &finalEffective, &finalMatrix) != nil || finalActive != active || finalVersion != stateVersion || !finalEffective || finalMatrix != matrix {
-		return fail()
-	}
-	finalConfig, err := writerConfig(q, identity.InstallationID, p.kind, active, stateVersion, matrix)
-	if err != nil || finalConfig.SHA256 != config.SHA256 || finalConfig.DeadlineSeconds != config.DeadlineSeconds || !bytes.Equal(finalConfig.CanonicalJSON, config.CanonicalJSON) {
-		return fail()
-	}
-	final, err := writerScan(q.QueryRow("SELECT "+writerHeaderColumns+" FROM "+table+" WHERE origin_installation_id=? AND public_id=? FOR UPDATE", identity.InstallationID, id), p.kind)
-	if err != nil || final.RequestHash != hash || final.Status != "pending" || final.RowVersion != 1 || final.ConfigVersion != active || final.RequestID != requestID || !final.CreatedAt.Equal(now) || !final.DeadlineAt.Equal(now.Add(time.Duration(config.DeadlineSeconds)*time.Second)) {
-		return fail()
-	}
-	var schedule time.Time
-	var snapshot []byte
-	var snapshotHash string
-	var snapshotSize uint64
-	if q.QueryRow("SELECT next_reconcile_at,config_snapshot_json,config_snapshot_sha256,config_snapshot_size_bytes FROM "+table+" WHERE origin_installation_id=? AND public_id=? FOR UPDATE", identity.InstallationID, id).Scan(&schedule, &snapshot, &snapshotHash, &snapshotSize) != nil || !schedule.Equal(now) || !bytes.Equal(snapshot, config.CanonicalJSON) || snapshotHash != config.SHA256 || snapshotSize != uint64(len(config.CanonicalJSON)) {
-		return fail()
-	}
-	if _, err = writerClock(q, now, until); err != nil || p.ctx.Err() != nil {
-		return fail()
-	}
-	return final, nil
+	return read.ScanSubmissionTask(q.QueryRow("SELECT "+read.SubmissionTaskColumns()+" FROM "+table+" WHERE origin_installation_id=? AND public_id=?", identity.InstallationID, p.id), p.kind, identity.InstallationID)
 }
 
-func writerConfig(q TaskWriteSQL, installation string, kind read.TaskKind, version, stateVersion uint64, matrix string) (TaskConfigSnapshot, error) {
-	c := TaskConfigSnapshot{Version: version, InstallationRowVersion: stateVersion, Matrix: matrix}
-	column := "backup_task_deadline_seconds"
-	if kind == read.PreflightTask {
-		column = "preflight_task_deadline_seconds"
+func (p *preparedSQLTask) ready(q TaskWriteSQL, installation string, config uint64) error {
+	var ready bool
+	if q.QueryRow(`SELECT ready AND expires_at>UTC_TIMESTAMP(6) AND checked_at<=UTC_TIMESTAMP(6)
+FROM system_backup_v2_execution_readiness WHERE origin_installation_id=? AND task_type=? AND config_version=? AND profile_sha256=? FOR SHARE`, installation, string(p.kind), config, p.writer.hash).Scan(&ready) != nil || !ready {
+		return &Error{"not_ready"}
 	}
-	var size uint64
-	var enabled bool
-	if q.QueryRow("SELECT canonical_config_json,config_sha256,config_size_bytes,enabled,"+column+" FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR SHARE", installation, version).Scan(&c.CanonicalJSON, &c.SHA256, &size, &enabled, &c.DeadlineSeconds) != nil || !enabled || size != uint64(len(c.CanonicalJSON)) {
-		return c, &Error{"not_ready"}
-	}
-	values, err := security.DecodeConfigValues(c.CanonicalJSON)
-	if err != nil || !values.Enabled() || values.SHA256() != c.SHA256 || !bytes.Equal(values.CanonicalJSON(), c.CanonicalJSON) {
-		return c, &Error{"not_ready"}
-	}
-	var document struct {
-		Durations map[string]uint64 `json:"durations"`
-	}
-	if json.Unmarshal(c.CanonicalJSON, &document) != nil || document.Durations[column] != c.DeadlineSeconds || c.DeadlineSeconds == 0 || c.DeadlineSeconds > 43200 {
-		return c, &Error{"not_ready"}
-	}
-	c.CanonicalJSON = append([]byte(nil), c.CanonicalJSON...)
-	return c, nil
-}
-
-func writerClock(q TaskWriteSQL, notBefore, until time.Time) (time.Time, error) {
-	var now time.Time
-	var offset int64
-	if q.QueryRow("SELECT UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))").Scan(&now, &offset) != nil || now.IsZero() || offset != 0 || now.Before(notBefore) || !now.Before(until) {
-		return time.Time{}, &Error{"not_ready"}
-	}
-	return now, nil
-}
-func writerOne(result sql.Result, err error) bool {
-	if err != nil || result == nil {
-		return false
-	}
-	n, err := result.RowsAffected()
-	return err == nil && n == 1
-}
-func writerID(prefix string) (string, error) {
-	var b [16]byte
-	if _, err := rand.Read(b[:]); err != nil {
-		return "", err
-	}
-	b[6] = (b[6] & 15) | 64
-	b[8] = (b[8] & 63) | 128
-	s := hex.EncodeToString(b[:])
-	return fmt.Sprintf("%s%s-%s-%s-%s-%s", prefix, s[:8], s[8:12], s[12:16], s[16:20], s[20:]), nil
-}
-
-func writerCreation(kind read.TaskKind, c TaskConfigSnapshot, creation TaskCreation) ([]string, []any, error) {
-	fail := func() ([]string, []any, error) { return nil, nil, &Error{"not_ready"} }
-	if kind == read.BackupTask {
-		b := creation.Backup
-		if b == nil || creation.Preflight != nil || !writerEnum(b.Orchestrator, "kubernetes", "k3s") || !writerEnum(b.Profile, "cluster", "single-node") || !writerEnum(b.Purpose, "acceptance", "functional_test") || !writerEnum(b.TargetClass, "dr-ready-external", "same-cluster-copy") || !taskWriterValue.MatchString(b.FailureDomain) || !taskWriterHash.MatchString(b.ArtifactReadIdentity) || !taskWriterHash.MatchString(b.ArtifactCAIdentity) || !taskWriterValue.MatchString(b.ArtifactReadVersion) || !taskWriterValue.MatchString(b.ArtifactCAVersion) {
-			return fail()
-		}
-		runner := "k8s"
-		if b.Orchestrator == "k3s" {
-			runner = "k3s"
-		}
-		if b.Runner != runner || c.Matrix != runner+"-"+b.Profile {
-			return fail()
-		}
-		parts, ok := writerSet(b.Parts, false, "mysql", "redis", "object_storage", "workspace", "deployment_resources", "secret_bundle")
-		if !ok {
-			return fail()
-		}
-		risks, ok := writerSet(b.TargetRisks, true, "source_overlap", "same_failure_domain", "artifact_credential_source_dependent", "kek_source_dependent", "signing_key_source_dependent", "catalog_source_dependent", "attestation_missing", "attestation_expired", "conditional_commit_unavailable", "transport_unverified", "broad_egress", "provider_capability_degraded")
-		if !ok {
-			return fail()
-		}
-		return []string{"source_orchestrator", "source_profile", "matrix_key", "datasource_topology", "runner", "task_purpose", "requested_parts", "target_class", "target_risks", "target_failure_domain_id", "artifact_read_identity_hash", "artifact_read_ref_version", "artifact_ca_identity_hash", "artifact_ca_ref_version"}, []any{b.Orchestrator, b.Profile, c.Matrix, "in_cluster", b.Runner, b.Purpose, parts, b.TargetClass, risks, b.FailureDomain, b.ArtifactReadIdentity, b.ArtifactReadVersion, b.ArtifactCAIdentity, b.ArtifactCAVersion}, nil
-	}
-	p := creation.Preflight
-	if p == nil || creation.Backup != nil || !writerEnum(p.SourceType, "backup", "catalog_import") || !writerEnum(p.Mode, "production_readonly", "functional_test") || !writerEnum(p.TargetProfile, "cluster", "single-node") || !taskWriterValue.MatchString(p.TargetConfigRef) || !taskWriterHash.MatchString(p.TargetConfigHash) || !writerEnum(p.Compatibility, "supported", "compatible_with_warnings", "unsupported") {
-		return fail()
-	}
-	prefix := "sbk_"
-	if p.SourceType == "catalog_import" {
-		prefix = "sci_"
-	}
-	if len(p.SourcePublicID) != 40 || !strings.HasPrefix(p.SourcePublicID, prefix) || !uuid.MatchString(p.SourcePublicID[4:]) {
-		return fail()
-	}
-	for _, hash := range []*string{p.SourceManifest, p.SourceAcceptance, p.SourceCatalog} {
-		if hash != nil && !taskWriterHash.MatchString(*hash) {
-			return fail()
-		}
-	}
-	return []string{"source_artifact_type", "source_public_id", "source_manifest_checksum", "source_acceptance_checksum", "source_catalog_checksum", "preflight_mode", "target_profile", "restore_target_config_ref", "restore_target_config_hash", "artifact_compatibility"}, []any{p.SourceType, p.SourcePublicID, p.SourceManifest, p.SourceAcceptance, p.SourceCatalog, p.Mode, p.TargetProfile, p.TargetConfigRef, p.TargetConfigHash, p.Compatibility}, nil
-}
-func writerEnum(value string, values ...string) bool {
-	for _, v := range values {
-		if value == v {
-			return true
-		}
-	}
-	return false
-}
-func writerSet(values []string, empty bool, allowed ...string) (string, bool) {
-	seen := map[string]bool{}
-	for _, v := range values {
-		if seen[v] || !writerEnum(v, allowed...) {
-			return "", false
-		}
-		seen[v] = true
-	}
-	if !empty && len(values) == 0 {
-		return "", false
-	}
-	ordered := []string{}
-	for _, v := range allowed {
-		if seen[v] {
-			ordered = append(ordered, v)
-		}
-	}
-	return strings.Join(ordered, ","), true
+	return nil
 }

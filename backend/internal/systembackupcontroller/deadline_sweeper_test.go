@@ -168,7 +168,7 @@ func TestExpiredPendingCandidateSQLIsDBTimeReadOnlyAndTaskOnly(t *testing.T) {
 			"status = 'pending'",
 			"deadline_at <= UTC_TIMESTAMP(6)",
 			"next_reconcile_at IS NULL OR next_reconcile_at <= UTC_TIMESTAMP(6)",
-			"NOT EXISTS (SELECT 1 FROM system_backup_attempts",
+			"NOT EXISTS (SELECT 1 FROM system_backup_v2_attempts",
 			"ORDER BY deadline_at, id LIMIT ?",
 		} {
 			if !strings.Contains(query, required) {

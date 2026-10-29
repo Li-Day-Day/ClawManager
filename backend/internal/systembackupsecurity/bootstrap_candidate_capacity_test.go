@@ -71,7 +71,7 @@ func (c *bootstrapCapacityConn) QueryContext(ctx context.Context, q string, _ []
 		return registrationRow(s.server, s.database), nil
 	case "SELECT UTC_TIMESTAMP(6)":
 		return registrationRow(s.now), nil
-	case "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE":
+	case "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE":
 		if !s.exists {
 			return &registrationTestRows{width: 2}, nil
 		}
@@ -85,14 +85,14 @@ func (c *bootstrapCapacityConn) ExecContext(ctx context.Context, q string, args 
 	}
 	s := c.s
 	switch q {
-	case "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)":
+	case "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)":
 		if !s.exists {
 			s.exists = true
 			s.sample = args[0].Value.(time.Time)
 			s.outstanding = 0
 		}
 		return driver.RowsAffected(1), nil
-	case "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?":
+	case "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?":
 		if s.failCAS {
 			return nil, errors.New("PRIVATE capacity SQL detail")
 		}

@@ -47,7 +47,7 @@ func (c *mutationMaterialConn) QueryContext(_ context.Context, q string, args []
 	switch {
 	case q == "SELECT @@server_uuid,DATABASE()":
 		return registrationRow(c.s.identity.ServerUUID, c.s.identity.Database), nil
-	case strings.HasPrefix(q, "SELECT nonce_hmac_ref_version FROM system_backup_configs"):
+	case strings.HasPrefix(q, "SELECT nonce_hmac_ref_version FROM system_backup_v2_configs"):
 		if len(args) != 1 {
 			return nil, errors.New("missing retention time")
 		}
@@ -56,7 +56,7 @@ func (c *mutationMaterialConn) QueryContext(_ context.Context, q string, args []
 			rows.data = append(rows.data, []driver.Value{v})
 		}
 		return rows, nil
-	case q == "SELECT DISTINCT nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs ORDER BY nonce_hmac_ref_version,nonce_hmac_identity_hash":
+	case q == "SELECT DISTINCT nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs ORDER BY nonce_hmac_ref_version,nonce_hmac_identity_hash":
 		versions := make([]string, 0, len(c.s.identities))
 		for version := range c.s.identities {
 			versions = append(versions, version)

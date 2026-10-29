@@ -35,7 +35,7 @@ func (g gcRegistry) WithLocked(ctx context.Context, id string, fn func(Locked) e
 		return ErrDenied
 	}
 	i := Identity{Installation: s.Installation, ID: id}
-	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", id).Scan(&i.OwnerType, &i.OwnerID) != nil || s.Policy.LockScope(ctx, tx, s.Installation, i) != nil {
+	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&i.OwnerType, &i.OwnerID) != nil || s.Policy.LockScope(ctx, tx, s.Installation, i) != nil {
 		return ErrDenied
 	}
 	op, err := a.lockOperation(ctx, tx)
@@ -76,7 +76,7 @@ func (g gcRegistry) WithLocked(ctx context.Context, id string, fn func(Locked) e
 		// Scanner candidates are only hints; enforce persisted backoff under
 		// the evidence lock before any new claim/audit or provider request.
 		var due sql.NullTime
-		if tx.QueryRowContext(ctx, "SELECT next_reconcile_at FROM system_backup_evidence WHERE public_id=? FOR UPDATE", id).Scan(&due) != nil {
+		if tx.QueryRowContext(ctx, "SELECT next_reconcile_at FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", id).Scan(&due) != nil {
 			return ErrUnavailable
 		}
 		if due.Valid && now.Before(due.Time) {

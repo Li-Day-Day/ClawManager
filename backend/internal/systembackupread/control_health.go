@@ -23,7 +23,7 @@ var healthWriterOwner = regexp.MustCompile(`^[A-Za-z0-9._:-]{1,128}$`)
 
 const controlHealthSQL = `SELECT h.schema_version,h.origin_installation_id,h.config_version,h.writer_epoch,h.writer_owner,
 h.observation_sequence,h.controller_health,h.database_health,h.observed_at,h.expires_at,c.controller_reconcile_interval_seconds
-FROM system_backup_control_health h JOIN system_backup_configs c
+FROM system_backup_v2_control_health h JOIN system_backup_v2_configs c
 ON c.origin_installation_id=h.origin_installation_id AND c.version=h.config_version
 WHERE h.origin_installation_id=?`
 

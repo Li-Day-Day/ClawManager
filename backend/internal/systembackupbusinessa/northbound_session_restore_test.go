@@ -193,6 +193,11 @@ func TestNorthboundRestoreScopeAllowlistMatchesRuntime(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	ownerRoutes, err := os.ReadFile("../northbound/owner_team_routes.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	raw = append(raw, ownerRoutes...)
 	pattern := regexp.MustCompile(`Scope[A-Za-z]+\s*=\s*"([^"]+)"`)
 	actual := make(map[string]struct{})
 	for _, match := range pattern.FindAllStringSubmatch(string(raw), -1) {

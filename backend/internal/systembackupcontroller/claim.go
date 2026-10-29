@@ -74,7 +74,7 @@ type targetDescriptor struct {
 
 var targetDescriptors = map[TargetKind]targetDescriptor{
 	TargetBackup: {
-		table:       "system_backups",
+		table:       "system_backup_v2_backups",
 		ownerColumn: "controller_owner",
 		leaseColumn: "controller_lease_expires_at",
 		heartbeat:   "heartbeat_at",
@@ -82,7 +82,7 @@ var targetDescriptors = map[TargetKind]targetDescriptor{
 		idPrefix:    "sbk_",
 	},
 	TargetDrill: {
-		table:       "system_restore_drills",
+		table:       "system_backup_v2_restore_drills",
 		ownerColumn: "controller_owner",
 		leaseColumn: "controller_lease_expires_at",
 		heartbeat:   "heartbeat_at",
@@ -90,7 +90,7 @@ var targetDescriptors = map[TargetKind]targetDescriptor{
 		idPrefix:    "sdr_",
 	},
 	TargetPreflight: {
-		table:       "system_backup_preflights",
+		table:       "system_backup_v2_preflights",
 		ownerColumn: "controller_owner",
 		leaseColumn: "controller_lease_expires_at",
 		heartbeat:   "heartbeat_at",
@@ -98,7 +98,7 @@ var targetDescriptors = map[TargetKind]targetDescriptor{
 		idPrefix:    "spf_",
 	},
 	TargetArtifactVerify: {
-		table:       "system_backup_artifact_verifications",
+		table:       "system_backup_v2_artifact_verifications",
 		ownerColumn: "controller_owner",
 		leaseColumn: "controller_lease_expires_at",
 		heartbeat:   "heartbeat_at",
@@ -106,7 +106,7 @@ var targetDescriptors = map[TargetKind]targetDescriptor{
 		idPrefix:    "sav_",
 	},
 	TargetOperation: {
-		table:       "system_backup_operations",
+		table:       "system_backup_v2_operations",
 		ownerColumn: "claim_owner",
 		leaseColumn: "claim_expires_at",
 		heartbeat:   "",

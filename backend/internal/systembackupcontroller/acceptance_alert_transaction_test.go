@@ -64,10 +64,10 @@ func (c acceptanceTransactionConn) BeginTx(context.Context, driver.TxOptions) (d
 }
 func (c acceptanceTransactionConn) ExecContext(_ context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
 	switch {
-	case strings.HasPrefix(query, "UPDATE system_backups SET status = 'failed'") || strings.HasPrefix(query, "UPDATE system_backups SET status = 'succeeded'"):
+	case strings.HasPrefix(query, "UPDATE system_backup_v2_backups SET status = 'failed'") || strings.HasPrefix(query, "UPDATE system_backup_v2_backups SET status = 'succeeded'"):
 		c.state.order = append(c.state.order, "task-cas")
 		return driver.RowsAffected(c.state.terminalRows), nil
-	case strings.HasPrefix(query, "INSERT INTO system_backup_events"):
+	case strings.HasPrefix(query, "INSERT INTO system_backup_v2_events"):
 		c.state.order = append(c.state.order, "event")
 		c.state.eventArgs = append([]driver.NamedValue(nil), args...)
 		if c.state.eventErr != nil {
@@ -77,10 +77,10 @@ func (c acceptanceTransactionConn) ExecContext(_ context.Context, query string, 
 			return driver.RowsAffected(0), nil
 		}
 		return driver.RowsAffected(1), nil
-	case strings.HasPrefix(query, "INSERT INTO system_backup_alert_states"):
+	case strings.HasPrefix(query, "INSERT INTO system_backup_v2_alert_states"):
 		c.state.order = append(c.state.order, "ensure-state")
 		return driver.RowsAffected(1), nil
-	case strings.HasPrefix(query, "UPDATE system_backup_alert_states"):
+	case strings.HasPrefix(query, "UPDATE system_backup_v2_alert_states"):
 		c.state.order = append(c.state.order, "sequence-cas")
 		c.state.updateArgs = append([]driver.NamedValue(nil), args...)
 		return driver.RowsAffected(c.state.sequenceRows), nil
@@ -90,7 +90,7 @@ func (c acceptanceTransactionConn) ExecContext(_ context.Context, query string, 
 }
 func (c acceptanceTransactionConn) QueryContext(_ context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
 	switch {
-	case strings.HasPrefix(query, "SELECT status, row_version FROM system_backups"):
+	case strings.HasPrefix(query, "SELECT status, row_version FROM system_backup_v2_backups"):
 		c.state.order = append(c.state.order, "lock-task")
 		c.state.taskArgs = append(c.state.taskArgs, append([]driver.NamedValue(nil), args...))
 		status, version := c.state.preStatus, c.state.preVersion
@@ -101,7 +101,7 @@ func (c acceptanceTransactionConn) QueryContext(_ context.Context, query string,
 			version = 4
 		}
 		return &acceptanceTransactionRows{columns: []string{"status", "row_version"}, values: [][]driver.Value{{status, int64(version)}}}, nil
-	case strings.HasPrefix(query, "SELECT status, task_purpose, config_version, acceptance_eligible, eligibility_decided_at, row_version FROM system_backups"):
+	case strings.HasPrefix(query, "SELECT status, task_purpose, config_version, acceptance_eligible, eligibility_decided_at, row_version FROM system_backup_v2_backups"):
 		c.state.order = append(c.state.order, "verify-task")
 		c.state.taskArgs = append(c.state.taskArgs, append([]driver.NamedValue(nil), args...))
 		status, purpose, config, version := c.state.postStatus, c.state.postPurpose, c.state.postConfig, c.state.postVersion
@@ -122,7 +122,7 @@ func (c acceptanceTransactionConn) QueryContext(_ context.Context, query string,
 			decidedAt = c.state.now
 		}
 		return &acceptanceTransactionRows{columns: []string{"status", "task_purpose", "config_version", "acceptance_eligible", "eligibility_decided_at", "row_version"}, values: [][]driver.Value{{status, purpose, int64(config), c.state.postEligible, decidedAt, int64(version)}}}, nil
-	case strings.Contains(query, "FROM system_backup_alert_states"):
+	case strings.Contains(query, "FROM system_backup_v2_alert_states"):
 		c.state.order = append(c.state.order, "lock-state")
 		return &acceptanceTransactionRows{
 			columns: []string{"id", "consecutive_anomaly_count", "first_anomaly_at", "last_observed_at", "last_eligible_success_at", "row_version"},
@@ -167,11 +167,11 @@ func (r *acceptanceTransactionRows) Next(dest []driver.Value) error {
 }
 
 func acceptanceTaskCASTest(ctx context.Context, executor Executor) (sql.Result, error) {
-	return executor.ExecContext(ctx, "UPDATE system_backups SET status = 'failed', row_version = row_version + 1 WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'pending'", "installation_test", "sbk_11111111-1111-4111-8111-111111111111", uint64(4))
+	return executor.ExecContext(ctx, "UPDATE system_backup_v2_backups SET status = 'failed', row_version = row_version + 1 WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'pending'", "installation_test", "sbk_11111111-1111-4111-8111-111111111111", uint64(4))
 }
 
 func acceptanceSuccessCASTest(ctx context.Context, executor Executor) (sql.Result, error) {
-	return executor.ExecContext(ctx, "UPDATE system_backups SET status = 'succeeded', acceptance_eligible = TRUE, eligibility_reason_codes = 'eligible', eligibility_decided_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'validating'", "installation_test", "sbk_11111111-1111-4111-8111-111111111111", uint64(4))
+	return executor.ExecContext(ctx, "UPDATE system_backup_v2_backups SET status = 'succeeded', acceptance_eligible = TRUE, eligibility_reason_codes = 'eligible', eligibility_decided_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'validating'", "installation_test", "sbk_11111111-1111-4111-8111-111111111111", uint64(4))
 }
 
 func acceptanceTarget() Target {

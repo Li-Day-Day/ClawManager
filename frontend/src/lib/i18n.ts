@@ -1,6 +1,5 @@
-export type Locale = "en" | "zh" | "ja" | "ko" | "de";
+﻿export type Locale = "en" | "zh" | "ja" | "ko" | "de";
 
-import { systemBackupTranslations } from "./systemBackupI18n";
 import { hermesDesktopTranslations } from "./hermesDesktopI18n";
 
 export const DEFAULT_LOCALE: Locale = "en";
@@ -1835,6 +1834,7 @@ export const translations: Record<Locale, TranslationTree> = {
     nav: {
       dashboard: "Dashboard",
       adminDashboard: "Console",
+      backups: 'Backups',
       userDashboard: "Workspace",
       users: "Users",
       instances: "Instances",
@@ -1858,7 +1858,6 @@ export const translations: Record<Locale, TranslationTree> = {
     },
     adminLayout: adminLayoutTranslations.en,
     hermesDesktop: hermesDesktopTranslations.en,
-    systemBackup: systemBackupTranslations.en,
     securityCenter: securityCenterTranslations.en,
     secplane: secplaneTranslations.en,
     skillHubPage: skillHubTranslations.en,
@@ -3737,6 +3736,7 @@ export const translations: Record<Locale, TranslationTree> = {
     nav: {
       dashboard: "仪表盘",
       adminDashboard: "控制台",
+      backups: '备份',
       userDashboard: "工作台",
       users: "用户",
       instances: "实例",
@@ -3760,7 +3760,6 @@ export const translations: Record<Locale, TranslationTree> = {
     },
     adminLayout: adminLayoutTranslations.zh,
     hermesDesktop: hermesDesktopTranslations.zh,
-    systemBackup: systemBackupTranslations.zh,
     securityCenter: securityCenterTranslations.zh,
     secplane: secplaneTranslations.zh,
     skillHubPage: skillHubTranslations.zh,
@@ -5551,6 +5550,7 @@ export const translations: Record<Locale, TranslationTree> = {
     nav: {
       dashboard: "ダッシュボード",
       adminDashboard: "コンソール",
+      backups: 'バックアップ',
       userDashboard: "ワークスペース",
       users: "ユーザー",
       instances: "インスタンス",
@@ -5573,7 +5573,6 @@ export const translations: Record<Locale, TranslationTree> = {
     },
     adminLayout: adminLayoutTranslations.ja,
     hermesDesktop: hermesDesktopTranslations.ja,
-    systemBackup: systemBackupTranslations.ja,
     securityCenter: securityCenterTranslations.ja,
     secplane: secplaneTranslations.ja,
     skillHubPage: skillHubTranslations.ja,
@@ -7186,6 +7185,7 @@ export const translations: Record<Locale, TranslationTree> = {
     nav: {
       dashboard: "대시보드",
       adminDashboard: "콘솔",
+      backups: '백업',
       userDashboard: "워크스페이스",
       users: "사용자",
       instances: "인스턴스",
@@ -7208,7 +7208,6 @@ export const translations: Record<Locale, TranslationTree> = {
     },
     adminLayout: adminLayoutTranslations.ko,
     hermesDesktop: hermesDesktopTranslations.ko,
-    systemBackup: systemBackupTranslations.ko,
     securityCenter: securityCenterTranslations.ko,
     secplane: secplaneTranslations.ko,
     skillHubPage: skillHubTranslations.ko,
@@ -8800,6 +8799,7 @@ export const translations: Record<Locale, TranslationTree> = {
     nav: {
       dashboard: "Dashboard",
       adminDashboard: "Konsole",
+      backups: 'Backups',
       userDashboard: "Arbeitsbereich",
       users: "Benutzer",
       instances: "Instanzen",
@@ -8822,7 +8822,6 @@ export const translations: Record<Locale, TranslationTree> = {
     },
     adminLayout: adminLayoutTranslations.de,
     hermesDesktop: hermesDesktopTranslations.de,
-    systemBackup: systemBackupTranslations.de,
     securityCenter: securityCenterTranslations.de,
     secplane: secplaneTranslations.de,
     skillHubPage: skillHubTranslations.de,

@@ -1,7 +1,6 @@
 package k8s
 
 import (
-	"clawreef/internal/systembackup/mutation"
 	"context"
 	"fmt"
 	"log"
@@ -17,6 +16,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	utilrand "k8s.io/apimachinery/pkg/util/rand"
+
+	"clawreef/internal/backupgate"
 )
 
 const (
@@ -91,7 +92,7 @@ func (c *WorkbuddyPrewarmController) Run(ctx context.Context) {
 }
 
 func (c *WorkbuddyPrewarmController) reconcileAndLog(ctx context.Context) {
-	release, gateErr := mutation.Enter(ctx, "workbuddy-prewarm")
+	release, gateErr := backupgate.HoldWorkUnit(ctx, "workbuddy.prewarm")
 	if gateErr != nil {
 		return
 	}

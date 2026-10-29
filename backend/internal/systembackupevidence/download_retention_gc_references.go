@@ -32,8 +32,8 @@ func NewSQLDownloadGCDirectReferences(c DownloadGCDirectReferencesConfig) (*SQLD
 	return &SQLDownloadGCDirectReferences{c: c}, nil
 }
 
-const downloadGCDirectColumnsSQL = `SELECT TABLE_NAME,COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND ((LEFT(TABLE_NAME,7)='system_' AND COLUMN_NAME REGEXP '(^|_)(operation(_public)?_id|audit(_log)?_id|nonce_id)$|^operation_identity$') OR (TABLE_NAME='system_backup_check_results' AND COLUMN_NAME='cleanup_target_public_id') OR (TABLE_NAME='system_backup_compact_tombstones' AND COLUMN_NAME='gc_batch_id') OR (TABLE_NAME='system_artifact_leases' AND COLUMN_NAME='holder_public_id') OR (TABLE_NAME='audit_logs' AND COLUMN_NAME IN ('details','resource_id'))) ORDER BY BINARY TABLE_NAME,BINARY COLUMN_NAME LIMIT 10001`
-const downloadGCDirectForeignKeysSQL = `SELECT k.TABLE_SCHEMA,k.TABLE_NAME,k.CONSTRAINT_NAME,CAST(k.ORDINAL_POSITION AS CHAR),k.COLUMN_NAME,k.REFERENCED_TABLE_SCHEMA,k.REFERENCED_TABLE_NAME,k.REFERENCED_COLUMN_NAME,r.DELETE_RULE FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS r ON r.CONSTRAINT_SCHEMA=k.CONSTRAINT_SCHEMA AND r.TABLE_NAME=k.TABLE_NAME AND r.CONSTRAINT_NAME=k.CONSTRAINT_NAME WHERE k.REFERENCED_TABLE_NAME IN ('system_backup_operations','audit_logs','system_backup_strong_auth_nonces','system_backup_download_admission_receipts','system_backup_download_result_receipts') AND k.REFERENCED_TABLE_SCHEMA=DATABASE() ORDER BY BINARY k.TABLE_SCHEMA,BINARY k.TABLE_NAME,BINARY k.CONSTRAINT_NAME,k.ORDINAL_POSITION LIMIT 10001`
+const downloadGCDirectColumnsSQL = `SELECT TABLE_NAME,COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND ((LEFT(TABLE_NAME,7)='system_' AND COLUMN_NAME REGEXP '(^|_)(operation(_public)?_id|audit(_log)?_id|nonce_id)$|^operation_identity$') OR (TABLE_NAME='system_backup_v2_check_results' AND COLUMN_NAME='cleanup_target_public_id') OR (TABLE_NAME='system_backup_v2_compact_tombstones' AND COLUMN_NAME='gc_batch_id') OR (TABLE_NAME='system_backup_v2_artifact_leases' AND COLUMN_NAME='holder_public_id') OR (TABLE_NAME='audit_logs' AND COLUMN_NAME IN ('details','resource_id'))) ORDER BY BINARY TABLE_NAME,BINARY COLUMN_NAME LIMIT 10001`
+const downloadGCDirectForeignKeysSQL = `SELECT k.TABLE_SCHEMA,k.TABLE_NAME,k.CONSTRAINT_NAME,CAST(k.ORDINAL_POSITION AS CHAR),k.COLUMN_NAME,k.REFERENCED_TABLE_SCHEMA,k.REFERENCED_TABLE_NAME,k.REFERENCED_COLUMN_NAME,r.DELETE_RULE FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS r ON r.CONSTRAINT_SCHEMA=k.CONSTRAINT_SCHEMA AND r.TABLE_NAME=k.TABLE_NAME AND r.CONSTRAINT_NAME=k.CONSTRAINT_NAME WHERE k.REFERENCED_TABLE_NAME IN ('system_backup_v2_operations','audit_logs','system_backup_v2_strong_auth_nonces','system_backup_v2_download_admission_receipts','system_backup_v2_download_result_receipts') AND k.REFERENCED_TABLE_SCHEMA=DATABASE() ORDER BY BINARY k.TABLE_SCHEMA,BINARY k.TABLE_NAME,BINARY k.CONSTRAINT_NAME,k.ORDINAL_POSITION LIMIT 10001`
 
 type gcDirectReference struct {
 	stage              int
@@ -46,29 +46,29 @@ type gcDirectReference struct {
 
 func gcDirectReferences(maintenance bool) []gcDirectReference {
 	r := []gcDirectReference{
-		{1, "system_backup_installation_state", "matrix_transition_operation_public_id", "origin_installation_id", "public", false},
-		{1, "system_maintenance_mutation_leases", "operation_identity", "id", "public", false},
-		{3, "system_backup_operations", "retry_of_operation_public_id", "id", "public", false},
-		{3, "system_backup_compact_tombstones", "gc_batch_id", "id", "public", false},
-		{3, "system_backup_download_admission_receipts", "operation_public_id", "operation_id", "public", true},
-		{3, "system_backup_download_result_receipts", "operation_public_id", "operation_id", "public", true},
-		{3, "system_backup_download_admission_receipts", "intent_audit_id", "operation_id", "audits", true},
-		{3, "system_backup_download_result_receipts", "intent_audit_id", "operation_id", "audits", true},
-		{3, "system_backup_download_result_receipts", "result_audit_id", "operation_id", "audits", true},
-		{5, "system_backup_events", "detail_operation_public_id", "id", "public", false},
-		{5, "system_backup_prune_runs", "last_operation_public_id", "id", "public", false},
-		{5, "system_backup_prune_items", "last_operation_public_id", "id", "public", false},
-		{5, "system_backup_external_actions", "operation_public_id", "id", "public", false},
-		{5, "system_backup_check_results", "cleanup_target_public_id", "id", "public", false},
-		{5, "system_backup_staging_resources", "cleanup_operation_id", "id", "numeric", false},
-		{5, "system_backup_staging_resources", "ownership_resolution_operation_id", "id", "numeric", false},
-		{5, "system_restore_drill_resources", "cleanup_operation_id", "id", "numeric", false},
-		{5, "system_restore_drill_resources", "ownership_resolution_operation_id", "id", "numeric", false},
-		{5, "system_artifact_leases", "holder_public_id", "id", "public", false},
-		{5, "system_backup_strong_auth_nonces", "audit_log_id", "id", "audits", true},
+		{1, "system_backup_v2_installation_state", "matrix_transition_operation_public_id", "origin_installation_id", "public", false},
+		{1, "system_backup_v2_maintenance_mutation_leases", "operation_identity", "id", "public", false},
+		{3, "system_backup_v2_operations", "retry_of_operation_public_id", "id", "public", false},
+		{3, "system_backup_v2_compact_tombstones", "gc_batch_id", "id", "public", false},
+		{3, "system_backup_v2_download_admission_receipts", "operation_public_id", "operation_id", "public", true},
+		{3, "system_backup_v2_download_result_receipts", "operation_public_id", "operation_id", "public", true},
+		{3, "system_backup_v2_download_admission_receipts", "intent_audit_id", "operation_id", "audits", true},
+		{3, "system_backup_v2_download_result_receipts", "intent_audit_id", "operation_id", "audits", true},
+		{3, "system_backup_v2_download_result_receipts", "result_audit_id", "operation_id", "audits", true},
+		{5, "system_backup_v2_events", "detail_operation_public_id", "id", "public", false},
+		{5, "system_backup_v2_prune_runs", "last_operation_public_id", "id", "public", false},
+		{5, "system_backup_v2_prune_items", "last_operation_public_id", "id", "public", false},
+		{5, "system_backup_v2_external_actions", "operation_public_id", "id", "public", false},
+		{5, "system_backup_v2_check_results", "cleanup_target_public_id", "id", "public", false},
+		{5, "system_backup_v2_staging_resources", "cleanup_operation_id", "id", "numeric", false},
+		{5, "system_backup_v2_staging_resources", "ownership_resolution_operation_id", "id", "numeric", false},
+		{5, "system_backup_v2_restore_drill_resources", "cleanup_operation_id", "id", "numeric", false},
+		{5, "system_backup_v2_restore_drill_resources", "ownership_resolution_operation_id", "id", "numeric", false},
+		{5, "system_backup_v2_artifact_leases", "holder_public_id", "id", "public", false},
+		{5, "system_backup_v2_strong_auth_nonces", "audit_log_id", "id", "audits", true},
 	}
 	if maintenance {
-		r = append(r, gcDirectReference{1, "system_backup_config_maintenance_receipts", "intent_audit_id", "id", "audits", false}, gcDirectReference{1, "system_backup_config_maintenance_receipts", "result_audit_id", "id", "audits", false})
+		r = append(r, gcDirectReference{1, "system_backup_v2_config_maintenance_receipts", "intent_audit_id", "id", "audits", false}, gcDirectReference{1, "system_backup_v2_config_maintenance_receipts", "result_audit_id", "id", "audits", false})
 	}
 	for _, field := range []string{"operation_public_id", "intent_audit_id", "result_audit_id", "audit_log_id", "nonce_id"} {
 		value := "audits"
@@ -110,9 +110,9 @@ func gcDirectQuery(r gcDirectReference) string {
 
 func gcDirectColumns(maintenance bool) map[string]string {
 	out := map[string]string{
-		"system_backup_download_admission_receipts.operation_id": "bigint",
-		"system_backup_download_result_receipts.operation_id":    "bigint",
-		"system_backup_strong_auth_nonces.operation_id":          "bigint",
+		"system_backup_v2_download_admission_receipts.operation_id": "bigint",
+		"system_backup_v2_download_result_receipts.operation_id":    "bigint",
+		"system_backup_v2_strong_auth_nonces.operation_id":          "bigint",
 		"audit_logs.details": "json",
 		// Generic resource IDs in published 001 are INTs, not typed Operation
 		// links. Equal numeric IDs in unrelated resource domains prove nothing.
@@ -143,29 +143,29 @@ func gcDirectFKEdges(maintenance bool) map[string]bool {
 	for _, r := range gcDirectReferences(maintenance) {
 		switch r.value {
 		case "numeric":
-			add(r.table, r.column, "system_backup_operations", "id")
+			add(r.table, r.column, "system_backup_v2_operations", "id")
 		case "audits":
 			if !strings.HasPrefix(r.column, "json:") {
 				add(r.table, r.column, "audit_logs", "id")
 			}
 		case "public":
-			if oneOf(r.table, "system_backup_operations", "system_backup_prune_runs", "system_backup_prune_items", "system_backup_external_actions") {
-				add(r.table, r.column, "system_backup_operations", "public_id")
+			if oneOf(r.table, "system_backup_v2_operations", "system_backup_v2_prune_runs", "system_backup_v2_prune_items", "system_backup_v2_external_actions") {
+				add(r.table, r.column, "system_backup_v2_operations", "public_id")
 			}
 		}
 	}
-	for _, table := range []string{"system_backup_operations", "system_backup_strong_auth_nonces", "system_backup_download_admission_receipts", "system_backup_check_results"} {
-		add(table, "origin_installation_id", "system_backup_operations", "origin_installation_id")
+	for _, table := range []string{"system_backup_v2_operations", "system_backup_v2_strong_auth_nonces", "system_backup_v2_download_admission_receipts", "system_backup_v2_check_results"} {
+		add(table, "origin_installation_id", "system_backup_v2_operations", "origin_installation_id")
 	}
-	add("system_backup_strong_auth_nonces", "operation_id", "system_backup_operations", "id")
+	add("system_backup_v2_strong_auth_nonces", "operation_id", "system_backup_v2_operations", "id")
 	for _, pair := range [][2]string{{"operation_id", "id"}, {"operation_public_id", "public_id"}, {"evidence_id", "download_evidence_id"}} {
-		add("system_backup_download_admission_receipts", pair[0], "system_backup_operations", pair[1])
+		add("system_backup_v2_download_admission_receipts", pair[0], "system_backup_v2_operations", pair[1])
 	}
 	for _, column := range []string{"origin_installation_id", "operation_id", "operation_public_id", "evidence_id", "evidence_public_id", "intent_audit_id", "retain_until"} {
-		add("system_backup_download_result_receipts", column, "system_backup_download_admission_receipts", column)
+		add("system_backup_v2_download_result_receipts", column, "system_backup_v2_download_admission_receipts", column)
 	}
-	add("system_backup_check_results", "cleanup_target_public_id", "system_backup_operations", "public_id")
-	add("system_backup_check_results", "cleanup_operation_type", "system_backup_operations", "operation_type")
+	add("system_backup_v2_check_results", "cleanup_target_public_id", "system_backup_v2_operations", "public_id")
+	add("system_backup_v2_check_results", "cleanup_operation_type", "system_backup_v2_operations", "operation_type")
 	return out
 }
 
@@ -234,7 +234,7 @@ func (s *SQLDownloadGCDirectReferences) metadata(ctx context.Context, tx *sql.Tx
 					}
 					delete(tables, v[0])
 				}
-				if v[0] == "system_backup_config_maintenance_receipts" && !maintenance {
+				if v[0] == "system_backup_v2_config_maintenance_receipts" && !maintenance {
 					rows.Close()
 					return "", ErrDenied
 				}
@@ -347,7 +347,7 @@ func (g *downloadGCDirectGuard) lock(ctx context.Context, stage int) error {
 			args := []any{value}
 			if r.own {
 				own := g.hint.OperationID
-				if r.table == "system_backup_strong_auth_nonces" {
+				if r.table == "system_backup_v2_strong_auth_nonces" {
 					own = g.nonceID
 				}
 				if r.table == "audit_logs" {

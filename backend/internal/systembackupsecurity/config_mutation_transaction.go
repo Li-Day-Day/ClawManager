@@ -207,7 +207,7 @@ func (s ConfigMutationService) beginView(ctx context.Context, actor Registration
 		return fail(ErrRegistrationPermission)
 	}
 	var version int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version,row_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.InstallationID).Scan(&version, &v.stateRowVersion) != nil || v.stateRowVersion < 1 || v.stateRowVersion >= 9007199254740991 {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version,row_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", s.InstallationID).Scan(&version, &v.stateRowVersion) != nil || v.stateRowVersion < 1 || v.stateRowVersion >= 9007199254740991 {
 		return fail(ErrRegistrationUnavailable)
 	}
 	v.row, err = readConfigMutationRow(ctx, tx, s.InstallationID, version)
@@ -233,7 +233,7 @@ func readConfigMutationRow(ctx context.Context, tx *sql.Tx, installation string,
 	if version < 1 || version > 9007199254740991 {
 		return r, ErrRegistrationUnavailable
 	}
-	err := tx.QueryRowContext(ctx, `SELECT schema_version,version,row_version,canonical_config_json,config_sha256,config_size_bytes FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, installation, version).Scan(&schema, &r.version, &r.rowVersion, &raw, &hash, &size)
+	err := tx.QueryRowContext(ctx, `SELECT schema_version,version,row_version,canonical_config_json,config_sha256,config_size_bytes FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, installation, version).Scan(&schema, &r.version, &r.rowVersion, &raw, &hash, &size)
 	if err != nil {
 		return r, ErrRegistrationUnavailable
 	}
@@ -256,7 +256,7 @@ func readConfigMutationRow(ctx context.Context, tx *sql.Tx, installation string,
 	for i := range stored {
 		dest[i] = &stored[i]
 	}
-	if tx.QueryRowContext(ctx, "SELECT "+strings.Join(selected, ",")+" FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE", installation, version).Scan(dest...) != nil {
+	if tx.QueryRowContext(ctx, "SELECT "+strings.Join(selected, ",")+" FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE", installation, version).Scan(dest...) != nil {
 		return r, ErrRegistrationUnavailable
 	}
 	for i, k := range selected {
@@ -307,7 +307,7 @@ func configMutationCellEqual(column string, a, b any, c ConfigValues) bool {
 }
 func (s ConfigMutationService) lookup(ctx context.Context, tx *sql.Tx, actor RegistrationActor, r ConfigMutationRequest, key, hash string) (*configMutationReceipt, error) {
 	p := configMutationReceipt{}
-	err := tx.QueryRowContext(ctx, `SELECT public_id,request_hash,status,http_status,result_config_version,redacted_response_evidence_id,redacted_response_sha256 FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, s.InstallationID, strconv.FormatInt(actor.UserID, 10), r.endpoint, key).Scan(&p.publicID, &p.hash, &p.status, &p.httpStatus, &p.version, &p.evidenceID, &p.responseHash)
+	err := tx.QueryRowContext(ctx, `SELECT public_id,request_hash,status,http_status,result_config_version,redacted_response_evidence_id,redacted_response_sha256 FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, s.InstallationID, strconv.FormatInt(actor.UserID, 10), r.endpoint, key).Scan(&p.publicID, &p.hash, &p.status, &p.httpStatus, &p.version, &p.evidenceID, &p.responseHash)
 	if err == nil {
 		if p.hash != hash {
 			return nil, ErrRegistrationConflict
@@ -361,7 +361,7 @@ func (s ConfigMutationService) lookup(ctx context.Context, tx *sql.Tx, actor Reg
 		return nil, ErrProviderEvidenceStorage
 	}
 	var tombstone string
-	err = tx.QueryRowContext(ctx, `SELECT request_hash FROM system_backup_compact_tombstones WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, s.InstallationID, strconv.FormatInt(actor.UserID, 10), r.endpoint, key).Scan(&tombstone)
+	err = tx.QueryRowContext(ctx, `SELECT request_hash FROM system_backup_v2_compact_tombstones WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, s.InstallationID, strconv.FormatInt(actor.UserID, 10), r.endpoint, key).Scan(&tombstone)
 	if err == nil {
 		if tombstone != hash {
 			return nil, ErrRegistrationConflict
@@ -426,7 +426,7 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 		proposed = old.values
 	}
 	var highest int64
-	if first.tx.QueryRowContext(ctx, "SELECT version FROM system_backup_configs WHERE origin_installation_id=? ORDER BY version DESC LIMIT 1 FOR UPDATE", s.InstallationID).Scan(&highest) != nil || highest < first.row.version || highest >= 9007199254740991 {
+	if first.tx.QueryRowContext(ctx, "SELECT version FROM system_backup_v2_configs WHERE origin_installation_id=? ORDER BY version DESC LIMIT 1 FOR UPDATE", s.InstallationID).Scan(&highest) != nil || highest < first.row.version || highest >= 9007199254740991 {
 		first.tx.Rollback()
 		return zero, ErrRegistrationUnavailable
 	}
@@ -487,7 +487,7 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 		return zero, ErrConfigVersionConflict
 	}
 	var currentHighest int64
-	if v.tx.QueryRowContext(ctx, "SELECT version FROM system_backup_configs WHERE origin_installation_id=? ORDER BY version DESC LIMIT 1 FOR UPDATE", s.InstallationID).Scan(&currentHighest) != nil || currentHighest != highest {
+	if v.tx.QueryRowContext(ctx, "SELECT version FROM system_backup_v2_configs WHERE origin_installation_id=? ORDER BY version DESC LIMIT 1 FOR UPDATE", s.InstallationID).Scan(&currentHighest) != nil || currentHighest != highest {
 		return zero, ErrConfigVersionConflict
 	}
 	if endpoint == ConfigRollbackEndpoint {
@@ -523,7 +523,7 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 		}
 		for _, candidate := range verified.NonceHMACCandidates {
 			var id int64
-			e := v.tx.QueryRowContext(ctx, "SELECT id FROM system_backup_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE", candidate.HMAC, candidate.KeyVersion).Scan(&id)
+			e := v.tx.QueryRowContext(ctx, "SELECT id FROM system_backup_v2_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE", candidate.HMAC, candidate.KeyVersion).Scan(&id)
 			if e == nil {
 				return zero, &VerificationError{Code: FailureReplayed, err: errors.New("nonce already consumed")}
 			}
@@ -562,10 +562,10 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 	if endpoint == ConfigRollbackEndpoint {
 		args[len(args)-1] = r.rollbackFromVersion
 	}
-	if _, err = v.tx.ExecContext(ctx, "INSERT INTO system_backup_configs ("+strings.Join(cols, ",")+") VALUES ("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...); err != nil {
+	if _, err = v.tx.ExecContext(ctx, "INSERT INTO system_backup_v2_configs ("+strings.Join(cols, ",")+") VALUES ("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...); err != nil {
 		return zero, ErrProviderEvidenceStorage
 	}
-	cas, err := v.tx.ExecContext(ctx, "UPDATE system_backup_installation_state SET active_config_version=?,row_version=row_version+1 WHERE origin_installation_id=? AND active_config_version=? AND row_version=?", newVersion, s.InstallationID, v.row.version, v.stateRowVersion)
+	cas, err := v.tx.ExecContext(ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=?,row_version=row_version+1 WHERE origin_installation_id=? AND active_config_version=? AND row_version=?", newVersion, s.InstallationID, v.row.version, v.stateRowVersion)
 	if !configMutationOne(cas, err) {
 		return zero, ErrConfigVersionConflict
 	}
@@ -591,7 +591,7 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 	if err = checkConfigResponseEvidence(ctx, v.tx, s.InstallationID, evidenceID, responseHash, len(response), retention); err != nil {
 		return zero, err
 	}
-	operation, err := v.tx.ExecContext(ctx, `INSERT INTO system_backup_operations (public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,result_config_version,http_status,redacted_response_evidence_id,redacted_response_sha256,deadline_at,started_at,finished_at,created_at,updated_at,row_version,result_resource_public_id,retryable,failure_category,failure_message) VALUES (?,?,'config_update','system',?,'admin',?,?,?,?,?,2,?,'succeeded',?,200,?,?,?,?,?,?,?,1,NULL,FALSE,'none',NULL)`, op, s.InstallationID, s.InstallationID, strconv.FormatInt(actor.UserID, 10), endpoint, key, hash, []byte("[]"), registrationHash("[]"), newVersion, evidenceID, responseHash, deadline, first.now, terminalNow, first.now, terminalNow)
+	operation, err := v.tx.ExecContext(ctx, `INSERT INTO system_backup_v2_operations (public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,result_config_version,http_status,redacted_response_evidence_id,redacted_response_sha256,deadline_at,started_at,finished_at,created_at,updated_at,row_version,result_resource_public_id,retryable,failure_category,failure_message) VALUES (?,?,'config_update','system',?,'admin',?,?,?,?,?,2,?,'succeeded',?,200,?,?,?,?,?,?,?,1,NULL,FALSE,'none',NULL)`, op, s.InstallationID, s.InstallationID, strconv.FormatInt(actor.UserID, 10), endpoint, key, hash, []byte("[]"), registrationHash("[]"), newVersion, evidenceID, responseHash, deadline, first.now, terminalNow, first.now, terminalNow)
 	if err != nil {
 		return zero, ErrProviderEvidenceStorage
 	}
@@ -607,7 +607,7 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 		// authenticated_at is the SQL verification sample, not signed auth_time.
 		// The latter still fixes the original maximum age; it cannot become the
 		// lower guard because valid proofs may be ahead within configured skew.
-		n, e := v.tx.ExecContext(ctx, `INSERT INTO system_backup_strong_auth_nonces (origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,operation_id,audit_log_id,retain_until) SELECT ?,?,?,?,?,?,?,?,?,?,?,UTC_TIMESTAMP(6),?,?,? WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<? AND UTC_TIMESTAMP(6)<=?`, s.InstallationID, registrationHash(frozenProof.Payload.Issuer), registrationHash(actor.Subject), registrationHash(actor.Session), verified.NonceHMAC, verified.NonceHMACKeyVersion, endpoint, hash, key, v.now, expiresAt, operationID, intent, expiresAt.Add(time.Duration(v.row.values.snapshot.numbers["control_metadata_retention_seconds"])*time.Second), v.now, expiresAt, authAt.Add(time.Duration(v.row.values.snapshot.numbers["strong_auth_max_age_seconds"])*time.Second).Add(time.Duration(v.row.values.snapshot.numbers["strong_auth_clock_skew_seconds"])*time.Second))
+		n, e := v.tx.ExecContext(ctx, `INSERT INTO system_backup_v2_strong_auth_nonces (origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,operation_id,audit_log_id,retain_until) SELECT ?,?,?,?,?,?,?,?,?,?,?,UTC_TIMESTAMP(6),?,?,? WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<? AND UTC_TIMESTAMP(6)<=?`, s.InstallationID, registrationHash(frozenProof.Payload.Issuer), registrationHash(actor.Subject), registrationHash(actor.Session), verified.NonceHMAC, verified.NonceHMACKeyVersion, endpoint, hash, key, v.now, expiresAt, operationID, intent, expiresAt.Add(time.Duration(v.row.values.snapshot.numbers["control_metadata_retention_seconds"])*time.Second), v.now, expiresAt, authAt.Add(time.Duration(v.row.values.snapshot.numbers["strong_auth_max_age_seconds"])*time.Second).Add(time.Duration(v.row.values.snapshot.numbers["strong_auth_clock_skew_seconds"])*time.Second))
 		if !configMutationOne(n, e) {
 			return zero, ErrRegistrationUnavailable
 		}
@@ -774,7 +774,7 @@ func checkConfigResponseEvidence(ctx context.Context, tx *sql.Tx, installation s
 	var ownerType, owner, checksum, state, health, media string
 	var bytes int64
 	var expiry time.Time
-	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id,content_checksum,content_size_bytes,storage_state,observed_health,media_type,expires_at FROM system_backup_evidence WHERE id=? FOR UPDATE", id).Scan(&ownerType, &owner, &checksum, &bytes, &state, &health, &media, &expiry) != nil || ownerType != "system" || owner != installation || checksum != hash || bytes != int64(size) || state != "inline" || size > MaxConfigOperationResponseBytes || health != "healthy" || media != "application/json" || expiry.Before(retain) {
+	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id,content_checksum,content_size_bytes,storage_state,observed_health,media_type,expires_at FROM system_backup_v2_evidence WHERE id=? FOR UPDATE", id).Scan(&ownerType, &owner, &checksum, &bytes, &state, &health, &media, &expiry) != nil || ownerType != "system" || owner != installation || checksum != hash || bytes != int64(size) || state != "inline" || size > MaxConfigOperationResponseBytes || health != "healthy" || media != "application/json" || expiry.Before(retain) {
 		return ErrRegistrationUnavailable
 	}
 	return nil

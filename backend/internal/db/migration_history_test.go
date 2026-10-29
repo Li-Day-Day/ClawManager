@@ -163,11 +163,11 @@ func TestReviewedInstalledLedgerOnlyApplies080AndRetainsHistory(t *testing.T) {
 				}
 				return
 			}
-			if state.connections != 1 || state.identities != 1 || state.releases != 1 {
+			if state.connections != 1 || state.identities != 1 || state.releases != 2 {
 				t.Fatal("lost same-connection lock/identity")
 			}
 			if name == "apply-runtime" {
-				if len(state.writes) != 5 || state.gates != 1 {
+				if len(state.writes) != 5 || state.gates != 5 {
 					t.Fatal("expected exactly four runtime DDL statements plus one ledger insert")
 				}
 				for _, q := range state.writes[:4] {

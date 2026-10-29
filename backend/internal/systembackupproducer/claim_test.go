@@ -13,7 +13,7 @@ import (
 
 // The claim CAS below runs against a synthetic participant in commandMemory's
 // transactional snapshot. No actual A SQL loader/MySQL/provider is exercised.
-const claimTestTable = "system_backup_evidence"
+const claimTestTable = "system_backup_v2_evidence"
 
 type claimTestEnvironment struct {
 	db                 *fakeDB

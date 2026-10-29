@@ -84,7 +84,7 @@ func loadSystemPending(ctx context.Context, tx pd.ReadSQL, r Record) (systemPend
 func loadSystemPublication(ctx context.Context, tx pd.ReadSQL, r Record, exactReadyVersion string) (systemPendingStored, bool, error) {
 	var out systemPendingStored
 	columns := "id," + strings.Join(systemPendingImmutableColumns, ",") + "," + systemPendingMutableColumns
-	rows, err := tx.QueryContext(ctx, "SELECT "+columns+" FROM system_backup_evidence WHERE public_id=? FOR UPDATE", r.Manifest.Identity.ID)
+	rows, err := tx.QueryContext(ctx, "SELECT "+columns+" FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", r.Manifest.Identity.ID)
 	if err != nil {
 		return out, false, ErrUnavailable
 	}
@@ -148,7 +148,7 @@ func loadSystemPublication(ctx context.Context, tx pd.ReadSQL, r Record, exactRe
 	if finishSystemPendingRows(rows) != nil {
 		return out, false, ErrUnavailable
 	}
-	chunks, err := tx.QueryContext(ctx, "SELECT "+systemPendingChunkColumns+" FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE", out.ID)
+	chunks, err := tx.QueryContext(ctx, "SELECT "+systemPendingChunkColumns+" FROM system_backup_v2_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE", out.ID)
 	if err != nil {
 		return out, false, ErrUnavailable
 	}
@@ -181,11 +181,11 @@ func loadSystemPublication(ctx context.Context, tx pd.ReadSQL, r Record, exactRe
 func insertSystemPending(ctx context.Context, tx *pd.Transaction, r Record) (int64, error) {
 	values := append(systemPendingValues(r), "pending", "none", nil, nil, int64(1), "unknown", nil, nil)
 	columns := strings.Join(systemPendingImmutableColumns, ",") + "," + systemPendingMutableColumns
-	query := "INSERT INTO system_backup_evidence (" + columns + ") VALUES (" + strings.TrimSuffix(strings.Repeat("?,", len(values)), ",") + ")"
+	query := "INSERT INTO system_backup_v2_evidence (" + columns + ") VALUES (" + strings.TrimSuffix(strings.Repeat("?,", len(values)), ",") + ")"
 	if tx.CAS(ctx, query, values...) != nil {
 		return 0, ErrUnavailable
 	}
-	rows, err := tx.QueryContext(ctx, "SELECT id FROM system_backup_evidence WHERE public_id=? FOR UPDATE", r.Manifest.Identity.ID)
+	rows, err := tx.QueryContext(ctx, "SELECT id FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", r.Manifest.Identity.ID)
 	if err != nil {
 		return 0, ErrUnavailable
 	}
@@ -202,7 +202,7 @@ func insertSystemPending(ctx context.Context, tx *pd.Transaction, r Record) (int
 	}
 	for _, c := range r.Manifest.Chunks {
 		values := append([]any{id}, systemPendingChunkValues(c)...)
-		if tx.CAS(ctx, "INSERT INTO system_backup_evidence_chunks (evidence_id,"+systemPendingChunkColumns+") VALUES (?,?,?,?,?,?,?,?,?,?)", values...) != nil {
+		if tx.CAS(ctx, "INSERT INTO system_backup_v2_evidence_chunks (evidence_id,"+systemPendingChunkColumns+") VALUES (?,?,?,?,?,?,?,?,?,?)", values...) != nil {
 			return 0, ErrUnavailable
 		}
 	}

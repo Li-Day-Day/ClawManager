@@ -103,7 +103,7 @@ func (a *SQLWriteRecovery) locked(ctx context.Context, id string, claimed bool, 
 		return fail(err)
 	}
 	i := Identity{Installation: s.Installation, ID: id}
-	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", id).Scan(&i.OwnerType, &i.OwnerID) != nil {
+	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&i.OwnerType, &i.OwnerID) != nil {
 		return fail(ErrUnavailable)
 	}
 	if s.Policy.LockScope(ctx, tx, s.Installation, i) != nil {
@@ -223,7 +223,7 @@ func (a *SQLWriteRecovery) Reconcile(ctx context.Context, id string, store Recov
 		// The scanner is only a hint. Recheck scheduling under the evidence
 		// lock so stale candidates and direct calls cannot bypass backoff.
 		var due sql.NullTime
-		if tx.tx.QueryRowContext(ctx, "SELECT next_reconcile_at FROM system_backup_evidence WHERE public_id=? FOR UPDATE", id).Scan(&due) != nil {
+		if tx.tx.QueryRowContext(ctx, "SELECT next_reconcile_at FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", id).Scan(&due) != nil {
 			return ErrUnavailable
 		}
 		if due.Valid && tx.now.Before(due.Time) {

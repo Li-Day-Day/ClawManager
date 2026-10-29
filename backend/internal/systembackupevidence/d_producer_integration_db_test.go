@@ -138,7 +138,7 @@ func (d *dIntegrationDB) QueryContext(ctx context.Context, q string, args []driv
 	return rows, nil
 }
 func (d *dIntegrationDB) ExecContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
-	if strings.HasPrefix(q, "UPDATE system_backup_evidence SET ") {
+	if strings.HasPrefix(q, "UPDATE system_backup_v2_evidence SET ") {
 		return d.evidenceCAS(q, args)
 	}
 	if !strings.Contains(q, "system_backup_producer_") {
@@ -210,8 +210,8 @@ func (d *dIntegrationDB) ExecContext(ctx context.Context, q string, args []drive
 // Evaluate every WHERE predicate on D's two evidence CAS statements. A's
 // actual loaders subsequently verify the complete registry/chunk projection.
 func (d *dIntegrationDB) evidenceCAS(q string, args []driver.NamedValue) (driver.Result, error) {
-	const claim = "UPDATE system_backup_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner <=> ? AND claim_expires_at <=> ?"
-	const finish = "UPDATE system_backup_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=NULL,claim_expires_at=NULL,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner=? AND claim_expires_at=? AND storage_immutable_version IS NULL"
+	const claim = "UPDATE system_backup_v2_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner <=> ? AND claim_expires_at <=> ?"
+	const finish = "UPDATE system_backup_v2_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=NULL,claim_expires_at=NULL,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner=? AND claim_expires_at=? AND storage_immutable_version IS NULL"
 	d.writes++
 	r := d.row
 	if r == nil || r["owner_target_type"] != "system" || r["evidence_type"] != "capability_snapshot" {

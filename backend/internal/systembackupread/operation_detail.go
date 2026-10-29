@@ -78,7 +78,7 @@ func (r *Reader) GetOperation(ctx context.Context, publicID string) (OperationSn
 	if !installationID.MatchString(installation) {
 		return OperationSnapshot{}, ErrDenied
 	}
-	query := `SELECT ` + operationProjectionColumns + ` FROM system_backup_operations
+	query := `SELECT ` + operationProjectionColumns + ` FROM system_backup_v2_operations
 WHERE origin_installation_id=? AND public_id=? FOR SHARE`
 	row, err := scanOperation(tx.QueryRowContext(ctx, query, installation, publicID), installation)
 	missing := errors.Is(err, sql.ErrNoRows)

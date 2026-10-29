@@ -93,7 +93,7 @@ func ApplyAcceptanceTerminalWithSequence(
 		actualEligible != outcome.Eligible || actualDecidedAt.Valid != outcome.EligibilityDecided || actualRowVersion != expectedRowVersion+1 {
 		return ErrAcceptanceTerminalCASRejected
 	}
-	eventSQL := fmt.Sprintf(`INSERT INTO system_backup_events
+	eventSQL := fmt.Sprintf(`INSERT INTO system_backup_v2_events
   (origin_installation_id, target_type, target_public_id, event_type, level,
    task_status, message, details_present, detail_previous_status,
    detail_current_status, detail_reason, request_id)
@@ -133,7 +133,7 @@ WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND statu
 }
 
 func updateAcceptanceSequenceInTx(ctx context.Context, tx *sql.Tx, installationID string, configVersion uint64, outcome AcceptanceTerminalOutcome) error {
-	_, err := tx.ExecContext(ctx, `INSERT INTO system_backup_alert_states
+	_, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_alert_states
   (origin_installation_id, rule_key, matrix_key, task_type, task_purpose, config_version)
 VALUES (?, ?, 'all', ?, 'acceptance', ?)
 ON DUPLICATE KEY UPDATE id = id`, installationID, acceptanceAnomalyStateKey, outcome.TaskType, configVersion)
@@ -145,7 +145,7 @@ ON DUPLICATE KEY UPDATE id = id`, installationID, acceptanceAnomalyStateKey, out
 	var first, last, success sql.NullTime
 	err = tx.QueryRowContext(ctx, `SELECT id, consecutive_anomaly_count, first_anomaly_at, last_observed_at,
   last_eligible_success_at, row_version
-FROM system_backup_alert_states
+FROM system_backup_v2_alert_states
 WHERE origin_installation_id = ? AND rule_key = ? AND matrix_key = 'all'
   AND task_type = ? AND task_purpose = 'acceptance'
 FOR UPDATE`, installationID, acceptanceAnomalyStateKey, outcome.TaskType).Scan(&id, &count, &first, &last, &success, &rowVersion)
@@ -171,7 +171,7 @@ FOR UPDATE`, installationID, acceptanceAnomalyStateKey, outcome.TaskType).Scan(&
 	if !changed {
 		return errors.New("acceptance terminal sequence unexpectedly unchanged")
 	}
-	result, err := tx.ExecContext(ctx, `UPDATE system_backup_alert_states
+	result, err := tx.ExecContext(ctx, `UPDATE system_backup_v2_alert_states
 SET consecutive_anomaly_count = ?, first_anomaly_at = ?, last_observed_at = ?,
   last_eligible_success_at = ?, config_version = ?, row_version = row_version + 1
 WHERE id = ? AND origin_installation_id = ? AND row_version = ?`,

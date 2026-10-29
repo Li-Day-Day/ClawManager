@@ -119,9 +119,9 @@ func (d *systemPendingTestDB) ExecContext(_ context.Context, q string, args []dr
 		return systemPendingTestResult{n: 1}, nil
 	}
 	stage := "evidence"
-	if strings.HasPrefix(q, "INSERT INTO system_backup_evidence_chunks ") {
+	if strings.HasPrefix(q, "INSERT INTO system_backup_v2_evidence_chunks ") {
 		stage = "chunk"
-	} else if !strings.HasPrefix(q, "INSERT INTO system_backup_evidence ") {
+	} else if !strings.HasPrefix(q, "INSERT INTO system_backup_v2_evidence ") {
 		d.t.Fatalf("unexpected SQL %s", q)
 	}
 	d.events = append(d.events, "insert:"+stage)
@@ -201,13 +201,13 @@ func (d *systemPendingTestDB) QueryContext(_ context.Context, q string, args []d
 	cols := strings.Split(strings.TrimPrefix(q[:end], "SELECT "), ",")
 	var source []map[string]driver.Value
 	stage := "evidence"
-	if strings.Contains(q, " FROM system_backup_evidence_chunks ") {
+	if strings.Contains(q, " FROM system_backup_v2_evidence_chunks ") {
 		stage = "chunks"
 		if len(args) != 1 || d.row == nil || args[0].Value != d.row["id"] {
 			d.t.Fatal("wrong chunk lookup")
 		}
 		source = d.chunks
-	} else if strings.Contains(q, " FROM system_backup_evidence ") {
+	} else if strings.Contains(q, " FROM system_backup_v2_evidence ") {
 		if len(args) != 1 {
 			d.t.Fatal("wrong evidence key")
 		}

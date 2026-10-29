@@ -84,7 +84,7 @@ func (c *registrationTestConn) QueryContext(_ context.Context, q string, args []
 	s := c.s
 	s.queries = append(s.queries, q)
 	switch {
-	case strings.Contains(q, "SELECT origin_installation_id FROM system_backup_installation_state"):
+	case strings.Contains(q, "SELECT origin_installation_id FROM system_backup_v2_installation_state"):
 		return registrationRow("installation_synthetic"), nil
 	case strings.Contains(q, "SELECT active_config_version"):
 		return registrationRow(int64(1)), nil
@@ -103,7 +103,7 @@ func (c *registrationTestConn) QueryContext(_ context.Context, q string, args []
 		return registrationRow(s.now, int64(0)), nil
 	case strings.Contains(q, "SELECT nonce_hmac_ref_version"):
 		return &registrationTestRows{data: [][]driver.Value{{"old"}, {s.config.NonceKeyVersion}}, width: 1}, nil
-	case strings.Contains(q, "SELECT id FROM system_backup_strong_auth_nonces"):
+	case strings.Contains(q, "SELECT id FROM system_backup_v2_strong_auth_nonces"):
 		if !strings.Contains(q, "FOR UPDATE") {
 			return nil, errors.New("nonce missing locking read")
 		}
@@ -130,13 +130,13 @@ func (c *registrationTestConn) ExecContext(_ context.Context, q string, args []d
 	switch {
 	case strings.Contains(q, "INSERT INTO audit_logs"):
 		kind = "audit"
-	case strings.Contains(q, "INSERT INTO system_backup_evidence"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_evidence"):
 		kind = "evidence"
-	case strings.Contains(q, "INSERT INTO system_backup_operations"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_operations"):
 		kind = "operation"
 		s.hash = args[7].Value.(string)
 		s.result = &ProviderRegistrationResult{OperationPublicID: args[0].Value.(string), EvidencePublicID: args[10].Value.(string), HTTPStatus: 201}
-	case strings.Contains(q, "INSERT INTO system_backup_strong_auth_nonces"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_strong_auth_nonces"):
 		kind = "nonce"
 	default:
 		return nil, errors.New("unexpected write")

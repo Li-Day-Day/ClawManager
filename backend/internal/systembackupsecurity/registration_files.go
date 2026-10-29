@@ -43,7 +43,7 @@ func boundedFile(path string, limit int64) ([]byte, error) {
 	return b, nil
 }
 func (f RegistrationFiles) NonceKeys(ctx context.Context, tx *sql.Tx, c RegistrationConfig, versions []string) (map[string][]byte, error) {
-	rows, err := tx.QueryContext(ctx, "SELECT DISTINCT nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs ORDER BY nonce_hmac_ref_version,nonce_hmac_identity_hash")
+	rows, err := tx.QueryContext(ctx, "SELECT DISTINCT nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs ORDER BY nonce_hmac_ref_version,nonce_hmac_identity_hash")
 	if err != nil {
 		return nil, ErrRegistrationUnavailable
 	}

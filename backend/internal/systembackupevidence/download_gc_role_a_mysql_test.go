@@ -34,7 +34,7 @@ var aGCRoleCases = []string{
 
 // This table is created by the formal capsule in every isolated role database.
 // The role fixture does not create the MFA owner's separate synthetic table.
-const aGCRoleMetadataDriftSQL = "ALTER TABLE system_backup_configs ADD COLUMN gc_role_probe INT NULL"
+const aGCRoleMetadataDriftSQL = "ALTER TABLE system_backup_v2_configs ADD COLUMN gc_role_probe INT NULL"
 
 func aGCRoleHint(c DownloadGCEarlyReferenceConfig) DownloadGCEarlyScope {
 	return DownloadGCEarlyScope{Database: c.Database, Installation: c.Installation, WorkerOperation: "sop_11111111-2222-4333-8444-555555555555", Operation: "sop_66666666-7777-4888-8999-aaaaaaaaaaaa", PrincipalSHA256: strings.Repeat("b", 64), OperationID: 1, ActorID: 42, IntentAuditID: 1, ResultAuditID: 2}
@@ -49,10 +49,10 @@ func aGCRoleGrants(database, user string) []string {
 		if gcDeleteTables[table] {
 			privileges += ", DELETE"
 		}
-		if table == "system_backup_compact_tombstones" {
+		if table == "system_backup_v2_compact_tombstones" {
 			privileges += ", INSERT"
 		}
-		if table == "system_backup_metadata_reservations" {
+		if table == "system_backup_v2_metadata_reservations" {
 			privileges += ", UPDATE"
 		}
 		grants = append(grants, "GRANT "+privileges+" ON "+object(table)+" TO "+recipient)
@@ -64,7 +64,7 @@ func TestADownloadGCRoleMySQLSeed(t *testing.T) {
 	if _, err := decodeADownloadMFAInputs(aDownloadMFASeed); err != nil {
 		t.Fatal("GC role capsule invalid")
 	}
-	if !strings.Contains(aGCRoleMetadataDriftSQL, "ALTER TABLE system_backup_configs ADD COLUMN") {
+	if !strings.Contains(aGCRoleMetadataDriftSQL, "ALTER TABLE system_backup_v2_configs ADD COLUMN") {
 		t.Fatal("GC role drift must alter an existing formal fixture table")
 	}
 	seen := map[string]bool{}
@@ -80,7 +80,7 @@ func TestADownloadGCRoleMySQLSeed(t *testing.T) {
 	if len(seen) != 10 || source.grants(grants) != nil || !validGCEarlyScope(source.c, aGCRoleHint(source.c)) {
 		t.Fatal("GC role candidate shape")
 	}
-	for _, forbidden := range []string{"GRANT SELECT ON `agc_seed`.`users` TO 'a_gc_seed'@'%'", "GRANT CREATE ON `agc_seed`.* TO 'a_gc_seed'@'%'", "GRANT DELETE ON `agc_seed`.`system_backup_compact_tombstones` TO 'a_gc_seed'@'%'"} {
+	for _, forbidden := range []string{"GRANT SELECT ON `agc_seed`.`users` TO 'a_gc_seed'@'%'", "GRANT CREATE ON `agc_seed`.* TO 'a_gc_seed'@'%'", "GRANT DELETE ON `agc_seed`.`system_backup_v2_compact_tombstones` TO 'a_gc_seed'@'%'"} {
 		if source.grants(append(append([]string(nil), grants...), forbidden)) == nil {
 			t.Fatal("GC role unsafe grant accepted")
 		}
@@ -291,7 +291,7 @@ func TestADownloadGCRoleMySQL(t *testing.T) {
 				}
 				t.Log("OBSERVED restricted metadata parity tables/columns/incoming-FKs/indexes and users.id FOR UPDATE; maintenance=absent full_gc=not_run")
 			case "forbidden_data_and_ddl":
-				for _, query := range []string{"SELECT password_hash FROM users LIMIT 1", "UPDATE users SET password_hash=password_hash WHERE id=42", "UPDATE system_backups SET id=id WHERE 1=0", "INSERT INTO audit_logs(id) VALUES(1)", "UPDATE audit_logs SET id=id WHERE 1=0", "DELETE FROM system_backup_compact_tombstones WHERE 1=0", "CREATE TABLE gc_role_forbidden(id INT)"} {
+				for _, query := range []string{"SELECT password_hash FROM users LIMIT 1", "UPDATE users SET password_hash=password_hash WHERE id=42", "UPDATE system_backup_v2_backups SET id=id WHERE 1=0", "INSERT INTO audit_logs(id) VALUES(1)", "UPDATE audit_logs SET id=id WHERE 1=0", "DELETE FROM system_backup_v2_compact_tombstones WHERE 1=0", "CREATE TABLE gc_role_forbidden(id INT)"} {
 					_, denied := conn.ExecContext(x.ctx, query)
 					aGCRoleDenied(t, denied)
 				}

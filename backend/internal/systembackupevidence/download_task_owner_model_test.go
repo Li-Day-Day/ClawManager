@@ -32,7 +32,7 @@ func taskOwnerDDLColumns(t *testing.T) map[string]string {
 	}
 	for _, file := range files {
 		name := filepath.Base(file)
-		if name[:3] >= "065" && name[:3] <= "080" {
+		if strings.Contains(name, "backup_v2_") && name[:3] >= "096" && name[:3] <= "109" {
 			raw, err := os.ReadFile(file)
 			if err != nil {
 				t.Fatal(err)
@@ -48,7 +48,7 @@ func taskOwnerDDLColumns(t *testing.T) map[string]string {
 	if !strings.Contains(string(raw), "ADD COLUMN download_evidence_id BIGINT UNSIGNED NULL") {
 		t.Fatal("missing actual candidate operation reference")
 	}
-	columns["system_backup_operations.download_evidence_id"] = "bigint"
+	columns["system_backup_v2_operations.download_evidence_id"] = "bigint"
 	if len(columns) != 25 {
 		t.Fatal("reference DDL changed; review the complete graph", len(columns), columns)
 	}
@@ -133,7 +133,7 @@ func (m *sqlTaskOwnerModel) query(_ context.Context, q string, args []driver.Nam
 		}
 		return admissionTxRow(int64(61), origin, i.OwnerType, i.OwnerID, i.Classification), true, nil
 	}
-	if q == "SELECT origin_installation_id FROM system_backup_evidence WHERE public_id=?" {
+	if q == "SELECT origin_installation_id FROM system_backup_v2_evidence WHERE public_id=?" {
 		var origin driver.Value = i.Installation
 		if m.f.db.committedOrigin != nil {
 			origin = *m.f.db.committedOrigin
@@ -198,13 +198,13 @@ func (m *sqlTaskOwnerModel) query(_ context.Context, q string, args []driver.Nam
 			return nil, true, err
 		}
 		ids := append([]int64(nil), m.refs[ref.table]...)
-		if ref.table == "system_backup_operations" && len(m.f.db.m.op) > 0 {
+		if ref.table == "system_backup_v2_operations" && len(m.f.db.m.op) > 0 {
 			ids = append(ids, 73)
 		}
-		if ref.table == "system_backup_download_admission_receipts" && len(m.f.db.m.receipt) > 0 {
+		if ref.table == "system_backup_v2_download_admission_receipts" && len(m.f.db.m.receipt) > 0 {
 			ids = append(ids, 73)
 		}
-		if ref.table == "system_backup_download_result_receipts" && len(m.f.db.resultRetention) > 0 {
+		if ref.table == "system_backup_v2_download_result_receipts" && len(m.f.db.resultRetention) > 0 {
 			ids = append(ids, 73)
 		}
 		rows := &admissionTxRows{width: 1}
@@ -231,7 +231,7 @@ func (m *sqlTaskOwnerModel) query(_ context.Context, q string, args []driver.Nam
 			return rows, true, nil
 		}
 	}
-	if strings.Contains(q, "FROM system_backup_evidence_chunks") {
+	if strings.Contains(q, "FROM system_backup_v2_evidence_chunks") {
 		m.chunkReads++
 	}
 	return nil, false, nil

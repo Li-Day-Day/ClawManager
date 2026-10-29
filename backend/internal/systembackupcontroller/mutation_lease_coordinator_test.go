@@ -36,7 +36,7 @@ func TestMutationLeaseCoordinatorAcquireUsesOneGateLockedTransaction(t *testing.
 	if factory.calls != 1 || !reflect.DeepEqual(tx.order, []string{"lock_gate", "exec", "commit"}) {
 		t.Fatalf("factory calls=%d order=%#v", factory.calls, tx.order)
 	}
-	if len(tx.queries) != 1 || !strings.HasPrefix(tx.queries[0], "INSERT INTO system_maintenance_mutation_leases") {
+	if len(tx.queries) != 1 || !strings.HasPrefix(tx.queries[0], "INSERT INTO system_backup_v2_maintenance_mutation_leases") {
 		t.Fatalf("queries=%#v", tx.queries)
 	}
 }
@@ -65,7 +65,7 @@ func TestMutationLeaseCoordinatorRenewAndReleasePreserveLockOrder(t *testing.T) 
 	if err := (MutationLeaseCoordinator{Factory: releaseFactory}).Release(context.Background(), renewed); err != nil {
 		t.Fatalf("Release: %v", err)
 	}
-	if !reflect.DeepEqual(releaseTx.order, []string{"lock_gate", "lock_lease", "exec", "commit"}) || !strings.HasPrefix(releaseTx.queries[0], "DELETE FROM system_maintenance_mutation_leases") {
+	if !reflect.DeepEqual(releaseTx.order, []string{"lock_gate", "lock_lease", "exec", "commit"}) || !strings.HasPrefix(releaseTx.queries[0], "DELETE FROM system_backup_v2_maintenance_mutation_leases") {
 		t.Fatalf("order=%#v queries=%#v", releaseTx.order, releaseTx.queries)
 	}
 }

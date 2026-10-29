@@ -79,7 +79,7 @@ func (c *backfillLockedConn) QueryContext(_ context.Context, q string, args []dr
 		}
 		return registrationRow(s.facts.TargetServerUUID, database, s.now, s.offset), nil
 	}
-	if q != "SELECT * FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE" || len(args) != 2 || args[0].Value != s.facts.InstallationID || args[1].Value != s.facts.Version {
+	if q != "SELECT * FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE" || len(args) != 2 || args[0].Value != s.facts.InstallationID || args[1].Value != s.facts.Version {
 		return nil, errors.New("wrong full-row scope/lock or source supplied as SQL facts")
 	}
 	if s.mode == "query-error" {
@@ -423,11 +423,11 @@ func TestConfigBackfillLockedRowFinalRecheckDetectsImmutableAndCanonicalDrift(t 
 	}
 }
 func TestConfigBackfillLockedColumnPinMatchesExactPublishedSchema(t *testing.T) {
-	raw, err := os.ReadFile("../db/migrations/066_add_system_backup_config_and_operations.sql")
+	raw, err := os.ReadFile("../db/migrations/097_backup_v2_add_system_backup_config_and_operations.sql")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if registrationHash(string(raw)) != "e5abdc933fa6cf20fe4f6d629f6e9c94bc0971460d3cecdd9a7706c812bca3ae" {
+	if registrationHash(string(raw)) != "d7eb73daddfe563372cd6ffcbb135e366b35ad3d0f64e32f2c9f4c3d75e51103" {
 		t.Fatal("published 066 changed")
 	}
 	text := string(raw)

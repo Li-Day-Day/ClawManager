@@ -25,7 +25,7 @@ func TestSelectOnlyGrants(t *testing.T) {
 	if ValidateGrants("fixture", grants()) != nil {
 		t.Fatal("exact SELECT inventory rejected")
 	}
-	for _, grant := range []string{"GRANT SELECT ON `fixture`.* TO `observer`@`localhost`", "GRANT ALL PRIVILEGES ON *.* TO `observer`@`localhost`", "GRANT SELECT, UPDATE ON `fixture`.`system_backups` TO `observer`@`localhost`", "GRANT `reader_role`@`%` TO `observer`@`localhost`", "GRANT SELECT ON `fixture`.`users` TO `observer`@`localhost`", "GRANT SELECT ON `other`.`system_backups` TO `observer`@`localhost`", "GRANT SELECT ON `fixture`.`system_backups` TO `observer`@`localhost` WITH GRANT OPTION"} {
+	for _, grant := range []string{"GRANT SELECT ON `fixture`.* TO `observer`@`localhost`", "GRANT ALL PRIVILEGES ON *.* TO `observer`@`localhost`", "GRANT SELECT, UPDATE ON `fixture`.`system_backup_v2_backups` TO `observer`@`localhost`", "GRANT `reader_role`@`%` TO `observer`@`localhost`", "GRANT SELECT ON `fixture`.`users` TO `observer`@`localhost`", "GRANT SELECT ON `other`.`system_backup_v2_backups` TO `observer`@`localhost`", "GRANT SELECT ON `fixture`.`system_backup_v2_backups` TO `observer`@`localhost` WITH GRANT OPTION"} {
 		t.Run(grant, func(t *testing.T) {
 			if ValidateGrants("fixture", append(grants(), grant)) == nil {
 				t.Fatal("unsafe grant accepted")
@@ -116,7 +116,7 @@ func (c *fixtureConn) QueryContext(_ context.Context, q string, args []driver.Na
 			actual = strings.Repeat("b", 64)
 		}
 		return row(int64(4), "admin", "7", "createSystemBackup", "same-request-key-1", "succeeded", "none", false, false, hash, actual, int64(2), int64(2), hash, nil, nil)
-	case strings.HasPrefix(q, "SELECT COUNT(*) FROM system_backups WHERE origin_installation_id="):
+	case strings.HasPrefix(q, "SELECT COUNT(*) FROM system_backup_v2_backups WHERE origin_installation_id="):
 		if strings.Contains(q, "actor_type=?") {
 			if len(args) != 5 {
 				return nil, errors.New("tuple count unscoped")
@@ -222,7 +222,7 @@ func TestObserverRollbackOnDriftOrSQLFailure(t *testing.T) {
 	}
 }
 func TestObserverRejectsInvalidRequestBeforeSQL(t *testing.T) {
-	for _, request := range []Request{{Kind: "backup", PublicID: "system_backups; DROP TABLE users", ConfigVersion: 1}, {Kind: "preflight", PublicID: fixtureRequest().PublicID, ConfigVersion: 1}, {Kind: "backup", PublicID: fixtureRequest().PublicID, ConfigVersion: 0}} {
+	for _, request := range []Request{{Kind: "backup", PublicID: "system_backup_v2_backups; DROP TABLE users", ConfigVersion: 1}, {Kind: "preflight", PublicID: fixtureRequest().PublicID, ConfigVersion: 1}, {Kind: "backup", PublicID: fixtureRequest().PublicID, ConfigVersion: 0}} {
 		state := &fixture{}
 		_, err := Observe(context.Background(), openFixture(t, state), fixturePins(), request)
 		if err != ErrUnavailable || state.queries != 0 {

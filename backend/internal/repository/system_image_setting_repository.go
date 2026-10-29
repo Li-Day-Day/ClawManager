@@ -23,9 +23,10 @@ type systemImageSettingRepository struct {
 	sess db.Session
 }
 
-// NewSystemImageSettingRepository creates a repository. Schema changes are owned by migrations.
+// NewSystemImageSettingRepository creates a new repository (schema is owned by embedded migrations).
 func NewSystemImageSettingRepository(sess db.Session) SystemImageSettingRepository {
-	return &systemImageSettingRepository{sess: sess}
+	repo := &systemImageSettingRepository{sess: sess}
+	return repo
 }
 
 func (r *systemImageSettingRepository) List() ([]models.SystemImageSetting, error) {

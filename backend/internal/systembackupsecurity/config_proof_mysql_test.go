@@ -96,7 +96,7 @@ func newConfigProofMySQLFixture(t *testing.T, ctx context.Context, db *sql.DB, c
 			t.Error("CLEANUP_PENDING config-proof server identity")
 			return
 		}
-		for _, table := range []string{"system_backup_installation_state", "system_backup_configs", "system_backup_totp_credentials", "system_backup_admin_sessions", "system_backup_admin_revocations"} {
+		for _, table := range []string{"system_backup_v2_installation_state", "system_backup_v2_configs", "system_backup_v2_totp_credentials", "system_backup_v2_admin_sessions", "system_backup_v2_admin_revocations"} {
 			if _, e := db.ExecContext(cleanup, "DELETE FROM "+table+" WHERE origin_installation_id=?", f.installation); e != nil {
 				t.Error("CLEANUP_PENDING config-proof owned installation rows")
 				return
@@ -150,7 +150,7 @@ func newConfigProofMySQLFixture(t *testing.T, ctx context.Context, db *sql.DB, c
 	config, err := DecodeBootstrapConfig(configRaw)
 	mysqlMust(t, err)
 	columns, args := config.sqlValues(f.installation, strconv.FormatInt(f.userID, 10), "synthetic config proof fixture")
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
 	if err != nil {
 		t.Log("MYSQL_PROBE_STAGE synthetic-config-insert")
 	}
@@ -182,7 +182,7 @@ func newConfigProofMySQLFixture(t *testing.T, ctx context.Context, db *sql.DB, c
 	f.login(t, time.Hour, string(hash))
 	encrypted, err := box.seal(f.seed, f.svc.identity(f.actor))
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_totp_credentials(origin_installation_id,user_id,encrypted_seed,credential_hash,confirmed,last_step) VALUES(?,?,?,?,TRUE,-1)", f.installation, f.userID, encrypted, registrationHash(string(hash)))
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_totp_credentials(origin_installation_id,user_id,encrypted_seed,credential_hash,confirmed,last_step) VALUES(?,?,?,?,TRUE,-1)", f.installation, f.userID, encrypted, registrationHash(string(hash)))
 	if err != nil {
 		t.Log("MYSQL_PROBE_STAGE synthetic-totp-insert")
 	}
@@ -245,7 +245,7 @@ func (f *configProofMySQLFixture) state(t *testing.T) (int64, int) {
 	t.Helper()
 	var step int64
 	var count int
-	mysqlMust(t, f.db.QueryRowContext(f.ctx, "SELECT last_step FROM system_backup_totp_credentials WHERE origin_installation_id=? AND user_id=?", f.installation, f.userID).Scan(&step))
+	mysqlMust(t, f.db.QueryRowContext(f.ctx, "SELECT last_step FROM system_backup_v2_totp_credentials WHERE origin_installation_id=? AND user_id=?", f.installation, f.userID).Scan(&step))
 	mysqlMust(t, f.db.QueryRowContext(f.ctx, "SELECT COUNT(*) FROM audit_logs WHERE user_id=? AND action='system_backup.strong_auth.verified'", f.userID).Scan(&count))
 	return step, count
 }
@@ -410,7 +410,7 @@ func TestAConfigProofMySQL(t *testing.T) {
 	if !reflect.DeepEqual(actualFiles, inputs.Filenames) {
 		t.Fatal("full fresh migration ledger differs from pinned capsule")
 	}
-	for _, table := range []string{"users", "audit_logs", "system_backup_configs", "system_backup_installation_state", "system_backup_totp_credentials", "system_backup_admin_sessions", "system_backup_admin_revocations"} {
+	for _, table := range []string{"users", "audit_logs", "system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_totp_credentials", "system_backup_v2_admin_sessions", "system_backup_v2_admin_revocations"} {
 		var engine string
 		mysqlMust(t, db.QueryRowContext(ctx, "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?", table).Scan(&engine))
 		if engine != "InnoDB" {
@@ -466,7 +466,7 @@ func TestAConfigProofMySQL(t *testing.T) {
 					t.Fatal("first signer did not start")
 				}
 				second := f.start(t, code, request)
-				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, second, "system_backup_installation_state")
+				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, second, "system_backup_v2_installation_state")
 				unblock()
 				successes := 0
 				for _, worker := range []sessionProbeWorker{first, second} {
@@ -483,13 +483,13 @@ func TestAConfigProofMySQL(t *testing.T) {
 				}
 				return
 			case "missing_session":
-				exec("DELETE FROM system_backup_admin_sessions WHERE origin_installation_id=? AND session_sha256=?", f.installation, f.actor.Session)
+				exec("DELETE FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND session_sha256=?", f.installation, f.actor.Session)
 			case "revoked_session":
-				exec("UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", f.installation, f.actor.Session)
+				exec("UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", f.installation, f.actor.Session)
 			case "shortened_session":
-				exec("UPDATE system_backup_admin_sessions SET expires_at=? WHERE origin_installation_id=? AND session_sha256=?", f.actor.SessionExpiresAt.Add(-time.Microsecond), f.installation, f.actor.Session)
+				exec("UPDATE system_backup_v2_admin_sessions SET expires_at=? WHERE origin_installation_id=? AND session_sha256=?", f.actor.SessionExpiresAt.Add(-time.Microsecond), f.installation, f.actor.Session)
 			case "revoked_at_issue":
-				exec("INSERT INTO system_backup_admin_revocations(origin_installation_id,user_id,revoked_before) VALUES(?,?,?)", f.installation, f.userID, f.actor.SessionIssuedAt)
+				exec("INSERT INTO system_backup_v2_admin_revocations(origin_installation_id,user_id,revoked_before) VALUES(?,?,?)", f.installation, f.userID, f.actor.SessionIssuedAt)
 			case "inactive_user":
 				exec("UPDATE users SET is_active=FALSE WHERE id=?", f.userID)
 			case "password_changed":
@@ -497,7 +497,7 @@ func TestAConfigProofMySQL(t *testing.T) {
 				mysqlMust(t, e)
 				exec("UPDATE users SET password_hash=? WHERE id=?", string(hash), f.userID)
 			case "unconfirmed_totp":
-				exec("UPDATE system_backup_totp_credentials SET confirmed=FALSE,pending_until=UTC_TIMESTAMP(6)+INTERVAL 10 MINUTE WHERE origin_installation_id=? AND user_id=?", f.installation, f.userID)
+				exec("UPDATE system_backup_v2_totp_credentials SET confirmed=FALSE,pending_until=UTC_TIMESTAMP(6)+INTERVAL 10 MINUTE WHERE origin_installation_id=? AND user_id=?", f.installation, f.userID)
 			case "signer_failure":
 				f.signer.fail = true
 			case "audit_failure_rollback":
@@ -535,10 +535,10 @@ func TestAConfigProofMySQL(t *testing.T) {
 				block, e := db.BeginTx(ctx, nil)
 				mysqlMust(t, e)
 				defer block.Rollback()
-				_, e = block.ExecContext(ctx, "UPDATE system_backup_configs SET rbac_bindings_registry_version='proof-rbac-v2',rbac_bindings_registry_sha256=? WHERE origin_installation_id=? AND version=1", registrationHash(string(f.revokedRBAC)), f.installation)
+				_, e = block.ExecContext(ctx, "UPDATE system_backup_v2_configs SET rbac_bindings_registry_version='proof-rbac-v2',rbac_bindings_registry_sha256=? WHERE origin_installation_id=? AND version=1", registrationHash(string(f.revokedRBAC)), f.installation)
 				mysqlMust(t, e)
 				w := f.start(t, f.code(t), f.request(t, ConfigUpdateEndpoint))
-				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, w, "system_backup_configs")
+				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, w, "system_backup_v2_configs")
 				mysqlMust(t, block.Commit())
 				if e = sessionWorkerResult(t, ctx, w); e != ErrRegistrationUnavailable {
 					t.Fatal("worker authorized stale config after observed wait")
@@ -583,7 +583,7 @@ func TestAConfigProofMySQL(t *testing.T) {
 			}
 			if name == "missing_session" {
 				var count int
-				mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_admin_sessions WHERE origin_installation_id=? AND session_sha256=?", f.installation, f.actor.Session).Scan(&count))
+				mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND session_sha256=?", f.installation, f.actor.Session).Scan(&count))
 				if count != 0 {
 					t.Fatal("proof enrolled missing access session")
 				}

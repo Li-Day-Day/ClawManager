@@ -5,7 +5,6 @@ import (
 	"errors"
 	"os"
 	"path"
-	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -974,19 +973,7 @@ func TestInstanceServiceRestartWithEnvironmentRejectsConflictingChange(t *testin
 }
 
 func TestInstanceServiceDeleteV2MissingBindingStillDeletesInstance(t *testing.T) {
-	workspaceRoot := strings.ReplaceAll(t.TempDir(), "\\", "/")
-	workspacePath := RuntimeWorkspacePathWithRoot(workspaceRoot, "hermes", 45, 90)
-	if err := os.MkdirAll(workspacePath, 0750); err != nil {
-		t.Fatal(err)
-	}
-	marker := filepath.Join(workspacePath, "must-be-erased.txt")
-	if err := os.WriteFile(marker, []byte("delete me"), 0640); err != nil {
-		t.Fatal(err)
-	}
-	outside := filepath.Join(workspaceRoot, "must-remain.txt")
-	if err := os.WriteFile(outside, []byte("keep me"), 0640); err != nil {
-		t.Fatal(err)
-	}
+	workspacePath := "/workspaces/hermes/user-45/instance-90"
 	instanceRepo := newV2LifecycleInstanceRepo()
 	instanceRepo.byID[90] = &models.Instance{
 		ID:                90,
@@ -1002,7 +989,6 @@ func TestInstanceServiceDeleteV2MissingBindingStillDeletesInstance(t *testing.T)
 		runtimePodRepo: &fakeRuntimePodRepo{},
 		bindingRepo:    newFakeRuntimeBindingRepo(),
 		agentClient:    &fakeRuntimeAgentClient{},
-		workspaceRoot:  workspaceRoot,
 	}
 
 	if err := service.Delete(90); err != nil {
@@ -1011,78 +997,10 @@ func TestInstanceServiceDeleteV2MissingBindingStillDeletesInstance(t *testing.T)
 	if len(instanceRepo.deleted) != 1 || instanceRepo.deleted[0] != 90 {
 		t.Fatalf("deleted instances = %#v, want [90]", instanceRepo.deleted)
 	}
-	if _, err := os.Stat(workspacePath); !os.IsNotExist(err) {
-		t.Fatalf("Lite workspace still exists after deletion, err=%v", err)
-	}
-	if body, err := os.ReadFile(outside); err != nil || string(body) != "keep me" {
-		t.Fatalf("file outside Lite workspace changed, body=%q err=%v", string(body), err)
-	}
-}
-
-func TestInstanceServiceDeleteV2RejectsUnexpectedWorkspaceBeforeDeletingRecord(t *testing.T) {
-	workspaceRoot := strings.ReplaceAll(t.TempDir(), "\\", "/")
-	unsafeWorkspacePath := workspaceRoot
-	instanceRepo := newV2LifecycleInstanceRepo()
-	instanceRepo.byID[194] = &models.Instance{
-		ID:            194,
-		UserID:        45,
-		Type:          "openclaw",
-		RuntimeType:   "gateway",
-		InstanceMode:  InstanceModeLite,
-		Status:        "stopped",
-		WorkspacePath: &unsafeWorkspacePath,
-	}
-	service := &instanceService{
-		instanceRepo:  instanceRepo,
-		bindingRepo:   newFakeRuntimeBindingRepo(),
-		workspaceRoot: workspaceRoot,
-	}
-
-	err := service.Delete(194)
-	if err == nil || !strings.Contains(err.Error(), "workspace path failed factory-reset safety validation") {
-		t.Fatalf("Delete error = %v, want workspace safety rejection", err)
-	}
-	if instanceRepo.byID[194] == nil || instanceRepo.byID[194].Status != "deleting" {
-		t.Fatalf("unsafe deletion should remain retryable in deleting state: %#v", instanceRepo.byID[194])
-	}
-	if len(instanceRepo.deleted) != 0 {
-		t.Fatalf("deleted instances = %#v, want none", instanceRepo.deleted)
-	}
-}
-
-func TestInstanceServiceDeleteV2TreatsAlreadyAbsentExpectedWorkspaceAsIdempotent(t *testing.T) {
-	workspaceRoot := strings.ReplaceAll(t.TempDir(), "\\", "/")
-	workspacePath := RuntimeWorkspacePathWithRoot(workspaceRoot, "openclaw", 45, 199)
-	instanceRepo := newV2LifecycleInstanceRepo()
-	instanceRepo.byID[199] = &models.Instance{
-		ID:            199,
-		UserID:        45,
-		Type:          "openclaw",
-		RuntimeType:   "gateway",
-		InstanceMode:  InstanceModeLite,
-		Status:        "deleting",
-		WorkspacePath: &workspacePath,
-	}
-	service := &instanceService{
-		instanceRepo:  instanceRepo,
-		bindingRepo:   newFakeRuntimeBindingRepo(),
-		workspaceRoot: workspaceRoot,
-	}
-
-	if err := service.Delete(199); err != nil {
-		t.Fatalf("Delete returned error for an already absent expected workspace: %v", err)
-	}
-	if instanceRepo.byID[199] != nil {
-		t.Fatalf("instance record remains after idempotent deletion: %#v", instanceRepo.byID[199])
-	}
 }
 
 func TestInstanceServiceDeleteV2KeepsInstanceAndBindingWhenAgentDeleteFails(t *testing.T) {
-	workspaceRoot := strings.ReplaceAll(t.TempDir(), "\\", "/")
-	workspacePath := RuntimeWorkspacePathWithRoot(workspaceRoot, "hermes", 45, 190)
-	if err := os.MkdirAll(workspacePath, 0750); err != nil {
-		t.Fatal(err)
-	}
+	workspacePath := "/workspaces/hermes/user-45/instance-190"
 	instanceRepo := newV2LifecycleInstanceRepo()
 	instanceRepo.byID[190] = &models.Instance{
 		ID:                190,
@@ -1114,7 +1032,6 @@ func TestInstanceServiceDeleteV2KeepsInstanceAndBindingWhenAgentDeleteFails(t *t
 		runtimePodRepo: podRepo,
 		bindingRepo:    bindingRepo,
 		agentClient:    agent,
-		workspaceRoot:  workspaceRoot,
 	}
 
 	err := service.Delete(190)
@@ -1141,9 +1058,6 @@ func TestInstanceServiceDeleteV2KeepsInstanceAndBindingWhenAgentDeleteFails(t *t
 	}
 	if retried != 1 || instanceRepo.byID[190] != nil || bindingRepo.bindings[190] != nil {
 		t.Fatalf("pending deletion did not recover: retried=%d instance=%#v binding=%#v", retried, instanceRepo.byID[190], bindingRepo.bindings[190])
-	}
-	if _, err := os.Stat(workspacePath); !os.IsNotExist(err) {
-		t.Fatalf("Lite workspace still exists after deletion retry, err=%v", err)
 	}
 }
 
@@ -1264,19 +1178,13 @@ func TestInstanceServiceReplacementResetChecksUpgradeGuardBeforeMutation(t *test
 }
 
 func TestInstanceServiceResumePendingDeletionsOnlyRetriesExplicitDeletingRows(t *testing.T) {
-	workspaceRoot := strings.ReplaceAll(t.TempDir(), "\\", "/")
-	deletingWorkspacePath := RuntimeWorkspacePathWithRoot(workspaceRoot, "openclaw", 45, 192)
-	if err := os.MkdirAll(deletingWorkspacePath, 0750); err != nil {
-		t.Fatal(err)
-	}
 	instanceRepo := newV2LifecycleInstanceRepo()
 	instanceRepo.byID[192] = &models.Instance{
-		ID:            192,
-		UserID:        45,
-		Type:          "openclaw",
-		RuntimeType:   "gateway",
-		Status:        "deleting",
-		WorkspacePath: &deletingWorkspacePath,
+		ID:          192,
+		UserID:      45,
+		Type:        "openclaw",
+		RuntimeType: "gateway",
+		Status:      "deleting",
 	}
 	instanceRepo.byID[193] = &models.Instance{
 		ID:          193,
@@ -1288,7 +1196,6 @@ func TestInstanceServiceResumePendingDeletionsOnlyRetriesExplicitDeletingRows(t 
 	service := &instanceService{
 		instanceRepo:      instanceRepo,
 		deletionsInFlight: map[int]struct{}{},
-		workspaceRoot:     workspaceRoot,
 	}
 
 	retried, err := service.ResumePendingDeletions(context.Background())
@@ -1303,9 +1210,6 @@ func TestInstanceServiceResumePendingDeletionsOnlyRetriesExplicitDeletingRows(t 
 	}
 	if instanceRepo.byID[193] == nil || instanceRepo.byID[193].Status != "running" {
 		t.Fatal("running instance was changed by deletion reconciliation")
-	}
-	if _, err := os.Stat(deletingWorkspacePath); !os.IsNotExist(err) {
-		t.Fatalf("deleting instance workspace still exists, err=%v", err)
 	}
 }
 

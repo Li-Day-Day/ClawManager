@@ -65,7 +65,7 @@ func (r *Reader) ReadTaskCheckControl(ctx context.Context, kind TaskKind, public
 
 const maxTaskCheckControlRows = 10000
 const taskCheckControlColumns = "id,schema_version,origin_installation_id,target_type,target_public_id,attempt_no,category,mode,check_code,status,skip_reason,evidence_public_id,evidence_sha256,warning_code,check_classification,failure_category,checked_at,created_at"
-const taskCheckControlSQL = "SELECT " + taskCheckControlColumns + " FROM system_backup_check_results WHERE origin_installation_id=? AND target_type=? AND target_public_id=? ORDER BY checked_at,id LIMIT 10001"
+const taskCheckControlSQL = "SELECT " + taskCheckControlColumns + " FROM system_backup_v2_check_results WHERE origin_installation_id=? AND target_type=? AND target_public_id=? ORDER BY checked_at,id LIMIT 10001"
 
 var taskCheckCode = regexp.MustCompile(`^[a-z0-9][a-z0-9_.-]{0,127}$`)
 var taskCheckBusinessCategories = statusSet("users", "instances", "ai_gateway", "teams", "resources", "skill_hub", "control_plane")

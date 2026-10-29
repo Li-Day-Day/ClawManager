@@ -83,7 +83,7 @@ func decodeADownloadMFAInputs(raw []byte) (aDownloadMFAInputs, error) {
 		return out, ErrInvalid
 	}
 	var extra any
-	if len(seen) != 9 || d.Decode(&extra) != io.EOF || json.Unmarshal(raw, &out) != nil || out.Kind != "a_download_mfa_probe_inputs.v1" || out.Catalog != "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe" || len(out.Files) != 96 || out.CanonicalSHA != "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1" || hash([]byte(out.CanonicalDDL)) != out.CanonicalSHA || out.OwnershipSHA != "dc0687839ce07646688b7a53d3c7ddda20ea5b269999d499a0730e2d2e0f50a9" || hash([]byte(out.OwnershipDDL)) != out.OwnershipSHA || !strings.HasPrefix(out.ConfigSchema, "CREATE TABLE IF NOT EXISTS system_backup_configs (") {
+	if len(seen) != 9 || d.Decode(&extra) != io.EOF || json.Unmarshal(raw, &out) != nil || out.Kind != "a_download_mfa_probe_inputs.v1" || out.Catalog != "0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe" || len(out.Files) != 96 || out.CanonicalSHA != "14db3b88263f0ab3e31e293aa0351bb08da23464d4a0fee8854263d56354cce1" || hash([]byte(out.CanonicalDDL)) != out.CanonicalSHA || out.OwnershipSHA != "dc0687839ce07646688b7a53d3c7ddda20ea5b269999d499a0730e2d2e0f50a9" || hash([]byte(out.OwnershipDDL)) != out.OwnershipSHA || !strings.HasPrefix(out.ConfigSchema, "CREATE TABLE IF NOT EXISTS system_backup_v2_configs (") {
 		return aDownloadMFAInputs{}, ErrInvalid
 	}
 	for i, name := range out.Files {
@@ -136,7 +136,7 @@ func TestASensitiveDownloadMFAMySQLSeed(t *testing.T) {
 			case "catalog":
 				raw = bytes.Replace(raw, []byte("0a2fc9ee709ffe6935679ed0923414f0607b2d34bf55ba615e7f431f8411bffe"), []byte(strings.Repeat("0", 64)), 1)
 			case "ddl":
-				raw = bytes.Replace(raw, []byte("ALTER TABLE system_backup_configs"), []byte("ALTER TABLE wrong_config_table"), 1)
+				raw = bytes.Replace(raw, []byte("ALTER TABLE system_backup_v2_configs"), []byte("ALTER TABLE wrong_config_table"), 1)
 			case "budget":
 				raw = make([]byte, 65537)
 			}
@@ -261,7 +261,7 @@ func aDownloadMFADatabase(t *testing.T, input aDownloadMFAInputs) (context.Conte
 	mustSQL(t, err)
 	_, err = db.ExecContext(ctx, input.OwnershipDDL)
 	mustSQL(t, err)
-	for _, table := range []string{"users", "audit_logs", "system_backup_configs", "system_backup_installation_state", "system_backup_admin_sessions", "system_backup_admin_revocations", "system_backup_totp_credentials", "system_backup_evidence", "system_backup_evidence_chunks", "system_backup_strong_auth_nonces"} {
+	for _, table := range []string{"users", "audit_logs", "system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_admin_sessions", "system_backup_v2_admin_revocations", "system_backup_v2_totp_credentials", "system_backup_v2_evidence", "system_backup_v2_evidence_chunks", "system_backup_v2_strong_auth_nonces"} {
 		var engine string
 		mustSQL(t, db.QueryRowContext(ctx, "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?", table).Scan(&engine))
 		if engine != "InnoDB" {
@@ -382,7 +382,7 @@ func newADownloadMFAFixture(t *testing.T, input aDownloadMFAInputs) *aDownloadMF
 	_, err = db.ExecContext(ctx, "INSERT INTO users(id,username,email,password_hash,role,is_active) VALUES(42,'synthetic-download-mfa','download-mfa@example.invalid',?,'admin',TRUE)", string(passwordHash))
 	mustSQL(t, err)
 	values := aDownloadMFAConfigCells(p)
-	rows, err := db.QueryContext(ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' ORDER BY ORDINAL_POSITION")
+	rows, err := db.QueryContext(ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_configs' ORDER BY ORDINAL_POSITION")
 	mustSQL(t, err)
 	var columns []string
 	var args []any
@@ -396,15 +396,15 @@ func newADownloadMFAFixture(t *testing.T, input aDownloadMFAInputs) *aDownloadMF
 	}
 	mustSQL(t, rows.Err())
 	mustSQL(t, rows.Close())
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
 	mustSQL(t, err)
 	now := aDownloadMFANow(t, ctx, db)
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_installation_state(origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key) VALUES (?,1,?,'k8s-cluster')", p.initial.Manifest.Identity.Installation, now)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_installation_state(origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key) VALUES (?,1,?,'k8s-cluster')", p.initial.Manifest.Identity.Installation, now)
 	mustSQL(t, err)
 	r := p.initial
 	m := r.Manifest
 	i := m.Identity
-	result, err := db.ExecContext(ctx, `INSERT INTO system_backup_evidence(public_id,origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,storage_provider_role,storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,storage_immutable_version,content_checksum,content_size_bytes,object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_count,chunk_list_root,media_type,encryption,envelope_framing_version,kek_identity_hash,kek_version,envelope_hash,redaction_classification,observed_health,expires_at,protected_until,row_version,created_at) VALUES(?,?,?,?,?,'ready','none','evidence',?,?,?,?,?,?,?,?,?,?,?,?,?,'envelope_v1',?,?,?,?,?,'unknown',?,?,?,?)`, i.ID, i.Installation, i.OwnerType, i.OwnerID, i.Type, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), r.Ref.ImmutableVersion, i.ContentHash, i.ContentSize, m.ObjectHash, m.ObjectSize, ChunkSize, len(m.Chunks), m.ChunkRoot, i.Media, Framing, m.Key.Identity, m.Key.Version, m.EnvelopeHash, i.Classification, r.ExpiresAt, r.ProtectedUntil, r.RowVersion, r.CreatedAt)
+	result, err := db.ExecContext(ctx, `INSERT INTO system_backup_v2_evidence(public_id,origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,storage_provider_role,storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,storage_immutable_version,content_checksum,content_size_bytes,object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_count,chunk_list_root,media_type,encryption,envelope_framing_version,kek_identity_hash,kek_version,envelope_hash,redaction_classification,observed_health,expires_at,protected_until,row_version,created_at) VALUES(?,?,?,?,?,'ready','none','evidence',?,?,?,?,?,?,?,?,?,?,?,?,?,'envelope_v1',?,?,?,?,?,'unknown',?,?,?,?)`, i.ID, i.Installation, i.OwnerType, i.OwnerID, i.Type, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), r.Ref.ImmutableVersion, i.ContentHash, i.ContentSize, m.ObjectHash, m.ObjectSize, ChunkSize, len(m.Chunks), m.ChunkRoot, i.Media, Framing, m.Key.Identity, m.Key.Version, m.EnvelopeHash, i.Classification, r.ExpiresAt, r.ProtectedUntil, r.RowVersion, r.CreatedAt)
 	mustSQL(t, err)
 	evidenceID, err := result.LastInsertId()
 	mustSQL(t, err)
@@ -413,7 +413,7 @@ func newADownloadMFAFixture(t *testing.T, input aDownloadMFAInputs) *aDownloadMF
 		mustSQL(t, e)
 		tag, e := base64.RawURLEncoding.DecodeString(chunk.Tag)
 		mustSQL(t, e)
-		_, err = db.ExecContext(ctx, "INSERT INTO system_backup_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)", evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
+		_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)", evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
 		mustSQL(t, err)
 	}
 	_, err = db.ExecContext(ctx, "CREATE TABLE synthetic_download_mfa_owner(owner_id VARCHAR(128) PRIMARY KEY,installation VARCHAR(128) NOT NULL,owner_type VARCHAR(32) NOT NULL,deadline DATETIME(6) NOT NULL,visible BOOLEAN NOT NULL) ENGINE=InnoDB")
@@ -445,7 +445,7 @@ func newADownloadMFAFixture(t *testing.T, input aDownloadMFAInputs) *aDownloadMF
 	stamp := aDownloadMFANow(t, ctx, db)
 	_, err = f.svc.VerifyAndIssue(ctx, p.env.actor, f.password, aDownloadMFACode(f.seed, stamp.Unix()/30), nil)
 	mustSQL(t, err)
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT last_step FROM system_backup_totp_credentials WHERE origin_installation_id=? AND user_id=42", i.Installation).Scan(&f.step))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT last_step FROM system_backup_v2_totp_credentials WHERE origin_installation_id=? AND user_id=42", i.Installation).Scan(&f.step))
 	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM audit_logs WHERE user_id=42").Scan(&f.audits))
 	materials, err := sec.NewConfigMutationSecurityFiles(i.Installation, identity, p.configuration.RegistryDirectory, filepath.Dir(filepath.Dir(p.noncePaths["v2"])))
 	mustSQL(t, err)
@@ -490,13 +490,13 @@ func (f *aDownloadMFAFixture) http(code string) (int, sec.Proof) {
 func (f *aDownloadMFAFixture) checkRows(t *testing.T, step int64, auditDelta int) {
 	t.Helper()
 	var gotStep int64
-	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT last_step FROM system_backup_totp_credentials WHERE origin_installation_id=? AND user_id=42", f.svc.InstallationID).Scan(&gotStep))
+	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT last_step FROM system_backup_v2_totp_credentials WHERE origin_installation_id=? AND user_id=42", f.svc.InstallationID).Scan(&gotStep))
 	var audits int
 	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT COUNT(*) FROM audit_logs WHERE user_id=42").Scan(&audits))
 	if gotStep != step || audits != f.audits+auditDelta {
 		t.Fatal("actual TOTP/audit transaction differs", gotStep, step, audits, f.audits+auditDelta)
 	}
-	for _, table := range []string{"system_backup_strong_auth_nonces", "system_backup_operations", "system_backup_download_admission_receipts", "system_backup_metadata_reservations"} {
+	for _, table := range []string{"system_backup_v2_strong_auth_nonces", "system_backup_v2_operations", "system_backup_v2_download_admission_receipts", "system_backup_v2_metadata_reservations"} {
 		var count int
 		mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT COUNT(*) FROM "+table).Scan(&count))
 		if count != 0 {
@@ -506,7 +506,7 @@ func (f *aDownloadMFAFixture) checkRows(t *testing.T, step int64, auditDelta int
 	var claim sql.NullString
 	var version int64
 	var checksum string
-	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT claim_owner,row_version,content_checksum FROM system_backup_evidence WHERE public_id=?", f.initial.Manifest.Identity.ID).Scan(&claim, &version, &checksum))
+	mustSQL(t, f.db.QueryRowContext(f.ctx, "SELECT claim_owner,row_version,content_checksum FROM system_backup_v2_evidence WHERE public_id=?", f.initial.Manifest.Identity.ID).Scan(&claim, &version, &checksum))
 	if claim.Valid || version != f.initial.RowVersion || checksum != f.initial.Manifest.Identity.ContentHash {
 		t.Fatal("MFA changed immutable evidence/claim")
 	}
@@ -660,7 +660,7 @@ func TestASensitiveDownloadMFAMySQL(t *testing.T) {
 					hit = true
 					q := "UPDATE synthetic_download_mfa_owner SET visible=FALSE"
 					if name == "final_manifest_change_rollback" {
-						q = "UPDATE system_backup_evidence SET content_checksum='" + strings.Repeat("c", 64) + "'"
+						q = "UPDATE system_backup_v2_evidence SET content_checksum='" + strings.Repeat("c", 64) + "'"
 					}
 					r, e := f.owners.tx.ExecContext(ctx, q)
 					if e != nil {
@@ -723,14 +723,14 @@ func TestASensitiveDownloadMFAMySQL(t *testing.T) {
 				mustSQL(t, e)
 				defer blocker.Rollback()
 				var installation string
-				mustSQL(t, blocker.QueryRowContext(f.ctx, "SELECT origin_installation_id FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", f.svc.InstallationID).Scan(&installation))
+				mustSQL(t, blocker.QueryRowContext(f.ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", f.svc.InstallationID).Scan(&installation))
 				result := make(chan int, 1)
 				go func() { status, _ := f.http(code); result <- status }()
 				observed := false
 				limit := time.Now().Add(5 * time.Second)
 				for time.Now().Before(limit) {
 					var waits int
-					mustSQL(t, f.db.QueryRowContext(f.ctx, `SELECT COUNT(*) FROM performance_schema.data_lock_waits w JOIN performance_schema.data_locks l ON l.ENGINE_LOCK_ID=w.REQUESTING_ENGINE_LOCK_ID WHERE l.OBJECT_SCHEMA=? AND l.OBJECT_NAME='system_backup_installation_state'`, f.identity.Database).Scan(&waits))
+					mustSQL(t, f.db.QueryRowContext(f.ctx, `SELECT COUNT(*) FROM performance_schema.data_lock_waits w JOIN performance_schema.data_locks l ON l.ENGINE_LOCK_ID=w.REQUESTING_ENGINE_LOCK_ID WHERE l.OBJECT_SCHEMA=? AND l.OBJECT_NAME='system_backup_v2_installation_state'`, f.identity.Database).Scan(&waits))
 					if waits > 0 {
 						observed = true
 						break

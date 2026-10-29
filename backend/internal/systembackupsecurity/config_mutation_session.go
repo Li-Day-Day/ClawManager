@@ -38,7 +38,7 @@ func (s *SQLLoginSessions) CheckConfigMutationSession(ctx context.Context, tx *s
 		return ErrRegistrationPermission
 	}
 	var revokedBefore time.Time
-	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", installation, actor.UserID).Scan(&revokedBefore)
+	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_v2_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", installation, actor.UserID).Scan(&revokedBefore)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) || err == nil && revokedBefore.IsZero() {
 		return ErrRegistrationUnavailable
 	}

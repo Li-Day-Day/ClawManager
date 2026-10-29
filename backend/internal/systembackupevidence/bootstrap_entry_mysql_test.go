@@ -211,7 +211,7 @@ func bootstrapEntryLowIdentity(t *testing.T, f *bootstrapEntryFixture) *sql.DB {
 		}
 		t.Log("CLEANED entry run-owned mysql account")
 	})
-	for _, table := range []string{"users", "audit_logs", "system_backup_evidence", "system_backup_evidence_chunks", "system_backup_configs", "system_backup_installation_state", "system_backup_operations", "system_backup_metadata_reservations"} {
+	for _, table := range []string{"users", "audit_logs", "system_backup_v2_evidence", "system_backup_v2_evidence_chunks", "system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_operations", "system_backup_v2_metadata_reservations"} {
 		_, err = f.db.Exec("GRANT SELECT,INSERT,UPDATE,DELETE ON " + string(f.scope.Database) + "." + table + " TO '" + user + "'@'127.0.0.1'")
 		mustSQL(t, err)
 	}
@@ -245,8 +245,8 @@ func bootstrapEntryLowIdentity(t *testing.T, f *bootstrapEntryFixture) *sql.DB {
 	mustSQL(t, err)
 	defer tx.Rollback()
 	for _, query := range []string{
-		"SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE",
-		"SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE",
+		"SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE",
+		"SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE",
 	} {
 		rows, err := tx.QueryContext(ctx, query)
 		mustSQL(t, err)
@@ -410,7 +410,7 @@ func TestDBootstrapEntryMySQL(t *testing.T) {
 					t.Fatal("old schema original writer failed")
 				}
 				var configs int
-				mustSQL(t, f.db.QueryRow("SELECT COUNT(*) FROM system_backup_configs WHERE origin_installation_id=? AND version=1 AND enabled=FALSE", f.grant.InstallationID).Scan(&configs))
+				mustSQL(t, f.db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1 AND enabled=FALSE", f.grant.InstallationID).Scan(&configs))
 				if configs != 1 {
 					t.Fatal("entry atomic disabled config missing")
 				}

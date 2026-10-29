@@ -33,7 +33,7 @@ type operationAStoreConn struct {
 }
 
 func (c *operationAStoreConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	if strings.HasPrefix(query, "INSERT INTO system_backup_operations") {
+	if strings.HasPrefix(query, "INSERT INTO system_backup_v2_operations") {
 		row, err := operationBindingSQLRow(query, args)
 		if err != nil {
 			return nil, err
@@ -112,7 +112,7 @@ func (r *operationAAttackRows) Next(values []driver.Value) error {
 	}
 	// Evidence attacks must not alter the operation query, so that the test
 	// isolates the independent saved-evidence binding.
-	if r.observation.attack != "foreign-actor" && r.observation.attack != "foreign-request" && !strings.Contains(r.query, " FROM system_backup_evidence ") {
+	if r.observation.attack != "foreign-actor" && r.observation.attack != "foreign-request" && !strings.Contains(r.query, " FROM system_backup_v2_evidence ") {
 		return nil
 	}
 	for i, name := range operationASelectedColumns(r.query) {

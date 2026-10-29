@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"clawreef/internal/backupgate"
 	"clawreef/internal/models"
 	"clawreef/internal/repository"
 	"clawreef/internal/services/k8s"
@@ -16,7 +17,6 @@ import (
 
 // SyncService handles synchronization between database and K8s state
 type SyncService struct {
-	BackupGate           BackupMutationGate
 	instanceRepo         repository.InstanceRepository
 	runtimeStatusService InstanceRuntimeStatusService
 	podService           *k8s.PodService
@@ -94,8 +94,8 @@ func (s *SyncService) syncLoop(stop <-chan struct{}) {
 // syncAllInstances synchronizes the state of all instances
 func (s *SyncService) syncAllInstances() {
 	ctx := context.Background()
-	ctx, release, err := enterBackupMutationContext(ctx, s.BackupGate, "instance-sync")
-	if err != nil {
+	release, gateErr := backupgate.HoldWorkUnit(ctx, "instance.sync")
+	if gateErr != nil {
 		return
 	}
 	defer release()

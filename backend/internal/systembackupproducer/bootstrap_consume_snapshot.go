@@ -11,11 +11,11 @@ import (
 // full rows preserve manifest/locator/chunk and flattened config bytes, even
 // fields which are not part of the small ResultEvidence projection. Snapshots
 // carry no permission and never appear in the public result or errors.
-const bootstrapEvidenceSnapshotSQL = "SELECT * FROM system_backup_evidence WHERE public_id=? FOR UPDATE"
-const bootstrapChunksSnapshotSQL = "SELECT * FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE"
-const bootstrapConfigSnapshotSQL = "SELECT * FROM system_backup_configs WHERE origin_installation_id=? AND version=1 FOR UPDATE"
-const bootstrapInstallationSnapshotSQL = "SELECT * FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE"
-const bootstrapOperationSnapshotSQL = "SELECT * FROM system_backup_operations WHERE public_id=? FOR UPDATE"
+const bootstrapEvidenceSnapshotSQL = "SELECT * FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE"
+const bootstrapChunksSnapshotSQL = "SELECT * FROM system_backup_v2_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE"
+const bootstrapConfigSnapshotSQL = "SELECT * FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1 FOR UPDATE"
+const bootstrapInstallationSnapshotSQL = "SELECT * FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE"
+const bootstrapOperationSnapshotSQL = "SELECT * FROM system_backup_v2_operations WHERE public_id=? FOR UPDATE"
 const bootstrapAuditSnapshotSQL = "SELECT * FROM audit_logs WHERE id=? FOR UPDATE"
 
 type bootstrapSQLSnapshot struct {

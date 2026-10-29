@@ -11,5 +11,5 @@ func taskPageSQL(table taskTable, filtered bool) string {
 	return query + " ORDER BY id DESC LIMIT ?"
 }
 
-const operationPageSQL = `SELECT id,` + operationProjectionColumns + ` FROM system_backup_operations
+const operationPageSQL = `SELECT id,` + operationProjectionColumns + ` FROM system_backup_v2_operations
 WHERE origin_installation_id=? AND id<? ORDER BY id DESC LIMIT ?`

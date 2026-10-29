@@ -135,11 +135,11 @@ func TestSQLTaskDownloadUnknownSchemaOwnerAndAuthorityFailBeforeChunks(t *testin
 				s := "installation_other"
 				f.db.committedOrigin = &s
 			case "metadata_missing":
-				delete(m.metadata, "system_backup_events.detail_evidence_public_id")
+				delete(m.metadata, "system_backup_v2_events.detail_evidence_public_id")
 			case "metadata_unknown":
 				m.metadata["system_unreviewed_table.evidence_id"] = "bigint"
 			case "metadata_type":
-				m.metadata["system_backup_log_chunks.redacted_evidence_id"] = "varchar"
+				m.metadata["system_backup_v2_log_chunks.redacted_evidence_id"] = "varchar"
 			case "metadata_partial_producer":
 				m.metadata["system_backup_producer_runs.evidence_id"] = "varchar"
 			case "session_revoked":
@@ -174,12 +174,12 @@ func TestSQLTaskDownloadLocksReferencesInOrderAndRejectsOverflow(t *testing.T) {
 			f, _, s, m := sqlTaskOwnerFixture(t, "backup")
 			switch mode {
 			case "normal":
-				m.refs["system_backup_check_results"] = []int64{4, 8}
+				m.refs["system_backup_v2_check_results"] = []int64{4, 8}
 			case "unsorted":
-				m.refs["system_backup_check_results"] = []int64{8, 4}
+				m.refs["system_backup_v2_check_results"] = []int64{8, 4}
 			case "overflow":
 				for n := 1; n <= maxTaskDownloadReferences+1; n++ {
-					m.refs["system_backup_check_results"] = append(m.refs["system_backup_check_results"], int64(n))
+					m.refs["system_backup_v2_check_results"] = append(m.refs["system_backup_v2_check_results"], int64(n))
 				}
 			case "producer_reference":
 				for _, table := range taskDownloadSystemProducerTables {
@@ -367,7 +367,7 @@ func TestSQLTaskDownloadResultLocksActualOwnerAfterRevocation(t *testing.T) {
 				m.created = c.record.CreatedAt.Add(time.Microsecond)
 			case "reference_overflow":
 				for n := 1; n <= maxTaskDownloadReferences+1; n++ {
-					m.refs["system_backup_check_results"] = append(m.refs["system_backup_check_results"], int64(n))
+					m.refs["system_backup_v2_check_results"] = append(m.refs["system_backup_v2_check_results"], int64(n))
 				}
 			}
 			queries := len(f.db.queries)

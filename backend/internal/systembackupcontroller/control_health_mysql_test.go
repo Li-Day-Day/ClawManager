@@ -89,8 +89,8 @@ func decodeHealthProbeInputs(raw []byte) (healthProbeInputs, error) {
 	}
 	if value.Kind != "d_control_health_probe_inputs.v1" || value.Catalog != ContractMigrationCatalogHash || len(value.Migrations) != ContractMigrationCatalogFileCount ||
 		healthDigest([]byte(value.DDL)) != value.DDLSHA || healthDigest([]byte(value.Fixture)) != value.FixtureSHA ||
-		healthStatementCount(value.DDL) != 1 || !strings.Contains(value.DDL, "CREATE TABLE system_backup_control_health (") ||
-		healthStatementCount(value.Fixture) != 2 || !strings.Contains(value.Fixture, "INSERT INTO system_backup_configs (") || !strings.Contains(value.Fixture, "INSERT INTO system_backup_installation_state (") {
+		healthStatementCount(value.DDL) != 1 || !strings.Contains(value.DDL, "CREATE TABLE system_backup_v2_control_health (") ||
+		healthStatementCount(value.Fixture) != 2 || !strings.Contains(value.Fixture, "INSERT INTO system_backup_v2_configs (") || !strings.Contains(value.Fixture, "INSERT INTO system_backup_v2_installation_state (") {
 		return healthProbeInputs{}, errors.New("capsule source/catalog pins differ")
 	}
 	for i, name := range value.Migrations {
@@ -144,7 +144,7 @@ func TestDControlHealthMySQLSeed(t *testing.T) {
 	t.Run("current_config_switch_fixture", func(t *testing.T) {
 		query, err := healthNextConfigFixture(input.Fixture)
 		healthMust(t, err)
-		if healthStatementCount(query) != 1 || strings.Contains(query, "INSERT INTO system_backup_installation_state") || !strings.Contains(query, ") VALUES (\n  @installation_id,\n  2,\n") {
+		if healthStatementCount(query) != 1 || strings.Contains(query, "INSERT INTO system_backup_v2_installation_state") || !strings.Contains(query, ") VALUES (\n  @installation_id,\n  2,\n") {
 			t.Fatal("config switch fixture must insert only an existing version 2 target")
 		}
 		if _, err := healthNextConfigFixture(strings.Replace(input.Fixture, "  @installation_id,\n  1,", "  @installation_id,\n  3,", 1)); err == nil {
@@ -163,7 +163,7 @@ func TestDControlHealthMySQLSeed(t *testing.T) {
 		{"unknown", func(b []byte) []byte { return append([]byte(`{"unreviewed":true,`), b[1:]...) }},
 		{"trailing", func(b []byte) []byte { return append(b, []byte(`{}`)...) }},
 		{"DDL drift", func(b []byte) []byte {
-			return bytes.Replace(b, []byte("CREATE TABLE system_backup_control_health"), []byte("CREATE TABLE other_health"), 1)
+			return bytes.Replace(b, []byte("CREATE TABLE system_backup_v2_control_health"), []byte("CREATE TABLE other_health"), 1)
 		}},
 		{"fixture drift", func(b []byte) []byte {
 			return bytes.Replace(b, []byte("d-isolated-smoke"), []byte("other-isolated-smoke"), 1)
@@ -180,7 +180,7 @@ func TestDControlHealthMySQLSeed(t *testing.T) {
 }
 
 func healthNextConfigFixture(fixture string) (string, error) {
-	config, _, ok := strings.Cut(fixture, "\nINSERT INTO system_backup_installation_state (")
+	config, _, ok := strings.Cut(fixture, "\nINSERT INTO system_backup_v2_installation_state (")
 	const values = ") VALUES (\n  @installation_id,\n  1,\n"
 	if !ok || strings.Count(config, values) != 1 || healthStatementCount(config) != 1 {
 		return "", errors.New("config switch fixture shape differs")
@@ -250,7 +250,7 @@ func (s *healthSQLScope) RecheckRead(context.Context, *sql.Tx, string) error {
 
 func healthStateBytes(t *testing.T, ctx context.Context, db *sql.DB, installation string) string {
 	t.Helper()
-	rows, err := db.QueryContext(ctx, "SELECT * FROM system_backup_installation_state WHERE origin_installation_id=?", installation)
+	rows, err := db.QueryContext(ctx, "SELECT * FROM system_backup_v2_installation_state WHERE origin_installation_id=?", installation)
 	healthMust(t, err)
 	defer rows.Close()
 	columns, err := rows.Columns()
@@ -285,7 +285,7 @@ func healthOwnedFixture(t *testing.T, ctx context.Context, db *sql.DB, input hea
 	t.Cleanup(func() {
 		cleanup, done := context.WithTimeout(context.Background(), 20*time.Second)
 		defer done()
-		for _, table := range []string{"system_backup_control_health", "system_backup_installation_state", "system_backup_configs"} {
+		for _, table := range []string{"system_backup_v2_control_health", "system_backup_v2_installation_state", "system_backup_v2_configs"} {
 			if _, e := db.ExecContext(cleanup, "DELETE FROM "+table+" WHERE origin_installation_id=?", id); e != nil {
 				t.Errorf("CLEANUP_PENDING health fixture=%s table=%s: %v", id, table, e)
 				return
@@ -345,7 +345,7 @@ func TestDControlHealthMySQL(t *testing.T) {
 		t.Fatal("actual ledger differs from full current catalog")
 	}
 	var exists int
-	healthMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='system_backup_control_health'").Scan(&exists))
+	healthMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='system_backup_v2_control_health'").Scan(&exists))
 	if exists != 0 {
 		t.Fatal("refusing an existing health table")
 	}
@@ -355,11 +355,11 @@ func TestDControlHealthMySQL(t *testing.T) {
 		cleanup, done := context.WithTimeout(context.Background(), 20*time.Second)
 		defer done()
 		var n int
-		if e := db.QueryRowContext(cleanup, "SELECT COUNT(*) FROM system_backup_control_health").Scan(&n); e != nil || n != 0 {
+		if e := db.QueryRowContext(cleanup, "SELECT COUNT(*) FROM system_backup_v2_control_health").Scan(&n); e != nil || n != 0 {
 			t.Errorf("CLEANUP_PENDING candidate health table rows=%d: %v", n, e)
 			return
 		}
-		if _, e := db.ExecContext(cleanup, "DROP TABLE system_backup_control_health"); e != nil {
+		if _, e := db.ExecContext(cleanup, "DROP TABLE system_backup_v2_control_health"); e != nil {
 			t.Errorf("CLEANUP_PENDING candidate health table: %v", e)
 		} else {
 			t.Log("CLEANED candidate control health table")
@@ -487,7 +487,7 @@ func TestDControlHealthMySQL(t *testing.T) {
 			}
 		}
 		var sequence uint64
-		healthMust(t, db.QueryRowContext(ctx, "SELECT observation_sequence FROM system_backup_control_health WHERE origin_installation_id=?", id).Scan(&sequence))
+		healthMust(t, db.QueryRowContext(ctx, "SELECT observation_sequence FROM system_backup_v2_control_health WHERE origin_installation_id=?", id).Scan(&sequence))
 		if won != 1 || sequence != 1 {
 			t.Fatal("concurrent observation was not single CAS", won, sequence)
 		}
@@ -502,8 +502,8 @@ func TestDControlHealthMySQL(t *testing.T) {
 		// Backdate a valid observation using this fixture's configured TTL.
 		// A fixed 30-second window is corrupt when the interval is 5 seconds;
 		// the reader correctly returns unavailable instead of stale for it.
-		result, err := db.ExecContext(ctx, `UPDATE system_backup_control_health h
-JOIN system_backup_configs c ON c.origin_installation_id=h.origin_installation_id AND c.version=h.config_version
+		result, err := db.ExecContext(ctx, `UPDATE system_backup_v2_control_health h
+JOIN system_backup_v2_configs c ON c.origin_installation_id=h.origin_installation_id AND c.version=h.config_version
 SET h.observed_at=TIMESTAMPADD(SECOND,-(3*c.controller_reconcile_interval_seconds+1),UTC_TIMESTAMP(6)),
     h.expires_at=TIMESTAMPADD(SECOND,-1,UTC_TIMESTAMP(6))
 WHERE h.origin_installation_id=?`, id)
@@ -516,7 +516,7 @@ WHERE h.origin_installation_id=?`, id)
 		var lifetime, configuredLifetime int64
 		healthMust(t, db.QueryRowContext(ctx, `SELECT TIMESTAMPDIFF(MICROSECOND,h.observed_at,h.expires_at),
 3*c.controller_reconcile_interval_seconds*1000000
-FROM system_backup_control_health h JOIN system_backup_configs c
+FROM system_backup_v2_control_health h JOIN system_backup_v2_configs c
 ON c.origin_installation_id=h.origin_installation_id AND c.version=h.config_version
 WHERE h.origin_installation_id=?`, id).Scan(&lifetime, &configuredLifetime))
 		if lifetime != configuredLifetime {
@@ -553,7 +553,7 @@ WHERE h.origin_installation_id=?`, id).Scan(&lifetime, &configuredLifetime))
 		// An intentionally changed fixture's current-config pointer must also
 		// fence health writes. Compare the complete state after this fixture
 		// mutation, so a writer cannot hide additional installation changes.
-		_, err = db.ExecContext(ctx, "UPDATE system_backup_installation_state SET active_config_version=2 WHERE origin_installation_id=?", id)
+		_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=2 WHERE origin_installation_id=?", id)
 		healthMust(t, err)
 		before := healthStateBytes(t, ctx, db, id)
 		token, err = store.Observe(ctx, writer, ControlLoopResult{}, probe)
@@ -573,11 +573,11 @@ WHERE h.origin_installation_id=?`, id).Scan(&lifetime, &configuredLifetime))
 		_, err := store.BeginWriter(ctx, id, 1, "health:leader", 0)
 		healthMust(t, err)
 		for _, query := range []string{
-			"UPDATE system_backup_control_health SET writer_epoch=0 WHERE origin_installation_id=?",
-			"UPDATE system_backup_control_health SET writer_epoch=9007199254740992 WHERE origin_installation_id=?",
-			"UPDATE system_backup_control_health SET writer_owner='' WHERE origin_installation_id=?",
-			"UPDATE system_backup_control_health SET controller_health='healthy' WHERE origin_installation_id=?",
-			"UPDATE system_backup_control_health SET expires_at=observed_at WHERE origin_installation_id=?",
+			"UPDATE system_backup_v2_control_health SET writer_epoch=0 WHERE origin_installation_id=?",
+			"UPDATE system_backup_v2_control_health SET writer_epoch=9007199254740992 WHERE origin_installation_id=?",
+			"UPDATE system_backup_v2_control_health SET writer_owner='' WHERE origin_installation_id=?",
+			"UPDATE system_backup_v2_control_health SET controller_health='healthy' WHERE origin_installation_id=?",
+			"UPDATE system_backup_v2_control_health SET expires_at=observed_at WHERE origin_installation_id=?",
 		} {
 			_, err := db.ExecContext(ctx, query, id)
 			var mysqlErr *mysql.MySQLError
@@ -585,7 +585,7 @@ WHERE h.origin_installation_id=?`, id).Scan(&lifetime, &configuredLifetime))
 				t.Fatal("actual CHECK was not enforced", err)
 			}
 		}
-		for _, table := range []string{"system_backup_installation_state", "system_backup_configs"} {
+		for _, table := range []string{"system_backup_v2_installation_state", "system_backup_v2_configs"} {
 			_, err := db.ExecContext(ctx, "DELETE FROM "+table+" WHERE origin_installation_id=?", id)
 			var mysqlErr *mysql.MySQLError
 			if !errors.As(err, &mysqlErr) || mysqlErr.Number != 1451 {
@@ -625,7 +625,7 @@ WHERE h.origin_installation_id=?`, id).Scan(&lifetime, &configuredLifetime))
 			t.Fatal("unknown reply caused SQL retry")
 		}
 		var sequence uint64
-		healthMust(t, db.QueryRowContext(ctx, "SELECT observation_sequence FROM system_backup_control_health WHERE origin_installation_id=?", id).Scan(&sequence))
+		healthMust(t, db.QueryRowContext(ctx, "SELECT observation_sequence FROM system_backup_v2_control_health WHERE origin_installation_id=?", id).Scan(&sequence))
 		if sequence != 1 || healthRead(t, ctx, db, id).ControllerHealth() != "healthy" {
 			t.Fatal("independent read did not find one committed observation")
 		}

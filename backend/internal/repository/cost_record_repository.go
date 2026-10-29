@@ -32,9 +32,10 @@ type costRecordRepository struct {
 	sess db.Session
 }
 
-// NewCostRecordRepository creates a new cost record repository.
+// NewCostRecordRepository creates a new cost record repository (schema is owned by embedded migrations).
 func NewCostRecordRepository(sess db.Session) CostRecordRepository {
-	return &costRecordRepository{sess: sess}
+	repo := &costRecordRepository{sess: sess}
+	return repo
 }
 
 func (r *costRecordRepository) Create(record *models.CostRecord) error {

@@ -42,7 +42,7 @@ func TestDAdminReadIndexCandidateMySQL(t *testing.T) {
 	if gotRun != run || gotUID != uid || pinnedUUID != actualUUID {
 		t.Fatal("index probe is outside the pinned run-owned MySQL")
 	}
-	for _, filename := range []string{"066_add_system_backup_config_and_operations.sql", "067_add_system_backup_task_execution_core.sql"} {
+	for _, filename := range []string{"097_backup_v2_add_system_backup_config_and_operations.sql", "098_backup_v2_add_system_backup_task_execution_core.sql"} {
 		var n int
 		indexMust(t, source.QueryRowContext(ctx, "SELECT COUNT(*) FROM schema_migrations WHERE filename=?", filename).Scan(&n))
 		if n != 1 {
@@ -79,7 +79,7 @@ func TestDAdminReadIndexCandidateMySQL(t *testing.T) {
 	indexMust(t, err)
 	defer db.Close()
 	const rowCount = 12000
-	tables := []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_backup_operations"}
+	tables := []string{"system_backup_v2_backups", "system_backup_v2_restore_drills", "system_backup_v2_preflights", "system_backup_v2_artifact_verifications", "system_backup_v2_operations"}
 	sourceHashes := make(map[string]string)
 	for _, table := range tables {
 		sourceHashes[table] = indexSchemaHash(t, ctx, source, table)
@@ -141,9 +141,9 @@ func indexVariantDDL(full, variant string) (string, error) {
 		return "", ErrInvalid
 	}
 	tables := []struct{ table, prefix string }{
-		{"system_backups", "idx_sb_backup"}, {"system_restore_drills", "idx_sb_drill"},
-		{"system_backup_preflights", "idx_sb_preflight"}, {"system_backup_artifact_verifications", "idx_sb_verify"},
-		{"system_backup_operations", "idx_sb_operation"},
+		{"system_backup_v2_backups", "idx_sb_backup"}, {"system_backup_v2_restore_drills", "idx_sb_drill"},
+		{"system_backup_v2_preflights", "idx_sb_preflight"}, {"system_backup_v2_artifact_verifications", "idx_sb_verify"},
+		{"system_backup_v2_operations", "idx_sb_operation"},
 	}
 	build := func(group string) string {
 		var statements []string
@@ -152,7 +152,7 @@ func indexVariantDDL(full, variant string) (string, error) {
 			if group != "status" {
 				indexes = append(indexes, "ADD INDEX "+row.prefix+"_admin_page (origin_installation_id, id)")
 			}
-			if group != "page" && row.table != "system_backup_operations" {
+			if group != "page" && row.table != "system_backup_v2_operations" {
 				indexes = append(indexes, "ADD INDEX "+row.prefix+"_admin_status_page (origin_installation_id, status, id)")
 			}
 			if len(indexes) > 0 {
@@ -365,8 +365,8 @@ func indexSchemaHash(t *testing.T, ctx context.Context, db *sql.DB, table string
 }
 
 func indexSeedSQL(table string) string {
-	if table == "system_backup_operations" {
-		return `INSERT INTO system_backup_operations (public_id,origin_installation_id,idempotency_key,created_at,next_reconcile_at,
+	if table == "system_backup_v2_operations" {
+		return `INSERT INTO system_backup_v2_operations (public_id,origin_installation_id,idempotency_key,created_at,next_reconcile_at,
 operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,request_hash,
 external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,deadline_at,status)
 VALUES (?,?,?,?,?,'control_metadata_gc','system',?,'system','system:controller','IndexProbe',REPEAT('a',64),'[]',2,SHA2('[]',256),UTC_TIMESTAMP(6)+INTERVAL 1 HOUR,'pending')`
@@ -375,22 +375,22 @@ VALUES (?,?,?,?,?,'control_metadata_gc','system',?,'system','system:controller',
 actor_type,actor_id,endpoint,request_hash,config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,deadline_at,`
 	values := ` VALUES (?,?,?,?,?,?,'admin','1','IndexProbe',REPEAT('a',64),1,'{}',2,SHA2('{}',256),UTC_TIMESTAMP(6)+INTERVAL 1 HOUR,`
 	switch table {
-	case "system_backups":
+	case "system_backup_v2_backups":
 		return common + `source_orchestrator,source_profile,matrix_key,runner,requested_parts,artifact_read_identity_hash,artifact_read_ref_version,artifact_ca_identity_hash,artifact_ca_ref_version,target_class,target_risks,target_failure_domain_id)` + values + `'kubernetes','single-node','k8s-single-node','k8s','mysql',REPEAT('b',64),'fixture-v1',REPEAT('c',64),'fixture-v1','dr-ready-external','','isolated')`
-	case "system_restore_drills", "system_backup_preflights":
+	case "system_backup_v2_restore_drills", "system_backup_v2_preflights":
 		extra, value := "cleanup_policy", "delete-on-success"
-		if table == "system_backup_preflights" {
+		if table == "system_backup_v2_preflights" {
 			extra, value = "artifact_compatibility", "supported"
 		}
 		return common + `source_artifact_type,source_public_id,target_profile,restore_target_config_ref,restore_target_config_hash,` + extra + `)` + values + `'backup','sbk_00000000-0000-4000-8000-000000000001','single-node','isolated-target',REPEAT('d',64),'` + value + `')`
-	case "system_backup_artifact_verifications":
+	case "system_backup_v2_artifact_verifications":
 		return common + `verification_scope,source_artifact_type,source_public_id,artifact_state_before,artifact_state_after,unusable_reason_before,unusable_reason_after)` + values + `'health','backup','sbk_00000000-0000-4000-8000-000000000001','staging','staging','not_committed','not_committed')`
 	}
 	panic("unrecognized index probe table")
 }
 
 func indexSeedArgs(table string, i int) []any {
-	prefix := map[string]string{"system_backups": "sbk_", "system_restore_drills": "sdr_", "system_backup_preflights": "spf_", "system_backup_artifact_verifications": "sav_", "system_backup_operations": "sop_"}[table]
+	prefix := map[string]string{"system_backup_v2_backups": "sbk_", "system_backup_v2_restore_drills": "sdr_", "system_backup_v2_preflights": "spf_", "system_backup_v2_artifact_verifications": "sav_", "system_backup_v2_operations": "sop_"}[table]
 	installation := "installation_index_foreign"
 	if i%10 < 2 {
 		installation = "installation_index_own"
@@ -401,11 +401,11 @@ func indexSeedArgs(table string, i int) []any {
 	// correlation from disguising the cost of sorting by id.
 	created := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(i*7919%86400) * time.Second)
 	args := []any{fmt.Sprintf("%s00000000-0000-4000-8000-%012d", prefix, i), installation, fmt.Sprintf("index-probe-key-%012d", i)}
-	if table != "system_backup_operations" {
+	if table != "system_backup_v2_operations" {
 		args = append(args, fmt.Sprintf("index-%d", i))
 	}
 	args = append(args, created, created.Add(time.Duration(i%17)*time.Minute))
-	if table == "system_backup_operations" {
+	if table == "system_backup_v2_operations" {
 		args = append(args, installation)
 	}
 	return args
@@ -413,7 +413,7 @@ func indexSeedArgs(table string, i int) []any {
 
 func indexFailedSQL(table string) string {
 	update := "UPDATE " + table + " SET status='failed',failure_category='internal_error',started_at=UTC_TIMESTAMP(6),finished_at=UTC_TIMESTAMP(6),next_reconcile_at=NULL"
-	if table != "system_backup_operations" {
+	if table != "system_backup_v2_operations" {
 		update += ",can_cancel=FALSE"
 	}
 	return update
@@ -442,11 +442,11 @@ func indexMeasureTable(t *testing.T, ctx context.Context, db *sql.DB, table, pha
 		for _, upper := range []int{count + 1, count / 2} {
 			for _, limit := range []int{51, 501} {
 				query := operationPageSQL
-				if table != "system_backup_operations" {
+				if table != "system_backup_v2_operations" {
 					query = taskPageSQL(taskTable{name: table}, false)
 				}
 				indexMeasureQuery(t, ctx, db, table, phase, "page", query, []any{installation, upper, limit}, baselines)
-				if table != "system_backup_operations" {
+				if table != "system_backup_v2_operations" {
 					for _, status := range []string{"pending", "failed"} {
 						indexMeasureQuery(t, ctx, db, table, phase, "status_page", taskPageSQL(taskTable{name: table}, true), []any{installation, upper, status, limit}, baselines)
 					}
@@ -598,7 +598,7 @@ func TestDAdminReadIndexSeed(t *testing.T) {
 			if group == "page" && strings.Contains(ddl, "status, id") {
 				t.Fatal("page group contains status index")
 			}
-			if group == "status" && (strings.Contains(ddl, "system_backup_operations") || strings.Contains(ddl, "(origin_installation_id, id)")) {
+			if group == "status" && (strings.Contains(ddl, "system_backup_v2_operations") || strings.Contains(ddl, "(origin_installation_id, id)")) {
 				t.Fatal("status group includes page-only indexes")
 			}
 		}
@@ -616,10 +616,10 @@ func TestDAdminReadIndexSeed(t *testing.T) {
 		begin := time.Now()
 		end := begin.Add(time.Second)
 		spans := []indexWriteSpan{
-			{"system_backups", begin.Add(-time.Second), begin},
-			{"system_restore_drills", end, end.Add(time.Second)},
-			{"system_backup_preflights", begin.Add(-time.Millisecond), begin.Add(time.Millisecond)},
-			{"system_backup_artifact_verifications", end.Add(-time.Millisecond), end.Add(time.Millisecond)},
+			{"system_backup_v2_backups", begin.Add(-time.Second), begin},
+			{"system_backup_v2_restore_drills", end, end.Add(time.Second)},
+			{"system_backup_v2_preflights", begin.Add(-time.Millisecond), begin.Add(time.Millisecond)},
+			{"system_backup_v2_artifact_verifications", end.Add(-time.Millisecond), end.Add(time.Millisecond)},
 		}
 		selected, samples := indexOverlappingWrites(spans, begin, end)
 		if len(selected) != 2 || len(samples) != 2 || samples[0] != 2000 || samples[1] != 2000 {
@@ -637,7 +637,7 @@ func TestDAdminReadIndexSeed(t *testing.T) {
 	}
 	counts := map[string]int{}
 	for i := 1; i <= 12000; i++ {
-		counts[indexSeedArgs("system_backups", i)[1].(string)]++
+		counts[indexSeedArgs("system_backup_v2_backups", i)[1].(string)]++
 	}
 	if counts["installation_index_own"] != 2400 || counts["installation_index_foreign"] != 8400 || counts["installation_index_sparse"] != 1200 {
 		t.Fatal("fixture distribution", counts)
@@ -646,13 +646,13 @@ func TestDAdminReadIndexSeed(t *testing.T) {
 	if p["p50"] != 6 || p["p95"] != 10 {
 		t.Fatal("percentile", p)
 	}
-	for _, table := range []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_backup_operations"} {
+	for _, table := range []string{"system_backup_v2_backups", "system_backup_v2_restore_drills", "system_backup_v2_preflights", "system_backup_v2_artifact_verifications", "system_backup_v2_operations"} {
 		if strings.Count(indexSeedSQL(table), "?") != len(indexSeedArgs(table, 1)) {
 			t.Fatal("seed parameter count", table)
 		}
-		migration := "067_add_system_backup_task_execution_core.sql"
-		if table == "system_backup_operations" {
-			migration = "066_add_system_backup_config_and_operations.sql"
+		migration := "098_backup_v2_add_system_backup_task_execution_core.sql"
+		if table == "system_backup_v2_operations" {
+			migration = "097_backup_v2_add_system_backup_config_and_operations.sql"
 		}
 		raw, err := os.ReadFile(filepath.Join("..", "db", "migrations", migration))
 		indexMust(t, err)
@@ -674,7 +674,7 @@ func TestDAdminReadIndexSeed(t *testing.T) {
 		}
 	}
 	for i := 1; i <= 10; i++ {
-		args := indexSeedArgs("system_backup_operations", i)
+		args := indexSeedArgs("system_backup_v2_operations", i)
 		if args[1] != args[5] {
 			t.Fatal("operation system target must equal installation")
 		}
@@ -689,7 +689,7 @@ type indexWriterFixture struct {
 	stopAfterPair func()
 }
 
-var indexWriterFixtureTables = []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_backup_operations"}
+var indexWriterFixtureTables = []string{"system_backup_v2_backups", "system_backup_v2_restore_drills", "system_backup_v2_preflights", "system_backup_v2_artifact_verifications", "system_backup_v2_operations"}
 var errIndexWriterFixture = errors.New("synthetic index writer SQL failure")
 
 func (f *indexWriterFixture) ExecContext(_ context.Context, query string, args ...any) (sql.Result, error) {

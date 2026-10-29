@@ -30,9 +30,9 @@ type mysqlFixtureStep struct {
 // It is not an SQL parser; reject unsupported layouts instead of splitting SQL
 // or comments blindly at semicolons.
 func mysqlFixtureSchemaSteps(schema string) ([]mysqlFixtureStep, error) {
-	want := map[string]bool{"system_backup_operations": false, "system_backup_download_admission_receipts": false,
-		"audit_logs": false, "system_backup_download_result_receipts": false, "system_backup_strong_auth_nonces": false}
-	pattern := regexp.MustCompile(`^CREATE TABLE ([a-z_]+) \([^;]+\);$`)
+	want := map[string]bool{"system_backup_v2_operations": false, "system_backup_v2_download_admission_receipts": false,
+		"audit_logs": false, "system_backup_v2_download_result_receipts": false, "system_backup_v2_strong_auth_nonces": false}
+	pattern := regexp.MustCompile(`^CREATE TABLE ([a-z][a-z0-9_]*) \([^;]+\);$`)
 	var steps []mysqlFixtureStep
 	for _, line := range strings.Split(schema, "\n") {
 		line = strings.TrimSpace(line)
@@ -95,12 +95,12 @@ func mysqlFixtureSeedSteps(raw []byte) ([]mysqlFixtureStep, error) {
 	}
 	claims := a["body"].(map[string]any)
 	return []mysqlFixtureStep{
-		{"seed_operation", "INSERT INTO system_backup_operations (id,public_id,origin_installation_id,actor_id,operation_type,endpoint,status,idempotency_key,request_hash,target_public_id) VALUES (?,?,?,?,?,?,?,?,?,?)", []any{o["id"], o["public_id"], o["installation_id"], o["actor_id"], o["operation_type"], o["endpoint"], o["status"], o["idempotency_key"], o["request_hash"], o["evidence_id"]}},
-		{"seed_admission", "INSERT INTO system_backup_download_admission_receipts (operation_id,operation_public_id,origin_installation_id,evidence_public_id,intent_audit_id,receipt_size_bytes,receipt_sha256,receipt_canonical_json) VALUES (?,?,?,?,?,?,?,?)", []any{a["operation_id"], a["operation_public_id"], a["installation_id"], a["evidence_id"], a["intent_audit_id"], a["size_bytes"], a["sha256"], ab}},
+		{"seed_operation", "INSERT INTO system_backup_v2_operations (id,public_id,origin_installation_id,actor_id,operation_type,endpoint,status,idempotency_key,request_hash,target_public_id) VALUES (?,?,?,?,?,?,?,?,?,?)", []any{o["id"], o["public_id"], o["installation_id"], o["actor_id"], o["operation_type"], o["endpoint"], o["status"], o["idempotency_key"], o["request_hash"], o["evidence_id"]}},
+		{"seed_admission", "INSERT INTO system_backup_v2_download_admission_receipts (operation_id,operation_public_id,origin_installation_id,evidence_public_id,intent_audit_id,receipt_size_bytes,receipt_sha256,receipt_canonical_json) VALUES (?,?,?,?,?,?,?,?)", []any{a["operation_id"], a["operation_public_id"], a["installation_id"], a["evidence_id"], a["intent_audit_id"], a["size_bytes"], a["sha256"], ab}},
 		{"seed_intent", "INSERT INTO audit_logs (id,user_id,action,resource_type,resource_id,details) VALUES (?,?,?,?,?,?)", []any{i["id"], i["user_id"], i["action"], i["resource_type"], nil, ib}},
 		{"seed_result", "INSERT INTO audit_logs (id,user_id,action,resource_type,resource_id,details) VALUES (?,?,?,?,?,?)", []any{r["id"], r["user_id"], r["action"], r["resource_type"], nil, rb}},
-		{"seed_result_link", "INSERT INTO system_backup_download_result_receipts (operation_id,operation_public_id,origin_installation_id,evidence_public_id,intent_audit_id,result_audit_id,result_size_bytes,result_sha256) VALUES (?,?,?,?,?,?,?,?)", []any{l["operation_id"], l["operation_public_id"], l["installation_id"], l["evidence_id"], l["intent_audit_id"], l["result_audit_id"], l["size_bytes"], l["sha256"]}},
-		{"seed_nonce", "INSERT INTO system_backup_strong_auth_nonces (operation_id,audit_log_id,origin_installation_id,endpoint,idempotency_key,request_hash,subject_sha256,session_sha256) VALUES (?,?,?,?,?,?,?,?)", []any{o["id"], i["id"], o["installation_id"], o["endpoint"], o["idempotency_key"], o["request_hash"], claims["subject_sha256"], claims["session_sha256"]}},
+		{"seed_result_link", "INSERT INTO system_backup_v2_download_result_receipts (operation_id,operation_public_id,origin_installation_id,evidence_public_id,intent_audit_id,result_audit_id,result_size_bytes,result_sha256) VALUES (?,?,?,?,?,?,?,?)", []any{l["operation_id"], l["operation_public_id"], l["installation_id"], l["evidence_id"], l["intent_audit_id"], l["result_audit_id"], l["size_bytes"], l["sha256"]}},
+		{"seed_nonce", "INSERT INTO system_backup_v2_strong_auth_nonces (operation_id,audit_log_id,origin_installation_id,endpoint,idempotency_key,request_hash,subject_sha256,session_sha256) VALUES (?,?,?,?,?,?,?,?)", []any{o["id"], i["id"], o["installation_id"], o["endpoint"], o["idempotency_key"], o["request_hash"], claims["subject_sha256"], claims["session_sha256"]}},
 	}, nil
 }
 

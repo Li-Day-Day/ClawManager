@@ -133,7 +133,7 @@ func (c *mutationTestConn) QueryContext(_ context.Context, q string, args []driv
 		return registrationRow(p.publicID, p.hash, p.status, int64(p.httpStatus), p.version, p.evidenceID, p.responseHash), nil
 	case strings.Contains(q, "SELECT details FROM audit_logs"):
 		return registrationRow(d.audit), nil
-	case strings.Contains(q, "SELECT request_hash FROM system_backup_compact_tombstones"):
+	case strings.Contains(q, "SELECT request_hash FROM system_backup_v2_compact_tombstones"):
 		return &registrationTestRows{width: 1}, nil
 	case strings.Contains(q, "ORDER BY version DESC"):
 		var highest int64
@@ -145,7 +145,7 @@ func (c *mutationTestConn) QueryContext(_ context.Context, q string, args []driv
 		return registrationRow(highest), nil
 	case strings.Contains(q, "SELECT nonce_hmac_ref_version"):
 		return &registrationTestRows{data: [][]driver.Value{{"old"}, {"synthetic-v1"}}, width: 1}, nil
-	case strings.Contains(q, "SELECT id FROM system_backup_strong_auth_nonces"):
+	case strings.Contains(q, "SELECT id FROM system_backup_v2_strong_auth_nonces"):
 		if s.consumed && args[1].Value == "old" {
 			return registrationRow(int64(9)), nil
 		}
@@ -156,7 +156,7 @@ func (c *mutationTestConn) QueryContext(_ context.Context, q string, args []driv
 			checksum = strings.Repeat("f", 64)
 		}
 		return registrationRow("system", "installation_synthetic", checksum, int64(len(d.response)), "inline", "healthy", "application/json", d.expires), nil
-	case strings.Contains(q, "FROM system_backup_configs WHERE origin_installation_id=? AND version=?"):
+	case strings.Contains(q, "FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=?"):
 		version := args[1].Value.(int64)
 		v, ok := d.rows[version]
 		if !ok {
@@ -218,7 +218,7 @@ func (c *mutationTestConn) ExecContext(_ context.Context, q string, args []drive
 		if strings.Contains(string(d.audit), `"nonce"`) {
 			return nil, errors.New("nonce in audit")
 		}
-	case strings.Contains(q, "INSERT INTO system_backup_configs"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_configs"):
 		kind = "config"
 		cols := strings.Split(strings.Split(strings.Split(q, "(")[1], ")")[0], ",")
 		values := map[string]any{}
@@ -242,7 +242,7 @@ func (c *mutationTestConn) ExecContext(_ context.Context, q string, args []drive
 			}
 		}
 		d.rows[version] = v
-	case strings.Contains(q, "UPDATE system_backup_installation_state"):
+	case strings.Contains(q, "UPDATE system_backup_v2_installation_state"):
 		kind = "cas"
 		if s.zeroCAS {
 			return mutationTestResult{0, 0}, nil
@@ -258,7 +258,7 @@ func (c *mutationTestConn) ExecContext(_ context.Context, q string, args []drive
 		if s.afterCAS != nil {
 			s.afterCAS()
 		}
-	case strings.Contains(q, "INSERT INTO system_backup_evidence"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_evidence"):
 		kind = "evidence"
 		if len(args) == 9 {
 			d.response = append([]byte(nil), args[2].Value.([]byte)...)
@@ -277,7 +277,7 @@ func (c *mutationTestConn) ExecContext(_ context.Context, q string, args []drive
 		}
 		d.evidenceHash = registrationHash(string(d.response))
 		d.evidenceID = int64(100 + len(d.writes) + 1)
-	case strings.Contains(q, "INSERT INTO system_backup_operations"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_operations"):
 		kind = "operation"
 		d.receipt = &configMutationReceipt{publicID: args[0].Value.(string), hash: args[6].Value.(string), status: "succeeded", httpStatus: 200, version: args[9].Value.(int64), evidenceID: args[10].Value.(int64), responseHash: args[11].Value.(string)}
 		if !strings.Contains(q, "updated_at,row_version,result_resource_public_id,retryable,failure_category,failure_message") || len(args) != 17 {
@@ -285,7 +285,7 @@ func (c *mutationTestConn) ExecContext(_ context.Context, q string, args []drive
 		}
 		actorID, _ := strconv.ParseInt(args[3].Value.(string), 10, 64)
 		d.operationPolicy = ConfigOperationResponsePolicy{InstallationID: args[1].Value.(string), OperationPublicID: args[0].Value.(string), ActorID: actorID, Endpoint: args[4].Value.(string), IdempotencyKey: args[5].Value.(string), RequestHash: args[6].Value.(string), Version: args[9].Value.(int64), RowVersion: 1, DeadlineAt: args[12].Value.(time.Time), StartedAt: args[13].Value.(time.Time), FinishedAt: args[14].Value.(time.Time), CreatedAt: args[15].Value.(time.Time), UpdatedAt: args[16].Value.(time.Time)}
-	case strings.Contains(q, "INSERT INTO system_backup_strong_auth_nonces"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_strong_auth_nonces"):
 		kind = "nonce"
 		if s.zeroNonce {
 			return mutationTestResult{0, 0}, nil
@@ -426,7 +426,7 @@ func (a mutationTestPreparedResponse) Stage(ctx context.Context, tx *sql.Tx, _ C
 	if a.s.tx != tx {
 		return 0, errors.New("wrong tx")
 	}
-	r, e := tx.ExecContext(ctx, "INSERT INTO system_backup_evidence (inline_payload,expires_at) VALUES (?,?)", a.payload, a.expires)
+	r, e := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_evidence (inline_payload,expires_at) VALUES (?,?)", a.payload, a.expires)
 	if e != nil {
 		return 0, e
 	}

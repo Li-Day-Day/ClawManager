@@ -38,7 +38,7 @@ func (d *gcRuntimeDB) BeginTx(ctx context.Context, opts driver.TxOptions) (drive
 	return d, nil
 }
 func (d *gcRuntimeDB) QueryContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, error) {
-	if strings.HasPrefix(q, "SELECT next_reconcile_at FROM system_backup_evidence") {
+	if strings.HasPrefix(q, "SELECT next_reconcile_at FROM system_backup_v2_evidence") {
 		return d.recoveryDB.QueryContext(ctx, q, args)
 	}
 	if d.record.State == "deleted" && d.index == 7 {
@@ -47,20 +47,20 @@ func (d *gcRuntimeDB) QueryContext(ctx context.Context, q string, args []driver.
 	return d.authorityDB.QueryContext(ctx, q, args)
 }
 func (d *gcRuntimeDB) ExecContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
-	if strings.HasPrefix(q, "UPDATE system_backup_evidence SET storage_state=?") {
+	if strings.HasPrefix(q, "UPDATE system_backup_v2_evidence SET storage_state=?") {
 		return d.recoveryDB.ExecContext(ctx, q, args)
 	}
 	if (len(args) != 2 && len(args) != 5) || args[len(args)-2].Value != d.pending.Manifest.Identity.ID || args[len(args)-1].Value != d.pending.RowVersion || d.pending.State != "deleting" || !strings.Contains(q, "storage_state='deleting'") {
 		d.t.Fatal("GC cleared data without exact deleting row CAS")
 	}
 	switch {
-	case strings.HasPrefix(q, "DELETE c FROM system_backup_evidence_chunks"):
+	case strings.HasPrefix(q, "DELETE c FROM system_backup_v2_evidence_chunks"):
 		if d.failChunks {
 			return nil, ErrUnavailable
 		}
 		d.deletedChunks = true
 		return driver.RowsAffected(len(d.pending.Manifest.Chunks)), nil
-	case strings.HasPrefix(q, "UPDATE system_backup_evidence SET storage_state='deleted'"):
+	case strings.HasPrefix(q, "UPDATE system_backup_v2_evidence SET storage_state='deleted'"):
 		if !d.deletedChunks {
 			d.t.Fatal("tombstone before chunk cleanup")
 		}

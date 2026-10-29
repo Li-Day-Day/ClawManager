@@ -8,6 +8,8 @@ import { useBackupText } from './useBackupText';
 import { formatBytes } from './backupReadModel';
 import BackupLiveActivity from './BackupLiveActivity.tsx';
 import BackupEvidenceDownload from './BackupEvidenceDownload.tsx';
+import BackupCancelUnstarted from './BackupCancelUnstarted';
+import BackupRecoveryNotice from './BackupRecoveryNotice';
 
 type DetailState = { kind: 'loading' } | { kind: 'error' }
   | { kind: 'ready'; detail: BackupTaskResource[BackupTaskKind] };
@@ -110,8 +112,14 @@ export default function BackupLiveDetail({ selection, close, reader = systemBack
     {(section === 'summary' || section === 'logs' && state.kind !== 'ready') && <>
       {state.kind === 'loading' && <p className="mt-4 text-sm text-slate-500" role="status" aria-busy="true">{b('loading')}</p>}
       {state.kind === 'error' && <p className="mt-4 text-sm text-red-700" role="alert">{b('readError')}</p>}
+      {state.kind === 'ready' && !localReport && reader === systemBackupReadService && <BackupRecoveryNotice
+        key={`${public_id}:${revision}:${state.detail.task.row_version}`}
+        selection={{ ...selection, row_version: state.detail.task.row_version }} status={state.detail.task.status} viewEvents={() => setSection('events')} />}
       {state.kind === 'ready' && <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2 xl:grid-cols-3">{fields.map(([name, value]) =>
         <div key={name} className="min-w-0"><dt className="text-slate-500">{name}</dt><dd className="mt-1 break-words text-slate-900">{value}</dd></div>)}</dl>}
+      {state.kind === 'ready' && !localReport && reader === systemBackupReadService && (kind === 'backups' || kind === 'preflights')
+        && state.detail.task.can_cancel && ['pending', 'preparing', 'ready_for_capture', 'acquiring_gate', 'capturing', 'canceling', 'validating'].includes(state.detail.task.status)
+        && <BackupCancelUnstarted key={public_id} selection={selection} active={state.detail.task.status !== 'pending'} canceled={() => { setState({ kind: 'loading' }); setRevision(v => v + 1); }} />}
       {downloadEvidence !== null && <div className="mt-5">{localReport ? localReport(downloadEvidence) : <BackupEvidenceDownload
         installation={origin_installation_id} evidenceId={downloadEvidence.public_id} />}</div>}
     </>}

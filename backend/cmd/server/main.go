@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	stdsql "database/sql"
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"clawreef/internal/aigateway"
+	"clawreef/internal/backupgate"
 	"clawreef/internal/buildinfo"
 	"clawreef/internal/config"
 	"clawreef/internal/db"
@@ -25,6 +26,7 @@ import (
 	"clawreef/internal/services"
 	"clawreef/internal/services/k8s"
 	"clawreef/internal/services/leader"
+	"clawreef/internal/systembackup"
 	"clawreef/internal/systembackupapi"
 	"clawreef/internal/systembackupsecurity"
 	"clawreef/internal/teamtemplate"
@@ -43,12 +45,6 @@ func main() {
 	}
 
 	// Initialize database
-	if strings.TrimSpace(os.Getenv("CLAWMANAGER_BACKUP_CONTROL_CONFIG")) != "" {
-		log.Fatal("Experimental backup control configuration is not supported by the production server")
-	}
-	// D owns public mutation-gate composition. Until its reviewed adapter is
-	// linked, nil is absence of coverage and grants no capture qualification.
-	var backupGate middleware.BackupMutationGate
 	database, err := db.Initialize(cfg.Database)
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
@@ -122,26 +118,25 @@ func main() {
 	if enterpriseAuthManager.Status(context.Background()).Enabled {
 		log.Printf("Enterprise LDAP authentication enabled")
 	}
-	// Backup authentication checks SQL UTC timestamps. Use a separate pool so
-	// every physical connection is UTC without changing business DB sessions.
 	backupDatabase := database
 	if os.Getenv("SYSTEM_BACKUP_READ_SESSIONS_ENABLED") == "true" {
 		backupDatabase, err = db.OpenSystemBackupRead(cfg.Database)
 		if err != nil {
-			log.Fatal("system-backup UTC database pool unavailable")
+			log.Fatal("system backup UTC session pool unavailable")
 		}
 		defer backupDatabase.Close()
 	}
-	sessionDB, _ := backupDatabase.Driver().(*stdsql.DB)
-	backupSessions, err := backupSessionRecorder(sessionDB, cfg.Database.Database, cfg.JWT.Secret, os.Getenv)
+	backupSessionSQL, _ := backupDatabase.Driver().(*sql.DB)
+	backupSessions, err := backupSessionRecorder(backupSessionSQL, cfg.Database.Database, cfg.JWT.Secret, os.Getenv)
 	if err != nil {
-		log.Fatal("system-backup read session configuration unavailable")
+		log.Fatal("system backup session enrollment configuration invalid")
 	}
 	authOptions := []services.AuthServiceOption{services.WithEnterpriseAuthPolicy(cfg.Auth.Enterprise), services.WithQuotaRepository(quotaRepo)}
 	if backupSessions != nil {
 		authOptions = append(authOptions, services.WithSystemBackupSessions(backupSessions))
 	}
 	authService := services.NewAuthService(userRepo, cfg.JWT, enterpriseAuthManager, authOptions...)
+
 	quotaService := services.NewQuotaService(quotaRepo)
 	userService := services.NewUserService(userRepo, quotaRepo)
 	systemImageSettingService := services.NewSystemImageSettingService(systemImageSettingRepo)
@@ -294,6 +289,15 @@ func main() {
 	runtimeMaintenanceHandler := handlers.NewRuntimeMaintenanceHandler(repository.NewRuntimeMaintenanceRepository(database), instanceRepo)
 	runtimeProtocolPolicy := middleware.RuntimeProtocolPolicy(runtimeProtocols)
 	customTeamTemplateService := teamtemplate.NewService(customTeamTemplateRepo, aiGatewayService)
+	ownerTeamAPI := northbound.NewOwnerTeamAPI(database, teamService, instanceService, userRepo, aiGatewayService, false, 0)
+	ownerTeamAPI.Settings = northboundRuntimeSettings
+	ownerTeamAPI.Audit = auditEventRepo
+	if guarded, ok := instanceService.(interface {
+		SetOwnerTeamMutationGuard(func(int, string, int) error)
+	}); ok {
+		guarded.SetOwnerTeamMutationGuard(ownerTeamAPI.GuardInstanceMutation)
+	}
+	northboundCoreService.OwnerTeams = ownerTeamAPI
 
 	// Initialize handlers
 	versionHandler := handlers.NewVersionHandler()
@@ -301,7 +305,7 @@ func main() {
 	if backupSessions != nil {
 		authHandler.SetSystemBackupLogoutHook(backupSessions.RevokeUserSessions)
 	} else if installation := os.Getenv("SYSTEM_BACKUP_REGISTRATION_INSTALLATION_ID"); installation != "" {
-		sqlDB, ok := database.Driver().(*stdsql.DB)
+		sqlDB, ok := database.Driver().(*sql.DB)
 		if !ok {
 			log.Fatal("system-backup registration requires SQL session revocation support")
 		}
@@ -340,10 +344,12 @@ func main() {
 		log.Fatalf("Failed to initialize IEI system SSO: %v", err)
 	}
 	instanceHandler.SetIEISSOService(ieiSSOService)
+	ieiSSOService.SetSessionRevocationStore(repository.NewOwnerTeamRepository(database))
 	instanceHandler.SetHermesDesktopService(hermesDesktopService)
 	ieiSystemHandler := handlers.NewIEISystemHandler(cfg.IEISystem, ieiSSOService, instanceService, instanceHandler)
 	ieiSystemHandler.SetHermesDesktopService(hermesDesktopService)
 	ieiSystemHandler.SetOwnerDashboard(ownerStore)
+	ieiSystemHandler.SetOwnerTeamAPI(ownerTeamAPI)
 	if northboundCoreService != nil {
 		northboundCoreService.SetOwnerUsage(ownerStore)
 	}
@@ -432,8 +438,6 @@ func main() {
 	// elected leader and migrate on failover; with it disabled (single-replica
 	// deployments) they run directly.
 	syncService := services.NewSyncService(instanceRepo, instanceRuntimeStatusService)
-	syncService.BackupGate = backupGate
-	materializeWorker.BackupGate = backupGate
 	var runtimeSchedulerCancel context.CancelFunc
 	var runtimeSchedulerMu sync.Mutex
 	var runtimeScheduler *services.RuntimeScheduler
@@ -482,13 +486,35 @@ func main() {
 		log.Printf("runtime scheduler disabled by configuration")
 	}
 	runtimePoolHandler := handlers.NewRuntimePoolHandler(runtimePodRepo, bindingRepo, rolloutRepo, runtimeScheduler, runtimeEvents)
-	if runtimeScheduler != nil {
-		runtimeScheduler.BackupGate = backupGate
-	}
 	runtimePoolHandler.SetUpgradeService(runtimeUpgradeService)
 	workbuddyPrewarmController := k8s.NewWorkbuddyPrewarmController()
 
 	leaderCtx, leaderCancel := context.WithCancel(context.Background())
+	var backupHTTPPool *sql.DB
+	if db.SQLGateScope() != "" {
+		openCtx, openCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var openErr error
+		backupHTTPPool, openErr = systembackup.OpenControlDatabase(openCtx, os.Getenv("SYSTEM_BACKUP_CONTROL_DSN_FILE"))
+		if openErr == nil {
+			businessSQL, _ := database.Driver().(*sql.DB)
+			openErr = backupgate.RequireSameDatabase(openCtx, businessSQL, backupHTTPPool)
+		}
+		openCancel()
+		if openErr != nil {
+			log.Fatal("backup HTTP boundary requires an available independent control credential")
+		}
+		// Do not consume the business SQL pool while a handler is awaiting I/O.
+		backupHTTPPool.SetMaxOpenConns(64)
+		defer backupHTTPPool.Close()
+		restoreBoundary := backupgate.ConfigureWorkBoundary(func(ctx context.Context) (func(), error) {
+			return backupgate.HoldRequest(ctx, backupHTTPPool, db.SQLGateScope())
+		})
+		defer restoreBoundary()
+		go (systembackup.Gate{DB: backupHTTPPool}).RunExpiryWatchdog(leaderCtx, db.SQLGateScope())
+		if northboundCoreServer != nil {
+			northboundCoreServer.Handler = backupgate.HTTPBoundary(northboundCoreServer.Handler, "northbound.core_http")
+		}
+	}
 	defer leaderCancel()
 	go ownerStore.RunBuffered(leaderCtx)
 	go db.RetryOwnerAnalytics(leaderCtx, database)
@@ -499,7 +525,7 @@ func main() {
 		log.Printf("Starting leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
 		syncService.Start()
 		if err := materializeWorker.StartContext(ctx); err != nil {
-			log.Printf("skill package materialize worker start failed: %v", err)
+			log.Printf("Skill materialize worker could not start: %v", err)
 		}
 		teamService.StartBackground(ctx)
 		if reconciler, ok := instanceService.(interface {
@@ -524,11 +550,11 @@ func main() {
 	}
 	stopBackground := func() {
 		log.Printf("Stopping leader-only background loops (identity=%s)", cfg.LeaderElection.Identity)
-		materializeStopCtx, materializeStopCancel := context.WithTimeout(context.Background(), 30*time.Second)
-		if err := materializeWorker.StopAndWait(materializeStopCtx); err != nil {
-			log.Printf("skill package materialize worker drain NOT confirmed: %v", err)
+		drainCtx, cancelDrain := context.WithTimeout(context.Background(), 10*time.Second)
+		if err := materializeWorker.StopAndWait(drainCtx); err != nil {
+			log.Printf("Skill materialize shutdown is not confirmed: %v", err)
 		}
-		materializeStopCancel()
+		cancelDrain()
 		if northboundOperationWorker != nil {
 			northboundOperationWorker.Stop()
 		}
@@ -562,6 +588,7 @@ func main() {
 	// Setup router
 	r := gin.New()
 	r.Use(handlers.HermesDesktopRedactTickets(), gin.Logger(), gin.Recovery())
+	r.Use(middleware.BackupRequestBoundary(backupHTTPPool, db.SQLGateScope()))
 
 	// Middleware
 	r.Use(middleware.CORS())
@@ -575,13 +602,12 @@ func main() {
 
 	api := r.Group("/api/v1")
 	{
-		// The former experimental /admin/system-backup control API is retired.
-		// Public system-backups/preflights routes below retain A authorization.
 		// Build information is intentionally public so operators can identify the
 		// running control-plane version even when authentication is unavailable.
 		api.GET("/version", versionHandler.Get)
 
 		ieiSystem := api.Group("/ieisystem")
+		ieiSystemHandler.RegisterOwnerTeamRoutes(ieiSystem)
 		{
 			ieiSystem.POST("/session", ieiSystemHandler.ExchangeSession)
 			ieiSystem.GET("/session", ieiSystemHandler.GetSession)
@@ -791,6 +817,7 @@ func main() {
 		teams := api.Group("/teams")
 		teams.Use(middleware.Auth())
 		teams.Use(middleware.SetUserInfo(userRepo))
+		teams.Use(teamHandler.ResourceScopeGuard)
 		{
 			teams.GET("", teamHandler.ListTeams)
 			teams.POST("", teamHandler.CreateTeam)
@@ -921,6 +948,64 @@ func main() {
 			adminSystemSettings.POST("/routing-classifier/compare", routingClassifierHandler.Compare)
 		}
 
+		backupBindings, backupBindingErr := systembackup.ParseRoleBindings(os.Getenv("SYSTEM_BACKUP_ROLE_BINDINGS"))
+		if backupBindingErr != nil {
+			log.Println("System backup role bootstrap is invalid; access disabled")
+			backupBindings = nil
+		}
+		backupSQL, _ := database.Driver().(*sql.DB)
+		if controlFile := strings.TrimSpace(os.Getenv("SYSTEM_BACKUP_CONTROL_DSN_FILE")); controlFile != "" {
+			controlContext, controlCancel := context.WithTimeout(context.Background(), 10*time.Second)
+			controlSQL, controlErr := systembackup.OpenControlDatabase(controlContext, controlFile)
+			if controlErr == nil && db.SQLGateScope() != "" {
+				controlErr = backupgate.RequireSameDatabase(controlContext, backupSQL, controlSQL)
+			}
+			controlCancel()
+			if controlErr != nil {
+				if controlSQL != nil {
+					controlSQL.Close()
+				}
+				log.Println("System backup control database unavailable; access disabled")
+				backupSQL = nil
+			} else {
+				backupSQL = controlSQL
+				defer controlSQL.Close()
+			}
+		} else if db.SQLGateScope() != "" {
+			log.Println("System backup SQL gate requires a separate control credential; backup access disabled")
+			backupSQL = nil
+		}
+		backupStore := systembackup.Store{DB: backupSQL, InstallationID: strings.TrimSpace(os.Getenv("SYSTEM_BACKUP_INSTALLATION_ID"))}
+		backupHandler := handlers.NewSystemBackupHandler(backupStore, backupBindings)
+		backupMFA, backupMFAErr := systembackup.LoadStrongAuthVerifier(strings.TrimSpace(os.Getenv("SYSTEM_BACKUP_STRONG_AUTH_FILE")))
+		if backupMFAErr != nil || backupMFA != nil && backupMFA.Audience != backupStore.InstallationID {
+			log.Println("System backup MFA bootstrap is invalid; sensitive configuration changes disabled")
+		} else {
+			backupHandler.SetStrongAuthVerifier(backupMFA)
+		}
+		backupAdmin := api.Group("/admin/system-backup")
+		backupAdmin.Use(middleware.Auth(), middleware.SetUserInfo(userRepo), middleware.NewAdminAuth(userRepo))
+		// Historical reads remain available; no second task writer/controller.
+		backupAdmin.Use(func(c *gin.Context) {
+			if c.Request.Method != http.MethodGet && c.Request.Method != http.MethodHead {
+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{"code": "not_ready"})
+			}
+		})
+		backupHandler.Register(backupAdmin)
+		// Public tasks and history share versioned control identity and pinned authority.
+		if live, readErr := loadLiveBackupRead(backupSessionSQL, backupSessions, os.Getenv); live != nil {
+			if readErr != nil {
+				log.Println("Versioned backup history unavailable; read authority not ready")
+			}
+			live.tasks = systembackupapi.NewHandler(linkedSystemBackupTaskApplication(backupSessionSQL, backupSessions))
+			versionedAdmin := api.Group("/admin")
+			versionedAdmin.Use(middleware.Auth(), middleware.SetUserInfo(userRepo), middleware.NewAdminAuth(userRepo))
+			registerBackupReadLive(versionedAdmin, live)
+			registerBackupTaskMutations(versionedAdmin, live.tasks)
+		} else if readErr != nil {
+			log.Println("Versioned backup history disabled: invalid read switch")
+		}
+
 		northboundSettings := api.Group("/admin/northbound")
 		northboundSettings.Use(middleware.Auth())
 		northboundSettings.Use(middleware.SetUserInfo(userRepo))
@@ -1042,28 +1127,6 @@ func main() {
 			adminSecurity.GET("/scan-jobs/:id", securityHandler.GetJob)
 		}
 
-		// Real reads use A's request-bound installation/session/RBAC authority.
-		// The fixture keeps its separate explicit opt-in for contract previews.
-		adminBackupRead := api.Group("/admin")
-		backupTasks := systembackupapi.NewHandler(linkedSystemBackupTaskApplication(sessionDB, backupSessions))
-		// Mutations have a separate application authority, including when the
-		// read-only fixture preview is enabled. Never inherit fixture admission.
-		registerBackupTaskMutations(api.Group("/admin"), backupTasks)
-		liveBackupRead, readErr := loadLiveBackupRead(sessionDB, backupSessions, os.Getenv)
-		if readErr != nil {
-			if liveBackupRead == nil {
-				log.Fatalf("system-backup live read switch invalid: %v", readErr)
-			}
-			log.Printf("system-backup live read unavailable: %v", readErr)
-		}
-		if liveBackupRead != nil {
-			liveBackupRead.tasks = backupTasks
-			registerBackupReadLive(adminBackupRead, liveBackupRead)
-		} else {
-			adminBackupRead.Use(middleware.SystemBackupReadFixtureAuth(userRepo))
-			registerBackupReadFixture(adminBackupRead, cfg.JWT.Secret)
-		}
-
 		gatewayLLM := api.Group("/gateway/llm")
 		gatewayLLM.Use(middleware.GatewayAuth(instanceRepo, gatewayKeyRepo, bindingRepo))
 		{
@@ -1129,11 +1192,11 @@ func main() {
 		Addr:    cfg.Server.Address,
 		Handler: r,
 	}
+
 	srv.TLSConfig, err = loadSystemBackupAPITLS(os.Getenv)
 	if err != nil {
 		log.Fatal("system-backup API TLS configuration unavailable")
 	}
-
 	go func() {
 		log.Printf("Server starting on %s", cfg.Server.Address)
 		var serveErr error

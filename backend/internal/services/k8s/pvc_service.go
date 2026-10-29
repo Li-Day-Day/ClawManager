@@ -1,7 +1,6 @@
 package k8s
 
 import (
-	"clawreef/internal/systembackup/mutation"
 	"context"
 	"fmt"
 	"net"
@@ -279,11 +278,6 @@ func (s *PVCService) shouldUseManualHostPathFallback(storageClass string) bool {
 }
 
 func (s *PVCService) monitorTeamSharedPVCBinding(ctx context.Context, namespace, pvcName string, userID, teamID, storageSizeGB int, storageClass string, timeout time.Duration) {
-	release, gateErr := mutation.Wait(ctx, "team-pvc-binding")
-	if gateErr != nil {
-		return
-	}
-	defer release()
 	if _, err := s.waitForTeamSharedPVCBinding(ctx, namespace, pvcName, userID, teamID, storageSizeGB, storageClass, timeout); err != nil {
 		fmt.Printf("Async Team shared PVC binding monitor failed for %s: %v\n", pvcName, err)
 	}
@@ -706,11 +700,6 @@ func isHostPathPVNodeCandidate(node corev1.Node) bool {
 }
 
 func (s *PVCService) monitorPVCBinding(ctx context.Context, namespace, pvcName string, userID, instanceID, storageSizeGB int, storageClass string, timeout time.Duration) {
-	release, gateErr := mutation.Wait(ctx, "instance-pvc-binding")
-	if gateErr != nil {
-		return
-	}
-	defer release()
 	if _, err := s.waitForPVCBinding(ctx, namespace, pvcName, userID, instanceID, storageSizeGB, storageClass, timeout); err != nil {
 		fmt.Printf("Async PVC binding monitor failed for %s: %v\n", pvcName, err)
 	}

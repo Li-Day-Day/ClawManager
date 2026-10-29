@@ -119,7 +119,7 @@ func scriptStore(t *testing.T, steps ...sqlStep) (SQLStore, *scriptDB) {
 func TestSQLCreateAdmissionIdempotencyAndLostCommit(t *testing.T) {
 	request := testTask().Request
 	profile, _ := json.Marshal(Profile{ID: "fixture", Revision: strings.Repeat("a", 64), Kinds: []string{"backup"}, Ready: true})
-	steps := []sqlStep{{contains: "WHERE actor_id=? AND idempotency_key=? FOR UPDATE"}, {contains: "system_backup_profiles", rows: [][]driver.Value{{profile, true}}}, {contains: "SELECT " + dbNow, rows: [][]driver.Value{{int64(1000)}}}, {contains: "INSERT INTO system_backup_tasks", affected: 1}, {contains: "INSERT INTO system_backup_events", affected: 1}}
+	steps := []sqlStep{{contains: "WHERE actor_id=? AND idempotency_key=? FOR UPDATE"}, {contains: "system_backup_profiles", rows: [][]driver.Value{{profile, true}}}, {contains: "SELECT " + dbNow, rows: [][]driver.Value{{int64(1000)}}}, {contains: "INSERT INTO system_backup_tasks", affected: 1}, {contains: "INSERT INTO system_backup_v2_events", affected: 1}}
 	store, script := scriptStore(t, steps...)
 	script.loseCommit = true
 	if _, e := store.Create(context.Background(), 1, "request-1", request, time.Hour); !errors.Is(e, ErrNotReady) {

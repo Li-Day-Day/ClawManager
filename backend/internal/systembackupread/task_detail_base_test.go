@@ -14,10 +14,10 @@ func TestGetTaskBaseScopesAndRedactsFourKinds(t *testing.T) {
 		kind          TaskKind
 		table, prefix string
 	}{
-		{BackupTask, "system_backups", "sbk_"},
-		{DrillTask, "system_restore_drills", "sdr_"},
-		{PreflightTask, "system_backup_preflights", "spf_"},
-		{VerificationTask, "system_backup_artifact_verifications", "sav_"},
+		{BackupTask, "system_backup_v2_backups", "sbk_"},
+		{DrillTask, "system_backup_v2_restore_drills", "sdr_"},
+		{PreflightTask, "system_backup_v2_preflights", "spf_"},
+		{VerificationTask, "system_backup_v2_artifact_verifications", "sav_"},
 	} {
 		t.Run(string(tc.kind), func(t *testing.T) {
 			fixture := makePageFixture(tc.table, string(tc.kind), tc.prefix)
@@ -49,7 +49,7 @@ func TestGetTaskBaseScopesAndRedactsFourKinds(t *testing.T) {
 }
 
 func TestGetTaskBaseFailsClosedOnInvalidMissingAndRevoked(t *testing.T) {
-	fixture := makePageFixture("system_backups", "backup", "sbk_")
+	fixture := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	db := sql.OpenDB(pageConnector{fixture})
 	defer db.Close()
 	service, err := NewService(db, fixture, []byte(strings.Repeat("k", 32)))
@@ -86,7 +86,7 @@ func TestGetTaskBaseFailsClosedOnInvalidMissingAndRevoked(t *testing.T) {
 }
 
 func TestDetailBuilderRunsWithinAuthorizedTransactionBeforeFinalRecheck(t *testing.T) {
-	fixture := makePageFixture("system_backups", "backup", "sbk_")
+	fixture := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	db := sql.OpenDB(pageConnector{fixture})
 	defer db.Close()
 	reader, err := NewReader(db, fixture)
@@ -101,7 +101,7 @@ func TestDetailBuilderRunsWithinAuthorizedTransactionBeforeFinalRecheck(t *testi
 			t.Fatal("builder received a wrong or already committed task", item, fixture.rechecks)
 		}
 		var count uint64
-		if err := tx.QueryRowContext(ctx, "SELECT COALESCE(MAX(id),0) FROM system_backups WHERE origin_installation_id=?", item.InstallationID).Scan(&count); err != nil || count != 3 {
+		if err := tx.QueryRowContext(ctx, "SELECT COALESCE(MAX(id),0) FROM system_backup_v2_backups WHERE origin_installation_id=?", item.InstallationID).Scan(&count); err != nil || count != 3 {
 			t.Fatal("builder could not read in the same scoped transaction", count, err)
 		}
 		fixture.recheckErr = true

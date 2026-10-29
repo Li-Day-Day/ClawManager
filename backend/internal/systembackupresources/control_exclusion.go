@@ -14,24 +14,24 @@ import (
 // into a drill database. schema_migrations is target-local metadata and is
 // deliberately outside this source-row exclusion check.
 var controlExclusionTables = map[string]struct{}{
-	"system_artifact_lease_states": {}, "system_artifact_leases": {},
-	"system_backup_admin_revocations": {}, "system_backup_admin_sessions": {},
-	"system_backup_alert_states": {}, "system_backup_artifact_verifications": {},
-	"system_backup_attempts": {}, "system_backup_check_results": {},
-	"system_backup_compact_tombstones": {}, "system_backup_configs": {},
-	"system_backup_dependency_health": {}, "system_backup_events": {},
-	"system_backup_evidence": {}, "system_backup_evidence_chunks": {},
-	"system_backup_external_actions": {}, "system_backup_installation_state": {},
-	"system_backup_job_observations": {}, "system_backup_log_chunks": {},
-	"system_backup_metadata_reservations": {},
-	"system_backup_operations":            {}, "system_backup_preflights": {},
-	"system_backup_promotions": {}, "system_backup_provider_capabilities": {},
-	"system_backup_prune_items": {}, "system_backup_prune_runs": {},
-	"system_backup_source_writer_check_states": {}, "system_backup_staging_resources": {},
-	"system_backup_strong_auth_nonces": {}, "system_backup_totp_credentials": {}, "system_backups": {},
-	"system_maintenance_locks": {}, "system_maintenance_mutation_leases": {},
-	"system_maintenance_participants": {}, "system_restore_drill_resources": {},
-	"system_restore_drills": {},
+	"system_backup_v2_artifact_lease_states": {}, "system_backup_v2_artifact_leases": {},
+	"system_backup_v2_admin_revocations": {}, "system_backup_v2_admin_sessions": {},
+	"system_backup_v2_alert_states": {}, "system_backup_v2_artifact_verifications": {},
+	"system_backup_v2_attempts": {}, "system_backup_v2_check_results": {},
+	"system_backup_v2_compact_tombstones": {}, "system_backup_v2_configs": {},
+	"system_backup_v2_dependency_health": {}, "system_backup_v2_events": {},
+	"system_backup_v2_evidence": {}, "system_backup_v2_evidence_chunks": {},
+	"system_backup_v2_external_actions": {}, "system_backup_v2_installation_state": {},
+	"system_backup_v2_job_observations": {}, "system_backup_v2_log_chunks": {},
+	"system_backup_v2_metadata_reservations": {},
+	"system_backup_v2_operations":            {}, "system_backup_v2_preflights": {},
+	"system_backup_v2_promotions": {}, "system_backup_v2_provider_capabilities": {},
+	"system_backup_v2_prune_items": {}, "system_backup_v2_prune_runs": {},
+	"system_backup_v2_source_writer_check_states": {}, "system_backup_v2_staging_resources": {},
+	"system_backup_v2_strong_auth_nonces": {}, "system_backup_v2_totp_credentials": {}, "system_backup_v2_backups": {},
+	"system_backup_v2_maintenance_locks": {}, "system_backup_v2_maintenance_mutation_leases": {},
+	"system_backup_v2_maintenance_participants": {}, "system_backup_v2_restore_drill_resources": {},
+	"system_backup_v2_restore_drills": {},
 }
 
 // ControlExclusionAllowlist is closed against the frozen schema registry. Any
@@ -76,8 +76,8 @@ func ControlExclusionAllowlist(registryJSON []byte) ([]string, error) {
 
 func looksLikeControlTable(name string) bool {
 	return strings.HasPrefix(name, "system_backup_") || strings.HasPrefix(name, "system_artifact_lease") ||
-		strings.HasPrefix(name, "system_maintenance_") || name == "system_backups" ||
-		name == "system_restore_drills" || name == "system_restore_drill_resources"
+		strings.HasPrefix(name, "system_maintenance_") || name == "system_backup_v2_backups" ||
+		name == "system_backup_v2_restore_drills" || name == "system_backup_v2_restore_drill_resources"
 }
 
 // TargetReadProofVerifier is supplied by B's isolated restore target. It must

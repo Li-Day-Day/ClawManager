@@ -72,12 +72,12 @@ func (d *downloadNonceDB) QueryContext(_ context.Context, q string, args []drive
 		return registrationRow(d.identity.ServerUUID, d.identity.Database), nil
 	case sensitiveDownloadInstallationsSQL:
 		return list(d.installations), nil
-	case "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE":
+	case "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE":
 		if args[0].Value != "installation_test" {
 			d.t.Fatal("wrong installation")
 		}
 		return registrationRow(d.configVersion), nil
-	case "SELECT nonce_hmac_ref_version FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE":
+	case "SELECT nonce_hmac_ref_version FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE":
 		if args[0].Value != "installation_test" || args[1].Value != d.configVersion {
 			d.t.Fatal("wrong config binding")
 		}
@@ -127,8 +127,8 @@ func TestSensitiveDownloadNonceScopeGlobalHistoryAndExactLookups(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{"SELECT @@server_uuid,DATABASE()", sensitiveDownloadInstallationsSQL,
-		"SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE",
-		"SELECT nonce_hmac_ref_version FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE",
+		"SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE",
+		"SELECT nonce_hmac_ref_version FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE",
 		"SELECT UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))", sensitiveDownloadNonceVersionsSQL,
 		"SELECT UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))"}
 	if strings.Join(d.queries, "\n") != strings.Join(want, "\n") {

@@ -62,7 +62,7 @@ func testConfigBootstrapMySQL(t *testing.T, ctx context.Context, admin *sql.DB, 
 	svc := ConfigBootstrapService{DB: db, Admission: mysqlBootstrapAdmission{}}
 	counts := func(want int) {
 		t.Helper()
-		for _, table := range []string{"system_backup_configs", "system_backup_installation_state", "system_backup_operations", "d_capacity_reservations", "audit_logs"} {
+		for _, table := range []string{"system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_operations", "d_capacity_reservations", "audit_logs"} {
 			var actual int
 			mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM "+table).Scan(&actual))
 			expected := want
@@ -143,7 +143,7 @@ func testConfigBootstrapMySQL(t *testing.T, ctx context.Context, admin *sql.DB, 
 	var enabled bool
 	var factor, hash string
 	var size, version int64
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT enabled,source_size_safety_factor,config_sha256,config_size_bytes,version FROM system_backup_configs").Scan(&enabled, &factor, &hash, &size, &version))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT enabled,source_size_safety_factor,config_sha256,config_size_bytes,version FROM system_backup_v2_configs").Scan(&enabled, &factor, &hash, &size, &version))
 	if enabled || factor != "1.25" || hash != config.SHA256() || size != int64(len(config.CanonicalJSON())) || version != 1 {
 		t.Fatal("persisted snapshot mismatch")
 	}

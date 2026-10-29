@@ -58,7 +58,7 @@ func (c *mutationCapacityConn) QueryContext(_ context.Context, q string, args []
 	switch q {
 	case "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))":
 		return registrationRow(c.s.identity.ServerUUID, c.s.identity.Database, c.s.now, c.s.offset), nil
-	case "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE":
+	case "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE":
 		return registrationRow(c.s.pendingSample, c.s.pending), nil
 	}
 	return nil, errors.New("unexpected capacity query")
@@ -68,14 +68,14 @@ func (c *mutationCapacityConn) ExecContext(_ context.Context, q string, args []d
 		return nil, err
 	}
 	switch q {
-	case "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)":
+	case "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)":
 		if len(args) != 1 {
 			return nil, errors.New("bad baseline args")
 		}
 		if c.s.pendingSample.IsZero() {
 			c.s.pendingSample, c.s.pending = args[0].Value.(time.Time), 0
 		}
-	case "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?":
+	case "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?":
 		if len(args) != 3 || args[0].Value.(int64) < 1 || !args[1].Value.(time.Time).Equal(c.s.pendingSample) || args[2].Value != c.s.pending {
 			return nil, errors.New("wrong reservation CAS or count")
 		}

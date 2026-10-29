@@ -44,7 +44,7 @@ func (a *SQLConfigMutationReplayAuthorizer) AuthorizeReplay(ctx context.Context,
 		return registrationBoundaryError(err)
 	}
 	var version, rowVersion int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version,row_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", a.installation).Scan(&version, &rowVersion) != nil || rowVersion < 1 || rowVersion >= 9007199254740991 {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version,row_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", a.installation).Scan(&version, &rowVersion) != nil || rowVersion < 1 || rowVersion >= 9007199254740991 {
 		return ErrRegistrationUnavailable
 	}
 	current, err := readConfigMutationRow(ctx, tx, a.installation, version)

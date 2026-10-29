@@ -40,7 +40,7 @@ type Input struct {
 	Backup                     *BackupSpec
 }
 
-// BackupSpec is the admitted public system_backups projection. RequestedParts
+// BackupSpec is the admitted public system_backup_v2_backups projection. RequestedParts
 // and TaskPurpose come from the original task, never inferred from an empty
 // request, the current config, a profile name or B's lab functional_test default.
 type BackupSpec struct {
@@ -87,6 +87,12 @@ type Ports interface {
 	EnsureJob(context.Context, Authority, JobIntent) (JobBinding, error)
 	ObserveJob(context.Context, Authority, JobBinding) (JobObservation, error)
 	StopJob(context.Context, Authority, JobBinding) error
+}
+
+// ResumeBarrier is required by the public SQL capture composition. It proves
+// ALL durable collector intents stopped before any physical source resume.
+type ResumeBarrier interface {
+	BeforeResume(context.Context, Authority) error
 }
 type JobObservation struct {
 	Binding        JobBinding

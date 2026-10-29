@@ -59,19 +59,6 @@
       "updated_at": "2026-09-15T01:01:00Z"
     },
     "mutation_requests": {
-      "BackupCreateRequest": {
-        "requested_parts": ["mysql", "redis", "object_storage", "workspace", "deployment_resources", "secret_bundle"],
-        "task_purpose": "acceptance",
-        "retry_of_public_id": null
-      },
-      "PreflightCreateRequest": {
-        "source_artifact_type": "backup",
-        "source_public_id": "sbk_00000000-0000-4000-8000-000000000001",
-        "target_profile": "cluster",
-        "restore_target_config_ref": "target_v1",
-        "preflight_mode": "production_readonly",
-        "retry_of_public_id": null
-      },
       "CancelRequest": {},
       "CleanupRequest": {
         "retry_of_operation_public_id": null

@@ -80,7 +80,7 @@ func TestDownloadRetentionGCTaskOtherArtifactDependents(t *testing.T) {
 func TestDownloadRetentionGCTaskDependencyKeysAndOwnExclusion(t *testing.T) {
 	// Independently spell the published table predicates. There is no SQL
 	// installation/type/status/expiry filter or PK exclusion hiding a live row.
-	tables := map[string]string{"drill": "system_restore_drills", "preflight": "system_backup_preflights", "artifact_verify": "system_backup_artifact_verifications"}
+	tables := map[string]string{"drill": "system_backup_v2_restore_drills", "preflight": "system_backup_v2_preflights", "artifact_verify": "system_backup_v2_artifact_verifications"}
 	for _, owner := range []string{"backup", "drill", "preflight", "artifact_verify"} {
 		t.Run(owner, func(t *testing.T) {
 			f := newGCTaskEligibilityFixture(t, owner)
@@ -94,7 +94,7 @@ func TestDownloadRetentionGCTaskDependencyKeysAndOwnExclusion(t *testing.T) {
 					t.Fatal("missing broad dependent range", q)
 				}
 			}
-			if !f.m.locked[gcTaskRangeKey("SELECT id FROM system_backup_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE", f.m.backup)] {
+			if !f.m.locked[gcTaskRangeKey("SELECT id FROM system_backup_v2_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE", f.m.backup)] {
 				t.Fatal("missing retained prune range")
 			}
 			originalLocks := append([]string(nil), f.m.locks...)
@@ -266,7 +266,7 @@ func TestDownloadRetentionGCTaskPruneDependencyAndRequiredTable(t *testing.T) {
 				f.m.ranges[gcTaskRangeKey(downloadGCTaskPruneDependencySQL, f.m.backup)] = [][]driver.Value{{int64(93)}}
 			} else {
 				for n, row := range f.m.catalog {
-					if row[0] == "system_backup_prune_items" {
+					if row[0] == "system_backup_v2_prune_items" {
 						if mode == "view" {
 							row[1] = "VIEW"
 						} else {

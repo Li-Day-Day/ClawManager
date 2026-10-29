@@ -105,7 +105,7 @@ func (c *claimReceiptConn) ExecContext(_ context.Context, q string, args []drive
 		c.pending.heartbeat = c.pending.now
 		c.pending.until = c.pending.heartbeat.Add(time.Duration(micros) * time.Microsecond)
 		return fixedResult(1), nil
-	case strings.HasPrefix(q, "INSERT INTO system_backup_events "):
+	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_events "):
 		s.insert++
 		if len(args) != 6 || args[0].Value != c.pending.installation || args[1].Value != c.pending.kind || args[2].Value != c.pending.publicID || args[3].Value != TaskClaimAcquiredEvent || args[4].Value != c.pending.status || args[5].Value != c.pending.requestID {
 			return nil, errors.New("receipt binding changed")

@@ -10,16 +10,16 @@ import (
 	"clawreef/internal/systembackupsecurity"
 )
 
-const downloadAdmissionNonceInsertSQL = `INSERT INTO system_backup_strong_auth_nonces
+const downloadAdmissionNonceInsertSQL = `INSERT INTO system_backup_v2_strong_auth_nonces
 (origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,
 authenticated_at,expires_at,consumed_at,operation_id,response_sha256,audit_log_id,retain_until,created_at)
 SELECT ?,?,?,?,?,?,'getSystemBackupEvidence',?,?,?,?,UTC_TIMESTAMP(6),?,NULL,?,?,UTC_TIMESTAMP(6)
 WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<? AND UTC_TIMESTAMP(6)<?`
-const downloadAdmissionNonceReadSQL = `SELECT consumed_at,created_at FROM system_backup_strong_auth_nonces
+const downloadAdmissionNonceReadSQL = `SELECT consumed_at,created_at FROM system_backup_v2_strong_auth_nonces
 WHERE id=? AND schema_version='system-backup-strong-auth-nonce.v1' AND origin_installation_id=? AND issuer_sha256=? AND subject_sha256=? AND session_sha256=?
 AND nonce_hmac=? AND nonce_hmac_key_version=? AND endpoint='getSystemBackupEvidence' AND request_hash=? AND idempotency_key=?
 AND authenticated_at=? AND expires_at=? AND operation_id=? AND response_sha256 IS NULL AND audit_log_id=? AND retain_until=? FOR UPDATE`
-const downloadAdmissionNonceCandidateReadSQL = `SELECT id FROM system_backup_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE`
+const downloadAdmissionNonceCandidateReadSQL = `SELECT id FROM system_backup_v2_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE`
 
 // DownloadAdmissionNonce anchors an UNCOMMITTED nonce to the original storage
 // rows and exact all-version lock scope. Only the outer owner may commit, after

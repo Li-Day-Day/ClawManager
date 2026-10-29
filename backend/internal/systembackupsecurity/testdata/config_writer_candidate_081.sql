@@ -3,9 +3,9 @@
 -- Published migration 066 stays byte-for-byte unchanged. No backfill/seed.
 -- NULL old rows preserve read failure until an independently authorized writer
 -- verifies their original version-bound bytes against every stored field.
-ALTER TABLE system_backup_configs
+ALTER TABLE system_backup_v2_configs
   ADD COLUMN canonical_config_json MEDIUMBLOB NULL AFTER config_size_bytes,
-  ADD CONSTRAINT chk_sb_config_canonical_json CHECK (
+  ADD CONSTRAINT sbv2_chk_sb_config_canonical_json CHECK (
     canonical_config_json IS NULL OR (
       OCTET_LENGTH(canonical_config_json) = config_size_bytes
       AND JSON_VALID(CONVERT(canonical_config_json USING utf8mb4))

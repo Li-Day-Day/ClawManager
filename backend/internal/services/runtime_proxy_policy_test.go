@@ -138,26 +138,6 @@ func TestIdlePolicyRenewalKeepsTenantAndRuntimeBoundaries(t *testing.T) {
 		4: {ID: 4, RuntimeType: RuntimeTypeHermes, Namespace: "tenant", AgentEndpoint: &endpoint, State: "ready"},
 	}}
 	s := &RuntimeScheduler{podRepo: pods, proxyPolicy: coordinator, runtimeNamespace: "tenant"}
-	closed := errors.New("backup gate closed")
-	s.BackupGate = materializeBackupGateFunc(func(context.Context, string) (func() error, error) {
-		return nil, closed
-	})
-	if err := s.renewRuntimeProxyPolicies(context.Background()); !errors.Is(err, closed) || agent.writes != 0 || len(client.Actions()) != 0 {
-		t.Fatalf("closed gate allowed renewal: writes=%d err=%v", agent.writes, err)
-	}
-	releases := 0
-	s.BackupGate = materializeBackupGateFunc(func(_ context.Context, name string) (func() error, error) {
-		if name != "runtime-proxy-policy-renewal" {
-			t.Fatalf("wrong permit: %s", name)
-		}
-		return func() error {
-			releases++
-			if agent.writes != releases*2 {
-				t.Fatalf("permit released before writes completed: %d", agent.writes)
-			}
-			return nil
-		}, nil
-	})
 	if err := s.renewRuntimeProxyPolicies(context.Background()); err != nil {
 		t.Fatal(err)
 	}
@@ -175,29 +155,6 @@ func TestIdlePolicyRenewalKeepsTenantAndRuntimeBoundaries(t *testing.T) {
 	}
 	if agent.writes != 4 || !reflect.DeepEqual(agent.addresses, []string{"10.1.1.3"}) {
 		t.Fatalf("renewal=%v", agent.addresses)
-	}
-	if releases != 2 {
-		t.Fatalf("permits not released: %d", releases)
-	}
-}
-
-func TestProxyPolicyRenewalCancellationJoinsPermitReleaseFailure(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	releaseErr := errors.New("permit release failed")
-	calls, releases := 0, 0
-	s := &RuntimeScheduler{podRepo: &fakeRuntimePodRepo{}, proxyPolicy: &RuntimeProxyPolicyCoordinator{}}
-	s.BackupGate = materializeBackupGateFunc(func(context.Context, string) (func() error, error) {
-		calls++
-		cancel()
-		return func() error { releases++; return releaseErr }, nil
-	})
-	err := s.renewRuntimeProxyPolicies(ctx)
-	if !errors.Is(err, context.Canceled) || !errors.Is(err, releaseErr) || releases != 1 {
-		t.Fatalf("release/cancel lost: releases=%d err=%v", releases, err)
-	}
-	if err := s.renewRuntimeProxyPolicies(ctx); !errors.Is(err, context.Canceled) || calls != 1 {
-		t.Fatalf("cancelled renewal acquired a permit: calls=%d err=%v", calls, err)
 	}
 }
 

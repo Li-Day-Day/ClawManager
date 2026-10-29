@@ -24,8 +24,9 @@ import AdminSecurityScannerConfigPage from '../pages/admin/security/AdminSecurit
 import RiskRulesPage from '../pages/admin/RiskRulesPage';
 import ModelManagementPage from '../pages/admin/ModelManagementPage';
 import SystemSettingsPage from '../pages/admin/SystemSettingsPage';
+import SystemBackupTasksPage from '../pages/admin/backups/BackupsPage';
+import BackupControlRecordsPage from '../pages/admin/backups/SystemBackupsPage';
 import NorthboundSettingsPage from '../pages/admin/NorthboundSettingsPage';
-import SystemBackupsPage from '../pages/admin/backups/SystemBackupsPage';
 import RuntimePodsPage from '../pages/admin/RuntimePodsPage';
 import UserSettingsPage from '../pages/settings/UserSettingsPage';
 import OpenClawConfigCenterPage from '../pages/openclaw/OpenClawConfigCenterPage';
@@ -63,6 +64,7 @@ import TeamListPage from '../pages/teams/TeamListPage';
 import CreateTeamPage from '../pages/teams/CreateTeamPage';
 import CustomTeamTemplatesPage from '../pages/teams/CustomTeamTemplatesPage';
 import TeamDetailPage from '../pages/teams/TeamDetailPage';
+import IEISystemTeamPage from '../pages/teams/IEISystemTeamPage';
 import SkillHubPage from '../pages/skill-hub/SkillHubPage';
 
 // Protected Route Component
@@ -175,6 +177,7 @@ function AppRoutes() {
       <Route path="/share/:code" element={<SharedInstancePage />} />
       <Route path="/ieisystem/list-instances" element={<IEISystemListInstancesPage />} />
       <Route path="/ieisystem/instances/:id" element={<IEISystemInstancePage />} />
+      <Route path="/ieisystem/teams/:id" element={<IEISystemTeamPage />} />
 
       {/* User Routes */}
       <Route
@@ -277,6 +280,11 @@ function AppRoutes() {
       />
 
       {/* Admin Routes */}
+      <Route path="/admin/backups" element={<AdminRoute><Navigate to="/admin/backups/records" replace /></AdminRoute>} />
+      <Route path="/admin/backups/system" element={<AdminRoute><SystemBackupTasksPage /></AdminRoute>} />
+      <Route path="/admin/backups/system/:id" element={<AdminRoute><SystemBackupTasksPage /></AdminRoute>} />
+      <Route path="/admin/backups/records" element={<AdminRoute><BackupControlRecordsPage /></AdminRoute>} />
+      <Route path="/admin/backups/:id" element={<AdminRoute><Navigate to="/admin/backups/records" replace /></AdminRoute>} />
       <Route
         path="/admin"
         element={
@@ -507,9 +515,7 @@ function AppRoutes() {
           </AdminRoute>
         }
       />
-      <Route path="/admin/backups" element={<AdminRoute><SystemBackupsPage /></AdminRoute>} />
       {/* Default Redirect */}
-      <Route path="/admin/system-backup" element={<AdminRoute><Navigate to="/admin/backups" replace /></AdminRoute>} />
       <Route path="/" element={<DashboardRedirect />} />
     </Routes>
   );

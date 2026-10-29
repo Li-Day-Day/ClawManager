@@ -79,7 +79,7 @@ func dRecoveryFenceStored(t *testing.T, db *sql.DB, history pd.HistoricalBinding
 	mustSQL(t, err)
 	var epoch, version int64
 	var revoked sql.NullTime
-	err = db.QueryRow("SELECT revocation_epoch,row_version,revoked_at FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?", encoded.Columns["scope_key"], identityBytes).Scan(&epoch, &version, &revoked)
+	err = db.QueryRow("SELECT revocation_epoch,row_version,revoked_at FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?", encoded.Columns["scope_key"], identityBytes).Scan(&epoch, &version, &revoked)
 	if errors.Is(err, sql.ErrNoRows) {
 		return 0, 0, false, false
 	}
@@ -206,7 +206,7 @@ func TestDRecoveryFenceMySQL(t *testing.T) {
 		a.failRecheck = false
 		next := pd.Hash(strings.Repeat("f", 64))
 		r.NextIdentityHash = &next
-		_, err = db.ExecContext(ctx, "CREATE TRIGGER reject_recovery_new_identity BEFORE INSERT ON system_backup_producer_recovery_revocations FOR EACH ROW SET NEW.row_version = 0")
+		_, err = db.ExecContext(ctx, "CREATE TRIGGER reject_recovery_new_identity BEFORE INSERT ON system_backup_v2_producer_recovery_revocations FOR EACH ROW SET NEW.row_version = 0")
 		mustSQL(t, err)
 		if _, err = m.ChangeFence(ctx, r); err == nil {
 			t.Fatal("second insert accepted")

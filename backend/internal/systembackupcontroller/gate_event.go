@@ -35,7 +35,7 @@ func insertGateTransitionEvent(ctx context.Context, executor Executor, key GateK
 	if reason == "" || message == "" {
 		return errors.New("maintenance gate event reason and message are required")
 	}
-	result, err := executor.ExecContext(ctx, `INSERT INTO system_backup_events (
+	result, err := executor.ExecContext(ctx, `INSERT INTO system_backup_v2_events (
   origin_installation_id,
   target_type,
   target_public_id,

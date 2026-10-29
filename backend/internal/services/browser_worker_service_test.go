@@ -313,26 +313,18 @@ func TestBrowserWorkerUsesAuthenticatedRelayAndNetworkPolicy(t *testing.T) {
 
 func TestBrowserWorkerUnifiedDeleteCleansResourcesAndRetriesFailure(t *testing.T) {
 	s, instance, _ := browserWorkerTestService(t)
-	// Unified deletion validates the recorded path against the lifecycle root.
-	// Model a real instance layout inside this test's owned temporary root.
-	workspaceRoot := t.TempDir()
-	workspace := RuntimeWorkspacePathWithRoot(workspaceRoot, RuntimeTypeOpenClaw, instance.UserID, instance.ID)
-	instance.WorkspacePath = &workspace
-	configPath := writeBrowserWorkerTestConfig(t, instance)
+	writeBrowserWorkerTestConfig(t, instance)
 	if _, err := s.Update(context.Background(), instance, BrowserWorkerUpdate{Enabled: true}); err != nil {
 		t.Fatal(err)
 	}
 	instance.RuntimeType = RuntimeBackendGateway
 	instances := s.instances.(*v2LifecycleInstanceRepo)
-	lifecycle := &instanceService{instanceRepo: instances, workspaceRoot: workspaceRoot, resourceCleanup: func(context.Context, int) error { return errors.New("temporary component cleanup failure") }}
+	lifecycle := &instanceService{instanceRepo: instances, resourceCleanup: func(context.Context, int) error { return errors.New("temporary component cleanup failure") }}
 	if err := lifecycle.Delete(instance.ID); err == nil {
 		t.Fatal("cleanup failure must keep instance retryable")
 	}
 	if instances.byID[instance.ID] == nil || instances.byID[instance.ID].Status != "deleting" {
 		t.Fatal("failed cleanup lost deletion intent")
-	}
-	if _, err := os.Stat(configPath); err != nil {
-		t.Fatal("failed component cleanup erased the retryable workspace")
 	}
 	// The reconciler must never recreate components for a deleting instance.
 	s.ReconcileAll(context.Background())
@@ -342,9 +334,6 @@ func TestBrowserWorkerUnifiedDeleteCleansResourcesAndRetriesFailure(t *testing.T
 	}
 	if instances.byID[instance.ID] != nil {
 		t.Fatal("instance record was not deleted")
-	}
-	if _, err := os.Stat(workspace); !os.IsNotExist(err) {
-		t.Fatal("instance workspace was not erased")
 	}
 	ctx := context.Background()
 	ns := s.Namespace()

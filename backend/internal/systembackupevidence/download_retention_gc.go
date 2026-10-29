@@ -143,9 +143,9 @@ func (s *SQLDownloadRetentionGC) AuthenticateRequest(r *http.Request) (context.C
 	return authenticatePinnedPeer(r, s, s.roots, s.c.CertificateSHA256, s.c.ExpiresAt)
 }
 
-const downloadGCActorHintSQL = `SELECT o.id,o.actor_type,o.actor_id,a.intent_audit_id,r.result_audit_id FROM system_backup_operations o JOIN system_backup_download_admission_receipts a ON a.operation_id=o.id AND a.origin_installation_id=o.origin_installation_id AND a.operation_public_id=o.public_id JOIN system_backup_download_result_receipts r ON r.operation_id=a.operation_id AND r.origin_installation_id=a.origin_installation_id AND r.operation_public_id=a.operation_public_id WHERE o.origin_installation_id=? AND o.public_id=?`
+const downloadGCActorHintSQL = `SELECT o.id,o.actor_type,o.actor_id,a.intent_audit_id,r.result_audit_id FROM system_backup_v2_operations o JOIN system_backup_v2_download_admission_receipts a ON a.operation_id=o.id AND a.origin_installation_id=o.origin_installation_id AND a.operation_public_id=o.public_id JOIN system_backup_v2_download_result_receipts r ON r.operation_id=a.operation_id AND r.origin_installation_id=a.origin_installation_id AND r.operation_public_id=a.operation_public_id WHERE o.origin_installation_id=? AND o.public_id=?`
 const downloadGCWorkerSQL = `SELECT operation_type,target_type,target_public_id,actor_type,actor_id,status,claim_owner,claim_expires_at,row_version,deadline_at,schema_version
-FROM system_backup_operations WHERE origin_installation_id=? AND public_id=? FOR UPDATE`
+FROM system_backup_v2_operations WHERE origin_installation_id=? AND public_id=? FOR UPDATE`
 
 type downloadGCWorker struct{ lease, deadline time.Time }
 
@@ -413,7 +413,7 @@ func (s *SQLDownloadRetentionGC) collectProtectedWorkWithCapacity(ctx context.Co
 }
 
 const downloadGCEvidenceHintSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type,created_at
-FROM system_backup_evidence WHERE id=? AND public_id=?`
+FROM system_backup_v2_evidence WHERE id=? AND public_id=?`
 
 func downloadGCEvidenceHint(ctx context.Context, tx *sql.Tx, g *DownloadRetentionGroup) (Identity, time.Time, error) {
 	i := Identity{ID: g.receipt.EvidenceID}
@@ -425,11 +425,11 @@ func downloadGCEvidenceHint(ctx context.Context, tx *sql.Tx, g *DownloadRetentio
 }
 
 const downloadGCDeletedEvidenceSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,redaction_classification,content_checksum,content_size_bytes,media_type,row_version,expires_at,protected_until,created_at
-FROM system_backup_evidence WHERE id=? AND public_id=? AND schema_version='system-backup-evidence.v1' AND storage_state='deleted' AND evidence_failure_code='none'
+FROM system_backup_v2_evidence WHERE id=? AND public_id=? AND schema_version='system-backup-evidence.v1' AND storage_state='deleted' AND evidence_failure_code='none'
 AND claim_owner IS NULL AND claim_expires_at IS NULL AND storage_provider_role IS NULL AND storage_identity_hash IS NULL AND storage_ref_version IS NULL
 AND storage_relative_key IS NULL AND storage_relative_key_hash IS NULL AND storage_immutable_version IS NULL AND inline_payload IS NULL
 AND object_checksum IS NULL AND object_size_bytes IS NULL AND plaintext_chunk_size_bytes IS NULL AND chunk_count=0 AND chunk_list_root IS NULL FOR UPDATE`
-const downloadGCEmptyChunksSQL = `SELECT chunk_index FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index LIMIT 1 FOR UPDATE`
+const downloadGCEmptyChunksSQL = `SELECT chunk_index FROM system_backup_v2_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index LIMIT 1 FOR UPDATE`
 
 type downloadGCDeletedEvidence struct {
 	identity  Identity
@@ -459,8 +459,8 @@ func (f downloadGCDeletedEvidence) recheck(ctx context.Context, tx *sql.Tx, s Do
 	return nil
 }
 
-const downloadGCTombstoneSourceKeySQL = `SELECT id FROM system_backup_compact_tombstones WHERE origin_installation_id=? AND source_type='operation' AND source_public_id=? FOR UPDATE`
-const downloadGCTombstoneIdempotencyKeySQL = `SELECT id FROM system_backup_compact_tombstones WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? FOR UPDATE`
+const downloadGCTombstoneSourceKeySQL = `SELECT id FROM system_backup_v2_compact_tombstones WHERE origin_installation_id=? AND source_type='operation' AND source_public_id=? FOR UPDATE`
+const downloadGCTombstoneIdempotencyKeySQL = `SELECT id FROM system_backup_v2_compact_tombstones WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? FOR UPDATE`
 
 func lockDownloadGCTombstone(ctx context.Context, tx *sql.Tx, g *DownloadRetentionGroup) error {
 	var id int64
@@ -482,11 +482,11 @@ func lockDownloadGCTombstone(ctx context.Context, tx *sql.Tx, g *DownloadRetenti
 	return nil
 }
 
-const downloadGCTombstoneInsertSQL = `INSERT INTO system_backup_compact_tombstones
+const downloadGCTombstoneInsertSQL = `INSERT INTO system_backup_v2_compact_tombstones
 (source_type,source_public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,terminal_status,failure_category,eligibility,artifact_final_state,response_summary_hash,source_created_at,source_finished_at,detail_rolling_hash,gc_batch_id,gc_at,retention_class,delete_after,row_version)
 VALUES ('operation',?,?,'admin',?,'getSystemBackupEvidence',?,?,'succeeded','none',NULL,NULL,?,?,?,?,?,?,'standard',?,1)`
 const downloadGCTombstoneReadSQL = `SELECT id,schema_version,source_type,source_public_id,origin_installation_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,terminal_status,failure_category,eligibility,artifact_final_state,response_summary_hash,source_created_at,source_finished_at,detail_rolling_hash,gc_batch_id,gc_at,retention_class,delete_after,row_version
-FROM system_backup_compact_tombstones WHERE origin_installation_id=? AND source_type='operation' AND source_public_id=? FOR UPDATE`
+FROM system_backup_v2_compact_tombstones WHERE origin_installation_id=? AND source_type='operation' AND source_public_id=? FOR UPDATE`
 
 type downloadGCTombstone struct {
 	id                                                                   int64
@@ -529,10 +529,10 @@ func (t downloadGCTombstone) matches(s downloadGCTombstone) bool {
 	return t.id == s.id && t.operation == s.operation && t.installation == s.installation && t.actor == s.actor && t.key == s.key && t.request == s.request && t.summary == s.summary && t.detail == s.detail && t.batch == s.batch && t.created.Equal(s.created) && t.finished.Equal(s.finished) && t.at.Equal(s.at) && t.deleteAfter.Equal(s.deleteAfter)
 }
 
-const downloadGCDeleteResultSQL = `DELETE FROM system_backup_download_result_receipts WHERE operation_id=? AND origin_installation_id=? AND operation_public_id=? AND evidence_id=? AND evidence_public_id=? AND intent_audit_id=? AND result_audit_id=? AND result_sha256=? AND result_size_bytes=? AND result_at=? AND retain_until=? AND schema_version='system-backup-evidence-download-result.v1'`
-const downloadGCDeleteNonceSQL = `DELETE FROM system_backup_strong_auth_nonces WHERE id=? AND origin_installation_id=? AND operation_id=? AND audit_log_id=? AND nonce_hmac=? AND nonce_hmac_key_version=? AND retain_until=? AND schema_version='system-backup-strong-auth-nonce.v1'`
-const downloadGCDeleteReceiptSQL = `DELETE FROM system_backup_download_admission_receipts WHERE operation_id=? AND origin_installation_id=? AND operation_public_id=? AND evidence_id=? AND evidence_public_id=? AND intent_audit_id=? AND receipt_sha256=? AND operation_sha256=? AND retain_until=? AND schema_version='system-backup-evidence-download-admission.v1'`
-const downloadGCDeleteOperationSQL = `DELETE FROM system_backup_operations WHERE id=? AND origin_installation_id=? AND public_id=? AND operation_type='evidence_download_admission' AND target_type='evidence' AND target_public_id=? AND download_evidence_id=? AND request_hash=? AND status='succeeded' AND row_version=1`
+const downloadGCDeleteResultSQL = `DELETE FROM system_backup_v2_download_result_receipts WHERE operation_id=? AND origin_installation_id=? AND operation_public_id=? AND evidence_id=? AND evidence_public_id=? AND intent_audit_id=? AND result_audit_id=? AND result_sha256=? AND result_size_bytes=? AND result_at=? AND retain_until=? AND schema_version='system-backup-evidence-download-result.v1'`
+const downloadGCDeleteNonceSQL = `DELETE FROM system_backup_v2_strong_auth_nonces WHERE id=? AND origin_installation_id=? AND operation_id=? AND audit_log_id=? AND nonce_hmac=? AND nonce_hmac_key_version=? AND retain_until=? AND schema_version='system-backup-strong-auth-nonce.v1'`
+const downloadGCDeleteReceiptSQL = `DELETE FROM system_backup_v2_download_admission_receipts WHERE operation_id=? AND origin_installation_id=? AND operation_public_id=? AND evidence_id=? AND evidence_public_id=? AND intent_audit_id=? AND receipt_sha256=? AND operation_sha256=? AND retain_until=? AND schema_version='system-backup-evidence-download-admission.v1'`
+const downloadGCDeleteOperationSQL = `DELETE FROM system_backup_v2_operations WHERE id=? AND origin_installation_id=? AND public_id=? AND operation_type='evidence_download_admission' AND target_type='evidence' AND target_public_id=? AND download_evidence_id=? AND request_hash=? AND status='succeeded' AND row_version=1`
 const downloadGCDeleteAuditSQL = `DELETE FROM audit_logs WHERE id=? AND user_id=? AND action=? AND resource_type='system_backup' AND resource_id IS NULL AND created_at=?`
 
 func deleteDownloadGCGroup(ctx context.Context, tx *sql.Tx, g *DownloadRetentionGroup) error {
@@ -591,14 +591,14 @@ func verifyDownloadGCAbsent(ctx context.Context, tx *sql.Tx, g *DownloadRetentio
 		sql  string
 		args []any
 	}{
-		{"SELECT id FROM system_backup_operations WHERE id=?", []any{g.operationID}},
+		{"SELECT id FROM system_backup_v2_operations WHERE id=?", []any{g.operationID}},
 		// A later audit DELETE trigger could reinsert either unique source key
 		// under a NEW numeric ID. Absence of the deleted PK alone is insufficient.
 		{downloadGCAbsentOperationPublicSQL, []any{g.operation.Installation, g.operation.OperationID}},
 		{downloadGCAbsentOperationKeySQL, []any{g.operation.Installation, strconv.FormatInt(g.operation.ActorID, 10), g.operation.IdempotencyKey}},
-		{"SELECT operation_id FROM system_backup_download_admission_receipts WHERE operation_id=?", []any{g.operationID}},
-		{"SELECT operation_id FROM system_backup_download_result_receipts WHERE operation_id=?", []any{g.operationID}},
-		{"SELECT id FROM system_backup_strong_auth_nonces WHERE operation_id=? LIMIT 1", []any{g.operationID}},
+		{"SELECT operation_id FROM system_backup_v2_download_admission_receipts WHERE operation_id=?", []any{g.operationID}},
+		{"SELECT operation_id FROM system_backup_v2_download_result_receipts WHERE operation_id=?", []any{g.operationID}},
+		{"SELECT id FROM system_backup_v2_strong_auth_nonces WHERE operation_id=? LIMIT 1", []any{g.operationID}},
 		{"SELECT id FROM audit_logs WHERE id=?", []any{g.receipt.IntentAuditID}},
 		{"SELECT id FROM audit_logs WHERE id=?", []any{g.result.resultID}},
 	} {
@@ -610,5 +610,5 @@ func verifyDownloadGCAbsent(ctx context.Context, tx *sql.Tx, g *DownloadRetentio
 	return nil
 }
 
-const downloadGCAbsentOperationPublicSQL = `SELECT id FROM system_backup_operations WHERE origin_installation_id=? AND public_id=?`
-const downloadGCAbsentOperationKeySQL = `SELECT id FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=?`
+const downloadGCAbsentOperationPublicSQL = `SELECT id FROM system_backup_v2_operations WHERE origin_installation_id=? AND public_id=?`
+const downloadGCAbsentOperationKeySQL = `SELECT id FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=?`

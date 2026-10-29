@@ -360,18 +360,18 @@ func newDProducerDownloadMySQLFixture(t *testing.T, input dProducerDownloadInput
 		r.OwnerDeadline = r.CreatedAt.Add(time.Minute)
 	}
 	m := r.Manifest
-	_, err = db.ExecContext(x.ctx, `UPDATE system_backup_evidence SET owner_target_type='system',owner_target_public_id=?,evidence_type='capability_snapshot',media_type='application/json',storage_relative_key=?,storage_relative_key_hash=?,content_checksum=?,content_size_bytes=?,object_checksum=?,object_size_bytes=?,chunk_count=?,chunk_list_root=?,envelope_hash=?,created_at=? WHERE public_id=?`, m.Identity.OwnerID, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), m.Identity.ContentHash, m.Identity.ContentSize, m.ObjectHash, m.ObjectSize, len(m.Chunks), m.ChunkRoot, m.EnvelopeHash, r.CreatedAt, m.Identity.ID)
+	_, err = db.ExecContext(x.ctx, `UPDATE system_backup_v2_evidence SET owner_target_type='system',owner_target_public_id=?,evidence_type='capability_snapshot',media_type='application/json',storage_relative_key=?,storage_relative_key_hash=?,content_checksum=?,content_size_bytes=?,object_checksum=?,object_size_bytes=?,chunk_count=?,chunk_list_root=?,envelope_hash=?,created_at=? WHERE public_id=?`, m.Identity.OwnerID, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), m.Identity.ContentHash, m.Identity.ContentSize, m.ObjectHash, m.ObjectSize, len(m.Chunks), m.ChunkRoot, m.EnvelopeHash, r.CreatedAt, m.Identity.ID)
 	mustSQL(t, err)
 	var evidenceID int64
-	mustSQL(t, db.QueryRowContext(x.ctx, "SELECT id FROM system_backup_evidence WHERE public_id=?", m.Identity.ID).Scan(&evidenceID))
-	_, err = db.ExecContext(x.ctx, "DELETE FROM system_backup_evidence_chunks WHERE evidence_id=?", evidenceID)
+	mustSQL(t, db.QueryRowContext(x.ctx, "SELECT id FROM system_backup_v2_evidence WHERE public_id=?", m.Identity.ID).Scan(&evidenceID))
+	_, err = db.ExecContext(x.ctx, "DELETE FROM system_backup_v2_evidence_chunks WHERE evidence_id=?", evidenceID)
 	mustSQL(t, err)
 	for _, chunk := range m.Chunks {
 		nonce, e := base64.RawURLEncoding.DecodeString(chunk.Nonce)
 		mustSQL(t, e)
 		tag, e := base64.RawURLEncoding.DecodeString(chunk.Tag)
 		mustSQL(t, e)
-		_, err = db.ExecContext(x.ctx, `INSERT INTO system_backup_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)`, evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
+		_, err = db.ExecContext(x.ctx, `INSERT INTO system_backup_v2_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)`, evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
 		mustSQL(t, err)
 	}
 	scope := pd.Scope{ServerUUID: pd.ServerUUID(x.identity.ServerUUID), Database: pd.Database(x.identity.Database), Installation: pd.Installation(x.registry.Installation)}
@@ -548,7 +548,7 @@ func TestDProducerDownloadOwnersMySQL(t *testing.T) {
 			if mode == "revoked_result" || mode == "result_link_rollback" {
 				c := f.admitted(t)
 				if mode == "result_link_rollback" {
-					_, err := db.ExecContext(f.ctx, "CREATE TRIGGER d_producer_result_link_reject BEFORE INSERT ON system_backup_download_result_receipts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='producer result link probe rejection'")
+					_, err := db.ExecContext(f.ctx, "CREATE TRIGGER d_producer_result_link_reject BEFORE INSERT ON system_backup_v2_download_result_receipts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='producer result link probe rejection'")
 					mustSQL(t, err)
 					if f.results.Finish(f.ctx, c, DownloadResultObservation{Outcome: "interrupted"}) == nil {
 						t.Fatal("producer result link failure committed")

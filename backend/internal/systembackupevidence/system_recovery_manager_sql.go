@@ -10,7 +10,7 @@ import (
 	pd "clawreef/internal/systembackupproducer"
 )
 
-const recoveryManagerSelect = `SELECT origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,revoked_at,row_version FROM system_backup_recovery_managers WHERE scope_key=? AND management_identity_hash=?`
+const recoveryManagerSelect = `SELECT origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,revoked_at,row_version FROM system_backup_v2_recovery_managers WHERE scope_key=? AND management_identity_hash=?`
 
 type RecoveryManagerPermission string
 

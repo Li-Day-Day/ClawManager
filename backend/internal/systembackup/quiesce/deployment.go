@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"sort"
 	"strings"
 	"time"
@@ -21,6 +22,13 @@ import (
 )
 
 const resumeFenceAnnotation = "backup.clawmanager.io/source-resume-fence"
+
+var ErrStopProofPending = errors.New("original runtime stop acknowledgement is pending")
+
+type resumeFailure struct{ stage string }
+
+func (e resumeFailure) Error() string { return "source resume failed: " + e.stage }
+func (e resumeFailure) Unwrap() error { return flow.ErrResume }
 
 type PodIdentity struct {
 	Name, UID, Node string
@@ -39,11 +47,15 @@ type deploymentCheckpoint struct {
 // proof after force deletion or a node partition. ConfirmResumed checks runtime
 // health/reconciliation, beyond Deployment readiness. No permissive defaults.
 type DeploymentWriter struct {
+	// Platform is deployment-owned, never a model/user option. Platform writers
+	// carry no fictitious Runtime identity; the guard must prove their registry.
+	Platform                      bool
 	Client                        kubernetes.Interface
 	Namespace, Name, UID, FenceID string
 	Runtime                       scope.Runtime
 	Guard                         func(context.Context, string, flow.State) error
 	ConfirmStopped                func(context.Context, flow.State, []PodIdentity) error
+	PrepareStop                   func(context.Context, flow.State, []PodIdentity) error
 	ConfirmResumed                func(context.Context, flow.State) error
 	PollInterval                  time.Duration
 }
@@ -58,9 +70,15 @@ func (w *DeploymentWriter) ready(ctx context.Context) error {
 	if w.Client == nil || w.Namespace == "" || w.Name == "" || w.UID == "" || w.FenceID == "" || len(w.FenceID) > 128 || w.Guard == nil || w.ConfirmStopped == nil || w.ConfirmResumed == nil {
 		return flow.ErrNotReady
 	}
-	p, err := scope.PlanRuntime(w.Runtime)
-	if err != nil || p.Mode != "pro" {
-		return flow.ErrNotReady
+	if w.Platform {
+		if w.Runtime != (scope.Runtime{}) {
+			return flow.ErrNotReady
+		}
+	} else {
+		p, err := scope.PlanRuntime(w.Runtime)
+		if err != nil || p.Mode != "pro" {
+			return flow.ErrNotReady
+		}
 	}
 	return ctx.Err()
 }
@@ -106,7 +124,13 @@ func (w *DeploymentWriter) pods(ctx context.Context, d *appsv1.Deployment) ([]Po
 	ready := true
 	for _, pod := range pods.Items {
 		owner := metav1.GetControllerOf(&pod)
-		if owner == nil || owner.Kind != "ReplicaSet" || !owned[owner.UID] || pod.UID == "" || pod.Spec.NodeName == "" || (pod.Spec.OS != nil && pod.Spec.OS.Name == corev1.Windows) {
+		if owner == nil || owner.Kind != "ReplicaSet" || !owned[owner.UID] || pod.UID == "" || (pod.Spec.OS != nil && pod.Spec.OS.Name == corev1.Windows) {
+			return nil, false, flow.ErrQuiesce
+		}
+		// A newly resumed, owned Pod can legitimately be Pending before the
+		// scheduler assigns its node. It is not a stopped/ready proof, nor an
+		// identity conflict. Keep counting it and wait for full runtime health.
+		if pod.Spec.NodeName == "" && pod.Status.Phase != corev1.PodPending {
 			return nil, false, flow.ErrQuiesce
 		}
 		identity, podReady := podProcess(&pod)
@@ -230,6 +254,11 @@ func (w *DeploymentWriter) Pause(ctx context.Context, s flow.State) (flow.ACK, e
 		if e != nil || !ready || !samePods(current, p.Pods) {
 			return flow.ACK{}, flow.ErrQuiesce
 		}
+		if w.PrepareStop != nil {
+			if e = w.PrepareStop(ctx, s, p.Pods); e != nil {
+				return flow.ACK{}, e
+			}
+		}
 		if err = w.patch(ctx, d, 0, false); err != nil {
 			return flow.ACK{}, err
 		}
@@ -258,7 +287,10 @@ func (w *DeploymentWriter) stopped(ctx context.Context, s flow.State, p deployme
 	if len(pods) != 0 || d.Status.ObservedGeneration < d.Generation || d.Status.Replicas != 0 {
 		return false, nil
 	}
-	if w.ConfirmStopped(ctx, s, p.Pods) != nil {
+	if e := w.ConfirmStopped(ctx, s, p.Pods); e != nil {
+		if errors.Is(e, ErrStopProofPending) {
+			return false, nil
+		}
 		return false, flow.ErrQuiesce
 	}
 	return true, nil
@@ -277,10 +309,17 @@ func (w *DeploymentWriter) CheckPaused(ctx context.Context, s flow.State) error 
 	}
 	return nil
 }
-func (w *DeploymentWriter) Resume(ctx context.Context, s flow.State) error {
+func (w *DeploymentWriter) Resume(ctx context.Context, s flow.State) (err error) {
+	stage := "readiness"
+	defer func() {
+		if err != nil {
+			err = resumeFailure{stage}
+		}
+	}()
 	if err := w.ready(ctx); err != nil {
 		return flow.ErrResume
 	}
+	stage = "original_checkpoint"
 	p, err := w.checkpoint(s)
 	if err != nil {
 		return flow.ErrResume
@@ -288,15 +327,18 @@ func (w *DeploymentWriter) Resume(ctx context.Context, s flow.State) error {
 	if w.Guard(ctx, "before-resume", s) != nil {
 		return flow.ErrResume
 	}
+	stage = "source_identity"
 	d, err := w.get(ctx)
 	if err != nil || !w.matches(d, p) || (*d.Spec.Replicas != 0 && *d.Spec.Replicas != p.Replicas) {
 		return flow.ErrResume
 	}
 	if p.Replicas > 0 && *d.Spec.Replicas == 0 {
+		stage = "old_process_stop_proof"
 		if wait(ctx, w.PollInterval, func() (bool, error) { return w.stopped(ctx, s, p, true) }) != nil {
 			return flow.ErrResume
 		}
 		// Refresh RV after waiting; do not send an old mutation across recovery.
+		stage = "source_refresh"
 		d, err = w.get(ctx)
 		if err != nil || !w.matches(d, p) || *d.Spec.Replicas != 0 {
 			return flow.ErrResume
@@ -309,10 +351,12 @@ func (w *DeploymentWriter) Resume(ctx context.Context, s flow.State) error {
 	// already equal the original value. Any delayed stop PATCH holding an old
 	// RV is then rejected instead of stopping the source after reported recovery.
 	if d.Annotations[resumeFenceAnnotation] != w.FenceID || *d.Spec.Replicas != p.Replicas {
+		stage = "resume_patch"
 		if w.patch(ctx, d, p.Replicas, true) != nil {
 			return flow.ErrResume
 		}
 	}
+	stage = "resumed_health"
 	err = wait(ctx, w.PollInterval, func() (bool, error) {
 		if w.Guard(ctx, "check-resumed", s) != nil {
 			return false, flow.ErrResume

@@ -61,11 +61,11 @@ func TestAcquireClaimUsesOneDBTimeCASForEveryDTarget(t *testing.T) {
 		ownerColumn string
 		leaseColumn string
 	}{
-		{TargetBackup, "sbk_11111111-1111-4111-8111-111111111111", "system_backups", "controller_owner", "controller_lease_expires_at"},
-		{TargetDrill, "sdr_11111111-1111-4111-8111-111111111111", "system_restore_drills", "controller_owner", "controller_lease_expires_at"},
-		{TargetPreflight, "spf_11111111-1111-4111-8111-111111111111", "system_backup_preflights", "controller_owner", "controller_lease_expires_at"},
-		{TargetArtifactVerify, "sav_11111111-1111-4111-8111-111111111111", "system_backup_artifact_verifications", "controller_owner", "controller_lease_expires_at"},
-		{TargetOperation, "sop_11111111-1111-4111-8111-111111111111", "system_backup_operations", "claim_owner", "claim_expires_at"},
+		{TargetBackup, "sbk_11111111-1111-4111-8111-111111111111", "system_backup_v2_backups", "controller_owner", "controller_lease_expires_at"},
+		{TargetDrill, "sdr_11111111-1111-4111-8111-111111111111", "system_backup_v2_restore_drills", "controller_owner", "controller_lease_expires_at"},
+		{TargetPreflight, "spf_11111111-1111-4111-8111-111111111111", "system_backup_v2_preflights", "controller_owner", "controller_lease_expires_at"},
+		{TargetArtifactVerify, "sav_11111111-1111-4111-8111-111111111111", "system_backup_v2_artifact_verifications", "controller_owner", "controller_lease_expires_at"},
+		{TargetOperation, "sop_11111111-1111-4111-8111-111111111111", "system_backup_v2_operations", "claim_owner", "claim_expires_at"},
 	}
 
 	for _, tt := range tests {

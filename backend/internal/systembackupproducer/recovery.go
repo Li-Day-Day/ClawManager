@@ -69,7 +69,7 @@ type RecoveryAdmission struct {
 	AdditionalCost      ZeroCounter // independently verified existing audit cost
 }
 
-const recoveryRevocationLockSQL = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`
+const recoveryRevocationLockSQL = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`
 
 // lockRecoveryRevocation checks the D-owned current identity fence in L2.
 // An absent row is a denial, including on an installation that has not yet
@@ -437,8 +437,8 @@ func (p *recoveryPolicy) Recheck(ctx context.Context, tx ReadSQL, scope Scope, p
 	return p.session.Recheck(ctx, tx, detached(p.request), detached(p.history), now)
 }
 
-const recoveryClaimCAS = `UPDATE system_backup_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner <=> ? AND claim_expires_at <=> ?`
-const recoveryFinishCAS = `UPDATE system_backup_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=NULL,claim_expires_at=NULL,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner=? AND claim_expires_at=? AND storage_immutable_version IS NULL`
+const recoveryClaimCAS = `UPDATE system_backup_v2_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner <=> ? AND claim_expires_at <=> ?`
+const recoveryFinishCAS = `UPDATE system_backup_v2_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=NULL,claim_expires_at=NULL,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner=? AND claim_expires_at=? AND storage_immutable_version IS NULL`
 
 func (p *recoveryPolicy) lockEvidence(ctx context.Context, tx *Transaction) (FinishEvidence, error) {
 	v, err := p.session.LockEvidence(ctx, tx, detached(p.request), detached(p.history))

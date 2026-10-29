@@ -136,8 +136,8 @@ func TestCaptureTableAllowlist(t *testing.T) {
 	if scope.RegistrySHA256() == "" || scope.SchemaSHA256() != strings.Repeat("a", 64) {
 		t.Fatalf("scope lost registry identity: %+v", scope)
 	}
-	got[0] = "system_backups"
-	if scope.Tables()[0] == "system_backups" {
+	got[0] = "system_backup_v2_backups"
+	if scope.Tables()[0] == "system_backup_v2_backups" {
 		t.Fatal("caller mutated capture scope table names")
 	}
 }
@@ -187,7 +187,7 @@ func TestCaptureTableAllowlistFailsClosed(t *testing.T) {
 			}
 			t.Fatal("risk_hits fixture missing")
 		}},
-		{"extra user table", func(t *testing.T, d map[string]any) { object(t, d, "system_backups")["category"] = "users" }},
+		{"extra user table", func(t *testing.T, d map[string]any) { object(t, d, "system_backup_v2_backups")["category"] = "users" }},
 		{"wrong verifier", func(t *testing.T, d map[string]any) { object(t, d, "audit_events")["verifier_id"] = "other" }},
 		{"unreviewed other domain", func(t *testing.T, d map[string]any) { object(t, d, "audit_logs")["approved_cross_reviewers"] = []any{} }},
 	} {

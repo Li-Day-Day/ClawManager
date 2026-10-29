@@ -421,7 +421,7 @@ func dGCLifecycleCommitted(t *testing.T, f *dGCColdFixture, e error) {
 	if f.fingerprint(t, true) != f.evidenceBefore {
 		t.Fatal("retained envelope changed")
 	}
-	for _, q := range []string{"SELECT COUNT(*) FROM system_backup_operations WHERE id=73", "SELECT COUNT(*) FROM system_backup_download_admission_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_download_result_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_strong_auth_nonces WHERE operation_id=73", "SELECT COUNT(*) FROM audit_logs WHERE id IN(1729,1730)"} {
+	for _, q := range []string{"SELECT COUNT(*) FROM system_backup_v2_operations WHERE id=73", "SELECT COUNT(*) FROM system_backup_v2_download_admission_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_v2_download_result_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_v2_strong_auth_nonces WHERE operation_id=73", "SELECT COUNT(*) FROM audit_logs WHERE id IN(1729,1730)"} {
 		var n int
 		dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, q).Scan(&n))
 		if n != 0 {
@@ -430,8 +430,8 @@ func dGCLifecycleCommitted(t *testing.T, f *dGCColdFixture, e error) {
 	}
 	var stones int
 	var reserved int64
-	dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT COUNT(*) FROM system_backup_compact_tombstones WHERE source_public_id=?", f.model.operation).Scan(&stones))
-	dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1").Scan(&reserved))
+	dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT COUNT(*) FROM system_backup_v2_compact_tombstones WHERE source_public_id=?", f.model.operation).Scan(&stones))
+	dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1").Scan(&reserved))
 	if stones != 1 || reserved != 65536 {
 		t.Fatal("committed marker/ledger is not exact")
 	}
@@ -594,13 +594,13 @@ func dGCLifecycleTakeover(t *testing.T, f *dGCColdFixture) {
 	t.Helper()
 	ctx, db := f.p.ddl.ctx, f.p.role.root
 	var originalDeadline time.Time
-	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT deadline_at FROM system_backup_operations WHERE id=74 AND public_id=?", f.collector.c.OperationID).Scan(&originalDeadline))
+	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT deadline_at FROM system_backup_v2_operations WHERE id=74 AND public_id=?", f.collector.c.OperationID).Scan(&originalDeadline))
 	now := aDownloadMFANow(t, ctx, db)
 	lease := now.Add(8 * time.Second)
 	if !lease.Before(originalDeadline) {
 		t.Fatal("fixture original operation deadline too short")
 	}
-	r, e := db.ExecContext(ctx, "UPDATE system_backup_operations SET claim_expires_at=? WHERE id=74 AND public_id=? AND row_version=7 AND claim_owner=? AND status='running'", lease, f.collector.c.OperationID, f.collector.c.OperationClaim)
+	r, e := db.ExecContext(ctx, "UPDATE system_backup_v2_operations SET claim_expires_at=? WHERE id=74 AND public_id=? AND row_version=7 AND claim_owner=? AND status='running'", lease, f.collector.c.OperationID, f.collector.c.OperationClaim)
 	dGCFreezeOK(t, e)
 	n, e := r.RowsAffected()
 	dGCFreezeOK(t, e)
@@ -624,7 +624,7 @@ func dGCLifecycleTakeover(t *testing.T, f *dGCColdFixture) {
 	}
 	claim := "full-lifecycle-successor"
 	newLease := earlier(now.Add(30*time.Second), originalDeadline)
-	r, e = db.ExecContext(ctx, "UPDATE system_backup_operations SET claim_owner=?,claim_expires_at=?,row_version=row_version+1 WHERE id=74 AND public_id=? AND row_version=7 AND claim_owner=? AND claim_expires_at<=UTC_TIMESTAMP(6) AND deadline_at=? AND deadline_at>UTC_TIMESTAMP(6)", claim, newLease, f.collector.c.OperationID, f.collector.c.OperationClaim, originalDeadline)
+	r, e = db.ExecContext(ctx, "UPDATE system_backup_v2_operations SET claim_owner=?,claim_expires_at=?,row_version=row_version+1 WHERE id=74 AND public_id=? AND row_version=7 AND claim_owner=? AND claim_expires_at<=UTC_TIMESTAMP(6) AND deadline_at=? AND deadline_at>UTC_TIMESTAMP(6)", claim, newLease, f.collector.c.OperationID, f.collector.c.OperationClaim, originalDeadline)
 	dGCFreezeOK(t, e)
 	n, e = r.RowsAffected()
 	dGCFreezeOK(t, e)
@@ -633,7 +633,7 @@ func dGCLifecycleTakeover(t *testing.T, f *dGCColdFixture) {
 	}
 	var afterDeadline time.Time
 	var version int64
-	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT deadline_at,row_version FROM system_backup_operations WHERE id=74").Scan(&afterDeadline, &version))
+	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT deadline_at,row_version FROM system_backup_v2_operations WHERE id=74").Scan(&afterDeadline, &version))
 	if !afterDeadline.Equal(originalDeadline) || version != 8 {
 		t.Fatal("takeover renewed original deadline or lost fence")
 	}
@@ -844,7 +844,7 @@ func dGCLifecycleScale(t *testing.T, f *dGCColdFixture) {
 	ctx, db := f.p.ddl.ctx, f.p.role.root
 	now := aDownloadMFANow(t, ctx, db)
 	empty := []byte("[]")
-	const insert = `INSERT INTO system_backup_operations(id,public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,failure_category,deadline_at,started_at,finished_at,created_at,updated_at) VALUES(?, ?,?,'control_metadata_gc','system',?,'system','system:controller','CollectSystemBackupControlMetadata',?,?,?,2,?,'failed','validation_failed',?,?,?,?,?)`
+	const insert = `INSERT INTO system_backup_v2_operations(id,public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,failure_category,deadline_at,started_at,finished_at,created_at,updated_at) VALUES(?, ?,?,'control_metadata_gc','system',?,'system','system:controller','CollectSystemBackupControlMetadata',?,?,?,2,?,'failed','validation_failed',?,?,?,?,?)`
 	for i := 0; i < 512; i++ {
 		dGCColdExec(t, ctx, db, insert, 1000+i, fmt.Sprintf("sop_c0000000-0000-4000-8000-%012x", i+1), f.p.role.c.Installation, f.p.role.c.Installation, fmt.Sprintf("gc-lifecycle-inert-%04d", i), hash([]byte("inert")), empty, hash(empty), now.Add(-time.Second), now.Add(-2*time.Second), now.Add(-time.Second), now.Add(-2*time.Second), now.Add(-time.Second))
 	}
@@ -860,7 +860,7 @@ func dGCLifecycleScale(t *testing.T, f *dGCColdFixture) {
 	}
 	dGCLifecycleCommitted(t, f, e)
 	var n int
-	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_operations WHERE id BETWEEN 1000 AND 1511").Scan(&n))
+	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_operations WHERE id BETWEEN 1000 AND 1511").Scan(&n))
 	if n != 512 {
 		t.Fatal("batch mutated unrelated inert rows")
 	}

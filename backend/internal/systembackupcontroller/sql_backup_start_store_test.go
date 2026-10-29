@@ -96,8 +96,8 @@ func (c *backupStartConn) ExecContext(ctx context.Context, q string, args []driv
 	m := c.m
 	m.queries = append(m.queries, q)
 	switch {
-	case strings.HasPrefix(q, "UPDATE system_backups SET status="):
-		for _, required := range []string{"row_version=?", "controller_lease_expires_at>UTC_TIMESTAMP(6)", "deadline_at>UTC_TIMESTAMP(6)", "system_backup_attempts", "system_backup_job_observations", "system_backup_staging_resources", "system_backup_external_actions"} {
+	case strings.HasPrefix(q, "UPDATE system_backup_v2_backups SET status="):
+		for _, required := range []string{"row_version=?", "controller_lease_expires_at>UTC_TIMESTAMP(6)", "deadline_at>UTC_TIMESTAMP(6)", "system_backup_v2_attempts", "system_backup_v2_job_observations", "system_backup_v2_staging_resources", "system_backup_v2_external_actions"} {
 			if !strings.Contains(q, required) {
 				return nil, errors.New("unsafe start CAS")
 			}
@@ -111,7 +111,7 @@ func (c *backupStartConn) ExecContext(ctx context.Context, q string, args []driv
 		return fixedResult(1), nil
 	case strings.HasPrefix(q, "UPDATE "):
 		return c.base.ExecContext(ctx, q, args)
-	case strings.HasPrefix(q, "INSERT INTO system_backup_attempts"):
+	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_attempts"):
 		if len(args) != 2 || args[0].Value != c.base.pending.publicID {
 			return nil, errors.New("unbound attempt")
 		}
@@ -124,7 +124,7 @@ func (c *backupStartConn) ExecContext(ctx context.Context, q string, args []driv
 		}
 		c.attempts[phase] = "preparing"
 		return fixedResult(1), nil
-	case strings.HasPrefix(q, "INSERT INTO system_backup_events"):
+	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_events"):
 		m.sequence++
 		id := m.sequence
 		if strings.Contains(q, "Controller acquired task claim.") {
@@ -482,7 +482,7 @@ func TestBackupStartFinalHistoryReadsPreserveAppendOnlyPermissions(t *testing.T)
 		if !strings.HasPrefix(q, "SELECT ") {
 			continue
 		}
-		if strings.Contains(q, "system_backup_events") || strings.Contains(q, "system_backup_configs") || strings.Contains(q, "system_backup_attempts") {
+		if strings.Contains(q, "system_backup_v2_events") || strings.Contains(q, "system_backup_v2_configs") || strings.Contains(q, "system_backup_v2_attempts") {
 			if strings.Contains(q, "FOR UPDATE") || !strings.HasSuffix(q, "FOR SHARE") {
 				t.Fatal("history verifier requested write grants")
 			}

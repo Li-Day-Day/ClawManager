@@ -17,9 +17,9 @@ var (
 	ErrDownloadAdmissionNotReady    = errors.New("not_ready")
 )
 
-const downloadAdmissionKeySQL = `SELECT id,request_hash FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? FOR UPDATE`
-const downloadAdmissionTombstoneSQL = `SELECT request_hash FROM system_backup_compact_tombstones WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? FOR UPDATE`
-const downloadAdmissionReceiptKeySQL = `SELECT operation_id FROM system_backup_download_admission_receipts WHERE origin_installation_id=? AND operation_public_id=? FOR UPDATE`
+const downloadAdmissionKeySQL = `SELECT id,request_hash FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? FOR UPDATE`
+const downloadAdmissionTombstoneSQL = `SELECT request_hash FROM system_backup_v2_compact_tombstones WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? FOR UPDATE`
+const downloadAdmissionReceiptKeySQL = `SELECT operation_id FROM system_backup_v2_download_admission_receipts WHERE origin_installation_id=? AND operation_public_id=? FOR UPDATE`
 
 // DownloadAdmissionKeyLock is only the L3 operation/receipt-key lock, not a
 // download authority. D must already own a fresh RepeatableRead transaction,

@@ -38,10 +38,10 @@ func TestDDownloadResultRetentionMySQL(t *testing.T) {
 					mustSQL(t, err)
 				}
 				if name == "cold_group_duplicate_nonce" {
-					insert, e := db.ExecContext(x.ctx, `INSERT INTO system_backup_strong_auth_nonces
+					insert, e := db.ExecContext(x.ctx, `INSERT INTO system_backup_v2_strong_auth_nonces
 (schema_version,origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,operation_id,response_sha256,audit_log_id,retain_until,created_at)
 SELECT schema_version,origin_installation_id,issuer_sha256,subject_sha256,session_sha256,?,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,operation_id,response_sha256,audit_log_id,retain_until,created_at
-FROM system_backup_strong_auth_nonces WHERE operation_id=?`, hash([]byte(c.rows.active.HMAC+":duplicate")), c.rows.operationID)
+FROM system_backup_v2_strong_auth_nonces WHERE operation_id=?`, hash([]byte(c.rows.active.HMAC+":duplicate")), c.rows.operationID)
 					mustSQL(t, e)
 					duplicateID, e = insert.LastInsertId()
 					mustSQL(t, e)
@@ -76,7 +76,7 @@ FROM system_backup_strong_auth_nonces WHERE operation_id=?`, hash([]byte(c.rows.
 				}
 				mustSQL(t, tx.Rollback())
 				if duplicateID > 0 {
-					_, e = db.ExecContext(x.ctx, "DELETE FROM system_backup_strong_auth_nonces WHERE id=? AND operation_id=?", duplicateID, c.rows.operationID)
+					_, e = db.ExecContext(x.ctx, "DELETE FROM system_backup_v2_strong_auth_nonces WHERE id=? AND operation_id=?", duplicateID, c.rows.operationID)
 					mustSQL(t, e)
 				}
 				if name == "cold_group_corrupt_intent" {
@@ -87,7 +87,7 @@ FROM system_backup_strong_auth_nonces WHERE operation_id=?`, hash([]byte(c.rows.
 				return
 			}
 			if name == "link_insert_rollback" {
-				_, err := db.ExecContext(x.ctx, `CREATE TRIGGER synthetic_result_link_reject BEFORE INSERT ON system_backup_download_result_receipts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic result link rejection'`)
+				_, err := db.ExecContext(x.ctx, `CREATE TRIGGER synthetic_result_link_reject BEFORE INSERT ON system_backup_v2_download_result_receipts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic result link rejection'`)
 				mustSQL(t, err)
 				if x.results.Finish(x.ctx, c, DownloadResultObservation{Outcome: "rejected"}) == nil {
 					t.Fatal("result with failed retention link committed")
@@ -98,26 +98,26 @@ FROM system_backup_strong_auth_nonces WHERE operation_id=?`, hash([]byte(c.rows.
 			x.result(t, c)
 			var resultID int64
 			var retain time.Time
-			mustSQL(t, db.QueryRowContext(x.ctx, "SELECT result_audit_id,retain_until FROM system_backup_download_result_receipts WHERE operation_id=?", c.rows.operationID).Scan(&resultID, &retain))
+			mustSQL(t, db.QueryRowContext(x.ctx, "SELECT result_audit_id,retain_until FROM system_backup_v2_download_result_receipts WHERE operation_id=?", c.rows.operationID).Scan(&resultID, &retain))
 			code := uint16(1452)
 			switch name {
 			case "result_audit_delete_restrict":
 				_, err = db.ExecContext(x.ctx, "DELETE FROM audit_logs WHERE id=?", resultID)
 				code = 1451
 			case "admission_delete_restrict":
-				_, err = db.ExecContext(x.ctx, "DELETE FROM system_backup_download_admission_receipts WHERE operation_id=?", c.rows.operationID)
+				_, err = db.ExecContext(x.ctx, "DELETE FROM system_backup_v2_download_admission_receipts WHERE operation_id=?", c.rows.operationID)
 				code = 1451
 			case "parent_retention_update_restrict":
-				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_download_admission_receipts SET retain_until=? WHERE operation_id=?", retain.Add(-time.Microsecond), c.rows.operationID)
+				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_v2_download_admission_receipts SET retain_until=? WHERE operation_id=?", retain.Add(-time.Microsecond), c.rows.operationID)
 				code = 1451
 			case "retention_group_fk":
-				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_download_result_receipts SET retain_until=? WHERE operation_id=?", retain.Add(-time.Microsecond), c.rows.operationID)
+				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_v2_download_result_receipts SET retain_until=? WHERE operation_id=?", retain.Add(-time.Microsecond), c.rows.operationID)
 			case "intent_group_fk":
-				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_download_result_receipts SET intent_audit_id=? WHERE operation_id=?", c.intentAuditID+100000, c.rows.operationID)
+				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_v2_download_result_receipts SET intent_audit_id=? WHERE operation_id=?", c.intentAuditID+100000, c.rows.operationID)
 			case "installation_group_fk":
-				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_download_result_receipts SET origin_installation_id='installation_other' WHERE operation_id=?", c.rows.operationID)
+				_, err = db.ExecContext(x.ctx, "UPDATE system_backup_v2_download_result_receipts SET origin_installation_id='installation_other' WHERE operation_id=?", c.rows.operationID)
 			case "duplicate_result_rejected":
-				_, err = db.ExecContext(x.ctx, "INSERT INTO system_backup_download_result_receipts SELECT * FROM system_backup_download_result_receipts WHERE operation_id=?", c.rows.operationID)
+				_, err = db.ExecContext(x.ctx, "INSERT INTO system_backup_v2_download_result_receipts SELECT * FROM system_backup_v2_download_result_receipts WHERE operation_id=?", c.rows.operationID)
 				code = 1062
 			}
 			var failure *mysql.MySQLError

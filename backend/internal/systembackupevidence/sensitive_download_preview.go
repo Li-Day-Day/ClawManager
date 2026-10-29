@@ -36,7 +36,7 @@ func (s SQLRegistry) previewDownloadEvidence(ctx context.Context, tx *sql.Tx, id
 		return Record{}, ErrDownloadAdmissionNotReady
 	}
 	var installation sql.NullString
-	err := tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_evidence WHERE public_id=?", id).Scan(&installation)
+	err := tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&installation)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Record{}, ErrDenied

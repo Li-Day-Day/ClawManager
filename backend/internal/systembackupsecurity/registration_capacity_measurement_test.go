@@ -88,9 +88,9 @@ func TestCapacityMeasurementOriginalWindowAndExactTables(t *testing.T) {
 			config := capacitySourceFixture(t)
 			start := time.Date(2026, 10, 19, 8, 0, 0, 123456000, time.UTC)
 			model := &capacityMeasurementModel{start: start, end: start.Add(time.Second), tables: [][]driver.Value{
-				{"system_backup_configs", "BASE TABLE", int64(100), int64(25)},
+				{"system_backup_v2_configs", "BASE TABLE", int64(100), int64(25)},
 				{"audit_logs", "BASE TABLE", int64(200), int64(50)},
-				{"system_backups", "BASE TABLE", int64(300), int64(75)},
+				{"system_backup_v2_backups", "BASE TABLE", int64(300), int64(75)},
 			}}
 			space := int64(1 << 40)
 			var statErr error

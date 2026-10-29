@@ -46,7 +46,7 @@ func (r *Reader) ReadTaskCheckEvidenceControl(ctx context.Context, kind TaskKind
 // The evidence public ID is globally unique. The owner must be the very task
 // whose installation and immutable public ID were read and authorized above.
 // No installation inferred from caller input or evidence state is trusted.
-const taskCheckEvidenceControlSQL = "SELECT c.id,c.evidence_public_id,c.evidence_sha256,e.schema_version,e.public_id,e.owner_target_type,e.owner_target_public_id,e.content_checksum FROM system_backup_check_results AS c LEFT JOIN system_backup_evidence AS e ON e.public_id=c.evidence_public_id WHERE c.origin_installation_id=? AND c.target_type=? AND c.target_public_id=? AND c.evidence_public_id IS NOT NULL ORDER BY c.checked_at,c.id LIMIT 10001"
+const taskCheckEvidenceControlSQL = "SELECT c.id,c.evidence_public_id,c.evidence_sha256,e.schema_version,e.public_id,e.owner_target_type,e.owner_target_public_id,e.content_checksum FROM system_backup_v2_check_results AS c LEFT JOIN system_backup_v2_evidence AS e ON e.public_id=c.evidence_public_id WHERE c.origin_installation_id=? AND c.target_type=? AND c.target_public_id=? AND c.evidence_public_id IS NOT NULL ORDER BY c.checked_at,c.id LIMIT 10001"
 
 func readTaskCheckEvidenceControl(ctx context.Context, q detailReadSQL, checks TaskCheckControlSnapshot) (TaskCheckEvidenceControlSnapshot, error) {
 	var zero TaskCheckEvidenceControlSnapshot

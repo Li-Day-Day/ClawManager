@@ -1,3 +1,5 @@
+> Superseded for current integration decisions by [2026-10-29 unified baseline](system-backup-d-unified-baseline-20261029.md). This report describes the older 288d74a source only.
+
 # D 接收 C / Teams 持续开发输入
 
 固定来源：`codex/backup-team-integration@288d74a92c37c6432ebb3dcdd6fd7c2afd837675`。原生只读 ls-remote 与 fetch 已核实；本次只更新跟踪引用，未 merge/checkout、未执行其 SQL/安装依赖/启动 controller。当前主链 `backup@8ef5fa7f` 加 A/D 本地增量、B `08d15abf` 导入和适配分别记录，不以 C 自报测试替代这些字节的验收。

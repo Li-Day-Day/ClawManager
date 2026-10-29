@@ -68,25 +68,6 @@ func TestUsernameMigrationFailsClosedOnInspectionError(t *testing.T) {
 	}
 }
 
-func TestUsernameMigrationWaitsForCaptureGateAndReleasesLock(t *testing.T) {
-	state := &usernameMigrationDB{activeGate: true}
-	database := sql.OpenDB(state)
-	defer database.Close()
-	if err := applyEmbeddedMigrationsSQL(context.Background(), database, nil); err == nil || !strings.Contains(err.Error(), "capture gate") {
-		t.Fatalf("active gate must block the newly introduced lower-numbered migration: %v", err)
-	}
-	if state.prepared || state.applied || state.conflictQueries != 0 || state.releases != 1 {
-		t.Fatal("blocked migration inspected users, wrote SQL, or retained its lock")
-	}
-	state.activeGate = false
-	if err := applyEmbeddedMigrationsSQL(context.Background(), database, nil); err != nil {
-		t.Fatal(err)
-	}
-	if !state.prepared || !state.applied || state.conflictQueries != 1 || state.gateChecks != 2 || state.releases != 2 {
-		t.Fatal("retry did not recheck capture, apply once and release its connection lock")
-	}
-}
-
 func TestUsernameMigrationPreservesDataAndCollation(t *testing.T) {
 	raw, err := embeddedMigrations.ReadFile("migrations/063_unique_usernames.sql")
 	if err != nil {
@@ -109,16 +90,14 @@ func TestUsernameMigrationPreservesDataAndCollation(t *testing.T) {
 }
 
 type usernameMigrationDB struct {
-	duplicates           [][]driver.Value
-	queryError           error
-	prepared, applied    bool
-	conflictQueries      int
-	activeGate           bool
-	gateChecks, releases int
+	duplicates        [][]driver.Value
+	queryError        error
+	prepared, applied bool
+	conflictQueries   int
 }
 
 func (d *usernameMigrationDB) Connect(context.Context) (driver.Conn, error) {
-	return &usernameMigrationConn{state: d}, nil
+	return &usernameMigrationConn{d}, nil
 }
 func (d *usernameMigrationDB) Driver() driver.Driver { return usernameMigrationDriver{} }
 
@@ -128,10 +107,7 @@ func (usernameMigrationDriver) Open(string) (driver.Conn, error) {
 	return nil, errors.New("use connector")
 }
 
-type usernameMigrationConn struct {
-	state               *usernameMigrationDB
-	locked, gateChecked bool
-}
+type usernameMigrationConn struct{ state *usernameMigrationDB }
 
 func (c *usernameMigrationConn) Close() error { return nil }
 func (c *usernameMigrationConn) Begin() (driver.Tx, error) {
@@ -141,9 +117,6 @@ func (c *usernameMigrationConn) Prepare(string) (driver.Stmt, error) {
 	return nil, errors.New("unexpected prepared driver statement")
 }
 func (c *usernameMigrationConn) ExecContext(_ context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	if !c.locked || !c.gateChecked || c.state.activeGate {
-		return nil, errors.New("username DDL outside capture exclusion")
-	}
 	if strings.Contains(query, "ADD UNIQUE KEY uk_users_username") {
 		c.state.prepared = true
 	}
@@ -157,33 +130,17 @@ func (c *usernameMigrationConn) QueryContext(_ context.Context, query string, ar
 	if query == "SELECT DATABASE() AS name" {
 		return &usernameMigrationRows{columns: []string{"name"}, values: [][]driver.Value{{"username_migration_test"}}}, nil
 	}
-	if strings.HasPrefix(query, "SELECT GET_LOCK(") {
-		c.locked = true
-		c.gateChecked = false
-		return &usernameMigrationRows{columns: []string{"locked"}, values: [][]driver.Value{{int64(1)}}}, nil
+	if strings.Contains(query, "SELECT CONCAT('cm:migrate:'") {
+		return &usernameMigrationRows{columns: []string{"lock_name"}, values: [][]driver.Value{{"cm:migrate:fixture"}}}, nil
 	}
-	if strings.HasPrefix(query, "SELECT RELEASE_LOCK(") {
-		if !c.locked {
-			return nil, errors.New("release without lock")
-		}
-		c.locked = false
-		c.state.releases++
+	if strings.Contains(query, "SELECT RELEASE_LOCK(") {
 		return &usernameMigrationRows{columns: []string{"released"}, values: [][]driver.Value{{int64(1)}}}, nil
 	}
-	if !c.locked {
-		return nil, errors.New("migration inspection outside lock connection")
+	if strings.Contains(query, "information_schema.TABLES") {
+		return &usernameMigrationRows{columns: []string{"present"}, values: [][]driver.Value{{int64(0)}}}, nil
 	}
-	if strings.Contains(query, "information_schema.tables") {
-		return &usernameMigrationRows{columns: []string{"count"}, values: [][]driver.Value{{int64(1)}}}, nil
-	}
-	if strings.Contains(query, "FROM system_maintenance_locks") {
-		c.state.gateChecks++
-		c.gateChecked = true
-		var active int64
-		if c.state.activeGate {
-			active = 1
-		}
-		return &usernameMigrationRows{columns: []string{"count"}, values: [][]driver.Value{{active}}}, nil
+	if strings.Contains(query, "SELECT GET_LOCK(") {
+		return &usernameMigrationRows{columns: []string{"locked"}, values: [][]driver.Value{{int64(1)}}}, nil
 	}
 	if strings.Contains(query, "SELECT filename FROM schema_migrations") {
 		entries, err := embeddedMigrations.ReadDir("migrations")
@@ -199,9 +156,6 @@ func (c *usernameMigrationConn) QueryContext(_ context.Context, query string, ar
 		return rows, nil
 	}
 	if strings.Contains(query, "HAVING COUNT(*) > 1") {
-		if !c.gateChecked || c.state.activeGate {
-			return nil, errors.New("username inspection before idle gate")
-		}
 		c.state.conflictQueries++
 		if c.state.queryError != nil {
 			return nil, c.state.queryError

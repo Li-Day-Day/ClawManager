@@ -90,7 +90,7 @@ func (c *loginSessionConn) QueryContext(_ context.Context, q string, args []driv
 			return &registrationTestRows{width: 6}, nil
 		}
 		return registrationRow(v.user, v.subject, v.credential, v.expires, v.revoked, s.now), nil
-	case strings.HasPrefix(q, "SELECT COUNT(*) FROM system_backup_admin_sessions"):
+	case strings.HasPrefix(q, "SELECT COUNT(*) FROM system_backup_v2_admin_sessions"):
 		if !strings.Contains(q, "revoked=FALSE") {
 			return nil, errors.New("revoked rows counted")
 		}
@@ -111,7 +111,7 @@ func (c *loginSessionConn) ExecContext(_ context.Context, q string, args []drive
 		return nil, errors.New("PRIVATE_SQL_ERROR")
 	}
 	switch {
-	case strings.HasPrefix(q, "UPDATE system_backup_admin_sessions SET revoked=TRUE"):
+	case strings.HasPrefix(q, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE"):
 		k := args[1].Value.(string)
 		v, ok := s.pending[k]
 		if !ok || v.revoked {
@@ -119,13 +119,13 @@ func (c *loginSessionConn) ExecContext(_ context.Context, q string, args []drive
 		}
 		v.revoked = true
 		s.pending[k] = v
-	case strings.HasPrefix(q, "DELETE FROM system_backup_admin_sessions"):
+	case strings.HasPrefix(q, "DELETE FROM system_backup_v2_admin_sessions"):
 		for k, v := range s.pending {
 			if !v.expires.After(s.now) {
 				delete(s.pending, k)
 			}
 		}
-	case strings.HasPrefix(q, "INSERT INTO system_backup_admin_sessions"):
+	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_admin_sessions"):
 		if strings.Contains(q, "DUPLICATE") {
 			return nil, errors.New("must not revive")
 		}

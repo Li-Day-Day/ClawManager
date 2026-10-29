@@ -11,7 +11,7 @@ import (
 // Keep the fixed read projection aligned with the migrated task tables. The
 // SQL execution and data-distribution checks still require isolated MySQL.
 func TestTaskProjectionExistsInAllMigratedTaskTables(t *testing.T) {
-	migration, err := os.ReadFile(filepath.Join("..", "db", "migrations", "067_add_system_backup_task_execution_core.sql"))
+	migration, err := os.ReadFile(filepath.Join("..", "db", "migrations", "098_backup_v2_add_system_backup_task_execution_core.sql"))
 	if err != nil {
 		t.Fatal(err)
 	}

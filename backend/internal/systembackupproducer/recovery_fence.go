@@ -147,10 +147,10 @@ type recoveryFencePolicy struct {
 	deadline time.Time
 }
 
-const recoveryFenceSelect = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`
-const recoveryFenceRecheck = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?`
-const recoveryFenceInsert = `INSERT INTO system_backup_producer_recovery_revocations (scope_key,workload_identity_hash,revocation_epoch,revoked_at,row_version,updated_at) VALUES (?,?,?,NULL,?,UTC_TIMESTAMP(6))`
-const recoveryFenceUpdate = `UPDATE system_backup_producer_recovery_revocations SET revocation_epoch=?,revoked_at=?,row_version=?,updated_at=UTC_TIMESTAMP(6) WHERE scope_key=? AND workload_identity_hash=? AND revocation_epoch=? AND row_version=? AND ((revoked_at IS NULL AND ?=0) OR (revoked_at IS NOT NULL AND ?=1))`
+const recoveryFenceSelect = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`
+const recoveryFenceRecheck = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?`
+const recoveryFenceInsert = `INSERT INTO system_backup_v2_producer_recovery_revocations (scope_key,workload_identity_hash,revocation_epoch,revoked_at,row_version,updated_at) VALUES (?,?,?,NULL,?,UTC_TIMESTAMP(6))`
+const recoveryFenceUpdate = `UPDATE system_backup_v2_producer_recovery_revocations SET revocation_epoch=?,revoked_at=?,row_version=?,updated_at=UTC_TIMESTAMP(6) WHERE scope_key=? AND workload_identity_hash=? AND revocation_epoch=? AND row_version=? AND ((revoked_at IS NULL AND ?=0) OR (revoked_at IS NOT NULL AND ?=1))`
 
 func readRecoveryFence(ctx context.Context, tx SQL, scopeKey, identityKey []byte, identity Hash) (RecoveryFenceRow, bool, error) {
 	var epoch, version int64

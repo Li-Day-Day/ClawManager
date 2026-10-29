@@ -178,7 +178,7 @@ func newGCTaskEligibilityModel(t *testing.T, database sec.DatabaseIdentity, inst
 		t.Fatal(err)
 	}
 	m := &gcTaskEligibilityModel{database: database, installation: installation, kind: kind, ownerID: owner, backup: backup, tasks: map[string][]driver.Value{}, ranges: map[string][][]driver.Value{}, service: s}
-	for _, table := range []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions", "system_backup_prune_items"} {
+	for _, table := range []string{"system_backup_v2_backups", "system_backup_v2_restore_drills", "system_backup_v2_preflights", "system_backup_v2_artifact_verifications", "system_backup_v2_artifact_lease_states", "system_backup_v2_artifact_leases", "system_backup_v2_staging_resources", "system_backup_v2_restore_drill_resources", "system_backup_v2_promotions", "system_backup_v2_prune_items"} {
 		m.catalog = append(m.catalog, []driver.Value{table, "BASE TABLE", "InnoDB"})
 	}
 	row := func(kind, id string, created time.Time) []driver.Value {

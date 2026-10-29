@@ -38,9 +38,10 @@ type modelInvocationRepository struct {
 	sess db.Session
 }
 
-// NewModelInvocationRepository creates a new invocation repository.
+// NewModelInvocationRepository creates a new invocation repository (schema is owned by embedded migrations).
 func NewModelInvocationRepository(sess db.Session) ModelInvocationRepository {
-	return &modelInvocationRepository{sess: sess}
+	repo := &modelInvocationRepository{sess: sess}
+	return repo
 }
 
 func (r *modelInvocationRepository) Create(invocation *models.ModelInvocation) error {

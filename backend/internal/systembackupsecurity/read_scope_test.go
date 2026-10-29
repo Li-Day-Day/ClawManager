@@ -60,7 +60,7 @@ func (c *readScopeTestConn) QueryContext(ctx context.Context, query string, args
 			return &registrationTestRows{width: 1}, nil
 		}
 		return registrationRow("synthetic-password-hash"), nil
-	case strings.Contains(query, "FROM system_backup_admin_sessions"):
+	case strings.Contains(query, "FROM system_backup_v2_admin_sessions"):
 		if c.state.sessionFailure {
 			return nil, errors.New("session query unavailable")
 		}
@@ -71,7 +71,7 @@ func (c *readScopeTestConn) QueryContext(ctx context.Context, query string, args
 			return &registrationTestRows{width: 6}, nil
 		}
 		return registrationRow(int64(42), "user:42", registrationHash("synthetic-password-hash"), c.state.until, c.state.revoked, time.Now().UTC()), nil
-	case strings.HasPrefix(query, "SELECT COALESCE(MAX(id),0) FROM system_backups"):
+	case strings.HasPrefix(query, "SELECT COALESCE(MAX(id),0) FROM system_backup_v2_backups"):
 		if len(args) != 1 || args[0].Value != "installation_synthetic" {
 			return nil, errors.New("task query escaped authorized installation")
 		}

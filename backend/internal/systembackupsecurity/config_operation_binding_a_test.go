@@ -76,7 +76,7 @@ func operationBindingSQLRow(query string, args []driver.NamedValue) (map[string]
 }
 
 func (c *operationBindingConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	if strings.HasPrefix(query, "INSERT INTO system_backup_operations") {
+	if strings.HasPrefix(query, "INSERT INTO system_backup_v2_operations") {
 		row, err := operationBindingSQLRow(query, args)
 		if err != nil {
 			return nil, err
@@ -84,7 +84,7 @@ func (c *operationBindingConn) ExecContext(ctx context.Context, query string, ar
 		c.observation.row = row
 	}
 	result, err := c.mutationTestConn.ExecContext(ctx, query, args)
-	if err == nil && strings.HasPrefix(query, "UPDATE system_backup_installation_state SET active_config_version=") {
+	if err == nil && strings.HasPrefix(query, "UPDATE system_backup_v2_installation_state SET active_config_version=") {
 		// Force a distinct completion timestamp only AFTER the config/CAS work.
 		c.observation.session.base.now = c.observation.session.base.now.Add(2 * time.Second)
 	}

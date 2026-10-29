@@ -231,12 +231,12 @@ func TestRestoreReadbackFailures(t *testing.T) {
 			case "final_proof":
 				proof.Final = func(context.Context, *sql.Tx) error { return secret }
 			case "control_query":
-				s.controlError = "system_restore_drills"
+				s.controlError = "system_backup_v2_restore_drills"
 			case "control_engine_query":
-				s.field.target = "system_restore_drills"
+				s.field.target = "system_backup_v2_restore_drills"
 				s.field.failure = "engine_query"
 			case "control_engine":
-				s.field.target = "system_restore_drills"
+				s.field.target = "system_backup_v2_restore_drills"
 				s.field.failure = "engine"
 			case "field_query":
 				s.field.target = "system_image_settings"

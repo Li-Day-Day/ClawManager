@@ -44,6 +44,18 @@ var ErrNorthboundSessionRestore = errors.New("A northbound session restore norma
 // allowlist. An added scope requires an explicit A restore-policy review before
 // historical sessions or caller policies can carry it into an isolated target.
 var northboundRestoreScopes = map[string]struct{}{
+	"teams:read":              {},
+	"teams:create":            {},
+	"teams:manage":            {},
+	"teams:delete":            {},
+	"teams:tasks:read":        {},
+	"teams:tasks:write":       {},
+	"teams:files:read":        {},
+	"teams:files:write":       {},
+	"team-templates:read":     {},
+	"team-templates:write":    {},
+	"team-templates:generate": {},
+
 	"lite-instances:create": {}, "lite-instances:read": {},
 	"pro-instances:create": {}, "pro-instances:read": {},
 	"lite-instances:restart": {}, "lite-instances:reset": {},

@@ -63,7 +63,7 @@ func (a *configWriterAFinalWaitAuthority) Authorize(ctx context.Context, tx *sql
 		return err
 	}
 	var active int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=?", installation).Scan(&active) != nil {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=?", installation).Scan(&active) != nil {
 		return ErrRegistrationUnavailable
 	}
 	if active == 2 {
@@ -139,20 +139,20 @@ func runAConfigWriterSecurityCases(t *testing.T, parent context.Context, db *sql
 				mysqlMust(t, err)
 				defer block.Rollback()
 				if name == "observed_session_lock_revocation" {
-					changed, err := block.ExecContext(ctx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", p.installation, p.actor.Session)
+					changed, err := block.ExecContext(ctx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", p.installation, p.actor.Session)
 					mysqlMust(t, err)
 					if !configMutationOne(changed, nil) {
 						t.Fatal("did not lock/revoke exactly one owned session")
 					}
 				} else {
 					var session string
-					mysqlMust(t, block.QueryRowContext(ctx, "SELECT session_sha256 FROM system_backup_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", p.installation, p.actor.Session).Scan(&session))
+					mysqlMust(t, block.QueryRowContext(ctx, "SELECT session_sha256 FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", p.installation, p.actor.Session).Scan(&session))
 					if session != p.actor.Session || !configProofDBNow(t, ctx, db).Before(p.actor.SessionExpiresAt) {
 						t.Fatal("session already expired before worker began")
 					}
 				}
 				worker := startAConfigWriterWorker(t, ctx, f, key, raw)
-				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, worker, "system_backup_admin_sessions")
+				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, worker, "system_backup_v2_admin_sessions")
 				if name == "observed_session_lock_expiry" {
 					mysqlMust(t, waitConfigWriterADBExpiry(ctx, p.actor.SessionExpiresAt, configWriterASample(db)))
 				}
@@ -195,7 +195,7 @@ func runAConfigWriterSecurityCases(t *testing.T, parent context.Context, db *sql
 				}
 			case "revocation_during_unlocked_prepare":
 				f.svc.Resolver = configWriterSyntheticResolver{readiness: f.readiness, prepare: func() {
-					changed, err := db.ExecContext(ctx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", p.installation, p.actor.Session)
+					changed, err := db.ExecContext(ctx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", p.installation, p.actor.Session)
 					mysqlMust(t, err)
 					if !configMutationOne(changed, nil) {
 						t.Fatal("prepare did not revoke exactly one owned session")

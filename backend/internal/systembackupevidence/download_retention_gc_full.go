@@ -119,7 +119,7 @@ func (f *downloadGCFullFreeze) grants(statements []string) error {
 	required := map[string]bool{"BACKUP_ADMIN ON *.*": false, "SELECT ON `performance_schema`.`metadata_locks`": false, "SELECT ON `performance_schema`.`threads`": false}
 	seen := map[string]bool{}
 	reservationInsert := false
-	reservationObject := "`" + f.worker.c.Database.Database + "`.`system_backup_metadata_reservations`"
+	reservationObject := "`" + f.worker.c.Database.Database + "`.`system_backup_v2_metadata_reservations`"
 	var base []string
 	for _, statement := range statements {
 		if len(statement) > 2048 || seen[statement] || !strings.HasPrefix(statement, "GRANT ") {
@@ -192,14 +192,14 @@ func (f *downloadGCFullFreeze) grants(statements []string) error {
 }
 
 func gcFullReadTables(maintenance bool) map[string]bool {
-	allowed := map[string]bool{"users": true, "system_backup_evidence": true, "system_backup_evidence_chunks": true}
+	allowed := map[string]bool{"users": true, "system_backup_v2_evidence": true, "system_backup_v2_evidence_chunks": true}
 	for _, table := range gcRequiredReadTables(maintenance) {
 		allowed[table] = true
 	}
 	for key := range gcDirectColumns(maintenance) {
 		allowed[strings.SplitN(key, ".", 2)[0]] = true
 	}
-	for _, table := range []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions", "system_backup_prune_items"} {
+	for _, table := range []string{"system_backup_v2_backups", "system_backup_v2_restore_drills", "system_backup_v2_preflights", "system_backup_v2_artifact_verifications", "system_backup_v2_artifact_lease_states", "system_backup_v2_artifact_leases", "system_backup_v2_staging_resources", "system_backup_v2_restore_drill_resources", "system_backup_v2_promotions", "system_backup_v2_prune_items"} {
 		allowed[table] = true
 	}
 	for _, table := range taskDownloadSystemProducerTables {

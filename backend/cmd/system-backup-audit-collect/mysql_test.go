@@ -162,7 +162,7 @@ func TestAuditCollectorMySQL(t *testing.T) {
 		collect(t, q, path, false, false)
 	})
 	t.Run("observer_cannot_write", func(t *testing.T) {
-		_, e := observerDB.ExecContext(ctx, "UPDATE system_backup_operations SET status='failed' WHERE id=11")
+		_, e := observerDB.ExecContext(ctx, "UPDATE system_backup_v2_operations SET status='failed' WHERE id=11")
 		var me *mysql.MySQLError
 		if !errors.As(e, &me) || me.Number != 1142 {
 			t.Fatal("observer update was not denied")
@@ -172,7 +172,7 @@ func TestAuditCollectorMySQL(t *testing.T) {
 		tx, e := admin.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
 		must(e)
 		defer tx.Rollback()
-		_, e = tx.ExecContext(ctx, "UPDATE system_backup_operations SET status='failed' WHERE id=11")
+		_, e = tx.ExecContext(ctx, "UPDATE system_backup_v2_operations SET status='failed' WHERE id=11")
 		var me *mysql.MySQLError
 		if !errors.As(e, &me) || me.Number != 1792 {
 			t.Fatal("server did not enforce readonly transaction")
@@ -183,24 +183,24 @@ func TestAuditCollectorMySQL(t *testing.T) {
 		name, change, restore string
 		accept, review        bool
 	}{
-		{"missing_join", "UPDATE system_backup_download_result_receipts SET result_audit_id=99", "UPDATE system_backup_download_result_receipts SET result_audit_id=13", false, false},
-		{"malformed_body", "UPDATE system_backup_download_admission_receipts SET receipt_canonical_json='broken'", "", false, false},
+		{"missing_join", "UPDATE system_backup_v2_download_result_receipts SET result_audit_id=99", "UPDATE system_backup_v2_download_result_receipts SET result_audit_id=13", false, false},
+		{"malformed_body", "UPDATE system_backup_v2_download_admission_receipts SET receipt_canonical_json='broken'", "", false, false},
 		{"unknown_body", "UPDATE audit_logs SET details=JSON_SET(details,'$.private_material','MUST_NOT_EXPORT') WHERE id=13", "", false, false},
-		{"duplicate_rows", "INSERT INTO system_backup_download_admission_receipts SELECT * FROM system_backup_download_admission_receipts", "DELETE FROM system_backup_download_admission_receipts LIMIT 1", false, false},
-		{"broken_link", "UPDATE system_backup_download_result_receipts SET intent_audit_id=99", "UPDATE system_backup_download_result_receipts SET intent_audit_id=12", true, false},
-		{"broken_nonce", "DELETE FROM system_backup_strong_auth_nonces", "", true, false},
-		{"broken_digest", "UPDATE system_backup_download_result_receipts SET result_sha256=REPEAT('0',64)", "UPDATE system_backup_download_result_receipts SET result_sha256='" + l["sha256"].(string) + "'", true, false},
+		{"duplicate_rows", "INSERT INTO system_backup_v2_download_admission_receipts SELECT * FROM system_backup_v2_download_admission_receipts", "DELETE FROM system_backup_v2_download_admission_receipts LIMIT 1", false, false},
+		{"broken_link", "UPDATE system_backup_v2_download_result_receipts SET intent_audit_id=99", "UPDATE system_backup_v2_download_result_receipts SET intent_audit_id=12", true, false},
+		{"broken_nonce", "DELETE FROM system_backup_v2_strong_auth_nonces", "", true, false},
+		{"broken_digest", "UPDATE system_backup_v2_download_result_receipts SET result_sha256=REPEAT('0',64)", "UPDATE system_backup_v2_download_result_receipts SET result_sha256='" + l["sha256"].(string) + "'", true, false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			exec(tc.change)
 			defer func() {
 				switch tc.name {
 				case "malformed_body":
-					exec("UPDATE system_backup_download_admission_receipts SET receipt_canonical_json=?", body("admission"))
+					exec("UPDATE system_backup_v2_download_admission_receipts SET receipt_canonical_json=?", body("admission"))
 				case "unknown_body":
 					exec("UPDATE audit_logs SET details=? WHERE id=13", body("result"))
 				case "broken_nonce":
-					exec("INSERT INTO system_backup_strong_auth_nonces VALUES (?,?,?,?,?,?,?,?)", o["id"], i["id"], o["installation_id"], o["endpoint"], o["idempotency_key"], o["request_hash"], ab["subject_sha256"], ab["session_sha256"])
+					exec("INSERT INTO system_backup_v2_strong_auth_nonces VALUES (?,?,?,?,?,?,?,?)", o["id"], i["id"], o["installation_id"], o["endpoint"], o["idempotency_key"], o["request_hash"], ab["subject_sha256"], ab["session_sha256"])
 				default:
 					exec(tc.restore)
 				}

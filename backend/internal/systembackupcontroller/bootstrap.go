@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	ContractMigrationCatalogHash      = "dba576ad9efd3f377d8d07de2a9a86d4e523d8dafe8943751beb057a64e52441"
-	ContractMigrationCatalogFileCount = 136
+	ContractMigrationCatalogHash      = migrationcatalog.ReviewedHash
+	ContractMigrationCatalogFileCount = migrationcatalog.ReviewedFileCount
 	MinBootstrapCheckInterval         = time.Second
 	DefaultBootstrapCheckInterval     = 10 * time.Second
 	MaxBootstrapCheckInterval         = 60 * time.Second
@@ -198,8 +198,8 @@ func (c SQLBootstrapChecker) Check(ctx context.Context, requirements BootstrapRe
   active_config.gate_acquisition_timeout_seconds,
   active_config.quiesce_max_hold_seconds,
   active_config.maintenance_lock_ttl_seconds
-FROM system_backup_installation_state AS installation
-LEFT JOIN system_backup_configs AS active_config
+FROM system_backup_v2_installation_state AS installation
+LEFT JOIN system_backup_v2_configs AS active_config
   ON active_config.origin_installation_id = installation.origin_installation_id
  AND active_config.version = installation.active_config_version
 WHERE installation.origin_installation_id = ?`, requirements.InstallationID).Scan(
@@ -276,7 +276,7 @@ func (r SQLInstallationStateReconciler) Reconcile(ctx context.Context, requireme
 	if !snapshot.StateTransitionRequired {
 		return nil
 	}
-	result, updateErr := r.DB.ExecContext(ctx, `UPDATE system_backup_installation_state SET
+	result, updateErr := r.DB.ExecContext(ctx, `UPDATE system_backup_v2_installation_state SET
   first_enabled_at = CASE WHEN ? THEN COALESCE(first_enabled_at, UTC_TIMESTAMP(6)) ELSE first_enabled_at END,
   last_effective_enabled_transition_at = CASE WHEN last_effective_enabled <> ? THEN UTC_TIMESTAMP(6) ELSE last_effective_enabled_transition_at END,
   last_effective_enabled = ?,

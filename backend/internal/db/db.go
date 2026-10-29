@@ -1,10 +1,18 @@
 package db
 
 import (
+	"context"
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"regexp"
+	"strings"
+	"time"
 
+	"clawreef/internal/backupgate"
 	"clawreef/internal/config"
+	mysqldriver "github.com/go-sql-driver/mysql"
 	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/mysql"
 )
@@ -18,7 +26,13 @@ func Initialize(cfg config.DatabaseConfig) (db.Session, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := applyEmbeddedMigrations(session); err != nil {
+	var migrationErr error
+	if SQLGateScope() != "" {
+		migrationErr = verifyEmbeddedMigrationsApplied(session)
+	} else {
+		migrationErr = applyEmbeddedMigrations(session)
+	}
+	if err := migrationErr; err != nil {
 		_ = session.Close()
 		return nil, fmt.Errorf("failed to apply database migrations: %w", err)
 	}
@@ -42,51 +56,36 @@ func Connect(cfg config.DatabaseConfig) (db.Session, error) {
 	return session, nil
 }
 
-// ConnectSystemBackupController opens only the D-owned controller session.
-// The MySQL driver applies time_zone on every newly opened pooled connection;
-// a one-time SET after Open would configure only one connection.
-func ConnectSystemBackupController(cfg config.DatabaseConfig) (db.Session, error) {
-	session, err := connectWithOptions(cfg, systemBackupControllerOptions())
-	if err != nil {
-		return nil, err
-	}
-	Session = session
-	log.Println("System backup controller database connected successfully (migrations disabled, UTC sessions)")
-	return session, nil
-}
-
-// OpenSystemBackupRead opens an independently owned UTC pool for backup login
-// sessions and reads. It neither runs migrations nor replaces the application's
-// global Session. Close the returned session after its HTTP/auth users drain.
+// OpenSystemBackupRead owns an independent UTC pool; business startup and SQL
+// fencing are identical to the normal connection path. No migrations or globals.
 func OpenSystemBackupRead(cfg config.DatabaseConfig) (db.Session, error) {
 	return connectWithOptions(cfg, systemBackupReadOptions())
 }
-
 func systemBackupReadOptions() map[string]string {
 	return map[string]string{"loc": "UTC", "time_zone": "'+00:00'"}
 }
 
-func systemBackupControllerOptions() map[string]string {
-	return map[string]string{
-		"loc":       "UTC",
-		"time_zone": "'+00:00'",
-	}
+func connect(cfg config.DatabaseConfig) (db.Session, error) { return connectWithOptions(cfg, nil) }
+
+func connectWithOptions(cfg config.DatabaseConfig, extra map[string]string) (db.Session, error) {
+	return connectWithGateOptions(cfg, extra, SQLGateScope())
 }
 
-func connect(cfg config.DatabaseConfig) (db.Session, error) {
-	return connectWithOptions(cfg, nil)
-}
+// An explicit metadata-only controller connection is admitted separately below.
+// Every ordinary business/read/operate entry retains SQLGateScope fencing.
+func connectWithGateOptions(cfg config.DatabaseConfig, extra map[string]string, gateScope string) (db.Session, error) {
 
-func connectWithOptions(cfg config.DatabaseConfig, additionalOptions map[string]string) (db.Session, error) {
-	hostPort := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-	options := map[string]string{
-		"charset":   "utf8mb4",
-		"collation": "utf8mb4_unicode_ci",
-		"parseTime": "true",
+	// P0 restored databases are data-only drill targets. Every official business
+	// process uses this connection path; none may start consumers, retry Owner
+	// operations, reconcile upgrades, seed data or migrate a restored copy.
+	if regexp.MustCompile(`^cm_(restore|import)_[a-f0-9]{32}$`).MatchString(cfg.Database) {
+		return nil, fmt.Errorf("isolated restore databases cannot run business services")
 	}
-	for key, value := range additionalOptions {
+	options := map[string]string{"charset": "utf8mb4", "collation": "utf8mb4_unicode_ci", "parseTime": "true"}
+	for key, value := range extra {
 		options[key] = value
 	}
+	hostPort := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	settings := mysql.ConnectionURL{
 		Host:     hostPort,
 		User:     cfg.User,
@@ -95,9 +94,40 @@ func connectWithOptions(cfg config.DatabaseConfig, additionalOptions map[string]
 		Options:  options,
 	}
 
-	session, err := mysql.Open(settings)
+	var session db.Session
+	var err error
+	if scope := gateScope; scope != "" {
+		driverConfig, e := mysqldriver.ParseDSN(settings.String())
+		if e != nil {
+			return nil, fmt.Errorf("invalid gated database configuration")
+		}
+		driverConfig.MultiStatements = false
+		connector, e := mysqldriver.NewConnector(driverConfig)
+		if e != nil {
+			return nil, e
+		}
+		pool, e := backupgate.Open(connector, scope)
+		if e != nil {
+			return nil, e
+		}
+		session, err = mysql.New(pool)
+		if err != nil {
+			pool.Close()
+		}
+	} else {
+		session, err = mysql.Open(settings)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
+	if pool, ok := session.Driver().(*sql.DB); ok {
+		checkCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		err := checkBackupControlSchema(checkCtx, pool)
+		cancel()
+		if err != nil {
+			session.Close()
+			return nil, err
+		}
 	}
 	maxOpenConns := cfg.MaxOpenConns
 	if maxOpenConns < 0 {
@@ -119,6 +149,47 @@ func connectWithOptions(cfg config.DatabaseConfig, additionalOptions map[string]
 		return nil, fmt.Errorf("failed to configure database connection charset: %w", err)
 	}
 	return session, nil
+}
+
+// SQLGateScope is opt-in until the full writer registry and Runtime protocols
+// are deployed. Enabling it never certifies non-SQL writers as drained.
+func SQLGateScope() string { return strings.TrimSpace(os.Getenv("SYSTEM_BACKUP_SQL_GATE_SCOPE")) }
+
+func verifyEmbeddedMigrationsApplied(session db.Session) error {
+	pool, ok := session.Driver().(*sql.DB)
+	if !ok {
+		return fmt.Errorf("SQL schema verifier unavailable")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	rows, e := pool.QueryContext(ctx, "SELECT filename FROM schema_migrations")
+	if e != nil {
+		return e
+	}
+	applied := map[string]bool{}
+	for rows.Next() {
+		var name string
+		if e = rows.Scan(&name); e != nil {
+			rows.Close()
+			return e
+		}
+		applied[name] = true
+	}
+	e = rows.Err()
+	rows.Close()
+	if e != nil {
+		return e
+	}
+	entries, e := embeddedMigrations.ReadDir("migrations")
+	if e != nil {
+		return e
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".sql") && !applied[entry.Name()] {
+			return fmt.Errorf("gated application requires offline migration: %s", entry.Name())
+		}
+	}
+	return nil
 }
 
 // Close closes the database connection

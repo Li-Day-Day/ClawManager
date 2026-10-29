@@ -125,7 +125,7 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 	var previous ProviderRegistrationResult
 	var previousHash, status string
 	err = tx.QueryRowContext(ctx, `SELECT public_id,result_resource_public_id,http_status,request_hash,status
-		FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`,
+		FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`,
 		s.InstallationID, strconv.FormatInt(actor.UserID, 10), ProviderRegistrationEndpoint, r.IdempotencyKey).
 		Scan(&previous.OperationPublicID, &previous.EvidencePublicID, &previous.HTTPStatus, &previousHash, &status)
 	if err == nil {
@@ -178,7 +178,7 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 	}
 	for _, candidate := range vr.NonceHMACCandidates {
 		var id int64
-		err = tx.QueryRowContext(ctx, `SELECT id FROM system_backup_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE`, candidate.HMAC, candidate.KeyVersion).Scan(&id)
+		err = tx.QueryRowContext(ctx, `SELECT id FROM system_backup_v2_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE`, candidate.HMAC, candidate.KeyVersion).Scan(&id)
 		if err == nil {
 			return empty, &VerificationError{Code: FailureReplayed, err: errors.New("nonce already consumed")}
 		}
@@ -208,7 +208,7 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 	if err = StageProviderProofEvidence(ctx, tx, evID, prepared); err != nil {
 		return empty, err
 	}
-	res, err := tx.ExecContext(ctx, `INSERT INTO system_backup_operations
+	res, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_operations
 		(public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,
 		external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,result_resource_public_id,http_status,deadline_at,started_at,finished_at,created_at)
 		VALUES (?,?,'provider_proof_register',?,?,'admin',?,?,?,?,?,2,?,'succeeded',?,201,?,UTC_TIMESTAMP(6),UTC_TIMESTAMP(6),UTC_TIMESTAMP(6))`,
@@ -229,7 +229,7 @@ func (s ProviderRegistrationService) Register(ctx context.Context, actor Registr
 	// auth_time (which may be in the future within the configured clock skew).
 	// Preserve the original age/expiry ceiling and reject a SQL clock that moved
 	// behind the actual verification sample while callbacks/writes were running.
-	res, err = tx.ExecContext(ctx, `INSERT INTO system_backup_strong_auth_nonces
+	res, err = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_strong_auth_nonces
 		(origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,
 		authenticated_at,expires_at,consumed_at,operation_id,audit_log_id,retain_until)
 		SELECT ?,?,?,?,?,?,?,?,?,?,?,UTC_TIMESTAMP(6),?,?,?
@@ -279,7 +279,7 @@ func registrationBoundaryError(err error) error {
 
 func lockRegistrationConfig(ctx context.Context, tx *sql.Tx, installation string) (RegistrationConfig, error) {
 	var c RegistrationConfig
-	if err := tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", installation).Scan(&c.Version); err != nil {
+	if err := tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", installation).Scan(&c.Version); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return c, ErrRegistrationUnavailable
 		}
@@ -289,7 +289,7 @@ func lockRegistrationConfig(ctx context.Context, tx *sql.Tx, installation string
 	err := tx.QueryRowContext(ctx, `SELECT provider_proof_issuers_registry_version,provider_proof_issuers_registry_sha256,
 		strong_auth_issuers_registry_version,strong_auth_issuers_registry_sha256,rbac_bindings_registry_version,rbac_bindings_registry_sha256,
 		nonce_hmac_ref_version,nonce_hmac_identity_hash,strong_auth_max_age_seconds,strong_auth_clock_skew_seconds,provider_proof_max_age_seconds,evidence_retention_seconds,
-		control_metadata_retention_seconds,operation_deadline_seconds,control_metadata_capacity_bytes FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, installation, c.Version).
+		control_metadata_retention_seconds,operation_deadline_seconds,control_metadata_capacity_bytes FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, installation, c.Version).
 		Scan(&c.ProviderRegistryVersion, &c.ProviderRegistrySHA256, &c.StrongAuthRegistryVersion, &c.StrongAuthRegistrySHA256, &c.RBACRegistryVersion, &c.RBACRegistrySHA256,
 			&c.NonceKeyVersion, &c.NonceIdentityHash, &authAge, &skew, &proofAge, &evidenceRetention, &controlRetention, &deadline, &c.CapacityBytes)
 	if err != nil {
@@ -309,7 +309,7 @@ func lockRegistrationConfig(ctx context.Context, tx *sql.Tx, installation string
 }
 
 func lockRegistrationInstallations(ctx context.Context, tx *sql.Tx) error {
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return ErrProviderEvidenceStorage
 	}
@@ -334,8 +334,8 @@ func lockRegistrationInstallations(ctx context.Context, tx *sql.Tx) error {
 func retainedNonceVersions(ctx context.Context, tx *sql.Tx, active string, now time.Time) ([]string, error) {
 	// Retained ledger versions are global because the existing unique nonce
 	// constraint is global. Missing key material must never shrink this list.
-	rows, err := tx.QueryContext(ctx, `SELECT nonce_hmac_ref_version FROM system_backup_configs
-		UNION SELECT nonce_hmac_key_version FROM system_backup_strong_auth_nonces WHERE retain_until>? ORDER BY 1`, now)
+	rows, err := tx.QueryContext(ctx, `SELECT nonce_hmac_ref_version FROM system_backup_v2_configs
+		UNION SELECT nonce_hmac_key_version FROM system_backup_v2_strong_auth_nonces WHERE retain_until>? ORDER BY 1`, now)
 	if err != nil {
 		return nil, ErrProviderEvidenceStorage
 	}

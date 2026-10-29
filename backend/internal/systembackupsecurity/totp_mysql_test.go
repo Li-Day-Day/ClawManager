@@ -102,7 +102,7 @@ func testTOTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	}
 	tx.Rollback()
 	var seedStored []byte
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT encrypted_seed FROM system_backup_totp_credentials WHERE user_id=43").Scan(&seedStored))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT encrypted_seed FROM system_backup_v2_totp_credentials WHERE user_id=43").Scan(&seedStored))
 	if bytes.Contains(seedStored, seed) {
 		t.Fatal("seed stored in plaintext")
 	}

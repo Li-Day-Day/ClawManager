@@ -128,7 +128,7 @@ func bootstrapRangeInsertSQL(columns []string) (string, error) {
 	if !seen["id"] || !seen["origin_installation_id"] || !seen["version"] || !seen["nonce_hmac_identity_hash"] || !seen["nonce_hmac_ref_version"] {
 		return "", errors.New("incomplete canonical config")
 	}
-	return "INSERT INTO system_backup_configs (" + strings.Join(names, ",") + ") VALUES (" + strings.Join(values, ",") + ")", nil
+	return "INSERT INTO system_backup_v2_configs (" + strings.Join(names, ",") + ") VALUES (" + strings.Join(values, ",") + ")", nil
 }
 
 func TestDBootstrapConsumerRangesMySQLSeed(t *testing.T) {
@@ -176,7 +176,7 @@ FROM performance_schema.data_lock_waits w
 JOIN performance_schema.data_locks l ON l.ENGINE=w.ENGINE AND l.ENGINE_LOCK_ID=w.REQUESTING_ENGINE_LOCK_ID
 JOIN performance_schema.threads r ON r.THREAD_ID=w.REQUESTING_THREAD_ID
 JOIN performance_schema.threads b ON b.THREAD_ID=w.BLOCKING_THREAD_ID
-WHERE r.PROCESSLIST_ID=? AND b.PROCESSLIST_ID=? AND l.OBJECT_SCHEMA=DATABASE() AND l.OBJECT_NAME='system_backup_configs'`, requester, blocker)
+WHERE r.PROCESSLIST_ID=? AND b.PROCESSLIST_ID=? AND l.OBJECT_SCHEMA=DATABASE() AND l.OBJECT_NAME='system_backup_v2_configs'`, requester, blocker)
 		if err != nil {
 			t.Fatal("actual lock graph unavailable", err)
 		}
@@ -224,7 +224,7 @@ func TestDBootstrapConsumerRangesMySQL(t *testing.T) {
 			// Capture INSERT values BEFORE the guarded transaction begins. An
 			// INSERT..SELECT would wait on its source row and falsely look like
 			// an insertion-gap test. The direct writer below has no source read.
-			template, err := db.Query("SELECT * FROM system_backup_configs WHERE origin_installation_id=? AND version=1", bootstrapRangeForeign)
+			template, err := db.Query("SELECT * FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1", bootstrapRangeForeign)
 			mustSQL(t, err)
 			columns, err := template.Columns()
 			mustSQL(t, err)
@@ -247,7 +247,7 @@ func TestDBootstrapConsumerRangesMySQL(t *testing.T) {
 			mustSQL(t, template.Err())
 			mustSQL(t, template.Close())
 			var originalNonce string
-			mustSQL(t, db.QueryRow("SELECT nonce_hmac_identity_hash FROM system_backup_configs WHERE origin_installation_id=? AND version=1", bootstrapRangeForeign).Scan(&originalNonce))
+			mustSQL(t, db.QueryRow("SELECT nonce_hmac_identity_hash FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1", bootstrapRangeForeign).Scan(&originalNonce))
 			before := dMySQLSnapshot(t, db)
 			entered, release := make(chan uint64, 1), make(chan struct{})
 			var releaseOnce sync.Once
@@ -293,7 +293,7 @@ func TestDBootstrapConsumerRangesMySQL(t *testing.T) {
 			mustSQL(t, err)
 			var requester uint64
 			mustSQL(t, writer.QueryRowContext(writerCtx, "SELECT CONNECTION_ID()").Scan(&requester))
-			q := "UPDATE system_backup_configs SET nonce_hmac_identity_hash=? WHERE origin_installation_id=? AND version=1"
+			q := "UPDATE system_backup_v2_configs SET nonce_hmac_identity_hash=? WHERE origin_installation_id=? AND version=1"
 			expectedNonce := strings.Repeat("f", 64)
 			if expectedNonce == originalNonce {
 				expectedNonce = strings.Repeat("e", 64)
@@ -359,13 +359,13 @@ func TestDBootstrapConsumerRangesMySQL(t *testing.T) {
 				t.Fatal("direct writer did not affect one row", written.rows)
 			}
 			var got string
-			mustSQL(t, db.QueryRow("SELECT nonce_hmac_identity_hash FROM system_backup_configs WHERE origin_installation_id=? AND version=?", target, version).Scan(&got))
+			mustSQL(t, db.QueryRow("SELECT nonce_hmac_identity_hash FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=?", target, version).Scan(&got))
 			if mode == "existing_nonce_metadata" && got != expectedNonce {
 				t.Fatal("direct nonce mutation not persisted")
 			}
 			var targetConfigs, totalConfigs int
-			mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_configs WHERE origin_installation_id=?", a.g.InstallationID).Scan(&targetConfigs))
-			mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_configs").Scan(&totalConfigs))
+			mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_configs WHERE origin_installation_id=?", a.g.InstallationID).Scan(&targetConfigs))
+			mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_configs").Scan(&totalConfigs))
 			expectedTotal := 4
 			if mode == "existing_nonce_metadata" {
 				expectedTotal = 3
@@ -375,8 +375,8 @@ func TestDBootstrapConsumerRangesMySQL(t *testing.T) {
 			}
 			// The only allowed committed change belongs to the direct writer.
 			after := dMySQLSnapshot(t, db)
-			delete(before, "system_backup_configs")
-			delete(after, "system_backup_configs")
+			delete(before, "system_backup_v2_configs")
+			delete(after, "system_backup_v2_configs")
 			if !reflect.DeepEqual(before, after) {
 				t.Fatal("canceled bootstrap changed non-config state")
 			}

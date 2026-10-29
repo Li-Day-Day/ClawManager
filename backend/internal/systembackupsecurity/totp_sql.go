@@ -77,17 +77,17 @@ func (s SQLTOTPService) lock(ctx context.Context, a RegistrationActor, password 
 		return fail(ErrTOTPRejected)
 	}
 	var revokedBefore time.Time
-	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", s.InstallationID, a.UserID).Scan(&revokedBefore)
+	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_v2_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", s.InstallationID, a.UserID).Scan(&revokedBefore)
 	if a.SessionIssuedAt.IsZero() || a.SessionIssuedAt.After(now) || err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return fail(ErrRegistrationUnavailable)
 	}
 	if err == nil && !a.SessionIssuedAt.After(revokedBefore) {
 		return fail(ErrTOTPRejected)
 	}
-	if _, err = tx.ExecContext(ctx, "INSERT IGNORE INTO system_backup_totp_credentials(origin_installation_id,user_id) VALUES (?,?)", s.InstallationID, a.UserID); err != nil {
+	if _, err = tx.ExecContext(ctx, "INSERT IGNORE INTO system_backup_v2_totp_credentials(origin_installation_id,user_id) VALUES (?,?)", s.InstallationID, a.UserID); err != nil {
 		return fail(ErrRegistrationUnavailable)
 	}
-	err = tx.QueryRowContext(ctx, `SELECT encrypted_seed,credential_hash,confirmed,pending_until,last_step,failures,locked_until FROM system_backup_totp_credentials WHERE origin_installation_id=? AND user_id=? FOR UPDATE`, s.InstallationID, a.UserID).Scan(&st.seed, &st.credential, &st.confirmed, &st.pending, &st.lastStep, &st.failures, &st.locked)
+	err = tx.QueryRowContext(ctx, `SELECT encrypted_seed,credential_hash,confirmed,pending_until,last_step,failures,locked_until FROM system_backup_v2_totp_credentials WHERE origin_installation_id=? AND user_id=? FOR UPDATE`, s.InstallationID, a.UserID).Scan(&st.seed, &st.credential, &st.confirmed, &st.pending, &st.lastStep, &st.failures, &st.locked)
 	if err != nil {
 		return fail(ErrRegistrationUnavailable)
 	}
@@ -109,7 +109,7 @@ func (s SQLTOTPService) reject(ctx context.Context, tx *sql.Tx, a RegistrationAc
 	if count >= 5 {
 		until = now.Add(5 * time.Minute)
 	}
-	if _, err := tx.ExecContext(ctx, "UPDATE system_backup_totp_credentials SET failures=?,locked_until=? WHERE origin_installation_id=? AND user_id=?", count, until, s.InstallationID, a.UserID); err != nil {
+	if _, err := tx.ExecContext(ctx, "UPDATE system_backup_v2_totp_credentials SET failures=?,locked_until=? WHERE origin_installation_id=? AND user_id=?", count, until, s.InstallationID, a.UserID); err != nil {
 		tx.Rollback()
 		return ErrRegistrationUnavailable
 	}
@@ -146,7 +146,7 @@ func (s SQLTOTPService) BeginEnrollment(ctx context.Context, a RegistrationActor
 	if err != nil {
 		return "", err
 	}
-	_, err = tx.ExecContext(ctx, "UPDATE system_backup_totp_credentials SET encrypted_seed=?,credential_hash=?,pending_until=?,last_step=-1,failures=0,locked_until=NULL WHERE origin_installation_id=? AND user_id=?", sealed, credential, now.Add(10*time.Minute), s.InstallationID, a.UserID)
+	_, err = tx.ExecContext(ctx, "UPDATE system_backup_v2_totp_credentials SET encrypted_seed=?,credential_hash=?,pending_until=?,last_step=-1,failures=0,locked_until=NULL WHERE origin_installation_id=? AND user_id=?", sealed, credential, now.Add(10*time.Minute), s.InstallationID, a.UserID)
 	if err != nil {
 		return "", ErrRegistrationUnavailable
 	}
@@ -225,7 +225,7 @@ func (s SQLTOTPService) verifyAndIssueBounded(ctx context.Context, a Registratio
 	// Config proof issuance requires an already recorded current login. It may
 	// not enroll a missing token or refresh an existing session as a side effect.
 	if !configMutation {
-		_, err = tx.ExecContext(ctx, `INSERT INTO system_backup_admin_sessions(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE expires_at=LEAST(expires_at,VALUES(expires_at))`, s.InstallationID, a.Session, a.UserID, a.Subject, credential, a.SessionExpiresAt.UTC())
+		_, err = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_admin_sessions(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE expires_at=LEAST(expires_at,VALUES(expires_at))`, s.InstallationID, a.Session, a.UserID, a.Subject, credential, a.SessionExpiresAt.UTC())
 		if err != nil {
 			return empty, ErrRegistrationUnavailable
 		}
@@ -233,7 +233,7 @@ func (s SQLTOTPService) verifyAndIssueBounded(ctx context.Context, a Registratio
 			return empty, err
 		}
 	}
-	_, err = tx.ExecContext(ctx, "UPDATE system_backup_totp_credentials SET confirmed=TRUE,pending_until=NULL,last_step=?,failures=0,locked_until=NULL WHERE origin_installation_id=? AND user_id=?", step, s.InstallationID, a.UserID)
+	_, err = tx.ExecContext(ctx, "UPDATE system_backup_v2_totp_credentials SET confirmed=TRUE,pending_until=NULL,last_step=?,failures=0,locked_until=NULL WHERE origin_installation_id=? AND user_id=?", step, s.InstallationID, a.UserID)
 	if err != nil {
 		return empty, ErrRegistrationUnavailable
 	}
@@ -284,7 +284,7 @@ func CheckRegistrationSessionUntil(ctx context.Context, tx *sql.Tx, installation
 	var uid int64
 	var expires, now time.Time
 	var revoked bool
-	err := tx.QueryRowContext(ctx, "SELECT user_id,subject,credential_hash,expires_at,revoked,UTC_TIMESTAMP(6) FROM system_backup_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", installation, a.Session).Scan(&uid, &subject, &credential, &expires, &revoked, &now)
+	err := tx.QueryRowContext(ctx, "SELECT user_id,subject,credential_hash,expires_at,revoked,UTC_TIMESTAMP(6) FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", installation, a.Session).Scan(&uid, &subject, &credential, &expires, &revoked, &now)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return time.Time{}, ErrRegistrationPermission
@@ -314,11 +314,11 @@ func (s SQLTOTPService) RevokeUserSessions(ctx context.Context, userID int) erro
 	if tx.QueryRowContext(ctx, "SELECT id FROM users WHERE id=? FOR UPDATE", userID).Scan(&uid) != nil {
 		return ErrRegistrationUnavailable
 	}
-	_, err = tx.ExecContext(ctx, "INSERT INTO system_backup_admin_revocations(origin_installation_id,user_id,revoked_before) VALUES (?,?,UTC_TIMESTAMP(6)) ON DUPLICATE KEY UPDATE revoked_before=UTC_TIMESTAMP(6)", s.InstallationID, userID)
+	_, err = tx.ExecContext(ctx, "INSERT INTO system_backup_v2_admin_revocations(origin_installation_id,user_id,revoked_before) VALUES (?,?,UTC_TIMESTAMP(6)) ON DUPLICATE KEY UPDATE revoked_before=UTC_TIMESTAMP(6)", s.InstallationID, userID)
 	if err != nil {
 		return ErrRegistrationUnavailable
 	}
-	_, err = tx.ExecContext(ctx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND user_id=?", s.InstallationID, userID)
+	_, err = tx.ExecContext(ctx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND user_id=?", s.InstallationID, userID)
 	if err != nil {
 		return ErrRegistrationUnavailable
 	}

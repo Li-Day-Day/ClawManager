@@ -35,13 +35,13 @@ func TestDRecoveryAuthorityRaceMySQL(t *testing.T) {
 			until := now.Add(3 * time.Minute)
 			digest := func(c string) string { return strings.Repeat(c, 64) }
 			decode := func(s string) []byte { b, err := hex.DecodeString(s); mustSQL(t, err); return b }
-			_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+			_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 			mustSQL(t, err)
 			facts := RecoveryManagerPeerFacts{Scope: scope, IdentityHash: digest("a"), IssuerIdentityHash: digest("b"),
 				CredentialBindingHash: digest("c"), ExpiresAt: until}
-			_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+			_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), string(scope.Installation),
 				decode(facts.IssuerIdentityHash), decode(facts.CredentialBindingHash), until)
@@ -140,7 +140,7 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 			}
 			var deploymentEpoch, deploymentVersion int64
 			var enabled bool
-			mustSQL(t, db.QueryRowContext(ctx, `SELECT deployment_epoch,row_version,enabled FROM system_backup_recovery_deployments WHERE scope_key=?`, key).
+			mustSQL(t, db.QueryRowContext(ctx, `SELECT deployment_epoch,row_version,enabled FROM system_backup_v2_recovery_deployments WHERE scope_key=?`, key).
 				Scan(&deploymentEpoch, &deploymentVersion, &enabled))
 			fenceEpoch, fenceVersion, revoked, found := dRecoveryFenceStored(t, db, f.history, identity)
 			if !found || deploymentEpoch != 2 || deploymentVersion != 2 || fenceEpoch != 2 || fenceVersion != 2 || enabled == revoked {

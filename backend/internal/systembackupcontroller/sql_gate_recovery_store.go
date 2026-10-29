@@ -88,7 +88,7 @@ func (s SQLGateRecoveryStore) FenceForRelease(ctx context.Context, candidate Gat
 
 func expiredGateCandidateSQL() string {
 	return `SELECT origin_installation_id, scope, gate_state, row_version
-FROM system_maintenance_locks
+FROM system_backup_v2_maintenance_locks
 WHERE origin_installation_id = ?
   AND (
     (gate_state = 'acquiring' AND (lease_expires_at <= UTC_TIMESTAMP(6) OR acquisition_deadline_at <= UTC_TIMESTAMP(6)))

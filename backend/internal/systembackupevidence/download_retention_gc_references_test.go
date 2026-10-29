@@ -61,7 +61,7 @@ func (m *gcDirectModel) columnDiagnostic() string {
 var gcDirectColumnPattern = regexp.MustCompile(`(^|_)(operation(_public)?_id|audit(_log)?_id|nonce_id)$|^operation_identity$`)
 
 func gcDirectModelColumn(table, column string) bool {
-	return strings.HasPrefix(table, "system_") && gcDirectColumnPattern.MatchString(column) || table == "audit_logs" && oneOf(column, "details", "resource_id") || table == "system_backup_check_results" && column == "cleanup_target_public_id" || table == "system_backup_compact_tombstones" && column == "gc_batch_id" || table == "system_artifact_leases" && column == "holder_public_id"
+	return strings.HasPrefix(table, "system_") && gcDirectColumnPattern.MatchString(column) || table == "audit_logs" && oneOf(column, "details", "resource_id") || table == "system_backup_v2_check_results" && column == "cleanup_target_public_id" || table == "system_backup_v2_compact_tombstones" && column == "gc_batch_id" || table == "system_backup_v2_artifact_leases" && column == "holder_public_id"
 }
 func (m *gcDirectModel) query(q string, a []driver.NamedValue) (driver.Rows, bool, error) {
 	if q == downloadGCDirectColumnsSQL {
@@ -79,7 +79,7 @@ func (m *gcDirectModel) query(q string, a []driver.NamedValue) (driver.Rows, boo
 	if q == downloadGCDirectForeignKeysSQL {
 		var rows [][]driver.Value
 		for _, r := range m.d.early.catalog[downloadGCEarlyForeignKeysSQL] {
-			if oneOf(r[6].(string), "system_backup_operations", "audit_logs", "system_backup_strong_auth_nonces", "system_backup_download_admission_receipts", "system_backup_download_result_receipts") {
+			if oneOf(r[6].(string), "system_backup_v2_operations", "audit_logs", "system_backup_v2_strong_auth_nonces", "system_backup_v2_download_admission_receipts", "system_backup_v2_download_result_receipts") {
 				v := append([]driver.Value(nil), r[:8]...)
 				v = append(v, r[9])
 				rows = append(rows, v)
@@ -100,7 +100,7 @@ func (m *gcDirectModel) query(q string, a []driver.NamedValue) (driver.Rows, boo
 		}
 		if r.own {
 			own := int64(73)
-			if r.table == "system_backup_strong_auth_nonces" {
+			if r.table == "system_backup_v2_strong_auth_nonces" {
 				own = 95
 			}
 			if r.table == "audit_logs" {
@@ -143,7 +143,7 @@ func gcDirectTestArgs(f *retentionGCFixture, r gcDirectReference, audit int64) [
 	args := []any{value}
 	if r.own {
 		own := int64(73)
-		if r.table == "system_backup_strong_auth_nonces" {
+		if r.table == "system_backup_v2_strong_auth_nonces" {
 			own = 95
 		}
 		if r.table == "audit_logs" {
@@ -159,7 +159,7 @@ func gcDirectTestArgs(f *retentionGCFixture, r gcDirectReference, audit int64) [
 func gcDirectOwnedRanges() []gcDirectReference {
 	var out []gcDirectReference
 	for _, r := range gcDirectReferences(true) {
-		if r.table != "system_backup_config_maintenance_receipts" {
+		if r.table != "system_backup_v2_config_maintenance_receipts" {
 			out = append(out, r)
 		}
 	}
@@ -205,7 +205,9 @@ func TestDownloadRetentionGCDirectPublishedColumnTypesAndFKs(t *testing.T) {
 	column := regexp.MustCompile(`(?m)^[ \t]{2,}(?:ADD COLUMN )?([a-z_][a-z0-9_]*)[ \t]+([A-Za-z]+)`)
 	fk := regexp.MustCompile(`(?is)FOREIGN\s+KEY\s*\(([^)]*)\)\s*REFERENCES\s+([a-z_][a-z0-9_]*)\s*\(([^)]*)\)`)
 	actual := map[string]string{}
-	allowed := gcDirectFKEdges(false)
+	// The integration publishes maintenance receipts as an appended migration;
+	// they are no longer an optional proposal outside the runtime schema.
+	allowed := gcDirectFKEdges(true)
 	fkCount := 0
 	for _, source := range sources {
 		matches := statement.FindAllStringSubmatchIndex(source, -1)
@@ -226,7 +228,7 @@ func TestDownloadRetentionGCDirectPublishedColumnTypesAndFKs(t *testing.T) {
 			}
 			for _, edge := range fk.FindAllStringSubmatch(body, -1) {
 				target := strings.ToLower(edge[2])
-				if !oneOf(target, "system_backup_operations", "audit_logs", "system_backup_strong_auth_nonces", "system_backup_download_admission_receipts", "system_backup_download_result_receipts") {
+				if !oneOf(target, "system_backup_v2_operations", "audit_logs", "system_backup_v2_strong_auth_nonces", "system_backup_v2_download_admission_receipts", "system_backup_v2_download_result_receipts") {
 					continue
 				}
 				left, right := strings.Split(edge[1], ","), strings.Split(edge[3], ",")
@@ -243,8 +245,8 @@ func TestDownloadRetentionGCDirectPublishedColumnTypesAndFKs(t *testing.T) {
 			}
 		}
 	}
-	if !reflect.DeepEqual(actual, gcDirectColumns(false)) {
-		t.Fatal("published source types differ from GC catalog", actual, gcDirectColumns(false))
+	if !reflect.DeepEqual(actual, gcDirectColumns(true)) {
+		t.Fatal("published source types differ from GC catalog", actual, gcDirectColumns(true))
 	}
 	if fkCount < 20 {
 		t.Fatal("published FK declarations were not read", fkCount)
@@ -362,10 +364,10 @@ func TestDownloadRetentionGCDirectClosedSchemaAndFailures(t *testing.T) {
 			m := f.d.early
 			switch mode {
 			case "unknown_column":
-				m.catalog[downloadGCEarlyColumnsSQL] = append(m.catalog[downloadGCEarlyColumnsSQL], []driver.Value{"system_backup_operations", "new_operation_id", "900", "bigint", "YES", "null", "", "", "", "", ""})
+				m.catalog[downloadGCEarlyColumnsSQL] = append(m.catalog[downloadGCEarlyColumnsSQL], []driver.Value{"system_backup_v2_operations", "new_operation_id", "900", "bigint", "YES", "null", "", "", "", "", ""})
 			case "missing_column", "wrong_type", "duplicate_column":
 				for n, r := range m.catalog[downloadGCEarlyColumnsSQL] {
-					if r[0] == "system_backup_operations" && r[1] == "retry_of_operation_public_id" {
+					if r[0] == "system_backup_v2_operations" && r[1] == "retry_of_operation_public_id" {
 						switch mode {
 						case "missing_column":
 							m.catalog[downloadGCEarlyColumnsSQL] = append(m.catalog[downloadGCEarlyColumnsSQL][:n], m.catalog[downloadGCEarlyColumnsSQL][n+1:]...)
@@ -379,7 +381,7 @@ func TestDownloadRetentionGCDirectClosedSchemaAndFailures(t *testing.T) {
 				}
 			case "missing_table", "view":
 				for n, r := range m.catalog[downloadGCEarlyTablesSQL] {
-					if r[0] == "system_backup_events" {
+					if r[0] == "system_backup_v2_events" {
 						if mode == "view" {
 							r[1] = "VIEW"
 						} else {
@@ -396,9 +398,9 @@ func TestDownloadRetentionGCDirectClosedSchemaAndFailures(t *testing.T) {
 				case "cross_schema_fk":
 					r[0] = "other_database"
 				case "nonce_fk":
-					r[6] = "system_backup_strong_auth_nonces"
+					r[6] = "system_backup_v2_strong_auth_nonces"
 				case "result_fk":
-					r[6] = "system_backup_download_result_receipts"
+					r[6] = "system_backup_v2_download_result_receipts"
 				case "cascade_fk":
 					r[9] = "CASCADE"
 				}

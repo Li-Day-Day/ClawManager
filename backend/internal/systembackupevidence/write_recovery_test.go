@@ -29,7 +29,7 @@ type recoveryTestObservation struct {
 
 func (d *recoveryDB) Connect(context.Context) (driver.Conn, error) { return d, nil }
 func (d *recoveryDB) QueryContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, error) {
-	if strings.HasPrefix(q, "SELECT next_reconcile_at FROM system_backup_evidence") {
+	if strings.HasPrefix(q, "SELECT next_reconcile_at FROM system_backup_v2_evidence") {
 		if !strings.HasSuffix(q, "FOR UPDATE") || len(args) != 1 || args[0].Value != d.record.Manifest.Identity.ID {
 			d.t.Fatal("scheduling check not locked to candidate")
 		}
@@ -73,7 +73,7 @@ func (d *recoveryDB) BeginTx(ctx context.Context, opts driver.TxOptions) (driver
 	return d, nil
 }
 func (d *recoveryDB) ExecContext(_ context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
-	if !strings.HasPrefix(q, "UPDATE system_backup_evidence SET storage_state=?") || (len(args) != 9 && len(args) != 12) {
+	if !strings.HasPrefix(q, "UPDATE system_backup_v2_evidence SET storage_state=?") || (len(args) != 9 && len(args) != 12) {
 		d.t.Fatal("recovery wrote outside evidence CAS")
 	}
 	d.writes++
@@ -180,7 +180,7 @@ func newRecoveryFixture(t *testing.T) *recoveryFixture {
 	}
 	f.c = c
 	old := base.db.plan
-	d.plan = []authorityQuery{old[0], old[1], old[2], {"FROM system_backup_configs", []driver.Value{c.Registry.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, c.Store.Identity, c.Store.Version, c.Read.Identity, c.Read.Version, int64(60)}}, old[6], old[7], old[8], {"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}}, {"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}}}
+	d.plan = []authorityQuery{old[0], old[1], old[2], {"FROM system_backup_v2_configs", []driver.Value{c.Registry.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, c.Store.Identity, c.Store.Version, c.Read.Identity, c.Read.Version, int64(60)}}, old[6], old[7], old[8], {"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}}, {"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}}}
 	var err error
 	f.a, err = NewSQLWriteRecovery(c)
 	if err != nil {

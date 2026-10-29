@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"clawreef/internal/backupgate"
 	"clawreef/internal/models"
 	"clawreef/internal/services/k8s"
 	corev1 "k8s.io/api/core/v1"
@@ -187,22 +188,17 @@ func (s *RuntimeScheduler) runProxyPolicyRenewal(ctx context.Context) {
 	}
 }
 
-func (s *RuntimeScheduler) renewRuntimeProxyPolicies(ctx context.Context) (resultErr error) {
+func (s *RuntimeScheduler) renewRuntimeProxyPolicies(ctx context.Context) error {
+	release, gateErr := backupgate.HoldWorkUnit(ctx, "runtime.proxy_policy")
+	if gateErr != nil {
+		if errors.Is(gateErr, backupgate.ErrMaintenance) {
+			return nil
+		}
+		return gateErr
+	}
+	defer release()
 	if s.proxyPolicy == nil || s.podRepo == nil {
 		return nil
-	}
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	// Renewal runs independently of the main scheduler, but writes Agent config.
-	// Hold admission through the entire renewal, including failure cleanup.
-	ctx, release, err := enterBackupMutationContext(ctx, s.BackupGate, "runtime-proxy-policy-renewal")
-	if err != nil {
-		return err
-	}
-	defer func() { resultErr = errors.Join(resultErr, release()) }()
-	if err := ctx.Err(); err != nil {
-		return err
 	}
 	pods, err := s.podRepo.List(ctx, "")
 	if err != nil {

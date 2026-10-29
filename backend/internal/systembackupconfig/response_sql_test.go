@@ -157,7 +157,7 @@ func (c *responseSQLConn) ExecContext(_ context.Context, q string, args []driver
 	if !s.active || s.fail {
 		return nil, errors.New("PRIVATE response insert failure")
 	}
-	if !strings.HasPrefix(q, "INSERT INTO system_backup_evidence") || len(args) != 9 || args[0].Value != s.c.identity.ID || args[1].Value != s.c.identity.Installation || registrationHash(string(args[2].Value.([]byte))) != s.c.identity.ContentHash || args[3].Value != s.c.identity.ContentHash || args[4].Value != int64(len(s.c.payload)) {
+	if !strings.HasPrefix(q, "INSERT INTO system_backup_v2_evidence") || len(args) != 9 || args[0].Value != s.c.identity.ID || args[1].Value != s.c.identity.Installation || registrationHash(string(args[2].Value.([]byte))) != s.c.identity.ContentHash || args[3].Value != s.c.identity.ContentHash || args[4].Value != int64(len(s.c.payload)) {
 		return nil, errors.New("wrong full inline payload or bind values")
 	}
 	s.writes++

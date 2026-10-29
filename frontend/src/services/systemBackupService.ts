@@ -1,28 +1,55 @@
 import api from './api';
-export type BackupKind = 'backup' | 'drill' | 'preflight' | 'catalog_scan' | 'catalog_import';
-export interface BackupReference { id: string; version: string; sha256: string }
-export interface BackupProfile { id: string; kinds: BackupKind[]; ready: boolean; reasons: string[]; acceptance_policy?: BackupReference }
+
+export type BackupTaskType = 'backup' | 'drill' | 'preflight' | 'artifact_verify';
 export interface BackupTask {
-  id: string;
-  request: { kind: BackupKind; profile: string; artifact?: string; record_sha256?: string; purpose: 'functional_test' | 'acceptance'; acceptance_policy?: BackupReference };
-  status: string; can_cancel: boolean; row_version: number; created_at: number; deadline: number; failure_code?: string;
+  public_id: string; task_type: BackupTaskType; task_purpose: string; status: string;
+  row_version: number; config_version: number; can_cancel: boolean;
+  commit_started: boolean; artifact_registered: boolean; acceptance_eligible: boolean;
+  failure_category: string; pending_reason: string; attention_reason: string;
+  created_at: string; deadline_at: string; finished_at?: string;
+  source_public_id?: string;
 }
-export interface BackupAvailability { profiles: BackupProfile[]; reasons?: string[]; production_restore: false }
-export interface CatalogItem { id: string; type: 'artifact_registered' | 'artifact_deleted'; sha256: string; backup?: string; origin?: string; matrix?: string; attempt?: number; decision_time?: number; deleted_at?: number }
-export interface CatalogView { scan_id: string; complete: boolean; count: number; snapshot_sha256: string; items: CatalogItem[]; next?: string }
-export interface BackupReport { version: string; task_id: string; kind: BackupKind; status: string; failure_code?: string; created_at: number; record_id?: string; record_sha256?: string; verified: boolean; restore_authorized: false; scan?: CatalogView; acceptance?: { local_acceptance: boolean; registered: boolean } }
-const prefix = '/admin/system-backup';
+export interface BackupReadiness {
+  contract_version: string; enabled: boolean; can_create: boolean;
+  config_version: number; recovery_point_count: number;
+  checks: Array<{name: string; passed: boolean; code: string; detail: string}>;
+}
+export interface BackupConfig {
+  enabled: boolean; runner: string; profile: string; retention_seconds: number;
+  minimum_recovery_points: number; gate_acquisition_timeout_seconds: number;
+  quiesce_max_hold_seconds: number; task_deadline_seconds: number;
+  max_artifact_bytes: number; staging_capacity_bytes: number; max_index_bytes: number;
+  max_source_items: number;
+  artifact_target?: SecretReference; encryption_key?: SecretReference;
+  signing_key?: SecretReference; catalog?: SecretReference;
+}
+export interface SecretReference {provider: string; name: string; version: string; purpose: string}
+export interface BackupConfigVersion {version: number; config: BackupConfig}
+export interface BackupConfigChange {expected_version: number; config: BackupConfig; change_reason?: string}
+export interface BackupAuthorizationBinding {aud: string; sub: string; session: string; endpoint: string; request_hash: string; idempotency_key: string}
+export interface BackupEvent {id: number; event_type: string; details: Record<string, unknown>; created_at: string}
+export interface BackupVerificationReport {
+  backup_id: string; origin_installation_id: string; purpose: string; consistency: string;
+  integrity_verified: boolean; acceptance_eligible: boolean; parts_verified: number;
+}
+const base = '/admin/system-backup';
 export const systemBackupService = {
-  profiles: async (signal?: AbortSignal): Promise<BackupAvailability> => (await api.get(`${prefix}/profiles`, { signal })).data.data,
-  list: async (signal?: AbortSignal): Promise<BackupTask[]> => (await api.get(`${prefix}/tasks`, { signal })).data.data.items,
-  create: async (request: BackupTask['request'], key: string): Promise<BackupTask> =>
-    (await api.post(`${prefix}/tasks`, request, { headers: { 'Idempotency-Key': key } })).data.data,
-  cancel: async (task: BackupTask): Promise<BackupTask> =>
-    (await api.post(`${prefix}/tasks/${encodeURIComponent(task.id)}/cancel`, {}, { headers: { 'If-Match': String(task.row_version) } })).data.data,
-  catalog: async (id: string, cursor: string, signal?: AbortSignal): Promise<CatalogView> =>
-    (await api.get(`${prefix}/tasks/${encodeURIComponent(id)}/catalog`, { params: { cursor, limit: 50 }, signal })).data.data,
-  catalogRecord: async (id: string, item: CatalogItem, signal?: AbortSignal): Promise<CatalogItem> =>
-    (await api.get(`${prefix}/tasks/${encodeURIComponent(id)}/catalog/${encodeURIComponent(item.id)}`, { params: { type: item.type }, signal })).data.data,
-  report: async (id: string, signal?: AbortSignal): Promise<BackupReport> =>
-    (await api.get(`${prefix}/tasks/${encodeURIComponent(id)}/report`, { signal })).data.data,
+  overview: async (signal?: AbortSignal): Promise<{readiness: BackupReadiness; permissions: string[]}> => (await api.get(`${base}/overview`, {signal})).data.data,
+  config: async (signal?: AbortSignal): Promise<BackupConfigVersion> => (await api.get(`${base}/config`, {signal})).data.data,
+  saveConfig: async (version: number, config: BackupConfig, key: string, reason = '', proof = ''): Promise<BackupConfigVersion> => (await api.put(`${base}/config`, {expected_version: version, config, ...(reason ? {change_reason: reason} : {})}, {headers: {'Idempotency-Key': key, ...(proof ? {'X-System-Backup-Proof': proof} : {})}})).data.data,
+  configAuthorization: async (input: BackupConfigChange, key: string): Promise<BackupAuthorizationBinding> => (await api.post(`${base}/config/authorization`, input, {headers: {'Idempotency-Key': key}})).data.data,
+  list: async (signal?: AbortSignal): Promise<BackupTask[]> => (await api.get(`${base}/tasks`, {signal})).data.data.items,
+  get: async (id: string, signal?: AbortSignal): Promise<BackupTask> => (await api.get(`${base}/tasks/${encodeURIComponent(id)}`, {signal})).data.data,
+  events: async (id: string, signal?: AbortSignal): Promise<BackupEvent[]> => (await api.get(`${base}/tasks/${encodeURIComponent(id)}/events`, {signal})).data.data.items,
+  verificationReport: async (id: string, signal?: AbortSignal): Promise<BackupVerificationReport> => (await api.get(`${base}/tasks/${encodeURIComponent(id)}/verification-report`, {signal})).data.data,
+  create: async (key: string, task_type: BackupTaskType, source_public_id?: string): Promise<BackupTask> => (await api.post(`${base}/tasks`, {task_type, task_purpose: 'acceptance', ...(source_public_id ? {source_public_id} : {})}, {headers: {'Idempotency-Key': key}})).data.data,
+  cancel: async (task: BackupTask, key: string): Promise<BackupTask> => (await api.post(`${base}/tasks/${encodeURIComponent(task.public_id)}/cancel`, {expected_version: task.row_version}, {headers: {'Idempotency-Key': key}})).data.data,
 };
+
+export function backupErrorCode(error: unknown): string {
+  const e = error as {response?: {data?: {code?: string}}};
+  return e.response?.data?.code ?? 'network_error';
+}
+export function terminalBackupTask(task: BackupTask): boolean {
+  return ['succeeded', 'failed', 'canceled'].includes(task.status);
+}

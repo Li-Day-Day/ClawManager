@@ -26,7 +26,7 @@ func StageProviderProofEvidence(ctx context.Context, tx *sql.Tx, evidenceID stri
 	if ctx.Err() != nil {
 		return &ProviderProofError{Code: ProviderValidationFailed}
 	}
-	table := map[string]string{"external_action": "system_backup_external_actions", "backup_staging": "system_backup_staging_resources", "restore_resource": "system_restore_drill_resources"}[p.target.TargetType]
+	table := map[string]string{"external_action": "system_backup_v2_external_actions", "backup_staging": "system_backup_v2_staging_resources", "restore_resource": "system_backup_v2_restore_drill_resources"}[p.target.TargetType]
 	if table == "" {
 		return &ProviderProofError{Code: ProviderValidationFailed}
 	}
@@ -39,7 +39,7 @@ func StageProviderProofEvidence(ctx context.Context, tx *sql.Tx, evidenceID stri
 	if errors.Is(err, sql.ErrNoRows) || version != p.rowVersion {
 		return &ProviderProofError{Code: ProviderVersionConflict}
 	}
-	result, err := tx.ExecContext(ctx, `INSERT INTO system_backup_evidence
+	result, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_evidence
 		(public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,inline_payload,
 		content_checksum,content_size_bytes,media_type,encryption,redaction_classification,observed_health,expires_at)
 		SELECT ?,?,?,?,'inline',?,?,?,'application/json','none','internal','healthy',?

@@ -49,7 +49,7 @@ func (a *SQLDownloadAuthority) authorize(ctx context.Context) (grant downloadGra
 			return deny()
 		}
 	} else {
-		rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+		rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 		if err != nil {
 			return deny()
 		}
@@ -72,14 +72,14 @@ func (a *SQLDownloadAuthority) authorize(ctx context.Context) (grant downloadGra
 			return deny()
 		}
 		var version int64
-		if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Installation).Scan(&version) != nil || version != c.ConfigVersion {
+		if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Installation).Scan(&version) != nil || version != c.ConfigVersion {
 			return deny()
 		}
 	}
 	var configHash, rbacVersion, rbacHash string
 	var store, read KeyRef
 	if tx.QueryRowContext(ctx, `SELECT config_sha256,rbac_bindings_registry_version,rbac_bindings_registry_sha256,evidence_store_identity_hash,evidence_store_ref_version,evidence_read_identity_hash,evidence_read_ref_version
-FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, s.Installation, c.ConfigVersion).Scan(&configHash, &rbacVersion, &rbacHash, &store.Identity, &store.Version, &read.Identity, &read.Version) != nil ||
+FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, s.Installation, c.ConfigVersion).Scan(&configHash, &rbacVersion, &rbacHash, &store.Identity, &store.Version, &read.Identity, &read.Version) != nil ||
 		configHash != c.ConfigSHA256 || rbacVersion != c.RBACVersion || rbacHash != c.RBACSHA256 || store != c.Store || read != c.Read {
 		return deny()
 	}
@@ -103,7 +103,7 @@ FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDA
 	if committed != nil {
 		i = committed.record.Manifest.Identity
 	} else {
-		if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", access.ID).Scan(&i.OwnerType, &i.OwnerID) != nil {
+		if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=?", access.ID).Scan(&i.OwnerType, &i.OwnerID) != nil {
 			return deny()
 		}
 	}

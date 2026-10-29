@@ -34,15 +34,15 @@ func NewSQLDownloadGCTaskEligibility(c DownloadGCTaskEligibilityConfig) (*SQLDow
 }
 
 const downloadGCTaskDatabaseSQL = `SELECT @@server_uuid,DATABASE()`
-const downloadGCTaskTablesSQL = `SELECT TABLE_NAME,TABLE_TYPE,COALESCE(ENGINE,'') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('system_backups','system_restore_drills','system_backup_preflights','system_backup_artifact_verifications','system_artifact_lease_states','system_artifact_leases','system_backup_staging_resources','system_restore_drill_resources','system_backup_promotions','system_backup_prune_items') ORDER BY BINARY TABLE_NAME`
-const downloadGCTaskLeaseStateSQL = `SELECT id,origin_installation_id,lease_mode,generation,row_version FROM system_artifact_lease_states WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
-const downloadGCTaskSourceLeaseSQL = `SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_artifact_leases WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
-const downloadGCTaskHolderLeaseSQL = `SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_artifact_leases WHERE holder_type=? AND holder_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
-const downloadGCTaskStagingSQL = `SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,cleanup_result,last_failure_code FROM system_backup_staging_resources WHERE backup_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
-const downloadGCTaskRestoreSQL = `SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,'',last_failure_code FROM system_restore_drill_resources WHERE drill_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
-const downloadGCTaskBackupPromotionSQL = `SELECT id FROM system_backup_promotions WHERE backup_public_id=? LIMIT 1 FOR UPDATE`
-const downloadGCTaskDrillPromotionSQL = `SELECT id FROM system_backup_promotions WHERE drill_public_id=? LIMIT 1 FOR UPDATE`
-const downloadGCTaskPruneDependencySQL = `SELECT id FROM system_backup_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE`
+const downloadGCTaskTablesSQL = `SELECT TABLE_NAME,TABLE_TYPE,COALESCE(ENGINE,'') FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME IN ('system_backup_v2_backups','system_backup_v2_restore_drills','system_backup_v2_preflights','system_backup_v2_artifact_verifications','system_backup_v2_artifact_lease_states','system_backup_v2_artifact_leases','system_backup_v2_staging_resources','system_backup_v2_restore_drill_resources','system_backup_v2_promotions','system_backup_v2_prune_items') ORDER BY BINARY TABLE_NAME`
+const downloadGCTaskLeaseStateSQL = `SELECT id,origin_installation_id,lease_mode,generation,row_version FROM system_backup_v2_artifact_lease_states WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
+const downloadGCTaskSourceLeaseSQL = `SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_backup_v2_artifact_leases WHERE source_artifact_type='backup' AND source_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
+const downloadGCTaskHolderLeaseSQL = `SELECT id,origin_installation_id,source_artifact_type,source_public_id,lease_generation,lease_mode,holder_type,holder_public_id,purpose,heartbeat_at,expires_at,lease_ttl_seconds,row_version,lease_owner,config_version FROM system_backup_v2_artifact_leases WHERE holder_type=? AND holder_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
+const downloadGCTaskStagingSQL = `SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,cleanup_result,last_failure_code FROM system_backup_v2_staging_resources WHERE backup_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
+const downloadGCTaskRestoreSQL = `SELECT id,origin_installation_id,lifecycle,claim_owner,claim_expires_at,row_version,'',last_failure_code FROM system_backup_v2_restore_drill_resources WHERE drill_public_id=? ORDER BY id LIMIT 10001 FOR UPDATE`
+const downloadGCTaskBackupPromotionSQL = `SELECT id FROM system_backup_v2_promotions WHERE backup_public_id=? LIMIT 1 FOR UPDATE`
+const downloadGCTaskDrillPromotionSQL = `SELECT id FROM system_backup_v2_promotions WHERE drill_public_id=? LIMIT 1 FOR UPDATE`
+const downloadGCTaskPruneDependencySQL = `SELECT id FROM system_backup_v2_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE`
 
 func downloadGCTaskDependentSQL(kind string) string {
 	if !oneOf(kind, "drill", "preflight", "artifact_verify") {
@@ -277,7 +277,7 @@ func gcTaskTables(ctx context.Context, tx *sql.Tx) error {
 	for _, t := range taskDownloadTables() {
 		expected[t.table] = true
 	}
-	for _, table := range []string{"system_artifact_lease_states", "system_artifact_leases", "system_backup_staging_resources", "system_restore_drill_resources", "system_backup_promotions", "system_backup_prune_items"} {
+	for _, table := range []string{"system_backup_v2_artifact_lease_states", "system_backup_v2_artifact_leases", "system_backup_v2_staging_resources", "system_backup_v2_restore_drill_resources", "system_backup_v2_promotions", "system_backup_v2_prune_items"} {
 		expected[table] = true
 	}
 	for rows.Next() {

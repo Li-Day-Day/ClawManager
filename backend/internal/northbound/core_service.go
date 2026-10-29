@@ -11,11 +11,11 @@ import (
 	"sync"
 	"time"
 
+	"clawreef/internal/backupgate"
 	"clawreef/internal/config"
 	"clawreef/internal/models"
 	"clawreef/internal/repository"
 	"clawreef/internal/services"
-	"clawreef/internal/systembackup/mutation"
 )
 
 const (
@@ -33,6 +33,7 @@ const (
 )
 
 type CoreService struct {
+	OwnerTeams      *OwnerTeamAPI
 	ownerUsage      ownerUsageReader
 	repo            *repository.NorthboundRepository
 	users           repository.UserRepository
@@ -763,7 +764,7 @@ func (w *OperationWorker) loop(ctx context.Context) {
 		case <-timer.C:
 			if time.Now().After(nextBatchCheck) {
 				nextBatchCheck = time.Now().Add(3 * time.Second)
-				if err := w.advanceLifecycleBatches(ctx); err != nil {
+				if err := w.service.repo.AdvanceLifecycleBatches(ctx); err != nil {
 					log.Printf("lifecycle batch scheduler failed: %v", err)
 					continue
 				}
@@ -775,23 +776,6 @@ func (w *OperationWorker) loop(ctx context.Context) {
 
 func (w *OperationWorker) processOne(ctx context.Context) {
 	w.processNext(ctx, false)
-}
-
-// Batch reservation changes the operation ledger before any operation is claimed.
-// It must drain under the same backup gate as ordinary and batch execution.
-func (w *OperationWorker) advanceLifecycleBatches(ctx context.Context) (resultErr error) {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	ctx, release, err := mutation.EnterContext(ctx, "northbound-lifecycle-batches")
-	if err != nil {
-		return err
-	}
-	defer func() { resultErr = errors.Join(resultErr, release()) }()
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	return w.service.repo.AdvanceLifecycleBatches(ctx)
 }
 
 func (w *OperationWorker) batchLoop(ctx context.Context) {
@@ -820,21 +804,11 @@ func (w *OperationWorker) batchLoop(ctx context.Context) {
 }
 
 func (w *OperationWorker) processNext(ctx context.Context, batchOnly bool) {
-	if ctx.Err() != nil {
-		return
-	}
-	ctx, release, gateErr := mutation.EnterContext(ctx, "northbound-operations")
+	release, gateErr := backupgate.HoldWorkUnit(ctx, "northbound.operation")
 	if gateErr != nil {
 		return
 	}
-	defer func() {
-		if err := release(); err != nil {
-			log.Printf("northbound operation backup permit release failed: %v", err)
-		}
-	}()
-	if ctx.Err() != nil {
-		return
-	}
+	defer release()
 	claimID, err := randomToken(w.owner+"_", 8)
 	if err != nil {
 		return
@@ -855,6 +829,28 @@ func (w *OperationWorker) processNext(ctx context.Context, batchOnly bool) {
 		return
 	}
 	if item == nil {
+		return
+	}
+	if strings.HasPrefix(item.OperationType, ownerTeamOperationPrefix) {
+		if w.service.OwnerTeams == nil {
+			return
+		}
+		var templateID *int
+		err := w.runLifecycleActionWithLease(ctx, item, func() error {
+			var err error
+			templateID, err = w.service.OwnerTeams.execute(ctx, item)
+			return err
+		})
+		var pending *services.OwnerTeamRuntimePending
+		if errors.As(err, &pending) {
+			if deferErr := w.service.repo.DeferOwnerTeamReadiness(ctx, item, pending.Error()); deferErr != nil {
+				log.Printf("Owner Team readiness observation could not be saved: %s", item.OperationID)
+			}
+			return
+		}
+		if finishErr := w.service.repo.FinishOwnerTeamOperation(ctx, item, templateID, err); finishErr != nil {
+			log.Printf("Owner Team operation completion failed: %s", item.OperationID)
+		}
 		return
 	}
 	if isLifecycleOperation(item.OperationType) {
@@ -1196,12 +1192,8 @@ func (w *OperationWorker) finishOrContinueLifecycle(ctx context.Context, item *m
 }
 
 func (w *OperationWorker) runLifecycleActionWithLease(ctx context.Context, item *models.NorthboundOperation, action func() error) error {
-	ctx, release, gateErr := mutation.EnterContext(ctx, "northbound-lifecycle")
-	if gateErr != nil {
-		return gateErr
-	}
 	result := make(chan error, 1)
-	go func() { defer release(); result <- action() }()
+	go func() { result <- action() }()
 	lease := time.Duration(w.service.settings().OperationLeaseSeconds) * time.Second
 	if lease <= 0 {
 		lease = 30 * time.Second

@@ -186,7 +186,7 @@ func TestAcceptanceTaskRequiresExplicitMatchingProfilePolicy(t *testing.T) {
 			b, _ := json.Marshal(profile)
 			steps := []sqlStep{{contains: "WHERE actor_id=? AND idempotency_key=? FOR UPDATE"}, {contains: "system_backup_profiles", rows: [][]driver.Value{{b, scenario != "expired"}}}}
 			if scenario == "match" {
-				steps = append(steps, sqlStep{contains: "SELECT " + dbNow, rows: [][]driver.Value{{int64(1000)}}}, sqlStep{contains: "INSERT INTO system_backup_tasks", affected: 1}, sqlStep{contains: "INSERT INTO system_backup_events", affected: 1})
+				steps = append(steps, sqlStep{contains: "SELECT " + dbNow, rows: [][]driver.Value{{int64(1000)}}}, sqlStep{contains: "INSERT INTO system_backup_tasks", affected: 1}, sqlStep{contains: "INSERT INTO system_backup_v2_events", affected: 1})
 			}
 			store, script := scriptStore(t, steps...)
 			_, e := store.Create(context.Background(), 1, "acceptance-test", task.Request, time.Hour)

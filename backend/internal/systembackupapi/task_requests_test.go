@@ -156,7 +156,7 @@ func TestTaskRequestsContextAndEndpoint(t *testing.T) {
 
 func TestTaskRequestsConcreteSQLWriterPrepare(t *testing.T) {
 	admission := &writerTestAdmission{}
-	w, err := NewSQLTaskWriter(NewTaskRequestContract(), admission, true)
+	w, err := NewPublicSQLTaskWriter(NewTaskRequestContract(), admission, true)
 	if err != nil {
 		t.Fatal(err)
 	}

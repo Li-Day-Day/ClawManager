@@ -43,7 +43,7 @@ func (c *candidateBridgeConn) QueryContext(ctx context.Context, q string, args [
 	s := c.state
 	s.queries = append(s.queries, q)
 	switch {
-	case strings.HasPrefix(q, "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version)"):
+	case strings.HasPrefix(q, "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs FORCE INDEX(uk_sb_config_version)"):
 		data := append([][]driver.Value(nil), s.otherConfigs...)
 		if len(s.cells) != 0 {
 			data = append(data, []driver.Value{int64(1), s.base.grant.InstallationID, s.cells["version"], s.cells["config_sha256"], s.cells["enabled"], s.cells["nonce_hmac_ref_version"], s.cells["nonce_hmac_identity_hash"]})
@@ -59,7 +59,7 @@ func (c *candidateBridgeConn) QueryContext(ctx context.Context, q string, args [
 			return &registrationTestRows{width: 3}, nil
 		}
 		return registrationRow(s.cells["version"], s.cells["config_sha256"], s.cells["enabled"]), nil
-	case strings.HasPrefix(q, "SELECT public_id FROM system_backup_operations"):
+	case strings.HasPrefix(q, "SELECT public_id FROM system_backup_v2_operations"):
 		return &registrationTestRows{width: 1}, nil
 	case strings.HasPrefix(q, "SELECT origin_installation_id,version,config_sha256,"):
 		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "SELECT "), " FROM ")[0], ",")
@@ -76,14 +76,14 @@ func (c *candidateBridgeConn) ExecContext(ctx context.Context, q string, args []
 	if err != nil {
 		return nil, err
 	}
-	if strings.HasPrefix(q, "INSERT INTO system_backup_configs (") {
-		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "INSERT INTO system_backup_configs ("), ")")[0], ",")
+	if strings.HasPrefix(q, "INSERT INTO system_backup_v2_configs (") {
+		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "INSERT INTO system_backup_v2_configs ("), ")")[0], ",")
 		c.state.cells = map[string]driver.Value{}
 		for i, k := range columns {
 			c.state.cells[k] = args[i].Value
 		}
 	}
-	if strings.HasPrefix(q, "INSERT INTO system_backup_installation_state") {
+	if strings.HasPrefix(q, "INSERT INTO system_backup_v2_installation_state") {
 		c.state.state = true
 	}
 	if strings.HasPrefix(q, "INSERT INTO audit_logs") && c.state.badAuditID {
@@ -268,7 +268,7 @@ func TestBootstrapCandidateAStagesKeepEarlyPrefixAndOneIntent(t *testing.T) {
 			if e = s.Recheck(ctx, tx, p.request, pd.BootstrapConsumptionFacts{}, tx.now); e != nil {
 				t.Fatal(e)
 			}
-			if len(state.queries) < 6 || !strings.Contains(state.queries[0], "ORDER BY origin_installation_id") || !strings.Contains(state.queries[2], "FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE") || strings.Contains(state.queries[2], " WHERE ") || !strings.HasPrefix(state.queries[3], "SELECT username") || !strings.Contains(state.queries[4], "idempotency_key") {
+			if len(state.queries) < 6 || !strings.Contains(state.queries[0], "ORDER BY origin_installation_id") || !strings.Contains(state.queries[2], "FROM system_backup_v2_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE") || strings.Contains(state.queries[2], " WHERE ") || !strings.HasPrefix(state.queries[3], "SELECT username") || !strings.Contains(state.queries[4], "idempotency_key") {
 				t.Fatal("late earlier-layer acquisition", state.queries)
 			}
 			if len(state.base.committed) != 0 {

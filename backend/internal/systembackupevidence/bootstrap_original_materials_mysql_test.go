@@ -339,7 +339,7 @@ func bootstrapOriginalFixture(t *testing.T, actual bool) (sec.ConfigBootstrapSer
 		if !reflect.DeepEqual(names, capsule.Migrations) {
 			t.Fatal("formal migration ledger differs")
 		}
-		for _, table := range []string{"users", "audit_logs", "system_backup_evidence", "system_backup_evidence_chunks", "system_backup_configs", "system_backup_installation_state", "system_backup_operations", "system_backup_metadata_reservations", "system_backup_strong_auth_nonces"} {
+		for _, table := range []string{"users", "audit_logs", "system_backup_v2_evidence", "system_backup_v2_evidence_chunks", "system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_operations", "system_backup_v2_metadata_reservations", "system_backup_v2_strong_auth_nonces"} {
 			var name, ddl string
 			mustSQL(t, db.QueryRow("SHOW CREATE TABLE clawmanager."+table).Scan(&name, &ddl))
 			if name != table || !strings.HasPrefix(ddl, "CREATE TABLE `"+table+"`") {
@@ -449,7 +449,7 @@ func TestDBootstrapOriginalMaterialsMySQL(t *testing.T) {
 				}
 				bootstrapOriginalRetained(t, a, version)
 				if mode == "late_retained_ledger" {
-					_, e = a.f.db.Exec("CREATE FUNCTION original_retained_mutate() RETURNS INT DETERMINISTIC MODIFIES SQL DATA BEGIN UPDATE system_backup_strong_auth_nonces SET nonce_hmac_key_version='unknown-late-v0'; RETURN ROW_COUNT(); END")
+					_, e = a.f.db.Exec("CREATE FUNCTION original_retained_mutate() RETURNS INT DETERMINISTIC MODIFIES SQL DATA BEGIN UPDATE system_backup_v2_strong_auth_nonces SET nonce_hmac_key_version='unknown-late-v0'; RETURN ROW_COUNT(); END")
 					mustSQL(t, e)
 				}
 			}
@@ -566,7 +566,7 @@ func bootstrapOriginalRetained(t *testing.T, a *bootstrapMySQLAuthority, version
 	var now time.Time
 	mustSQL(t, a.f.db.QueryRow("SELECT UTC_TIMESTAMP(6)").Scan(&now))
 	h := strings.Repeat("a", 64)
-	_, e = a.f.db.Exec(`INSERT INTO system_backup_strong_auth_nonces
+	_, e = a.f.db.Exec(`INSERT INTO system_backup_v2_strong_auth_nonces
 (origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,response_sha256,audit_log_id,retain_until)
 VALUES ('installation_retained_fixture',?,?,?,?,?,'bootstrapOriginalRetention',?,'original-retained-fixture-0001',?,?,?,?,?,?)`, h, h, h, h, version, h, now, now.Add(time.Minute), now, h, id, now.Add(time.Hour))
 	mustSQL(t, e)

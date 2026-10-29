@@ -136,7 +136,7 @@ func makePageFixture(table, taskType, prefix string) *pageFixture {
 }
 
 func TestTaskPagesBindInstallationAndKeyset(t *testing.T) {
-	f := makePageFixture("system_backups", "backup", "sbk_")
+	f := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	db := sql.OpenDB(pageConnector{f})
 	defer db.Close()
 	r, err := NewReader(db, f)
@@ -162,7 +162,7 @@ func TestTaskPagesBindInstallationAndKeyset(t *testing.T) {
 }
 
 func TestTaskPagesFailClosedOnAuthorityAndDatabase(t *testing.T) {
-	f := makePageFixture("system_backups", "backup", "sbk_")
+	f := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	db := sql.OpenDB(pageConnector{f})
 	defer db.Close()
 	r, err := NewReader(db, f)
@@ -201,7 +201,7 @@ func TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows(t *testing.T) {
 		{"duplicate", func(f *pageFixture) { f.rows[1] = append([]driver.Value(nil), f.rows[0]...) }},
 	} {
 		t.Run(mutation.name, func(t *testing.T) {
-			f := makePageFixture("system_backups", "backup", "sbk_")
+			f := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 			mutation.edit(f)
 			db := sql.OpenDB(pageConnector{f})
 			defer db.Close()
@@ -218,7 +218,7 @@ func TestTaskPagesRejectOutOfOrderAndDuplicateDatabaseRows(t *testing.T) {
 }
 
 func TestTaskPagesRejectUnknownStoredSchemaVersion(t *testing.T) {
-	f := makePageFixture("system_backups", "backup", "sbk_")
+	f := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	f.rows[0][len(f.rows[0])-1] = "system-backup-task.v2"
 	db := sql.OpenDB(pageConnector{f})
 	defer db.Close()
@@ -238,10 +238,10 @@ func TestTaskPagesUseFourDistinctTables(t *testing.T) {
 		table  string
 		prefix string
 	}{
-		{BackupTask, "system_backups", "sbk_"},
-		{DrillTask, "system_restore_drills", "sdr_"},
-		{PreflightTask, "system_backup_preflights", "spf_"},
-		{VerificationTask, "system_backup_artifact_verifications", "sav_"},
+		{BackupTask, "system_backup_v2_backups", "sbk_"},
+		{DrillTask, "system_backup_v2_restore_drills", "sdr_"},
+		{PreflightTask, "system_backup_v2_preflights", "spf_"},
+		{VerificationTask, "system_backup_v2_artifact_verifications", "sav_"},
 	} {
 		t.Run(string(test.kind), func(t *testing.T) {
 			f := makePageFixture(test.table, string(test.kind), test.prefix)
@@ -260,7 +260,7 @@ func TestTaskPagesUseFourDistinctTables(t *testing.T) {
 }
 
 func TestReadServiceContinuesOnlyAuthorizedInstallation(t *testing.T) {
-	f := makePageFixture("system_backups", "backup", "sbk_")
+	f := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	db := sql.OpenDB(pageConnector{f})
 	defer db.Close()
 	s, err := NewService(db, f, []byte(strings.Repeat("k", 32)))

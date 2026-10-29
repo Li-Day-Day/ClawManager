@@ -228,18 +228,18 @@ func (d *admissionTxDB) QueryContext(ctx context.Context, q string, args []drive
 		return admissionTxRow(d.identity.ServerUUID, d.identity.Database), nil
 	case strings.HasPrefix(q, "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6)"):
 		return admissionTxRow(d.identity.ServerUUID, d.identity.Database, d.now, int64(0)), nil
-	case q == "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE":
+	case q == "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE":
 		d.installationLocked = true
 		d.calls = append(d.calls, "L0")
 		return admissionTxRow(d.record.Manifest.Identity.Installation), nil
-	case strings.HasPrefix(q, "SELECT active_config_version FROM system_backup_installation_state"):
+	case strings.HasPrefix(q, "SELECT active_config_version FROM system_backup_v2_installation_state"):
 		if !d.installationLocked {
 			d.t.Fatal("config before L0")
 		}
 		return admissionTxRow(d.activeConfig), nil
-	case strings.HasPrefix(q, "SELECT nonce_hmac_ref_version FROM system_backup_configs WHERE"):
+	case strings.HasPrefix(q, "SELECT nonce_hmac_ref_version FROM system_backup_v2_configs WHERE"):
 		return admissionTxRow("v2"), nil
-	case strings.HasPrefix(q, "SELECT nonce_hmac_ref_version FROM system_backup_configs"):
+	case strings.HasPrefix(q, "SELECT nonce_hmac_ref_version FROM system_backup_v2_configs"):
 		if d.retainedVersions != nil {
 			out := &admissionTxRows{width: 1}
 			for _, v := range d.retainedVersions {
@@ -248,7 +248,7 @@ func (d *admissionTxDB) QueryContext(ctx context.Context, q string, args []drive
 			return out, nil
 		}
 		return &admissionTxRows{width: 1, data: [][]driver.Value{{"v1"}, {"v2"}}}, nil
-	case q == "SELECT DISTINCT nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs ORDER BY nonce_hmac_ref_version,nonce_hmac_identity_hash":
+	case q == "SELECT DISTINCT nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs ORDER BY nonce_hmac_ref_version,nonce_hmac_identity_hash":
 		return &admissionTxRows{width: 2, data: [][]driver.Value{{"v1", hash([]byte("old-nonce-identity"))}, {"v2", d.configCells["nonce_hmac_identity_hash"]}}}, nil
 	case strings.HasPrefix(q, "SELECT schema_version,version,row_version,canonical_config_json"):
 		if d.fault == "canonical_missing" {
@@ -256,13 +256,13 @@ func (d *admissionTxDB) QueryContext(ctx context.Context, q string, args []drive
 			return admissionTxRow("system-backup-config.v1", int64(1), int64(1), nil, d.config.SHA256(), int64(len(d.config.CanonicalJSON()))), nil
 		}
 		return admissionTxRow("system-backup-config.v1", d.activeConfig, int64(1), d.config.CanonicalJSON(), d.config.SHA256(), int64(len(d.config.CanonicalJSON()))), nil
-	case q == "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?":
+	case q == "SELECT owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=?":
 		return admissionTxRow(d.record.Manifest.Identity.OwnerType, d.record.Manifest.Identity.OwnerID), nil
 	case strings.HasPrefix(q, "SELECT config_sha256,rbac_bindings_registry_version"):
 		return admissionTxRow(d.config.SHA256(), d.configCells["rbac_bindings_registry_version"], d.configCells["rbac_bindings_registry_sha256"], d.configCells["evidence_store_identity_hash"], d.configCells["evidence_store_ref_version"], d.configCells["evidence_read_identity_hash"], d.configCells["evidence_read_ref_version"]), nil
 	case q == "SELECT UTC_TIMESTAMP(6)":
 		return admissionTxRow(d.now), nil
-	case strings.HasSuffix(q, "FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE"):
+	case strings.HasSuffix(q, "FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE"):
 		columns := strings.Split(strings.TrimPrefix(strings.Split(q, " FROM ")[0], "SELECT "), ",")
 		values := make([]driver.Value, len(columns))
 		for i, k := range columns {
@@ -285,7 +285,7 @@ func (d *admissionTxDB) QueryContext(ctx context.Context, q string, args []drive
 		return admissionTxRow(d.password), nil
 	case strings.HasPrefix(q, "SELECT user_id,subject,credential_hash,expires_at,revoked,UTC_TIMESTAMP(6)"):
 		return admissionTxRow(int64(42), "user:42", d.credential, d.sessionUntil, d.sessionRevoked, d.now), nil
-	case strings.HasPrefix(q, "SELECT revoked_before FROM system_backup_admin_revocations"):
+	case strings.HasPrefix(q, "SELECT revoked_before FROM system_backup_v2_admin_revocations"):
 		if !d.revokedBefore.IsZero() {
 			return admissionTxRow(d.revokedBefore), nil
 		}
@@ -346,7 +346,7 @@ func (d *admissionTxDB) QueryContext(ctx context.Context, q string, args []drive
 		i := m.Identity
 		return admissionTxRow(int64(61), i.OwnerType, i.OwnerID, i.Type, r.State, r.Failure, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, r.Ref.ImmutableVersion, i.ContentHash, i.ContentSize,
 			m.ObjectHash, m.ObjectSize, ChunkSize, int64(len(m.Chunks)), m.ChunkRoot, i.Media, "envelope_v1", m.Key.Identity, m.Key.Version, m.EnvelopeHash, i.Classification, nullString(r.Claim), nullTime(r.ClaimUntil), r.ExpiresAt, nullTime(r.ProtectedUntil), r.RowVersion, r.CreatedAt, "evidence", hash([]byte(r.Ref.RelativeKey)), Framing), nil
-	case strings.Contains(q, "FROM system_backup_evidence_chunks WHERE evidence_id=?"):
+	case strings.Contains(q, "FROM system_backup_v2_evidence_chunks WHERE evidence_id=?"):
 		rows := &admissionTxRows{width: 9}
 		for _, c := range d.record.Manifest.Chunks {
 			nonce, _ := base64.RawURLEncoding.DecodeString(c.Nonce)
@@ -367,9 +367,9 @@ func (d *admissionTxDB) QueryContext(ctx context.Context, q string, args []drive
 			return &admissionTxRows{width: 2}, nil
 		}
 		return admissionTxRow(d.consumed, d.consumed), nil
-	case q == "SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE":
+	case q == "SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE":
 		return admissionTxRow(d.reserved), nil
-	case q == "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE":
+	case q == "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE":
 		return admissionTxRow(d.sample, d.reserved), nil
 	}
 	d.m.f.Record = d.record
@@ -396,7 +396,7 @@ func (d *admissionTxDB) ExecContext(ctx context.Context, q string, args []driver
 	if strings.Count(q, "?") != len(args) {
 		d.t.Fatal("mutation placeholder mismatch", q, len(args))
 	}
-	if strings.HasPrefix(q, "UPDATE system_backup_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=?,claim_expires_at=?,expires_at=?,protected_until=?") {
+	if strings.HasPrefix(q, "UPDATE system_backup_v2_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=?,claim_expires_at=?,expires_at=?,protected_until=?") {
 		if len(args) != 9 || args[7].Value != d.record.Manifest.Identity.ID || args[8].Value != d.record.RowVersion {
 			return admissionRecordsResult{rows: 0}, nil
 		}
@@ -468,19 +468,19 @@ func (d *admissionTxDB) ExecContext(ctx context.Context, q string, args []driver
 		d.record.ClaimUntil = time.Time{}
 		d.record.RowVersion++
 		return admissionRecordsResult{rows: 1}, nil
-	case "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)":
+	case "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)":
 		if d.sample.IsZero() {
 			d.sample = args[0].Value.(time.Time)
 		}
 		return admissionRecordsResult{rows: 1}, nil
-	case "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?":
+	case "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?":
 		if !d.ownerLocked || !d.sample.Equal(args[1].Value.(time.Time)) || d.reserved != args[2].Value {
 			return admissionRecordsResult{rows: 0}, nil
 		}
 		d.reserved += args[0].Value.(int64)
 		d.calls = append(d.calls, "L6")
 		return admissionRecordsResult{rows: 1}, nil
-	case "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND reserved_bytes=?":
+	case "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND reserved_bytes=?":
 		if !d.ownerLocked || args[1].Value != d.reserved {
 			d.t.Fatal("reservation order/CAS")
 		}
@@ -610,7 +610,7 @@ func (e *admissionTxEnvironment) Reserve(ctx context.Context, tx *sql.Tx, now ti
 	if e.denyReserve {
 		return nil, ErrCapacity
 	}
-	if !downloadAdmissionOne(tx.ExecContext(ctx, "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND reserved_bytes=?", int64(65536), e.db.reserved)) {
+	if !downloadAdmissionOne(tx.ExecContext(ctx, "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND reserved_bytes=?", int64(65536), e.db.reserved)) {
 		return nil, ErrCapacity
 	}
 	return admissionTxReservation{e}, nil
@@ -642,7 +642,7 @@ func (r admissionTxReservation) Recheck(ctx context.Context, tx *sql.Tx, now tim
 		return ErrCapacity
 	}
 	var reserved int64
-	if tx.QueryRowContext(ctx, "SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&reserved) != nil || reserved < 65536 {
+	if tx.QueryRowContext(ctx, "SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&reserved) != nil || reserved < 65536 {
 		return ErrCapacity
 	}
 	return nil

@@ -16,9 +16,9 @@ const maxDownloadResultBytes = 2048
 const downloadResultActorSQL = `SELECT id FROM users WHERE id=? FOR UPDATE`
 const downloadResultInsertSQL = `INSERT INTO audit_logs (user_id,action,resource_type,resource_id,details,created_at) VALUES (?,'system_backup.evidence_download.result','system_backup',NULL,?,?)`
 const downloadResultReadSQL = `SELECT user_id,action,resource_type,resource_id,details,created_at FROM audit_logs WHERE id=? FOR UPDATE`
-const downloadResultReleaseSQL = `UPDATE system_backup_evidence SET claim_owner=NULL,claim_expires_at=NULL,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6)
+const downloadResultReleaseSQL = `UPDATE system_backup_v2_evidence SET claim_owner=NULL,claim_expires_at=NULL,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6)
 WHERE id=? AND public_id=? AND origin_installation_id=? AND owner_target_type=? AND owner_target_public_id=? AND row_version=? AND claim_owner=? AND claim_expires_at=? AND row_version<9007199254740991`
-const downloadResultReleaseReadSQL = `SELECT origin_installation_id,row_version,claim_owner,claim_expires_at FROM system_backup_evidence WHERE id=? AND public_id=? FOR UPDATE`
+const downloadResultReleaseReadSQL = `SELECT origin_installation_id,row_version,claim_owner,claim_expires_at FROM system_backup_v2_evidence WHERE id=? AND public_id=? FOR UPDATE`
 
 var ErrDownloadResultCommitUnknown = errors.New("download_result_commit_unknown")
 

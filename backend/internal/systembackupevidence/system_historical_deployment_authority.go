@@ -52,7 +52,7 @@ type systemDeploymentBoundSession struct {
 	refLocked  bool
 }
 
-const systemHistoricalRevocationSelect = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?`
+const systemHistoricalRevocationSelect = `SELECT revocation_epoch,revoked_at,row_version FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?`
 
 func (s *systemDeploymentBoundSession) readRevocation(ctx context.Context, tx pd.ReadSQL, lock bool) (int64, error) {
 	key, err := pd.RecoveryScopeKey(s.request.Scope)

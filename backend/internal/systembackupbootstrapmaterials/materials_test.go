@@ -275,7 +275,7 @@ func (c *conn) QueryContext(ctx context.Context, q string, args []driver.NamedVa
 		return &rows{[][]driver.Value{{s.f.g.ServerUUID, s.f.g.Database}}, 2}, nil
 	case q == "SELECT UTC_TIMESTAMP(6)":
 		return &rows{[][]driver.Value{{s.now}}, 1}, nil
-	case strings.HasPrefix(q, "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE"):
+	case strings.HasPrefix(q, "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE"):
 		if len(args) != 0 {
 			return nil, errors.New("global config scope narrowed")
 		}
@@ -285,7 +285,7 @@ func (c *conn) QueryContext(ctx context.Context, q string, args []driver.NamedVa
 			r.data = [][]driver.Value{{"1", s.f.g.InstallationID, "1", s.f.c.SHA256(), false, key.Version, key.IdentityHash}}
 		}
 		return r, nil
-	case strings.HasPrefix(q, "SELECT id,nonce_hmac_key_version,retain_until FROM system_backup_strong_auth_nonces"):
+	case strings.HasPrefix(q, "SELECT id,nonce_hmac_key_version,retain_until FROM system_backup_v2_strong_auth_nonces"):
 		if len(args) != 1 {
 			return nil, errors.New("missing fixed retention cutoff")
 		}

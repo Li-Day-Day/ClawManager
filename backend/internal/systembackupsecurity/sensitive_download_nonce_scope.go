@@ -38,10 +38,10 @@ func (*SensitiveDownloadNonceScope) MarshalJSON() ([]byte, error) {
 func (*SensitiveDownloadNonceScope) String() string   { return "SensitiveDownloadNonceScope" }
 func (*SensitiveDownloadNonceScope) GoString() string { return "SensitiveDownloadNonceScope" }
 
-const sensitiveDownloadInstallationsSQL = "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE"
-const sensitiveDownloadNonceVersionsSQL = `SELECT nonce_hmac_ref_version FROM system_backup_configs
-UNION SELECT nonce_hmac_key_version FROM system_backup_strong_auth_nonces WHERE retain_until>? ORDER BY 1`
-const sensitiveDownloadNonceLookupSQL = "SELECT id FROM system_backup_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE"
+const sensitiveDownloadInstallationsSQL = "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE"
+const sensitiveDownloadNonceVersionsSQL = `SELECT nonce_hmac_ref_version FROM system_backup_v2_configs
+UNION SELECT nonce_hmac_key_version FROM system_backup_v2_strong_auth_nonces WHERE retain_until>? ORDER BY 1`
+const sensitiveDownloadNonceLookupSQL = "SELECT id FROM system_backup_v2_strong_auth_nonces WHERE nonce_hmac=? AND nonce_hmac_key_version=? FOR UPDATE"
 
 // LockSensitiveDownloadNonceScope establishes the same global installation
 // serialization as the existing nonce consumers, including the empty ranges.
@@ -75,11 +75,11 @@ func LockSensitiveDownloadNonceScope(ctx context.Context, tx *sql.Tx, database D
 		return nil, ErrRegistrationUnavailable
 	}
 	var version int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", installation).Scan(&version) != nil || version < 1 || version > 9007199254740991 {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", installation).Scan(&version) != nil || version < 1 || version > 9007199254740991 {
 		return nil, ErrRegistrationUnavailable
 	}
 	var active string
-	if tx.QueryRowContext(ctx, "SELECT nonce_hmac_ref_version FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE", installation, version).Scan(&active) != nil || !sensitiveDownloadNonceVersion(active) {
+	if tx.QueryRowContext(ctx, "SELECT nonce_hmac_ref_version FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE", installation, version).Scan(&active) != nil || !sensitiveDownloadNonceVersion(active) {
 		return nil, ErrRegistrationUnavailable
 	}
 	now, err := sensitiveDownloadNonceClock(ctx, tx, time.Time{})

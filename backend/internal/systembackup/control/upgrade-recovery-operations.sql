@@ -31,14 +31,14 @@ CREATE TABLE IF NOT EXISTS system_backup_recovery_leases (
  PRIMARY KEY(artifact_id,task_id,consumer_id),
  INDEX task_active(task_id,released)
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS system_backup_prune_runs (
+CREATE TABLE IF NOT EXISTS system_backup_v2_prune_runs (
  run_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
  task_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
  plan_json MEDIUMBLOB NOT NULL,
  run_state VARCHAR(24) NOT NULL,
  INDEX task_state(task_id,run_state)
 ) ENGINE=InnoDB;
-CREATE TABLE IF NOT EXISTS system_backup_prune_items (
+CREATE TABLE IF NOT EXISTS system_backup_v2_prune_items (
  run_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
  artifact_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
  dispatch_json MEDIUMBLOB NOT NULL,

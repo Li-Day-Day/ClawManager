@@ -135,7 +135,7 @@ func TestGateCoordinatorDirectLifecycleUsesExactExecutorCAS(t *testing.T) {
 		t.Fatalf("renew=%#v abort=%#v release=%#v finish=%#v", executor.queries, abortTx.queries, releaseTx.queries, finishTx.queries)
 	}
 	for name, queries := range map[string][]string{"abort": abortTx.queries, "release": releaseTx.queries, "finish": finishTx.queries} {
-		if !strings.Contains(queries[1], "INSERT INTO system_backup_events") || !strings.Contains(queries[1], "'gate_changed'") {
+		if !strings.Contains(queries[1], "INSERT INTO system_backup_v2_events") || !strings.Contains(queries[1], "'gate_changed'") {
 			t.Fatalf("%s event=%s", name, queries[1])
 		}
 	}

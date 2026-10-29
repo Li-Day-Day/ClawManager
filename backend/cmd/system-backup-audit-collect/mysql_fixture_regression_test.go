@@ -35,8 +35,8 @@ func TestMySQLFixtureSchemaCommentsAndClosedLayout(t *testing.T) {
 // from the real DDL. This is a shape check, not an in-memory MySQL substitute.
 func mysqlFixtureShapeError(schema []mysqlFixtureStep, seed []mysqlFixtureStep) error {
 	tables := map[string][]string{}
-	create := regexp.MustCompile(`^CREATE TABLE ([a-z_]+) \((.+)\)$`)
-	insert := regexp.MustCompile(`^INSERT INTO ([a-z_]+) \(([^)]+)\) VALUES \(([?,]+)\)$`)
+	create := regexp.MustCompile(`^CREATE TABLE ([a-z][a-z0-9_]*) \((.+)\)$`)
+	insert := regexp.MustCompile(`^INSERT INTO ([a-z][a-z0-9_]*) \(([^)]+)\) VALUES \(([?,]+)\)$`)
 	for _, step := range schema {
 		match := create.FindStringSubmatch(step.query)
 		if match == nil {

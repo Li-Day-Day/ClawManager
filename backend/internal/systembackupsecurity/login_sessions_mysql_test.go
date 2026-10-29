@@ -119,10 +119,10 @@ func (f sessionMySQLProbe) counts(t *testing.T, ctx context.Context, sessions, r
 		query string
 		want  int
 	}{
-		{"SELECT COUNT(*) FROM system_backup_admin_sessions", sessions},
-		{"SELECT COUNT(*) FROM system_backup_admin_sessions WHERE revoked=TRUE", revoked},
+		{"SELECT COUNT(*) FROM system_backup_v2_admin_sessions", sessions},
+		{"SELECT COUNT(*) FROM system_backup_v2_admin_sessions WHERE revoked=TRUE", revoked},
 		{"SELECT COUNT(*) FROM audit_logs", audits},
-		{"SELECT COUNT(*) FROM system_backup_admin_revocations", epochs},
+		{"SELECT COUNT(*) FROM system_backup_v2_admin_revocations", epochs},
 	} {
 		var got int
 		mysqlMust(t, f.db.QueryRowContext(ctx, c.query).Scan(&got))
@@ -267,7 +267,7 @@ func TestALoginSessionsMySQL(t *testing.T) {
 		mysqlMust(t, e)
 	}
 	reset := func(t *testing.T) {
-		exec(t, "DELETE FROM system_backup_admin_sessions; DELETE FROM system_backup_admin_revocations; DELETE FROM audit_logs; DELETE FROM users")
+		exec(t, "DELETE FROM system_backup_v2_admin_sessions; DELETE FROM system_backup_v2_admin_revocations; DELETE FROM audit_logs; DELETE FROM users")
 		exec(t, "INSERT INTO users(id,username,email,password_hash,role,is_active) VALUES(42,'session-probe','session-probe@example.invalid',?,'admin',TRUE)", sessionProbePassword)
 	}
 	hold := func(t *testing.T, query string, args ...any) *sql.Tx {
@@ -297,7 +297,7 @@ func TestALoginSessionsMySQL(t *testing.T) {
 		p := issue(t)
 		f.counts(t, ctx, 2, 0, 1, 0)
 		var count int
-		mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_admin_sessions WHERE session_sha256 IN (?,?) AND credential_hash=? AND subject='user:42' AND origin_installation_id=?", registrationHash(p.AccessToken), registrationHash(p.RefreshToken), p.CredentialSHA256, sessionProbeInstallation).Scan(&count))
+		mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_admin_sessions WHERE session_sha256 IN (?,?) AND credential_hash=? AND subject='user:42' AND origin_installation_id=?", registrationHash(p.AccessToken), registrationHash(p.RefreshToken), p.CredentialSHA256, sessionProbeInstallation).Scan(&count))
 		if count != 2 {
 			t.Fatal("persisted pair binding mismatch")
 		}
@@ -333,10 +333,10 @@ func TestALoginSessionsMySQL(t *testing.T) {
 	}
 	if !runCase("refresh_commits_before_logout_all_tokens_revoked", func(t *testing.T) {
 		parent := issue(t)
-		block := hold(t, "SELECT user_id FROM system_backup_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", sessionProbeInstallation, registrationHash(parent.RefreshToken))
+		block := hold(t, "SELECT user_id FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND session_sha256=? FOR UPDATE", sessionProbeInstallation, registrationHash(parent.RefreshToken))
 		defer block.Rollback()
 		refresh := startPair(t, f.pair(t, ctx, parent.RefreshToken))
-		f.waiting(t, ctx, refresh, "system_backup_admin_sessions")
+		f.waiting(t, ctx, refresh, "system_backup_v2_admin_sessions")
 		logout := startLogout(t)
 		f.waiting(t, ctx, logout, "users")
 		mysqlMust(t, block.Commit())
@@ -348,11 +348,11 @@ func TestALoginSessionsMySQL(t *testing.T) {
 	}
 	if !runCase("logout_commits_before_refresh_no_new_pair", func(t *testing.T) {
 		parent := issue(t)
-		exec(t, "INSERT INTO system_backup_admin_revocations VALUES(?,42,DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 10 MINUTE))", sessionProbeInstallation)
-		block := hold(t, "SELECT user_id FROM system_backup_admin_revocations WHERE origin_installation_id=? AND user_id=42 FOR UPDATE", sessionProbeInstallation)
+		exec(t, "INSERT INTO system_backup_v2_admin_revocations VALUES(?,42,DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 10 MINUTE))", sessionProbeInstallation)
+		block := hold(t, "SELECT user_id FROM system_backup_v2_admin_revocations WHERE origin_installation_id=? AND user_id=42 FOR UPDATE", sessionProbeInstallation)
 		defer block.Rollback()
 		logout := startLogout(t)
-		f.waiting(t, ctx, logout, "system_backup_admin_revocations")
+		f.waiting(t, ctx, logout, "system_backup_v2_admin_revocations")
 		refresh := startPair(t, f.pair(t, ctx, parent.RefreshToken))
 		f.waiting(t, ctx, refresh, "users")
 		mysqlMust(t, block.Commit())
@@ -430,7 +430,7 @@ func TestALoginSessionsMySQL(t *testing.T) {
 	}
 	if !runCase("logout_failure_rolls_back_epoch_and_revocations", func(t *testing.T) {
 		issue(t)
-		exec(t, "CREATE TRIGGER a_session_reject_revoke BEFORE UPDATE ON system_backup_admin_sessions FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic revoke failure'")
+		exec(t, "CREATE TRIGGER a_session_reject_revoke BEFORE UPDATE ON system_backup_v2_admin_sessions FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic revoke failure'")
 		t.Cleanup(func() { exec(t, "DROP TRIGGER IF EXISTS a_session_reject_revoke") })
 		sessionExpect(t, svc.RevokeUserSessions(ctx, 42), ErrRegistrationUnavailable)
 		f.counts(t, ctx, 2, 0, 1, 0)
@@ -484,7 +484,7 @@ func TestALoginSessionsMySQL(t *testing.T) {
 		mysqlMust(t, svc.RevokeUserSessions(ctx, 42))
 		f.counts(t, ctx, 4, 2, 2, 1)
 		var live int
-		mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_admin_sessions WHERE origin_installation_id='installation_session_other' AND revoked=FALSE").Scan(&live))
+		mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_admin_sessions WHERE origin_installation_id='installation_session_other' AND revoked=FALSE").Scan(&live))
 		if live != 2 {
 			t.Fatal("logout affected another installation")
 		}

@@ -118,7 +118,7 @@ func TestCaptureTableAllowlistFailsClosed(t *testing.T) {
 		}},
 		{"draft decision", func(d map[string]any) { resourceObject(t, d, "audit_logs")["decision_status"] = "owner_recorded" }},
 		{"missing table", func(d map[string]any) { resourceObject(t, d, "audit_logs")["category"] = "system_backup" }},
-		{"extra table", func(d map[string]any) { resourceObject(t, d, "system_backups")["category"] = "resources" }},
+		{"extra table", func(d map[string]any) { resourceObject(t, d, "system_backup_v2_backups")["category"] = "resources" }},
 		{"wrong owner", func(d map[string]any) { resourceObject(t, d, "audit_logs")["owner"] = "A" }},
 		{"secret classification", func(d map[string]any) { resourceObject(t, d, "audit_logs")["data_classification"] = "secret" }},
 		{"not dumped", func(d map[string]any) { resourceObject(t, d, "audit_logs")["backup_strategy"] = "metadata_only" }},

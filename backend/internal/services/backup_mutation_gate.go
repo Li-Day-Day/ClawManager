@@ -3,6 +3,7 @@ package services
 import (
 	"clawreef/internal/systembackup/mutation"
 	"context"
+	"errors"
 )
 
 // Set before Start. Each permit spans all child goroutines and external writes;
@@ -15,16 +16,9 @@ func enterBackupMutation(ctx context.Context, g BackupMutationGate, name string)
 	if g == nil {
 		return mutation.Enter(ctx, name)
 	}
-	return g.Enter(ctx, name)
-}
-
-func enterBackupMutationContext(ctx context.Context, g BackupMutationGate, name string) (context.Context, func() error, error) {
-	if g == nil {
-		return mutation.EnterContext(ctx, name)
-	}
-	if contextual, ok := g.(mutation.ContextGate); ok {
-		return contextual.EnterContext(ctx, name)
-	}
 	release, err := g.Enter(ctx, name)
-	return ctx, release, err
+	if err == nil && release == nil {
+		return nil, errors.New("backup mutation release capability missing")
+	}
+	return release, err
 }

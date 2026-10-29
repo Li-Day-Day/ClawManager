@@ -126,7 +126,7 @@ func (c *SensitiveDownloadConfig) Recheck(ctx context.Context, tx *sql.Tx) error
 		return ErrRegistrationUnavailable
 	}
 	var version int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.installation).Scan(&version) != nil || version != c.row.version {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", s.installation).Scan(&version) != nil || version != c.row.version {
 		return ErrRegistrationUnavailable
 	}
 	row, err := readConfigMutationRow(ctx, tx, s.installation, version)

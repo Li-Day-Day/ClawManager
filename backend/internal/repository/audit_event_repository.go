@@ -22,9 +22,10 @@ type auditEventRepository struct {
 	sess db.Session
 }
 
-// NewAuditEventRepository creates a new audit event repository.
+// NewAuditEventRepository creates a new audit event repository (schema is owned by embedded migrations).
 func NewAuditEventRepository(sess db.Session) AuditEventRepository {
-	return &auditEventRepository{sess: sess}
+	repo := &auditEventRepository{sess: sess}
+	return repo
 }
 
 // NewAuditEventRepositoryExistingTable skips DDL and is intended for

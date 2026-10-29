@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-const downloadAdmissionInstallationSQL = `SELECT origin_installation_id FROM system_backup_evidence WHERE public_id=? FOR UPDATE`
-const downloadAdmissionClaimCASSQL = `UPDATE system_backup_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6)
+const downloadAdmissionInstallationSQL = `SELECT origin_installation_id FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE`
+const downloadAdmissionClaimCASSQL = `UPDATE system_backup_v2_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6)
 WHERE public_id=? AND origin_installation_id=? AND row_version=? AND storage_state='ready' AND evidence_failure_code='none'
 AND claim_owner <=> ? AND claim_expires_at <=> ?
 AND ((claim_owner IS NULL AND claim_expires_at IS NULL) OR claim_expires_at<=UTC_TIMESTAMP(6))

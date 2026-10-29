@@ -70,15 +70,15 @@ func (c *queueBudgetConn) QueryContext(_ context.Context, query string, args []d
 		return nil, errors.New("pending queue budget query has an unexpected filter")
 	}
 	switch {
-	case strings.Contains(query, "FROM system_backups"):
+	case strings.Contains(query, "FROM system_backup_v2_backups"):
 		return &queueBudgetRows{columns: []string{"task_purpose", "created_at", "deadline_at"}, values: c.state.backup}, nil
-	case strings.Contains(query, "FROM system_restore_drills"):
+	case strings.Contains(query, "FROM system_backup_v2_restore_drills"):
 		return &queueBudgetRows{columns: []string{"task_purpose", "created_at", "deadline_at"}, values: c.state.drill}, nil
-	case strings.Contains(query, "FROM system_backup_preflights"):
+	case strings.Contains(query, "FROM system_backup_v2_preflights"):
 		return &queueBudgetRows{columns: []string{"preflight_mode", "created_at", "deadline_at"}, values: c.state.preflight}, nil
-	case strings.Contains(query, "FROM system_backup_artifact_verifications"):
+	case strings.Contains(query, "FROM system_backup_v2_artifact_verifications"):
 		return &queueBudgetRows{columns: []string{"verification_scope", "created_at", "deadline_at"}, values: c.state.verify}, nil
-	case strings.Contains(query, "FROM system_backup_operations"):
+	case strings.Contains(query, "FROM system_backup_v2_operations"):
 		return &queueBudgetRows{columns: []string{"operation_type", "created_at", "deadline_at"}, values: c.state.operations}, nil
 	default:
 		return nil, errors.New("unexpected queue budget table")

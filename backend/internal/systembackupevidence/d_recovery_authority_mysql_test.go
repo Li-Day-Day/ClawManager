@@ -132,11 +132,11 @@ func TestDRecoveryAuthorityMySQL(t *testing.T) {
 	until := now.Add(3 * time.Minute)
 	facts := RecoveryManagerPeerFacts{Scope: scope, IdentityHash: digest("a"), IssuerIdentityHash: digest("b"),
 		CredentialBindingHash: digest("c"), ExpiresAt: until}
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), string(scope.Installation),
 		decode(facts.IssuerIdentityHash), decode(facts.CredentialBindingHash), until)
@@ -163,11 +163,11 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 		var enabled bool
 		var deploymentEpoch, deploymentVersion int64
 		var workload []byte
-		mustSQL(t, db.QueryRowContext(ctx, `SELECT enabled,deployment_epoch,row_version,workload_identity_hash FROM system_backup_recovery_deployments WHERE scope_key=?`, key).
+		mustSQL(t, db.QueryRowContext(ctx, `SELECT enabled,deployment_epoch,row_version,workload_identity_hash FROM system_backup_v2_recovery_deployments WHERE scope_key=?`, key).
 			Scan(&enabled, &deploymentEpoch, &deploymentVersion, &workload))
 		var fenceEpoch, fenceVersion int64
 		var revoked sql.NullTime
-		mustSQL(t, db.QueryRowContext(ctx, `SELECT revocation_epoch,row_version,revoked_at FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?`, key, decode(string(identity))).
+		mustSQL(t, db.QueryRowContext(ctx, `SELECT revocation_epoch,row_version,revoked_at FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?`, key, decode(string(identity))).
 			Scan(&fenceEpoch, &fenceVersion, &revoked))
 		return enabled, deploymentEpoch, deploymentVersion, hex.EncodeToString(workload), fenceEpoch, revoked.Valid
 	}
@@ -177,11 +177,11 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 		t.Fatalf("audit rollback result: %v %v", got, err)
 	}
 	var count int
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_recovery_deployments WHERE scope_key=?", key).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_recovery_deployments WHERE scope_key=?", key).Scan(&count))
 	if count != 0 {
 		t.Fatal("deployment survived failed audit")
 	}
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_producer_recovery_revocations WHERE scope_key=?", key).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=?", key).Scan(&count))
 	if count != 0 {
 		t.Fatal("fence survived failed audit")
 	}
@@ -290,7 +290,7 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 	blocker, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 	mustSQL(t, err)
 	var blockedEpoch int64
-	mustSQL(t, blocker.QueryRowContext(ctx, `SELECT revocation_epoch FROM system_backup_producer_recovery_revocations
+	mustSQL(t, blocker.QueryRowContext(ctx, `SELECT revocation_epoch FROM system_backup_v2_producer_recovery_revocations
 WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`, key, decode(string(firstIdentity))).Scan(&blockedEpoch))
 	if blockedEpoch != 4 {
 		blocker.Rollback()
@@ -312,7 +312,7 @@ WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`, key, decode(string(f
 	}
 	// A disabled manager loses both write and deployment authority on the next
 	// transaction; no L1a/L2 version changes are permitted.
-	_, err = db.ExecContext(ctx, `UPDATE system_backup_recovery_managers SET enabled=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?`, key, decode(facts.IdentityHash))
+	_, err = db.ExecContext(ctx, `UPDATE system_backup_v2_recovery_managers SET enabled=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?`, key, decode(facts.IdentityHash))
 	mustSQL(t, err)
 	if got, err := manager.Change(ctx, r); err == nil || got != (pd.RecoveryAuthorityResult{}) {
 		t.Fatalf("disabled manager changed authority: %v %v", got, err)
@@ -325,7 +325,7 @@ WHERE scope_key=? AND workload_identity_hash=? FOR UPDATE`, key, decode(string(f
 	}
 	// Once an emergency revoke commits, a later rotate cannot silently turn
 	// the same revoked identity back into an enabled deployment.
-	_, err = db.ExecContext(ctx, `UPDATE system_backup_recovery_managers SET enabled=TRUE,row_version=3 WHERE scope_key=? AND management_identity_hash=?`, key, decode(facts.IdentityHash))
+	_, err = db.ExecContext(ctx, `UPDATE system_backup_v2_recovery_managers SET enabled=TRUE,row_version=3 WHERE scope_key=? AND management_identity_hash=?`, key, decode(facts.IdentityHash))
 	mustSQL(t, err)
 	r.Fence.Operation = "revoke"
 	env.proposal.Enabled = false

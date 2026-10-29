@@ -122,7 +122,7 @@ func TestKillSwitchSQLIsScopedAndPreservesTaskIdentityAndDeadlines(t *testing.T)
 					t.Fatalf("candidate SQL missing %q: %s", required, query)
 				}
 			}
-			for _, forbidden := range []string{"deadline_at", "created_at", "idempotency_key", "request_hash", "system_backup_attempts"} {
+			for _, forbidden := range []string{"deadline_at", "created_at", "idempotency_key", "request_hash", "system_backup_v2_attempts"} {
 				if strings.Contains(query, forbidden) {
 					t.Fatalf("candidate SQL contains %q: %s", forbidden, query)
 				}

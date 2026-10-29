@@ -86,7 +86,7 @@ func (c *configConn) QueryContext(_ context.Context, query string, args []driver
 		}
 		return &pageRows{columns: configColumns, values: result}, nil
 	}
-	if strings.Contains(query, "FROM system_backup_configs AS c") {
+	if strings.Contains(query, "FROM system_backup_v2_configs AS c") {
 		if strings.Contains(query, "canonical_config_json") || !strings.Contains(query, configMaterializedSelect()) ||
 			!strings.HasSuffix(query, "FOR SHARE") || len(args) != 2 ||
 			args[0].Value != "installation_test" || fmt.Sprint(args[1].Value) != "1" {
@@ -119,7 +119,7 @@ var configColumns = append([]string{"schema_version", "origin_installation_id", 
 var legacyConfigColumns = append([]string{"schema_version", "origin_installation_id", "version", "row_version", "config_sha256", "config_size_bytes", "created_by", "change_reason", "created_at"}, configMaterializedColumns...)
 
 func TestConfigMaterializedProjectionMatchesMigrationColumns(t *testing.T) {
-	raw, err := os.ReadFile("../db/migrations/066_add_system_backup_config_and_operations.sql")
+	raw, err := os.ReadFile("../db/migrations/097_backup_v2_add_system_backup_config_and_operations.sql")
 	if err != nil {
 		t.Fatal(err)
 	}

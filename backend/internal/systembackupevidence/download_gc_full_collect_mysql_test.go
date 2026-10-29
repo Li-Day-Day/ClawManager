@@ -56,14 +56,14 @@ func dGCColdGroupStatements(t *testing.T, m *retentionGCFixture) []dGCColdStatem
 		t.Fatal("invalid original cold model")
 	}
 	statements := []dGCColdStatement{
-		{`INSERT INTO system_backup_evidence(id,public_id,origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,content_checksum,content_size_bytes,media_type,encryption,envelope_framing_version,kek_identity_hash,kek_version,envelope_hash,redaction_classification,observed_health,expires_at,protected_until,row_version,created_at) VALUES(61,?,?,?,?,?,'deleted','none',?,?,?,'envelope_v1',?,?,?,?,?,'unknown',?,?,?,?)`, []any{i.ID, i.Installation, i.OwnerType, i.OwnerID, i.Type, i.ContentHash, i.ContentSize, i.Media, Framing, r.Manifest.Key.Identity, r.Manifest.Key.Version, r.Manifest.EnvelopeHash, i.Classification, r.ExpiresAt, r.ProtectedUntil, r.RowVersion, r.CreatedAt}},
+		{`INSERT INTO system_backup_v2_evidence(id,public_id,origin_installation_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,content_checksum,content_size_bytes,media_type,encryption,envelope_framing_version,kek_identity_hash,kek_version,envelope_hash,redaction_classification,observed_health,expires_at,protected_until,row_version,created_at) VALUES(61,?,?,?,?,?,'deleted','none',?,?,?,'envelope_v1',?,?,?,?,?,'unknown',?,?,?,?)`, []any{i.ID, i.Installation, i.OwnerType, i.OwnerID, i.Type, i.ContentHash, i.ContentSize, i.Media, Framing, r.Manifest.Key.Identity, r.Manifest.Key.Version, r.Manifest.EnvelopeHash, i.Classification, r.ExpiresAt, r.ProtectedUntil, r.RowVersion, r.CreatedAt}},
 		{dGCColdWithID(downloadIntentInsertSQL), []any{int64(1729), int64(42), append([]byte(nil), d.body...), d.created}},
 		{dGCColdWithID(downloadResultInsertSQL), []any{int64(1730), int64(42), append([]byte(nil), d.resultBody...), d.resultCreated}},
 		{dGCColdWithID(downloadAdmissionOperationInsertSQL), append([]any{int64(73)}, dGCColdValues(d.m.op)...)},
 		{downloadAdmissionReceiptInsertSQL, dGCColdValues(d.m.receipt)},
 	}
 	n := d.nonce
-	statements = append(statements, dGCColdStatement{`INSERT INTO system_backup_strong_auth_nonces(id,origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,operation_id,response_sha256,audit_log_id,retain_until,created_at) VALUES(95,?,?,?,?,?,?,'getSystemBackupEvidence',?,?,?,?,?,?,NULL,?,?,?)`, []any{n[0], n[1], n[2], n[3], n[4], n[5], n[6], n[7], n[8], n[9], d.consumed, n[10], n[11], n[12], d.consumed}}, dGCColdStatement{downloadResultRetentionInsertSQL, dGCColdValues(d.resultRetention)})
+	statements = append(statements, dGCColdStatement{`INSERT INTO system_backup_v2_strong_auth_nonces(id,origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,authenticated_at,expires_at,consumed_at,operation_id,response_sha256,audit_log_id,retain_until,created_at) VALUES(95,?,?,?,?,?,?,'getSystemBackupEvidence',?,?,?,?,?,?,NULL,?,?,?)`, []any{n[0], n[1], n[2], n[3], n[4], n[5], n[6], n[7], n[8], n[9], d.consumed, n[10], n[11], n[12], d.consumed}}, dGCColdStatement{downloadResultRetentionInsertSQL, dGCColdValues(d.resultRetention)})
 	for _, statement := range statements {
 		if strings.Count(statement.query, "?") != len(statement.args) {
 			t.Fatal("cold SQL parameter mismatch")
@@ -345,7 +345,7 @@ func newDGCColdFixture(t *testing.T, input aDownloadMFAInputs, mode string) *dGC
 	installation := m.d.record.Manifest.Identity.Installation
 	p.role.c.Installation = installation
 	cells := aDownloadMFAConfigCells(m.p)
-	rows, err := db.QueryContext(ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' ORDER BY ORDINAL_POSITION")
+	rows, err := db.QueryContext(ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_configs' ORDER BY ORDINAL_POSITION")
 	dGCFreezeOK(t, err)
 	var columns []string
 	var args []any
@@ -359,23 +359,23 @@ func newDGCColdFixture(t *testing.T, input aDownloadMFAInputs, mode string) *dGC
 	}
 	dGCFreezeOK(t, rows.Err())
 	dGCFreezeOK(t, rows.Close())
-	dGCColdExec(t, ctx, db, "INSERT INTO system_backup_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+	dGCColdExec(t, ctx, db, "INSERT INTO system_backup_v2_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
 	now := aDownloadMFANow(t, ctx, db)
-	dGCColdExec(t, ctx, db, "INSERT INTO system_backup_installation_state(origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key) VALUES(?,1,?,'k8s-cluster')", installation, now.Add(-time.Hour))
+	dGCColdExec(t, ctx, db, "INSERT INTO system_backup_v2_installation_state(origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key) VALUES(?,1,?,'k8s-cluster')", installation, now.Add(-time.Hour))
 	for _, row := range aTaskOwnerSQLSeeds(installation, now.Add(-800*24*time.Hour), now.Add(-500*24*time.Hour), m.d.config.CanonicalJSON()) {
 		dGCColdExec(t, ctx, db, row.statement, row.args...)
 		dGCColdExec(t, ctx, db, "UPDATE "+row.table+" SET status='failed',can_cancel=FALSE,failure_category='validation_failed',started_at=created_at,finished_at=? WHERE public_id=?", now.Add(-600*24*time.Hour), row.id)
 	}
-	dGCColdExec(t, ctx, db, "UPDATE system_backups SET artifact_state='deleted',artifact_unusable_reason='deleted',prune_guard_version=3 WHERE public_id=?", m.d.record.Manifest.Identity.OwnerID)
-	dGCColdExec(t, ctx, db, "UPDATE system_restore_drills SET cleanup_status='succeeded'")
+	dGCColdExec(t, ctx, db, "UPDATE system_backup_v2_backups SET artifact_state='deleted',artifact_unusable_reason='deleted',prune_guard_version=3 WHERE public_id=?", m.d.record.Manifest.Identity.OwnerID)
+	dGCColdExec(t, ctx, db, "UPDATE system_backup_v2_restore_drills SET cleanup_status='succeeded'")
 	for _, statement := range statements {
 		dGCColdExec(t, ctx, db, statement.query, statement.args...)
 	}
 	empty := []byte("[]")
-	dGCColdExec(t, ctx, db, `INSERT INTO system_backup_operations(id,public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,claim_owner,claim_expires_at,row_version,deadline_at,started_at,next_reconcile_at,created_at,updated_at) VALUES(74,?,?,'control_metadata_gc','system',?,'system','system:controller','CollectSystemBackupControlMetadata','full-gc-cold-worker-fixture',?,?,2,?,'running',?,?,7,?,?,?,?,?)`, m.s.c.OperationID, installation, installation, hash([]byte("full-gc-cold-worker")), empty, hash(empty), m.s.c.OperationClaim, now.Add(time.Minute), now.Add(2*time.Minute), now, now, now, now)
-	dGCColdExec(t, ctx, db, "INSERT INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,?,0)", now)
+	dGCColdExec(t, ctx, db, `INSERT INTO system_backup_v2_operations(id,public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,claim_owner,claim_expires_at,row_version,deadline_at,started_at,next_reconcile_at,created_at,updated_at) VALUES(74,?,?,'control_metadata_gc','system',?,'system','system:controller','CollectSystemBackupControlMetadata','full-gc-cold-worker-fixture',?,?,2,?,'running',?,?,7,?,?,?,?,?)`, m.s.c.OperationID, installation, installation, hash([]byte("full-gc-cold-worker")), empty, hash(empty), m.s.c.OperationClaim, now.Add(time.Minute), now.Add(2*time.Minute), now, now, now, now)
+	dGCColdExec(t, ctx, db, "INSERT INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,?,0)", now)
 	var maintenance int
-	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_config_maintenance_receipts'").Scan(&maintenance))
+	dGCFreezeOK(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_config_maintenance_receipts'").Scan(&maintenance))
 	if maintenance == 1 {
 		p.role.c.MaintenanceReceipts = "installed"
 	}
@@ -444,9 +444,9 @@ func newDGCColdFixture(t *testing.T, input aDownloadMFAInputs, mode string) *dGC
 
 func (f *dGCColdFixture) fingerprint(t *testing.T, evidenceOnly bool) string {
 	t.Helper()
-	tables := []string{"audit_logs", "system_backup_operations", "system_backup_download_admission_receipts", "system_backup_download_result_receipts", "system_backup_strong_auth_nonces", "system_backup_compact_tombstones", "system_backup_metadata_reservations", "system_backup_evidence", "system_backup_evidence_chunks"}
+	tables := []string{"audit_logs", "system_backup_v2_operations", "system_backup_v2_download_admission_receipts", "system_backup_v2_download_result_receipts", "system_backup_v2_strong_auth_nonces", "system_backup_v2_compact_tombstones", "system_backup_v2_metadata_reservations", "system_backup_v2_evidence", "system_backup_v2_evidence_chunks"}
 	if evidenceOnly {
-		tables = []string{"system_backup_evidence", "system_backup_evidence_chunks"}
+		tables = []string{"system_backup_v2_evidence", "system_backup_v2_evidence_chunks"}
 	}
 	var snapshot []any
 	for _, table := range tables {
@@ -535,7 +535,7 @@ func TestDDownloadGCFullCollectMySQL(t *testing.T) {
 				}
 				return
 			}
-			for _, query := range []string{"SELECT COUNT(*) FROM system_backup_operations WHERE id=73", "SELECT COUNT(*) FROM system_backup_download_admission_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_download_result_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_strong_auth_nonces WHERE operation_id=73", "SELECT COUNT(*) FROM audit_logs WHERE id IN(1729,1730)"} {
+			for _, query := range []string{"SELECT COUNT(*) FROM system_backup_v2_operations WHERE id=73", "SELECT COUNT(*) FROM system_backup_v2_download_admission_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_v2_download_result_receipts WHERE operation_id=73", "SELECT COUNT(*) FROM system_backup_v2_strong_auth_nonces WHERE operation_id=73", "SELECT COUNT(*) FROM audit_logs WHERE id IN(1729,1730)"} {
 				var n int
 				dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, query).Scan(&n))
 				if n != 0 {
@@ -544,8 +544,8 @@ func TestDDownloadGCFullCollectMySQL(t *testing.T) {
 			}
 			var stones int
 			var reserved int64
-			dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT COUNT(*) FROM system_backup_compact_tombstones WHERE source_public_id=?", f.model.operation).Scan(&stones))
-			dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1").Scan(&reserved))
+			dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT COUNT(*) FROM system_backup_v2_compact_tombstones WHERE source_public_id=?", f.model.operation).Scan(&stones))
+			dGCFreezeOK(t, f.p.role.root.QueryRowContext(f.p.ddl.ctx, "SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1").Scan(&reserved))
 			if stones != 1 || reserved != 65536 {
 				t.Fatal("exact marker/capacity commit missing")
 			}

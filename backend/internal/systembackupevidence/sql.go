@@ -79,7 +79,7 @@ func (s SQLRegistry) WithLocked(ctx context.Context, id string, fn func(Locked) 
 	// This first read is only an immutable ownership hint. Scope is authorized
 	// by the mandatory policy, and the locked row is compared to the hint.
 	i := Identity{Installation: s.Installation, ID: id}
-	e = tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", id).Scan(&i.OwnerType, &i.OwnerID)
+	e = tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&i.OwnerType, &i.OwnerID)
 	if errors.Is(e, sql.ErrNoRows) {
 		return ErrNotFound
 	}
@@ -140,7 +140,7 @@ func (s SQLRegistry) loadManifest(ctx context.Context, tx *sql.Tx, id string, lo
 storage_identity_hash,storage_ref_version,storage_relative_key,storage_immutable_version,content_checksum,content_size_bytes,
 object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_count,chunk_list_root,media_type,encryption,kek_identity_hash,kek_version,envelope_hash,
 redaction_classification,claim_owner,claim_expires_at,expires_at,protected_until,row_version,created_at,storage_provider_role,storage_relative_key_hash,envelope_framing_version
-FROM system_backup_evidence WHERE public_id=?`+lock, id).Scan(&dbID, &i.OwnerType, &i.OwnerID, &i.Type, &r.State, &r.Failure,
+FROM system_backup_v2_evidence WHERE public_id=?`+lock, id).Scan(&dbID, &i.OwnerType, &i.OwnerID, &i.Type, &r.State, &r.Failure,
 		&identity, &version, &key, &immutable, &i.ContentHash, &i.ContentSize, &objectHash, &objectSize, &chunkSize, &count, &root, &i.Media, &encryption, &kekIdentity, &kekVersion, &envelopeHash,
 		&i.Classification, &claim, &until, &r.ExpiresAt, &protected, &r.RowVersion, &r.CreatedAt, &role, &keyHash, &framing)
 	if e != nil {
@@ -173,7 +173,7 @@ FROM system_backup_evidence WHERE public_id=?`+lock, id).Scan(&dbID, &i.OwnerTyp
 	if count < 1 || count > 1024 || chunkSize.Int64 != ChunkSize {
 		return r, ErrIntegrity
 	}
-	rows, e := tx.QueryContext(ctx, `SELECT chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index`+lock, dbID)
+	rows, e := tx.QueryContext(ctx, `SELECT chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag FROM system_backup_v2_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index`+lock, dbID)
 	if e != nil {
 		return r, ErrUnavailable
 	}
@@ -233,7 +233,7 @@ func (s SQLRegistry) PersistPending(ctx context.Context, r Record) error {
 	}
 	m := r.Manifest
 	i := m.Identity
-	result, e := tx.ExecContext(ctx, `INSERT INTO system_backup_evidence
+	result, e := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_evidence
 (public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,storage_provider_role,
 storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,content_checksum,content_size_bytes,
 object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_count,chunk_list_root,media_type,encryption,envelope_framing_version,
@@ -251,7 +251,7 @@ VALUES (?,?,?,?,'pending','none','evidence',?,?,?,?,?,?,?,?,?,?,?,?, 'envelope_v
 	for _, c := range m.Chunks {
 		nonce, _ := base64.RawURLEncoding.DecodeString(c.Nonce)
 		tag, _ := base64.RawURLEncoding.DecodeString(c.Tag)
-		_, e = tx.ExecContext(ctx, `INSERT INTO system_backup_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES (?,?,?,?,?,?,?,?,?,?)`, dbID, c.Index, c.PlainOffset, c.PlainLength, c.PlainHash, c.FrameOffset, c.FrameLength, c.CipherHash, nonce, tag)
+		_, e = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES (?,?,?,?,?,?,?,?,?,?)`, dbID, c.Index, c.PlainOffset, c.PlainLength, c.PlainHash, c.FrameOffset, c.FrameLength, c.CipherHash, nonce, tag)
 		if e != nil {
 			return ErrUnavailable
 		}
@@ -330,11 +330,11 @@ func (t *sqlLocked) save(ctx context.Context, next Record, observation *evidence
 	if next.State == "deleted" {
 		// Requires the accompanying D migration proposal; old 065 constraints
 		// reject this atomically rather than keeping a misleading ready payload.
-		_, e = t.tx.ExecContext(ctx, "DELETE c FROM system_backup_evidence_chunks c JOIN system_backup_evidence e ON e.id=c.evidence_id WHERE e.public_id=? AND e.row_version=? AND e.storage_state='deleting'", old.Manifest.Identity.ID, old.RowVersion)
+		_, e = t.tx.ExecContext(ctx, "DELETE c FROM system_backup_v2_evidence_chunks c JOIN system_backup_v2_evidence e ON e.id=c.evidence_id WHERE e.public_id=? AND e.row_version=? AND e.storage_state='deleting'", old.Manifest.Identity.ID, old.RowVersion)
 		if e != nil {
 			return ErrUnavailable
 		}
-		query := `UPDATE system_backup_evidence SET storage_state='deleted',evidence_failure_code='none',storage_provider_role=NULL,storage_identity_hash=NULL,storage_ref_version=NULL,storage_relative_key=NULL,storage_relative_key_hash=NULL,storage_immutable_version=NULL,inline_payload=NULL,object_checksum=NULL,object_size_bytes=NULL,plaintext_chunk_size_bytes=NULL,chunk_count=0,chunk_list_root=NULL,claim_owner=NULL,claim_expires_at=NULL`
+		query := `UPDATE system_backup_v2_evidence SET storage_state='deleted',evidence_failure_code='none',storage_provider_role=NULL,storage_identity_hash=NULL,storage_ref_version=NULL,storage_relative_key=NULL,storage_relative_key_hash=NULL,storage_immutable_version=NULL,inline_payload=NULL,object_checksum=NULL,object_size_bytes=NULL,plaintext_chunk_size_bytes=NULL,chunk_count=0,chunk_list_root=NULL,claim_owner=NULL,claim_expires_at=NULL`
 		var args []any
 		if observation != nil {
 			query += `,observed_health=?,last_checked_at=?,next_reconcile_at=?`
@@ -347,7 +347,7 @@ func (t *sqlLocked) save(ctx context.Context, next Record, observation *evidence
 		if hash(canonical(next.Manifest)) != hash(canonical(old.Manifest)) || next.Ref.Identity != old.Ref.Identity || next.Ref.Version != old.Ref.Version || next.Ref.RelativeKey != old.Ref.RelativeKey || old.Ref.ImmutableVersion != "" && next.Ref.ImmutableVersion != old.Ref.ImmutableVersion {
 			return ErrIntegrity
 		}
-		query := `UPDATE system_backup_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=?,claim_expires_at=?,expires_at=?,protected_until=?`
+		query := `UPDATE system_backup_v2_evidence SET storage_state=?,evidence_failure_code=?,storage_immutable_version=?,claim_owner=?,claim_expires_at=?,expires_at=?,protected_until=?`
 		args := []any{next.State, next.Failure, nullString(next.Ref.ImmutableVersion), nullString(next.Claim), nullTime(next.ClaimUntil), next.ExpiresAt, nullTime(next.ProtectedUntil)}
 		if observation != nil {
 			query += `,observed_health=?,last_checked_at=?,next_reconcile_at=?`

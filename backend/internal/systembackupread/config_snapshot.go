@@ -67,8 +67,8 @@ func (r *Reader) readConfig(ctx context.Context, selectedVersion uint64) (Config
 	query := `SELECT c.schema_version,c.origin_installation_id,c.version,c.row_version,
   c.config_sha256,c.config_size_bytes,c.canonical_config_json,c.created_by,c.change_reason,c.created_at,
   s.active_config_version,s.last_effective_enabled,` + configMaterializedSelect() + `
-FROM system_backup_installation_state AS s
-JOIN system_backup_configs AS c
+FROM system_backup_v2_installation_state AS s
+JOIN system_backup_v2_configs AS c
 	ON c.origin_installation_id=s.origin_installation_id
 WHERE s.origin_installation_id=? AND c.version=s.active_config_version FOR SHARE`
 	args := []any{installation}
@@ -76,8 +76,8 @@ WHERE s.origin_installation_id=? AND c.version=s.active_config_version FOR SHARE
 		query = `SELECT c.schema_version,c.origin_installation_id,c.version,c.row_version,
   c.config_sha256,c.config_size_bytes,c.canonical_config_json,c.created_by,c.change_reason,c.created_at,
   s.active_config_version,s.last_effective_enabled,` + configMaterializedSelect() + `
-FROM system_backup_installation_state AS s
-JOIN system_backup_configs AS c ON c.origin_installation_id=s.origin_installation_id
+FROM system_backup_v2_installation_state AS s
+JOIN system_backup_v2_configs AS c ON c.origin_installation_id=s.origin_installation_id
 WHERE s.origin_installation_id=? AND c.version=? FOR SHARE`
 		args = append(args, selectedVersion)
 	}

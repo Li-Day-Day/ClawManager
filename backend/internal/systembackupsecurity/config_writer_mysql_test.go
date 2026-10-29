@@ -120,7 +120,7 @@ func newConfigWriterMySQLFixture(t *testing.T, proof *configProofMySQLFixture) *
 	mysqlMust(t, err)
 	current, err := DecodeConfigValues(raw)
 	mysqlMust(t, err)
-	filled, err := db.ExecContext(ctx, "UPDATE system_backup_configs SET canonical_config_json=? WHERE origin_installation_id=? AND version=1 AND canonical_config_json IS NULL AND config_sha256=? AND config_size_bytes=?", current.CanonicalJSON(), proof.installation, current.SHA256(), len(current.CanonicalJSON()))
+	filled, err := db.ExecContext(ctx, "UPDATE system_backup_v2_configs SET canonical_config_json=? WHERE origin_installation_id=? AND version=1 AND canonical_config_json IS NULL AND config_sha256=? AND config_size_bytes=?", current.CanonicalJSON(), proof.installation, current.SHA256(), len(current.CanonicalJSON()))
 	mysqlMust(t, err)
 	if !configMutationOne(filled, nil) {
 		t.Fatal("synthetic fixture original canonical bytes were not installed exactly once")
@@ -135,12 +135,12 @@ func newConfigWriterMySQLFixture(t *testing.T, proof *configProofMySQLFixture) *
 			return
 		}
 		for _, q := range []string{
-			"DELETE FROM system_backup_strong_auth_nonces WHERE origin_installation_id=?",
-			"DELETE FROM system_backup_operations WHERE origin_installation_id=?",
-			"DELETE FROM system_backup_evidence WHERE owner_target_type='system' AND owner_target_public_id=?",
-			"DELETE FROM system_backup_installation_state WHERE origin_installation_id=?",
+			"DELETE FROM system_backup_v2_strong_auth_nonces WHERE origin_installation_id=?",
+			"DELETE FROM system_backup_v2_operations WHERE origin_installation_id=?",
+			"DELETE FROM system_backup_v2_evidence WHERE owner_target_type='system' AND owner_target_public_id=?",
+			"DELETE FROM system_backup_v2_installation_state WHERE origin_installation_id=?",
 			// MySQL checks the self-FK immediately. Remove copied versions first.
-			"DELETE FROM system_backup_configs WHERE origin_installation_id=? ORDER BY version DESC",
+			"DELETE FROM system_backup_v2_configs WHERE origin_installation_id=? ORDER BY version DESC",
 		} {
 			if _, e := db.ExecContext(cleanup, q, proof.installation); e != nil {
 				t.Error("CLEANUP_PENDING config-writer FK rows")
@@ -148,7 +148,7 @@ func newConfigWriterMySQLFixture(t *testing.T, proof *configProofMySQLFixture) *
 			}
 		}
 		var count int
-		if db.QueryRowContext(cleanup, "SELECT (SELECT COUNT(*) FROM system_backup_operations WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_evidence WHERE owner_target_type='system' AND owner_target_public_id=?)+(SELECT COUNT(*) FROM system_backup_configs WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_installation_state WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_strong_auth_nonces WHERE origin_installation_id=?)", proof.installation, proof.installation, proof.installation, proof.installation, proof.installation).Scan(&count) != nil || count != 0 {
+		if db.QueryRowContext(cleanup, "SELECT (SELECT COUNT(*) FROM system_backup_v2_operations WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_v2_evidence WHERE owner_target_type='system' AND owner_target_public_id=?)+(SELECT COUNT(*) FROM system_backup_v2_configs WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_v2_installation_state WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_v2_strong_auth_nonces WHERE origin_installation_id=?)", proof.installation, proof.installation, proof.installation, proof.installation, proof.installation).Scan(&count) != nil || count != 0 {
 			t.Error("CLEANUP_PENDING writer row absence")
 			return
 		}
@@ -234,12 +234,12 @@ func (f *configWriterMySQLFixture) counts(t *testing.T) []int64 {
 	p := f.proof
 	out := make([]int64, 7)
 	for i, q := range []string{
-		"SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=?",
-		"SELECT row_version FROM system_backup_installation_state WHERE origin_installation_id=?",
-		"SELECT COUNT(*) FROM system_backup_configs WHERE origin_installation_id=?",
-		"SELECT COUNT(*) FROM system_backup_operations WHERE origin_installation_id=?",
-		"SELECT COUNT(*) FROM system_backup_evidence WHERE owner_target_type='system' AND owner_target_public_id=?",
-		"SELECT COUNT(*) FROM system_backup_strong_auth_nonces WHERE origin_installation_id=?",
+		"SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=?",
+		"SELECT row_version FROM system_backup_v2_installation_state WHERE origin_installation_id=?",
+		"SELECT COUNT(*) FROM system_backup_v2_configs WHERE origin_installation_id=?",
+		"SELECT COUNT(*) FROM system_backup_v2_operations WHERE origin_installation_id=?",
+		"SELECT COUNT(*) FROM system_backup_v2_evidence WHERE owner_target_type='system' AND owner_target_public_id=?",
+		"SELECT COUNT(*) FROM system_backup_v2_strong_auth_nonces WHERE origin_installation_id=?",
 		"SELECT COUNT(*) FROM audit_logs WHERE user_id=? AND action LIKE 'system_backup.config_update.%'",
 	} {
 		var arg any = p.installation
@@ -283,11 +283,11 @@ func (f *configWriterMySQLFixture) checkCommitted(t *testing.T, result ConfigMut
 	var sha string
 	var created, finished, updated time.Time
 	var copied sql.NullInt64
-	mysqlMust(t, tx.QueryRowContext(p.ctx, "SELECT e.inline_payload,e.content_checksum,o.created_at,o.finished_at,o.updated_at FROM system_backup_operations o JOIN system_backup_evidence e ON e.id=o.redacted_response_evidence_id WHERE o.origin_installation_id=? AND o.public_id=?", p.installation, result.OperationPublicID).Scan(&body, &sha, &created, &finished, &updated))
+	mysqlMust(t, tx.QueryRowContext(p.ctx, "SELECT e.inline_payload,e.content_checksum,o.created_at,o.finished_at,o.updated_at FROM system_backup_v2_operations o JOIN system_backup_v2_evidence e ON e.id=o.redacted_response_evidence_id WHERE o.origin_installation_id=? AND o.public_id=?", p.installation, result.OperationPublicID).Scan(&body, &sha, &created, &finished, &updated))
 	if !bytes.Equal(body, result.Response) || sha != registrationHash(string(body)) || !created.Equal(policy.CreatedAt) || !finished.Equal(policy.FinishedAt) || !updated.Equal(policy.UpdatedAt) {
 		t.Fatal("original Operation bytes/times/checksum diverged from SQL")
 	}
-	mysqlMust(t, tx.QueryRowContext(p.ctx, "SELECT copied_from_version FROM system_backup_configs WHERE origin_installation_id=? AND version=?", p.installation, version).Scan(&copied))
+	mysqlMust(t, tx.QueryRowContext(p.ctx, "SELECT copied_from_version FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=?", p.installation, version).Scan(&copied))
 	if endpoint == ConfigRollbackEndpoint && (!copied.Valid || copied.Int64 != 1) || endpoint == ConfigUpdateEndpoint && copied.Valid {
 		t.Fatal("rollback provenance differs")
 	}
@@ -327,7 +327,7 @@ func configWriterMySQLDatabase(t *testing.T) (context.Context, *sql.DB, *mysql.C
 	if !reflect.DeepEqual(names, base.Filenames) {
 		t.Fatal("full migration ledger differs")
 	}
-	for _, table := range []string{"users", "audit_logs", "system_backup_configs", "system_backup_installation_state", "system_backup_operations", "system_backup_evidence", "system_backup_evidence_chunks", "system_backup_strong_auth_nonces", "system_backup_admin_sessions", "system_backup_admin_revocations"} {
+	for _, table := range []string{"users", "audit_logs", "system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_operations", "system_backup_v2_evidence", "system_backup_v2_evidence_chunks", "system_backup_v2_strong_auth_nonces", "system_backup_v2_admin_sessions", "system_backup_v2_admin_revocations"} {
 		var engine string
 		mysqlMust(t, db.QueryRowContext(ctx, "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?", table).Scan(&engine))
 		if engine != "InnoDB" {
@@ -335,7 +335,7 @@ func configWriterMySQLDatabase(t *testing.T) (context.Context, *sql.DB, *mysql.C
 		}
 	}
 	var exists int
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' AND COLUMN_NAME='canonical_config_json'").Scan(&exists))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_configs' AND COLUMN_NAME='canonical_config_json'").Scan(&exists))
 	if exists != 0 {
 		t.Fatal("candidate column unexpectedly preinstalled")
 	}
@@ -416,7 +416,7 @@ func TestDConfigWriterMySQL(t *testing.T) {
 					proof = &issued
 				}
 				trigger := "d_writer_" + p.installation[len(p.installation)-24:]
-				table, condition := "system_backup_operations", "NEW.origin_installation_id='"+p.installation+"'"
+				table, condition := "system_backup_v2_operations", "NEW.origin_installation_id='"+p.installation+"'"
 				if proof != nil {
 					table = "audit_logs"
 					condition = "NEW.user_id=" + strconv.FormatInt(p.userID, 10) + " AND NEW.action='system_backup.config_update.result'"
@@ -461,7 +461,7 @@ func TestDConfigWriterMySQL(t *testing.T) {
 				}
 				if proof != nil {
 					var anchors int
-					mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_strong_auth_nonces n JOIN system_backup_operations o ON o.id=n.operation_id JOIN audit_logs a ON a.id=n.audit_log_id WHERE n.origin_installation_id=? AND o.public_id=? AND a.user_id=? AND a.action='system_backup.config_update.intent'", p.installation, success.OperationPublicID, p.userID).Scan(&anchors))
+					mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_strong_auth_nonces n JOIN system_backup_v2_operations o ON o.id=n.operation_id JOIN audit_logs a ON a.id=n.audit_log_id WHERE n.origin_installation_id=? AND o.public_id=? AND a.user_id=? AND a.action='system_backup.config_update.intent'", p.installation, success.OperationPublicID, p.userID).Scan(&anchors))
 					if anchors != 1 {
 						t.Fatal("nonce does not bind real operation/audit FK")
 					}
@@ -547,9 +547,9 @@ func TestDConfigWriterMySQL(t *testing.T) {
 				first, e := f.svc.Mutate(ctx, p.actor, ConfigUpdateEndpoint, key, "writer-replay-guard", raw, nil)
 				mysqlMust(t, e)
 				if name == "revoked_session_denies_replay" {
-					_, e = db.ExecContext(ctx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", p.installation, p.actor.Session)
+					_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", p.installation, p.actor.Session)
 				} else {
-					_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence e JOIN system_backup_operations o ON o.redacted_response_evidence_id=e.id SET e.inline_payload=? WHERE o.origin_installation_id=? AND o.public_id=?", bytes.Repeat([]byte{' '}, len(first.Response)), p.installation, first.OperationPublicID)
+					_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence e JOIN system_backup_v2_operations o ON o.redacted_response_evidence_id=e.id SET e.inline_payload=? WHERE o.origin_installation_id=? AND o.public_id=?", bytes.Repeat([]byte{' '}, len(first.Response)), p.installation, first.OperationPublicID)
 				}
 				mysqlMust(t, e)
 				before := f.counts(t)

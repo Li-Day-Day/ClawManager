@@ -219,9 +219,9 @@ func dMySQLReceipt(t *testing.T, f *dIntegrationFixture) pd.ReceiptRecord {
 	var state, version, health string
 	var claim any
 	var rv, refs, chunks int
-	mustSQL(t, f.db.QueryRow("SELECT storage_state,storage_immutable_version,observed_health,claim_owner,row_version FROM system_backup_evidence").Scan(&state, &version, &health, &claim, &rv))
+	mustSQL(t, f.db.QueryRow("SELECT storage_state,storage_immutable_version,observed_health,claim_owner,row_version FROM system_backup_v2_evidence").Scan(&state, &version, &health, &claim, &rv))
 	mustSQL(t, f.db.QueryRow("SELECT COUNT(*) FROM system_backup_producer_evidence_refs").Scan(&refs))
-	mustSQL(t, f.db.QueryRow("SELECT COUNT(*) FROM system_backup_evidence_chunks").Scan(&chunks))
+	mustSQL(t, f.db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_evidence_chunks").Scan(&chunks))
 	if state != "ready" || version != "Exact.Version/1" || health != "unknown" || claim != nil || rv != 3 || refs != 3 || chunks != 1 {
 		t.Fatal("incomplete A commit")
 	}
@@ -556,7 +556,7 @@ func TestDProducerMySQL(t *testing.T) {
 		record, _, err := systemPreparedRecord(f.prepared, f.channel, f.history)
 		mustSQL(t, err)
 		values := append(systemPendingValues(record), "pending", "none", nil, nil, int64(1), "unknown", nil, nil)
-		query := "INSERT INTO system_backup_evidence (" + strings.Join(systemPendingImmutableColumns, ",") + "," + systemPendingMutableColumns + ") VALUES (" + strings.TrimSuffix(strings.Repeat("?,", len(values)), ",") + ")"
+		query := "INSERT INTO system_backup_v2_evidence (" + strings.Join(systemPendingImmutableColumns, ",") + "," + systemPendingMutableColumns + ") VALUES (" + strings.TrimSuffix(strings.Repeat("?,", len(values)), ",") + ")"
 		insertCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		insertResult := make(chan error, 1)
@@ -571,7 +571,7 @@ func TestDProducerMySQL(t *testing.T) {
 		case <-time.After(800 * time.Millisecond):
 		}
 		var count int
-		mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_evidence WHERE public_id=?", identity.ID).Scan(&count))
+		mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_evidence WHERE public_id=?", identity.ID).Scan(&count))
 		if count != 0 {
 			free()
 			t.Fatal("blocked INSERT became visible")
@@ -592,7 +592,7 @@ func TestDProducerMySQL(t *testing.T) {
 		case <-time.After(10 * time.Second):
 			t.Fatal("competing INSERT did not complete after gap lock release")
 		}
-		mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_evidence WHERE public_id=?", identity.ID).Scan(&count))
+		mustSQL(t, db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_evidence WHERE public_id=?", identity.ID).Scan(&count))
 		if count != 1 {
 			t.Fatalf("competing INSERT count after release: %d", count)
 		}
@@ -666,7 +666,7 @@ func TestDProducerMySQL(t *testing.T) {
 		defer cancel()
 		updateResult := make(chan error, 1)
 		go func() {
-			_, updateErr := db.ExecContext(updateCtx, "UPDATE system_backup_evidence SET observed_health='degraded' WHERE public_id=?", f.history.Evidence.EvidenceID)
+			_, updateErr := db.ExecContext(updateCtx, "UPDATE system_backup_v2_evidence SET observed_health='degraded' WHERE public_id=?", f.history.Evidence.EvidenceID)
 			updateResult <- updateErr
 		}()
 		select {
@@ -689,7 +689,7 @@ func TestDProducerMySQL(t *testing.T) {
 			t.Fatal("competing UPDATE did not complete after historical reader")
 		}
 		var health string
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health FROM system_backup_evidence WHERE public_id=?", f.history.Evidence.EvidenceID).Scan(&health))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health FROM system_backup_v2_evidence WHERE public_id=?", f.history.Evidence.EvidenceID).Scan(&health))
 		if health != "degraded" {
 			t.Fatal("competing UPDATE did not persist after lock release", health)
 		}
@@ -698,7 +698,7 @@ func TestDProducerMySQL(t *testing.T) {
 		if record, err := load(altered); err == nil || !reflect.DeepEqual(record, Record{}) {
 			t.Fatal("changed D history reconstructed A record", err)
 		}
-		_, err = db.ExecContext(ctx, "UPDATE system_backup_evidence SET envelope_hash=? WHERE public_id=?", strings.Repeat("f", 64), f.history.Evidence.EvidenceID)
+		_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET envelope_hash=? WHERE public_id=?", strings.Repeat("f", 64), f.history.Evidence.EvidenceID)
 		mustSQL(t, err)
 		if record, err := load(f.history); err == nil || !reflect.DeepEqual(record, Record{}) {
 			t.Fatal("changed A envelope reconstructed historical record", err)
@@ -797,7 +797,7 @@ func TestDProducerMySQL(t *testing.T) {
 			})
 		}
 	}
-	for _, tc := range []struct{ stage, table string }{{"pending", "system_backup_evidence_chunks"}, {"result", "system_backup_producer_result_receipts"}} {
+	for _, tc := range []struct{ stage, table string }{{"pending", "system_backup_v2_evidence_chunks"}, {"result", "system_backup_producer_result_receipts"}} {
 		t.Run(tc.stage+"_sql_failure", func(t *testing.T) {
 			db, _ := dProducerMySQLDB(t)
 			f := newDIntegrationFixtureWithDB(t, db)

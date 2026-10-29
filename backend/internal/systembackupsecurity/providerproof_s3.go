@@ -48,12 +48,12 @@ func (o S3ExternalActionObserver) binding(ctx context.Context, tx *sql.Tx, targe
 	var action, key, finalKey, state, checksum, identity string
 	var length, version int64
 	var observed sql.NullString
-	err := tx.QueryRowContext(ctx, `SELECT action_type,action_key,final_key,state,payload_sha256,content_length,row_version,observed_version FROM system_backup_external_actions WHERE origin_installation_id=? AND public_id=? FOR UPDATE`, o.InstallationID, target.TargetPublicID).Scan(&action, &key, &finalKey, &state, &checksum, &length, &version, &observed)
+	err := tx.QueryRowContext(ctx, `SELECT action_type,action_key,final_key,state,payload_sha256,content_length,row_version,observed_version FROM system_backup_v2_external_actions WHERE origin_installation_id=? AND public_id=? FOR UPDATE`, o.InstallationID, target.TargetPublicID).Scan(&action, &key, &finalKey, &state, &checksum, &length, &version, &observed)
 	if err != nil || !contains([]string{"manifest_put", "marker_put", "acceptance_put"}, action) || !contains([]string{"request_sent", "provider_unreachable", "confirmed_present"}, state) || !strings.HasPrefix(finalKey, o.Prefix) || length < 1 || length > 262144 || !providerHashPattern.MatchString(checksum) {
 		return b, "", ErrRegistrationUnavailable
 	}
 	// Match the configured provider identity under the locked active config.
-	err = tx.QueryRowContext(ctx, `SELECT c.artifact_write_identity_hash FROM system_backup_configs c JOIN system_backup_installation_state i ON i.origin_installation_id=c.origin_installation_id AND i.active_config_version=c.version WHERE c.origin_installation_id=? FOR UPDATE`, o.InstallationID).Scan(&identity)
+	err = tx.QueryRowContext(ctx, `SELECT c.artifact_write_identity_hash FROM system_backup_v2_configs c JOIN system_backup_v2_installation_state i ON i.origin_installation_id=c.origin_installation_id AND i.active_config_version=c.version WHERE c.origin_installation_id=? FOR UPDATE`, o.InstallationID).Scan(&identity)
 	if err != nil || identity != o.ProviderIdentityHash {
 		return b, "", ErrRegistrationUnavailable
 	}

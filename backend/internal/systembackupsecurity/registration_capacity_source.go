@@ -34,12 +34,12 @@ func (c CapacityCollectorConfig) Validate() error {
 	}
 	seen := map[string]bool{}
 	for _, table := range c.Tables {
-		if !capacityIdentifier.MatchString(table) || seen[table] || !(strings.HasPrefix(table, "system_backup_") || strings.HasPrefix(table, "system_restore_") || table == "system_backups" || table == "audit_logs") {
+		if !capacityIdentifier.MatchString(table) || seen[table] || !(strings.HasPrefix(table, "system_backup_") || strings.HasPrefix(table, "system_restore_") || table == "system_backup_v2_backups" || table == "audit_logs") {
 			return ErrRegistrationUnavailable
 		}
 		seen[table] = true
 	}
-	if !seen["audit_logs"] || !seen["system_backup_configs"] || !seen["system_backups"] {
+	if !seen["audit_logs"] || !seen["system_backup_v2_configs"] || !seen["system_backup_v2_backups"] {
 		return ErrRegistrationUnavailable
 	}
 	return nil

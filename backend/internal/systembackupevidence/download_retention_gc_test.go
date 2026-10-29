@@ -180,22 +180,22 @@ func (d *retentionGCModel) QueryContext(ctx context.Context, q string, a []drive
 			return admissionTxRow(int64(0)), nil
 		}
 		return &admissionTxRows{width: 1}, nil
-	case "SELECT id FROM system_backup_operations WHERE id=?":
+	case "SELECT id FROM system_backup_v2_operations WHERE id=?":
 		if len(d.m.op) > 0 {
 			return admissionTxRow(int64(73)), nil
 		}
 		return &admissionTxRows{width: 1}, nil
-	case "SELECT operation_id FROM system_backup_download_admission_receipts WHERE operation_id=?":
+	case "SELECT operation_id FROM system_backup_v2_download_admission_receipts WHERE operation_id=?":
 		if len(d.m.receipt) > 0 {
 			return admissionTxRow(int64(73)), nil
 		}
 		return &admissionTxRows{width: 1}, nil
-	case "SELECT operation_id FROM system_backup_download_result_receipts WHERE operation_id=?":
+	case "SELECT operation_id FROM system_backup_v2_download_result_receipts WHERE operation_id=?":
 		if len(d.resultRetention) > 0 {
 			return admissionTxRow(int64(73)), nil
 		}
 		return &admissionTxRows{width: 1}, nil
-	case "SELECT id FROM system_backup_strong_auth_nonces WHERE operation_id=? LIMIT 1":
+	case "SELECT id FROM system_backup_v2_strong_auth_nonces WHERE operation_id=? LIMIT 1":
 		if len(d.nonce) > 0 {
 			return admissionTxRow(int64(95)), nil
 		}

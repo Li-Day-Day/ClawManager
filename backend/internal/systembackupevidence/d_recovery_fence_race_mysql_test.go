@@ -69,7 +69,7 @@ func dRecoveryEvidenceState(t *testing.T, db *sql.DB, evidence pd.EvidenceID) (s
 	var state string
 	var version int64
 	var owner sql.NullString
-	mustSQL(t, db.QueryRow("SELECT storage_state,row_version,claim_owner FROM system_backup_evidence WHERE public_id=?", string(evidence)).Scan(&state, &version, &owner))
+	mustSQL(t, db.QueryRow("SELECT storage_state,row_version,claim_owner FROM system_backup_v2_evidence WHERE public_id=?", string(evidence)).Scan(&state, &version, &owner))
 	return state, version, owner
 }
 

@@ -71,7 +71,7 @@ func (p *stagedConfigOperationResponse) Stage(ctx context.Context, tx *sql.Tx, p
 	if err != nil {
 		return 0, ErrRegistrationUnavailable
 	}
-	result, err := tx.ExecContext(ctx, `INSERT INTO system_backup_evidence (public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,inline_payload,content_checksum,content_size_bytes,media_type,encryption,redaction_classification,observed_health,expires_at,created_at) SELECT ?,'system',?,'diagnostic','inline',?,?,?,'application/json','none','internal','healthy',?,? WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<?`, id, p.plan.installation, raw, registrationHash(string(raw)), len(raw), retain.UTC(), policy.FinishedAt.UTC(), policy.FinishedAt.UTC(), p.plan.until.UTC())
+	result, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_evidence (public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,inline_payload,content_checksum,content_size_bytes,media_type,encryption,redaction_classification,observed_health,expires_at,created_at) SELECT ?,'system',?,'diagnostic','inline',?,?,?,'application/json','none','internal','healthy',?,? WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<?`, id, p.plan.installation, raw, registrationHash(string(raw)), len(raw), retain.UTC(), policy.FinishedAt.UTC(), policy.FinishedAt.UTC(), p.plan.until.UTC())
 	if err != nil {
 		return 0, ErrProviderEvidenceStorage
 	}
@@ -129,14 +129,14 @@ func loadConfigOperationResponse(ctx context.Context, tx *sql.Tx, in ConfigMutat
 	var resultResource, failureMessage sql.NullString
 	var retryable bool
 	var httpStatus int
-	err := tx.QueryRowContext(ctx, `SELECT schema_version,public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,status,result_resource_public_id,result_config_version,retryable,failure_category,failure_message,http_status,row_version,deadline_at,started_at,finished_at,created_at,updated_at,redacted_response_evidence_id,redacted_response_sha256 FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? AND public_id=? FOR UPDATE`, f.Installation, strconv.FormatInt(f.Actor.UserID, 10), f.Endpoint, f.IdempotencyKey, f.Operation).Scan(&schema, &p.OperationPublicID, &p.InstallationID, &kind, &targetType, &targetID, &actorType, &actorID, &p.Endpoint, &p.IdempotencyKey, &p.RequestHash, &status, &resultResource, &p.Version, &retryable, &failure, &failureMessage, &httpStatus, &p.RowVersion, &p.DeadlineAt, &p.StartedAt, &p.FinishedAt, &p.CreatedAt, &p.UpdatedAt, &s.evidenceID, &s.checksum)
+	err := tx.QueryRowContext(ctx, `SELECT schema_version,public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,status,result_resource_public_id,result_config_version,retryable,failure_category,failure_message,http_status,row_version,deadline_at,started_at,finished_at,created_at,updated_at,redacted_response_evidence_id,redacted_response_sha256 FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? AND public_id=? FOR UPDATE`, f.Installation, strconv.FormatInt(f.Actor.UserID, 10), f.Endpoint, f.IdempotencyKey, f.Operation).Scan(&schema, &p.OperationPublicID, &p.InstallationID, &kind, &targetType, &targetID, &actorType, &actorID, &p.Endpoint, &p.IdempotencyKey, &p.RequestHash, &status, &resultResource, &p.Version, &retryable, &failure, &failureMessage, &httpStatus, &p.RowVersion, &p.DeadlineAt, &p.StartedAt, &p.FinishedAt, &p.CreatedAt, &p.UpdatedAt, &s.evidenceID, &s.checksum)
 	if err != nil || schema != "system-backup-operation.v1" || p.OperationPublicID != f.Operation || p.InstallationID != f.Installation || kind != "config_update" || targetType != "system" || targetID != f.Installation || actorType != "admin" || actorID != strconv.FormatInt(f.Actor.UserID, 10) || p.Endpoint != f.Endpoint || p.IdempotencyKey != f.IdempotencyKey || p.RequestHash != f.RequestHash || status != "succeeded" || resultResource.Valid || p.Version != f.Version || retryable || failure != "none" || failureMessage.Valid || httpStatus != 200 || s.evidenceID != f.EvidenceID || s.checksum != f.ResponseHash {
 		return fail()
 	}
 	p.ActorID = f.Actor.UserID
 	var ownerType, owner, evidenceType, state, eFailure, health, media, encryption, classification string
 	var size, count, id int64
-	err = tx.QueryRowContext(ctx, `SELECT id,schema_version,public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,observed_health,inline_payload,content_checksum,content_size_bytes,media_type,encryption,redaction_classification,expires_at,created_at,row_version,chunk_count FROM system_backup_evidence WHERE id=? FOR UPDATE`, f.EvidenceID).Scan(&id, &schema, &s.publicID, &ownerType, &owner, &evidenceType, &state, &eFailure, &health, &s.raw, &s.checksum, &size, &media, &encryption, &classification, &s.expiry, &s.created, &s.rowVersion, &count)
+	err = tx.QueryRowContext(ctx, `SELECT id,schema_version,public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,evidence_failure_code,observed_health,inline_payload,content_checksum,content_size_bytes,media_type,encryption,redaction_classification,expires_at,created_at,row_version,chunk_count FROM system_backup_v2_evidence WHERE id=? FOR UPDATE`, f.EvidenceID).Scan(&id, &schema, &s.publicID, &ownerType, &owner, &evidenceType, &state, &eFailure, &health, &s.raw, &s.checksum, &size, &media, &encryption, &classification, &s.expiry, &s.created, &s.rowVersion, &count)
 	if err != nil || id != f.EvidenceID || schema != "system-backup-evidence.v1" || !providerEvidenceID.MatchString(s.publicID) || ownerType != "system" || owner != f.Installation || evidenceType != "diagnostic" || state != "inline" || eFailure != "none" || health != "healthy" || size < 2 || size > MaxConfigOperationResponseBytes || size != int64(len(s.raw)) || s.checksum != f.ResponseHash || registrationHash(string(s.raw)) != f.ResponseHash || media != "application/json" || encryption != "none" || classification != "internal" || s.rowVersion < 1 || count != 0 || !s.created.Equal(p.FinishedAt) || !now.Before(s.expiry) {
 		return fail()
 	}
@@ -151,7 +151,7 @@ func loadConfigOperationResponse(ctx context.Context, tx *sql.Tx, in ConfigMutat
 	for i := range fields {
 		dest[i] = &fields[i]
 	}
-	if tx.QueryRowContext(ctx, `SELECT storage_provider_role,storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,storage_immutable_version,object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_list_root,envelope_framing_version,kek_identity_hash,kek_version,envelope_hash FROM system_backup_evidence WHERE id=? FOR UPDATE`, f.EvidenceID).Scan(dest...) != nil {
+	if tx.QueryRowContext(ctx, `SELECT storage_provider_role,storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,storage_immutable_version,object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_list_root,envelope_framing_version,kek_identity_hash,kek_version,envelope_hash FROM system_backup_v2_evidence WHERE id=? FOR UPDATE`, f.EvidenceID).Scan(dest...) != nil {
 		return fail()
 	}
 	for _, v := range fields {
@@ -159,7 +159,7 @@ func loadConfigOperationResponse(ctx context.Context, tx *sql.Tx, in ConfigMutat
 			return fail()
 		}
 	}
-	rows, err := tx.QueryContext(ctx, "SELECT chunk_index FROM system_backup_evidence_chunks WHERE evidence_id=? FOR UPDATE", f.EvidenceID)
+	rows, err := tx.QueryContext(ctx, "SELECT chunk_index FROM system_backup_v2_evidence_chunks WHERE evidence_id=? FOR UPDATE", f.EvidenceID)
 	if err != nil {
 		return fail()
 	}

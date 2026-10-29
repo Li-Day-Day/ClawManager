@@ -120,18 +120,18 @@ func newDTaskOwnerDownloadChainFixture(t *testing.T, input aDownloadMFAInputs, k
 	r.Ref.RelativeKey, err = keyFor("evidence", r.Manifest.Identity)
 	mustSQL(t, err)
 	m := r.Manifest
-	_, err = db.ExecContext(x.ctx, `UPDATE system_backup_evidence SET owner_target_type=?,owner_target_public_id=?,storage_relative_key=?,storage_relative_key_hash=?,object_checksum=?,object_size_bytes=?,chunk_count=?,chunk_list_root=?,envelope_hash=? WHERE public_id=?`, kind, f.row.id, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), m.ObjectHash, m.ObjectSize, len(m.Chunks), m.ChunkRoot, m.EnvelopeHash, m.Identity.ID)
+	_, err = db.ExecContext(x.ctx, `UPDATE system_backup_v2_evidence SET owner_target_type=?,owner_target_public_id=?,storage_relative_key=?,storage_relative_key_hash=?,object_checksum=?,object_size_bytes=?,chunk_count=?,chunk_list_root=?,envelope_hash=? WHERE public_id=?`, kind, f.row.id, r.Ref.RelativeKey, hash([]byte(r.Ref.RelativeKey)), m.ObjectHash, m.ObjectSize, len(m.Chunks), m.ChunkRoot, m.EnvelopeHash, m.Identity.ID)
 	mustSQL(t, err)
 	var evidenceID int64
-	mustSQL(t, db.QueryRowContext(x.ctx, "SELECT id FROM system_backup_evidence WHERE public_id=?", m.Identity.ID).Scan(&evidenceID))
-	_, err = db.ExecContext(x.ctx, "DELETE FROM system_backup_evidence_chunks WHERE evidence_id=?", evidenceID)
+	mustSQL(t, db.QueryRowContext(x.ctx, "SELECT id FROM system_backup_v2_evidence WHERE public_id=?", m.Identity.ID).Scan(&evidenceID))
+	_, err = db.ExecContext(x.ctx, "DELETE FROM system_backup_v2_evidence_chunks WHERE evidence_id=?", evidenceID)
 	mustSQL(t, err)
 	for _, chunk := range m.Chunks {
 		nonce, e := base64.RawURLEncoding.DecodeString(chunk.Nonce)
 		mustSQL(t, e)
 		tag, e := base64.RawURLEncoding.DecodeString(chunk.Tag)
 		mustSQL(t, e)
-		_, err = db.ExecContext(x.ctx, `INSERT INTO system_backup_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)`, evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
+		_, err = db.ExecContext(x.ctx, `INSERT INTO system_backup_v2_evidence_chunks(evidence_id,chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag) VALUES(?,?,?,?,?,?,?,?,?,?)`, evidenceID, chunk.Index, chunk.PlainOffset, chunk.PlainLength, chunk.PlainHash, chunk.FrameOffset, chunk.FrameLength, chunk.CipherHash, nonce, tag)
 		mustSQL(t, err)
 	}
 	// Physically remove the old synthetic fallback before rebuilding every
@@ -210,7 +210,7 @@ func TestDTaskOwnerDownloadChainMySQL(t *testing.T) {
 				w := admittedWriter()
 				h.ServeHTTP(w, f.request)
 				var operation string
-				mustSQL(t, db.QueryRowContext(f.ctx, "SELECT public_id FROM system_backup_operations").Scan(&operation))
+				mustSQL(t, db.QueryRowContext(f.ctx, "SELECT public_id FROM system_backup_v2_operations").Scan(&operation))
 				if w.Code != 200 || !bytes.Equal(w.Body.Bytes(), f.plain) || w.Header().Get("X-System-Backup-Operation-Id") != operation || len(f.store.scopes) != 3 || failures != 0 {
 					t.Fatal("actual task owner/HTTP/provider/result composition", kind, w.Code, len(f.store.scopes), failures)
 				}
@@ -224,7 +224,7 @@ func TestDTaskOwnerDownloadChainMySQL(t *testing.T) {
 			db := f.aDownloadMFAFixture.db
 			c := f.admitted(t)
 			if mode == "result_link_rollback" {
-				_, err := db.ExecContext(f.ctx, "CREATE TRIGGER d_task_result_link_reject BEFORE INSERT ON system_backup_download_result_receipts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='task result link probe rejection'")
+				_, err := db.ExecContext(f.ctx, "CREATE TRIGGER d_task_result_link_reject BEFORE INSERT ON system_backup_v2_download_result_receipts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='task result link probe rejection'")
 				mustSQL(t, err)
 				if f.results.Finish(f.ctx, c, DownloadResultObservation{Outcome: "interrupted"}) == nil {
 					t.Fatal("failed actual task result link committed")
@@ -249,7 +249,7 @@ func TestDTaskOwnerDownloadChainMySQL(t *testing.T) {
 			f := newDTaskOwnerDownloadChainFixture(t, input, "backup")
 			db := f.aDownloadMFAFixture.db
 			if mode == "existing_task_reference_lock" {
-				_, err := db.ExecContext(f.ctx, "UPDATE system_backup_preflights SET verifier_report_evidence_public_id=?,verifier_report_evidence_sha256=?", f.initial.Manifest.Identity.ID, f.initial.Manifest.Identity.ContentHash)
+				_, err := db.ExecContext(f.ctx, "UPDATE system_backup_v2_preflights SET verifier_report_evidence_public_id=?,verifier_report_evidence_sha256=?", f.initial.Manifest.Identity.ID, f.initial.Manifest.Identity.ContentHash)
 				mustSQL(t, err)
 			}
 			tx, err := db.BeginTx(f.ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
@@ -260,9 +260,9 @@ func TestDTaskOwnerDownloadChainMySQL(t *testing.T) {
 			mustSQL(t, f.concrete.LockOwnerReferences(f.ctx, tx, r))
 			mustSQL(t, f.concrete.Recheck(f.ctx, tx, f.env.actor, r))
 			if mode == "existing_task_reference_lock" {
-				f.observeExactBlockedWrite(t, tx, "system_backup_preflights", "UPDATE system_backup_preflights SET verifier_report_evidence_public_id=NULL,verifier_report_evidence_sha256=NULL")
+				f.observeExactBlockedWrite(t, tx, "system_backup_v2_preflights", "UPDATE system_backup_v2_preflights SET verifier_report_evidence_public_id=NULL,verifier_report_evidence_sha256=NULL")
 			} else {
-				f.observeExactBlockedWrite(t, tx, "system_backup_events", `INSERT INTO system_backup_events(origin_installation_id,target_type,target_public_id,event_type,level,message,details_present,detail_evidence_public_id) VALUES(?,'backup',?,'evidence_changed','info','isolated task owner reference probe',TRUE,?)`, f.registry.Installation, f.row.id, f.initial.Manifest.Identity.ID)
+				f.observeExactBlockedWrite(t, tx, "system_backup_v2_events", `INSERT INTO system_backup_v2_events(origin_installation_id,target_type,target_public_id,event_type,level,message,details_present,detail_evidence_public_id) VALUES(?,'backup',?,'evidence_changed','info','isolated task owner reference probe',TRUE,?)`, f.registry.Installation, f.row.id, f.initial.Manifest.Identity.ID)
 			}
 			f.requireRows(t, 0, 0, false)
 		})

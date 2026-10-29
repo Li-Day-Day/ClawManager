@@ -156,7 +156,7 @@ func (s RecoveryManagerRevocationService) Revoke(ctx context.Context, grant *Rec
 	var enabled bool
 	var revoked sql.NullTime
 	if err := tx.QueryRowContext(ctx, `SELECT origin_installation_id,row_version,enabled,revoked_at
-FROM system_backup_recovery_managers WHERE scope_key=? AND management_identity_hash=? FOR UPDATE`, key, identity).
+FROM system_backup_v2_recovery_managers WHERE scope_key=? AND management_identity_hash=? FOR UPDATE`, key, identity).
 		Scan(&origin, &version, &enabled, &revoked); err != nil {
 		return ErrDenied
 	}
@@ -166,7 +166,7 @@ FROM system_backup_recovery_managers WHERE scope_key=? AND management_identity_h
 	if err := writeRecoveryManagerRevocationAudit(ctx, tx, entry, "intent"); err != nil {
 		return err
 	}
-	result, err := tx.ExecContext(ctx, `UPDATE system_backup_recovery_managers
+	result, err := tx.ExecContext(ctx, `UPDATE system_backup_v2_recovery_managers
 SET enabled=FALSE,can_read_fence=FALSE,can_write_fence=FALSE,can_manage_deployment=FALSE,
 revoked_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6)
 WHERE scope_key=? AND management_identity_hash=? AND origin_installation_id=? AND row_version=? AND enabled=TRUE AND revoked_at IS NULL`,
@@ -185,7 +185,7 @@ WHERE scope_key=? AND management_identity_hash=? AND origin_installation_id=? AN
 	var finalEnabled, read, write, manage bool
 	var finalRevoked sql.NullTime
 	if err := tx.QueryRowContext(ctx, `SELECT row_version,enabled,can_read_fence,can_write_fence,can_manage_deployment,revoked_at
-FROM system_backup_recovery_managers WHERE scope_key=? AND management_identity_hash=? FOR UPDATE`, key, identity).
+FROM system_backup_v2_recovery_managers WHERE scope_key=? AND management_identity_hash=? FOR UPDATE`, key, identity).
 		Scan(&finalVersion, &finalEnabled, &read, &write, &manage, &finalRevoked); err != nil ||
 		finalVersion != version+1 || finalEnabled || read || write || manage || !finalRevoked.Valid || !finalRevoked.Time.Equal(now) {
 		return ErrDenied

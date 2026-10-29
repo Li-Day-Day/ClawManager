@@ -8,7 +8,7 @@ import (
 
 func (a *SQLWriteRecovery) lockConfig(ctx context.Context, tx *sql.Tx) (time.Duration, error) {
 	c, s := a.c, a.c.Registry
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return 0, ErrUnavailable
 	}
@@ -31,14 +31,14 @@ func (a *SQLWriteRecovery) lockConfig(ctx context.Context, tx *sql.Tx) (time.Dur
 		return 0, ErrDenied
 	}
 	var version int64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Installation).Scan(&version) != nil || version != c.ConfigVersion {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Installation).Scan(&version) != nil || version != c.ConfigVersion {
 		return 0, ErrDenied
 	}
 	var configHash string
 	var store, read KeyRef
 	var retrySeconds int64
 	if tx.QueryRowContext(ctx, `SELECT config_sha256,evidence_store_identity_hash,evidence_store_ref_version,evidence_read_identity_hash,evidence_read_ref_version,retry_max_backoff_seconds
-FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, s.Installation, c.ConfigVersion).Scan(&configHash, &store.Identity, &store.Version, &read.Identity, &read.Version, &retrySeconds) != nil || configHash != c.ConfigSHA256 || store != c.Store || read != c.Read || retrySeconds < 5 || retrySeconds > 600 {
+FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, s.Installation, c.ConfigVersion).Scan(&configHash, &store.Identity, &store.Version, &read.Identity, &read.Version, &retrySeconds) != nil || configHash != c.ConfigSHA256 || store != c.Store || read != c.Read || retrySeconds < 5 || retrySeconds > 600 {
 		return 0, ErrDenied
 	}
 	return time.Duration(retrySeconds) * time.Second, nil
@@ -147,7 +147,7 @@ func (a *SQLWriteRecovery) scan(ctx context.Context, afterID int64, limit int) (
 	return candidates, more, nil
 }
 
-const recoveryCandidatesSQL = `SELECT id,public_id FROM system_backup_evidence
+const recoveryCandidatesSQL = `SELECT id,public_id FROM system_backup_v2_evidence
 WHERE id>? AND storage_state IN ('pending','write_unknown')
 AND storage_provider_role='evidence' AND storage_identity_hash=? AND storage_ref_version=?
 AND NOT (owner_target_type='system' AND evidence_type='capability_snapshot')

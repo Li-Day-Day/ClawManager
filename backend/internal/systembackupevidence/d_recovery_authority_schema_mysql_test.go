@@ -18,7 +18,7 @@ func TestDRecoveryAuthoritySchemaMySQL(t *testing.T) {
 	key := func(b byte) []byte { return bytes.Repeat([]byte{b}, 32) }
 	until := time.Now().UTC().Add(time.Minute)
 	const installation = "recovery-schema-test-installation"
-	const insertDeployment = `INSERT INTO system_backup_recovery_deployments
+	const insertDeployment = `INSERT INTO system_backup_v2_recovery_deployments
 (scope_key,origin_installation_id,workload_identity_hash,issuer_identity_hash,subject_hash,management_issuer_identity_hash,actor_identity_hash,admission_hash,client_ca_sha256,certificate_sha256,stat_profile_hash,enabled,deployment_epoch,authorized_until,row_version)
 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 	deployment := func(origin string, scope []byte, epoch, version int64) error {
@@ -28,7 +28,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 	if err := deployment("missing-installation", key(9), 1, 1); err == nil {
 		t.Fatal("deployment accepted without L0 installation parent")
 	}
-	_, err := db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err := db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, installation)
 	mustSQL(t, err)
@@ -44,7 +44,7 @@ VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, installation)
 	if err = deployment(installation, key(10), 1, 0); err == nil {
 		t.Fatal("zero deployment row version accepted")
 	}
-	const insertManager = `INSERT INTO system_backup_recovery_managers
+	const insertManager = `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,revoked_at,row_version)
 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
 	manager := func(origin string, identity byte, revoked any, version int64) error {
@@ -66,7 +66,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
 	if err = manager(installation, 15, nil, 0); err == nil {
 		t.Fatal("zero manager row version accepted")
 	}
-	for _, table := range []string{"system_backup_recovery_deployments", "system_backup_recovery_managers"} {
+	for _, table := range []string{"system_backup_v2_recovery_deployments", "system_backup_v2_recovery_managers"} {
 		var count int
 		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM "+table).Scan(&count))
 		if count != 1 {

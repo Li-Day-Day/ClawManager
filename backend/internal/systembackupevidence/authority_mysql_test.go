@@ -25,9 +25,9 @@ func testMySQLLiveAuthorities(t *testing.T, ctx context.Context, registry SQLReg
 	db := registry.DB
 	db.SetMaxOpenConns(8)
 	exec := func(q string, args ...any) { t.Helper(); _, err := db.ExecContext(ctx, q, args...); mustSQL(t, err) }
-	exec(`CREATE TABLE system_backup_installation_state(origin_installation_id VARCHAR(128) PRIMARY KEY,active_config_version BIGINT NOT NULL) ENGINE=InnoDB;
-CREATE TABLE system_backup_configs(origin_installation_id VARCHAR(128),version BIGINT,config_sha256 CHAR(64),evidence_store_identity_hash CHAR(64),evidence_store_ref_version VARCHAR(128),evidence_delete_identity_hash CHAR(64),evidence_delete_ref_version VARCHAR(128),evidence_read_identity_hash CHAR(64),evidence_read_ref_version VARCHAR(128),retry_max_backoff_seconds BIGINT,PRIMARY KEY(origin_installation_id,version)) ENGINE=InnoDB;
-CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public_id VARCHAR(128),operation_type VARCHAR(64),target_type VARCHAR(64),target_public_id VARCHAR(128),actor_type VARCHAR(64),actor_id VARCHAR(128),status VARCHAR(64),claim_owner VARCHAR(128),claim_expires_at DATETIME(6),row_version BIGINT,deadline_at DATETIME(6),PRIMARY KEY(origin_installation_id,public_id)) ENGINE=InnoDB;`)
+	exec(`CREATE TABLE system_backup_v2_installation_state(origin_installation_id VARCHAR(128) PRIMARY KEY,active_config_version BIGINT NOT NULL) ENGINE=InnoDB;
+CREATE TABLE system_backup_v2_configs(origin_installation_id VARCHAR(128),version BIGINT,config_sha256 CHAR(64),evidence_store_identity_hash CHAR(64),evidence_store_ref_version VARCHAR(128),evidence_delete_identity_hash CHAR(64),evidence_delete_ref_version VARCHAR(128),evidence_read_identity_hash CHAR(64),evidence_read_ref_version VARCHAR(128),retry_max_backoff_seconds BIGINT,PRIMARY KEY(origin_installation_id,version)) ENGINE=InnoDB;
+CREATE TABLE system_backup_v2_operations(origin_installation_id VARCHAR(128),public_id VARCHAR(128),operation_type VARCHAR(64),target_type VARCHAR(64),target_public_id VARCHAR(128),actor_type VARCHAR(64),actor_id VARCHAR(128),status VARCHAR(64),claim_owner VARCHAR(128),claim_expires_at DATETIME(6),row_version BIGINT,deadline_at DATETIME(6),PRIMARY KEY(origin_installation_id,public_id)) ENGINE=InnoDB;`)
 	peer := newTaskFixture(t, false) // Reuse only generated test credentials; its scripted DB is never used.
 	registry.Policy = mysqlLivePolicy{}
 	p, _, object, keys := fixture(t, 9000)
@@ -36,12 +36,12 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 	rc := WriteRecoveryConfig{Registry: registry, ConfigVersion: c.ConfigVersion, ConfigSHA256: c.ConfigSHA256, Root: c.Root, Store: c.Store, Read: KeyRef{strings.Repeat("e", 64), "read-v1"}, ClientCAPEM: c.ClientCAPEM, ClientCASHA256: c.ClientCASHA256, CertificateSHA256: c.CertificateSHA256, Issuer: c.Issuer, Audience: c.Audience, Subject: c.Subject, TokenFile: c.TokenFile, ExpiresAt: c.ExpiresAt, Failure: func(context.Context, string, string) {}}
 	reset := func(t *testing.T, recovery bool) *mysqlAuthorityStore {
 		t.Helper()
-		for _, table := range []string{"system_backup_evidence_chunks", "system_backup_evidence", "a_audit", "system_backup_operations", "system_backup_configs", "system_backup_installation_state"} {
+		for _, table := range []string{"system_backup_v2_evidence_chunks", "system_backup_v2_evidence", "a_audit", "system_backup_v2_operations", "system_backup_v2_configs", "system_backup_v2_installation_state"} {
 			exec("DELETE FROM " + table)
 		}
-		exec("INSERT INTO system_backup_installation_state VALUES(?,1)", registry.Installation)
-		exec("INSERT INTO system_backup_configs VALUES(?,1,?,?,?,?,?,?,?,60)", registry.Installation, c.ConfigSHA256, c.Store.Identity, c.Store.Version, c.Delete.Identity, c.Delete.Version, rc.Read.Identity, rc.Read.Version)
-		exec("INSERT INTO system_backup_operations VALUES(?,?,'evidence_gc','system',?,'system','system:controller','running',?,DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 5 MINUTE),1,DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 10 MINUTE))", registry.Installation, c.OperationID, registry.Installation, c.OperationClaim)
+		exec("INSERT INTO system_backup_v2_installation_state VALUES(?,1)", registry.Installation)
+		exec("INSERT INTO system_backup_v2_configs VALUES(?,1,?,?,?,?,?,?,?,60)", registry.Installation, c.ConfigSHA256, c.Store.Identity, c.Store.Version, c.Delete.Identity, c.Delete.Version, rc.Read.Identity, rc.Read.Version)
+		exec("INSERT INTO system_backup_v2_operations VALUES(?,?,'evidence_gc','system',?,'system','system:controller','running',?,DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 5 MINUTE),1,DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 10 MINUTE))", registry.Installation, c.OperationID, registry.Installation, c.OperationClaim)
 		var now time.Time
 		mustSQL(t, db.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now))
 		exec("UPDATE a_owner SET deadline=?,referenced=FALSE,allowed=TRUE", now.Add(time.Hour))
@@ -54,7 +54,7 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 			}
 		}
 		exec("UPDATE a_owner SET deadline=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 MINUTE)")
-		exec("UPDATE system_backup_evidence SET created_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 2 DAY),expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY),protected_until=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
+		exec("UPDATE system_backup_v2_evidence SET created_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 2 DAY),expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY),protected_until=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
 		store := &mysqlAuthorityStore{info: ObjectInfo{Version: "immutable-v1", SHA256: p.manifest.ObjectHash, Size: p.manifest.ObjectSize}}
 		store.present.Store(true)
 		return store
@@ -80,9 +80,9 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 		var got string
 		var audits, chunks int
 		var version sql.NullString
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT storage_state,storage_immutable_version FROM system_backup_evidence WHERE public_id=?", id).Scan(&got, &version))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT storage_state,storage_immutable_version FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&got, &version))
 		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM a_audit WHERE action IN ('evidence.gc.result','evidence.recovery.result')").Scan(&audits))
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence_chunks").Scan(&chunks))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence_chunks").Scan(&chunks))
 		if got != state || audits != results || (state == "deleted" && (chunks != 0 || version.Valid)) || (state != "deleted" && chunks != 1) {
 			t.Fatalf("state/result/payload mismatch: state=%s results=%d chunks=%d", got, audits, chunks)
 		}
@@ -135,8 +135,8 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 			mysqlAwait(t, entered)
 			var oldClaim string
 			var oldRow int64
-			mustSQL(t, db.QueryRowContext(ctx, "SELECT claim_owner,row_version FROM system_backup_evidence WHERE public_id=?", id).Scan(&oldClaim, &oldRow))
-			exec("UPDATE system_backup_evidence SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE public_id=?", id)
+			mustSQL(t, db.QueryRowContext(ctx, "SELECT claim_owner,row_version FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&oldClaim, &oldRow))
+			exec("UPDATE system_backup_v2_evidence SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE public_id=?", id)
 			second := &mysqlAuthorityStore{info: first.info}
 			second.present.Store(true)
 			mustSQL(t, mysqlResult(t, start(second)))
@@ -152,7 +152,7 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 				t.Fatal("stale worker deleted")
 			}
 			var row int64
-			mustSQL(t, db.QueryRowContext(ctx, "SELECT row_version FROM system_backup_evidence WHERE public_id=?", id).Scan(&row))
+			mustSQL(t, db.QueryRowContext(ctx, "SELECT row_version FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&row))
 			if oldClaim == "" || row != oldRow+2 {
 				t.Fatal("takeover did not use a fresh CAS")
 			}
@@ -176,7 +176,7 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 			}
 			var checked, due time.Time
 			var row int64
-			mustSQL(t, db.QueryRowContext(ctx, "SELECT last_checked_at,next_reconcile_at,row_version FROM system_backup_evidence WHERE public_id=?", id).Scan(&checked, &due, &row))
+			mustSQL(t, db.QueryRowContext(ctx, "SELECT last_checked_at,next_reconcile_at,row_version FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&checked, &due, &row))
 			if !due.Equal(checked.Add(time.Minute)) {
 				t.Fatal("wrong persisted backoff")
 			}
@@ -186,11 +186,11 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 				t.Fatal("direct retry bypassed backoff")
 			}
 			var after int64
-			mustSQL(t, db.QueryRowContext(ctx, "SELECT row_version FROM system_backup_evidence WHERE public_id=?", id).Scan(&after))
+			mustSQL(t, db.QueryRowContext(ctx, "SELECT row_version FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&after))
 			if after != row {
 				t.Fatal("denied retry mutated record")
 			}
-			exec("UPDATE system_backup_evidence SET next_reconcile_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE public_id=?", id)
+			exec("UPDATE system_backup_v2_evidence SET next_reconcile_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE public_id=?", id)
 			mustSQL(t, mysqlResult(t, start(second)))
 			state := "deleted"
 			if recovery {
@@ -212,14 +212,14 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 				mysqlAwait(t, entered)
 				switch drift {
 				case "active_config":
-					exec("UPDATE system_backup_installation_state SET active_config_version=2")
+					exec("UPDATE system_backup_v2_installation_state SET active_config_version=2")
 				case "config_hash":
-					exec("UPDATE system_backup_configs SET config_sha256=?", strings.Repeat("f", 64))
+					exec("UPDATE system_backup_v2_configs SET config_sha256=?", strings.Repeat("f", 64))
 				case "credential_ref":
 					if recovery {
-						exec("UPDATE system_backup_configs SET evidence_read_ref_version='revoked'")
+						exec("UPDATE system_backup_v2_configs SET evidence_read_ref_version='revoked'")
 					} else {
-						exec("UPDATE system_backup_configs SET evidence_delete_ref_version='revoked'")
+						exec("UPDATE system_backup_v2_configs SET evidence_delete_ref_version='revoked'")
 					}
 				}
 				close(release)
@@ -243,9 +243,9 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 			mysqlAwait(t, entered)
 			switch mutation {
 			case "operation_lease":
-				exec("UPDATE system_backup_operations SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND)")
+				exec("UPDATE system_backup_v2_operations SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND)")
 			case "operation_takeover":
-				exec("UPDATE system_backup_operations SET claim_owner='worker-two',row_version=row_version+1")
+				exec("UPDATE system_backup_v2_operations SET claim_owner='worker-two',row_version=row_version+1")
 			case "new_reference":
 				exec("UPDATE a_owner SET referenced=TRUE")
 			}
@@ -277,12 +277,12 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 	})
 	t.Run("gc_operation_expires_during_real_row_lock_wait", func(t *testing.T) {
 		store := reset(t, false)
-		exec("UPDATE system_backup_operations SET claim_expires_at=DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 2 SECOND)")
+		exec("UPDATE system_backup_v2_operations SET claim_expires_at=DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 2 SECOND)")
 		holder, err := db.BeginTx(ctx, nil)
 		mustSQL(t, err)
 		defer holder.Rollback()
 		var row int64
-		mustSQL(t, holder.QueryRowContext(ctx, "SELECT row_version FROM system_backup_evidence WHERE public_id=? FOR UPDATE", id).Scan(&row))
+		mustSQL(t, holder.QueryRowContext(ctx, "SELECT row_version FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", id).Scan(&row))
 		done := gc(t, store, c)
 		// Observe an actual blocked InnoDB transaction, not a timing assumption.
 		limit := time.Now().Add(5 * time.Second)
@@ -299,7 +299,7 @@ CREATE TABLE system_backup_operations(origin_installation_id VARCHAR(128),public
 		}
 		for {
 			var expired bool
-			mustSQL(t, db.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)>=claim_expires_at FROM system_backup_operations WHERE public_id=?", c.OperationID).Scan(&expired))
+			mustSQL(t, db.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)>=claim_expires_at FROM system_backup_v2_operations WHERE public_id=?", c.OperationID).Scan(&expired))
 			if expired {
 				break
 			}

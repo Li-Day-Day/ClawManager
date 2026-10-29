@@ -29,11 +29,11 @@ const downloadGCBatchIDMax int64 = 9007199254740991
 // Collect independently authenticates and locks/rechecks every original fact.
 // LIMIT bounds returned hints and memory, not the optimizer's scan work; actual
 // query plans and deployment-scale latency still require MySQL evidence.
-const downloadGCBatchUpperSQL = `SELECT COALESCE(MAX(id),0) FROM system_backup_operations WHERE origin_installation_id=? AND operation_type='evidence_download_admission'`
-const downloadGCBatchCandidatesSQL = `SELECT id,IF(OCTET_LENGTH(public_id)=40,public_id,NULL) FROM system_backup_operations WHERE origin_installation_id=? AND operation_type='evidence_download_admission' AND id>? AND id<=? ORDER BY id LIMIT ?`
-const downloadGCBatchSchemaSQL = `SELECT IF(OCTET_LENGTH(COLUMN_TYPE) BETWEEN 1 AND 8192,COLUMN_TYPE,NULL) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_operations' AND COLUMN_NAME='operation_type' AND DATA_TYPE='enum'`
+const downloadGCBatchUpperSQL = `SELECT COALESCE(MAX(id),0) FROM system_backup_v2_operations WHERE origin_installation_id=? AND operation_type='evidence_download_admission'`
+const downloadGCBatchCandidatesSQL = `SELECT id,IF(OCTET_LENGTH(public_id)=40,public_id,NULL) FROM system_backup_v2_operations WHERE origin_installation_id=? AND operation_type='evidence_download_admission' AND id>? AND id<=? ORDER BY id LIMIT ?`
+const downloadGCBatchSchemaSQL = `SELECT IF(OCTET_LENGTH(COLUMN_TYPE) BETWEEN 1 AND 8192,COLUMN_TYPE,NULL) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_operations' AND COLUMN_NAME='operation_type' AND DATA_TYPE='enum'`
 const downloadGCBatchWorkerSQL = `SELECT operation_type,target_type,target_public_id,actor_type,actor_id,status,claim_owner,claim_expires_at,row_version,deadline_at,schema_version
-FROM system_backup_operations WHERE origin_installation_id=? AND public_id=?`
+FROM system_backup_v2_operations WHERE origin_installation_id=? AND public_id=?`
 
 type downloadGCBatchCandidate struct {
 	id        int64

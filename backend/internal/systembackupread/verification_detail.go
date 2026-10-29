@@ -25,8 +25,8 @@ func (s *Service) ReadVerificationDetailDTO(ctx context.Context, publicID string
 	return s.reader.ReadVerificationDetail(ctx, publicID)
 }
 
-const verificationTaskTimesSQL = "SELECT row_version,heartbeat_at,next_reconcile_at,started_at,finished_at FROM system_backup_artifact_verifications WHERE origin_installation_id=? AND public_id=?"
-const verificationReportReferenceSQL = "SELECT schema_version,owner_target_type,owner_target_public_id,content_checksum,created_at FROM system_backup_evidence WHERE public_id=?"
+const verificationTaskTimesSQL = "SELECT row_version,heartbeat_at,next_reconcile_at,started_at,finished_at FROM system_backup_v2_artifact_verifications WHERE origin_installation_id=? AND public_id=?"
+const verificationReportReferenceSQL = "SELECT schema_version,owner_target_type,owner_target_public_id,content_checksum,created_at FROM system_backup_v2_evidence WHERE public_id=?"
 
 func buildVerificationDetail(ctx context.Context, q detailReadSQL, snapshot TaskCheckEvidenceControlSnapshot) (contract.ArtifactVerificationDetailResource, error) {
 	var zero contract.ArtifactVerificationDetailResource

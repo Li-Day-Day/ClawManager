@@ -29,7 +29,7 @@ func TestAGCDirectAuditResourcePublishedInteger(t *testing.T) {
 			if mode == "unexpected_fk" {
 				// Re-pin the outer fingerprint so the direct closed catalog must
 				// itself reject this unpublished edge, not just a changed hash.
-				f.d.early.catalog[downloadGCEarlyForeignKeysSQL] = append(f.d.early.catalog[downloadGCEarlyForeignKeysSQL], []driver.Value{f.d.identity.Database, "audit_logs", "audit_resource_unpublished_fk", "1", "resource_id", f.d.identity.Database, "system_backup_operations", "id", "RESTRICT", "RESTRICT"})
+				f.d.early.catalog[downloadGCEarlyForeignKeysSQL] = append(f.d.early.catalog[downloadGCEarlyForeignKeysSQL], []driver.Value{f.d.identity.Database, "audit_logs", "audit_resource_unpublished_fk", "1", "resource_id", f.d.identity.Database, "system_backup_v2_operations", "id", "RESTRICT", "RESTRICT"})
 			}
 			f.d.early.service.c.Metadata = f.d.early.pins()
 			before := f.d.reserved

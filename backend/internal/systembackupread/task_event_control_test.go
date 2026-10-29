@@ -448,7 +448,7 @@ func TestTaskEventControlRequestsAndPublishedColumns(t *testing.T) {
 	if len(f.queries) != 0 {
 		t.Fatal("invalid request selected task/events")
 	}
-	ddl, err := os.ReadFile("../db/migrations/068_add_system_backup_coordination_observability.sql")
+	ddl, err := os.ReadFile("../db/migrations/099_backup_v2_add_system_backup_coordination_observability.sql")
 	if err != nil {
 		t.Fatal(err)
 	}

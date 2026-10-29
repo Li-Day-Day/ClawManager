@@ -79,7 +79,7 @@ func TestDownloadResultRetentionDDLAndClosedReferences(t *testing.T) {
 		t.Fatal(err)
 	}
 	ddl := string(raw)
-	start := strings.Index(ddl, "CREATE TABLE system_backup_download_result_receipts (")
+	start := strings.Index(ddl, "CREATE TABLE system_backup_v2_download_result_receipts (")
 	if start < 0 {
 		t.Fatal("result retention migration candidate absent")
 	}
@@ -87,7 +87,7 @@ func TestDownloadResultRetentionDDLAndClosedReferences(t *testing.T) {
 	for _, clause := range []string{
 		"PRIMARY KEY (operation_id)", "UNIQUE KEY uk_sb_download_result_audit (result_audit_id)",
 		"FOREIGN KEY (origin_installation_id,operation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,retain_until)",
-		"REFERENCES system_backup_download_admission_receipts(origin_installation_id,operation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,retain_until) ON DELETE RESTRICT",
+		"REFERENCES system_backup_v2_download_admission_receipts(origin_installation_id,operation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,retain_until) ON DELETE RESTRICT",
 		"FOREIGN KEY (result_audit_id)", "REFERENCES audit_logs(id) ON DELETE RESTRICT", "result_at < retain_until", "result_audit_id <> intent_audit_id",
 	} {
 		if !strings.Contains(result, clause) {
@@ -95,11 +95,11 @@ func TestDownloadResultRetentionDDLAndClosedReferences(t *testing.T) {
 		}
 	}
 	columns := taskOwnerDDLColumns(t)
-	if columns["system_backup_download_result_receipts.evidence_id"] != "bigint" || columns["system_backup_download_result_receipts.evidence_public_id"] != "varchar" {
+	if columns["system_backup_v2_download_result_receipts.evidence_id"] != "bigint" || columns["system_backup_v2_download_result_receipts.evidence_public_id"] != "varchar" {
 		t.Fatal("candidate result evidence graph incomplete")
 	}
 	f, _, s, m := sqlTaskOwnerFixture(t, "backup")
-	m.refs["system_backup_download_result_receipts"] = []int64{73, 74}
+	m.refs["system_backup_v2_download_result_receipts"] = []int64{73, 74}
 	tx, _, err := s.Registry().begin(context.Background())
 	if err != nil {
 		t.Fatal(err)
@@ -109,7 +109,7 @@ func TestDownloadResultRetentionDDLAndClosedReferences(t *testing.T) {
 		t.Fatal("result references not included in original L3 prefix", err)
 	}
 	for _, q := range f.db.queries {
-		if strings.Contains(q, " FROM system_backup_download_result_receipts WHERE ") && strings.Contains(q, "ORDER BY operation_id LIMIT 10001 FOR UPDATE") {
+		if strings.Contains(q, " FROM system_backup_v2_download_result_receipts WHERE ") && strings.Contains(q, "ORDER BY operation_id LIMIT 10001 FOR UPDATE") {
 			return
 		}
 	}
@@ -120,7 +120,7 @@ func TestDownloadResultRetentionMissingMetadataRejectsBeforeChunks(t *testing.T)
 	for _, column := range []string{"evidence_id", "evidence_public_id"} {
 		t.Run(column, func(t *testing.T) {
 			f, _, s, m := sqlTaskOwnerFixture(t, "backup")
-			delete(m.metadata, "system_backup_download_result_receipts."+column)
+			delete(m.metadata, "system_backup_v2_download_result_receipts."+column)
 			tx, _, err := s.Registry().begin(context.Background())
 			if err != nil {
 				t.Fatal(err)

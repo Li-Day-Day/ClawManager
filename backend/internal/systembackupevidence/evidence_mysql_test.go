@@ -100,8 +100,8 @@ func TestAEvidenceMySQL(t *testing.T) {
 			t.Fatal("duplicate replaced intent")
 		}
 		var evidence, chunks int
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence").Scan(&evidence))
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence_chunks").Scan(&chunks))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence").Scan(&evidence))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence_chunks").Scan(&chunks))
 		if evidence != 1 || chunks != 2 || store.puts != 0 {
 			t.Fatal("intent not atomic")
 		}
@@ -113,7 +113,7 @@ func TestAEvidenceMySQL(t *testing.T) {
 		prefix := "evidence/installation_test/"
 		identity := strings.Repeat("a", 64)
 		var sequence int64
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT id FROM system_backup_evidence WHERE public_id=?", id).Scan(&sequence))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT id FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&sequence))
 		check := func(after int64, store, version, scope string, expected int) {
 			t.Helper()
 			rows, err := db.QueryContext(ctx, recoveryCandidatesSQL, after, store, version, len(scope), scope, 2)
@@ -140,24 +140,24 @@ func TestAEvidenceMySQL(t *testing.T) {
 		check(0, identity, "v2", prefix, 0)
 		check(0, identity, "v1", "evidence/installationXtest/", 0)
 		check(0, identity, "v1", "evidence/installation%test/", 0)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET next_reconcile_at=DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET next_reconcile_at=DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
 		mustSQL(t, e)
 		check(0, identity, "v1", prefix, 0)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET next_reconcile_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND),claim_owner='scan-test',claim_expires_at=DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET next_reconcile_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND),claim_owner='scan-test',claim_expires_at=DATE_ADD(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
 		mustSQL(t, e)
 		check(0, identity, "v1", prefix, 0)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND)")
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND)")
 		mustSQL(t, e)
 		check(0, identity, "v1", prefix, 1)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET next_reconcile_at=NULL,claim_owner=NULL,claim_expires_at=NULL")
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET next_reconcile_at=NULL,claim_owner=NULL,claim_expires_at=NULL")
 		mustSQL(t, e)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET owner_target_type='system',owner_target_public_id='installation_test',evidence_type='capability_snapshot' WHERE public_id=?", id)
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET owner_target_type='system',owner_target_public_id='installation_test',evidence_type='capability_snapshot' WHERE public_id=?", id)
 		mustSQL(t, e)
 		check(0, identity, "v1", prefix, 0)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET evidence_type='diagnostic' WHERE public_id=?", id)
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET evidence_type='diagnostic' WHERE public_id=?", id)
 		mustSQL(t, e)
 		check(0, identity, "v1", prefix, 1)
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET owner_target_type=?,owner_target_public_id=?,evidence_type=? WHERE public_id=?", p.manifest.Identity.OwnerType, p.manifest.Identity.OwnerID, p.manifest.Identity.Type, id)
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET owner_target_type=?,owner_target_public_id=?,evidence_type=? WHERE public_id=?", p.manifest.Identity.OwnerType, p.manifest.Identity.OwnerID, p.manifest.Identity.Type, id)
 		mustSQL(t, e)
 	})
 	if t.Failed() {
@@ -184,7 +184,7 @@ func TestAEvidenceMySQL(t *testing.T) {
 		if s.GC(ctx, []string{id})[0] != ErrConflict || store.deletes != 0 {
 			t.Fatal("retention bypass")
 		}
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET created_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 2 DAY),expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY),protected_until=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET created_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 2 DAY),expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY),protected_until=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 DAY)")
 		mustSQL(t, e)
 		_, e = db.ExecContext(ctx, "UPDATE a_owner SET referenced=TRUE")
 		mustSQL(t, e)
@@ -218,13 +218,13 @@ func TestAEvidenceMySQL(t *testing.T) {
 			t.Fatal("unknown deletion accepted")
 		}
 		var state, version string
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT storage_state,storage_immutable_version FROM system_backup_evidence").Scan(&state, &version))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT storage_state,storage_immutable_version FROM system_backup_v2_evidence").Scan(&state, &version))
 		if state != "delete_failed" || version == "" {
 			t.Fatal("lost recoverable state")
 		}
 		var health string
 		var checked, retry time.Time
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health,last_checked_at,next_reconcile_at FROM system_backup_evidence WHERE public_id=?", id).Scan(&health, &checked, &retry))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health,last_checked_at,next_reconcile_at FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&health, &checked, &retry))
 		if health != "unknown" || checked.IsZero() || !retry.Equal(checked.Add(time.Minute)) {
 			t.Fatal("GC failure observation and retry were not persisted")
 		}
@@ -235,7 +235,7 @@ func TestAEvidenceMySQL(t *testing.T) {
 	t.Run("gc_result_audit_failure_preserves_observation_and_reference", func(t *testing.T) {
 		var beforeHealth string
 		var beforeChecked, beforeRetry time.Time
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health,last_checked_at,next_reconcile_at FROM system_backup_evidence WHERE public_id=?", id).Scan(&beforeHealth, &beforeChecked, &beforeRetry))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health,last_checked_at,next_reconcile_at FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&beforeHealth, &beforeChecked, &beforeRetry))
 		var beforeAudits int
 		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM a_audit WHERE action='evidence.gc.result'").Scan(&beforeAudits))
 		_, e = db.ExecContext(ctx, `CREATE TRIGGER a_reject_result BEFORE INSERT ON a_audit FOR EACH ROW BEGIN IF NEW.action='evidence.gc.result' THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='synthetic GC result audit failure'; END IF; END`)
@@ -248,15 +248,15 @@ func TestAEvidenceMySQL(t *testing.T) {
 		mustSQL(t, e)
 		var state, version, health string
 		var checked, retry time.Time
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT storage_state,storage_immutable_version,observed_health,last_checked_at,next_reconcile_at FROM system_backup_evidence WHERE public_id=?", id).Scan(&state, &version, &health, &checked, &retry))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT storage_state,storage_immutable_version,observed_health,last_checked_at,next_reconcile_at FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&state, &version, &health, &checked, &retry))
 		var audits, chunks int
 		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM a_audit WHERE action='evidence.gc.result'").Scan(&audits))
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence_chunks").Scan(&chunks))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence_chunks").Scan(&chunks))
 		if state != "deleting" || version == "" || health != beforeHealth || !checked.Equal(beforeChecked) || !retry.Equal(beforeRetry) || audits != beforeAudits || chunks != 2 {
 			t.Fatal("failed result transaction changed durable GC observation/ref/audit")
 		}
 		// Simulate later takeover solely inside this run-owned test database.
-		_, e = db.ExecContext(ctx, "UPDATE system_backup_evidence SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE public_id=?", id)
+		_, e = db.ExecContext(ctx, "UPDATE system_backup_v2_evidence SET claim_expires_at=DATE_SUB(UTC_TIMESTAMP(6),INTERVAL 1 SECOND) WHERE public_id=?", id)
 		mustSQL(t, e)
 	})
 	if t.Failed() {
@@ -266,17 +266,17 @@ func TestAEvidenceMySQL(t *testing.T) {
 		deletes := store.deletes
 		mustSQL(t, s.GC(ctx, []string{id})[0])
 		var count int
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence WHERE storage_state='deleted' AND storage_relative_key IS NULL AND content_checksum IS NOT NULL").Scan(&count))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence WHERE storage_state='deleted' AND storage_relative_key IS NULL AND content_checksum IS NOT NULL").Scan(&count))
 		if count != 1 {
 			t.Fatal("minimum tombstone missing")
 		}
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence_chunks").Scan(&count))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence_chunks").Scan(&count))
 		if count != 0 {
 			t.Fatal("chunks retained")
 		}
 		var health string
 		var checked, retry sql.NullTime
-		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health,last_checked_at,next_reconcile_at FROM system_backup_evidence WHERE public_id=?", id).Scan(&health, &checked, &retry))
+		mustSQL(t, db.QueryRowContext(ctx, "SELECT observed_health,last_checked_at,next_reconcile_at FROM system_backup_v2_evidence WHERE public_id=?", id).Scan(&health, &checked, &retry))
 		if health != "unknown" || !checked.Valid || retry.Valid || store.deletes != deletes {
 			t.Fatal("confirmed absence retained retry or repeated DELETE")
 		}

@@ -59,7 +59,7 @@ func (c *operationConn) QueryContext(_ context.Context, query string, args []dri
 		return nil, errors.New("synthetic query failure")
 	}
 	if !strings.Contains(query, operationProjectionColumns) ||
-		!strings.Contains(query, "FROM system_backup_operations") ||
+		!strings.Contains(query, "FROM system_backup_v2_operations") ||
 		!strings.Contains(query, "WHERE origin_installation_id=? AND public_id=? FOR SHARE") ||
 		strings.Contains(query, "failure_message") || strings.Contains(query, "external_action_public_ids_canonical_json") ||
 		strings.Contains(query, "redacted_response_evidence_id") || len(args) != 2 ||
@@ -85,7 +85,7 @@ func operationTestFixture() *operationFixture {
 }
 
 func TestOperationProjectionMatchesMigrationWithoutSensitiveColumns(t *testing.T) {
-	raw, err := os.ReadFile("../db/migrations/066_add_system_backup_config_and_operations.sql")
+	raw, err := os.ReadFile("../db/migrations/097_backup_v2_add_system_backup_config_and_operations.sql")
 	if err != nil {
 		t.Fatal(err)
 	}

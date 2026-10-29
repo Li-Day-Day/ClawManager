@@ -280,7 +280,7 @@ func (p *claimPolicy) LockAndAuthorize(ctx context.Context, tx SQL, scope Scope)
 // The full original evidence bytes were validated by the locked A adapter.
 // This additional CAS binds all changing columns and system ownership; it never
 // edits manifest/chunks, health, provider result, retention or observation.
-const publicationClaimCAS = `UPDATE system_backup_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner <=> ? AND claim_expires_at <=> ?`
+const publicationClaimCAS = `UPDATE system_backup_v2_evidence SET claim_owner=?,claim_expires_at=?,row_version=row_version+1,updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND row_version=? AND owner_target_type='system' AND owner_target_public_id=? AND evidence_type='capability_snapshot' AND storage_state=? AND claim_owner <=> ? AND claim_expires_at <=> ?`
 
 func (p *claimPolicy) write(ctx context.Context, tx *Transaction) error {
 	b, env := p.binding, p.environment

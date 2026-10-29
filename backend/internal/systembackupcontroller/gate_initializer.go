@@ -34,7 +34,7 @@ func (i SQLGateInitializer) Ensure(ctx context.Context, installationID string, p
 	if err := policy.Validate(); err != nil {
 		return err
 	}
-	_, err := i.DB.ExecContext(ctx, `INSERT INTO system_maintenance_locks (
+	_, err := i.DB.ExecContext(ctx, `INSERT INTO system_backup_v2_maintenance_locks (
   origin_installation_id,
   scope,
   lock_ttl_seconds

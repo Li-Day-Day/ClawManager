@@ -121,7 +121,7 @@ func (s *systemPreparationCallSession) Recheck(ctx context.Context, tx pd.ReadSQ
 }
 
 func lockSystemPreparationAbsent(ctx context.Context, tx pd.ReadSQL, id pd.EvidenceID) error {
-	rows, err := tx.QueryContext(ctx, "SELECT id FROM system_backup_evidence WHERE public_id=? FOR UPDATE", id)
+	rows, err := tx.QueryContext(ctx, "SELECT id FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", id)
 	if err != nil {
 		return ErrUnavailable
 	}

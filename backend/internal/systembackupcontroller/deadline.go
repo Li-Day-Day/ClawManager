@@ -41,15 +41,15 @@ func deadlineSQL(descriptor targetDescriptor, kind TargetKind) (deadlineDescript
 			descriptor.leaseColumn,
 		)
 		noSideEffectGuard = fmt.Sprintf(
-			"NOT EXISTS (SELECT 1 FROM system_backup_attempts AS attempt WHERE attempt.target_type = '%s' AND attempt.target_public_id = %s.public_id)",
+			"NOT EXISTS (SELECT 1 FROM system_backup_v2_attempts AS attempt WHERE attempt.target_type = '%s' AND attempt.target_public_id = %s.public_id)",
 			kind,
 			descriptor.table,
 		)
 		if kind == TargetBackup {
-			noSideEffectGuard += " AND NOT EXISTS (SELECT 1 FROM system_backup_external_actions AS action WHERE action.target_type = 'backup' AND action.target_public_id = system_backups.public_id)"
+			noSideEffectGuard += " AND NOT EXISTS (SELECT 1 FROM system_backup_v2_external_actions AS action WHERE action.target_type = 'backup' AND action.target_public_id = system_backup_v2_backups.public_id)"
 		} else {
 			noSideEffectGuard += fmt.Sprintf(
-				" AND NOT EXISTS (SELECT 1 FROM system_artifact_leases AS artifact_lease WHERE artifact_lease.holder_type = '%s' AND artifact_lease.holder_public_id = %s.public_id)",
+				" AND NOT EXISTS (SELECT 1 FROM system_backup_v2_artifact_leases AS artifact_lease WHERE artifact_lease.holder_type = '%s' AND artifact_lease.holder_public_id = %s.public_id)",
 				kind,
 				descriptor.table,
 			)
@@ -72,7 +72,7 @@ func deadlineSQL(descriptor targetDescriptor, kind TargetKind) (deadlineDescript
 		noSideEffectGuard,
 	)
 	eventSQL := fmt.Sprintf(
-		"INSERT INTO system_backup_events (origin_installation_id, target_type, target_public_id, event_type, level, task_status, message, details_present, detail_previous_status, detail_current_status, detail_reason, request_id) SELECT origin_installation_id, '%s', public_id, '%s', 'error', %s, '%s', TRUE, 'pending', 'failed', 'deadline_exceeded', %s FROM %s WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'failed'",
+		"INSERT INTO system_backup_v2_events (origin_installation_id, target_type, target_public_id, event_type, level, task_status, message, details_present, detail_previous_status, detail_current_status, detail_reason, request_id) SELECT origin_installation_id, '%s', public_id, '%s', 'error', %s, '%s', TRUE, 'pending', 'failed', 'deadline_exceeded', %s FROM %s WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'failed'",
 		eventTargetType,
 		eventType,
 		eventTaskStatus,
@@ -86,7 +86,7 @@ func deadlineSQL(descriptor targetDescriptor, kind TargetKind) (deadlineDescript
 		// therefore observes its immutable purpose/config in the same transaction;
 		// functional-test rows select nothing. A duplicate state row advances once
 		// only because this statement runs after the one-row pending CAS.
-		acceptanceSQL = fmt.Sprintf(`INSERT INTO system_backup_alert_states
+		acceptanceSQL = fmt.Sprintf(`INSERT INTO system_backup_v2_alert_states
   (origin_installation_id, rule_key, matrix_key, task_type, task_purpose,
    consecutive_anomaly_count, first_anomaly_at, last_observed_at, config_version)
 SELECT incoming.origin_installation_id, ?, 'all', '%s', 'acceptance',

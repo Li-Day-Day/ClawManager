@@ -30,7 +30,7 @@ func loadSystemHistoricalRecord(ctx context.Context, tx *pd.Transaction, history
 		return Record{}, ErrIntegrity
 	}
 	const columns = "id,envelope_hash,chunk_list_root,storage_immutable_version"
-	rows, err := tx.QueryContext(ctx, "SELECT "+columns+" FROM system_backup_evidence WHERE public_id=? FOR UPDATE", h.Evidence.EvidenceID)
+	rows, err := tx.QueryContext(ctx, "SELECT "+columns+" FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", h.Evidence.EvidenceID)
 	if err != nil {
 		return Record{}, ErrUnavailable
 	}
@@ -65,7 +65,7 @@ func loadSystemHistoricalRecord(ctx context.Context, tx *pd.Transaction, history
 	if err := finishSystemPendingRows(rows); err != nil {
 		return Record{}, err
 	}
-	chunkRows, err := tx.QueryContext(ctx, "SELECT "+systemPendingChunkColumns+" FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE", id.Int64)
+	chunkRows, err := tx.QueryContext(ctx, "SELECT "+systemPendingChunkColumns+" FROM system_backup_v2_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE", id.Int64)
 	if err != nil {
 		return Record{}, ErrUnavailable
 	}

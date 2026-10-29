@@ -349,9 +349,9 @@ func TestRestoreWriteRejectsInvalidAndLateFacts(t *testing.T) {
 				s.readback.field.target = "system_image_settings"
 				s.readback.field.failure = "schema_extra"
 			case "control_before":
-				s.readback.nonempty = "system_backups"
+				s.readback.nonempty = "system_backup_v2_backups"
 			case "control_after":
-				s.mutationHook = func() { s.readback.nonempty = "system_backups" }
+				s.mutationHook = func() { s.readback.nonempty = "system_backup_v2_backups" }
 			case "coercion":
 				s.corruptAt = 27
 			case "cancel_before":

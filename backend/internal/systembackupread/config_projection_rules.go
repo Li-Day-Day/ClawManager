@@ -1,7 +1,7 @@
 // Generated from the v12 ConfigValues schema; TestConfigProjectionRulesMatchContract pins the source.
 package systembackupread
 
-const configProjectionSchemaSHA256 = "6d1c88a46406bc4488b6c7f35545ffc4dfd286e3b020cea916e1980f07e1a865"
+const configProjectionSchemaSHA256 = "5da5a1fe5f6ebaaac824c2ffb9d70569bc9f5a0eb80e7b09cd20a22ec4144156"
 
 var configNumericBounds = map[string]map[string]configNumberBound{
 	"durations": {

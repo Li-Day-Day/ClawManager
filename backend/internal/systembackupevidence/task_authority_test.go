@@ -165,13 +165,13 @@ func newTaskFixture(t *testing.T, s3 bool) *taskFixture {
 		{"SELECT @@server_uuid", nil, []driver.Value{c.ServerUUID, c.Database, now, int64(0)}},
 		{"ORDER BY origin_installation_id FOR UPDATE", nil, []driver.Value{c.Installation}},
 		{"SELECT active_config_version,last_effective_enabled", []driver.Value{c.Installation}, []driver.Value{c.ConfigVersion, true}},
-		{"FROM system_backup_configs", []driver.Value{c.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, int64(2), true, c.Store.Identity, c.Store.Version, c.Write.Identity, c.Write.Version}},
-		{"FROM system_backups", []driver.Value{c.Installation, c.OwnerID}, []driver.Value{c.ConfigVersion, c.ConfigSHA256, int64(2), []byte(`{}`), "capturing", c.ControllerOwner, now.Add(2 * time.Minute), now.Add(5 * time.Minute)}},
+		{"FROM system_backup_v2_configs", []driver.Value{c.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, int64(2), true, c.Store.Identity, c.Store.Version, c.Write.Identity, c.Write.Version}},
+		{"FROM system_backup_v2_backups", []driver.Value{c.Installation, c.OwnerID}, []driver.Value{c.ConfigVersion, c.ConfigSHA256, int64(2), []byte(`{}`), "capturing", c.ControllerOwner, now.Add(2 * time.Minute), now.Add(5 * time.Minute)}},
 		{"ORDER BY attempt_no DESC LIMIT 1 FOR UPDATE", []driver.Value{c.OwnerType, c.OwnerID, c.Phase}, []driver.Value{c.Attempt, "running"}},
-		{"FROM system_backup_job_observations", []driver.Value{c.Installation, c.OwnerType, c.OwnerID, c.Attempt, c.Phase, c.JobUnit}, []driver.Value{c.JobUID, c.JobGeneration, c.RelayIdentity, c.RelayVersion, now.Add(-time.Minute), now.Add(3 * time.Minute)}},
+		{"FROM system_backup_v2_job_observations", []driver.Value{c.Installation, c.OwnerType, c.OwnerID, c.Attempt, c.Phase, c.JobUnit}, []driver.Value{c.JobUID, c.JobGeneration, c.RelayIdentity, c.RelayVersion, now.Add(-time.Minute), now.Add(3 * time.Minute)}},
 	}
 	if s3 {
-		d.plan = append(d.plan, authorityQuery{"FROM system_backup_evidence WHERE public_id=? FOR UPDATE", []driver.Value{f.identity.ID}, []driver.Value{
+		d.plan = append(d.plan, authorityQuery{"FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", []driver.Value{f.identity.ID}, []driver.Value{
 			c.OwnerType, c.OwnerID, f.identity.Type, f.identity.Media, c.Classification, f.identity.ContentHash, f.identity.ContentSize, "pending", "evidence", c.Store.Identity, c.Store.Version, objectKey, hash([]byte(objectKey)), nil,
 			strings.Repeat("c", 64), int64(20000), "envelope_v1", Framing, f.record.Claim, now.Add(25 * time.Second), now.Add(time.Hour), int64(2),
 		}})

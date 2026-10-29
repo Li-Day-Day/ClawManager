@@ -99,7 +99,7 @@ func newMaintenanceMySQLFixture(t *testing.T, ctx context.Context, db *sql.DB, i
 	// Insert the complete generated legacy row without a canonical value. Never
 	// discover/modify an existing installation or reconstruct historical bytes.
 	columns, args := config.sqlValues(f.installation, "synthetic-maintenance-probe", "synthetic original row")
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_configs("+strings.Join(columns, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
 	mysqlMust(t, err)
 	t.Cleanup(func() {
 		cleanup, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -114,7 +114,7 @@ func newMaintenanceMySQLFixture(t *testing.T, ctx context.Context, db *sql.DB, i
 			t.Error("CLEANUP_PENDING maintenance identity")
 			return
 		}
-		for _, q := range []string{"DELETE FROM system_backup_config_maintenance_receipts WHERE origin_installation_id=?", "DELETE FROM audit_logs WHERE action IN ('system_backup.config_canonical_backfill.intent','system_backup.config_canonical_backfill.result') AND JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?", "DELETE FROM system_backup_configs WHERE origin_installation_id=?"} {
+		for _, q := range []string{"DELETE FROM system_backup_v2_config_maintenance_receipts WHERE origin_installation_id=?", "DELETE FROM audit_logs WHERE action IN ('system_backup.config_canonical_backfill.intent','system_backup.config_canonical_backfill.result') AND JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?", "DELETE FROM system_backup_v2_configs WHERE origin_installation_id=?"} {
 			if _, e = tx.ExecContext(cleanup, q, f.installation); e != nil {
 				t.Error("CLEANUP_PENDING maintenance owned rows")
 				return
@@ -125,7 +125,7 @@ func newMaintenanceMySQLFixture(t *testing.T, ctx context.Context, db *sql.DB, i
 			return
 		}
 		var n int
-		if db.QueryRowContext(cleanup, "SELECT (SELECT COUNT(*) FROM system_backup_config_maintenance_receipts WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_configs WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM audit_logs WHERE JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?)", f.installation, f.installation, f.installation).Scan(&n) != nil || n != 0 {
+		if db.QueryRowContext(cleanup, "SELECT (SELECT COUNT(*) FROM system_backup_v2_config_maintenance_receipts WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM system_backup_v2_configs WHERE origin_installation_id=?)+(SELECT COUNT(*) FROM audit_logs WHERE JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?)", f.installation, f.installation, f.installation).Scan(&n) != nil || n != 0 {
 			t.Error("CLEANUP_PENDING maintenance row absence")
 			return
 		}
@@ -181,7 +181,7 @@ func (f *maintenanceMySQLFixture) prepare(ctx context.Context, tx *sql.Tx) (conf
 		return zero, err
 	}
 	if wrote {
-		result, e := tx.ExecContext(ctx, "UPDATE system_backup_configs SET canonical_config_json=? WHERE id=? AND origin_installation_id=? AND version=1 AND canonical_config_json IS NULL AND config_sha256=?", append([]byte(nil), f.original...), row.rowID, f.installation, f.scope.identity.ConfigSHA)
+		result, e := tx.ExecContext(ctx, "UPDATE system_backup_v2_configs SET canonical_config_json=? WHERE id=? AND origin_installation_id=? AND version=1 AND canonical_config_json IS NULL AND config_sha256=?", append([]byte(nil), f.original...), row.rowID, f.installation, f.scope.identity.ConfigSHA)
 		if !configMutationOne(result, e) {
 			return zero, ErrConfigMutation
 		}
@@ -214,7 +214,7 @@ func (f *maintenanceMySQLFixture) begin(ctx context.Context, db *sql.DB) (*sql.T
 func (f *maintenanceMySQLFixture) assert(t *testing.T, ctx context.Context, receipts, audits int, filled bool) {
 	t.Helper()
 	var r, a int
-	mysqlMust(t, f.db.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM system_backup_config_maintenance_receipts WHERE origin_installation_id=?),(SELECT COUNT(*) FROM audit_logs WHERE JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?)", f.installation, f.installation).Scan(&r, &a))
+	mysqlMust(t, f.db.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM system_backup_v2_config_maintenance_receipts WHERE origin_installation_id=?),(SELECT COUNT(*) FROM audit_logs WHERE JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?)", f.installation, f.installation).Scan(&r, &a))
 	if r != receipts || a != audits {
 		t.Fatal("maintenance atomic row counts differ", r, a)
 	}
@@ -270,7 +270,7 @@ func maintenanceProbeDatabase(t *testing.T) (context.Context, *sql.DB, *mysql.Co
 		t.Fatal("full migration ledger differs")
 	}
 	var present int
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' AND COLUMN_NAME='canonical_config_json')+(SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_config_maintenance_receipts')").Scan(&present))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_configs' AND COLUMN_NAME='canonical_config_json')+(SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_config_maintenance_receipts')").Scan(&present))
 	if present != 0 {
 		t.Fatal("candidate schema unexpectedly preinstalled")
 	}
@@ -278,7 +278,7 @@ func maintenanceProbeDatabase(t *testing.T) (context.Context, *sql.DB, *mysql.Co
 	mysqlMust(t, err)
 	_, err = db.ExecContext(ctx, input.MaintenanceDDL)
 	mysqlMust(t, err)
-	for _, table := range []string{"system_backup_configs", "system_backup_config_maintenance_receipts", "audit_logs"} {
+	for _, table := range []string{"system_backup_v2_configs", "system_backup_v2_config_maintenance_receipts", "audit_logs"} {
 		var engine string
 		mysqlMust(t, db.QueryRowContext(ctx, "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?", table).Scan(&engine))
 		if engine != "InnoDB" {
@@ -297,7 +297,7 @@ func TestDConfigMaintenanceReceiptMySQL(t *testing.T) {
 			switch name {
 			case "receipt_failure_atomic_rollback", "result_audit_failure_atomic_rollback":
 				trigger := "dmr_" + strings.TrimPrefix(f.installation, "installation_maintenance_probe_")
-				table, predicate := "system_backup_config_maintenance_receipts", "NEW.origin_installation_id='"+f.installation+"'"
+				table, predicate := "system_backup_v2_config_maintenance_receipts", "NEW.origin_installation_id='"+f.installation+"'"
 				if name == "result_audit_failure_atomic_rollback" {
 					table = "audit_logs"
 					predicate = "NEW.action='system_backup.config_canonical_backfill.result' AND JSON_UNQUOTE(JSON_EXTRACT(NEW.details,'$.origin_installation_id'))='" + f.installation + "'"
@@ -446,13 +446,13 @@ func TestDConfigMaintenanceReceiptMySQL(t *testing.T) {
 							code = 1452
 						}
 						values = append(values, f.installation)
-						_, e = db.ExecContext(ctx, "INSERT INTO system_backup_config_maintenance_receipts("+strings.Join(columns, ",")+") SELECT "+strings.Join(expressions, ",")+" FROM system_backup_config_maintenance_receipts WHERE origin_installation_id=?", values...)
+						_, e = db.ExecContext(ctx, "INSERT INTO system_backup_v2_config_maintenance_receipts("+strings.Join(columns, ",")+") SELECT "+strings.Join(expressions, ",")+" FROM system_backup_v2_config_maintenance_receipts WHERE origin_installation_id=?", values...)
 						maintenanceProbeError(t, e, code)
 					})
 				}
 				_, e = db.ExecContext(ctx, "DELETE FROM audit_logs WHERE id=?", r.policy.intentID)
 				maintenanceProbeError(t, e, 1451)
-				_, e = db.ExecContext(ctx, "DELETE FROM system_backup_configs WHERE origin_installation_id=?", f.installation)
+				_, e = db.ExecContext(ctx, "DELETE FROM system_backup_v2_configs WHERE origin_installation_id=?", f.installation)
 				maintenanceProbeError(t, e, 1451)
 				f.assert(t, ctx, 1, 2, true)
 			case "lost_commit_reply_observation":
@@ -518,7 +518,7 @@ func TestDConfigMaintenanceReceiptMySQL(t *testing.T) {
 						t.Error("maintenance worker did not drain")
 					}
 				}()
-				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, sessionProbeWorker{id: connectionID, result: done}, "system_backup_configs")
+				(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, sessionProbeWorker{id: connectionID, result: done}, "system_backup_v2_configs")
 				r, e := f.prepare(ctx, first)
 				mysqlMust(t, e)
 				mysqlMust(t, first.Commit())

@@ -7,12 +7,12 @@ import (
 	"time"
 )
 
-const downloadResultRetentionKeySQL = `SELECT operation_id FROM system_backup_download_result_receipts WHERE operation_id=? FOR UPDATE`
-const downloadResultRetentionInsertSQL = `INSERT INTO system_backup_download_result_receipts
+const downloadResultRetentionKeySQL = `SELECT operation_id FROM system_backup_v2_download_result_receipts WHERE operation_id=? FOR UPDATE`
+const downloadResultRetentionInsertSQL = `INSERT INTO system_backup_v2_download_result_receipts
 (operation_id,origin_installation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,result_audit_id,result_size_bytes,result_sha256,result_at,retain_until)
 VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 const downloadResultRetentionReadSQL = `SELECT operation_id,origin_installation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,result_audit_id,result_size_bytes,result_sha256,result_at,retain_until
-FROM system_backup_download_result_receipts WHERE operation_id=? AND schema_version='system-backup-evidence-download-result.v1' FOR UPDATE`
+FROM system_backup_v2_download_result_receipts WHERE operation_id=? AND schema_version='system-backup-evidence-download-result.v1' FOR UPDATE`
 
 // Lock the unique result slot at L3, before owner/ref and audit locks. A result
 // is one independent attempt; even an existing identical row cannot be replayed.

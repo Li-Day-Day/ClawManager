@@ -89,7 +89,7 @@ func TestControllerGrantMatrixAcceptsOnlyCurrentRuntimePrivileges(t *testing.T) 
 			return append(grants, "GRANT ALL PRIVILEGES ON *.* TO `sbk_controller`@`%`")
 		},
 		func(grants []string) []string {
-			return append(grants, "GRANT CREATE ON `clawmanager`.`system_backups` TO `sbk_controller`@`%`")
+			return append(grants, "GRANT CREATE ON `clawmanager`.`system_backup_v2_backups` TO `sbk_controller`@`%`")
 		},
 		func(grants []string) []string {
 			return append(grants, "GRANT SELECT ON `clawmanager`.* TO `sbk_controller`@`%`")
@@ -104,7 +104,7 @@ func TestControllerGrantMatrixAcceptsOnlyCurrentRuntimePrivileges(t *testing.T) 
 			return append(grants, "GRANT USAGE ON *.* TO `sbk_controller`@`%` WITH GRANT OPTION")
 		},
 		func(grants []string) []string {
-			return append(grants, "GRANT SELECT ON `other_schema`.`system_backups` TO `sbk_controller`@`%`")
+			return append(grants, "GRANT SELECT ON `other_schema`.`system_backup_v2_backups` TO `sbk_controller`@`%`")
 		},
 	} {
 		if err := ValidateControllerGrantStatements("clawmanager", mutate(controllerTestGrants())); err == nil {

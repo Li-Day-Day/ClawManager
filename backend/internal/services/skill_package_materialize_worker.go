@@ -177,23 +177,20 @@ func (w *SkillPackageMaterializeWorker) loop(run *skillMaterializeWorkerRun) {
 	}
 }
 
-// The permit spans the entire backfill, including cancellation. A release
-// failure is retained in the drain result, just like incomplete job cleanup.
+// Admission refusal must defer this once-per-run backfill until a later tick.
+// The permit is held through all child writes; a release failure is not an ACK.
 func (w *SkillPackageMaterializeWorker) backfill(ctx context.Context) error {
 	_, err := w.backfillAttempt(ctx)
 	return err
 }
 
-// An admission refusal defers this once-per-run attempt until a later tick.
-// Only entering a permit completes the attempt; its release (including failure)
-// finishes before any subsequent claim. Cancellation never acquires a permit.
 func (w *SkillPackageMaterializeWorker) backfillAttempt(ctx context.Context) (admitted bool, releaseErr error) {
 	if ctx.Err() != nil {
 		return false, nil
 	}
-	ctx, release, err := enterBackupMutationContext(ctx, w.BackupGate, "skill-backfill")
+	release, err := enterBackupMutation(ctx, w.BackupGate, "skill-backfill")
 	if err != nil {
-		return false, nil // admission is closed; no work has started
+		return false, nil
 	}
 	defer func() { releaseErr = release() }()
 	if ctx.Err() != nil {
@@ -213,12 +210,11 @@ func (w *SkillPackageMaterializeWorker) processBatch(ctx context.Context) (resul
 	if ctx.Err() != nil {
 		return nil
 	}
-	ctx, releasePermit, gateErr := enterBackupMutationContext(ctx, w.BackupGate, "skill-materialize")
+	releaseGate, gateErr := enterBackupMutation(ctx, w.BackupGate, "skill-materialize")
 	if gateErr != nil {
-		return nil // a closed gate is not an incomplete claim
+		return nil
 	}
-	// Release only after all child jobs and cancellation cleanup have joined.
-	defer func() { resultErr = errors.Join(resultErr, releasePermit()) }()
+	defer func() { resultErr = errors.Join(resultErr, releaseGate()) }()
 	if ctx.Err() != nil {
 		return nil
 	}

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const capacityAllocationQuery = `SELECT TABLE_NAME,TABLE_TYPE,DATA_LENGTH,INDEX_LENGTH FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND (LEFT(TABLE_NAME,14)='system_backup_' OR LEFT(TABLE_NAME,15)='system_restore_' OR TABLE_NAME='system_backups' OR TABLE_NAME='audit_logs')`
+const capacityAllocationQuery = `SELECT TABLE_NAME,TABLE_TYPE,DATA_LENGTH,INDEX_LENGTH FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND (LEFT(TABLE_NAME,14)='system_backup_' OR LEFT(TABLE_NAME,15)='system_restore_' OR TABLE_NAME='system_backup_v2_backups' OR TABLE_NAME='audit_logs')`
 
 // Start the original freshness window before measuring either physical space
 // or table allocation. Slow collection must not renew the age of old space.

@@ -125,7 +125,7 @@ func (c *recordConn) QueryContext(ctx context.Context, q string, args []driver.N
 		if strings.Contains(q, "key_ref") {
 			return &recordRows{values: []driver.Value{c.m.row.hash, c.m.row.ref, c.m.row.sealed}}, nil
 		}
-		if !c.active || !strings.HasSuffix(q, "FOR UPDATE") {
+		if !c.active || !strings.HasSuffix(q, "FOR SHARE") {
 			return nil, errors.New("unlocked receipt")
 		}
 		return &recordRows{values: []driver.Value{c.m.row.hash}}, nil
@@ -133,7 +133,7 @@ func (c *recordConn) QueryContext(ctx context.Context, q string, args []driver.N
 	return c.executionConn.QueryContext(ctx, q, args)
 }
 func (c *recordConn) ExecContext(_ context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
-	if !c.active || !strings.HasPrefix(q, "INSERT INTO system_backup_execution_records") || len(args) != 8 {
+	if !c.active || !strings.HasPrefix(q, "INSERT INTO system_backup_v2_execution_records") || len(args) != 8 {
 		return nil, errors.New("unexpected write")
 	}
 	c.m.inserts++

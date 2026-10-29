@@ -88,10 +88,10 @@ func (c *configProofConn) ExecContext(_ context.Context, q string, args []driver
 		return nil, errors.New("PRIVATE proof storage failure")
 	}
 	switch {
-	case strings.HasPrefix(q, "INSERT IGNORE INTO system_backup_totp_credentials"):
-	case strings.HasPrefix(q, "UPDATE system_backup_totp_credentials SET confirmed"):
+	case strings.HasPrefix(q, "INSERT IGNORE INTO system_backup_v2_totp_credentials"):
+	case strings.HasPrefix(q, "UPDATE system_backup_v2_totp_credentials SET confirmed"):
 		s.working.confirmed, s.working.step = true, args[0].Value.(int64)
-	case strings.HasPrefix(q, "UPDATE system_backup_totp_credentials SET failures"):
+	case strings.HasPrefix(q, "UPDATE system_backup_v2_totp_credentials SET failures"):
 		s.working.failures, s.working.locked = args[0].Value.(int64), args[1].Value
 	case strings.HasPrefix(q, "INSERT INTO audit_logs"):
 		details := "{}"
@@ -99,7 +99,7 @@ func (c *configProofConn) ExecContext(_ context.Context, q string, args []driver
 			details = args[1].Value.(string)
 		}
 		s.workingAudit = q + ":" + details
-	case strings.HasPrefix(q, "INSERT INTO system_backup_admin_sessions"):
+	case strings.HasPrefix(q, "INSERT INTO system_backup_v2_admin_sessions"):
 		s.sessionEnrollments++
 		if !s.allowEnroll {
 			return nil, errors.New("configuration proof tried to enroll a session")

@@ -77,7 +77,7 @@ func TestSQLAcceptanceAnomalyReaderUsesStableBoundedScope(t *testing.T) {
 	if counts[TargetBackup] != 2 || counts[TargetDrill] != 3 || len(counts) != 2 {
 		t.Fatalf("unexpected acceptance anomaly counts: %#v", counts)
 	}
-	for _, required := range []string{"FROM system_backup_alert_states", "matrix_key = 'all'", "task_purpose = 'acceptance'", "LIMIT 3"} {
+	for _, required := range []string{"FROM system_backup_v2_alert_states", "matrix_key = 'all'", "task_purpose = 'acceptance'", "LIMIT 3"} {
 		if !strings.Contains(state.query, required) {
 			t.Fatalf("acceptance anomaly query lacks %q: %s", required, state.query)
 		}

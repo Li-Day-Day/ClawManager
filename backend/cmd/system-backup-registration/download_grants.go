@@ -31,15 +31,15 @@ var downloadTableGrant = regexp.MustCompile("^GRANT ([A-Z ,]+) ON `([A-Za-z0-9_]
 // never issues LOCK TABLES or any grant; lock-mode/role approval is external.
 var downloadWritableTables = map[string]map[string]bool{
 	"audit_logs":                                {"INSERT": true},
-	"system_backup_operations":                  {"INSERT": true},
-	"system_backup_evidence":                    {"INSERT": true, "UPDATE": true},
-	"system_backup_download_admission_receipts": {"INSERT": true},
-	"system_backup_download_result_receipts":    {"INSERT": true},
-	"system_backup_strong_auth_nonces":          {"INSERT": true, "UPDATE": true},
-	"system_backup_metadata_reservations":       {"INSERT": true, "UPDATE": true},
-	"system_backup_admin_sessions":              {"INSERT": true, "UPDATE": true},
-	"system_backup_admin_revocations":           {"INSERT": true, "UPDATE": true},
-	"system_backup_totp_credentials":            {"INSERT": true, "UPDATE": true},
+	"system_backup_v2_operations":                  {"INSERT": true},
+	"system_backup_v2_evidence":                    {"INSERT": true, "UPDATE": true},
+	"system_backup_v2_download_admission_receipts": {"INSERT": true},
+	"system_backup_v2_download_result_receipts":    {"INSERT": true},
+	"system_backup_v2_strong_auth_nonces":          {"INSERT": true, "UPDATE": true},
+	"system_backup_v2_metadata_reservations":       {"INSERT": true, "UPDATE": true},
+	"system_backup_v2_admin_sessions":              {"INSERT": true, "UPDATE": true},
+	"system_backup_v2_admin_revocations":           {"INSERT": true, "UPDATE": true},
+	"system_backup_v2_totp_credentials":            {"INSERT": true, "UPDATE": true},
 }
 
 func downloadGrantShape(c downloadDeployment, statements []string) error {
@@ -72,7 +72,7 @@ func downloadGrantShape(c downloadDeployment, statements []string) error {
 			return errDownloadDeployment
 		}
 		table := m[3]
-		if !(strings.HasPrefix(table, "system_backup_") || strings.HasPrefix(table, "system_restore_") || table == "system_backups" || table == "users" || table == "audit_logs" || table == "schema_migrations") {
+		if !(strings.HasPrefix(table, "system_backup_") || strings.HasPrefix(table, "system_restore_") || table == "system_backup_v2_backups" || table == "users" || table == "audit_logs" || table == "schema_migrations") {
 			return errDownloadDeployment
 		}
 		privileges := map[string]bool{}
@@ -93,12 +93,12 @@ func downloadGrantShape(c downloadDeployment, statements []string) error {
 		return errDownloadDeployment
 	}
 	for table, required := range map[string][]string{
-		"system_backups": {"SELECT"}, "system_restore_drills": {"SELECT"}, "system_backup_preflights": {"SELECT"}, "system_backup_artifact_verifications": {"SELECT"},
-		"users": {"SELECT"}, "audit_logs": {"SELECT", "INSERT"}, "system_backup_installation_state": {"SELECT"}, "system_backup_configs": {"SELECT"},
-		"system_backup_operations": {"SELECT", "INSERT"}, "system_backup_evidence": {"SELECT", "INSERT", "UPDATE"}, "system_backup_evidence_chunks": {"SELECT"},
-		"system_backup_download_admission_receipts": {"SELECT", "INSERT"}, "system_backup_download_result_receipts": {"SELECT", "INSERT"},
-		"system_backup_strong_auth_nonces": {"SELECT", "INSERT"}, "system_backup_metadata_reservations": {"SELECT", "INSERT", "UPDATE"},
-		"system_backup_admin_sessions": {"SELECT", "INSERT", "UPDATE"}, "system_backup_admin_revocations": {"SELECT"}, "system_backup_totp_credentials": {"SELECT", "INSERT", "UPDATE"},
+		"system_backup_v2_backups": {"SELECT"}, "system_backup_v2_restore_drills": {"SELECT"}, "system_backup_v2_preflights": {"SELECT"}, "system_backup_v2_artifact_verifications": {"SELECT"},
+		"users": {"SELECT"}, "audit_logs": {"SELECT", "INSERT"}, "system_backup_v2_installation_state": {"SELECT"}, "system_backup_v2_configs": {"SELECT"},
+		"system_backup_v2_operations": {"SELECT", "INSERT"}, "system_backup_v2_evidence": {"SELECT", "INSERT", "UPDATE"}, "system_backup_v2_evidence_chunks": {"SELECT"},
+		"system_backup_v2_download_admission_receipts": {"SELECT", "INSERT"}, "system_backup_v2_download_result_receipts": {"SELECT", "INSERT"},
+		"system_backup_v2_strong_auth_nonces": {"SELECT", "INSERT"}, "system_backup_v2_metadata_reservations": {"SELECT", "INSERT", "UPDATE"},
+		"system_backup_v2_admin_sessions": {"SELECT", "INSERT", "UPDATE"}, "system_backup_v2_admin_revocations": {"SELECT"}, "system_backup_v2_totp_credentials": {"SELECT", "INSERT", "UPDATE"},
 	} {
 		for _, priv := range required {
 			if !byTable[table][priv] {

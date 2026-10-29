@@ -63,8 +63,6 @@ func (s SQLDeadlineStore) Acquire(ctx context.Context, installationID string, ca
 	if s.DB == nil {
 		return ClaimToken{}, errors.New("nil system backup SQL deadline database")
 	}
-	// This is still the no-side-effect pending deadline caller, not B execution.
-	// The shared entry atomically persists the claim CAS and its public receipt.
 	return (SQLTaskClaimStore{DB: s.DB, InstallationID: installationID}).AcquireWithReceipt(ctx, candidate.Target, owner, candidate.RowVersion, policy)
 }
 
@@ -95,15 +93,15 @@ func expiredPendingCandidateSQL(kind TargetKind) (string, error) {
 		return "", fmt.Errorf("unsupported pending deadline target kind %q", kind)
 	}
 	guard := fmt.Sprintf(
-		"NOT EXISTS (SELECT 1 FROM system_backup_attempts AS attempt WHERE attempt.target_type = '%s' AND attempt.target_public_id = %s.public_id)",
+		"NOT EXISTS (SELECT 1 FROM system_backup_v2_attempts AS attempt WHERE attempt.target_type = '%s' AND attempt.target_public_id = %s.public_id)",
 		kind,
 		descriptor.table,
 	)
 	if kind == TargetBackup {
-		guard += " AND NOT EXISTS (SELECT 1 FROM system_backup_external_actions AS action WHERE action.target_type = 'backup' AND action.target_public_id = system_backups.public_id)"
+		guard += " AND NOT EXISTS (SELECT 1 FROM system_backup_v2_external_actions AS action WHERE action.target_type = 'backup' AND action.target_public_id = system_backup_v2_backups.public_id)"
 	} else {
 		guard += fmt.Sprintf(
-			" AND NOT EXISTS (SELECT 1 FROM system_artifact_leases AS artifact_lease WHERE artifact_lease.holder_type = '%s' AND artifact_lease.holder_public_id = %s.public_id)",
+			" AND NOT EXISTS (SELECT 1 FROM system_backup_v2_artifact_leases AS artifact_lease WHERE artifact_lease.holder_type = '%s' AND artifact_lease.holder_public_id = %s.public_id)",
 			kind,
 			descriptor.table,
 		)

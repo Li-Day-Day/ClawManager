@@ -68,7 +68,7 @@ func TestRecoveryAuthorityReadCurrentState(t *testing.T) {
 	parent, deployment, manager, fence := -1, -1, -1, -1
 	for i, event := range db.events {
 		switch event {
-		case "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE":
+		case "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE":
 			parent = i
 		case recoveryDeploymentLockSQL:
 			deployment = i

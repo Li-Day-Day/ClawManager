@@ -13,11 +13,11 @@ import (
 
 func capacitySourceFixture(t *testing.T) CapacityCollectorConfig {
 	t.Helper()
-	return CapacityCollectorConfig{ServerUUID: "11111111-2222-3333-4444-555555555555", Database: "test_capacity", User: "capacity_reader", DataDir: t.TempDir(), Tables: []string{"audit_logs", "system_backup_configs", "system_backups"}}
+	return CapacityCollectorConfig{ServerUUID: "11111111-2222-3333-4444-555555555555", Database: "test_capacity", User: "capacity_reader", DataDir: t.TempDir(), Tables: []string{"audit_logs", "system_backup_v2_configs", "system_backup_v2_backups"}}
 }
 func TestCapacityExactDirectGrants(t *testing.T) {
 	c := capacitySourceFixture(t)
-	grants := []string{"GRANT USAGE ON *.* TO 'capacity_reader'@'localhost'", "GRANT SELECT ON `test_capacity`.`audit_logs` TO 'capacity_reader'@'localhost'", "GRANT SELECT ON `test_capacity`.`system_backup_configs` TO 'capacity_reader'@'localhost'", "GRANT SELECT ON `test_capacity`.`system_backups` TO 'capacity_reader'@'localhost'"}
+	grants := []string{"GRANT USAGE ON *.* TO 'capacity_reader'@'localhost'", "GRANT SELECT ON `test_capacity`.`audit_logs` TO 'capacity_reader'@'localhost'", "GRANT SELECT ON `test_capacity`.`system_backup_v2_configs` TO 'capacity_reader'@'localhost'", "GRANT SELECT ON `test_capacity`.`system_backup_v2_backups` TO 'capacity_reader'@'localhost'"}
 	if ValidateCapacityGrants(c, grants) != nil {
 		t.Fatal("exact reader grants rejected")
 	}

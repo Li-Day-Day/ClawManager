@@ -136,18 +136,18 @@ const overviewInstallationSQL = `SELECT s.schema_version,s.origin_installation_i
 s.first_enabled_at,s.last_effective_enabled,s.monitoring_armed,s.monitoring_armed_reason,s.matrix_key,
 c.schema_version,c.origin_installation_id,c.version,c.row_version,c.enabled,
 UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))
-FROM system_backup_installation_state AS s
-JOIN system_backup_configs AS c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
+FROM system_backup_v2_installation_state AS s
+JOIN system_backup_v2_configs AS c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
 WHERE s.origin_installation_id=? FOR SHARE`
 
 // All four task contributions are read by one statement, at the same
 // transaction snapshot as operations. No raw config, failure text or evidence
 // payload is selected. Empty tables are initialized to explicit zero counts.
-const overviewTaskCountsSQL = `SELECT 'backup',schema_version,task_type,status,COUNT(*) FROM system_backups WHERE origin_installation_id=? GROUP BY schema_version,task_type,status
-UNION ALL SELECT 'drill',schema_version,task_type,status,COUNT(*) FROM system_restore_drills WHERE origin_installation_id=? GROUP BY schema_version,task_type,status
-UNION ALL SELECT 'preflight',schema_version,task_type,status,COUNT(*) FROM system_backup_preflights WHERE origin_installation_id=? GROUP BY schema_version,task_type,status
-UNION ALL SELECT 'artifact_verify',schema_version,task_type,status,COUNT(*) FROM system_backup_artifact_verifications WHERE origin_installation_id=? GROUP BY schema_version,task_type,status`
-const overviewOperationCountsSQL = `SELECT schema_version,status,COUNT(*) FROM system_backup_operations WHERE origin_installation_id=? GROUP BY schema_version,status`
+const overviewTaskCountsSQL = `SELECT 'backup',schema_version,task_type,status,COUNT(*) FROM system_backup_v2_backups WHERE origin_installation_id=? GROUP BY schema_version,task_type,status
+UNION ALL SELECT 'drill',schema_version,task_type,status,COUNT(*) FROM system_backup_v2_restore_drills WHERE origin_installation_id=? GROUP BY schema_version,task_type,status
+UNION ALL SELECT 'preflight',schema_version,task_type,status,COUNT(*) FROM system_backup_v2_preflights WHERE origin_installation_id=? GROUP BY schema_version,task_type,status
+UNION ALL SELECT 'artifact_verify',schema_version,task_type,status,COUNT(*) FROM system_backup_v2_artifact_verifications WHERE origin_installation_id=? GROUP BY schema_version,task_type,status`
+const overviewOperationCountsSQL = `SELECT schema_version,status,COUNT(*) FROM system_backup_v2_operations WHERE origin_installation_id=? GROUP BY schema_version,status`
 
 func readOverviewControl(ctx context.Context, q overviewReadSQL, installation string) (OverviewControlSnapshot, error) {
 	var zero OverviewControlSnapshot

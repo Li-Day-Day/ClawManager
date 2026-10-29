@@ -112,18 +112,8 @@ clients. DNS, TLS, and verification requirements are documented in the
 
 ### 6. Apply The Manifest
 
-Provision the broker TLS Secret and public CA ConfigMap before applying the
-profile. Production installations should use their reviewed PKI; the repository
-bootstrap is intended for self-contained test installations:
-
-```sh
-KUBE_CONTEXT="$(kubectl config current-context)" SOURCE_NAMESPACE=clawmanager-system \
-  bash ../../../scripts/secret-broker-pki-bootstrap.sh
-```
-
 ```sh
 kubectl apply -f clawmanager.yaml
-kubectl -n clawmanager-system rollout status deployment/clawmanager-secret-broker --timeout=5m
 ```
 
 ### 7. Check ClawManager

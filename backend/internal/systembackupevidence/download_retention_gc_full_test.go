@@ -174,7 +174,7 @@ func configureFullGC(t *testing.T, f *retentionGCFixture) (*fullGCConn, *fullGCO
 	}
 	c := &fullGCConn{gcFrozenWorkConn: &gcFrozenWorkConn{retentionGCModel: f.d}}
 	c.grants = append([]string(nil), f.d.early.grants...)
-	c.grants = append(c.grants, "GRANT INSERT ON `"+f.d.identity.Database+"`.`system_backup_metadata_reservations` TO 'download_gc'@'localhost'")
+	c.grants = append(c.grants, "GRANT INSERT ON `"+f.d.identity.Database+"`.`system_backup_v2_metadata_reservations` TO 'download_gc'@'localhost'")
 	for _, body := range []string{"BACKUP_ADMIN ON *.*", "SELECT ON `performance_schema`.`metadata_locks`", "SELECT ON `performance_schema`.`threads`"} {
 		c.grants = append(c.grants, "GRANT "+body+" TO 'download_gc'@'localhost'")
 	}
@@ -344,7 +344,7 @@ func TestDownloadGCFullRejectsClockBetweenCapacityAndOwnerSamples(t *testing.T) 
 	advanced, regressed := false, false
 	initialReservation := f.d.reserved
 	c.beforeQuery = func(q string) {
-		if !advanced && q == "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))" && f.d.reserved > initialReservation && len(f.d.queries) > 0 && f.d.queries[len(f.d.queries)-1] == "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE" {
+		if !advanced && q == "SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6),TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))" && f.d.reserved > initialReservation && len(f.d.queries) > 0 && f.d.queries[len(f.d.queries)-1] == "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE" {
 			f.d.now = f.d.now.Add(2 * time.Microsecond)
 			advanced = true
 		}
@@ -391,7 +391,7 @@ func TestDownloadGCFullGrantsSeparateProfile(t *testing.T) {
 			case "escaped_recipient":
 				ss[0] = "GRANT REFERENCES ON *.* TO 'download_gc\\'@\\'localhost'"
 			case "cross_database":
-				ss = append(ss, "GRANT SELECT ON `other`.`system_backup_operations` TO 'download_gc'@'localhost'")
+				ss = append(ss, "GRANT SELECT ON `other`.`system_backup_v2_operations` TO 'download_gc'@'localhost'")
 			case "repinned_extra_table":
 				ss = append(ss, "GRANT SELECT ON `"+f.d.identity.Database+"`.`system_unreviewed_catalog` TO 'download_gc'@'localhost'")
 			case "global_select":
@@ -455,7 +455,7 @@ func TestDownloadGCFullReservationInsertPrivilege(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	object := "`" + f.d.identity.Database + "`.`system_backup_metadata_reservations`"
+	object := "`" + f.d.identity.Database + "`.`system_backup_v2_metadata_reservations`"
 	to := " TO 'download_gc'@'localhost'"
 	for _, mode := range []string{"separate", "merged", "missing", "duplicate", "other_table", "other_database", "column_insert", "grant_option", "combined_extra", "wrong_complete_hash"} {
 		t.Run(mode, func(t *testing.T) {
@@ -477,10 +477,10 @@ func TestDownloadGCFullReservationInsertPrivilege(t *testing.T) {
 				statements = append(statements, "GRANT INSERT ON "+object+to)
 			case "other_table":
 				statement = "GRANT SELECT, UPDATE ON " + object + to
-				statements = append(statements, "GRANT INSERT ON `"+f.d.identity.Database+"`.`system_backup_operations`"+to)
+				statements = append(statements, "GRANT INSERT ON `"+f.d.identity.Database+"`.`system_backup_v2_operations`"+to)
 			case "other_database":
 				statement = "GRANT SELECT, UPDATE ON " + object + to
-				statements = append(statements, "GRANT INSERT ON `other`.`system_backup_metadata_reservations`"+to)
+				statements = append(statements, "GRANT INSERT ON `other`.`system_backup_v2_metadata_reservations`"+to)
 			case "column_insert":
 				statement = "GRANT SELECT, UPDATE, INSERT (`id`) ON " + object + to
 			case "grant_option":

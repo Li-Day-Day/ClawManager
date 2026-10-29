@@ -54,11 +54,11 @@ func TestSystemHistoricalDeploymentGuardMySQL(t *testing.T) {
 		t.Fatalf("missing installation admitted: %v", err)
 	}
 	mustSQL(t, missingTx.Rollback())
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_deployments
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_deployments
 (scope_key,origin_installation_id,workload_identity_hash,issuer_identity_hash,subject_hash,management_issuer_identity_hash,actor_identity_hash,admission_hash,client_ca_sha256,certificate_sha256,stat_profile_hash,enabled,deployment_epoch,authorized_until,row_version)
 VALUES (?,?,?,?,?,?,?,?,?,?,?,TRUE,1,?,1)`, key, string(scope.Installation),
 		decode(facts.WorkloadIdentityHash), decode(facts.IssuerIdentityHash), decode(facts.SubjectHash), decode(manager),
@@ -90,18 +90,18 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,TRUE,1,?,1)`, key, string(scope.Installation),
 	if err := guard.Admit(facts, badAdmission, now); err != ErrDenied {
 		t.Fatalf("changed L2 epoch accepted: %v", err)
 	}
-	_, err = tx.ExecContext(ctx, "UPDATE system_backup_recovery_deployments SET row_version=2 WHERE scope_key=?", key)
+	_, err = tx.ExecContext(ctx, "UPDATE system_backup_v2_recovery_deployments SET row_version=2 WHERE scope_key=?", key)
 	mustSQL(t, err)
 	if err := guard.Recheck(ctx, historicalDeploymentTx{tx}, facts, admission, now); err != ErrDenied {
 		t.Fatalf("changed deployment version accepted: %v", err)
 	}
 	mustSQL(t, tx.Rollback())
 	var version int64
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT row_version FROM system_backup_recovery_deployments WHERE scope_key=?", key).Scan(&version))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT row_version FROM system_backup_v2_recovery_deployments WHERE scope_key=?", key).Scan(&version))
 	if version != 1 {
 		t.Fatalf("guard failure committed drift: version=%d", version)
 	}
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_producer_recovery_revocations
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_producer_recovery_revocations
 (scope_key,workload_identity_hash,revocation_epoch,revoked_at,row_version,updated_at)
 VALUES (?,?,1,NULL,1,UTC_TIMESTAMP(6))`, key, decode(facts.WorkloadIdentityHash))
 	mustSQL(t, err)
@@ -140,13 +140,13 @@ VALUES (?,?,1,NULL,1,UTC_TIMESTAMP(6))`, key, decode(facts.WorkloadIdentityHash)
 	if err := session.Recheck(ctx, historicalDeploymentTx{boundTx}, r, h, admitted, now); err != nil || !inner.checked {
 		t.Fatal("bound authority skipped current deployment or delegated final guard:", err)
 	}
-	_, err = boundTx.ExecContext(ctx, "UPDATE system_backup_producer_recovery_revocations SET row_version=2 WHERE scope_key=? AND workload_identity_hash=?", key, decode(facts.WorkloadIdentityHash))
+	_, err = boundTx.ExecContext(ctx, "UPDATE system_backup_v2_producer_recovery_revocations SET row_version=2 WHERE scope_key=? AND workload_identity_hash=?", key, decode(facts.WorkloadIdentityHash))
 	mustSQL(t, err)
 	if err := session.Recheck(ctx, historicalDeploymentTx{boundTx}, r, h, admitted, now); err != ErrDenied {
 		t.Fatalf("changed L2 row version accepted by final guard: %v", err)
 	}
 	mustSQL(t, boundTx.Rollback())
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_recovery_deployments SET enabled=FALSE WHERE scope_key=?", key)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_recovery_deployments SET enabled=FALSE WHERE scope_key=?", key)
 	mustSQL(t, err)
 	disabledTx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 	mustSQL(t, err)

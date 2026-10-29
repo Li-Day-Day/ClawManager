@@ -51,7 +51,7 @@ func (r *Reader) VerifyConfigBackfillSource(ctx context.Context, version uint64,
 	}
 	query := `SELECT c.schema_version,c.origin_installation_id,c.version,c.row_version,
   c.config_sha256,c.config_size_bytes,c.created_by,c.change_reason,c.created_at,` + configMaterializedSelect() + `
-FROM system_backup_configs AS c
+FROM system_backup_v2_configs AS c
 WHERE c.origin_installation_id=? AND c.version=? FOR SHARE`
 	var row ConfigSnapshot
 	var schemaVersion string

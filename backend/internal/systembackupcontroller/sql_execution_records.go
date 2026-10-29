@@ -14,6 +14,7 @@ import (
 	b "clawreef/internal/systembackup/publicadapter"
 	"clawreef/internal/systembackup/staging"
 	d "clawreef/internal/systembackupdispatch"
+	security "clawreef/internal/systembackupsecurity"
 )
 
 var ErrExecutionRecord = errors.New("execution record unavailable or conflicting")
@@ -32,8 +33,9 @@ type ExecutionRecordKeys interface {
 // It uses the same authenticated staging format as plan custody; plaintext
 // plans/checkpoints and keys never enter SQL. No provider call occurs in a Tx.
 type SQLExecutionRecords struct {
-	Authority SQLExecutionAuthority
-	Keys      ExecutionRecordKeys
+	Authority          SQLExecutionAuthority
+	Keys               ExecutionRecordKeys
+	CapacityReportFile string
 }
 
 func recordHash(raw []byte) string { sum := sha256.Sum256(raw); return hex.EncodeToString(sum[:]) }
@@ -51,7 +53,7 @@ func (s SQLExecutionRecords) Ready(ctx context.Context) error {
 		return d.ErrNotReady
 	}
 	// Reject a missing migration/read grant before the scheduler can claim.
-	rows, err := s.Authority.DB.QueryContext(ctx, "SELECT payload_sha256,key_ref,sealed_payload FROM system_backup_execution_records WHERE 1=0")
+	rows, err := s.Authority.DB.QueryContext(ctx, "SELECT payload_sha256,key_ref,sealed_payload FROM system_backup_v2_execution_records WHERE 1=0")
 	if err != nil {
 		return err
 	}
@@ -85,7 +87,7 @@ func (s SQLExecutionRecords) write(ctx context.Context, a d.Authority, kind stri
 		return err
 	}
 	var oldHash string
-	err = tx.QueryRowContext(ctx, "SELECT payload_sha256 FROM system_backup_execution_records WHERE origin_installation_id=? AND task_public_id=? AND attempt_no=? AND phase=? AND record_kind=? FOR UPDATE", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, kind).Scan(&oldHash)
+	err = tx.QueryRowContext(ctx, "SELECT payload_sha256 FROM system_backup_v2_execution_records WHERE origin_installation_id=? AND task_public_id=? AND attempt_no=? AND phase=? AND record_kind=? FOR SHARE", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, kind).Scan(&oldHash)
 	if err == nil {
 		if oldHash != digest {
 			return ErrExecutionRecord
@@ -96,7 +98,16 @@ func (s SQLExecutionRecords) write(ctx context.Context, a d.Authority, kind stri
 	if !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
-	_, err = tx.ExecContext(ctx, "INSERT INTO system_backup_execution_records (origin_installation_id,task_public_id,attempt_no,phase,record_kind,payload_sha256,key_ref,sealed_payload) VALUES (?,?,?,?,?,?,?,?)", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, kind, digest, ref, sealed.Bytes())
+	if s.CapacityReportFile != "" {
+		var capacity int64
+		if tx.QueryRowContext(ctx, "SELECT control_metadata_capacity_bytes FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR SHARE", a.InstallationID, a.ConfigVersion).Scan(&capacity) != nil {
+			return ErrExecutionRecord
+		}
+		if err = (security.RegistrationCapacity{ReportFile: s.CapacityReportFile}).ReserveExecutionPayload(ctx, tx, capacity, sealed.Len()); err != nil {
+			return err
+		}
+	}
+	_, err = tx.ExecContext(ctx, "INSERT INTO system_backup_v2_execution_records (origin_installation_id,task_public_id,attempt_no,phase,record_kind,payload_sha256,key_ref,sealed_payload) VALUES (?,?,?,?,?,?,?,?)", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, kind, digest, ref, sealed.Bytes())
 	if err != nil {
 		return err
 	}
@@ -118,7 +129,7 @@ func (s SQLExecutionRecords) read(ctx context.Context, a d.Authority, kind strin
 	}
 	var ref, digest string
 	var sealed []byte
-	err := s.Authority.DB.QueryRowContext(ctx, "SELECT payload_sha256,key_ref,sealed_payload FROM system_backup_execution_records WHERE origin_installation_id=? AND task_public_id=? AND attempt_no=? AND phase=? AND record_kind=?", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, kind).Scan(&digest, &ref, &sealed)
+	err := s.Authority.DB.QueryRowContext(ctx, "SELECT payload_sha256,key_ref,sealed_payload FROM system_backup_v2_execution_records WHERE origin_installation_id=? AND task_public_id=? AND attempt_no=? AND phase=? AND record_kind=?", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase, kind).Scan(&digest, &ref, &sealed)
 	if err != nil {
 		return nil, err
 	}
@@ -163,6 +174,49 @@ func (s SQLExecutionRecords) LoadPlan(ctx context.Context, in d.Input) (d.Plan, 
 		return d.Plan{}, err
 	}
 	return plan, nil
+}
+
+// LoadRecoveryPlan decrypts ONLY the original plan under a separately issued
+// recovery grant. It does not relax forward LoadPlan or permit source capture.
+func (s SQLExecutionRecords) LoadRecoveryPlan(ctx context.Context, in d.Input, recovery SQLRecoveryAuthority) (d.Plan, error) {
+	a := in.Authority
+	if recovery.DB != s.Authority.DB || recovery.Identity == nil {
+		return d.Plan{}, ErrExecutionAuthority
+	}
+	if e := recovery.Check(ctx, a); e != nil {
+		return d.Plan{}, e
+	}
+	var digest, ref string
+	var sealed []byte
+	e := recovery.DB.QueryRowContext(ctx, "SELECT payload_sha256,key_ref,sealed_payload FROM system_backup_v2_execution_records WHERE origin_installation_id=? AND task_public_id=? AND attempt_no=? AND phase=? AND record_kind='plan'", a.InstallationID, a.TaskPublicID, a.AttemptNo, a.Phase).Scan(&digest, &ref, &sealed)
+	if e != nil {
+		return d.Plan{}, e
+	}
+	if !executionHash.MatchString(digest) || len(sealed) > (8<<20)+4096 {
+		return d.Plan{}, ErrExecutionRecord
+	}
+	actual, key, e := recovery.Identity.Resolve(ctx, a, ref)
+	defer clear(key)
+	if e != nil || actual != ref || len(key) != 32 {
+		return d.Plan{}, ErrExecutionRecord
+	}
+	var plain bytes.Buffer
+	defer func() { clear(plain.Bytes()) }()
+	if staging.Open(ctx, bytes.NewReader(sealed), &plain, key, recordBinding(a, "plan", digest), 8<<20) != nil || recordHash(plain.Bytes()) != digest {
+		return d.Plan{}, ErrExecutionRecord
+	}
+	p := d.Plan{SchemaVersion: d.TaskPlanVersion, CanonicalJSON: bytes.Clone(plain.Bytes()), SHA256: digest}
+	inner, e := d.UnwrapTaskPlan(in, p, b.PlanVersion)
+	clear(inner.CanonicalJSON)
+	if e != nil {
+		clear(p.CanonicalJSON)
+		return d.Plan{}, e
+	}
+	if e = recovery.Check(ctx, a); e != nil {
+		clear(p.CanonicalJSON)
+		return d.Plan{}, e
+	}
+	return p, nil
 }
 
 type executionResultRecord struct {

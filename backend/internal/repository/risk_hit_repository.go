@@ -19,9 +19,10 @@ type riskHitRepository struct {
 	sess db.Session
 }
 
-// NewRiskHitRepository creates a new risk hit repository.
+// NewRiskHitRepository creates a new risk hit repository (schema is owned by embedded migrations).
 func NewRiskHitRepository(sess db.Session) RiskHitRepository {
-	return &riskHitRepository{sess: sess}
+	repo := &riskHitRepository{sess: sess}
+	return repo
 }
 
 func (r *riskHitRepository) Create(hit *models.RiskHit) error {

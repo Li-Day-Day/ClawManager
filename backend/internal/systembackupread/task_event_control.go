@@ -63,10 +63,10 @@ type TaskEventControlResult struct {
 func (TaskEventControlResult) MarshalJSON() ([]byte, error) { return nil, ErrInvalid }
 
 const taskEventControlColumns = "id,schema_version,origin_installation_id,target_type,target_public_id,event_type,level,task_status,details_present,detail_previous_status,detail_current_status,detail_reason,detail_attempt_number,detail_operation_public_id,detail_evidence_public_id,detail_truncated,detail_original_size,detail_content_hash,request_id,created_at"
-const taskEventCutoffSQL = "SELECT COALESCE(MAX(id),0) FROM system_backup_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=?"
+const taskEventCutoffSQL = "SELECT COALESCE(MAX(id),0) FROM system_backup_v2_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=?"
 
 func taskEventControlSQL(continuation bool) string {
-	query := "SELECT " + taskEventControlColumns + " FROM system_backup_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND id<=?"
+	query := "SELECT " + taskEventControlColumns + " FROM system_backup_v2_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND id<=?"
 	if continuation {
 		query += " AND (created_at<? OR (created_at=? AND id<?))"
 	}

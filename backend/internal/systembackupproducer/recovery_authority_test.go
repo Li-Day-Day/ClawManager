@@ -74,9 +74,9 @@ func setupRecoveryAuthority(t *testing.T) (*RecoveryAuthorityManager, RecoveryAu
 	db.rollbackRecord = func() { oldRollback(); e.row = e.previous }
 	db.queryRecord = func(q string, args []driver.NamedValue) (driver.Rows, error) {
 		switch q {
-		case "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE":
+		case "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE":
 			return &fakeRows{values: []driver.Value{string(fenceRequest.Scope.Installation)}}, nil
-		case "SELECT origin_installation_id FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE":
+		case "SELECT origin_installation_id FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE":
 			if len(args) != 1 || args[0].Value != string(fenceRequest.Scope.Installation) {
 				return &emptyFenceRows{}, nil
 			}
@@ -147,7 +147,7 @@ func TestRecoveryAuthorityAtomicLifecycle(t *testing.T) {
 	parent, deployment, manager, fenceLock := -1, -1, -1, -1
 	for i, event := range db.events {
 		switch event {
-		case "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE":
+		case "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE":
 			parent = i
 		case recoveryDeploymentLockSQL:
 			deployment = i

@@ -10,7 +10,7 @@ import (
 const taskDownloadReferenceColumnsSQL = `SELECT TABLE_NAME,COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS
 WHERE TABLE_SCHEMA=DATABASE() AND LEFT(TABLE_NAME,7)='system_' AND COLUMN_NAME REGEXP '(^|_)evidence_(public_)?id$'
 ORDER BY TABLE_NAME,COLUMN_NAME LIMIT 10001`
-const taskDownloadEvidenceKeySQL = `SELECT id,origin_installation_id,owner_target_type,owner_target_public_id,redaction_classification FROM system_backup_evidence WHERE public_id=?`
+const taskDownloadEvidenceKeySQL = `SELECT id,origin_installation_id,owner_target_type,owner_target_public_id,redaction_classification FROM system_backup_v2_evidence WHERE public_id=?`
 const maxTaskDownloadReferences = 10000
 
 type taskDownloadReference struct {
@@ -22,19 +22,19 @@ type taskDownloadReference struct {
 
 func taskDownloadReferences() []taskDownloadReference {
 	r := []taskDownloadReference{
-		{"system_backup_operations", []string{"redacted_response_evidence_id", "download_evidence_id"}, nil, true, 3},
-		{"system_backup_download_admission_receipts", []string{"evidence_id"}, []string{"evidence_public_id"}, true, 3},
-		{"system_backup_download_result_receipts", []string{"evidence_id"}, []string{"evidence_public_id"}, true, 3},
-		{"system_backup_log_chunks", []string{"redacted_evidence_id"}, nil, false, 5},
-		{"system_backup_dependency_health", []string{"evidence_id"}, nil, false, 5},
-		{"system_backup_provider_capabilities", []string{"evidence_id"}, nil, false, 5},
-		{"system_backup_events", nil, []string{"detail_evidence_public_id"}, true, 5},
-		{"system_backup_promotions", nil, []string{"drill_evidence_public_id"}, true, 5},
-		{"system_backup_external_actions", nil, []string{"provider_proof_evidence_public_id"}, true, 5},
-		{"system_backup_source_writer_check_states", nil, []string{"evidence_public_id"}, true, 5},
-		{"system_backup_check_results", nil, []string{"evidence_public_id"}, true, 5},
-		{"system_backup_staging_resources", []string{"ownership_resolution_evidence_id"}, nil, true, 5},
-		{"system_restore_drill_resources", []string{"ownership_resolution_evidence_id"}, nil, true, 5},
+		{"system_backup_v2_operations", []string{"redacted_response_evidence_id", "download_evidence_id"}, nil, true, 3},
+		{"system_backup_v2_download_admission_receipts", []string{"evidence_id"}, []string{"evidence_public_id"}, true, 3},
+		{"system_backup_v2_download_result_receipts", []string{"evidence_id"}, []string{"evidence_public_id"}, true, 3},
+		{"system_backup_v2_log_chunks", []string{"redacted_evidence_id"}, nil, false, 5},
+		{"system_backup_v2_dependency_health", []string{"evidence_id"}, nil, false, 5},
+		{"system_backup_v2_provider_capabilities", []string{"evidence_id"}, nil, false, 5},
+		{"system_backup_v2_events", nil, []string{"detail_evidence_public_id"}, true, 5},
+		{"system_backup_v2_promotions", nil, []string{"drill_evidence_public_id"}, true, 5},
+		{"system_backup_v2_external_actions", nil, []string{"provider_proof_evidence_public_id"}, true, 5},
+		{"system_backup_v2_source_writer_check_states", nil, []string{"evidence_public_id"}, true, 5},
+		{"system_backup_v2_check_results", nil, []string{"evidence_public_id"}, true, 5},
+		{"system_backup_v2_staging_resources", []string{"ownership_resolution_evidence_id"}, nil, true, 5},
+		{"system_backup_v2_restore_drill_resources", []string{"ownership_resolution_evidence_id"}, nil, true, 5},
 	}
 	sort.Slice(r, func(i, j int) bool {
 		if r[i].stage != r[j].stage {
@@ -52,10 +52,10 @@ type taskDownloadTable struct {
 
 func taskDownloadTables() []taskDownloadTable {
 	return []taskDownloadTable{
-		{"backup", "system_backups", nil},
-		{"drill", "system_restore_drills", []string{"preflight_evidence_public_id", "diff_evidence_public_id", "verifier_report_evidence_public_id"}},
-		{"preflight", "system_backup_preflights", []string{"report_evidence_public_id", "diff_evidence_public_id", "verifier_report_evidence_public_id"}},
-		{"artifact_verify", "system_backup_artifact_verifications", []string{"health_report_evidence_public_id", "verifier_report_evidence_public_id"}},
+		{"backup", "system_backup_v2_backups", nil},
+		{"drill", "system_backup_v2_restore_drills", []string{"preflight_evidence_public_id", "diff_evidence_public_id", "verifier_report_evidence_public_id"}},
+		{"preflight", "system_backup_v2_preflights", []string{"report_evidence_public_id", "diff_evidence_public_id", "verifier_report_evidence_public_id"}},
+		{"artifact_verify", "system_backup_v2_artifact_verifications", []string{"health_report_evidence_public_id", "verifier_report_evidence_public_id"}},
 	}
 }
 
@@ -67,7 +67,7 @@ var taskDownloadSystemProducerTables = []string{"system_backup_producer_evidence
 // identifiers. Producer tables, when installed, may reference system evidence
 // only, so a task-evidence match there is an integrity failure.
 func checkTaskDownloadReferenceSchema(ctx context.Context, tx *sql.Tx) (map[string]bool, error) {
-	expected := map[string]bool{"system_backup_evidence_chunks.evidence_id": true}
+	expected := map[string]bool{"system_backup_v2_evidence_chunks.evidence_id": true}
 	for _, r := range taskDownloadReferences() {
 		for _, c := range r.columns {
 			expected[r.table+"."+c] = true
@@ -136,7 +136,7 @@ func taskDownloadReferenceSQL(r taskDownloadReference, locking bool) string {
 		conditions[n] = c + "=?"
 	}
 	key := "id"
-	if r.table == "system_backup_download_admission_receipts" || r.table == "system_backup_download_result_receipts" {
+	if r.table == "system_backup_v2_download_admission_receipts" || r.table == "system_backup_v2_download_result_receipts" {
 		key = "operation_id"
 	}
 	q := "SELECT " + key + " FROM " + r.table + " WHERE "

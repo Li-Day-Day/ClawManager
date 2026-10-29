@@ -90,12 +90,12 @@ const maxTaskExecutionRows = 10000
 
 const taskAttemptColumns = "a.target_type,a.target_public_id,a.attempt_no,a.phase,a.status,a.failure_category,a.row_version,a.started_at,a.finished_at,a.created_at,a.updated_at"
 const taskJobColumns = "schema_version,origin_installation_id,target_type,target_public_id,attempt_no,phase,job_unit_key,job_uid,job_generation,last_accepted_sequence,last_accepted_body_sha256,last_observed_status,last_observed_at,progress_sequence,progress_digest_sha256,last_business_progress_at,row_version,relay_identity_bound_at,relay_identity_expires_at,created_at,updated_at"
-const taskJobsSQL = "SELECT " + taskJobColumns + " FROM system_backup_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=? ORDER BY attempt_no,phase,job_unit_key LIMIT 10001"
+const taskJobsSQL = "SELECT " + taskJobColumns + " FROM system_backup_v2_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=? ORDER BY attempt_no,phase,job_unit_key LIMIT 10001"
 
 func taskAttemptsSQL(table taskTable) string {
 	// Attempts have no installation column. Rejoin the already authorized task
 	// at this transaction snapshot before using its globally unique public ID.
-	return "SELECT " + taskAttemptColumns + " FROM system_backup_attempts AS a JOIN " + table.name +
+	return "SELECT " + taskAttemptColumns + " FROM system_backup_v2_attempts AS a JOIN " + table.name +
 		" AS t ON a.target_public_id=t.public_id AND a.target_type=t.task_type WHERE t.origin_installation_id=? AND t.public_id=? AND a.target_type=? ORDER BY a.attempt_no,a.phase LIMIT 10001"
 }
 

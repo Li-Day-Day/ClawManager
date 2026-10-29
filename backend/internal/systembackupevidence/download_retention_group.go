@@ -16,15 +16,15 @@ import (
 )
 
 const downloadRetentionOperationSQL = `SELECT id,public_id,origin_installation_id,target_public_id,download_evidence_id,actor_id,idempotency_key,request_hash,deadline_at,created_at,row_version
-FROM system_backup_operations WHERE origin_installation_id=? AND public_id=? FOR UPDATE`
+FROM system_backup_v2_operations WHERE origin_installation_id=? AND public_id=? FOR UPDATE`
 const downloadRetentionReceiptSQL = `SELECT operation_id,origin_installation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,
 IF(OCTET_LENGTH(receipt_canonical_json) BETWEEN 2 AND 8192,receipt_canonical_json,NULL),receipt_size_bytes,receipt_sha256,
 IF(OCTET_LENGTH(operation_canonical_json) BETWEEN 2 AND 8192,operation_canonical_json,NULL),operation_size_bytes,operation_sha256,
-admitted_at,claim_expires_at,deadline_at,retain_until FROM system_backup_download_admission_receipts
+admitted_at,claim_expires_at,deadline_at,retain_until FROM system_backup_v2_download_admission_receipts
 WHERE operation_id=? AND origin_installation_id=? AND schema_version='system-backup-evidence-download-admission.v1' FOR UPDATE`
 const downloadRetentionNonceSQL = `SELECT id,origin_installation_id,issuer_sha256,subject_sha256,session_sha256,nonce_hmac,nonce_hmac_key_version,endpoint,request_hash,idempotency_key,
 authenticated_at,expires_at,consumed_at,operation_id,response_sha256,audit_log_id,retain_until,created_at,schema_version
-FROM system_backup_strong_auth_nonces WHERE operation_id=? ORDER BY id LIMIT 2 FOR UPDATE`
+FROM system_backup_v2_strong_auth_nonces WHERE operation_id=? ORDER BY id LIMIT 2 FOR UPDATE`
 const downloadRetentionAuditSQL = `SELECT user_id,action,resource_type,resource_id,IF(OCTET_LENGTH(details) BETWEEN 2 AND 8192,details,NULL),created_at FROM audit_logs WHERE id=? FOR UPDATE`
 
 var downloadRetentionNonceVersion = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$`)

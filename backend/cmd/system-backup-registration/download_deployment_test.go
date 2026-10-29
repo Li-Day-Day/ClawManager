@@ -102,11 +102,11 @@ func downloadFixtureGrants(c downloadDeployment) []string {
 	grantee := "'" + c.DatabaseUser + "'@'%'"
 	out := []string{"GRANT USAGE ON *.* TO " + grantee, "GRANT LOCK TABLES ON `" + c.Database + "`.* TO " + grantee}
 	tables := map[string][]string{
-		"users": {"SELECT"}, "audit_logs": {"SELECT", "INSERT"}, "system_backup_installation_state": {"SELECT"}, "system_backup_configs": {"SELECT"},
-		"system_backup_operations": {"SELECT", "INSERT"}, "system_backup_evidence": {"SELECT", "INSERT", "UPDATE"}, "system_backup_evidence_chunks": {"SELECT"},
-		"system_backup_download_admission_receipts": {"SELECT", "INSERT"}, "system_backup_download_result_receipts": {"SELECT", "INSERT"}, "system_backup_strong_auth_nonces": {"SELECT", "INSERT"},
-		"system_backup_metadata_reservations": {"SELECT", "INSERT", "UPDATE"}, "system_backup_admin_sessions": {"SELECT", "INSERT", "UPDATE"}, "system_backup_admin_revocations": {"SELECT"}, "system_backup_totp_credentials": {"SELECT", "INSERT", "UPDATE"},
-		"system_backups": {"SELECT"}, "system_restore_drills": {"SELECT"}, "system_backup_preflights": {"SELECT"}, "system_backup_artifact_verifications": {"SELECT"},
+		"users": {"SELECT"}, "audit_logs": {"SELECT", "INSERT"}, "system_backup_v2_installation_state": {"SELECT"}, "system_backup_v2_configs": {"SELECT"},
+		"system_backup_v2_operations": {"SELECT", "INSERT"}, "system_backup_v2_evidence": {"SELECT", "INSERT", "UPDATE"}, "system_backup_v2_evidence_chunks": {"SELECT"},
+		"system_backup_v2_download_admission_receipts": {"SELECT", "INSERT"}, "system_backup_v2_download_result_receipts": {"SELECT", "INSERT"}, "system_backup_v2_strong_auth_nonces": {"SELECT", "INSERT"},
+		"system_backup_v2_metadata_reservations": {"SELECT", "INSERT", "UPDATE"}, "system_backup_v2_admin_sessions": {"SELECT", "INSERT", "UPDATE"}, "system_backup_v2_admin_revocations": {"SELECT"}, "system_backup_v2_totp_credentials": {"SELECT", "INSERT", "UPDATE"},
+		"system_backup_v2_backups": {"SELECT"}, "system_backup_v2_restore_drills": {"SELECT"}, "system_backup_v2_preflights": {"SELECT"}, "system_backup_v2_artifact_verifications": {"SELECT"},
 	}
 	var names []string
 	for name := range tables {
@@ -269,7 +269,7 @@ func TestDownloadGrantShapeRejectsEscalation(t *testing.T) {
 	if downloadGrantShape(c, good) != nil {
 		t.Fatal("fixture grants rejected")
 	}
-	for _, extra := range []string{"GRANT ALL PRIVILEGES ON `download_test`.* TO 'download_reader'@'%'", "GRANT SELECT ON *.* TO 'download_reader'@'%'", "GRANT UPDATE ON `download_test`.`audit_logs` TO 'download_reader'@'%'", "GRANT UPDATE ON `download_test`.`users` TO 'download_reader'@'%'", "GRANT DELETE ON `download_test`.`system_backup_evidence` TO 'download_reader'@'%'", "GRANT 'role'@'%' TO 'download_reader'@'%'", good[2] + " WITH GRANT OPTION", "GRANT SELECT ON `other`.`system_backups` TO 'download_reader'@'%'"} {
+	for _, extra := range []string{"GRANT ALL PRIVILEGES ON `download_test`.* TO 'download_reader'@'%'", "GRANT SELECT ON *.* TO 'download_reader'@'%'", "GRANT UPDATE ON `download_test`.`audit_logs` TO 'download_reader'@'%'", "GRANT UPDATE ON `download_test`.`users` TO 'download_reader'@'%'", "GRANT DELETE ON `download_test`.`system_backup_v2_evidence` TO 'download_reader'@'%'", "GRANT 'role'@'%' TO 'download_reader'@'%'", good[2] + " WITH GRANT OPTION", "GRANT SELECT ON `other`.`system_backup_v2_backups` TO 'download_reader'@'%'"} {
 		if downloadGrantShape(c, append(append([]string(nil), good...), extra)) == nil {
 			t.Fatal("overbroad grant accepted", extra)
 		}

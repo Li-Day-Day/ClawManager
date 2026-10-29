@@ -129,7 +129,7 @@ func stageTaskClaimWithReceipt(ctx context.Context, tx *sql.Tx, installation str
 	if receipt != nil && (first.now.Before(receipt.ObservedAt) || first.heartbeat.Before(receipt.ObservedAt)) {
 		return zero, ErrTaskClaimReceipt
 	}
-	result, err := tx.ExecContext(ctx, "INSERT INTO system_backup_events (origin_installation_id,target_type,target_public_id,event_type,level,task_status,message,details_present,request_id,created_at) VALUES (?,?,?,?,'info',?,'Controller acquired task claim.',FALSE,?,UTC_TIMESTAMP(6))", installation, string(target.Kind), target.PublicID, TaskClaimAcquiredEvent, first.status, first.requestID)
+	result, err := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_events (origin_installation_id,target_type,target_public_id,event_type,level,task_status,message,details_present,request_id,created_at) VALUES (?,?,?,?,'info',?,'Controller acquired task claim.',FALSE,?,UTC_TIMESTAMP(6))", installation, string(target.Kind), target.PublicID, TaskClaimAcquiredEvent, first.status, first.requestID)
 	if err != nil {
 		return zero, ErrTaskClaimReceipt
 	}

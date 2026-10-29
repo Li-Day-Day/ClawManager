@@ -95,15 +95,15 @@ func TestAHistoricalRecoveryMySQL(t *testing.T) {
 		mustSQL(t, err)
 		s, err := pd.NewHistoricalRecovery(db, f.history.Scope, aRecoveryMySQLTrace{env})
 		mustSQL(t, err)
-		chunkWhere := " WHERE evidence_id=(SELECT id FROM system_backup_evidence WHERE public_id=?) AND chunk_index=0"
+		chunkWhere := " WHERE evidence_id=(SELECT id FROM system_backup_v2_evidence WHERE public_id=?) AND chunk_index=0"
 		var originalNonce []byte
-		mustSQL(t, db.QueryRow("SELECT gcm_nonce FROM system_backup_evidence_chunks"+chunkWhere, f.history.Evidence.EvidenceID).Scan(&originalNonce))
+		mustSQL(t, db.QueryRow("SELECT gcm_nonce FROM system_backup_v2_evidence_chunks"+chunkWhere, f.history.Evidence.EvidenceID).Scan(&originalNonce))
 		if len(originalNonce) == 0 {
 			t.Fatal("missing original A chunk nonce")
 		}
 		corruptNonce := append([]byte(nil), originalNonce...)
 		corruptNonce[0] ^= 0xff
-		_, err = db.Exec("UPDATE system_backup_evidence_chunks SET gcm_nonce=?"+chunkWhere, corruptNonce, f.history.Evidence.EvidenceID)
+		_, err = db.Exec("UPDATE system_backup_v2_evidence_chunks SET gcm_nonce=?"+chunkWhere, corruptNonce, f.history.Evidence.EvidenceID)
 		mustSQL(t, err)
 		var now time.Time
 		mustSQL(t, db.QueryRow("SELECT UTC_TIMESTAMP(6)").Scan(&now))
@@ -143,7 +143,7 @@ func TestAHistoricalRecoveryMySQL(t *testing.T) {
 	if err != nil || claim == nil {
 		t.Fatal("live mTLS workload could not claim original evidence", err)
 	}
-	_, err = db.Exec("UPDATE system_backup_producer_recovery_revocations SET revocation_epoch=2,row_version=2,updated_at=UTC_TIMESTAMP(6)")
+	_, err = db.Exec("UPDATE system_backup_v2_producer_recovery_revocations SET revocation_epoch=2,row_version=2,updated_at=UTC_TIMESTAMP(6)")
 	mustSQL(t, err)
 	var observed time.Time
 	mustSQL(t, db.QueryRow("SELECT UTC_TIMESTAMP(6)").Scan(&observed))

@@ -75,7 +75,7 @@ func (tx executionTx) Commit() error   { tx.f.commits++; return tx.f.commitErr }
 func (tx executionTx) Rollback() error { tx.f.rollbacks++; close(tx.f.rollbackDone); return nil }
 func (c *executionConn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
 	f := c.f
-	if strings.Contains(query, "system_backup_attempts AS a") || query == taskJobsSQL {
+	if strings.Contains(query, "system_backup_v2_attempts AS a") || query == taskJobsSQL {
 		f.queries = append(f.queries, query)
 		if query == f.queryError {
 			return nil, errors.New("execution query failure")
@@ -366,7 +366,7 @@ func TestTaskExecutionBuilderSharesSnapshotAndCannotCommit(t *testing.T) {
 					t.Fatal("exec escaped")
 				}
 				var count int
-				if e := q.QueryRowContext(ctx, "SELECT COALESCE(MAX(id),0) FROM system_backups WHERE origin_installation_id=?", s.task.InstallationID).Scan(&count); e != nil || count != 3 {
+				if e := q.QueryRowContext(ctx, "SELECT COALESCE(MAX(id),0) FROM system_backup_v2_backups WHERE origin_installation_id=?", s.task.InstallationID).Scan(&count); e != nil || count != 3 {
 					t.Fatal("builder query unavailable", count, e)
 				}
 				switch stage {

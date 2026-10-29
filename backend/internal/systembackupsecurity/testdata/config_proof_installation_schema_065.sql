@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS system_backup_installation_state (
+CREATE TABLE IF NOT EXISTS system_backup_v2_installation_state (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   schema_version VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'system-backup-installation-state.v1',
   origin_installation_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS system_backup_installation_state (
   created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   UNIQUE KEY uk_sb_installation_origin (origin_installation_id),
-  CONSTRAINT chk_sb_installation_schema CHECK (schema_version = 'system-backup-installation-state.v1'),
-  CONSTRAINT chk_sb_installation_config_version CHECK (active_config_version >= 1),
-  CONSTRAINT chk_sb_installation_row_version CHECK (row_version >= 1),
-  CONSTRAINT chk_sb_installation_operation_id CHECK (matrix_transition_operation_public_id IS NULL OR matrix_transition_operation_public_id REGEXP '^sop_'),
-  CONSTRAINT chk_sb_installation_monitoring CHECK (
+  CONSTRAINT sbv2_chk_sb_installation_schema CHECK (schema_version = 'system-backup-installation-state.v1'),
+  CONSTRAINT sbv2_chk_sb_installation_config_version CHECK (active_config_version >= 1),
+  CONSTRAINT sbv2_chk_sb_installation_row_version CHECK (row_version >= 1),
+  CONSTRAINT sbv2_chk_sb_installation_operation_id CHECK (matrix_transition_operation_public_id IS NULL OR matrix_transition_operation_public_id REGEXP '^sop_'),
+  CONSTRAINT sbv2_chk_sb_installation_monitoring CHECK (
     (monitoring_armed = FALSE AND monitoring_armed_reason = 'none' AND first_enabled_at IS NULL)
     OR (monitoring_armed = TRUE AND monitoring_armed_reason = 'deployment_required')
     OR (monitoring_armed = TRUE AND monitoring_armed_reason = 'previously_enabled' AND first_enabled_at IS NOT NULL)

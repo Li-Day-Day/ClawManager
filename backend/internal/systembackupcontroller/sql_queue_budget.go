@@ -75,11 +75,11 @@ func (r SQLQueueBudgetReader) Collect(ctx context.Context, installationID string
 		kind  string
 		label string
 	}{
-		{table: "system_backups", kind: "backup", label: "task_purpose"},
-		{table: "system_restore_drills", kind: "drill", label: "task_purpose"},
-		{table: "system_backup_preflights", kind: "preflight", label: "preflight_mode"},
-		{table: "system_backup_artifact_verifications", kind: "artifact_verify", label: "verification_scope"},
-		{table: "system_backup_operations", kind: "operation", label: "operation_type"},
+		{table: "system_backup_v2_backups", kind: "backup", label: "task_purpose"},
+		{table: "system_backup_v2_restore_drills", kind: "drill", label: "task_purpose"},
+		{table: "system_backup_v2_preflights", kind: "preflight", label: "preflight_mode"},
+		{table: "system_backup_v2_artifact_verifications", kind: "artifact_verify", label: "verification_scope"},
+		{table: "system_backup_v2_operations", kind: "operation", label: "operation_type"},
 	} {
 		if err := collectQueueBudgetSource(ctx, tx, source.table, source.label, source.kind, installationID, databaseNow, &remaining, taskRatios, preflightRatios, verificationRatios, operationRatios); err != nil {
 			return nil, err

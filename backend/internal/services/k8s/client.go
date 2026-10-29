@@ -249,11 +249,7 @@ func (c *Client) GetNamespace(userID int) string {
 
 // GetSystemNamespace returns the control-plane namespace used by ClawManager itself.
 func (c *Client) GetSystemNamespace() string {
-	namespace := sanitizeK8sName(strings.TrimSpace(c.Namespace))
-	if strings.HasSuffix(namespace, "-system") {
-		return namespace
-	}
-	return sanitizeK8sName(fmt.Sprintf("%s-system", strings.TrimSpace(c.Namespace)))
+	return sanitizeK8sName(fmt.Sprintf("%s-system", c.Namespace))
 }
 
 // GetPodName returns the pod name for an instance

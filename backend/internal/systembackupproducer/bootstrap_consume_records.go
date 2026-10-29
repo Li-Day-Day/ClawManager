@@ -389,14 +389,14 @@ func (p *bootstrapConsumptionPolicy) verifyBootstrap(ctx context.Context, read R
 	var configHash, matrix string
 	var version int64
 	var enabled bool
-	if err := read.QueryRowContext(ctx, `SELECT c.config_sha256,s.active_config_version,c.enabled,s.matrix_key FROM system_backup_installation_state s JOIN system_backup_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version WHERE s.origin_installation_id=? FOR UPDATE`, string(r.Scope.Installation)).Scan(&configHash, &version, &enabled, &matrix); err != nil {
+	if err := read.QueryRowContext(ctx, `SELECT c.config_sha256,s.active_config_version,c.enabled,s.matrix_key FROM system_backup_v2_installation_state s JOIN system_backup_v2_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version WHERE s.origin_installation_id=? FOR UPDATE`, string(r.Scope.Installation)).Scan(&configHash, &version, &enabled, &matrix); err != nil {
 		return ErrUnavailable
 	}
 	if configHash != string(r.ConfigHash) || version != 1 || enabled || matrix != r.MatrixKey {
 		return ErrConflict
 	}
 	var op BootstrapOperation
-	if err := read.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, string(r.Scope.Installation), string(r.ActorID), r.Endpoint, r.IdempotencyKey).Scan(&op.PublicID, &op.Version, &op.RequestHash, &op.Status, &op.HTTPStatus); err != nil {
+	if err := read.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, string(r.Scope.Installation), string(r.ActorID), r.Endpoint, r.IdempotencyKey).Scan(&op.PublicID, &op.Version, &op.RequestHash, &op.Status, &op.HTTPStatus); err != nil {
 		return ErrUnavailable
 	}
 	if op.PublicID != p.operationID() || op.Version != 1 || op.RequestHash != p.hash || op.Status != "succeeded" || op.HTTPStatus != 201 {

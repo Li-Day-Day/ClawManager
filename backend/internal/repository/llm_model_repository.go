@@ -22,9 +22,10 @@ type llmModelRepository struct {
 	sess db.Session
 }
 
-// NewLLMModelRepository creates a new model repository.
+// NewLLMModelRepository creates a new model repository (schema is owned by embedded migrations).
 func NewLLMModelRepository(sess db.Session) LLMModelRepository {
-	return &llmModelRepository{sess: sess}
+	repo := &llmModelRepository{sess: sess}
+	return repo
 }
 
 func (r *llmModelRepository) readModels(cond db.Cond, order bool) ([]models.LLMModel, error) {

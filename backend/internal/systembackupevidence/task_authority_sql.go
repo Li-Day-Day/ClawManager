@@ -9,13 +9,13 @@ import (
 func taskTable(kind string) string {
 	switch kind {
 	case "backup":
-		return "system_backups"
+		return "system_backup_v2_backups"
 	case "drill":
-		return "system_restore_drills"
+		return "system_backup_v2_restore_drills"
 	case "preflight":
-		return "system_backup_preflights"
+		return "system_backup_v2_preflights"
 	case "artifact_verify":
-		return "system_backup_artifact_verifications"
+		return "system_backup_v2_artifact_verifications"
 	}
 	return ""
 }
@@ -105,7 +105,7 @@ func (a *SQLTaskAuthority) authorizeKey(ctx context.Context, scope *S3Scope, exp
 		server != c.ServerUUID || database != c.Database || offset != 0 || now.IsZero() {
 		return deny()
 	}
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return deny()
 	}
@@ -130,14 +130,14 @@ func (a *SQLTaskAuthority) authorizeKey(ctx context.Context, scope *S3Scope, exp
 	}
 	var version int64
 	var enabled bool
-	if tx.QueryRowContext(ctx, "SELECT active_config_version,last_effective_enabled FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", c.Installation).Scan(&version, &enabled) != nil || version != c.ConfigVersion || !enabled {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version,last_effective_enabled FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", c.Installation).Scan(&version, &enabled) != nil || version != c.ConfigVersion || !enabled {
 		return deny()
 	}
 	var configHash string
 	var configSize int64
 	var store, write KeyRef
 	if tx.QueryRowContext(ctx, `SELECT config_sha256,config_size_bytes,enabled,evidence_store_identity_hash,evidence_store_ref_version,evidence_write_identity_hash,evidence_write_ref_version
-FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, c.Installation, c.ConfigVersion).Scan(&configHash, &configSize, &enabled, &store.Identity, &store.Version, &write.Identity, &write.Version) != nil ||
+FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, c.Installation, c.ConfigVersion).Scan(&configHash, &configSize, &enabled, &store.Identity, &store.Version, &write.Identity, &write.Version) != nil ||
 		configHash != c.ConfigSHA256 || configSize < 2 || configSize > 262144 || !enabled || store != c.Store || write != c.Write {
 		return deny()
 	}
@@ -145,7 +145,7 @@ FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDA
 	if expected != nil {
 		var key KeyRef
 		if tx.QueryRowContext(ctx, `SELECT evidence_kek_identity_hash,evidence_kek_ref_version
-FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, c.Installation, c.ConfigVersion).Scan(&key.Identity, &key.Version) != nil || key != *expected {
+FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE`, c.Installation, c.ConfigVersion).Scan(&key.Identity, &key.Version) != nil || key != *expected {
 			return deny()
 		}
 	}
@@ -166,7 +166,7 @@ FROM `+taskTable(c.OwnerType)+` WHERE origin_installation_id=? AND public_id=? F
 	}
 	until = earlier(earlier(until, deadline), lease.Time)
 	var attempt int64
-	if tx.QueryRowContext(ctx, `SELECT attempt_no,status FROM system_backup_attempts
+	if tx.QueryRowContext(ctx, `SELECT attempt_no,status FROM system_backup_v2_attempts
 WHERE target_type=? AND target_public_id=? AND phase=? ORDER BY attempt_no DESC LIMIT 1 FOR UPDATE`, c.OwnerType, c.OwnerID, c.Phase).Scan(&attempt, &status) != nil ||
 		attempt != c.Attempt || !oneOf(status, "preparing", "running", "sealed") {
 		return deny()
@@ -175,7 +175,7 @@ WHERE target_type=? AND target_public_id=? AND phase=? ORDER BY attempt_no DESC 
 	var generation int64
 	var bound, relayUntil time.Time
 	if tx.QueryRowContext(ctx, `SELECT job_uid,job_generation,relay_identity_ref,relay_identity_version,relay_identity_bound_at,relay_identity_expires_at
-FROM system_backup_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND attempt_no=? AND phase=? AND job_unit_key=? FOR UPDATE`, c.Installation, c.OwnerType, c.OwnerID, c.Attempt, c.Phase, c.JobUnit).Scan(&jobUID, &generation, &relay, &relayVersion, &bound, &relayUntil) != nil ||
+FROM system_backup_v2_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND attempt_no=? AND phase=? AND job_unit_key=? FOR UPDATE`, c.Installation, c.OwnerType, c.OwnerID, c.Attempt, c.Phase, c.JobUnit).Scan(&jobUID, &generation, &relay, &relayVersion, &bound, &relayUntil) != nil ||
 		jobUID != c.JobUID || generation != c.JobGeneration || relay != c.RelayIdentity || relayVersion != c.RelayVersion || bound.IsZero() || !relayUntil.After(bound) {
 		return deny()
 	}
@@ -218,7 +218,7 @@ func (a *SQLTaskAuthority) lockEvidence(ctx context.Context, tx *sql.Tx, access 
 	if tx.QueryRowContext(ctx, `SELECT owner_target_type,owner_target_public_id,evidence_type,media_type,redaction_classification,content_checksum,content_size_bytes,
 storage_state,storage_provider_role,storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,storage_immutable_version,
 object_checksum,object_size_bytes,encryption,envelope_framing_version,claim_owner,claim_expires_at,expires_at,row_version
-FROM system_backup_evidence WHERE public_id=? FOR UPDATE`, access.ID).Scan(&i.OwnerType, &i.OwnerID, &i.Type, &i.Media, &i.Classification, &i.ContentHash, &i.ContentSize,
+FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE`, access.ID).Scan(&i.OwnerType, &i.OwnerID, &i.Type, &i.Media, &i.Classification, &i.ContentHash, &i.ContentSize,
 		&state, &role, &ref.Identity, &ref.Version, &ref.RelativeKey, &keyHash, &immutable, &objectHash, &size, &encryption, &framing, &claim, &until, &expires, &rowVersion) != nil {
 		return deny()
 	}

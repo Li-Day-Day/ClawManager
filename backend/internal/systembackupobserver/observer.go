@@ -71,10 +71,10 @@ func (r Request) table() (string, error) {
 		return "", ErrUnavailable
 	}
 	if r.Kind == "backup" && strings.HasPrefix(r.PublicID, "sbk_") {
-		return "system_backups", nil
+		return "system_backup_v2_backups", nil
 	}
 	if r.Kind == "preflight" && strings.HasPrefix(r.PublicID, "spf_") {
-		return "system_backup_preflights", nil
+		return "system_backup_v2_preflights", nil
 	}
 	return "", ErrUnavailable
 }
@@ -150,7 +150,7 @@ func Observe(ctx context.Context, db *sql.DB, pins Pins, request Request) (Obser
 		return zero, ErrUnavailable
 	}
 	var claims uint64
-	if tx.QueryRowContext(ctx, "SELECT COALESCE(SUM(event_type=?),0),COALESCE(SUM(event_type=?),0) FROM system_backup_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=?", EnqueueEvent, ClaimEvent, pins.InstallationID, request.Kind, request.PublicID).Scan(&value.EnqueueCount, &claims) != nil {
+	if tx.QueryRowContext(ctx, "SELECT COALESCE(SUM(event_type=?),0),COALESCE(SUM(event_type=?),0) FROM system_backup_v2_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=?", EnqueueEvent, ClaimEvent, pins.InstallationID, request.Kind, request.PublicID).Scan(&value.EnqueueCount, &claims) != nil {
 		return zero, ErrUnavailable
 	}
 	// A durable receipt is required. Lease state, task row_version and attempts
@@ -159,20 +159,20 @@ func Observe(ctx context.Context, db *sql.DB, pins Pins, request Request) (Obser
 		value.ClaimCount = &claims
 		value.ClaimHistory = "durable_receipts"
 	}
-	if tx.QueryRowContext(ctx, "SELECT COUNT(DISTINCT a.attempt_no) FROM system_backup_attempts a JOIN "+table+" t ON t.public_id=a.target_public_id AND t.task_type=a.target_type WHERE t.origin_installation_id=? AND t.public_id=? AND a.target_type=?", pins.InstallationID, request.PublicID, request.Kind).Scan(&value.AttemptCount) != nil {
+	if tx.QueryRowContext(ctx, "SELECT COUNT(DISTINCT a.attempt_no) FROM system_backup_v2_attempts a JOIN "+table+" t ON t.public_id=a.target_public_id AND t.task_type=a.target_type WHERE t.origin_installation_id=? AND t.public_id=? AND a.target_type=?", pins.InstallationID, request.PublicID, request.Kind).Scan(&value.AttemptCount) != nil {
 		return zero, ErrUnavailable
 	}
-	if tx.QueryRowContext(ctx, "SELECT COUNT(*),COALESCE(SUM(last_accepted_sequence>0),0) FROM system_backup_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=?", pins.InstallationID, request.Kind, request.PublicID).Scan(&value.JobCount, &value.RelayObservationCount) != nil {
+	if tx.QueryRowContext(ctx, "SELECT COUNT(*),COALESCE(SUM(last_accepted_sequence>0),0) FROM system_backup_v2_job_observations WHERE origin_installation_id=? AND target_type=? AND target_public_id=?", pins.InstallationID, request.Kind, request.PublicID).Scan(&value.JobCount, &value.RelayObservationCount) != nil {
 		return zero, ErrUnavailable
 	}
 	if request.Kind == "backup" {
 		// Historical jobs from an earlier attempt cannot prove that the latest
 		// capture was executed. Both queries use this same read-only snapshot.
 		q := `SELECT COUNT(*),COALESCE(SUM(j.last_accepted_sequence>0 AND j.last_observed_status='completed'),0)
-FROM system_backup_job_observations j
+FROM system_backup_v2_job_observations j
 WHERE j.origin_installation_id=? AND j.target_type=? AND j.target_public_id=? AND j.phase='capture'
-AND j.attempt_no=(SELECT MAX(a.attempt_no) FROM system_backup_attempts a WHERE a.target_type=? AND a.target_public_id=? AND a.phase='capture')
-AND EXISTS (SELECT 1 FROM system_backup_attempts a2 WHERE a2.target_type=j.target_type AND a2.target_public_id=j.target_public_id AND a2.attempt_no=j.attempt_no AND a2.phase=j.phase AND a2.status='sealed')`
+AND j.attempt_no=(SELECT MAX(a.attempt_no) FROM system_backup_v2_attempts a WHERE a.target_type=? AND a.target_public_id=? AND a.phase='capture')
+AND EXISTS (SELECT 1 FROM system_backup_v2_attempts a2 WHERE a2.target_type=j.target_type AND a2.target_public_id=j.target_public_id AND a2.attempt_no=j.attempt_no AND a2.phase=j.phase AND a2.status='sealed')`
 		if tx.QueryRowContext(ctx, q, pins.InstallationID, request.Kind, request.PublicID, request.Kind, request.PublicID).Scan(&value.LatestCaptureJobCount, &value.LatestCaptureCompletedRelayCount) != nil {
 			return zero, ErrUnavailable
 		}
@@ -191,7 +191,7 @@ AND EXISTS (SELECT 1 FROM system_backup_attempts a2 WHERE a2.target_type=j.targe
 			return zero, ErrUnavailable
 		}
 		var evidenceCount uint64
-		if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence WHERE public_id=? AND owner_target_type=? AND owner_target_public_id=? AND content_checksum=?", resultID.String, request.Kind, request.PublicID, resultHash.String).Scan(&evidenceCount) != nil || evidenceCount != 1 {
+		if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence WHERE public_id=? AND owner_target_type=? AND owner_target_public_id=? AND content_checksum=?", resultID.String, request.Kind, request.PublicID, resultHash.String).Scan(&evidenceCount) != nil || evidenceCount != 1 {
 			return zero, ErrUnavailable
 		}
 		value.ResultPublicID = &resultID.String
@@ -206,7 +206,7 @@ AND EXISTS (SELECT 1 FROM system_backup_attempts a2 WHERE a2.target_type=j.targe
 
 var selectGrant = regexp.MustCompile("^GRANT SELECT ON `([A-Za-z0-9_]+)`\\.`([A-Za-z0-9_]+)` TO .+$")
 var usageGrant = regexp.MustCompile(`^GRANT USAGE ON \*\.\* TO .+$`)
-var requiredTables = []string{"system_backups", "system_backup_preflights", "system_backup_events", "system_backup_attempts", "system_backup_job_observations", "system_backup_evidence"}
+var requiredTables = []string{"system_backup_v2_backups", "system_backup_v2_preflights", "system_backup_v2_events", "system_backup_v2_attempts", "system_backup_v2_job_observations", "system_backup_v2_evidence"}
 
 // ValidateGrants rejects roles, global/database wildcards, write/delegation
 // privileges, unlisted tables and unknown SQL. It never creates a SQL account.

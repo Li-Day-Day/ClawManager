@@ -52,7 +52,7 @@ func (c *aRealNonceTimeConn) QueryContext(ctx context.Context, q string, args []
 	return c.Conn.(driver.QueryerContext).QueryContext(ctx, q, args)
 }
 func (c *aRealNonceTimeConn) ExecContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
-	if strings.Contains(q, "INSERT INTO system_backup_strong_auth_nonces") {
+	if strings.Contains(q, "INSERT INTO system_backup_v2_strong_auth_nonces") {
 		if c.tap.called || len(args) != 17 {
 			return nil, errors.New("nonce time probe requires one exact INSERT")
 		}
@@ -92,7 +92,7 @@ func aRealNonceResign(t *testing.T, p *Proof, key ed25519.PrivateKey, auth, expi
 func aRealNonceTimes(t *testing.T, ctx context.Context, db *sql.DB, installation, key string, before, auth, expiry time.Time, future bool, tap *aRealNonceTimeConnector) {
 	t.Helper()
 	var accepted, consumed, expires, retain time.Time
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT authenticated_at,consumed_at,expires_at,retain_until FROM system_backup_strong_auth_nonces WHERE origin_installation_id=? AND idempotency_key=?", installation, key).Scan(&accepted, &consumed, &expires, &retain))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT authenticated_at,consumed_at,expires_at,retain_until FROM system_backup_v2_strong_auth_nonces WHERE origin_installation_id=? AND idempotency_key=?", installation, key).Scan(&accepted, &consumed, &expires, &retain))
 	after := configProofDBNow(t, ctx, db)
 	if !tap.called || !accepted.Equal(tap.accepted) || accepted.Equal(auth) || accepted.Before(before) || consumed.Before(accepted) || consumed.After(after) || !expires.Equal(expiry) || !retain.After(expires) {
 		t.Fatal("real ledger did not preserve SQL acceptance and original expiry")
@@ -148,7 +148,7 @@ func aNonceProviderDatabase(t *testing.T, ctx context.Context, parent *sql.DB, c
 	mysqlMust(t, childIdentity.check(ctx, db))
 	_, err = db.ExecContext(ctx, registrationMySQLDependencies)
 	mysqlMust(t, err)
-	for _, table := range []string{"system_backup_evidence", "system_backup_operations", "system_backup_strong_auth_nonces"} {
+	for _, table := range []string{"system_backup_v2_evidence", "system_backup_v2_operations", "system_backup_v2_strong_auth_nonces"} {
 		var got, ddl string
 		mysqlMust(t, parent.QueryRowContext(ctx, "SHOW CREATE TABLE "+table).Scan(&got, &ddl))
 		if got != table || !strings.HasPrefix(ddl, "CREATE TABLE `"+table+"`") || len(ddl) > 131072 || strings.Contains(ddl, "`"+cfg.DBName+"`.") || strings.Contains(ddl, "DEFINER") {
@@ -184,9 +184,9 @@ func runANonceProviderTimes(t *testing.T, ctx context.Context, parent *sql.DB, c
 			_, actor, _, proof, synthetic := registrationFixture(t)
 			key := ed25519.NewKeyFromSeed([]byte(strings.Repeat("s", 32)))
 			authority := mysqlRegistrationAuthority{pc: pc, sc: syntheticAuthorityConfig(t, synthetic, actor, key)}
-			_, err := db.ExecContext(ctx, `INSERT INTO users VALUES(42,'admin',true); INSERT INTO system_backup_installation_state VALUES('installation_synthetic',1); INSERT INTO system_backup_configs VALUES('installation_synthetic',1,'synthetic-v1',REPEAT('a',64),'auth-v1',REPEAT('b',64),'rbac-v1',REPEAT('c',64),'v1',REPEAT('d',64),300,30,300,86400,2592000,60,1073741824)`)
+			_, err := db.ExecContext(ctx, `INSERT INTO users VALUES(42,'admin',true); INSERT INTO system_backup_v2_installation_state VALUES('installation_synthetic',1); INSERT INTO system_backup_v2_configs VALUES('installation_synthetic',1,'synthetic-v1',REPEAT('a',64),'auth-v1',REPEAT('b',64),'rbac-v1',REPEAT('c',64),'v1',REPEAT('d',64),300,30,300,86400,2592000,60,1073741824)`)
 			mysqlMust(t, err)
-			_, err = db.ExecContext(ctx, "INSERT INTO system_backup_external_actions VALUES(?,?,3)", pc.Scope.InstallationID, r.Target.TargetPublicID)
+			_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_external_actions VALUES(?,?,3)", pc.Scope.InstallationID, r.Target.TargetPublicID)
 			mysqlMust(t, err)
 			callDB, tap := aRealNonceTimeDB(t, childCfg)
 			service := ProviderRegistrationService{DB: callDB, InstallationID: pc.Scope.InstallationID, Authority: aNonceProviderAuthority{authority, DatabaseIdentity{ServerUUID: identity.ServerUUID, Database: childCfg.DBName}}}

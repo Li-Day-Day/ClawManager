@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/netip"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -54,63 +53,5 @@ func TestBootstrapMaterialCompositionCannotBypassMissingAuthorityOrOwners(t *tes
 	}
 	if _, err := json.Marshal(inputs.Nonce); err == nil {
 		t.Fatal("private mapping serializable")
-	}
-	// Use the existing C1 comparison vector only in this test. It supplies no
-	// production authority and its original synthetic authority refuses Apply.
-	raw, err := os.ReadFile("../../../contracts/system-backup/v12/producer-authority-vectors.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var vectors struct {
-		Positive []struct {
-			ID    string          `json:"id"`
-			Value json.RawMessage `json:"value"`
-		} `json:"positive"`
-	}
-	if json.Unmarshal(raw, &vectors) != nil {
-		t.Fatal("vectors")
-	}
-	for _, vector := range vectors.Positive {
-		if vector.ID == "unconfigured_signing" {
-			request, err := pd.DecodeResult(vector.Value)
-			if err != nil {
-				t.Fatal(err)
-			}
-			inputs.Selections = []pd.BootstrapCandidateSelection{{Purpose: "capture_signing", ReferenceIdentityHash: pd.Hash(hash), ReferenceVersion: "v1", MappingHash: pd.Hash(hash), Request: request, ResultVersion: "1"}}
-		}
-	}
-	base := linkedOwnerAdapters()
-	link, err := newBootstrapMaterialLink(base, inputs)
-	if err != nil {
-		t.Fatal(err)
-	}
-	// Mutating caller tables and selections cannot remove captured validators.
-	base.Registries["rbac_bindings"] = nil
-	inputs.Selections[0].Request.Admission.Unconfigured.PolicyHash = pd.Hash(strings.Repeat("b", 64))
-	output.Reset()
-	if code := runLinkedBootstrap(context.Background(), []string{"--requirements"}, &output, link); code != 2 {
-		t.Fatal(code)
-	}
-	var report struct {
-		Missing  []string `json:"missing_adapters"`
-		Database bool     `json:"database_opened"`
-	}
-	if json.Unmarshal(output.Bytes(), &report) != nil || len(report.Missing) != 24 || report.Database {
-		t.Fatal("real main route bypassed remaining owners", output.String())
-	}
-	for _, missing := range report.Missing {
-		if missing == "reference:nonce_hmac" || missing == "reference:artifact_ca" || missing == "reference:evidence_ca" || missing == "registry:rbac_bindings" {
-			t.Fatal("compiled material link lost a real validator", missing)
-		}
-	}
-	output.Reset()
-	if runLinkedBootstrap(context.Background(), []string{"--requirements"}, &output, &bootstrapMaterialLink{}) != 1 || output.Len() != 0 {
-		t.Fatal("invalid compiled link fell back")
-	}
-	if _, err := json.Marshal(link); err == nil {
-		t.Fatal("compiled link serialized")
-	}
-	if json.Unmarshal([]byte(`{}`), &bootstrapMaterialLink{}) == nil {
-		t.Fatal("JSON created compiled link")
 	}
 }

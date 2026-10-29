@@ -1,7 +1,6 @@
 package services
 
 import (
-	"clawreef/internal/systembackup/mutation"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -2241,11 +2240,6 @@ func errorString(err error) string {
 // resource content. It does NOT restart instances; the new env takes effect
 // on the next instance restart.
 func (s *openClawConfigService) cascadeSnapshotsForResource(userID, resourceID int) {
-	release, gateErr := mutation.Wait(context.Background(), "config-cascade")
-	if gateErr != nil {
-		return
-	}
-	defer release()
 	snapshots, err := s.repo.ListActiveSnapshots(userID)
 	if err != nil {
 		log.Printf("[cascade] failed to list active snapshots for user %d: %v", userID, err)

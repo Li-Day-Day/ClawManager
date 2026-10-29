@@ -39,7 +39,7 @@ func TestDConfigCanonicalCandidateMySQL(t *testing.T) {
 	if gotRun != run || gotUID != uid || pinnedUUID != actualUUID {
 		t.Fatal("config candidate probe is outside the pinned run-owned MySQL")
 	}
-	for _, name := range []string{"066_add_system_backup_config_and_operations.sql", "080_add_system_backup_registration_runtime.sql"} {
+	for _, name := range []string{"097_backup_v2_add_system_backup_config_and_operations.sql", "109_backup_v2_add_system_backup_registration_runtime.sql"} {
 		var count int
 		mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM schema_migrations WHERE filename=?", name).Scan(&count))
 		if count != 1 {
@@ -81,14 +81,14 @@ func TestDConfigCanonicalCandidateMySQL(t *testing.T) {
 	insert := func(tx *sql.Tx, columns []string, args []any) {
 		t.Helper()
 		marks := strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")
-		_, e := tx.ExecContext(ctx, "INSERT INTO system_backup_configs ("+strings.Join(columns, ",")+") VALUES ("+marks+")", args...)
+		_, e := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_configs ("+strings.Join(columns, ",")+") VALUES ("+marks+")", args...)
 		mysqlMust(t, e)
 	}
 	tx, err := db.BeginTx(ctx, nil)
 	mysqlMust(t, err)
 	columns, args := config.sqlValues(installation, actor, "isolated candidate")
 	insert(tx, columns, args)
-	_, err = tx.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 		(origin_installation_id,active_config_version,last_effective_enabled,last_effective_enabled_transition_at,matrix_key)
 		VALUES (?,1,FALSE,UTC_TIMESTAMP(6),'k8s-cluster')`, installation)
 	mysqlMust(t, err)
@@ -101,7 +101,7 @@ func TestDConfigCanonicalCandidateMySQL(t *testing.T) {
 		"iat": now.Add(-time.Minute).Unix(), "exp": now.Add(5 * time.Minute).Unix(),
 	}).SignedString(secret)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_admin_sessions
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_admin_sessions
 		(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at,revoked)
 		VALUES(?,?,?,?,?,UTC_TIMESTAMP(6)+INTERVAL 5 MINUTE,FALSE)`,
 		installation, registrationHash(token), userID, "user:"+actor, registrationHash(passwordHash))
@@ -138,7 +138,7 @@ func TestDConfigCanonicalCandidateMySQL(t *testing.T) {
 	tx, err = db.BeginTx(ctx, nil)
 	mysqlMust(t, err)
 	insert(tx, columns, args)
-	_, err = tx.ExecContext(ctx, "UPDATE system_backup_installation_state SET active_config_version=2 WHERE origin_installation_id=?", installation)
+	_, err = tx.ExecContext(ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=2 WHERE origin_installation_id=?", installation)
 	mysqlMust(t, err)
 	mysqlMust(t, tx.Commit())
 	if _, err := service1.ReadActiveConfigDTO(readContext1); !errors.Is(err, ErrRegistrationUnavailable) {
@@ -153,21 +153,21 @@ func TestDConfigCanonicalCandidateMySQL(t *testing.T) {
 	if _, err := service2.ReadConfigVersionDTO(readContext2, 1); !errors.Is(err, systembackupread.ErrUnavailable) {
 		t.Fatalf("old row became readable: %v", err)
 	}
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_configs SET config_sha256=REPEAT('f',64) WHERE origin_installation_id=? AND version=2", installation)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_configs SET config_sha256=REPEAT('f',64) WHERE origin_installation_id=? AND version=2", installation)
 	mysqlMust(t, err)
 	if _, err := service2.ReadActiveConfigDTO(readContext2); !errors.Is(err, systembackupread.ErrUnavailable) {
 		t.Fatalf("hash drift was readable: %v", err)
 	}
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_configs SET config_sha256=? WHERE origin_installation_id=? AND version=2", config.SHA256(), installation)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_configs SET config_sha256=? WHERE origin_installation_id=? AND version=2", config.SHA256(), installation)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_configs SET alert_profile='production' WHERE origin_installation_id=? AND version=2", installation)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_configs SET alert_profile='production' WHERE origin_installation_id=? AND version=2", installation)
 	mysqlMust(t, err)
 	if _, err := service2.ReadActiveConfigDTO(readContext2); !errors.Is(err, systembackupread.ErrUnavailable) {
 		t.Fatalf("materialized drift was readable: %v", err)
 	}
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_configs SET alert_profile='development' WHERE origin_installation_id=? AND version=2", installation)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_configs SET alert_profile='development' WHERE origin_installation_id=? AND version=2", installation)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", installation, registrationHash(token))
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", installation, registrationHash(token))
 	mysqlMust(t, err)
 	if _, err := service2.ReadActiveConfigDTO(readContext2); !errors.Is(err, ErrRegistrationPermission) {
 		t.Fatalf("revoked session retained config read: %v", err)
@@ -208,13 +208,13 @@ func testDConfigBootstrapCandidateMySQL(t *testing.T, ctx context.Context, db *s
 	var hash string
 	var size int64
 	mysqlMust(t, db.QueryRowContext(ctx, `SELECT canonical_config_json,config_sha256,config_size_bytes
-		FROM system_backup_configs WHERE origin_installation_id=? AND version=1`, grant.InstallationID).Scan(&stored, &hash, &size))
+		FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1`, grant.InstallationID).Scan(&stored, &hash, &size))
 	if !bytes.Equal(stored, config.CanonicalJSON()) || hash != config.SHA256() || size != int64(len(stored)) {
 		t.Fatal("candidate bootstrap committed a mismatched canonical snapshot")
 	}
 	verifyCount := func(installation string, want int) {
 		t.Helper()
-		for _, table := range []string{"system_backup_configs", "system_backup_installation_state", "system_backup_operations"} {
+		for _, table := range []string{"system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_operations"} {
 			var count int
 			mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM "+table+" WHERE origin_installation_id=?", installation).Scan(&count))
 			if count != want {
@@ -233,7 +233,7 @@ func testDConfigBootstrapCandidateMySQL(t *testing.T, ctx context.Context, db *s
 	rollbackGrant.InstallationID = "installation_d_config_bootstrap_rollback"
 	rollbackGrant.IdempotencyKey = "d-config-bootstrap-rollback-001"
 	const trigger = "d_config_bootstrap_candidate_reject"
-	_, err = db.ExecContext(ctx, `CREATE TRIGGER `+trigger+` BEFORE INSERT ON system_backup_operations FOR EACH ROW
+	_, err = db.ExecContext(ctx, `CREATE TRIGGER `+trigger+` BEFORE INSERT ON system_backup_v2_operations FOR EACH ROW
 		BEGIN IF NEW.origin_installation_id='installation_d_config_bootstrap_rollback'
 		THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='candidate receipt rejection'; END IF; END`)
 	mysqlMust(t, err)

@@ -53,10 +53,10 @@ func TestExpirePendingTaskIsOneClaimedDBTimeTransitionAndOneEvent(t *testing.T) 
 		table      string
 		targetType string
 	}{
-		{TargetBackup, "sbk_11111111-1111-4111-8111-111111111111", "system_backups", "backup"},
-		{TargetDrill, "sdr_11111111-1111-4111-8111-111111111111", "system_restore_drills", "drill"},
-		{TargetPreflight, "spf_11111111-1111-4111-8111-111111111111", "system_backup_preflights", "preflight"},
-		{TargetArtifactVerify, "sav_11111111-1111-4111-8111-111111111111", "system_backup_artifact_verifications", "artifact_verify"},
+		{TargetBackup, "sbk_11111111-1111-4111-8111-111111111111", "system_backup_v2_backups", "backup"},
+		{TargetDrill, "sdr_11111111-1111-4111-8111-111111111111", "system_backup_v2_restore_drills", "drill"},
+		{TargetPreflight, "spf_11111111-1111-4111-8111-111111111111", "system_backup_v2_preflights", "preflight"},
+		{TargetArtifactVerify, "sav_11111111-1111-4111-8111-111111111111", "system_backup_v2_artifact_verifications", "artifact_verify"},
 	}
 
 	for _, tt := range tests {
@@ -90,22 +90,22 @@ func TestExpirePendingTaskIsOneClaimedDBTimeTransitionAndOneEvent(t *testing.T) 
 				"origin_installation_id = ? AND public_id = ?",
 				"controller_owner = ? AND controller_lease_expires_at > UTC_TIMESTAMP(6)",
 				"deadline_at <= UTC_TIMESTAMP(6)",
-				"NOT EXISTS (SELECT 1 FROM system_backup_attempts",
+				"NOT EXISTS (SELECT 1 FROM system_backup_v2_attempts",
 			} {
 				if !strings.Contains(update, required) {
 					t.Fatalf("deadline update missing %q:\n%s", required, update)
 				}
 			}
-			if tt.kind == TargetBackup && !strings.Contains(update, "NOT EXISTS (SELECT 1 FROM system_backup_external_actions") {
+			if tt.kind == TargetBackup && !strings.Contains(update, "NOT EXISTS (SELECT 1 FROM system_backup_v2_external_actions") {
 				t.Fatalf("backup deadline update must reject every persisted external action: %s", update)
 			}
-			if tt.kind != TargetBackup && !strings.Contains(update, "NOT EXISTS (SELECT 1 FROM system_artifact_leases") {
+			if tt.kind != TargetBackup && !strings.Contains(update, "NOT EXISTS (SELECT 1 FROM system_backup_v2_artifact_leases") {
 				t.Fatalf("read/verify task deadline update must reject every artifact lease: %s", update)
 			}
 
 			event := tx.queries[1]
 			for _, required := range []string{
-				"INSERT INTO system_backup_events",
+				"INSERT INTO system_backup_v2_events",
 				"'" + tt.targetType + "', public_id, 'task_status_changed', 'error', 'failed'",
 				"'pending', 'failed', 'deadline_exceeded'",
 				"FROM " + tt.table + " WHERE origin_installation_id = ? AND public_id = ? AND row_version = ? AND status = 'failed'",
@@ -117,7 +117,7 @@ func TestExpirePendingTaskIsOneClaimedDBTimeTransitionAndOneEvent(t *testing.T) 
 			if wantStatements == 3 {
 				sequence := tx.queries[2]
 				for _, required := range []string{
-					"INSERT INTO system_backup_alert_states",
+					"INSERT INTO system_backup_v2_alert_states",
 					"'acceptance'",
 					"task_purpose = 'acceptance'",
 					"ON DUPLICATE KEY UPDATE",

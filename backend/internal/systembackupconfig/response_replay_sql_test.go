@@ -86,7 +86,7 @@ func (c *replaySQLConn) QueryContext(_ context.Context, q string, args []driver.
 	if !strings.Contains(q, "FOR UPDATE") {
 		return nil, errors.New("unlocked snapshot")
 	}
-	if strings.Contains(q, "FROM system_backup_operations") {
+	if strings.Contains(q, "FROM system_backup_v2_operations") {
 		f := s.facts
 		want := []driver.Value{f.Installation, "42", f.Endpoint, f.IdempotencyKey, f.Operation}
 		if f.Actor.UserID == 7 {
@@ -119,7 +119,7 @@ func (c *replaySQLConn) QueryContext(_ context.Context, q string, args []driver.
 	if len(args) != 1 || args[0].Value != s.facts.EvidenceID {
 		return nil, errors.New("wrong evidence FK")
 	}
-	if strings.Contains(q, "FROM system_backup_evidence_chunks") {
+	if strings.Contains(q, "FROM system_backup_v2_evidence_chunks") {
 		if !strings.Contains(q, "ORDER BY chunk_index FOR UPDATE") {
 			return nil, errors.New("partial chunk query")
 		}
@@ -139,7 +139,7 @@ func (c *replaySQLConn) QueryContext(_ context.Context, q string, args []driver.
 		}
 		return rows, nil
 	}
-	if !strings.Contains(q, "FROM system_backup_evidence WHERE id=?") {
+	if !strings.Contains(q, "FROM system_backup_v2_evidence WHERE id=?") {
 		return nil, errors.New("unexpected replay query")
 	}
 	e := s.snapshot

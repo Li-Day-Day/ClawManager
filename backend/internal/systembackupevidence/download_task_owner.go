@@ -26,7 +26,7 @@ type SQLTaskDownloadOwners struct {
 	producerRoot string
 }
 
-const taskDownloadPreviewCreatedSQL = `SELECT created_at FROM system_backup_evidence WHERE public_id=? AND origin_installation_id=?`
+const taskDownloadPreviewCreatedSQL = `SELECT created_at FROM system_backup_v2_evidence WHERE public_id=? AND origin_installation_id=?`
 
 var _ DownloadAdmissionOwners = (*SQLTaskDownloadOwners)(nil)
 var _ SQLPolicy = (*SQLTaskDownloadOwners)(nil)

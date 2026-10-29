@@ -260,7 +260,7 @@ func (s *configCanonicalBackfillService) apply(ctx context.Context, key string, 
 		return zero, err
 	}
 	if wrote {
-		r, err := tx.ExecContext(ctx, "UPDATE system_backup_configs SET canonical_config_json=? WHERE id=? AND origin_installation_id=? AND version=? AND canonical_config_json IS NULL AND config_sha256=? AND config_size_bytes=?", append([]byte(nil), source...), row.rowID, s.installation, scope.identity.Version, scope.identity.ConfigSHA, scope.identity.ConfigSize)
+		r, err := tx.ExecContext(ctx, "UPDATE system_backup_v2_configs SET canonical_config_json=? WHERE id=? AND origin_installation_id=? AND version=? AND canonical_config_json IS NULL AND config_sha256=? AND config_size_bytes=?", append([]byte(nil), source...), row.rowID, s.installation, scope.identity.Version, scope.identity.ConfigSHA, scope.identity.ConfigSize)
 		if !configMutationOne(r, err) {
 			return zero, ErrProviderEvidenceStorage
 		}

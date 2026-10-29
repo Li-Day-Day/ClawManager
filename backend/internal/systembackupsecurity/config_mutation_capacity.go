@@ -73,12 +73,12 @@ func (c *ConfigMutationCapacity) Reserve(ctx context.Context, tx *sql.Tx, curren
 	if err != nil || report.ObservedAt.After(now) || !now.Before(until) {
 		return fail()
 	}
-	if _, err = tx.ExecContext(ctx, "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)", report.ObservedAt.UTC()); err != nil {
+	if _, err = tx.ExecContext(ctx, "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)", report.ObservedAt.UTC()); err != nil {
 		return fail()
 	}
 	var sample time.Time
 	var outstanding int64
-	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || sample.IsZero() || report.ObservedAt.Before(sample) {
+	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || sample.IsZero() || report.ObservedAt.Before(sample) {
 		return fail()
 	}
 	// The new budget takes effect atomically with this write, allowing an
@@ -95,7 +95,7 @@ func (c *ConfigMutationCapacity) Reserve(ctx context.Context, tx *sql.Tx, curren
 	if report.AvailableBytes <= physicalBudget+configMutationSafetyReserve(physicalBudget)+outstanding+cost {
 		return fail()
 	}
-	if !configMutationOne(tx.ExecContext(ctx, "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?", cost, sample, outstanding)) {
+	if !configMutationOne(tx.ExecContext(ctx, "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?", cost, sample, outstanding)) {
 		return fail()
 	}
 	r := &configMutationCapacityReservation{c, tx, report, sample, capacity, physicalBudget, outstanding + cost, until}
@@ -126,7 +126,7 @@ func (r *configMutationCapacityReservation) Recheck(ctx context.Context, tx *sql
 	}
 	var sample time.Time
 	var outstanding int64
-	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || !sample.Equal(r.sample) || outstanding < r.floor || outstanding >= r.capacity-configMutationSafetyReserve(r.capacity)-r.report.AllocatedBytes || r.report.AvailableBytes <= r.physical+configMutationSafetyReserve(r.physical)+outstanding {
+	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || !sample.Equal(r.sample) || outstanding < r.floor || outstanding >= r.capacity-configMutationSafetyReserve(r.capacity)-r.report.AllocatedBytes || r.report.AvailableBytes <= r.physical+configMutationSafetyReserve(r.physical)+outstanding {
 		return ErrRegistrationUnavailable
 	}
 	now, err := r.source.clock(ctx, tx, notBefore)

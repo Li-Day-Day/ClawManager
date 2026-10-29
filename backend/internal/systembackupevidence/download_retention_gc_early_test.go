@@ -152,10 +152,10 @@ func newGCEarlyModel(t *testing.T, d *retentionGCModel, maintenance bool) *gcEar
 		if gcDeleteTables[table] {
 			privileges += ", DELETE"
 		}
-		if table == "system_backup_metadata_reservations" {
+		if table == "system_backup_v2_metadata_reservations" {
 			privileges += ", UPDATE"
 		}
-		if table == "system_backup_compact_tombstones" {
+		if table == "system_backup_v2_compact_tombstones" {
 			privileges += ", INSERT"
 		}
 		m.grants = append(m.grants, "GRANT "+privileges+" ON "+target(table))
@@ -169,7 +169,7 @@ func newGCEarlyModel(t *testing.T, d *retentionGCModel, maintenance bool) *gcEar
 		parts := strings.SplitN(key, ".", 2)
 		m.catalog[downloadGCEarlyColumnsSQL] = append(m.catalog[downloadGCEarlyColumnsSQL], []driver.Value{parts[0], parts[1], strconv.Itoa(n + 2), gcDirectColumns(maintenance)[key], "YES", "null", "", "", "", "", ""})
 	}
-	m.catalog[downloadGCEarlyForeignKeysSQL] = [][]driver.Value{{database, "system_backup_download_admission_receipts", "admission_operation", "1", "operation_id", database, "system_backup_operations", "id", "RESTRICT", "RESTRICT"}}
+	m.catalog[downloadGCEarlyForeignKeysSQL] = [][]driver.Value{{database, "system_backup_v2_download_admission_receipts", "admission_operation", "1", "operation_id", database, "system_backup_v2_operations", "id", "RESTRICT", "RESTRICT"}}
 	state := "absent"
 	if maintenance {
 		state = "installed"
@@ -253,9 +253,9 @@ func TestDownloadRetentionGCEarlyReferenceAndGrantDenials(t *testing.T) {
 			case "extra_update_audit":
 				addGrant("UPDATE", "audit_logs")
 			case "extra_insert_operation":
-				addGrant("INSERT", "system_backup_operations")
+				addGrant("INSERT", "system_backup_v2_operations")
 			case "extra_delete_marker":
-				addGrant("DELETE", "system_backup_compact_tombstones")
+				addGrant("DELETE", "system_backup_v2_compact_tombstones")
 			case "extra_user_select":
 				addGrant("SELECT", "users")
 			case "grant_option":
@@ -265,7 +265,7 @@ func TestDownloadRetentionGCEarlyReferenceAndGrantDenials(t *testing.T) {
 				m.grants = append(m.grants, "GRANT 'gc_role'@'localhost' TO 'download_gc'@'localhost'")
 				m.service.c.GrantsSHA256 = m.grantsPin()
 			case "other_database":
-				m.grants = append(m.grants, "GRANT SELECT ON `other`.`system_backups` TO 'download_gc'@'localhost'")
+				m.grants = append(m.grants, "GRANT SELECT ON `other`.`system_backup_v2_backups` TO 'download_gc'@'localhost'")
 				m.service.c.GrantsSHA256 = m.grantsPin()
 			case "duplicate_grant":
 				m.grants = append(m.grants, m.grants[0])

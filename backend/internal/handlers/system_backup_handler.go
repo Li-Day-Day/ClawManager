@@ -1,192 +1,258 @@
 package handlers
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 
-	"clawreef/internal/systembackup/control"
+	"clawreef/internal/systembackup"
 	"github.com/gin-gonic/gin"
 )
 
-type BackupTaskStore interface {
-	Create(context.Context, int, string, control.Request, time.Duration) (control.Task, error)
-	List(context.Context, int) ([]control.Task, error)
-	Get(context.Context, string) (control.Task, error)
-	Cancel(context.Context, string, int64) (control.Task, error)
-	Profiles(context.Context) ([]control.Profile, error)
-}
-type SystemBackupHandler struct{ Store BackupTaskStore }
-
-type BackupCatalogStore interface {
-	CatalogPage(context.Context, string, string, int) (control.CatalogView, error)
-	CatalogDetail(context.Context, string, string, string) (control.CatalogItem, error)
-	Report(context.Context, string) (control.TaskReport, error)
+type SystemBackupHandler struct {
+	store      systembackup.Store
+	bindings   systembackup.RoleBindings
+	configured bool
+	strongAuth *systembackup.StrongAuthVerifier
 }
 
-func (h SystemBackupHandler) Catalog(c *gin.Context) {
-	if !h.available(c) {
+func (h *SystemBackupHandler) SetStrongAuthVerifier(v *systembackup.StrongAuthVerifier) {
+	h.strongAuth = v
+}
+
+func NewSystemBackupHandler(s systembackup.Store, b systembackup.RoleBindings) *SystemBackupHandler {
+	return &SystemBackupHandler{store: s, bindings: b, configured: s.DB != nil && s.InstallationID != ""}
+}
+func (h *SystemBackupHandler) Register(r *gin.RouterGroup) {
+	r.GET("/overview", h.overview)
+	r.GET("/config", h.config)
+	r.PUT("/config", h.saveConfig)
+	r.POST("/config/authorization", h.configAuthorization)
+	r.GET("/tasks", h.list)
+	r.POST("/tasks", h.create)
+	r.GET("/tasks/:id", h.detail)
+	r.GET("/tasks/:id/events", h.events)
+	r.GET("/tasks/:id/verification-report", h.verificationReport)
+	r.POST("/tasks/:id/cancel", h.cancel)
+}
+
+func (h *SystemBackupHandler) verificationReport(c *gin.Context) {
+	if !h.allow(c, systembackup.Read) {
 		return
 	}
-	s, ok := h.Store.(BackupCatalogStore)
-	if !ok {
-		backupError(c, control.ErrNotReady)
-		return
-	}
-	limit := 50
-	if value, ok := c.GetQuery("limit"); ok {
-		var e error
-		limit, e = strconv.Atoi(value)
-		if e != nil {
-			backupError(c, control.ErrInvalid)
-			return
-		}
-	}
-	v, e := s.CatalogPage(c.Request.Context(), c.Param("id"), c.Query("cursor"), limit)
+	v, e := h.store.VerificationReport(c.Request.Context(), c.Param("id"))
 	if e != nil {
 		backupError(c, e)
 		return
 	}
 	c.JSON(200, gin.H{"success": true, "data": v})
 }
-func (h SystemBackupHandler) CatalogRecord(c *gin.Context) {
-	if !h.available(c) {
-		return
+func backupError(c *gin.Context, err error) {
+	code := systembackup.PublicError(err)
+	status := 500
+	switch code {
+	case "validation_failed":
+		status = 400
+	case "permission_denied":
+		status = 403
+	case "not_found":
+		status = 404
+	case "not_ready", "artifact_unavailable":
+		status = 503
+	case "version_conflict", "idempotency_conflict", "state_conflict", "commit_started", "conflict_active_job":
+		status = 409
+	case "unsupported_runner_p1", "unsupported_profile_p1", "capacity_exceeded":
+		status = 422
+	case "strong_auth_required", "strong_auth_expired", "strong_auth_invalid_issuer", "strong_auth_invalid", "strong_auth_replayed":
+		status = 401
+	case "rate_limited":
+		status = 429
 	}
-	s, ok := h.Store.(BackupCatalogStore)
-	if !ok {
-		backupError(c, control.ErrNotReady)
-		return
+	if status == 503 || status == 429 {
+		c.Header("Retry-After", "15")
 	}
-	v, e := s.CatalogDetail(c.Request.Context(), c.Param("id"), c.Param("record"), c.Query("type"))
-	if e != nil {
-		backupError(c, e)
-		return
-	}
-	c.JSON(200, gin.H{"success": true, "data": v})
-}
-func (h SystemBackupHandler) Report(c *gin.Context) {
-	if !h.available(c) {
-		return
-	}
-	s, ok := h.Store.(BackupCatalogStore)
-	if !ok {
-		backupError(c, control.ErrNotReady)
-		return
-	}
-	v, e := s.Report(c.Request.Context(), c.Param("id"))
-	if e != nil {
-		backupError(c, e)
-		return
-	}
-	if c.Query("download") == "1" {
-		c.Header("Content-Disposition", `attachment; filename="backup-report.json"`)
-	}
-	c.Header("X-Content-Type-Options", "nosniff")
-	c.JSON(200, gin.H{"success": true, "data": v})
-}
-
-func backupError(c *gin.Context, e error) {
-	code, status := "not_ready", http.StatusServiceUnavailable
-	switch {
-	case errors.Is(e, control.ErrInvalid):
-		code, status = "invalid_request", 400
-	case errors.Is(e, control.ErrConflict):
-		code, status = "state_conflict", 409
-	case errors.Is(e, control.ErrNotFound):
-		code, status = "not_found", 404
-	}
-	c.JSON(status, gin.H{"success": false, "error": code})
-}
-func (h SystemBackupHandler) available(c *gin.Context) bool {
 	c.Header("Cache-Control", "no-store")
-	if h.Store == nil {
-		backupError(c, control.ErrNotReady)
+	c.JSON(status, gin.H{"success": false, "code": code, "error": code})
+}
+func (h *SystemBackupHandler) allow(c *gin.Context, p systembackup.Permission) bool {
+	c.Header("Cache-Control", "no-store")
+	c.Header("X-Content-Type-Options", "nosniff")
+	id := c.GetInt("userID")
+	if id < 1 {
+		c.JSON(401, gin.H{"success": false, "code": "authentication_required"})
+		return false
+	}
+	if !h.configured || len(h.bindings) == 0 {
+		backupError(c, errors.New("not_ready"))
+		return false
+	}
+	if !h.bindings.Allows(id, p) {
+		backupError(c, errors.New("permission_denied"))
 		return false
 	}
 	return true
 }
-func (h SystemBackupHandler) Profiles(c *gin.Context) {
-	c.Header("Cache-Control", "no-store")
-	if h.Store == nil {
-		c.JSON(200, gin.H{"success": true, "data": gin.H{"profiles": []control.Profile{}, "ready": false, "reasons": []string{"control_database_not_configured"}, "contract": control.Version, "production_restore": false}})
-		return
+func backupBody(c *gin.Context, v any) bool {
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 256<<10)
+	raw, e := io.ReadAll(c.Request.Body)
+	if e == nil {
+		e = systembackup.DecodeStrictJSON(raw, v)
+		if e == nil {
+			return true
+		}
 	}
-	p, e := h.Store.Profiles(c.Request.Context())
-	if e != nil {
-		backupError(c, e)
-		return
+	var size *http.MaxBytesError
+	if errors.As(e, &size) {
+		c.JSON(413, gin.H{"success": false, "code": "payload_too_large"})
+		return false
 	}
-	c.JSON(200, gin.H{"success": true, "data": gin.H{"profiles": p, "contract": control.Version, "production_restore": false}})
+	backupError(c, errors.New("validation_failed"))
+	return false
 }
-func (h SystemBackupHandler) List(c *gin.Context) {
-	if !h.available(c) {
+func (h *SystemBackupHandler) overview(c *gin.Context) {
+	if !h.allow(c, systembackup.Read) {
 		return
 	}
-	items, e := h.Store.List(c.Request.Context(), 100)
+	v, e := h.store.Readiness(c.Request.Context())
 	if e != nil {
 		backupError(c, e)
 		return
 	}
-	c.JSON(200, gin.H{"success": true, "data": gin.H{"items": items}})
+	permissions := []systembackup.Permission{}
+	for _, p := range []systembackup.Permission{systembackup.Read, systembackup.Operate, systembackup.Configure, systembackup.SecurityConfigure, systembackup.Destructive} {
+		if h.bindings.Allows(c.GetInt("userID"), p) {
+			permissions = append(permissions, p)
+		}
+	}
+	c.JSON(200, gin.H{"success": true, "data": gin.H{"readiness": v, "permissions": permissions}})
 }
-func (h SystemBackupHandler) Get(c *gin.Context) {
-	if !h.available(c) {
+func (h *SystemBackupHandler) config(c *gin.Context) {
+	if !h.allow(c, systembackup.Read) {
 		return
 	}
-	t, e := h.Store.Get(c.Request.Context(), c.Param("id"))
+	v, e := h.store.Config(c.Request.Context())
 	if e != nil {
 		backupError(c, e)
 		return
 	}
-	c.JSON(200, gin.H{"success": true, "data": t})
+	c.JSON(200, gin.H{"success": true, "data": v})
 }
-func (h SystemBackupHandler) Create(c *gin.Context) {
-	if !h.available(c) {
+func (h *SystemBackupHandler) saveConfig(c *gin.Context) {
+	if !h.allow(c, systembackup.Configure) {
 		return
 	}
-	var r control.Request
-	decoder := json.NewDecoder(http.MaxBytesReader(c.Writer, c.Request.Body, 4096))
-	decoder.DisallowUnknownFields()
-	if decoder.Decode(&r) != nil || r.Validate() != nil {
-		backupError(c, control.ErrInvalid)
+	var input systembackup.ConfigChange
+	if !backupBody(c, &input) {
 		return
 	}
-	var extra any
-	if decoder.Decode(&extra) != io.EOF {
-		backupError(c, control.ErrInvalid)
-		return
-	}
-	actor := c.GetInt("userID")
-	if actor <= 0 {
-		c.AbortWithStatus(401)
-		return
-	}
-	t, e := h.Store.Create(c.Request.Context(), actor, c.GetHeader("Idempotency-Key"), r, 2*time.Hour)
+	v, replay, e := h.store.SaveConfigAuthorized(c.Request.Context(), c.GetInt("userID"), c.GetHeader("Idempotency-Key"), input, systembackup.SessionBinding(c.GetHeader("Authorization")), c.GetHeader("X-System-Backup-Proof"), h.bindings, h.strongAuth)
 	if e != nil {
 		backupError(c, e)
 		return
 	}
-	c.Header("Location", "/api/v1/admin/system-backup/tasks/"+t.ID)
-	c.JSON(202, gin.H{"success": true, "data": t})
+	c.JSON(200, gin.H{"success": true, "data": v, "idempotent_replay": replay})
 }
-func (h SystemBackupHandler) Cancel(c *gin.Context) {
-	if !h.available(c) {
+
+// This prepares a binding for a trusted MFA issuer, not an MFA proof. It never
+// consumes a nonce or gives the application the issuer's signing capability.
+func (h *SystemBackupHandler) configAuthorization(c *gin.Context) {
+	if !h.allow(c, systembackup.Configure) {
 		return
 	}
-	version, e := strconv.ParseInt(c.GetHeader("If-Match"), 10, 64)
-	if e != nil || version <= 0 {
-		backupError(c, control.ErrInvalid)
+	var input systembackup.ConfigChange
+	if !backupBody(c, &input) {
 		return
 	}
-	t, e := h.Store.Cancel(c.Request.Context(), c.Param("id"), version)
+	if h.strongAuth == nil || h.strongAuth.Validate() != nil || h.strongAuth.Audience != h.store.InstallationID {
+		backupError(c, errors.New("not_ready"))
+		return
+	}
+	key := c.GetHeader("Idempotency-Key")
+	if len(key) < 8 || len(key) > 128 {
+		backupError(c, errors.New("validation_failed"))
+		return
+	}
+	hash, e := systembackup.RequestHash(input)
 	if e != nil {
 		backupError(c, e)
 		return
 	}
-	c.JSON(202, gin.H{"success": true, "data": t})
+	c.JSON(200, gin.H{"success": true, "data": gin.H{"aud": h.store.InstallationID, "sub": strconv.Itoa(c.GetInt("userID")), "session": systembackup.SessionBinding(c.GetHeader("Authorization")), "endpoint": "PUT /config", "request_hash": hash, "idempotency_key": key}})
+}
+func (h *SystemBackupHandler) list(c *gin.Context) {
+	if !h.allow(c, systembackup.Read) {
+		return
+	}
+	v, e := h.store.List(c.Request.Context(), 100)
+	if e != nil {
+		backupError(c, e)
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "data": gin.H{"items": v}})
+}
+func (h *SystemBackupHandler) detail(c *gin.Context) {
+	if !h.allow(c, systembackup.Read) {
+		return
+	}
+	v, e := h.store.Get(c.Request.Context(), c.Param("id"))
+	if e != nil {
+		backupError(c, e)
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "data": v})
+}
+func (h *SystemBackupHandler) events(c *gin.Context) {
+	if !h.allow(c, systembackup.Read) {
+		return
+	}
+	after := uint64(0)
+	if value := c.Query("after"); value != "" {
+		n, e := strconv.ParseUint(value, 10, 64)
+		if e != nil {
+			backupError(c, errors.New("validation_failed"))
+			return
+		}
+		after = n
+	}
+	v, e := h.store.Events(c.Request.Context(), c.Param("id"), after)
+	if e != nil {
+		backupError(c, e)
+		return
+	}
+	c.JSON(200, gin.H{"success": true, "data": gin.H{"items": v}})
+}
+func (h *SystemBackupHandler) create(c *gin.Context) {
+	if !h.allow(c, systembackup.Operate) {
+		return
+	}
+	var input systembackup.CreateTaskRequest
+	if !backupBody(c, &input) {
+		return
+	}
+	v, replay, e := h.store.Create(c.Request.Context(), c.GetInt("userID"), c.GetHeader("Idempotency-Key"), input, systembackup.AdmitReady)
+	if e != nil {
+		backupError(c, e)
+		return
+	}
+	c.Header("Location", "/api/v1/admin/system-backup/tasks/"+v.ID)
+	c.JSON(202, gin.H{"success": true, "data": v, "idempotent_replay": replay})
+}
+func (h *SystemBackupHandler) cancel(c *gin.Context) {
+	if !h.allow(c, systembackup.Operate) {
+		return
+	}
+	var input struct {
+		Version uint64 `json:"expected_version"`
+	}
+	if !backupBody(c, &input) {
+		return
+	}
+	v, replay, e := h.store.CancelIdempotent(c.Request.Context(), c.Param("id"), input.Version, c.GetInt("userID"), c.GetHeader("Idempotency-Key"))
+	if e != nil {
+		backupError(c, e)
+		return
+	}
+	c.Header("Location", "/api/v1/admin/system-backup/tasks/"+v.ID)
+	c.JSON(202, gin.H{"success": true, "data": v, "idempotent_replay": replay})
 }

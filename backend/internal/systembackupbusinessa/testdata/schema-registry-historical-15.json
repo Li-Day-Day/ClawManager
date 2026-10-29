@@ -1575,7 +1575,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_artifact_lease_states",
+      "name": "system_backup_v2_artifact_lease_states",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -1585,7 +1585,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.artifact_lease_states.reference.verify.v1",
       "depends_on": [
-        "table:system_backups"
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1606,7 +1606,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_artifact_leases",
+      "name": "system_backup_v2_artifact_leases",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -1616,12 +1616,12 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.artifact_leases.reference.verify.v1",
       "depends_on": [
-        "table:system_artifact_lease_states",
-        "table:system_backup_artifact_verifications",
-        "table:system_backup_configs",
-        "table:system_backup_preflights",
-        "table:system_backups",
-        "table:system_restore_drills"
+        "table:system_backup_v2_artifact_lease_states",
+        "table:system_backup_v2_artifact_verifications",
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_preflights",
+        "table:system_backup_v2_backups",
+        "table:system_backup_v2_restore_drills"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1642,7 +1642,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_admin_revocations",
+      "name": "system_backup_v2_admin_revocations",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1672,7 +1672,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_admin_sessions",
+      "name": "system_backup_v2_admin_sessions",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1702,7 +1702,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_alert_states",
+      "name": "system_backup_v2_alert_states",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -1712,7 +1712,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.alert_states.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs"
+        "table:system_backup_v2_configs"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1734,7 +1734,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_artifact_verifications",
+      "name": "system_backup_v2_artifact_verifications",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1744,9 +1744,9 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.artifact_verifications.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_evidence",
-        "table:system_backups"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1768,7 +1768,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_attempts",
+      "name": "system_backup_v2_attempts",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1778,10 +1778,10 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.attempts.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_artifact_verifications",
-        "table:system_backup_preflights",
-        "table:system_backups",
-        "table:system_restore_drills"
+        "table:system_backup_v2_artifact_verifications",
+        "table:system_backup_v2_preflights",
+        "table:system_backup_v2_backups",
+        "table:system_backup_v2_restore_drills"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1803,7 +1803,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_check_results",
+      "name": "system_backup_v2_check_results",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1813,14 +1813,14 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.check_results.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_artifact_verifications",
-        "table:system_backup_evidence",
-        "table:system_backup_operations",
-        "table:system_backup_preflights",
-        "table:system_backup_promotions",
-        "table:system_backup_prune_runs",
-        "table:system_backups",
-        "table:system_restore_drills"
+        "table:system_backup_v2_artifact_verifications",
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_preflights",
+        "table:system_backup_v2_promotions",
+        "table:system_backup_v2_prune_runs",
+        "table:system_backup_v2_backups",
+        "table:system_backup_v2_restore_drills"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1842,7 +1842,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_compact_tombstones",
+      "name": "system_backup_v2_compact_tombstones",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1870,7 +1870,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_configs",
+      "name": "system_backup_v2_configs",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1900,7 +1900,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_dependency_health",
+      "name": "system_backup_v2_dependency_health",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -1910,7 +1910,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.dependency_health.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_evidence"
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1932,7 +1932,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_events",
+      "name": "system_backup_v2_events",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1942,11 +1942,11 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.events.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_artifact_verifications",
-        "table:system_backup_operations",
-        "table:system_backup_preflights",
-        "table:system_backups",
-        "table:system_restore_drills"
+        "table:system_backup_v2_artifact_verifications",
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_preflights",
+        "table:system_backup_v2_backups",
+        "table:system_backup_v2_restore_drills"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -1968,7 +1968,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_evidence",
+      "name": "system_backup_v2_evidence",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -1998,7 +1998,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_evidence_chunks",
+      "name": "system_backup_v2_evidence_chunks",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2008,7 +2008,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.evidence_chunks.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_evidence"
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2029,7 +2029,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_external_actions",
+      "name": "system_backup_v2_external_actions",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2039,10 +2039,10 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.external_actions.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_evidence",
-        "table:system_backup_operations",
-        "table:system_backup_prune_items",
-        "table:system_backups"
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_prune_items",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2063,7 +2063,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_installation_state",
+      "name": "system_backup_v2_installation_state",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -2073,7 +2073,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.installation_state.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs"
+        "table:system_backup_v2_configs"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2094,7 +2094,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_job_observations",
+      "name": "system_backup_v2_job_observations",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2104,7 +2104,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.job_observations.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_attempts"
+        "table:system_backup_v2_attempts"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2126,7 +2126,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_log_chunks",
+      "name": "system_backup_v2_log_chunks",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2136,7 +2136,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.log_chunks.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_evidence"
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2157,7 +2157,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_metadata_reservations",
+      "name": "system_backup_v2_metadata_reservations",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -2185,7 +2185,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_operations",
+      "name": "system_backup_v2_operations",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2195,8 +2195,8 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.operations.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_evidence"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2218,7 +2218,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_preflights",
+      "name": "system_backup_v2_preflights",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2228,9 +2228,9 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.preflights.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_evidence",
-        "table:system_backups"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2252,7 +2252,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_promotions",
+      "name": "system_backup_v2_promotions",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2262,11 +2262,11 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.promotions.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_dependency_health",
-        "table:system_backup_evidence",
-        "table:system_backups",
-        "table:system_restore_drills"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_dependency_health",
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_backups",
+        "table:system_backup_v2_restore_drills"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2288,7 +2288,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_provider_capabilities",
+      "name": "system_backup_v2_provider_capabilities",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -2298,7 +2298,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.provider_capabilities.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_evidence"
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2320,7 +2320,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_prune_items",
+      "name": "system_backup_v2_prune_items",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2330,9 +2330,9 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.prune_items.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_operations",
-        "table:system_backup_prune_runs",
-        "table:system_backups"
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_prune_runs",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2352,7 +2352,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_prune_runs",
+      "name": "system_backup_v2_prune_runs",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2362,11 +2362,11 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.prune_runs.reference.verify.v1",
       "depends_on": [
-        "table:system_artifact_leases",
-        "table:system_backup_configs",
-        "table:system_backup_operations",
-        "table:system_backup_promotions",
-        "table:system_backups"
+        "table:system_backup_v2_artifact_leases",
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_promotions",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2387,7 +2387,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_source_writer_check_states",
+      "name": "system_backup_v2_source_writer_check_states",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2397,8 +2397,8 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.source_writer_check_states.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_evidence"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2420,7 +2420,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_staging_resources",
+      "name": "system_backup_v2_staging_resources",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2430,10 +2430,10 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.staging_resources.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_attempts",
-        "table:system_backup_evidence",
-        "table:system_backup_operations",
-        "table:system_backups"
+        "table:system_backup_v2_attempts",
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2455,7 +2455,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_strong_auth_nonces",
+      "name": "system_backup_v2_strong_auth_nonces",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2466,7 +2466,7 @@
       "verifier_id": "system_backup.strong_auth_nonces.reference.verify.v1",
       "depends_on": [
         "table:audit_logs",
-        "table:system_backup_operations"
+        "table:system_backup_v2_operations"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2486,7 +2486,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backup_totp_credentials",
+      "name": "system_backup_v2_totp_credentials",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "secret",
@@ -2516,7 +2516,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_backups",
+      "name": "system_backup_v2_backups",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2526,8 +2526,8 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.backups.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_evidence"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_evidence"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2578,7 +2578,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_maintenance_locks",
+      "name": "system_backup_v2_maintenance_locks",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -2588,7 +2588,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.maintenance_locks.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs"
+        "table:system_backup_v2_configs"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2610,7 +2610,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_maintenance_mutation_leases",
+      "name": "system_backup_v2_maintenance_mutation_leases",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -2620,7 +2620,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.maintenance_mutation_leases.reference.verify.v1",
       "depends_on": [
-        "table:system_maintenance_locks"
+        "table:system_backup_v2_maintenance_locks"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2642,7 +2642,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_maintenance_participants",
+      "name": "system_backup_v2_maintenance_participants",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "internal",
@@ -2652,7 +2652,7 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.maintenance_participants.reference.verify.v1",
       "depends_on": [
-        "table:system_maintenance_locks"
+        "table:system_backup_v2_maintenance_locks"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2674,7 +2674,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_restore_drill_resources",
+      "name": "system_backup_v2_restore_drill_resources",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2684,9 +2684,9 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.restore_drill_resources.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_evidence",
-        "table:system_backup_operations",
-        "table:system_restore_drills"
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_operations",
+        "table:system_backup_v2_restore_drills"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [
@@ -2708,7 +2708,7 @@
     },
     {
       "object_type": "table",
-      "name": "system_restore_drills",
+      "name": "system_backup_v2_restore_drills",
       "owner": "D",
       "category": "system_backup",
       "data_classification": "confidential",
@@ -2718,9 +2718,9 @@
       "normalizer_id": null,
       "verifier_id": "system_backup.restore_drills.reference.verify.v1",
       "depends_on": [
-        "table:system_backup_configs",
-        "table:system_backup_evidence",
-        "table:system_backups"
+        "table:system_backup_v2_configs",
+        "table:system_backup_v2_evidence",
+        "table:system_backup_v2_backups"
       ],
       "decision_status": "owner_recorded",
       "required_cross_reviewers": [

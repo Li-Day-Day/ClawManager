@@ -411,9 +411,9 @@ func TestDResourcesReadbackMySQL(t *testing.T) {
 		restoreMySQLOK(t, verifyRestoreReadback(f.ctx, f.reader, f.registry, empty, fieldTestBudget, f.proofs()))
 	})
 	t.Run("control_row_denied", func(t *testing.T) {
-		f.exec(t, "INSERT INTO `"+f.database+"`.system_maintenance_locks(origin_installation_id,scope,lock_ttl_seconds) VALUES('installation_resources_probe','installation',300)")
+		f.exec(t, "INSERT INTO `"+f.database+"`.system_backup_v2_maintenance_locks(origin_installation_id,scope,lock_ttl_seconds) VALUES('installation_resources_probe','installation',300)")
 		var count int
-		restoreMySQLOK(t, f.reader.QueryRowContext(f.ctx, "SELECT COUNT(*) FROM system_maintenance_locks").Scan(&count))
+		restoreMySQLOK(t, f.reader.QueryRowContext(f.ctx, "SELECT COUNT(*) FROM system_backup_v2_maintenance_locks").Scan(&count))
 		if count == 0 {
 			t.Fatal("control-row negative fixture missing")
 		}

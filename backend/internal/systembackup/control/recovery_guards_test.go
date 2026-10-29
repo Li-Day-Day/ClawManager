@@ -85,7 +85,7 @@ func TestPruneClaimFreezesAllCandidatesBeforeAnyProviderCall(t *testing.T) {
 		if json.Unmarshal(args[0].Value.([]byte), &a) != nil || a.State != "deleting" || a.GuardVersion != 2 {
 			t.Fatal("candidate not claimed")
 		}
-	}}, sqlStep{contains: "INSERT INTO system_backup_prune_items", affected: 1}, sqlStep{contains: "SET run_state='claimed'", affected: 1})
+	}}, sqlStep{contains: "INSERT INTO system_backup_v2_prune_items", affected: 1}, sqlStep{contains: "SET run_state='claimed'", affected: 1})
 	steps = append(steps, workerCommit(task)...)
 	s, script := scriptStore(t, steps...)
 	if e := (RecoveryGuards{s, task}).ClaimPrune(context.Background(), p); e != nil || script.commits != 1 {

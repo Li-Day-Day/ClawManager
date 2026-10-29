@@ -295,7 +295,7 @@ func TestTaskDetailControlBuilderCannotCommitOrOutliveFinalAuthority(t *testing.
 				}
 				var rowVersion uint64
 				// A later Owner query uses this exact same transaction wrapper.
-				if err := q.QueryRowContext(ctx, "SELECT COALESCE(MAX(id),0) FROM system_backups WHERE origin_installation_id=?", s.Execution().Task().InstallationID).Scan(&rowVersion); err != nil {
+				if err := q.QueryRowContext(ctx, "SELECT COALESCE(MAX(id),0) FROM system_backup_v2_backups WHERE origin_installation_id=?", s.Execution().Task().InstallationID).Scan(&rowVersion); err != nil {
 					t.Fatal(err)
 				}
 				switch scenario {
@@ -326,7 +326,7 @@ func TestTaskDetailControlBuilderCannotCommitOrOutliveFinalAuthority(t *testing.
 }
 
 func TestTaskDetailControlColumnsExistInPublishedMigration(t *testing.T) {
-	data, err := os.ReadFile("../db/migrations/067_add_system_backup_task_execution_core.sql")
+	data, err := os.ReadFile("../db/migrations/098_backup_v2_add_system_backup_task_execution_core.sql")
 	if err != nil {
 		t.Fatal(err)
 	}

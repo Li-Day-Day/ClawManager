@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 	"os"
 	"time"
 
@@ -12,58 +13,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// This is the only production task application composition point. The existing
-// read authorizer is intentionally not reused as system_backup.operate authority.
-// Supply reviewed deployment owners through this build-time composition seam.
-// SQL persistence and complete DTO composition are concrete implementations;
-// the missing owner contract/admission/provider implementations are explicit.
-type systemBackupTaskOwners struct {
-	Admission    systembackupapi.TaskAdmission
-	CurrentFacts systembackupread.CurrentTaskFacts
-	Manifest     systembackupread.ManifestReader
-}
-
-// A deployment composition file may bind real owners, as with the bootstrap
-// owner link. HTTP/env JSON cannot inject callbacks or approve a missing owner.
-// The repository currently has no B/C production link: leave it unavailable.
-var systemBackupTaskOwnerLink func(*sql.DB) (systemBackupTaskOwners, error)
-
+// Read and operate authorities remain separate. Task admission additionally
+// requires a matching, fresh execution-adapter receipt inside its SQL transaction.
 func linkedSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions) systembackupapi.TaskApplication {
-	if db == nil || sessions == nil || systemBackupTaskOwnerLink == nil {
-		return nil
+	var writer systembackupapi.TaskWriter = systembackupapi.DisabledTaskWriter{}
+	if path := os.Getenv("SYSTEM_BACKUP_EXECUTION_PROFILE_FILE"); path != "" {
+		profile, err := systembackupapi.LoadExecutionProfile(path)
+		if err == nil {
+			if os.Getenv("SYSTEM_BACKUP_EXECUTION_PROTOCOL") == "public-v1" {
+				writer, err = systembackupapi.NewAdmittedTaskWriter(profile, os.Getenv("SYSTEM_BACKUP_CAPACITY_REPORT_FILE"), os.Getenv("SYSTEM_BACKUP_V2_EXECUTION_ENABLED") == "true")
+			} else {
+				err = &systembackupapi.Error{Code: "not_ready"}
+			}
+		}
+		if err != nil {
+			writer = systembackupapi.DisabledTaskWriter{}
+			log.Print("backup execution profile unavailable; task submission disabled, authorized history and unstarted cancellation retained")
+		}
 	}
-	owners, err := systemBackupTaskOwnerLink(db)
-	if err != nil {
-		return nil
-	}
-	application, err := composeOwnedSystemBackupTaskApplication(db, sessions, owners, os.Getenv)
+	details := systembackupapi.SQLTaskDetails{DB: db}
+	application, err := composeSystemBackupTaskApplication(db, sessions, writer, details, os.Getenv)
 	if err != nil {
 		return nil
 	}
 	return application
-}
-
-func composeOwnedSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions, owners systemBackupTaskOwners, getenv func(string) string) (systembackupapi.TaskApplication, error) {
-	if getenv == nil {
-		return nil, &systembackupapi.Error{Code: "not_ready"}
-	}
-	var enabled bool
-	switch getenv("SYSTEM_BACKUP_ENABLED") {
-	case "", "false":
-	case "true":
-		enabled = true
-	default:
-		return nil, &systembackupapi.Error{Code: "not_ready"}
-	}
-	writer, err := systembackupapi.NewSQLTaskWriter(systembackupapi.NewTaskRequestContract(), owners.Admission, enabled)
-	if err != nil {
-		return nil, err
-	}
-	details, err := systembackupapi.NewSQLTaskDetails(db, owners.CurrentFacts, owners.Manifest)
-	if err != nil {
-		return nil, err
-	}
-	return composeSystemBackupTaskApplication(db, sessions, writer, details, getenv)
 }
 
 func composeSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecurity.SQLLoginSessions,
@@ -81,7 +54,11 @@ func composeSystemBackupTaskApplication(db *sql.DB, sessions *systembackupsecuri
 	if err != nil {
 		return nil, err
 	}
-	return systembackupapi.NewSQLApplication(db, actions, reads, writer, details, 30*time.Second)
+	app, err := systembackupapi.NewSQLApplication(db, actions, reads, writer, details, 30*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	return app.WithCancellationCapacityReport(getenv("SYSTEM_BACKUP_CAPACITY_REPORT_FILE")), nil
 }
 
 func registerBackupTaskMutations(admin *gin.RouterGroup, handler *systembackupapi.Handler) {
@@ -90,5 +67,11 @@ func registerBackupTaskMutations(admin *gin.RouterGroup, handler *systembackupap
 	})
 	admin.POST("/system-backup-preflights", func(c *gin.Context) {
 		handler.Create(c.Writer, c.Request, systembackupread.PreflightTask, middleware.SystemBackupRequestID(c))
+	})
+	admin.POST("/system-backups/:id/cancel", func(c *gin.Context) {
+		handler.Cancel(c.Writer, c.Request, systembackupread.BackupTask, c.Param("id"), middleware.SystemBackupRequestID(c))
+	})
+	admin.POST("/system-backup-preflights/:id/cancel", func(c *gin.Context) {
+		handler.Cancel(c.Writer, c.Request, systembackupread.PreflightTask, c.Param("id"), middleware.SystemBackupRequestID(c))
 	})
 }

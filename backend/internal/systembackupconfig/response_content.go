@@ -18,7 +18,7 @@ func (c ConfigMutationResponseContent) StageInline(ctx context.Context, tx *sql.
 	if ctx == nil || ctx.Err() != nil || tx == nil || len(c.payload) < 2 || len(c.payload) > 8192 || now.Before(c.created) || !now.Before(c.until) || checkDatabase(ctx, tx, c.database) != nil {
 		return 0, sec.ErrRegistrationUnavailable
 	}
-	result, err := tx.ExecContext(ctx, `INSERT INTO system_backup_evidence
+	result, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_evidence
 (public_id,owner_target_type,owner_target_public_id,evidence_type,storage_state,inline_payload,content_checksum,content_size_bytes,media_type,encryption,redaction_classification,observed_health,expires_at,created_at)
 SELECT ?,'system',?,'diagnostic','inline',?,?,?,'application/json','none','internal','healthy',?,?
 WHERE UTC_TIMESTAMP(6)>=? AND UTC_TIMESTAMP(6)<?`, c.identity.ID, c.identity.Installation, c.payload, c.identity.ContentHash, len(c.payload), c.retain.UTC(), c.created.UTC(), c.created.UTC(), c.until.UTC())
@@ -53,7 +53,7 @@ func (c ConfigMutationResponseContent) BindPublished(ctx context.Context, tx *sq
 storage_provider_role,storage_identity_hash,storage_ref_version,storage_relative_key,storage_relative_key_hash,storage_immutable_version,
 content_checksum,content_size_bytes,object_checksum,object_size_bytes,plaintext_chunk_size_bytes,chunk_count,chunk_list_root,media_type,encryption,envelope_framing_version,
 kek_identity_hash,kek_version,envelope_hash,redaction_classification,expires_at,created_at
-FROM system_backup_evidence WHERE public_id=? FOR UPDATE`, c.identity.ID).Scan(&id, &schema, &publicID, &ownerType, &owner, &evidenceType, &state, &failure, &health,
+FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE`, c.identity.ID).Scan(&id, &schema, &publicID, &ownerType, &owner, &evidenceType, &state, &failure, &health,
 		&provider, &identity, &version, &key, &keyHash, &immutable, &contentHash, &contentSize, &objectHash, &objectSize, &chunkSize, &count, &root, &media, &encryption, &framing,
 		&kekIdentity, &kekVersion, &envelopeHash, &classification, &expiry, &created)
 	if err != nil || id < 1 || schema != "system-backup-evidence.v1" || publicID != c.identity.ID || ownerType != "system" || owner != c.identity.Installation || evidenceType != "diagnostic" || state != "ready" || failure != "none" || health != "healthy" || provider != "evidence" || identity != ref.Identity || version != ref.Version || key != ref.RelativeKey || keyHash != registrationHash(ref.RelativeKey) || immutable != ref.ImmutableVersion || contentHash != c.identity.ContentHash || contentSize != c.identity.ContentSize || objectHash != m.ObjectHash || objectSize != m.ObjectSize || chunkSize != ev.ChunkSize || count != 1 || root != m.ChunkRoot || media != "application/json" || encryption != "envelope_v1" || framing != ev.Framing || kekIdentity != m.Key.Identity || kekVersion != m.Key.Version || envelopeHash != m.EnvelopeHash || classification != "internal" || expiry.Before(c.retain) || created.Before(c.created) || created.After(now) {
@@ -63,7 +63,7 @@ FROM system_backup_evidence WHERE public_id=? FOR UPDATE`, c.identity.ID).Scan(&
 	var plainHash, cipherHash string
 	var nonce, tag []byte
 	chunk := m.Chunks[0]
-	rows, err := tx.QueryContext(ctx, `SELECT chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag FROM system_backup_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE`, id)
+	rows, err := tx.QueryContext(ctx, `SELECT chunk_index,plaintext_offset,plaintext_length,plaintext_sha256,object_frame_offset,object_frame_length,ciphertext_sha256,gcm_nonce,gcm_tag FROM system_backup_v2_evidence_chunks WHERE evidence_id=? ORDER BY chunk_index FOR UPDATE`, id)
 	if err != nil {
 		return 0, sec.ErrRegistrationUnavailable
 	}

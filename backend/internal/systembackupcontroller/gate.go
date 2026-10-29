@@ -170,7 +170,7 @@ func (t SQLCoordinationTransaction) LockGate(ctx context.Context, key GateKey) (
 	var snapshot GateSnapshot
 	var state string
 	if err := t.Tx.QueryRowContext(ctx,
-		"SELECT gate_state, generation, fencing_token, COALESCE(lock_owner, ''), row_version FROM system_maintenance_locks WHERE origin_installation_id = ? AND scope = ? FOR UPDATE",
+		"SELECT gate_state, generation, fencing_token, COALESCE(lock_owner, ''), row_version FROM system_backup_v2_maintenance_locks WHERE origin_installation_id = ? AND scope = ? FOR UPDATE",
 		key.InstallationID, key.Scope,
 	).Scan(&state, &snapshot.Generation, &snapshot.FencingToken, &snapshot.Owner, &snapshot.RowVersion); err != nil {
 		return GateSnapshot{}, fmt.Errorf("lock system backup maintenance gate: %w", err)
@@ -189,7 +189,7 @@ func (t SQLCoordinationTransaction) LockMutationLease(ctx context.Context, lease
 	}
 	var snapshot MutationLeaseSnapshot
 	if err := t.Tx.QueryRowContext(ctx,
-		"SELECT lease_id, origin_installation_id, scope, lease_owner, gate_generation, row_version, expires_at > UTC_TIMESTAMP(6) FROM system_maintenance_mutation_leases WHERE lease_id = ? FOR UPDATE",
+		"SELECT lease_id, origin_installation_id, scope, lease_owner, gate_generation, row_version, expires_at > UTC_TIMESTAMP(6) FROM system_backup_v2_maintenance_mutation_leases WHERE lease_id = ? FOR UPDATE",
 		leaseID,
 	).Scan(&snapshot.LeaseID, &snapshot.Key.InstallationID, &snapshot.Key.Scope, &snapshot.Owner, &snapshot.Generation, &snapshot.RowVersion, &snapshot.Live); err != nil {
 		return MutationLeaseSnapshot{}, fmt.Errorf("lock system backup mutation lease: %w", err)
@@ -208,7 +208,7 @@ func (t SQLCoordinationTransaction) CountOutstandingMutationLeases(ctx context.C
 		return 0, errors.New("mutation lease generation must be at least 1")
 	}
 	rows, err := t.Tx.QueryContext(ctx,
-		"SELECT id FROM system_maintenance_mutation_leases WHERE origin_installation_id = ? AND scope = ? AND gate_generation <= ? ORDER BY id FOR UPDATE",
+		"SELECT id FROM system_backup_v2_maintenance_mutation_leases WHERE origin_installation_id = ? AND scope = ? AND gate_generation <= ? ORDER BY id FOR UPDATE",
 		key.InstallationID, key.Scope, throughGeneration,
 	)
 	if err != nil {
@@ -299,7 +299,7 @@ func BeginGateAcquisition(ctx context.Context, tx CoordinationTransaction, key G
 		return GateToken{}, ErrGateTransitionRejected
 	}
 	result, err := tx.ExecContext(ctx,
-		"UPDATE system_maintenance_locks SET gate_state = 'acquiring', generation = generation + 1, lock_owner = ?, heartbeat_at = UTC_TIMESTAMP(6), lock_ttl_seconds = ?, lease_expires_at = LEAST(DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND)), gate_acquisition_timeout_seconds = ?, quiesce_max_hold_seconds = NULL, acquiring_started_at = UTC_TIMESTAMP(6), held_at = NULL, release_started_at = NULL, acquisition_deadline_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'idle' AND generation = ? AND row_version = ?",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'acquiring', generation = generation + 1, lock_owner = ?, heartbeat_at = UTC_TIMESTAMP(6), lock_ttl_seconds = ?, lease_expires_at = LEAST(DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND)), gate_acquisition_timeout_seconds = ?, quiesce_max_hold_seconds = NULL, acquiring_started_at = UTC_TIMESTAMP(6), held_at = NULL, release_started_at = NULL, acquisition_deadline_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'idle' AND generation = ? AND row_version = ?",
 		owner, gateSeconds(policy.LockTTL), gateSeconds(policy.LockTTL), gateSeconds(policy.AcquisitionTimeout), gateSeconds(policy.AcquisitionTimeout), gateSeconds(policy.AcquisitionTimeout), key.InstallationID, key.Scope, snapshot.Generation, snapshot.RowVersion,
 	)
 	if err != nil {
@@ -362,7 +362,7 @@ func AdvanceGateHeld(ctx context.Context, tx CoordinationTransaction, token Gate
 		return GateToken{}, fmt.Errorf("verify system backup gate participants paused: %w", errors.Join(ErrGateHoldNotReady, err))
 	}
 	result, err := tx.ExecContext(ctx,
-		"UPDATE system_maintenance_locks SET gate_state = 'held', fencing_token = fencing_token + 1, heartbeat_at = UTC_TIMESTAMP(6), lease_expires_at = LEAST(DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND)), quiesce_max_hold_seconds = ?, held_at = UTC_TIMESTAMP(6), absolute_hold_deadline_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'acquiring' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6) AND acquisition_deadline_at > UTC_TIMESTAMP(6)",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'held', fencing_token = fencing_token + 1, heartbeat_at = UTC_TIMESTAMP(6), lease_expires_at = LEAST(DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND)), quiesce_max_hold_seconds = ?, held_at = UTC_TIMESTAMP(6), absolute_hold_deadline_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'acquiring' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6) AND acquisition_deadline_at > UTC_TIMESTAMP(6)",
 		gateSeconds(policy.LockTTL), gateSeconds(policy.MaxHold), gateSeconds(policy.MaxHold), gateSeconds(policy.MaxHold), token.Key.InstallationID, token.Key.Scope, token.Generation, token.FencingToken, token.Owner, token.RowVersion,
 	)
 	if err != nil {
@@ -401,7 +401,7 @@ func AbortGateAcquisition(ctx context.Context, executor Executor, token GateToke
 		return 0, err
 	}
 	result, err := executor.ExecContext(ctx,
-		"UPDATE system_maintenance_locks SET gate_state = 'idle', lock_owner = NULL, heartbeat_at = NULL, lease_expires_at = NULL, gate_acquisition_timeout_seconds = NULL, quiesce_max_hold_seconds = NULL, acquiring_started_at = NULL, held_at = NULL, release_started_at = NULL, acquisition_deadline_at = NULL, absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'acquiring' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6)",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'idle', lock_owner = NULL, heartbeat_at = NULL, lease_expires_at = NULL, gate_acquisition_timeout_seconds = NULL, quiesce_max_hold_seconds = NULL, acquiring_started_at = NULL, held_at = NULL, release_started_at = NULL, acquisition_deadline_at = NULL, absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'acquiring' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6)",
 		token.Key.InstallationID, token.Key.Scope, token.Generation, token.FencingToken, token.Owner, token.RowVersion,
 	)
 	if err != nil {
@@ -453,7 +453,7 @@ func RecoverGateIdle(ctx context.Context, tx CoordinationTransaction, key GateKe
 		return 0, fmt.Errorf("verify system backup gate participants running: %w", errors.Join(ErrGateRecoveryNotReady, err))
 	}
 	result, err := tx.ExecContext(ctx,
-		"UPDATE system_maintenance_locks SET gate_state = 'idle', lock_owner = NULL, heartbeat_at = NULL, lease_expires_at = NULL, gate_acquisition_timeout_seconds = NULL, quiesce_max_hold_seconds = NULL, acquiring_started_at = NULL, held_at = NULL, release_started_at = NULL, acquisition_deadline_at = NULL, absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'acquiring' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND (lease_expires_at <= UTC_TIMESTAMP(6) OR acquisition_deadline_at <= UTC_TIMESTAMP(6))",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'idle', lock_owner = NULL, heartbeat_at = NULL, lease_expires_at = NULL, gate_acquisition_timeout_seconds = NULL, quiesce_max_hold_seconds = NULL, acquiring_started_at = NULL, held_at = NULL, release_started_at = NULL, acquisition_deadline_at = NULL, absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'acquiring' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND (lease_expires_at <= UTC_TIMESTAMP(6) OR acquisition_deadline_at <= UTC_TIMESTAMP(6))",
 		key.InstallationID, key.Scope, snapshot.Generation, snapshot.FencingToken, snapshot.Owner, snapshot.RowVersion,
 	)
 	if err != nil {
@@ -509,7 +509,7 @@ func RecoverGateRelease(ctx context.Context, tx CoordinationTransaction, key Gat
 		expiryPredicate = "lease_expires_at <= UTC_TIMESTAMP(6)"
 	}
 	query := fmt.Sprintf(
-		"UPDATE system_maintenance_locks SET gate_state = 'releasing', fencing_token = fencing_token + 1, lock_owner = ?, heartbeat_at = UTC_TIMESTAMP(6), lock_ttl_seconds = ?, lease_expires_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), release_started_at = COALESCE(release_started_at, UTC_TIMESTAMP(6)), state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = ? AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND (%s)",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'releasing', fencing_token = fencing_token + 1, lock_owner = ?, heartbeat_at = UTC_TIMESTAMP(6), lock_ttl_seconds = ?, lease_expires_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), release_started_at = COALESCE(release_started_at, UTC_TIMESTAMP(6)), state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = ? AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND (%s)",
 		expiryPredicate,
 	)
 	result, err := tx.ExecContext(ctx, query,
@@ -563,7 +563,7 @@ func RenewGate(ctx context.Context, executor Executor, token GateToken, policy G
 		deadlinePredicate = ""
 	}
 	query := fmt.Sprintf(
-		"UPDATE system_maintenance_locks SET heartbeat_at = UTC_TIMESTAMP(6), lease_expires_at = %s, row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = ? AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6)%s",
+		"UPDATE system_backup_v2_maintenance_locks SET heartbeat_at = UTC_TIMESTAMP(6), lease_expires_at = %s, row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = ? AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6)%s",
 		leaseExpression, deadlinePredicate,
 	)
 	result, err := executor.ExecContext(ctx, query, gateSeconds(policy.LockTTL), token.Key.InstallationID, token.Key.Scope, token.State, token.Generation, token.FencingToken, token.Owner, token.RowVersion)
@@ -592,7 +592,7 @@ func BeginGateRelease(ctx context.Context, executor Executor, token GateToken) (
 		return GateToken{}, err
 	}
 	result, err := executor.ExecContext(ctx,
-		"UPDATE system_maintenance_locks SET gate_state = 'releasing', heartbeat_at = UTC_TIMESTAMP(6), release_started_at = UTC_TIMESTAMP(6), state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'held' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6) AND absolute_hold_deadline_at > UTC_TIMESTAMP(6)",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'releasing', heartbeat_at = UTC_TIMESTAMP(6), release_started_at = UTC_TIMESTAMP(6), state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'held' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6) AND absolute_hold_deadline_at > UTC_TIMESTAMP(6)",
 		token.Key.InstallationID, token.Key.Scope, token.Generation, token.FencingToken, token.Owner, token.RowVersion,
 	)
 	if err != nil {
@@ -621,7 +621,7 @@ func FinishGateRelease(ctx context.Context, executor Executor, token GateToken) 
 		return 0, err
 	}
 	result, err := executor.ExecContext(ctx,
-		"UPDATE system_maintenance_locks SET gate_state = 'idle', lock_owner = NULL, heartbeat_at = NULL, lease_expires_at = NULL, gate_acquisition_timeout_seconds = NULL, quiesce_max_hold_seconds = NULL, acquiring_started_at = NULL, held_at = NULL, release_started_at = NULL, acquisition_deadline_at = NULL, absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'releasing' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6)",
+		"UPDATE system_backup_v2_maintenance_locks SET gate_state = 'idle', lock_owner = NULL, heartbeat_at = NULL, lease_expires_at = NULL, gate_acquisition_timeout_seconds = NULL, quiesce_max_hold_seconds = NULL, acquiring_started_at = NULL, held_at = NULL, release_started_at = NULL, acquisition_deadline_at = NULL, absolute_hold_deadline_at = NULL, state_changed_at = UTC_TIMESTAMP(6), row_version = row_version + 1 WHERE origin_installation_id = ? AND scope = ? AND gate_state = 'releasing' AND generation = ? AND fencing_token = ? AND lock_owner = ? AND row_version = ? AND lease_expires_at > UTC_TIMESTAMP(6)",
 		token.Key.InstallationID, token.Key.Scope, token.Generation, token.FencingToken, token.Owner, token.RowVersion,
 	)
 	if err != nil {

@@ -19,7 +19,7 @@ func TestSQLGateInitializerCreatesOnlyMissingCaptureGate(t *testing.T) {
 	}
 	query := executor.queries[0]
 	for _, required := range []string{
-		"INSERT INTO system_maintenance_locks",
+		"INSERT INTO system_backup_v2_maintenance_locks",
 		"origin_installation_id",
 		"scope",
 		"lock_ttl_seconds",

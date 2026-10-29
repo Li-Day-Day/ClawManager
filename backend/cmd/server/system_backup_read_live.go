@@ -88,13 +88,7 @@ func registerBackupReadLive(admin *gin.RouterGroup, live *liveBackupRead) {
 		admin.GET(route.path+"/:id/events", func(c *gin.Context) { live.listTaskEvents(c, kind) })
 		admin.GET(route.path+"/:id/logs", unavailable)
 	}
-	admin.GET("/system-backups/:id/manifest", func(c *gin.Context) {
-		var handler *systembackupapi.Handler
-		if live != nil {
-			handler = live.tasks
-		}
-		handler.Manifest(c.Writer, c.Request, c.Param("id"), middleware.SystemBackupRequestID(c))
-	})
+	admin.GET("/system-backups/:id/manifest", unavailable)
 	admin.GET("/system-backup-operations", live.listOperations)
 	admin.GET("/system-backup-operations/:id", live.getOperation)
 }

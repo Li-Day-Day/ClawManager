@@ -3611,7 +3611,7 @@
     {
       "id": "acceptance-consecutive-anomalies.production",
       "expression_language": "controller_state",
-      "expression": "system_backup_alert_states.consecutive_anomaly_count(task_purpose=acceptance) >= 3",
+      "expression": "system_backup_v2_alert_states.consecutive_anomaly_count(task_purpose=acceptance) >= 3",
       "severity": "critical",
       "for_seconds": 0,
       "threshold_source": "contract_default",
@@ -3646,7 +3646,7 @@
     {
       "id": "acceptance-consecutive-anomalies.development",
       "expression_language": "controller_state",
-      "expression": "system_backup_alert_states.consecutive_anomaly_count(task_purpose=acceptance) >= 3",
+      "expression": "system_backup_v2_alert_states.consecutive_anomaly_count(task_purpose=acceptance) >= 3",
       "severity": "info",
       "for_seconds": 0,
       "threshold_source": "contract_default",

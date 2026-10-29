@@ -76,7 +76,7 @@ func (c *taskCheckConn) BeginTx(ctx context.Context, opts driver.TxOptions) (dri
 }
 
 func (c *taskCheckConn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
-	if !strings.Contains(query, "FROM system_backup_check_results") {
+	if !strings.Contains(query, "FROM system_backup_v2_check_results") {
 		return c.Conn.(driver.QueryerContext).QueryContext(ctx, query, args)
 	}
 	f := c.f
@@ -367,7 +367,7 @@ func TestTaskCheckControlUsesCheckTimeAndIDOrder(t *testing.T) {
 }
 
 func TestTaskCheckControlSQLContract(t *testing.T) {
-	ddl, err := os.ReadFile("../db/migrations/072_add_system_backup_check_authority.sql")
+	ddl, err := os.ReadFile("../db/migrations/103_backup_v2_add_system_backup_check_authority.sql")
 	if err != nil {
 		t.Fatal(err)
 	}

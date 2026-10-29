@@ -35,7 +35,7 @@ func (o httpMySQLObserver) Observe(ctx context.Context, target ProviderProofTarg
 	if target != o.binding.Target || version != o.binding.RowVersion {
 		return ProviderObservation{}, ErrRegistrationPermission
 	}
-	if err := o.db.QueryRowContext(ctx, "SELECT row_version,UTC_TIMESTAMP(6) FROM system_backup_external_actions WHERE origin_installation_id=? AND public_id=?", o.installation, target.TargetPublicID).Scan(&row, &now); err != nil || row != version {
+	if err := o.db.QueryRowContext(ctx, "SELECT row_version,UTC_TIMESTAMP(6) FROM system_backup_v2_external_actions WHERE origin_installation_id=? AND public_id=?", o.installation, target.TargetPublicID).Scan(&row, &now); err != nil || row != version {
 		return ProviderObservation{}, ErrRegistrationUnavailable
 	}
 	return ProviderObservation{Binding: o.binding, ObservedAt: now}, nil
@@ -71,11 +71,11 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	revokedRaw := bytes.ReplaceAll(bytes.ReplaceAll(rbacRaw, []byte("http-rbac-v1"), []byte("http-rbac-v2")), []byte("security_admin"), []byte("viewer"))
 	registries := map[string][]byte{"provider_proof_issuers/http-provider-v1": providerRaw, "strong_auth_issuers/http-strong-v1": strongRaw, "rbac_bindings/http-rbac-v1": rbacRaw, "rbac_bindings/http-rbac-v2": revokedRaw}
 	cfg := RegistrationConfig{Version: 1, ProviderRegistryVersion: "http-provider-v1", ProviderRegistrySHA256: registrationHash(string(providerRaw)), StrongAuthRegistryVersion: "http-strong-v1", StrongAuthRegistrySHA256: registrationHash(string(strongRaw)), RBACRegistryVersion: "http-rbac-v1", RBACRegistrySHA256: registrationHash(string(rbacRaw))}
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_configs VALUES(?,1,?,?,?,?,?,?,'v1',REPEAT('d',64),300,30,300,86400,2592000,60,1073741824)`, installation, cfg.ProviderRegistryVersion, cfg.ProviderRegistrySHA256, cfg.StrongAuthRegistryVersion, cfg.StrongAuthRegistrySHA256, cfg.RBACRegistryVersion, cfg.RBACRegistrySHA256)
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_configs VALUES(?,1,?,?,?,?,?,?,'v1',REPEAT('d',64),300,30,300,86400,2592000,60,1073741824)`, installation, cfg.ProviderRegistryVersion, cfg.ProviderRegistrySHA256, cfg.StrongAuthRegistryVersion, cfg.StrongAuthRegistrySHA256, cfg.RBACRegistryVersion, cfg.RBACRegistrySHA256)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_installation_state VALUES(?,1)", installation)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_installation_state VALUES(?,1)", installation)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_external_actions VALUES(?,?,?)", installation, r.Target.TargetPublicID, r.ExpectedRowVersion)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_external_actions VALUES(?,?,?)", installation, r.Target.TargetPublicID, r.ExpectedRowVersion)
 	mysqlMust(t, err)
 	binding := pc.Binding
 	targetBinding := func(ctx context.Context, tx *sql.Tx, target ProviderProofTarget) (ProviderProofBinding, error) {
@@ -83,7 +83,7 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 		if target != binding.Target {
 			return ProviderProofBinding{}, ErrRegistrationPermission
 		}
-		if err := tx.QueryRowContext(ctx, "SELECT row_version FROM system_backup_external_actions WHERE origin_installation_id=? AND public_id=? FOR UPDATE", installation, target.TargetPublicID).Scan(&version); err != nil || version != binding.RowVersion {
+		if err := tx.QueryRowContext(ctx, "SELECT row_version FROM system_backup_v2_external_actions WHERE origin_installation_id=? AND public_id=? FOR UPDATE", installation, target.TargetPublicID).Scan(&version); err != nil || version != binding.RowVersion {
 			return ProviderProofBinding{}, ErrRegistrationUnavailable
 		}
 		return binding, nil
@@ -174,7 +174,7 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	call(strongAuthBase+"/enroll", token(44, "access", bytes.Repeat([]byte{9}, 32)), enroll, "", 401)
 	call(strongAuthBase+"/enroll", token(45, "access", jwtKey), enroll, "", 403)
 	var n int
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_totp_credentials WHERE user_id=45").Scan(&n))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_totp_credentials WHERE user_id=45").Scan(&n))
 	if n != 0 {
 		t.Fatal("unbound admin created MFA state")
 	}
@@ -196,13 +196,13 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	}
 	call(strongAuthBase+"/proof", access, proofBody, "", 401)
 	var evidenceBefore int
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence").Scan(&evidenceBefore))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence").Scan(&evidenceBefore))
 	first := call(ProviderRegistrationPath, access, r, signed["header_value"], 201)
 	replay := call(ProviderRegistrationPath, access, r, "", 201)
 	if !bytes.Equal(first, replay) {
 		t.Fatal("HTTP committed retry changed receipt")
 	}
-	for _, table := range []string{"system_backup_operations", "system_backup_strong_auth_nonces"} {
+	for _, table := range []string{"system_backup_v2_operations", "system_backup_v2_strong_auth_nonces"} {
 		mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM "+table+" WHERE origin_installation_id=?", installation).Scan(&n))
 		if n != 1 {
 			t.Fatal("unexpected scoped receipt count", table, n)
@@ -213,11 +213,11 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	// delta so a retry cannot silently create another unreferenced evidence row.
 	var receipt ProviderRegistrationResult
 	mysqlMust(t, json.Unmarshal(first, &receipt))
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence WHERE public_id=? AND owner_target_type=? AND owner_target_public_id=?", receipt.EvidencePublicID, r.Target.TargetType, r.Target.TargetPublicID).Scan(&n))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence WHERE public_id=? AND owner_target_type=? AND owner_target_public_id=?", receipt.EvidencePublicID, r.Target.TargetType, r.Target.TargetPublicID).Scan(&n))
 	if n != 1 {
 		t.Fatal("HTTP receipt does not identify exactly one owned evidence row")
 	}
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_evidence").Scan(&n))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_evidence").Scan(&n))
 	if n != evidenceBefore+1 {
 		t.Fatal("HTTP registration/retry did not create exactly one evidence row")
 	}
@@ -243,10 +243,10 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 		defer tx.Rollback()
 		close(started)
 		if e = lockRegistrationInstallations(ctx, tx); e == nil {
-			_, e = tx.ExecContext(ctx, `INSERT INTO system_backup_configs SELECT origin_installation_id,2,provider_proof_issuers_registry_version,provider_proof_issuers_registry_sha256,strong_auth_issuers_registry_version,strong_auth_issuers_registry_sha256,'http-rbac-v2',?,nonce_hmac_ref_version,nonce_hmac_identity_hash,strong_auth_max_age_seconds,strong_auth_clock_skew_seconds,provider_proof_max_age_seconds,evidence_retention_seconds,control_metadata_retention_seconds,operation_deadline_seconds,control_metadata_capacity_bytes FROM system_backup_configs WHERE origin_installation_id=? AND version=1`, registrationHash(string(revokedRaw)), installation)
+			_, e = tx.ExecContext(ctx, `INSERT INTO system_backup_v2_configs SELECT origin_installation_id,2,provider_proof_issuers_registry_version,provider_proof_issuers_registry_sha256,strong_auth_issuers_registry_version,strong_auth_issuers_registry_sha256,'http-rbac-v2',?,nonce_hmac_ref_version,nonce_hmac_identity_hash,strong_auth_max_age_seconds,strong_auth_clock_skew_seconds,provider_proof_max_age_seconds,evidence_retention_seconds,control_metadata_retention_seconds,operation_deadline_seconds,control_metadata_capacity_bytes FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1`, registrationHash(string(revokedRaw)), installation)
 		}
 		if e == nil {
-			_, e = tx.ExecContext(ctx, "UPDATE system_backup_installation_state SET active_config_version=2 WHERE origin_installation_id=?", installation)
+			_, e = tx.ExecContext(ctx, "UPDATE system_backup_v2_installation_state SET active_config_version=2 WHERE origin_installation_id=?", installation)
 		}
 		if e == nil {
 			e = tx.Commit()
@@ -274,7 +274,7 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 		t.Fatal("configuration rotation timeout")
 	}
 	var stepBefore, stepAfter int64
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT last_step FROM system_backup_totp_credentials WHERE origin_installation_id=? AND user_id=44", installation).Scan(&stepBefore))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT last_step FROM system_backup_v2_totp_credentials WHERE origin_installation_id=? AND user_id=44", installation).Scan(&stepBefore))
 	proofBody["code"] = totpCode(seed, now.Unix()/30+1, 6)
 	call(strongAuthBase+"/proof", access, proofBody, "", 503)
 	// Reloaded runtime sees the explicit revoked role, while old runtime refuses
@@ -291,7 +291,7 @@ func testRegistrationHTTPMySQL(t *testing.T, db *sql.DB, ctx context.Context) {
 	client.Timeout = 10 * time.Second
 	call(strongAuthBase+"/proof", access, proofBody, "", 403)
 	call(ProviderRegistrationPath, access, r, "", 403)
-	mysqlMust(t, db.QueryRowContext(ctx, "SELECT last_step FROM system_backup_totp_credentials WHERE origin_installation_id=? AND user_id=44", installation).Scan(&stepAfter))
+	mysqlMust(t, db.QueryRowContext(ctx, "SELECT last_step FROM system_backup_v2_totp_credentials WHERE origin_installation_id=? AND user_id=44", installation).Scan(&stepAfter))
 	if stepAfter != stepBefore {
 		t.Fatal("revoked MFA consumed a code")
 	}

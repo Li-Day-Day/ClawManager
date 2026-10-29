@@ -79,13 +79,13 @@ func (a configuredAuthority) AuthorizeMFA(ctx context.Context, tx *sql.Tx, actor
 		return err
 	}
 	var version int64
-	err := tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", a.InstallationID).Scan(&version)
+	err := tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", a.InstallationID).Scan(&version)
 	if errors.Is(err, sql.ErrNoRows) {
 		if a.expected.Version != 1 {
 			return ErrRegistrationUnavailable
 		}
 		// Orphan config rows are not a fresh installation/bootstrap grant.
-		err = tx.QueryRowContext(ctx, "SELECT version FROM system_backup_configs WHERE origin_installation_id=? ORDER BY version LIMIT 1 FOR UPDATE", a.InstallationID).Scan(&version)
+		err = tx.QueryRowContext(ctx, "SELECT version FROM system_backup_v2_configs WHERE origin_installation_id=? ORDER BY version LIMIT 1 FOR UPDATE", a.InstallationID).Scan(&version)
 		if !errors.Is(err, sql.ErrNoRows) {
 			return ErrRegistrationUnavailable
 		}
@@ -285,7 +285,7 @@ func (a *RegistrationApplication) CheckActivation(ctx context.Context) error {
 	if _, err = a.Authority.NonceKeys(ctx, tx, cfg, versions); err != nil {
 		return err
 	}
-	for _, table := range []string{"system_backup_totp_credentials", "system_backup_admin_sessions", "system_backup_admin_revocations", "system_backup_metadata_reservations"} {
+	for _, table := range []string{"system_backup_v2_totp_credentials", "system_backup_v2_admin_sessions", "system_backup_v2_admin_revocations", "system_backup_v2_metadata_reservations"} {
 		var count int
 		if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=?", table).Scan(&count) != nil || count != 1 {
 			return ErrRegistrationUnavailable

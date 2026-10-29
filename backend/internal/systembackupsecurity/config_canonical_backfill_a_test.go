@@ -130,7 +130,7 @@ func (c *maintenanceServiceConn) ExecContext(ctx context.Context, q string, args
 		m.store.audits[id] = []driver.Value{nil, action, "system_backup", nil, []byte(body), created}
 		return maintenanceServiceResult{id}, nil
 	}
-	if q == "UPDATE system_backup_configs SET canonical_config_json=? WHERE id=? AND origin_installation_id=? AND version=? AND canonical_config_json IS NULL AND config_sha256=? AND config_size_bytes=?" {
+	if q == "UPDATE system_backup_v2_configs SET canonical_config_json=? WHERE id=? AND origin_installation_id=? AND version=? AND canonical_config_json IS NULL AND config_sha256=? AND config_size_bytes=?" {
 		if len(args) != 6 || args[1].Value != m.store.base.facts.RowID || args[2].Value != m.store.base.facts.InstallationID || args[3].Value != m.store.base.facts.Version || args[4].Value != m.store.base.facts.ConfigSHA256 || args[5].Value != m.store.base.facts.ConfigSizeBytes || m.store.base.cells["canonical_config_json"] != nil {
 			return nil, errors.New("non-exact canonical-only CAS")
 		}

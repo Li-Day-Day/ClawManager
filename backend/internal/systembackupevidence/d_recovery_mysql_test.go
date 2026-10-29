@@ -140,7 +140,7 @@ func dRecoveryMySQLInstallIdentity(t *testing.T, db *sql.DB, h pd.HistoricalBind
 	mustSQL(t, err)
 	bytes, err := hex.DecodeString(string(identity))
 	mustSQL(t, err)
-	_, err = db.Exec("INSERT INTO system_backup_producer_recovery_revocations (scope_key,workload_identity_hash,revocation_epoch,revoked_at,row_version,updated_at) VALUES (?,?,1,NULL,1,UTC_TIMESTAMP(6))", row.Columns["scope_key"], bytes)
+	_, err = db.Exec("INSERT INTO system_backup_v2_producer_recovery_revocations (scope_key,workload_identity_hash,revocation_epoch,revoked_at,row_version,updated_at) VALUES (?,?,1,NULL,1,UTC_TIMESTAMP(6))", row.Columns["scope_key"], bytes)
 	mustSQL(t, err)
 }
 func dRecoveryMySQLWaitCutoff(t *testing.T, db *sql.DB, cutoff pd.Timestamp) {
@@ -223,11 +223,11 @@ func TestDHistoricalRecoveryMySQL(t *testing.T) {
 		}
 		var rowVersion int
 		var owner sql.NullString
-		mustSQL(t, db.QueryRow("SELECT row_version,claim_owner FROM system_backup_evidence WHERE public_id=?", r.EvidenceID).Scan(&rowVersion, &owner))
+		mustSQL(t, db.QueryRow("SELECT row_version,claim_owner FROM system_backup_v2_evidence WHERE public_id=?", r.EvidenceID).Scan(&rowVersion, &owner))
 		if rowVersion != 2 || !owner.Valid {
 			t.Fatal("claim CAS absent")
 		}
-		_, err = db.Exec("UPDATE system_backup_producer_recovery_revocations SET revocation_epoch=2,row_version=2,updated_at=UTC_TIMESTAMP(6)")
+		_, err = db.Exec("UPDATE system_backup_v2_producer_recovery_revocations SET revocation_epoch=2,row_version=2,updated_at=UTC_TIMESTAMP(6)")
 		mustSQL(t, err)
 		a.epoch = "1"
 		var proofNow time.Time
@@ -239,7 +239,7 @@ func TestDHistoricalRecoveryMySQL(t *testing.T) {
 		// The sole change from the preceding snapshot is the out-of-band
 		// revocation epoch; denied finish must not touch evidence or audits.
 		var afterEpochState, afterEpochOwner string
-		mustSQL(t, db.QueryRow("SELECT storage_state,claim_owner FROM system_backup_evidence WHERE public_id=?", r.EvidenceID).Scan(&afterEpochState, &afterEpochOwner))
+		mustSQL(t, db.QueryRow("SELECT storage_state,claim_owner FROM system_backup_v2_evidence WHERE public_id=?", r.EvidenceID).Scan(&afterEpochState, &afterEpochOwner))
 		if afterEpochState != "pending" || afterEpochOwner != owner.String {
 			t.Fatal("revoked finish changed evidence")
 		}
@@ -267,7 +267,7 @@ func TestDHistoricalRecoveryMySQL(t *testing.T) {
 		}
 		var finalState, finalVersion string
 		var finalRowVersion int
-		mustSQL(t, db.QueryRow("SELECT storage_state,storage_immutable_version,row_version FROM system_backup_evidence WHERE public_id=?", r.EvidenceID).Scan(&finalState, &finalVersion, &finalRowVersion))
+		mustSQL(t, db.QueryRow("SELECT storage_state,storage_immutable_version,row_version FROM system_backup_v2_evidence WHERE public_id=?", r.EvidenceID).Scan(&finalState, &finalVersion, &finalRowVersion))
 		if finalState != "ready" || finalVersion != string(version) || finalRowVersion != 5 {
 			t.Fatal("evidence-only convergence", finalState, finalVersion, finalRowVersion)
 		}
@@ -296,7 +296,7 @@ func TestDHistoricalRecoveryMySQL(t *testing.T) {
 			t.Fatal("unknown commit yielded a claim", claim, err)
 		}
 		var version int
-		mustSQL(t, db.QueryRow("SELECT row_version FROM system_backup_evidence WHERE public_id=?", r.EvidenceID).Scan(&version))
+		mustSQL(t, db.QueryRow("SELECT row_version FROM system_backup_v2_evidence WHERE public_id=?", r.EvidenceID).Scan(&version))
 		if version != 2 {
 			t.Fatal("committed claim not observable after lost acknowledgement", version)
 		}

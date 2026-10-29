@@ -78,14 +78,14 @@ func dCheckDetailControlMySQL(t *testing.T, db *sql.DB, ownScope, foreignScope *
 			t.Run(string(target.kind), func(t *testing.T) {
 				requestID := "req_d_event_dto_probe_" + string(target.kind)
 				t.Cleanup(func() {
-					_, err := db.ExecContext(context.Background(), "DELETE FROM system_backup_events WHERE origin_installation_id=? AND request_id=?", installation, requestID)
+					_, err := db.ExecContext(context.Background(), "DELETE FROM system_backup_v2_events WHERE origin_installation_id=? AND request_id=?", installation, requestID)
 					mysqlMust(t, err)
 				})
 				detail, err := reader.ReadTaskDetailControl(ctx, target.kind, target.id)
 				mysqlMust(t, err)
 				at := detail.Execution().Task().CreatedAt.Add(time.Second)
 				insert := func(message string) {
-					_, err := db.ExecContext(ctx, "INSERT INTO system_backup_events(origin_installation_id,target_type,target_public_id,event_type,level,message,request_id,created_at) VALUES(?,?,?,'task_status_changed','info',?,?,?)", installation, string(target.kind), target.id, message, requestID, at)
+					_, err := db.ExecContext(ctx, "INSERT INTO system_backup_v2_events(origin_installation_id,target_type,target_public_id,event_type,level,message,request_id,created_at) VALUES(?,?,?,'task_status_changed','info',?,?,?)", installation, string(target.kind), target.id, message, requestID, at)
 					mysqlMust(t, err)
 				}
 				insert("redacted first")
@@ -112,13 +112,13 @@ func dCheckDetailControlMySQL(t *testing.T, db *sql.DB, ownScope, foreignScope *
 	t.Run("detail_control_same_snapshot_as_task_and_execution", func(t *testing.T) {
 		var domain string
 		var version uint64
-		mysqlMust(t, db.QueryRowContext(ctx, "SELECT target_failure_domain_id,row_version FROM system_backups WHERE origin_installation_id=? AND public_id=?", installation, backupID).Scan(&domain, &version))
+		mysqlMust(t, db.QueryRowContext(ctx, "SELECT target_failure_domain_id,row_version FROM system_backup_v2_backups WHERE origin_installation_id=? AND public_id=?", installation, backupID).Scan(&domain, &version))
 		defer func() {
-			_, e := db.ExecContext(ctx, "UPDATE system_backups SET target_failure_domain_id=?,row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", domain, installation, backupID)
+			_, e := db.ExecContext(ctx, "UPDATE system_backup_v2_backups SET target_failure_domain_id=?,row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", domain, installation, backupID)
 			mysqlMust(t, e)
 		}()
 		racedScope := dTaskExecutionSnapshotScope{base: ownScope, taskID: backupID, advance: func(ctx context.Context) error {
-			_, e := db.ExecContext(ctx, "UPDATE system_backups SET target_failure_domain_id='detail-after-snapshot',row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, backupID)
+			_, e := db.ExecContext(ctx, "UPDATE system_backup_v2_backups SET target_failure_domain_id='detail-after-snapshot',row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, backupID)
 			return e
 		}}
 		racedReader, e := systembackupread.NewReader(db, racedScope)
@@ -131,16 +131,16 @@ func dCheckDetailControlMySQL(t *testing.T, db *sql.DB, ownScope, foreignScope *
 		}
 		var currentDomain string
 		var currentVersion uint64
-		mysqlMust(t, db.QueryRowContext(ctx, "SELECT target_failure_domain_id,row_version FROM system_backups WHERE origin_installation_id=? AND public_id=?", installation, backupID).Scan(&currentDomain, &currentVersion))
+		mysqlMust(t, db.QueryRowContext(ctx, "SELECT target_failure_domain_id,row_version FROM system_backup_v2_backups WHERE origin_installation_id=? AND public_id=?", installation, backupID).Scan(&currentDomain, &currentVersion))
 		if currentDomain != "detail-after-snapshot" || currentVersion != version+1 {
 			t.Fatal("competing control-field update did not commit")
 		}
 	})
 	t.Run("detail_control_unsigned_bytes_and_nullable_consistency", func(t *testing.T) {
-		_, e := db.ExecContext(ctx, "UPDATE system_backups SET artifact_bytes=CAST('18446744073709551615' AS UNSIGNED),row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, backupID)
+		_, e := db.ExecContext(ctx, "UPDATE system_backup_v2_backups SET artifact_bytes=CAST('18446744073709551615' AS UNSIGNED),row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, backupID)
 		mysqlMust(t, e)
 		defer func() {
-			_, e := db.ExecContext(ctx, "UPDATE system_backups SET artifact_bytes=NULL,row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, backupID)
+			_, e := db.ExecContext(ctx, "UPDATE system_backup_v2_backups SET artifact_bytes=NULL,row_version=row_version+1 WHERE origin_installation_id=? AND public_id=?", installation, backupID)
 			mysqlMust(t, e)
 		}()
 		s, e := reader.ReadTaskDetailControl(ctx, systembackupread.BackupTask, backupID)
@@ -160,13 +160,13 @@ func dCheckDetailControlMySQL(t *testing.T, db *sql.DB, ownScope, foreignScope *
 		if id == "" {
 			t.Fatal("verification fixture missing")
 		}
-		_, e := db.ExecContext(ctx, `UPDATE system_backup_artifact_verifications SET source_artifact_type='catalog_import',
+		_, e := db.ExecContext(ctx, `UPDATE system_backup_v2_artifact_verifications SET source_artifact_type='catalog_import',
 		 source_public_id='sci_000000d1-0000-4000-8000-000000000001',artifact_state_before=NULL,artifact_state_after=NULL,
 		 usable_before=TRUE,usable_after=TRUE,unusable_reason_before='none',unusable_reason_after='none',row_version=row_version+1
 		 WHERE origin_installation_id=? AND public_id=?`, installation, id)
 		mysqlMust(t, e)
 		defer func() {
-			_, e := db.ExecContext(ctx, `UPDATE system_backup_artifact_verifications SET source_artifact_type='backup',source_public_id=?,
+			_, e := db.ExecContext(ctx, `UPDATE system_backup_v2_artifact_verifications SET source_artifact_type='backup',source_public_id=?,
 			 artifact_state_before='staging',artifact_state_after='staging',usable_before=FALSE,usable_after=FALSE,
 			 unusable_reason_before='not_committed',unusable_reason_after='not_committed',row_version=row_version+1
 			 WHERE origin_installation_id=? AND public_id=?`, backupID, installation, id)

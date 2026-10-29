@@ -3,26 +3,21 @@ package k8s
 import (
 	"context"
 	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CleanupService handles cleanup of K8s resources
 type CleanupService struct {
-	client        *Client
-	secretService *SecretService
+	client *Client
 }
 
 // NewCleanupService creates a new cleanup service
 func NewCleanupService() *CleanupService {
 	return &CleanupService{
-		client:        globalClient,
-		secretService: NewSecretService(),
+		client: globalClient,
 	}
 }
 
@@ -94,7 +89,7 @@ func (s *CleanupService) DeleteAllInstanceResources(ctx context.Context, userID,
 	}
 
 	// Wait for all resources to be actually deleted (with 30 second timeout)
-	if err := s.WaitForResourceDeletion(ctx, namespaces, userID, instanceID, 30*time.Second); err != nil {
+	if err := s.WaitForResourceDeletion(ctx, namespaces, instanceLabel, 30*time.Second); err != nil {
 		fmt.Printf("Warning: %v\n", err)
 	}
 
@@ -113,9 +108,6 @@ func (s *CleanupService) findNamespacesWithInstance(ctx context.Context, instanc
 
 	var result []string
 	for _, ns := range namespaces.Items {
-		if _, owned := s.tenantUserIDFromNamespace(ns.Name); !owned {
-			continue
-		}
 		deployments, err := s.client.Clientset.AppsV1().Deployments(ns.Name).List(ctx, metav1.ListOptions{
 			LabelSelector: fmt.Sprintf("instance-id=%s,managed-by=clawreef", instanceLabel),
 		})
@@ -231,16 +223,16 @@ func (s *CleanupService) deleteAllPVCs(ctx context.Context, namespace, instanceL
 // deleteAllPVs deletes all PVs for an instance
 func (s *CleanupService) deleteAllPVs(ctx context.Context, userID, instanceID int) error {
 	instanceLabel := fmt.Sprintf("%d", instanceID)
-	expectedNamespace := ""
-	if userID > 0 {
-		expectedNamespace = s.client.GetNamespace(userID)
-	}
 
 	// If userID is specified, try to delete the predictable PV name first
 	if userID > 0 {
 		pvName := s.client.GetInstancePVName(userID, instanceID)
-		if err := s.deleteOwnedInstancePV(ctx, pvName, expectedNamespace, userID, instanceID); err != nil {
-			fmt.Printf("Warning: failed to delete predictable PV %s: %v\n", pvName, err)
+		fmt.Printf("Deleting PV: %s\n", pvName)
+		if err := s.client.Clientset.CoreV1().PersistentVolumes().Delete(ctx, pvName, metav1.DeleteOptions{}); err != nil {
+			// Ignore not found error
+			if !errors.IsNotFound(err) {
+				fmt.Printf("Warning: failed to delete PV %s: %v\n", pvName, err)
+			}
 		}
 	}
 
@@ -253,72 +245,13 @@ func (s *CleanupService) deleteAllPVs(ctx context.Context, userID, instanceID in
 	}
 
 	for _, pv := range pvs.Items {
-		if err := s.deleteOwnedInstancePV(ctx, pv.Name, expectedNamespace, userID, instanceID); err != nil {
+		fmt.Printf("Deleting PV: %s\n", pv.Name)
+		if err := s.client.Clientset.CoreV1().PersistentVolumes().Delete(ctx, pv.Name, metav1.DeleteOptions{}); err != nil {
 			fmt.Printf("Warning: failed to delete PV %s: %v\n", pv.Name, err)
 		}
 	}
 
 	return nil
-}
-
-func (s *CleanupService) deleteOwnedInstancePV(ctx context.Context, pvName, expectedNamespace string, userID, instanceID int) error {
-	pv, err := s.client.Clientset.CoreV1().PersistentVolumes().Get(ctx, pvName, metav1.GetOptions{})
-	if err != nil {
-		if errors.IsNotFound(err) {
-			return nil
-		}
-		return err
-	}
-
-	owned, reason := s.ownsInstancePV(pv, expectedNamespace, userID, instanceID)
-	if !owned {
-		fmt.Printf("Skipping PV %s delete: %s\n", pv.Name, reason)
-		return nil
-	}
-
-	fmt.Printf("Deleting PV: %s\n", pv.Name)
-	if err := s.client.Clientset.CoreV1().PersistentVolumes().Delete(ctx, pv.Name, metav1.DeleteOptions{}); err != nil && !errors.IsNotFound(err) {
-		return err
-	}
-	return nil
-}
-
-func (s *CleanupService) ownsInstancePV(pv *corev1.PersistentVolume, expectedNamespace string, userID, instanceID int) (bool, string) {
-	if pv == nil || pv.Labels["managed-by"] != "clawreef" || pv.Labels["instance-id"] != strconv.Itoa(instanceID) {
-		return false, fmt.Sprintf("instance ownership labels do not match instance %d", instanceID)
-	}
-	if pv.Spec.ClaimRef == nil || strings.TrimSpace(pv.Spec.ClaimRef.Namespace) == "" {
-		return false, "no claim namespace ownership proof"
-	}
-
-	claimNamespace := strings.TrimSpace(pv.Spec.ClaimRef.Namespace)
-	if userID > 0 {
-		if claimNamespace != expectedNamespace || pv.Labels["user-id"] != strconv.Itoa(userID) {
-			return false, fmt.Sprintf("not owned by user %d in namespace %s", userID, expectedNamespace)
-		}
-		return true, ""
-	}
-
-	claimUserID, owned := s.tenantUserIDFromNamespace(claimNamespace)
-	if !owned || pv.Labels["user-id"] != strconv.Itoa(claimUserID) {
-		return false, fmt.Sprintf("claim namespace %s is outside this installation", claimNamespace)
-	}
-	return true, ""
-}
-
-func (s *CleanupService) tenantUserIDFromNamespace(namespace string) (int, bool) {
-	if s == nil || s.client == nil {
-		return 0, false
-	}
-	prefix := sanitizeK8sName(s.client.Namespace+"-user") + "-"
-	if !strings.HasPrefix(namespace, prefix) {
-		return 0, false
-	}
-	userID, err := strconv.Atoi(strings.TrimPrefix(namespace, prefix))
-	if err != nil || userID <= 0 || s.client.GetNamespace(userID) != namespace {
-		return 0, false
-	}
-	return userID, true
 }
 
 // deleteAllServices deletes all services with matching instance-id label
@@ -380,23 +313,26 @@ func (s *CleanupService) deleteAllConfigMaps(ctx context.Context, namespace, ins
 
 // deleteAllSecrets deletes all secrets with matching instance-id label
 func (s *CleanupService) deleteAllSecrets(ctx context.Context, namespace, instanceLabel string) error {
-	if s.secretService == nil {
-		return fmt.Errorf("secret service not initialized")
-	}
-	return s.secretService.DeleteByLabels(ctx, namespace, map[string]string{
-		"instance-id": instanceLabel,
-		"managed-by":  "clawreef",
+	secrets, err := s.client.Clientset.CoreV1().Secrets(namespace).List(ctx, metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("instance-id=%s,managed-by=clawreef", instanceLabel),
 	})
+	if err != nil {
+		return fmt.Errorf("failed to list secrets: %w", err)
+	}
+
+	for _, secret := range secrets.Items {
+		fmt.Printf("Deleting secret: %s\n", secret.Name)
+		if err := s.client.Clientset.CoreV1().Secrets(namespace).Delete(ctx, secret.Name, metav1.DeleteOptions{}); err != nil {
+			fmt.Printf("Warning: failed to delete secret %s: %v\n", secret.Name, err)
+		}
+	}
+
+	return nil
 }
 
 // WaitForResourceDeletion waits for all resources to be deleted with timeout
-func (s *CleanupService) WaitForResourceDeletion(ctx context.Context, namespaces []string, userID, instanceID int, timeout time.Duration) error {
+func (s *CleanupService) WaitForResourceDeletion(ctx context.Context, namespaces []string, instanceLabel string, timeout time.Duration) error {
 	fmt.Printf("Waiting up to %v for resources to be deleted...\n", timeout)
-	instanceLabel := strconv.Itoa(instanceID)
-	expectedNamespace := ""
-	if userID > 0 {
-		expectedNamespace = s.client.GetNamespace(userID)
-	}
 
 	ticker := time.NewTicker(2 * time.Second)
 	defer ticker.Stop()
@@ -449,17 +385,9 @@ func (s *CleanupService) WaitForResourceDeletion(ctx context.Context, namespaces
 			pvs, err := s.client.Clientset.CoreV1().PersistentVolumes().List(ctx, metav1.ListOptions{
 				LabelSelector: fmt.Sprintf("instance-id=%s,managed-by=clawreef", instanceLabel),
 			})
-			ownedPVCount := 0
-			if err == nil {
-				for i := range pvs.Items {
-					if owned, _ := s.ownsInstancePV(&pvs.Items[i], expectedNamespace, userID, instanceID); owned {
-						ownedPVCount++
-					}
-				}
-			}
-			if ownedPVCount > 0 {
+			if err == nil && len(pvs.Items) > 0 {
 				allDeleted = false
-				fmt.Printf("  Still waiting: %d owned PV(s)\n", ownedPVCount)
+				fmt.Printf("  Still waiting: %d PV(s)\n", len(pvs.Items))
 			}
 
 			if allDeleted {

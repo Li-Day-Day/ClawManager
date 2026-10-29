@@ -53,7 +53,7 @@ func TestRecoveryManagerBootstrapMySQL(t *testing.T) {
 	mustSQL(t, db.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now))
 	facts, err := auth.Check(ctx, peer, scope, now)
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
@@ -96,7 +96,7 @@ VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 func assertRecoveryBootstrapDB(t *testing.T, ctx context.Context, db *sql.DB, key []byte, managers, audits int) {
 	t.Helper()
 	var got int
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_recovery_managers WHERE scope_key=?", key).Scan(&got))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_recovery_managers WHERE scope_key=?", key).Scan(&got))
 	if got != managers {
 		t.Fatalf("manager rows=%d, want %d", got, managers)
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"embed"
-	"errors"
 	"fmt"
 	"log"
 	"path"
@@ -12,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"clawreef/internal/migrationcatalog"
-	"clawreef/internal/migrationcoord"
 	"github.com/upper/db/v4"
 )
 
@@ -22,83 +19,54 @@ var embeddedMigrations embed.FS
 
 const schemaMigrationsTable = "schema_migrations"
 
-const captureGateMigration = "068_add_system_backup_coordination_observability.sql"
-
-type migrationSQL interface {
-	ExecContext(context.Context, string, ...any) (sql.Result, error)
-	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
-}
-
-// EmbeddedMigrationCatalog returns the exact catalog compiled into this
-// binary. It does not inspect or mutate the database.
-func EmbeddedMigrationCatalog() (migrationcatalog.Catalog, error) {
-	return migrationcatalog.Compute(embeddedMigrations, "migrations")
-}
-
-func applyEmbeddedMigrations(session db.Session) (returnErr error) {
-	if session == nil {
-		return fmt.Errorf("nil database migration session")
+func applyEmbeddedMigrations(session db.Session) (result error) {
+	driver, ok := session.Driver().(*sql.DB)
+	if !ok {
+		return fmt.Errorf("migration lock requires MySQL SQL driver")
 	}
-	rawDB, ok := session.Driver().(*sql.DB)
-	if !ok || rawDB == nil {
-		return fmt.Errorf("database migration driver is not *sql.DB")
-	}
-	return applyEmbeddedMigrationsSQL(context.Background(), rawDB, nil)
-}
-
-func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *MigrationTarget) (returnErr error) {
-	guard, err := (migrationcoord.SQLLocker{DB: rawDB}).AcquireSQL(ctx)
+	ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
+	defer cancel()
+	conn, err := driver.Conn(ctx)
 	if err != nil {
-		return fmt.Errorf("acquire application migration exclusion: %w", err)
+		return err
+	}
+	defer conn.Close()
+	release, err := acquireMigrationLocks(ctx, conn)
+	if err != nil {
+		return err
 	}
 	defer func() {
-		releaseCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
-		defer cancel()
-		if err := guard.Release(releaseCtx); err != nil && returnErr == nil {
-			returnErr = fmt.Errorf("release application migration exclusion: %w", err)
+		if err := release(); err != nil && result == nil {
+			result = err
 		}
 	}()
-	if target != nil {
-		if err := verifyMigrationTarget(ctx, guard, *target); err != nil {
+	return applyEmbeddedMigrationsLocked(conn)
+}
+
+func applyEmbeddedMigrationsLocked(conn *sql.Conn) error {
+	return applyEmbeddedMigrationsLockedContext(context.Background(), conn)
+}
+
+func applyEmbeddedMigrationsLockedContext(ctx context.Context, conn *sql.Conn) error {
+	optionalReady := true
+	var ledgerExists int
+	if err := conn.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='schema_migrations'").Scan(&ledgerExists); err != nil {
+		return err
+	}
+	if ledgerExists == 0 {
+		if err := ensureSchemaMigrationsTable(conn); err != nil {
 			return err
 		}
 	}
 
-	if target != nil && target.HistoryReview != nil {
-		exists, err := migrationTableExists(ctx, guard, schemaMigrationsTable)
-		if err != nil || !exists {
-			return errors.New("reviewed installation migration ledger is missing or unreadable")
-		}
-	} else {
-		if err := ensureSchemaMigrationsTable(ctx, guard); err != nil {
-			return err
-		}
-	}
-
-	applied, err := listAppliedMigrations(ctx, guard)
+	applied, err := listAppliedMigrations(conn)
 	if err != nil {
 		return err
 	}
 
-	optionalReady := true
 	entries, err := embeddedMigrations.ReadDir("migrations")
 	if err != nil {
 		return fmt.Errorf("failed to list embedded migrations: %w", err)
-	}
-	if target != nil && target.HistoryReview != nil {
-		if err := target.HistoryReview.verifyLedger(applied); err != nil {
-			return err
-		}
-	} else if target != nil {
-		known := make(map[string]bool, len(entries))
-		for _, entry := range entries {
-			known[entry.Name()] = true
-		}
-		for name := range applied {
-			if !known[name] {
-				return errors.New("target migration ledger contains unknown migration")
-			}
-		}
 	}
 	sort.Slice(entries, func(i, j int) bool {
 		return entries[i].Name() < entries[j].Name()
@@ -111,18 +79,11 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 		if _, ok := applied[entry.Name()]; ok {
 			continue
 		}
-		// Once the capture-gate schema exists, every later application migration
-		// rechecks it while holding the same server-wide exclusion that gate
-		// acquisition must hold. This makes the check and DDL race-free even
-		// though MySQL DDL may implicitly commit.
-		if _, gateSchemaApplied := applied[captureGateMigration]; gateSchemaApplied {
-			if err := assertCaptureGateIdle(ctx, guard); err != nil {
-				return fmt.Errorf("migration %s blocked by system backup capture gate: %w", entry.Name(), err)
-			}
+		if err := assertBackupCaptureIdle(ctx, conn); err != nil {
+			return err
 		}
-
 		if entry.Name() == "063_unique_usernames.sql" {
-			if err := checkUniqueUsernames(ctx, guard); err != nil {
+			if err := checkUniqueUsernames(conn); err != nil {
 				return fmt.Errorf("cannot apply migration %s: %w", entry.Name(), err)
 			}
 		}
@@ -140,7 +101,7 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 			if entry.Name() == "067_add_northbound_owner_records.sql" {
 				statementCtx, stop = context.WithTimeout(statementCtx, 30*time.Second)
 			}
-			_, statementErr := guard.ExecContext(statementCtx, statement)
+			_, statementErr := conn.ExecContext(statementCtx, statement)
 			stop()
 			if err := statementErr; err != nil {
 				if entry.Name() == "067_add_northbound_owner_records.sql" {
@@ -156,14 +117,14 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 			continue
 		}
 		if entry.Name() == "067_add_northbound_owner_records.sql" {
-			if err := verifyOwnerAnalytics(ctx, guard); err != nil {
+			if err := verifyOwnerAnalytics(conn); err != nil {
 				optionalReady = false
 				log.Printf("Optional analytics schema incompatible: %T", err)
 				continue
 			}
 		}
 
-		if _, err := guard.ExecContext(ctx,
+		if _, err := conn.ExecContext(ctx,
 			fmt.Sprintf("INSERT INTO %s (filename, applied_at) VALUES (?, ?)", schemaMigrationsTable),
 			entry.Name(),
 			time.Now().UTC(),
@@ -176,10 +137,9 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 			return fmt.Errorf("failed to record applied migration %s: %w", entry.Name(), err)
 		}
 
-		applied[entry.Name()] = struct{}{}
 		log.Printf("Applied database migration %s", entry.Name())
 	}
-	if err := verifyOwnerAnalytics(ctx, guard); err != nil {
+	if err := verifyOwnerAnalytics(conn); err != nil {
 		ownerAnalyticsAvailable.Store(false)
 		log.Printf("Owner analytics disabled; schema validation unavailable: %T", err)
 	} else {
@@ -190,8 +150,8 @@ func applyEmbeddedMigrationsSQL(ctx context.Context, rawDB *sql.DB, target *Migr
 
 // Group and join using the database collation, exactly as the unique index does.
 // Include each conflicting row separately so long groups cannot be truncated.
-func checkUniqueUsernames(ctx context.Context, executor migrationSQL) error {
-	rows, err := executor.QueryContext(ctx, `
+func checkUniqueUsernames(conn *sql.Conn) error {
+	rows, err := conn.QueryContext(context.Background(), `
 		SELECT u.username, u.id, u.auth_provider
 		FROM users AS u
 		JOIN (SELECT username FROM users GROUP BY username HAVING COUNT(*) > 1) AS duplicates
@@ -220,24 +180,8 @@ func checkUniqueUsernames(ctx context.Context, executor migrationSQL) error {
 	return nil
 }
 
-func ensureSchemaMigrationsTable(ctx context.Context, executor migrationSQL) error {
-	exists, err := migrationTableExists(ctx, executor, schemaMigrationsTable)
-	if err != nil {
-		return fmt.Errorf("inspect schema migrations table: %w", err)
-	}
-	if exists {
-		// A normal app restart must not issue even an IF NOT EXISTS DDL while
-		// a system-backup capture gate may already be held.
-		return nil
-	}
-	gateExists, err := migrationTableExists(ctx, executor, "system_maintenance_locks")
-	if err != nil {
-		return fmt.Errorf("inspect system backup maintenance gate table: %w", err)
-	}
-	if gateExists {
-		return errors.New("schema migrations table is missing while system backup maintenance gate exists")
-	}
-	_, err = executor.ExecContext(ctx, fmt.Sprintf(`
+func ensureSchemaMigrationsTable(conn *sql.Conn) error {
+	_, err := conn.ExecContext(context.Background(), fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			filename VARCHAR(255) NOT NULL,
@@ -251,39 +195,8 @@ func ensureSchemaMigrationsTable(ctx context.Context, executor migrationSQL) err
 	return nil
 }
 
-func migrationTableExists(ctx context.Context, executor migrationSQL, table string) (bool, error) {
-	rows, err := executor.QueryContext(ctx, `SELECT COUNT(*)
-FROM information_schema.tables
-WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND TABLE_TYPE = 'BASE TABLE'`, table)
-	if err != nil {
-		return false, err
-	}
-	if !rows.Next() {
-		readErr := rows.Err()
-		closeErr := rows.Close()
-		if readErr != nil {
-			return false, errors.Join(readErr, closeErr)
-		}
-		return false, errors.Join(errors.New("schema table existence check returned no row"), closeErr)
-	}
-	var count uint64
-	if err := rows.Scan(&count); err != nil {
-		return false, errors.Join(err, rows.Close())
-	}
-	if rows.Next() {
-		return false, errors.Join(errors.New("schema table existence check returned multiple rows"), rows.Close())
-	}
-	if err := errors.Join(rows.Err(), rows.Close()); err != nil {
-		return false, err
-	}
-	if count > 1 {
-		return false, errors.New("schema table existence check returned duplicate table")
-	}
-	return count == 1, nil
-}
-
-func listAppliedMigrations(ctx context.Context, executor migrationSQL) (map[string]struct{}, error) {
-	rows, err := executor.QueryContext(ctx, fmt.Sprintf("SELECT filename FROM %s", schemaMigrationsTable))
+func listAppliedMigrations(conn *sql.Conn) (map[string]struct{}, error) {
+	rows, err := conn.QueryContext(context.Background(), fmt.Sprintf("SELECT filename FROM %s", schemaMigrationsTable))
 	if err != nil {
 		return nil, fmt.Errorf("failed to query applied migrations: %w", err)
 	}
@@ -302,39 +215,6 @@ func listAppliedMigrations(ctx context.Context, executor migrationSQL) (map[stri
 	}
 
 	return applied, nil
-}
-
-func assertCaptureGateIdle(ctx context.Context, executor migrationSQL) error {
-	var active uint64
-	rows, err := executor.QueryContext(ctx, `SELECT COUNT(*)
-FROM system_maintenance_locks
-WHERE gate_state <> 'idle'
-   OR lock_owner IS NOT NULL
-   OR heartbeat_at IS NOT NULL
-   OR lease_expires_at IS NOT NULL`)
-	if err != nil {
-		return fmt.Errorf("read system backup maintenance gate: %w", err)
-	}
-	defer rows.Close()
-	if !rows.Next() {
-		if err := rows.Err(); err != nil {
-			return fmt.Errorf("read system backup maintenance gate: %w", err)
-		}
-		return errors.New("system backup maintenance gate count returned no row")
-	}
-	if err := rows.Scan(&active); err != nil {
-		return fmt.Errorf("scan system backup maintenance gate count: %w", err)
-	}
-	if rows.Next() {
-		return errors.New("system backup maintenance gate count returned multiple rows")
-	}
-	if err := rows.Err(); err != nil {
-		return fmt.Errorf("read system backup maintenance gate: %w", err)
-	}
-	if active != 0 {
-		return fmt.Errorf("%d system backup capture gate(s) are active", active)
-	}
-	return nil
 }
 
 func splitSQLStatements(input string) []string {

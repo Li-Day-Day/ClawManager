@@ -53,9 +53,9 @@ func TestSQLDeadlineAlertReadinessProbeUsesActualSQLWithFalseWriteGuard(t *testi
 	if len(executor.queries) != 2 || len(executor.args) != 2 {
 		t.Fatalf("queries/args = %d/%d, want 2/2", len(executor.queries), len(executor.args))
 	}
-	for index, table := range []string{"system_backups", "system_restore_drills"} {
+	for index, table := range []string{"system_backup_v2_backups", "system_backup_v2_restore_drills"} {
 		query := executor.queries[index]
-		for _, required := range []string{"INSERT INTO system_backup_alert_states", "FROM " + table, "WHERE ?", "ON DUPLICATE KEY UPDATE"} {
+		for _, required := range []string{"INSERT INTO system_backup_v2_alert_states", "FROM " + table, "WHERE ?", "ON DUPLICATE KEY UPDATE"} {
 			if !strings.Contains(query, required) {
 				t.Fatalf("probe query %d missing %q: %s", index, required, query)
 			}

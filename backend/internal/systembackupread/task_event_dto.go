@@ -11,7 +11,7 @@ import (
 
 const TaskEventInstallationHeader = "X-System-Backup-Origin-Installation-ID"
 const TaskEventRowVersionHeader = "X-System-Backup-Task-Row-Version"
-const taskEventMessageSQLPrefix = "SELECT id,message FROM system_backup_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND id IN ("
+const taskEventMessageSQLPrefix = "SELECT id,message FROM system_backup_v2_events WHERE origin_installation_id=? AND target_type=? AND target_public_id=? AND id IN ("
 
 // The event table contains already-redacted events under the v12 event table and EventResource contract.
 // Redaction belongs to the producer's admission path. Reading these records

@@ -172,13 +172,13 @@ func (s RecoveryManagerBootstrapService) RegisterFirst(ctx context.Context, peer
 		return err
 	}
 	var existing int64
-	if err := tx.QueryRowContext(ctx, "SELECT row_version FROM system_backup_recovery_deployments WHERE scope_key=? FOR UPDATE", key).Scan(&existing); !errors.Is(err, sql.ErrNoRows) {
+	if err := tx.QueryRowContext(ctx, "SELECT row_version FROM system_backup_v2_recovery_deployments WHERE scope_key=? FOR UPDATE", key).Scan(&existing); !errors.Is(err, sql.ErrNoRows) {
 		if err == nil {
 			return ErrConflict
 		}
 		return ErrUnavailable
 	}
-	rows, err := tx.QueryContext(ctx, "SELECT management_identity_hash FROM system_backup_recovery_managers WHERE scope_key=? ORDER BY management_identity_hash FOR UPDATE", key)
+	rows, err := tx.QueryContext(ctx, "SELECT management_identity_hash FROM system_backup_v2_recovery_managers WHERE scope_key=? ORDER BY management_identity_hash FOR UPDATE", key)
 	if err != nil {
 		return ErrUnavailable
 	}
@@ -200,7 +200,7 @@ func (s RecoveryManagerBootstrapService) RegisterFirst(ctx context.Context, peer
 			identity, _ := hex.DecodeString(facts.IdentityHash)
 			issuer, _ := hex.DecodeString(facts.IssuerIdentityHash)
 			credential, _ := hex.DecodeString(facts.CredentialBindingHash)
-			if _, err := tx.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+			if _, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, identity, string(s.Scope.Installation), issuer, credential, until); err != nil {
 				return ErrUnavailable
@@ -231,7 +231,7 @@ VALUES (?,'system_backup',JSON_OBJECT('grant_id',?,'grant_sha256',?,'bootstrap_i
 	var rowRevoked sql.NullTime
 	if err := tx.QueryRowContext(ctx, `SELECT origin_installation_id,management_identity_hash,issuer_identity_hash,credential_binding_hash,
 can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version,revoked_at
-FROM system_backup_recovery_managers WHERE scope_key=? AND management_identity_hash=? FOR UPDATE`,
+FROM system_backup_v2_recovery_managers WHERE scope_key=? AND management_identity_hash=? FOR UPDATE`,
 		key, mustRecoveryBootstrapHash(facts.IdentityHash)).Scan(&rowOrigin, &rowIdentity, &rowIssuer, &rowCredential,
 		&rowRead, &rowWrite, &rowManage, &rowEnabled, &rowUntil, &rowVersion, &rowRevoked); err != nil {
 		return ErrUnavailable
@@ -261,7 +261,7 @@ func mustRecoveryBootstrapHash(value string) []byte {
 }
 
 func lockRecoveryManagerBootstrapParent(ctx context.Context, tx *sql.Tx, scope pd.Scope) error {
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return ErrUnavailable
 	}
@@ -284,7 +284,7 @@ func lockRecoveryManagerBootstrapParent(ctx context.Context, tx *sql.Tx, scope p
 		return ErrDenied
 	}
 	var installation string
-	if tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", string(scope.Installation)).Scan(&installation) != nil || installation != string(scope.Installation) {
+	if tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", string(scope.Installation)).Scan(&installation) != nil || installation != string(scope.Installation) {
 		return ErrDenied
 	}
 	return nil

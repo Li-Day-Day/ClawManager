@@ -145,9 +145,9 @@ func (c *bootstrapConn) ExecContext(_ context.Context, q string, a []driver.Name
 		kind = "reservation"
 	case strings.Contains(q, "INSERT INTO audit_logs"):
 		kind = "audit"
-	case strings.Contains(q, "INSERT INTO system_backup_configs"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_configs"):
 		kind = "config"
-		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "INSERT INTO system_backup_configs ("), ")")[0], ",")
+		columns := strings.Split(strings.Split(strings.TrimPrefix(q, "INSERT INTO system_backup_v2_configs ("), ")")[0], ",")
 		s.config = make(map[string]driver.Value, len(columns))
 		for i, column := range columns {
 			s.config[column] = a[i].Value
@@ -167,10 +167,10 @@ func (c *bootstrapConn) ExecContext(_ context.Context, q string, a []driver.Name
 		if len(a) != wantArgs || a[1].Value != int64(1) || a[4].Value != false {
 			return nil, errors.New("bad snapshot")
 		}
-	case strings.Contains(q, "INSERT INTO system_backup_installation_state"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_installation_state"):
 		kind = "state"
 		s.matrix = a[2].Value.(string)
-	case strings.Contains(q, "INSERT INTO system_backup_operations"):
+	case strings.Contains(q, "INSERT INTO system_backup_v2_operations"):
 		kind = "operation"
 		s.stagedOp = a[0].Value.(string)
 		s.stagedHash = a[6].Value.(string)

@@ -73,7 +73,7 @@ func (c *mfaPermissionConn) QueryContext(ctx context.Context, q string, args []d
 			return &registrationTestRows{width: 1}, nil
 		}
 		return registrationRow(c.m.activeVersion), nil
-	case strings.Contains(q, "SELECT version FROM system_backup_configs"):
+	case strings.Contains(q, "SELECT version FROM system_backup_v2_configs"):
 		if c.m.orphan {
 			return registrationRow(int64(1)), nil
 		}

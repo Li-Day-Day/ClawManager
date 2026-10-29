@@ -207,8 +207,8 @@ func (c *check) Recheck(ctx context.Context, tx *sql.Tx, now time.Time) error {
 	}
 	// Read the complete persisted global identity set and retained ledger in the
 	// caller's transaction. Missing material must not shrink the required set.
-	rows, e := tx.QueryContext(ctx, `SELECT nonce_hmac_ref_version,nonce_hmac_identity_hash,NULL FROM system_backup_configs
-UNION SELECT nonce_hmac_key_version,NULL,MAX(retain_until) FROM system_backup_strong_auth_nonces WHERE retain_until>? GROUP BY nonce_hmac_key_version`, now)
+	rows, e := tx.QueryContext(ctx, `SELECT nonce_hmac_ref_version,nonce_hmac_identity_hash,NULL FROM system_backup_v2_configs
+UNION SELECT nonce_hmac_key_version,NULL,MAX(retain_until) FROM system_backup_v2_strong_auth_nonces WHERE retain_until>? GROUP BY nonce_hmac_key_version`, now)
 	if e != nil {
 		return bad
 	}

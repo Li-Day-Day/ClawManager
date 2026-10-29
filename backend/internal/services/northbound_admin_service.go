@@ -28,6 +28,9 @@ import (
 var ErrNorthboundSettingsConflict = errors.New("northbound settings were changed by another administrator")
 
 var allowedNorthboundScopes = map[string]struct{}{
+	"teams:read": {}, "teams:create": {}, "teams:manage": {}, "teams:delete": {},
+	"teams:tasks:read": {}, "teams:tasks:write": {}, "teams:files:read": {}, "teams:files:write": {},
+	"team-templates:read": {}, "team-templates:write": {}, "team-templates:generate": {},
 	"lite-instances:create": {}, "lite-instances:read": {}, "pro-instances:create": {}, "pro-instances:read": {},
 	"lite-instances:restart": {}, "lite-instances:reset": {}, "pro-instances:restart": {}, "pro-instances:reset": {},
 	"lite-instances:delete": {}, "pro-instances:delete": {},
@@ -129,6 +132,18 @@ func (s *NorthboundAdminService) Overview(ctx context.Context) (*NorthboundAdmin
 }
 
 func (s *NorthboundAdminService) SaveSettings(ctx context.Context, actorUserID int, item *models.NorthboundAdminSettings) (*models.NorthboundAdminSettings, error) {
+	if item.OwnerTeamCreationUserID < 0 {
+		return nil, fmt.Errorf("invalid Owner Team creation account")
+	}
+	if item.OwnerTeamCreationUserID > 0 {
+		user, err := s.users.GetByID(item.OwnerTeamCreationUserID)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil || !user.IsActive {
+			return nil, fmt.Errorf("Owner Team creation account must be active")
+		}
+	}
 	if err := validateNorthboundSettings(item); err != nil {
 		return nil, err
 	}
@@ -315,13 +330,10 @@ func normalizeValues(values []string) []string {
 	return result
 }
 
-type KubernetesNorthboundController struct {
-	client  *k8ssvc.Client
-	secrets k8ssvc.SecretStore
-}
+type KubernetesNorthboundController struct{ client *k8ssvc.Client }
 
 func NewKubernetesNorthboundController(client *k8ssvc.Client) *KubernetesNorthboundController {
-	return &KubernetesNorthboundController{client: client, secrets: k8ssvc.NewSecretStore(client)}
+	return &KubernetesNorthboundController{client: client}
 }
 
 func (c *KubernetesNorthboundController) namespace() (string, error) {
@@ -407,7 +419,7 @@ func (c *KubernetesNorthboundController) PublicCA(ctx context.Context) ([]byte, 
 	if err != nil {
 		return nil, err
 	}
-	secret, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-ca")
+	secret, err := c.client.Clientset.CoreV1().Secrets(ns).Get(ctx, "clawmanager-northbound-gateway-ca", metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -423,7 +435,7 @@ func (c *KubernetesNorthboundController) PreparedCA(ctx context.Context) ([]byte
 	if err != nil {
 		return nil, err
 	}
-	secret, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-ca-next")
+	secret, err := c.client.Clientset.CoreV1().Secrets(ns).Get(ctx, "clawmanager-northbound-gateway-ca-next", metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +475,7 @@ func (c *KubernetesNorthboundController) PrepareManagedCertificate(ctx context.C
 		}
 	}
 	var caCertPEM, caKeyPEM, leafCertPEM, leafKeyPEM []byte
-	managed, managedErr := c.secrets.Get(ctx, ns, "clawmanager-northbound-managed-ca")
+	managed, managedErr := c.client.Clientset.CoreV1().Secrets(ns).Get(ctx, "clawmanager-northbound-managed-ca", metav1.GetOptions{})
 	if managedErr == nil {
 		caCertPEM = append([]byte(nil), managed.Data[corev1.TLSCertKey]...)
 		caKeyPEM = append([]byte(nil), managed.Data[corev1.TLSPrivateKeyKey]...)
@@ -477,13 +489,13 @@ func (c *KubernetesNorthboundController) PrepareManagedCertificate(ctx context.C
 		return err
 	}
 	labels := map[string]string{"app.kubernetes.io/managed-by": "clawmanager", "clawmanager.io/northbound-certificate": "staged"}
-	if err := upsertSystemSecret(ctx, c.secrets, ns, "clawmanager-northbound-managed-ca", corev1.SecretTypeTLS, map[string][]byte{corev1.TLSCertKey: caCertPEM, corev1.TLSPrivateKeyKey: caKeyPEM}, labels); err != nil {
+	if err := upsertSystemSecret(ctx, c.client, ns, "clawmanager-northbound-managed-ca", corev1.SecretTypeTLS, map[string][]byte{corev1.TLSCertKey: caCertPEM, corev1.TLSPrivateKeyKey: caKeyPEM}, labels); err != nil {
 		return err
 	}
-	if err := upsertSystemSecret(ctx, c.secrets, ns, "clawmanager-northbound-gateway-tls-next", corev1.SecretTypeTLS, map[string][]byte{corev1.TLSCertKey: leafCertPEM, corev1.TLSPrivateKeyKey: leafKeyPEM}, labels); err != nil {
+	if err := upsertSystemSecret(ctx, c.client, ns, "clawmanager-northbound-gateway-tls-next", corev1.SecretTypeTLS, map[string][]byte{corev1.TLSCertKey: leafCertPEM, corev1.TLSPrivateKeyKey: leafKeyPEM}, labels); err != nil {
 		return err
 	}
-	if err := upsertSystemSecret(ctx, c.secrets, ns, "clawmanager-northbound-gateway-ca-next", corev1.SecretTypeOpaque, map[string][]byte{"ca.crt": caCertPEM}, labels); err != nil {
+	if err := upsertSystemSecret(ctx, c.client, ns, "clawmanager-northbound-gateway-ca-next", corev1.SecretTypeOpaque, map[string][]byte{"ca.crt": caCertPEM}, labels); err != nil {
 		return err
 	}
 	return nil
@@ -494,39 +506,46 @@ func (c *KubernetesNorthboundController) ActivateManagedCertificate(ctx context.
 	if err != nil {
 		return err
 	}
-	nextTLS, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-tls-next")
+	secrets := c.client.Clientset.CoreV1().Secrets(ns)
+	nextTLS, err := secrets.Get(ctx, "clawmanager-northbound-gateway-tls-next", metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("prepared gateway certificate not found: %w", err)
 	}
-	nextCA, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-ca-next")
+	nextCA, err := secrets.Get(ctx, "clawmanager-northbound-gateway-ca-next", metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("prepared gateway CA not found: %w", err)
 	}
 	if !matchingTLSKeyPair(nextTLS.Data[corev1.TLSCertKey], nextTLS.Data[corev1.TLSPrivateKeyKey]) {
 		return errors.New("prepared gateway certificate and private key do not match")
 	}
-	activeTLS, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-tls")
+	activeTLS, err := secrets.Get(ctx, "clawmanager-northbound-gateway-tls", metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
-	activeCA, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-ca")
+	activeCA, err := secrets.Get(ctx, "clawmanager-northbound-gateway-ca", metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
-	oldTLS := *activeTLS
-	oldTLS.Data = cloneSecretData(activeTLS.Data)
-	oldCA := *activeCA
-	oldCA.Data = cloneSecretData(activeCA.Data)
+	oldTLS := activeTLS.DeepCopy()
+	oldCA := activeCA.DeepCopy()
 	activeTLS.Data = cloneSecretData(nextTLS.Data)
 	activeCA.Data = cloneSecretData(nextCA.Data)
-	if err = c.secrets.Upsert(ctx, activeTLS); err != nil {
+	if _, err = secrets.Update(ctx, activeTLS, metav1.UpdateOptions{}); err != nil {
 		return fmt.Errorf("activate gateway certificate: %w", err)
 	}
 	rollback := func() {
-		_ = c.secrets.Upsert(context.Background(), &oldTLS)
-		_ = c.secrets.Upsert(context.Background(), &oldCA)
+		current, _ := secrets.Get(context.Background(), oldTLS.Name, metav1.GetOptions{})
+		if current != nil {
+			oldTLS.ResourceVersion = current.ResourceVersion
+			_, _ = secrets.Update(context.Background(), oldTLS, metav1.UpdateOptions{})
+		}
+		currentCA, _ := secrets.Get(context.Background(), oldCA.Name, metav1.GetOptions{})
+		if currentCA != nil {
+			oldCA.ResourceVersion = currentCA.ResourceVersion
+			_, _ = secrets.Update(context.Background(), oldCA, metav1.UpdateOptions{})
+		}
 	}
-	if err = c.secrets.Upsert(ctx, activeCA); err != nil {
+	if _, err = secrets.Update(ctx, activeCA, metav1.UpdateOptions{}); err != nil {
 		rollback()
 		return fmt.Errorf("activate gateway CA: %w", err)
 	}
@@ -544,13 +563,31 @@ func (c *KubernetesNorthboundController) ActivateManagedCertificate(ctx context.
 		rollback()
 		return fmt.Errorf("restart northbound Gateway: %w", err)
 	}
-	_ = c.secrets.Delete(ctx, ns, "clawmanager-northbound-gateway-tls-next")
-	_ = c.secrets.Delete(ctx, ns, "clawmanager-northbound-gateway-ca-next")
+	_ = secrets.Delete(ctx, "clawmanager-northbound-gateway-tls-next", metav1.DeleteOptions{})
+	_ = secrets.Delete(ctx, "clawmanager-northbound-gateway-ca-next", metav1.DeleteOptions{})
 	return nil
 }
 
-func upsertSystemSecret(ctx context.Context, store k8ssvc.SecretStore, namespace, name string, secretType corev1.SecretType, data map[string][]byte, labels map[string]string) error {
-	return store.Upsert(ctx, &k8ssvc.SecretRecord{Namespace: namespace, Name: name, Type: secretType, Data: cloneSecretData(data), Labels: labels})
+func upsertSystemSecret(ctx context.Context, client *k8ssvc.Client, namespace, name string, secretType corev1.SecretType, data map[string][]byte, labels map[string]string) error {
+	api := client.Clientset.CoreV1().Secrets(namespace)
+	existing, err := api.Get(ctx, name, metav1.GetOptions{})
+	if err == nil {
+		existing.Type = secretType
+		existing.Data = cloneSecretData(data)
+		if existing.Labels == nil {
+			existing.Labels = map[string]string{}
+		}
+		for key, value := range labels {
+			existing.Labels[key] = value
+		}
+		_, err = api.Update(ctx, existing, metav1.UpdateOptions{})
+		return err
+	}
+	if !apierrors.IsNotFound(err) {
+		return err
+	}
+	_, err = api.Create(ctx, &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: namespace, Labels: labels}, Type: secretType, Data: cloneSecretData(data)}, metav1.CreateOptions{})
+	return err
 }
 func cloneSecretData(input map[string][]byte) map[string][]byte {
 	result := map[string][]byte{}
@@ -672,7 +709,7 @@ func issueManagedLeaf(caCertPEM, caKeyPEM []byte, dnsNames []string, ips []net.I
 
 func (c *KubernetesNorthboundController) certificateStatus(ctx context.Context, ns string) NorthboundCertificateStatus {
 	status := NorthboundCertificateStatus{ManagementNote: "Current CA signing key is not managed; inspect/download is safe, renewal requires one-time managed CA initialization."}
-	secret, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-tls")
+	secret, err := c.client.Clientset.CoreV1().Secrets(ns).Get(ctx, "clawmanager-northbound-gateway-tls", metav1.GetOptions{})
 	if err != nil {
 		status.Error = err.Error()
 		return status
@@ -699,11 +736,11 @@ func (c *KubernetesNorthboundController) certificateStatus(ctx context.Context, 
 	for _, ip := range cert.IPAddresses {
 		status.IPAddresses = append(status.IPAddresses, ip.String())
 	}
-	if signer, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-managed-ca"); err == nil && len(signer.Data[corev1.TLSPrivateKeyKey]) > 0 {
+	if signer, err := c.client.Clientset.CoreV1().Secrets(ns).Get(ctx, "clawmanager-northbound-managed-ca", metav1.GetOptions{}); err == nil && len(signer.Data[corev1.TLSPrivateKeyKey]) > 0 {
 		status.Managed = true
 		status.ManagementNote = "Managed internal CA signing material is present; renewal can be enabled without exposing the private key."
 	}
-	if staged, err := c.secrets.Get(ctx, ns, "clawmanager-northbound-gateway-tls-next"); err == nil {
+	if staged, err := c.client.Clientset.CoreV1().Secrets(ns).Get(ctx, "clawmanager-northbound-gateway-tls-next", metav1.GetOptions{}); err == nil {
 		if block, _ := pem.Decode(staged.Data[corev1.TLSCertKey]); block != nil {
 			if parsed, parseErr := x509.ParseCertificate(block.Bytes); parseErr == nil {
 				status.Prepared = true

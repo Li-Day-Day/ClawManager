@@ -14,10 +14,10 @@ func TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns(t *testing.T)
 		kind          TaskKind
 		table, prefix string
 	}{
-		{BackupTask, "system_backups", "sbk_"},
-		{DrillTask, "system_restore_drills", "sdr_"},
-		{PreflightTask, "system_backup_preflights", "spf_"},
-		{VerificationTask, "system_backup_artifact_verifications", "sav_"},
+		{BackupTask, "system_backup_v2_backups", "sbk_"},
+		{DrillTask, "system_backup_v2_restore_drills", "sdr_"},
+		{PreflightTask, "system_backup_v2_preflights", "spf_"},
+		{VerificationTask, "system_backup_v2_artifact_verifications", "sav_"},
 	} {
 		t.Run(string(tc.kind), func(t *testing.T) {
 			fixture := makePageFixture(tc.table, string(tc.kind), tc.prefix)
@@ -74,7 +74,7 @@ func TestProjectTaskListMatchesCommonTaskContractAndRedactsColumns(t *testing.T)
 }
 
 func TestProjectTaskListFailsClosedOnMalformedOrMixedScope(t *testing.T) {
-	f := makePageFixture("system_backups", "backup", "sbk_")
+	f := makePageFixture("system_backup_v2_backups", "backup", "sbk_")
 	db := sql.OpenDB(pageConnector{f})
 	defer db.Close()
 	service, err := NewService(db, f, []byte(strings.Repeat("k", 32)))

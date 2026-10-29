@@ -36,7 +36,7 @@ func (c *executionBoundsConn) QueryContext(ctx context.Context, query string, ar
 	if err != nil {
 		return nil, err
 	}
-	attempts := strings.Contains(query, "system_backup_attempts AS a")
+	attempts := strings.Contains(query, "system_backup_v2_attempts AS a")
 	jobs := query == taskJobsSQL
 	if !attempts && !jobs {
 		return rows, nil

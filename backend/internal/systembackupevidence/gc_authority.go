@@ -124,7 +124,7 @@ func (a *SQLGCAuthority) authorize(ctx context.Context, scope S3Scope) (gcGrant,
 	// The mandatory D policy locks the owner/reference scope before evidence.
 	// GC remains allowed while scheduled backups are disabled.
 	i := Identity{Installation: s.Installation, ID: access.ID}
-	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=?", access.ID).Scan(&i.OwnerType, &i.OwnerID) != nil || s.Policy.LockScope(ctx, tx, s.Installation, i) != nil {
+	if tx.QueryRowContext(ctx, "SELECT owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=?", access.ID).Scan(&i.OwnerType, &i.OwnerID) != nil || s.Policy.LockScope(ctx, tx, s.Installation, i) != nil {
 		return deny()
 	}
 	op, err := a.lockOperation(ctx, tx)

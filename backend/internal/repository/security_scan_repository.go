@@ -28,7 +28,8 @@ type securityScanRepository struct {
 }
 
 func NewSecurityScanRepository(sess db.Session) SecurityScanRepository {
-	return &securityScanRepository{sess: sess}
+	repo := &securityScanRepository{sess: sess}
+	return repo
 }
 
 func (r *securityScanRepository) GetConfig() (*models.SecurityScanConfig, error) {

@@ -121,7 +121,7 @@ func backfillMySQLEmpty(t *testing.T, result configMaintenanceResult, err error)
 
 func backfillMySQLInstallationSnapshot(t *testing.T, ctx context.Context, f *maintenanceMySQLFixture) []byte {
 	t.Helper()
-	rows, err := f.db.QueryContext(ctx, "SELECT * FROM system_backup_installation_state WHERE origin_installation_id=?", f.installation)
+	rows, err := f.db.QueryContext(ctx, "SELECT * FROM system_backup_v2_installation_state WHERE origin_installation_id=?", f.installation)
 	mysqlMust(t, err)
 	defer rows.Close()
 	columns, err := rows.Columns()
@@ -166,7 +166,7 @@ func backfillMySQLSeedInstallation(t *testing.T, ctx context.Context, f *mainten
 			t.Error("CLEANUP_PENDING backfill installation identity")
 			return
 		}
-		if _, e = tx.ExecContext(cleanup, "DELETE FROM system_backup_installation_state WHERE origin_installation_id=?", f.installation); e != nil {
+		if _, e = tx.ExecContext(cleanup, "DELETE FROM system_backup_v2_installation_state WHERE origin_installation_id=?", f.installation); e != nil {
 			t.Error("CLEANUP_PENDING backfill installation delete")
 			return
 		}
@@ -175,7 +175,7 @@ func backfillMySQLSeedInstallation(t *testing.T, ctx context.Context, f *mainten
 			return
 		}
 		var n int
-		if f.db.QueryRowContext(cleanup, "SELECT COUNT(*) FROM system_backup_installation_state WHERE origin_installation_id=?", f.installation).Scan(&n) != nil || n != 0 {
+		if f.db.QueryRowContext(cleanup, "SELECT COUNT(*) FROM system_backup_v2_installation_state WHERE origin_installation_id=?", f.installation).Scan(&n) != nil || n != 0 {
 			t.Error("CLEANUP_PENDING backfill installation absence")
 			return
 		}
@@ -185,7 +185,7 @@ func backfillMySQLSeedInstallation(t *testing.T, ctx context.Context, f *mainten
 }
 func backfillMySQLUncommitted(ctx context.Context, tx *sql.Tx, installation string) error {
 	var receipts, audits, filled int
-	if tx.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM system_backup_config_maintenance_receipts WHERE origin_installation_id=?),(SELECT COUNT(*) FROM audit_logs WHERE JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?),(SELECT COUNT(*) FROM system_backup_configs WHERE origin_installation_id=? AND canonical_config_json IS NOT NULL)", installation, installation, installation).Scan(&receipts, &audits, &filled) != nil || receipts != 1 || audits != 2 || filled != 1 {
+	if tx.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM system_backup_v2_config_maintenance_receipts WHERE origin_installation_id=?),(SELECT COUNT(*) FROM audit_logs WHERE JSON_UNQUOTE(JSON_EXTRACT(details,'$.origin_installation_id'))=?),(SELECT COUNT(*) FROM system_backup_v2_configs WHERE origin_installation_id=? AND canonical_config_json IS NOT NULL)", installation, installation, installation).Scan(&receipts, &audits, &filled) != nil || receipts != 1 || audits != 2 || filled != 1 {
 		return errors.New("required uncommitted effects not reached")
 	}
 	return nil
@@ -195,7 +195,7 @@ func backfillMySQLTrigger(t *testing.T, ctx context.Context, f *maintenanceMySQL
 	id, err := maintenanceProbeUUID()
 	mysqlMust(t, err)
 	name := "dbs_" + strings.ReplaceAll(id, "-", "")
-	table, predicate := "system_backup_config_maintenance_receipts", "NEW.origin_installation_id='"+f.installation+"'"
+	table, predicate := "system_backup_v2_config_maintenance_receipts", "NEW.origin_installation_id='"+f.installation+"'"
 	if phase == "result" {
 		table = "audit_logs"
 		predicate = "NEW.action='system_backup.config_canonical_backfill.result' AND JSON_UNQUOTE(JSON_EXTRACT(NEW.details,'$.origin_installation_id'))='" + f.installation + "'"
@@ -370,7 +370,7 @@ func TestDConfigCanonicalBackfillMySQL(t *testing.T) {
 				observed, e := svc.observe(ctx, f.scope.key, f.scope.canonical, f.original)
 				mysqlMust(t, e)
 				var original []byte
-				mysqlMust(t, db.QueryRowContext(ctx, "SELECT redacted_response_canonical_json FROM system_backup_config_maintenance_receipts WHERE origin_installation_id=?", f.installation).Scan(&original))
+				mysqlMust(t, db.QueryRowContext(ctx, "SELECT redacted_response_canonical_json FROM system_backup_v2_config_maintenance_receipts WHERE origin_installation_id=?", f.installation).Scan(&original))
 				if !observed.replayed || !bytes.Equal(observed.bytes(), original) || a.writeCalls.Load() != 1 || a.reserveCalls.Load() != 1 {
 					t.Fatal("independent service observation retried mutation")
 				}
@@ -385,7 +385,7 @@ func TestDConfigCanonicalBackfillMySQL(t *testing.T) {
 				for i := 0; i < 2; i++ {
 					w := startBackfillMySQLWorker(t, ctx, f, a, cfg)
 					workers = append(workers, w)
-					(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, sessionProbeWorker{id: w.id, result: w.errors}, "system_backup_configs")
+					(sessionMySQLProbe{db: db, identity: identity}).waiting(t, ctx, sessionProbeWorker{id: w.id, result: w.errors}, "system_backup_v2_configs")
 				}
 				mysqlMust(t, blocker.Rollback())
 				var original []byte

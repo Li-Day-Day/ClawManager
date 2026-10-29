@@ -42,7 +42,7 @@ func (r SQLAcceptanceAnomalyReader) Read(ctx context.Context, installationID str
 		return nil, errors.New("invalid acceptance anomaly installation ID")
 	}
 	rows, err := r.DB.QueryContext(ctx, `SELECT task_type, consecutive_anomaly_count
-FROM system_backup_alert_states
+FROM system_backup_v2_alert_states
 WHERE origin_installation_id = ?
   AND rule_key = ?
   AND matrix_key = 'all'

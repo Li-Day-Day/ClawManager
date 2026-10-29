@@ -140,12 +140,12 @@ func newDownloadFixture(t *testing.T, role string) *downloadFixture {
 		{"SELECT @@server_uuid", nil, []driver.Value{c.Registry.ServerUUID, c.Registry.Database, now, int64(0)}},
 		{"ORDER BY origin_installation_id FOR UPDATE", nil, []driver.Value{c.Registry.Installation}},
 		{"SELECT active_config_version FROM", []driver.Value{c.Registry.Installation}, []driver.Value{c.ConfigVersion}},
-		{"FROM system_backup_configs", []driver.Value{c.Registry.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, c.RBACVersion, c.RBACSHA256, c.Store.Identity, c.Store.Version, c.Read.Identity, c.Read.Version}},
+		{"FROM system_backup_v2_configs", []driver.Value{c.Registry.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, c.RBACVersion, c.RBACSHA256, c.Store.Identity, c.Store.Version, c.Read.Identity, c.Read.Version}},
 		{"SELECT password_hash FROM users", []driver.Value{int64(42)}, []driver.Value{password}},
-		{"FROM system_backup_admin_sessions", []driver.Value{c.Registry.Installation, hash([]byte(accessToken))}, []driver.Value{int64(42), "user:42", hash([]byte(password)), now.Add(3 * time.Minute), false, now}},
+		{"FROM system_backup_v2_admin_sessions", []driver.Value{c.Registry.Installation, hash([]byte(accessToken))}, []driver.Value{int64(42), "user:42", hash([]byte(password)), now.Add(3 * time.Minute), false, now}},
 		{"SELECT owner_target_type,owner_target_public_id", []driver.Value{i.ID}, []driver.Value{i.OwnerType, i.OwnerID}},
-		{"FROM system_backup_evidence WHERE public_id=? FOR UPDATE", []driver.Value{i.ID}, []driver.Value{int64(10), i.OwnerType, i.OwnerID, i.Type, r.State, r.Failure, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, r.Ref.ImmutableVersion, i.ContentHash, i.ContentSize, m.ObjectHash, m.ObjectSize, ChunkSize, int64(len(m.Chunks)), m.ChunkRoot, i.Media, "envelope_v1", m.Key.Identity, m.Key.Version, m.EnvelopeHash, i.Classification, r.Claim, r.ClaimUntil, r.ExpiresAt, r.ProtectedUntil, r.RowVersion, r.CreatedAt, "evidence", hash([]byte(key)), Framing}},
-		{"FROM system_backup_evidence_chunks", []driver.Value{int64(10)}, []driver.Value{ch.Index, ch.PlainOffset, ch.PlainLength, ch.PlainHash, ch.FrameOffset, ch.FrameLength, ch.CipherHash, nonce, tag}},
+		{"FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE", []driver.Value{i.ID}, []driver.Value{int64(10), i.OwnerType, i.OwnerID, i.Type, r.State, r.Failure, r.Ref.Identity, r.Ref.Version, r.Ref.RelativeKey, r.Ref.ImmutableVersion, i.ContentHash, i.ContentSize, m.ObjectHash, m.ObjectSize, ChunkSize, int64(len(m.Chunks)), m.ChunkRoot, i.Media, "envelope_v1", m.Key.Identity, m.Key.Version, m.EnvelopeHash, i.Classification, r.Claim, r.ClaimUntil, r.ExpiresAt, r.ProtectedUntil, r.RowVersion, r.CreatedAt, "evidence", hash([]byte(key)), Framing}},
+		{"FROM system_backup_v2_evidence_chunks", []driver.Value{int64(10)}, []driver.Value{ch.Index, ch.PlainOffset, ch.PlainLength, ch.PlainHash, ch.FrameOffset, ch.FrameLength, ch.CipherHash, nonce, tag}},
 		{"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}},
 	}
 	f.a, err = NewSQLDownloadAuthority(c)

@@ -54,7 +54,7 @@ func (s SQLBackupStartStore) StartNext(ctx context.Context, owner string, limit 
 	if absentExecutionDependency(ctx) || ctx.Err() != nil || !controllerOwnerPattern.MatchString(owner) || limit < 1 || limit > 64 {
 		return nil, ErrBackupStart
 	}
-	rows, err := s.Authority.DB.QueryContext(ctx, "SELECT public_id,row_version FROM system_backups WHERE origin_installation_id=? AND status='pending' AND deadline_at>UTC_TIMESTAMP(6) AND next_reconcile_at<=UTC_TIMESTAMP(6) AND (controller_owner IS NULL OR controller_owner=? OR controller_lease_expires_at<=UTC_TIMESTAMP(6)) ORDER BY next_reconcile_at,id LIMIT ?", s.Authority.InstallationID, owner, limit)
+	rows, err := s.Authority.DB.QueryContext(ctx, "SELECT public_id,row_version FROM system_backup_v2_backups WHERE origin_installation_id=? AND status='pending' AND deadline_at>UTC_TIMESTAMP(6) AND next_reconcile_at<=UTC_TIMESTAMP(6) AND (controller_owner IS NULL OR controller_owner=? OR controller_lease_expires_at<=UTC_TIMESTAMP(6)) ORDER BY next_reconcile_at,id LIMIT ?", s.Authority.InstallationID, owner, limit)
 	if err != nil {
 		return nil, ErrBackupStart
 	}
@@ -128,7 +128,7 @@ func loadBackupStart(ctx context.Context, tx *sql.Tx, installation string, token
 	var size uint64
 	// The task is already locked by the shared claim CAS. Never substitute the
 	// current configuration for this historical, admitted task snapshot.
-	err := tx.QueryRowContext(ctx, "SELECT request_id,config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,deadline_at,source_orchestrator,source_profile,matrix_key,datasource_topology,runner,task_purpose,requested_parts FROM system_backups WHERE origin_installation_id=? AND public_id=? AND controller_owner=? AND row_version=? AND status='pending' AND started_at IS NULL AND maintenance_lock_owner IS NULL AND maintenance_fencing_token IS NULL AND commit_started_at IS NULL AND failure_category='none' FOR UPDATE", installation, a.TaskPublicID, a.ClaimOwner, a.ClaimRowVersion).Scan(&a.RequestID, &a.ConfigVersion, &b.ConfigSnapshot, &size, &a.ConfigSHA256, &a.DeadlineAt, &b.Spec.SourceOrchestrator, &b.Spec.SourceProfile, &b.Spec.MatrixKey, &b.Spec.DatasourceTopology, &b.Spec.Runner, &b.Spec.TaskPurpose, &parts)
+	err := tx.QueryRowContext(ctx, "SELECT request_id,config_version,config_snapshot_json,config_snapshot_size_bytes,config_snapshot_sha256,deadline_at,source_orchestrator,source_profile,matrix_key,datasource_topology,runner,task_purpose,requested_parts FROM system_backup_v2_backups WHERE origin_installation_id=? AND public_id=? AND controller_owner=? AND row_version=? AND status='pending' AND started_at IS NULL AND maintenance_lock_owner IS NULL AND maintenance_fencing_token IS NULL AND commit_started_at IS NULL AND failure_category='none' FOR UPDATE", installation, a.TaskPublicID, a.ClaimOwner, a.ClaimRowVersion).Scan(&a.RequestID, &a.ConfigVersion, &b.ConfigSnapshot, &size, &a.ConfigSHA256, &a.DeadlineAt, &b.Spec.SourceOrchestrator, &b.Spec.SourceProfile, &b.Spec.MatrixKey, &b.Spec.DatasourceTopology, &b.Spec.Runner, &b.Spec.TaskPurpose, &parts)
 	if err != nil || size != uint64(len(b.ConfigSnapshot)) || !validExecutionInput(*a, installation) {
 		return BackupStart{}, ErrBackupStart
 	}
@@ -178,10 +178,10 @@ func (s SQLBackupStartStore) Start(ctx context.Context, target Target, owner str
 	// Lock installation/config before task rows, as in SQLExecutionAuthority.
 	var enabled bool
 	var activeVersion uint64
-	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Authority.InstallationID).Scan(&activeVersion) != nil || activeVersion == 0 {
+	if tx.QueryRowContext(ctx, "SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", s.Authority.InstallationID).Scan(&activeVersion) != nil || activeVersion == 0 {
 		return zero, ErrBackupStart
 	}
-	if tx.QueryRowContext(ctx, "SELECT enabled FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR SHARE", s.Authority.InstallationID, activeVersion).Scan(&enabled) != nil || !enabled {
+	if tx.QueryRowContext(ctx, "SELECT enabled FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR SHARE", s.Authority.InstallationID, activeVersion).Scan(&enabled) != nil || !enabled {
 		return zero, ErrBackupStart
 	}
 	var eventIDs [3]int64
@@ -199,7 +199,7 @@ func (s SQLBackupStartStore) Start(ctx context.Context, target Target, owner str
 	if err != nil {
 		return zero, err
 	}
-	update := "UPDATE system_backups SET status='preparing',pending_reason='none',started_at=UTC_TIMESTAMP(6),next_reconcile_at=UTC_TIMESTAMP(6),row_version=row_version+1 WHERE origin_installation_id=? AND public_id=? AND controller_owner=? AND row_version=? AND controller_lease_expires_at>UTC_TIMESTAMP(6) AND deadline_at>UTC_TIMESTAMP(6) AND status='pending' AND NOT EXISTS (SELECT 1 FROM system_backup_attempts a WHERE a.target_type='backup' AND a.target_public_id=system_backups.public_id) AND NOT EXISTS (SELECT 1 FROM system_backup_job_observations j WHERE j.target_type='backup' AND j.target_public_id=system_backups.public_id) AND NOT EXISTS (SELECT 1 FROM system_backup_staging_resources r WHERE r.backup_public_id=system_backups.public_id) AND NOT EXISTS (SELECT 1 FROM system_backup_external_actions x WHERE x.target_type='backup' AND x.target_public_id=system_backups.public_id)"
+	update := "UPDATE system_backup_v2_backups SET status='preparing',pending_reason='none',started_at=UTC_TIMESTAMP(6),next_reconcile_at=UTC_TIMESTAMP(6),row_version=row_version+1 WHERE origin_installation_id=? AND public_id=? AND controller_owner=? AND row_version=? AND controller_lease_expires_at>UTC_TIMESTAMP(6) AND deadline_at>UTC_TIMESTAMP(6) AND status='pending' AND NOT EXISTS (SELECT 1 FROM system_backup_v2_attempts a WHERE a.target_type='backup' AND a.target_public_id=system_backup_v2_backups.public_id) AND NOT EXISTS (SELECT 1 FROM system_backup_v2_job_observations j WHERE j.target_type='backup' AND j.target_public_id=system_backup_v2_backups.public_id) AND NOT EXISTS (SELECT 1 FROM system_backup_v2_staging_resources r WHERE r.backup_public_id=system_backup_v2_backups.public_id) AND NOT EXISTS (SELECT 1 FROM system_backup_v2_external_actions x WHERE x.target_type='backup' AND x.target_public_id=system_backup_v2_backups.public_id)"
 	result, err := tx.ExecContext(ctx, update, b.Authority.InstallationID, target.PublicID, owner, token.RowVersion)
 	one, countErr := exactlyOneRow(result)
 	if err != nil || countErr != nil || !one {
@@ -208,7 +208,7 @@ func (s SQLBackupStartStore) Start(ctx context.Context, target Target, owner str
 	token.RowVersion++
 	b.Authority.ClaimRowVersion = token.RowVersion
 	for _, phase := range []string{"capture", "secret_capture"} {
-		r, e := tx.ExecContext(ctx, "INSERT INTO system_backup_attempts (target_type,target_public_id,attempt_no,phase,status) VALUES ('backup',?,1,?,'preparing')", target.PublicID, phase)
+		r, e := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_attempts (target_type,target_public_id,attempt_no,phase,status) VALUES ('backup',?,1,?,'preparing')", target.PublicID, phase)
 		ok, re := exactlyOneRow(r)
 		if e != nil || re != nil || !ok {
 			return zero, ErrBackupStart
@@ -219,7 +219,7 @@ func (s SQLBackupStartStore) Start(ctx context.Context, target Target, owner str
 		if kind == "task_status_changed" {
 			previous, current = "pending", "preparing"
 		}
-		r, e := tx.ExecContext(ctx, "INSERT INTO system_backup_events (origin_installation_id,target_type,target_public_id,event_type,level,task_status,message,details_present,detail_previous_status,detail_current_status,detail_attempt_number,request_id,created_at) VALUES (?,'backup',?,?,'info','preparing','Backup preparation started.',TRUE,?,?,1,?,UTC_TIMESTAMP(6))", b.Authority.InstallationID, target.PublicID, kind, previous, current, b.Authority.RequestID)
+		r, e := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_events (origin_installation_id,target_type,target_public_id,event_type,level,task_status,message,details_present,detail_previous_status,detail_current_status,detail_attempt_number,request_id,created_at) VALUES (?,'backup',?,?,'info','preparing','Backup preparation started.',TRUE,?,?,1,?,UTC_TIMESTAMP(6))", b.Authority.InstallationID, target.PublicID, kind, previous, current, b.Authority.RequestID)
 		ok, re := exactlyOneRow(r)
 		if e != nil || re != nil || !ok {
 			return zero, ErrBackupStart
@@ -289,7 +289,7 @@ func backupStartClock(ctx context.Context, tx *sql.Tx) (time.Time, error) {
 }
 
 func checkBackupStartFinal(ctx context.Context, tx *sql.Tx, b BackupStart, claim taskClaimSnapshot, policy LeasePolicy, until time.Time, eventIDs [3]int64, floor time.Time) (time.Time, error) {
-	current, err := claimSnapshot(ctx, tx, "system_backups", b.Authority.InstallationID, Target{Kind: TargetBackup, PublicID: b.Authority.TaskPublicID})
+	current, err := claimSnapshot(ctx, tx, "system_backup_v2_backups", b.Authority.InstallationID, Target{Kind: TargetBackup, PublicID: b.Authority.TaskPublicID})
 	token := ClaimToken{Target: Target{Kind: TargetBackup, PublicID: b.Authority.TaskPublicID}, Owner: b.Authority.ClaimOwner, RowVersion: b.Authority.ClaimRowVersion}
 	if err != nil || !current.valid(b.Authority.InstallationID, token, policy) || current.status != "preparing" || !current.heartbeat.Equal(claim.heartbeat) || !current.until.Equal(claim.until) || current.now.Before(claim.now) || current.now.Before(floor) || !current.now.Before(until) {
 		return time.Time{}, ErrBackupStart
@@ -297,7 +297,7 @@ func checkBackupStartFinal(ctx context.Context, tx *sql.Tx, b BackupStart, claim
 	var cfg []byte
 	var parts, orchestrator, profile, matrix, topology, runner, purpose string
 	var scheduled, started time.Time
-	err = tx.QueryRowContext(ctx, "SELECT config_snapshot_json,source_orchestrator,source_profile,matrix_key,datasource_topology,runner,task_purpose,requested_parts,started_at,next_reconcile_at FROM system_backups WHERE origin_installation_id=? AND public_id=? FOR UPDATE", b.Authority.InstallationID, b.Authority.TaskPublicID).Scan(&cfg, &orchestrator, &profile, &matrix, &topology, &runner, &purpose, &parts, &started, &scheduled)
+	err = tx.QueryRowContext(ctx, "SELECT config_snapshot_json,source_orchestrator,source_profile,matrix_key,datasource_topology,runner,task_purpose,requested_parts,started_at,next_reconcile_at FROM system_backup_v2_backups WHERE origin_installation_id=? AND public_id=? FOR UPDATE", b.Authority.InstallationID, b.Authority.TaskPublicID).Scan(&cfg, &orchestrator, &profile, &matrix, &topology, &runner, &purpose, &parts, &started, &scheduled)
 	want := b.Spec
 	if err != nil || !bytes.Equal(cfg, b.ConfigSnapshot) || orchestrator != want.SourceOrchestrator || profile != want.SourceProfile || matrix != want.MatrixKey || topology != want.DatasourceTopology || runner != want.Runner || purpose != want.TaskPurpose || parts != strings.Join(want.RequestedParts, ",") || started.Before(claim.now) || started.After(current.now) || !scheduled.Equal(started) {
 		return time.Time{}, ErrBackupStart
@@ -305,7 +305,7 @@ func checkBackupStartFinal(ctx context.Context, tx *sql.Tx, b BackupStart, claim
 	for _, phase := range []string{"capture", "secret_capture"} {
 		var status string
 		var version uint64
-		if tx.QueryRowContext(ctx, "SELECT status,row_version FROM system_backup_attempts WHERE target_type='backup' AND target_public_id=? AND attempt_no=1 AND phase=? FOR SHARE", b.Authority.TaskPublicID, phase).Scan(&status, &version) != nil || status != "preparing" || version != 1 {
+		if tx.QueryRowContext(ctx, "SELECT status,row_version FROM system_backup_v2_attempts WHERE target_type='backup' AND target_public_id=? AND attempt_no=1 AND phase=? FOR SHARE", b.Authority.TaskPublicID, phase).Scan(&status, &version) != nil || status != "preparing" || version != 1 {
 			return time.Time{}, ErrBackupStart
 		}
 	}
@@ -313,7 +313,7 @@ func checkBackupStartFinal(ctx context.Context, tx *sql.Tx, b BackupStart, claim
 		var schema, actual, status, request string
 		var attempt sql.NullInt64
 		var previous, current sql.NullString
-		if tx.QueryRowContext(ctx, "SELECT schema_version,event_type,task_status,request_id,detail_attempt_number,detail_previous_status,detail_current_status FROM system_backup_events WHERE id=? AND origin_installation_id=? AND target_type='backup' AND target_public_id=? FOR SHARE", eventIDs[index], b.Authority.InstallationID, b.Authority.TaskPublicID).Scan(&schema, &actual, &status, &request, &attempt, &previous, &current) != nil || schema != "system-backup-event.v1" || actual != kind || request != b.Authority.RequestID {
+		if tx.QueryRowContext(ctx, "SELECT schema_version,event_type,task_status,request_id,detail_attempt_number,detail_previous_status,detail_current_status FROM system_backup_v2_events WHERE id=? AND origin_installation_id=? AND target_type='backup' AND target_public_id=? FOR SHARE", eventIDs[index], b.Authority.InstallationID, b.Authority.TaskPublicID).Scan(&schema, &actual, &status, &request, &attempt, &previous, &current) != nil || schema != "system-backup-event.v1" || actual != kind || request != b.Authority.RequestID {
 			return time.Time{}, ErrBackupStart
 		}
 		if index == 0 {

@@ -174,17 +174,17 @@ func (p *PreparedBootstrapCandidateCapacity) Reserve(ctx context.Context, tx pd.
 	if err != nil || !bootstrapCandidateCapacityTime(s.report, now) || s.report.AvailableBytes < s.capacity+reserve+s.cost {
 		return fail()
 	}
-	if _, err = tx.ExecContext(ctx, "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)", s.report.ObservedAt); err != nil {
+	if _, err = tx.ExecContext(ctx, "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES (1,?,0)", s.report.ObservedAt); err != nil {
 		return fail()
 	}
 	var sample time.Time
 	var outstanding int64
-	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || sample.IsZero() || s.report.ObservedAt.Before(sample) || outstanding < 0 || outstanding > s.capacity || s.report.AllocatedBytes > s.capacity-outstanding-s.cost {
+	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || sample.IsZero() || s.report.ObservedAt.Before(sample) || outstanding < 0 || outstanding > s.capacity || s.report.AllocatedBytes > s.capacity-outstanding-s.cost {
 		return fail()
 	}
 	// CAS protects the original ledger sample and amount and latches SQL errors.
 	write, ok := tx.(*pd.Transaction)
-	if !ok || write.CAS(ctx, "UPDATE system_backup_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?", s.cost, sample, outstanding) != nil {
+	if !ok || write.CAS(ctx, "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=reserved_bytes+? WHERE id=1 AND sample_at=? AND reserved_bytes=?", s.cost, sample, outstanding) != nil {
 		return fail()
 	}
 	r := &BootstrapCandidateCapacityReservation{state: s, tx: tx, sample: sample, floor: outstanding + s.cost}
@@ -203,7 +203,7 @@ func (r *BootstrapCandidateCapacityReservation) Recheck(ctx context.Context, tx 
 	}
 	var sample time.Time
 	var outstanding int64
-	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || !sample.Equal(r.sample) || outstanding < r.floor || outstanding > r.state.capacity-r.state.report.AllocatedBytes {
+	if tx.QueryRowContext(ctx, "SELECT sample_at,reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1 FOR UPDATE").Scan(&sample, &outstanding) != nil || !sample.Equal(r.sample) || outstanding < r.floor || outstanding > r.state.capacity-r.state.report.AllocatedBytes {
 		return ErrRegistrationUnavailable
 	}
 	now, err := tx.SampleTime(ctx)

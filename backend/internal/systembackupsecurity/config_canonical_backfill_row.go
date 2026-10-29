@@ -16,7 +16,7 @@ import (
 // This column-set check is not an installed schema/catalog or write approval.
 const configBackfillLockedColumnsSHA256 = "652956166534da92c7545d04b057310cc0f62029baa4b6d15ea41c39b69c4356"
 const configBackfillLockedColumnCount = 138
-const configBackfillLockedSelect = "SELECT * FROM system_backup_configs WHERE origin_installation_id=? AND version=? FOR UPDATE"
+const configBackfillLockedSelect = "SELECT * FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=? FOR UPDATE"
 
 type configBackfillCanonicalState uint8
 

@@ -25,7 +25,31 @@ type enterpriseAuthSettingRepository struct {
 }
 
 func NewEnterpriseAuthSettingRepository(sess db.Session) EnterpriseAuthSettingRepository {
-	return &enterpriseAuthSettingRepository{sess: sess}
+	repo := &enterpriseAuthSettingRepository{sess: sess}
+	return repo
+}
+
+func (r *enterpriseAuthSettingRepository) ensureColumn(column, alterSQL string) {
+	var exists int
+	row, err := r.sess.SQL().QueryRow(`
+SELECT COUNT(*)
+FROM information_schema.columns
+WHERE table_schema = DATABASE()
+  AND table_name = 'enterprise_auth_settings'
+  AND column_name = ?
+`, column)
+	if err != nil {
+		panic(fmt.Errorf("failed to check enterprise_auth_settings.%s: %w", column, err))
+	}
+	if err := row.Scan(&exists); err != nil {
+		panic(fmt.Errorf("failed to scan enterprise_auth_settings.%s existence: %w", column, err))
+	}
+	if exists > 0 {
+		return
+	}
+	if _, err := r.sess.SQL().Exec(alterSQL); err != nil {
+		panic(fmt.Errorf("failed to add enterprise_auth_settings.%s: %w", column, err))
+	}
 }
 
 func (r *enterpriseAuthSettingRepository) Get(provider string) (*models.EnterpriseAuthSetting, error) {

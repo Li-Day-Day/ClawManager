@@ -131,7 +131,7 @@ func (s *SQLLoginSessions) RecordPair(ctx context.Context, p LoginSessionPair) e
 		return ErrLoginSessionRejected
 	}
 	var revokedBefore time.Time
-	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", s.installation, p.UserID).Scan(&revokedBefore)
+	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_v2_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", s.installation, p.UserID).Scan(&revokedBefore)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return ErrLoginSessionUnavailable
 	}
@@ -149,7 +149,7 @@ func (s *SQLLoginSessions) RecordPair(ctx context.Context, p LoginSessionPair) e
 		if _, err = CheckRegistrationSessionUntil(ctx, tx, s.installation, parent); err != nil {
 			return ErrLoginSessionRejected
 		}
-		result, err := tx.ExecContext(ctx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=? AND revoked=FALSE", s.installation, parent.Session)
+		result, err := tx.ExecContext(ctx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=? AND revoked=FALSE", s.installation, parent.Session)
 		if err != nil {
 			return ErrLoginSessionUnavailable
 		}
@@ -160,15 +160,15 @@ func (s *SQLLoginSessions) RecordPair(ctx context.Context, p LoginSessionPair) e
 	}
 	// These expired authentication rows have no FK dependents. Nonce/audit and
 	// revocation ledgers are not deleted. Bound cleanup and live-pair admission.
-	if _, err = tx.ExecContext(ctx, "DELETE FROM system_backup_admin_sessions WHERE origin_installation_id=? AND user_id=? AND expires_at<=? LIMIT 256", s.installation, p.UserID, now); err != nil {
+	if _, err = tx.ExecContext(ctx, "DELETE FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND user_id=? AND expires_at<=? LIMIT 256", s.installation, p.UserID, now); err != nil {
 		return ErrLoginSessionUnavailable
 	}
 	var count int
-	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_admin_sessions WHERE origin_installation_id=? AND user_id=? AND expires_at>? AND revoked=FALSE", s.installation, p.UserID, now).Scan(&count) != nil || count > 254 {
+	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_admin_sessions WHERE origin_installation_id=? AND user_id=? AND expires_at>? AND revoked=FALSE", s.installation, p.UserID, now).Scan(&count) != nil || count > 254 {
 		return ErrLoginSessionUnavailable
 	}
 	for _, actor := range []RegistrationActor{access, refresh} {
-		if _, err = tx.ExecContext(ctx, "INSERT INTO system_backup_admin_sessions(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at) VALUES (?,?,?,?,?,?)", s.installation, actor.Session, actor.UserID, actor.Subject, p.CredentialSHA256, actor.SessionExpiresAt.UTC()); err != nil {
+		if _, err = tx.ExecContext(ctx, "INSERT INTO system_backup_v2_admin_sessions(origin_installation_id,session_sha256,user_id,subject,credential_hash,expires_at) VALUES (?,?,?,?,?,?)", s.installation, actor.Session, actor.UserID, actor.Subject, p.CredentialSHA256, actor.SessionExpiresAt.UTC()); err != nil {
 			return ErrLoginSessionUnavailable
 		}
 	}

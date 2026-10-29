@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-var runtimeControlTables = []string{"system_backup_admin_revocations", "system_backup_admin_sessions", "system_backup_metadata_reservations", "system_backup_totp_credentials"}
+var runtimeControlTables = []string{"system_backup_v2_admin_revocations", "system_backup_v2_admin_sessions", "system_backup_v2_metadata_reservations", "system_backup_v2_totp_credentials"}
 
 func TestControlExclusionCurrentRegistryScope(t *testing.T) {
 	tables, err := ControlExclusionAllowlist(frozenRegistryBytes(t))
@@ -94,7 +94,7 @@ func TestControlExclusionCompletionContext(t *testing.T) {
 				state.failure = "commit"
 			}
 			if mode == "canceled_nonempty" {
-				state.rows["system_backup_admin_sessions"] = 1
+				state.rows["system_backup_v2_admin_sessions"] = 1
 			}
 			proofCalls := 0
 			proof := controlCompletionProof(func(proofCtx context.Context, tx *sql.Tx) error {

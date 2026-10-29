@@ -134,7 +134,7 @@ func (s ConfigBootstrapService) bootstrapLegacyPrepared(ctx context.Context, g O
 	var prior ConfigBootstrapResult
 	var priorHash, status string
 	var httpStatus int
-	err = tx.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_operations
+	err = tx.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_v2_operations
 		WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, g.InstallationID, actor, BootstrapConfigEndpoint, g.IdempotencyKey).
 		Scan(&prior.OperationPublicID, &prior.Version, &priorHash, &status, &httpStatus)
 	if err == nil {
@@ -147,8 +147,8 @@ func (s ConfigBootstrapService) bootstrapLegacyPrepared(ctx context.Context, g O
 		var configHash, matrix string
 		var version int64
 		var enabled bool
-		if tx.QueryRowContext(ctx, `SELECT c.config_sha256,s.active_config_version,c.enabled,s.matrix_key FROM system_backup_installation_state s
-			JOIN system_backup_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
+		if tx.QueryRowContext(ctx, `SELECT c.config_sha256,s.active_config_version,c.enabled,s.matrix_key FROM system_backup_v2_installation_state s
+			JOIN system_backup_v2_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
 			WHERE s.origin_installation_id=? FOR UPDATE`, g.InstallationID).Scan(&configHash, &version, &enabled, &matrix) != nil {
 			return zero, ErrRegistrationUnavailable
 		}
@@ -172,7 +172,7 @@ func (s ConfigBootstrapService) bootstrapLegacyPrepared(ctx context.Context, g O
 		return zero, candidateBootstrapError(err)
 	}
 	// Reject both a previously initialized installation and orphan config rows.
-	for _, q := range []string{"SELECT active_config_version FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", "SELECT version FROM system_backup_configs WHERE origin_installation_id=? ORDER BY version FOR UPDATE"} {
+	for _, q := range []string{"SELECT active_config_version FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", "SELECT version FROM system_backup_v2_configs WHERE origin_installation_id=? ORDER BY version FOR UPDATE"} {
 		var version int64
 		err = tx.QueryRowContext(ctx, q, g.InstallationID).Scan(&version)
 		if err == nil {
@@ -265,13 +265,13 @@ func (s ConfigBootstrapService) finishInlineBootstrap(ctx context.Context, tx *s
 	}
 	var actualOp, actualHash, status string
 	var version, httpStatus int64
-	if tx.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, g.InstallationID, strconv.FormatInt(g.UserID, 10), BootstrapConfigEndpoint, g.IdempotencyKey).Scan(&actualOp, &version, &actualHash, &status, &httpStatus) != nil || actualOp != op || version != 1 || actualHash != hash || status != "succeeded" || httpStatus != 201 {
+	if tx.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, g.InstallationID, strconv.FormatInt(g.UserID, 10), BootstrapConfigEndpoint, g.IdempotencyKey).Scan(&actualOp, &version, &actualHash, &status, &httpStatus) != nil || actualOp != op || version != 1 || actualHash != hash || status != "succeeded" || httpStatus != 201 {
 		return ErrRegistrationConflict
 	}
 	var configHash, matrix string
 	var activeVersion int64
 	var enabled bool
-	if tx.QueryRowContext(ctx, `SELECT c.config_sha256,s.active_config_version,c.enabled,s.matrix_key FROM system_backup_installation_state s JOIN system_backup_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version WHERE s.origin_installation_id=? FOR UPDATE`, g.InstallationID).Scan(&configHash, &activeVersion, &enabled, &matrix) != nil || configHash != g.ConfigSHA256 || activeVersion != 1 || enabled || matrix != g.MatrixKey {
+	if tx.QueryRowContext(ctx, `SELECT c.config_sha256,s.active_config_version,c.enabled,s.matrix_key FROM system_backup_v2_installation_state s JOIN system_backup_v2_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version WHERE s.origin_installation_id=? FOR UPDATE`, g.InstallationID).Scan(&configHash, &activeVersion, &enabled, &matrix) != nil || configHash != g.ConfigSHA256 || activeVersion != 1 || enabled || matrix != g.MatrixKey {
 		return ErrBootstrapExists
 	}
 	if err = verifyBootstrapConfigValues(ctx, tx, g, c, s.CanonicalSnapshot); err != nil {
@@ -318,15 +318,15 @@ func writeBootstrapConfigData(ctx context.Context, tx bootstrapConfigWriter, g O
 		columns, args = c.sqlValuesWithCanonical(g.InstallationID, actor, g.ChangeReason)
 	}
 	marks := strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")
-	if _, err := tx.ExecContext(ctx, "INSERT INTO system_backup_configs ("+strings.Join(columns, ",")+") VALUES ("+marks+")", args...); err != nil {
+	if _, err := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_configs ("+strings.Join(columns, ",")+") VALUES ("+marks+")", args...); err != nil {
 		return ErrProviderEvidenceStorage
 	}
-	if _, err := tx.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	if _, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 		(origin_installation_id,active_config_version,last_effective_enabled,last_effective_enabled_transition_at,matrix_key)
 		VALUES (?,1,FALSE,?,?)`, g.InstallationID, now, g.MatrixKey); err != nil {
 		return ErrProviderEvidenceStorage
 	}
-	if _, err := tx.ExecContext(ctx, `INSERT INTO system_backup_operations
+	if _, err := tx.ExecContext(ctx, `INSERT INTO system_backup_v2_operations
 		(public_id,origin_installation_id,operation_type,target_type,target_public_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,
 		external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,result_config_version,http_status,deadline_at,started_at,finished_at,created_at)
 		VALUES (?,?,'config_update','system',?,'admin',?,?,?,?,?,2,?,'succeeded',1,201,?,?,?,?)`,

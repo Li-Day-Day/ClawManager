@@ -10,12 +10,12 @@ import (
 	"clawreef/internal/systembackupsecurity"
 )
 
-const downloadAdmissionEvidenceAnchorSQL = `SELECT id,origin_installation_id,row_version,claim_owner,claim_expires_at,protected_until,storage_state FROM system_backup_evidence WHERE public_id=? FOR UPDATE`
-const downloadAdmissionOperationInsertSQL = `INSERT INTO system_backup_operations
+const downloadAdmissionEvidenceAnchorSQL = `SELECT id,origin_installation_id,row_version,claim_owner,claim_expires_at,protected_until,storage_state FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE`
+const downloadAdmissionOperationInsertSQL = `INSERT INTO system_backup_v2_operations
 (public_id,origin_installation_id,operation_type,target_type,target_public_id,download_evidence_id,actor_type,actor_id,endpoint,idempotency_key,request_hash,
 external_action_public_ids_canonical_json,external_action_public_ids_size_bytes,external_action_public_ids_sha256,status,retryable,failure_category,http_status,row_version,deadline_at,started_at,finished_at,created_at,updated_at)
 VALUES (?,?,'evidence_download_admission','evidence',?,?,'admin',?,'getSystemBackupEvidence',?,?,?,2,?,'succeeded',FALSE,'none',200,1,?,?,?,?,?)`
-const downloadAdmissionOperationReadSQL = `SELECT id FROM system_backup_operations WHERE id=? AND public_id=? AND origin_installation_id=? AND schema_version='system-backup-operation.v1'
+const downloadAdmissionOperationReadSQL = `SELECT id FROM system_backup_v2_operations WHERE id=? AND public_id=? AND origin_installation_id=? AND schema_version='system-backup-operation.v1'
 AND operation_type='evidence_download_admission' AND target_type='evidence' AND target_public_id=? AND download_evidence_id=?
 AND actor_type='admin' AND actor_id=? AND endpoint='getSystemBackupEvidence' AND idempotency_key=? AND request_hash=?
 AND external_action_public_ids_canonical_json=? AND external_action_public_ids_size_bytes=2 AND external_action_public_ids_sha256=?
@@ -24,12 +24,12 @@ AND result_resource_public_id IS NULL AND result_config_version IS NULL AND retr
 AND redacted_response_evidence_id IS NULL AND redacted_response_sha256 IS NULL
 AND claim_owner IS NULL AND claim_expires_at IS NULL AND next_reconcile_at IS NULL AND row_version=1
 AND deadline_at=? AND started_at=? AND finished_at=? AND created_at=? AND updated_at=? FOR UPDATE`
-const downloadAdmissionReceiptInsertSQL = `INSERT INTO system_backup_download_admission_receipts
+const downloadAdmissionReceiptInsertSQL = `INSERT INTO system_backup_v2_download_admission_receipts
 (operation_id,origin_installation_id,operation_public_id,evidence_id,evidence_public_id,intent_audit_id,
 receipt_canonical_json,receipt_size_bytes,receipt_sha256,operation_canonical_json,operation_size_bytes,operation_sha256,
 admitted_at,claim_expires_at,deadline_at,retain_until) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 const downloadAdmissionReceiptReadSQL = `SELECT receipt_canonical_json,receipt_size_bytes,receipt_sha256,operation_canonical_json,operation_size_bytes,operation_sha256
-FROM system_backup_download_admission_receipts WHERE operation_id=? AND origin_installation_id=? AND operation_public_id=?
+FROM system_backup_v2_download_admission_receipts WHERE operation_id=? AND origin_installation_id=? AND operation_public_id=?
 AND evidence_id=? AND evidence_public_id=? AND intent_audit_id=? AND schema_version='system-backup-evidence-download-admission.v1'
 AND admitted_at=? AND claim_expires_at=? AND deadline_at=? AND retain_until=? FOR UPDATE`
 

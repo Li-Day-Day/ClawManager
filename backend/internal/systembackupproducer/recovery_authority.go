@@ -217,7 +217,7 @@ type recoveryAuthorityPolicy struct {
 // lockRecoveryAuthorityParent makes missing L1a/L1b/L2 rows serialize on the
 // existing installation row. It never creates an installation implicitly.
 func lockRecoveryAuthorityParent(ctx context.Context, tx SQL, scope Scope) error {
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return ErrUnavailable
 	}
@@ -240,7 +240,7 @@ func lockRecoveryAuthorityParent(ctx context.Context, tx SQL, scope Scope) error
 		return ErrGuardRequired
 	}
 	var installation string
-	if tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", string(scope.Installation)).Scan(&installation) != nil || installation != string(scope.Installation) {
+	if tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", string(scope.Installation)).Scan(&installation) != nil || installation != string(scope.Installation) {
 		return ErrGuardRequired
 	}
 	return nil

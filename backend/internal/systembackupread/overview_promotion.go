@@ -97,18 +97,18 @@ creation_signature_health,creation_catalog_health,creation_evidence_health,creat
 creation_health_snapshot_sha256,creation_health_observed_at,created_by,row_version,created_at,updated_at,
 (superseded_by_public_id IS NULL AND superseded_reason IS NULL AND superseded_at IS NULL
  AND revoked_by IS NULL AND revoked_reason IS NULL AND revoked_at IS NULL)
-FROM system_backup_promotions WHERE origin_installation_id=? AND matrix_key=? AND record_status='active'`
+FROM system_backup_v2_promotions WHERE origin_installation_id=? AND matrix_key=? AND record_status='active'`
 const promotionBackupSQL = `SELECT schema_version,public_id,origin_installation_id,matrix_key,task_type,status,task_purpose,
 acceptance_eligible,eligibility_reason_codes,eligibility_decision_hash,manifest_checksum,acceptance_checksum,
 artifact_registration_id,artifact_registration_hash,row_version,prune_guard_version,artifact_state,artifact_usable,artifact_unusable_reason
-FROM system_backups WHERE origin_installation_id=? AND public_id=?`
+FROM system_backup_v2_backups WHERE origin_installation_id=? AND public_id=?`
 const promotionDrillSQL = `SELECT schema_version,public_id,origin_installation_id,task_type,status,task_purpose,
 source_artifact_type,source_public_id,source_manifest_checksum,source_acceptance_checksum,acceptance_eligible,
 eligibility_reason_codes,eligibility_decision_hash,cleanup_policy,cleanup_status,cleanup_failure_code,row_version
-FROM system_restore_drills WHERE origin_installation_id=? AND public_id=?`
+FROM system_backup_v2_restore_drills WHERE origin_installation_id=? AND public_id=?`
 const promotionEvidenceSQL = `SELECT schema_version,public_id,owner_target_type,owner_target_public_id,evidence_type,content_checksum,row_version
-FROM system_backup_evidence WHERE public_id=?`
-const promotionConfigSQL = `SELECT schema_version,origin_installation_id,version FROM system_backup_configs WHERE origin_installation_id=? AND version=?`
+FROM system_backup_v2_evidence WHERE public_id=?`
+const promotionConfigSQL = `SELECT schema_version,origin_installation_id,version FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=?`
 
 func readCurrentPromotionControl(ctx context.Context, q overviewReadSQL, state OverviewInstallationState) (*PromotionControlRecord, error) {
 	rows, err := q.QueryContext(ctx, currentPromotionSQL, state.InstallationID, state.MatrixKey)

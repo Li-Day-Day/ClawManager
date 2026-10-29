@@ -39,11 +39,11 @@ func TestSystemRecoveryAuthorityReadMySQL(t *testing.T) {
 	decode := func(s string) []byte { b, err := hex.DecodeString(s); mustSQL(t, err); return b }
 	key, err := pd.RecoveryScopeKey(scope)
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,FALSE,FALSE,TRUE,?,1)`, key, decode(facts.IdentityHash), string(scope.Installation), decode(facts.IssuerIdentityHash), decode(facts.CredentialBindingHash), now.Add(time.Minute))
 	mustSQL(t, err)
@@ -56,7 +56,7 @@ VALUES (?,?,?,?,?,TRUE,FALSE,FALSE,TRUE,?,1)`, key, decode(facts.IdentityHash), 
 	if err != nil || observed.DeploymentFound || observed.FenceFound {
 		t.Fatal("authorized empty current-state observation rejected", err)
 	}
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_recovery_managers SET can_read_fence=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?", key, decode(facts.IdentityHash))
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_recovery_managers SET can_read_fence=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?", key, decode(facts.IdentityHash))
 	mustSQL(t, err)
 	r.Nonce = "a-manager-read-mysql-2"
 	if _, err := reader.Read(ctx, r); err == nil {

@@ -18,8 +18,8 @@ import (
 // The concrete A bridge acquires this COMPLETE GLOBAL config index/range at
 // L1, before the producer domain. These later reads revisit only that prefix.
 // Never narrow either global source to the current installation or active key.
-const candidateNonceConfigSQL = "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE"
-const candidateNonceRetainedSQL = "SELECT id,nonce_hmac_key_version,retain_until FROM system_backup_strong_auth_nonces FORCE INDEX(idx_sb_auth_nonce_retention) WHERE retain_until>? ORDER BY retain_until,id FOR UPDATE"
+const candidateNonceConfigSQL = "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE"
+const candidateNonceRetainedSQL = "SELECT id,nonce_hmac_key_version,retain_until FROM system_backup_v2_strong_auth_nonces FORCE INDEX(idx_sb_auth_nonce_retention) WHERE retain_until>? ORDER BY retain_until,id FOR UPDATE"
 
 // This is material validation, NOT independent deployment/bootstrap authority.
 // Original mapping authentication and L3 historical/new-use branching remain

@@ -48,11 +48,11 @@ func TestSystemRecoveryAuthorityPinnedDecisionMySQL(t *testing.T) {
 	key, err := pd.RecoveryScopeKey(scope)
 	mustSQL(t, err)
 	decode := func(s string) []byte { b, err := hex.DecodeString(s); mustSQL(t, err); return b }
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), string(scope.Installation),
 		decode(facts.IssuerIdentityHash), decode(facts.CredentialBindingHash), now.Add(time.Minute))
@@ -94,11 +94,11 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 		t.Fatal("pinned decision did not commit exact deployment")
 	}
 	var count int
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_recovery_deployments WHERE scope_key=? AND enabled=TRUE AND deployment_epoch=1", key).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_recovery_deployments WHERE scope_key=? AND enabled=TRUE AND deployment_epoch=1", key).Scan(&count))
 	if count != 1 {
 		t.Fatal("pinned decision did not write current deployment")
 	}
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? AND revocation_epoch=1", key, decode(string(identity))).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? AND revocation_epoch=1", key, decode(string(identity))).Scan(&count))
 	if count != 1 {
 		t.Fatal("pinned decision did not write matching fence")
 	}
@@ -150,11 +150,11 @@ func TestSystemRecoveryAuthorityMySQL(t *testing.T) {
 	decode := func(s string) []byte { b, err := hex.DecodeString(s); mustSQL(t, err); return b }
 	key, err := pd.RecoveryScopeKey(c.Scope)
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(c.Scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), string(c.Scope.Installation), decode(facts.IssuerIdentityHash), decode(facts.CredentialBindingHash), now.Add(time.Minute))
 	mustSQL(t, err)
@@ -171,7 +171,7 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 	mustSQL(t, err)
 	defer tx.Rollback()
 	var parent string
-	mustSQL(t, tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", string(c.Scope.Installation)).Scan(&parent))
+	mustSQL(t, tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", string(c.Scope.Installation)).Scan(&parent))
 	if parent != string(c.Scope.Installation) {
 		t.Fatal("wrong L0 parent")
 	}
@@ -182,7 +182,7 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 	if err := s.RecheckManager(ctx, recoveryManagerProbeTx{tx}, r, now); err != nil {
 		t.Fatal("unchanged manager final guard rejected", err)
 	}
-	_, err = tx.ExecContext(ctx, "UPDATE system_backup_recovery_managers SET can_manage_deployment=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?", key, decode(facts.IdentityHash))
+	_, err = tx.ExecContext(ctx, "UPDATE system_backup_v2_recovery_managers SET can_manage_deployment=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?", key, decode(facts.IdentityHash))
 	mustSQL(t, err)
 	if err := s.RecheckManager(ctx, recoveryManagerProbeTx{tx}, r, now); err != ErrDenied {
 		t.Fatalf("revoked management permission accepted: %v", err)
@@ -216,11 +216,11 @@ func TestSystemRecoveryAuthorityCombinedMySQL(t *testing.T) {
 	decode := func(s string) []byte { b, err := hex.DecodeString(s); mustSQL(t, err); return b }
 	key, err := pd.RecoveryScopeKey(scope)
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), string(scope.Installation),
 		decode(facts.IssuerIdentityHash), decode(facts.CredentialBindingHash), now.Add(time.Minute))
@@ -246,11 +246,11 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 		t.Fatal("result audit failure committed recovery authority")
 	}
 	var count int
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_recovery_deployments WHERE scope_key=?", key).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_recovery_deployments WHERE scope_key=?", key).Scan(&count))
 	if count != 0 {
 		t.Fatal("failed transaction left deployment")
 	}
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_producer_recovery_revocations WHERE scope_key=?", key).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=?", key).Scan(&count))
 	if count != 0 {
 		t.Fatal("failed transaction left revocation")
 	}
@@ -265,11 +265,11 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 	if result.WorkloadIdentityHash != identity || result.DeploymentEpoch != "1" || result.DeploymentVersion != "1" || !result.Enabled {
 		t.Fatal("combined result does not match current deployment")
 	}
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_recovery_deployments WHERE scope_key=? AND enabled=TRUE AND deployment_epoch=1", key).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_recovery_deployments WHERE scope_key=? AND enabled=TRUE AND deployment_epoch=1", key).Scan(&count))
 	if count != 1 {
 		t.Fatal("combined transaction did not commit deployment")
 	}
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? AND revocation_epoch=1 AND revoked_at IS NULL", key, decode(string(identity))).Scan(&count))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=? AND revocation_epoch=1 AND revoked_at IS NULL", key, decode(string(identity))).Scan(&count))
 	if count != 1 {
 		t.Fatal("combined transaction did not commit matching fence")
 	}
@@ -277,7 +277,7 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 	if count != 2 {
 		t.Fatal("combined transaction did not commit intent and result audits")
 	}
-	_, err = db.ExecContext(ctx, "UPDATE system_backup_recovery_managers SET can_write_fence=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?", key, decode(facts.IdentityHash))
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_recovery_managers SET can_write_fence=FALSE,row_version=2 WHERE scope_key=? AND management_identity_hash=?", key, decode(facts.IdentityHash))
 	mustSQL(t, err)
 	r.Fence.Operation, r.Fence.ExpectedEpoch, r.Fence.ExpectedRowVersion = "rotate", "1", "1"
 	r.ExpectedDeploymentVersion, r.Nonce = "1", "a-manager-combined-3"
@@ -286,11 +286,11 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, decode(facts.IdentityHash), st
 		t.Fatal("revoked manager write permission changed recovery authority")
 	}
 	var epoch, version int64
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT deployment_epoch,row_version FROM system_backup_recovery_deployments WHERE scope_key=?", key).Scan(&epoch, &version))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT deployment_epoch,row_version FROM system_backup_v2_recovery_deployments WHERE scope_key=?", key).Scan(&epoch, &version))
 	if epoch != 1 || version != 1 {
 		t.Fatal("denied manager request changed deployment")
 	}
-	mustSQL(t, db.QueryRowContext(ctx, "SELECT revocation_epoch,row_version FROM system_backup_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?", key, decode(string(identity))).Scan(&epoch, &version))
+	mustSQL(t, db.QueryRowContext(ctx, "SELECT revocation_epoch,row_version FROM system_backup_v2_producer_recovery_revocations WHERE scope_key=? AND workload_identity_hash=?", key, decode(string(identity))).Scan(&epoch, &version))
 	if epoch != 1 || version != 1 {
 		t.Fatal("denied manager request changed revocation fence")
 	}

@@ -22,10 +22,10 @@ type downloadPreviewSQL struct {
 func (d *downloadPreviewSQL) Connect(context.Context) (driver.Conn, error) { return d, nil }
 func (d *downloadPreviewSQL) QueryContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, error) {
 	d.queries = append(d.queries, q)
-	if strings.Contains(q, "FROM system_backup_evidence") && (strings.Contains(q, "FOR UPDATE") || strings.Contains(q, "FOR SHARE")) {
+	if strings.Contains(q, "FROM system_backup_v2_evidence") && (strings.Contains(q, "FOR UPDATE") || strings.Contains(q, "FOR SHARE")) {
 		return nil, errors.New("preview attempted L9 lock")
 	}
-	if q == "SELECT origin_installation_id FROM system_backup_evidence WHERE public_id=?" {
+	if q == "SELECT origin_installation_id FROM system_backup_v2_evidence WHERE public_id=?" {
 		if d.unavailable {
 			return nil, errors.New("PRIVATE missing candidate schema")
 		}
@@ -75,7 +75,7 @@ func TestDownloadPreviewLoadsActualManifestWithoutLateLocks(t *testing.T) {
 	if err != nil || bound != expected {
 		t.Fatal("preview differed from GET", err)
 	}
-	if len(d.queries) != 4 || !strings.Contains(d.queries[3], "FROM system_backup_evidence_chunks") || d.commitAttempts != 0 || d.ownerLocked || d.evidenceLocked || d.opKeyLocked || d.inserts != 0 || d.reserved != 0 {
+	if len(d.queries) != 4 || !strings.Contains(d.queries[3], "FROM system_backup_v2_evidence_chunks") || d.commitAttempts != 0 || d.ownerLocked || d.evidenceLocked || d.opKeyLocked || d.inserts != 0 || d.reserved != 0 {
 		t.Fatal("preview had admission effects", d.queries)
 	}
 	for _, q := range d.queries {
@@ -147,7 +147,7 @@ func TestDownloadPreviewFailsClosedBeforeChunkOrAuthority(t *testing.T) {
 			}
 			if strings.Contains(name, "owner") || strings.HasPrefix(name, "deadline-") {
 				for _, q := range d.queries {
-					if strings.Contains(q, "FROM system_backup_evidence_chunks") {
+					if strings.Contains(q, "FROM system_backup_v2_evidence_chunks") {
 						t.Fatal("chunks read after owner rejection")
 					}
 				}

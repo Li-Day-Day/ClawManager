@@ -10,7 +10,7 @@ import (
 	pd "clawreef/internal/systembackupproducer"
 )
 
-const historicalDeploymentSelect = `SELECT origin_installation_id,workload_identity_hash,issuer_identity_hash,subject_hash,management_issuer_identity_hash,actor_identity_hash,admission_hash,client_ca_sha256,certificate_sha256,stat_profile_hash,enabled,deployment_epoch,authorized_until,row_version FROM system_backup_recovery_deployments WHERE scope_key=? AND origin_installation_id=?`
+const historicalDeploymentSelect = `SELECT origin_installation_id,workload_identity_hash,issuer_identity_hash,subject_hash,management_issuer_identity_hash,actor_identity_hash,admission_hash,client_ca_sha256,certificate_sha256,stat_profile_hash,enabled,deployment_epoch,authorized_until,row_version FROM system_backup_v2_recovery_deployments WHERE scope_key=? AND origin_installation_id=?`
 
 // SystemHistoricalDeploymentGuard owns A's L0/L1a deployment admission. It
 // never reads the original active configuration or grants provider access.
@@ -59,7 +59,7 @@ func (g *SystemHistoricalDeploymentGuard) Lock(ctx context.Context, tx pd.SQL) e
 	if g == nil || g.locked || tx == nil || ctx == nil || ctx.Err() != nil {
 		return ErrDenied
 	}
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return ErrUnavailable
 	}
@@ -85,7 +85,7 @@ func (g *SystemHistoricalDeploymentGuard) Lock(ctx context.Context, tx pd.SQL) e
 		return ErrDenied
 	}
 	var installation string
-	if err := tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", string(g.scope.Installation)).Scan(&installation); err != nil || installation != string(g.scope.Installation) {
+	if err := tx.QueryRowContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", string(g.scope.Installation)).Scan(&installation); err != nil || installation != string(g.scope.Installation) {
 		return ErrDenied
 	}
 	row, err := readHistoricalDeployment(ctx, tx, g.scopeKey, string(g.scope.Installation), true)

@@ -47,15 +47,7 @@ func TestOptionalAnalyticsMigrationMySQL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = ensureSchemaMigrationsTable(context.Background(), conn); err != nil {
-		t.Fatal(err)
-	}
-	// The ledger below represents an installation with the capture gate applied.
-	// Keep that gate idle while testing optional analytics in isolation.
-	if _, err = conn.ExecContext(context.Background(), `CREATE TABLE system_maintenance_locks (
-		gate_state VARCHAR(32) NOT NULL, lock_owner VARCHAR(128) NULL,
-		heartbeat_at DATETIME NULL, lease_expires_at DATETIME NULL
-	)`); err != nil {
+	if err = ensureSchemaMigrationsTable(conn); err != nil {
 		t.Fatal(err)
 	}
 	// This fixture tests the optional migration, not the application's core schema.

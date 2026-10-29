@@ -62,7 +62,7 @@ func (c *aNonceTimeConn) QueryContext(ctx context.Context, query string, args []
 	return registrationRow(values...), nil
 }
 func (c *aNonceTimeConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	if !strings.Contains(query, "INSERT INTO system_backup_strong_auth_nonces") {
+	if !strings.Contains(query, "INSERT INTO system_backup_v2_strong_auth_nonces") {
 		return c.Conn.(driver.ExecerContext).ExecContext(ctx, query, args)
 	}
 	p := c.tap

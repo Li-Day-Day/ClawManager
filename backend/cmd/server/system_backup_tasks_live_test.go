@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -9,20 +8,6 @@ import (
 	"clawreef/internal/systembackupapi"
 	"github.com/gin-gonic/gin"
 )
-
-func TestBackupTaskOwnerCompositionRequiresRealDependencies(t *testing.T) {
-	for _, enabled := range []string{"false", "true", "invalid"} {
-		app, err := composeOwnedSystemBackupTaskApplication(&sql.DB{}, nil, systemBackupTaskOwners{}, func(key string) string {
-			if key == "SYSTEM_BACKUP_ENABLED" {
-				return enabled
-			}
-			return ""
-		})
-		if err == nil || app != nil {
-			t.Fatal("missing deployment owners admitted")
-		}
-	}
-}
 
 func TestBackupTaskRouteCompositionFailsClosedWithoutApplication(t *testing.T) {
 	gin.SetMode(gin.TestMode)

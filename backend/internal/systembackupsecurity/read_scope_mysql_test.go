@@ -25,7 +25,7 @@ func TestAAdminReadMySQLSeed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, table := range []string{"users", "system_backup_installation_state", "system_backup_configs", "system_backup_admin_sessions", "system_backups"} {
+	for _, table := range []string{"users", "system_backup_v2_installation_state", "system_backup_v2_configs", "system_backup_v2_admin_sessions", "system_backup_v2_backups"} {
 		if !strings.Contains(string(raw), "CREATE TABLE "+table+" (") {
 			t.Fatal("missing probe table", table)
 		}
@@ -112,11 +112,11 @@ func TestAAdminReadAuthorityMySQL(t *testing.T) {
 	mysqlMust(t, os.WriteFile(pinsPath, pinsRaw, 0600))
 	_, err = db.ExecContext(ctx, "INSERT INTO users VALUES(42,?,'admin',TRUE)", passwordHash)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_configs VALUES(?,1,'provider-v1',REPEAT('a',64),'strong-v1',REPEAT('b',64),'read-v1',?,'nonce-v1',REPEAT('d',64),300,0,300,86400,2592000,60,1073741824)`, installation, rbacHash)
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_configs VALUES(?,1,'provider-v1',REPEAT('a',64),'strong-v1',REPEAT('b',64),'read-v1',?,'nonce-v1',REPEAT('d',64),300,0,300,86400,2592000,60,1073741824)`, installation, rbacHash)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_installation_state VALUES(?,1)", installation)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_installation_state VALUES(?,1)", installation)
 	mysqlMust(t, err)
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_admin_sessions VALUES(?,?,?,?,?,UTC_TIMESTAMP(6) + INTERVAL 5 MINUTE,FALSE)", installation, registrationHash(token), 42, "user:42", registrationHash(passwordHash))
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_admin_sessions VALUES(?,?,?,?,?,UTC_TIMESTAMP(6) + INTERVAL 5 MINUTE,FALSE)", installation, registrationHash(token), 42, "user:42", registrationHash(passwordHash))
 	mysqlMust(t, err)
 	identity := DatabaseIdentity{ServerUUID: actualUUID, Database: database}
 	sessions, err := NewSQLLoginSessions(db, identity, installation, secret)
@@ -150,7 +150,7 @@ func TestAAdminReadAuthorityMySQL(t *testing.T) {
 	defer stopUpdate()
 	updated := make(chan error, 1)
 	go func() {
-		_, e := db.ExecContext(updateCtx, "UPDATE system_backup_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", installation, registrationHash(token))
+		_, e := db.ExecContext(updateCtx, "UPDATE system_backup_v2_admin_sessions SET revoked=TRUE WHERE origin_installation_id=? AND session_sha256=?", installation, registrationHash(token))
 		updated <- e
 	}()
 	select {

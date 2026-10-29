@@ -19,9 +19,10 @@ type chatMessageRepository struct {
 	sess db.Session
 }
 
-// NewChatMessageRepository creates a new chat message repository.
+// NewChatMessageRepository creates a new chat message repository (schema is owned by embedded migrations).
 func NewChatMessageRepository(sess db.Session) ChatMessageRepository {
-	return &chatMessageRepository{sess: sess}
+	repo := &chatMessageRepository{sess: sess}
+	return repo
 }
 
 func (r *chatMessageRepository) Create(message *models.ChatMessageRecord) error {

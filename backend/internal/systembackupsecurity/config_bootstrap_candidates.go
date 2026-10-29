@@ -222,10 +222,10 @@ type configBootstrapCandidateSession struct {
 	intentAudit   int64
 }
 
-const bootstrapCandidateGlobalConfigSQL = "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE"
+const bootstrapCandidateGlobalConfigSQL = "SELECT id,origin_installation_id,version,config_sha256,enabled,nonce_hmac_ref_version,nonce_hmac_identity_hash FROM system_backup_v2_configs FORCE INDEX(uk_sb_config_version) ORDER BY origin_installation_id,version FOR UPDATE"
 
 func (s *configBootstrapCandidateSession) LockInstallation(ctx context.Context, tx pd.BootstrapSQL, _ pd.BootstrapConsumptionRequest) error {
-	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_installation_state ORDER BY origin_installation_id FOR UPDATE")
+	rows, err := tx.QueryContext(ctx, "SELECT origin_installation_id FROM system_backup_v2_installation_state ORDER BY origin_installation_id FOR UPDATE")
 	if err != nil {
 		return pd.ErrUnavailable
 	}
@@ -251,7 +251,7 @@ func (s *configBootstrapCandidateSession) LockInstallation(ctx context.Context, 
 	}
 	// Do not demand absence/open state yet: L3 must admit exact old success.
 	g := s.plan.grant
-	err = tx.QueryRowContext(ctx, "SELECT active_config_version,matrix_key FROM system_backup_installation_state WHERE origin_installation_id=? FOR UPDATE", g.InstallationID).Scan(&s.stateVersion, &s.stateMatrix)
+	err = tx.QueryRowContext(ctx, "SELECT active_config_version,matrix_key FROM system_backup_v2_installation_state WHERE origin_installation_id=? FOR UPDATE", g.InstallationID).Scan(&s.stateVersion, &s.stateMatrix)
 	if err == nil {
 		s.stateFound = true
 	} else if !errors.Is(err, sql.ErrNoRows) {
@@ -319,7 +319,7 @@ func (s *configBootstrapCandidateSession) LockOperation(ctx context.Context, tx 
 		return out, pd.ErrConflict
 	}
 	g := s.plan.grant
-	err := tx.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, g.InstallationID, strconv.FormatInt(g.UserID, 10), BootstrapConfigEndpoint, g.IdempotencyKey).Scan(&out.PublicID, &out.Version, &out.RequestHash, &out.Status, &out.HTTPStatus)
+	err := tx.QueryRowContext(ctx, `SELECT public_id,result_config_version,request_hash,status,http_status FROM system_backup_v2_operations WHERE origin_installation_id=? AND actor_type='admin' AND actor_id=? AND endpoint=? AND idempotency_key=? FOR UPDATE`, g.InstallationID, strconv.FormatInt(g.UserID, 10), BootstrapConfigEndpoint, g.IdempotencyKey).Scan(&out.PublicID, &out.Version, &out.RequestHash, &out.Status, &out.HTTPStatus)
 	if err == nil {
 		out.Found = true
 		if !s.stateFound || s.stateVersion != 1 || s.stateMatrix != g.MatrixKey || s.configCount != 1 || s.configVersion != 1 || s.configHash != g.ConfigSHA256 || s.configEnabled {
@@ -334,7 +334,7 @@ func (s *configBootstrapCandidateSession) LockOperation(ctx context.Context, tx 
 		return out, pd.ErrConflict
 	}
 	var collision string
-	err = tx.QueryRowContext(ctx, "SELECT public_id FROM system_backup_operations WHERE public_id=? FOR UPDATE", op).Scan(&collision)
+	err = tx.QueryRowContext(ctx, "SELECT public_id FROM system_backup_v2_operations WHERE public_id=? FOR UPDATE", op).Scan(&collision)
 	if !errors.Is(err, sql.ErrNoRows) {
 		if err != nil {
 			return out, pd.ErrUnavailable
@@ -410,7 +410,7 @@ func verifyBootstrapConfigValues(ctx context.Context, tx pd.ReadSQL, g OfflineBo
 	for i := range actual {
 		dest[i] = &actual[i]
 	}
-	if err := tx.QueryRowContext(ctx, "SELECT "+strings.Join(columns, ",")+" FROM system_backup_configs WHERE origin_installation_id=? AND version=1 FOR UPDATE", g.InstallationID).Scan(dest...); err != nil {
+	if err := tx.QueryRowContext(ctx, "SELECT "+strings.Join(columns, ",")+" FROM system_backup_v2_configs WHERE origin_installation_id=? AND version=1 FOR UPDATE", g.InstallationID).Scan(dest...); err != nil {
 		return pd.ErrUnavailable
 	}
 	for i, column := range columns {

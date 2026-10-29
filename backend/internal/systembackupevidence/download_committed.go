@@ -201,14 +201,14 @@ func (c *CommittedDownloadAdmission) checkSession(ctx context.Context, tx *sql.T
 		return time.Time{}, ErrDenied
 	}
 	var revoked time.Time
-	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", c.record.Manifest.Identity.Installation, c.actor.UserID).Scan(&revoked)
+	err = tx.QueryRowContext(ctx, "SELECT revoked_before FROM system_backup_v2_admin_revocations WHERE origin_installation_id=? AND user_id=? FOR UPDATE", c.record.Manifest.Identity.Installation, c.actor.UserID).Scan(&revoked)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) || err == nil && (revoked.IsZero() || !c.actor.SessionIssuedAt.After(revoked)) {
 		return time.Time{}, ErrDenied
 	}
 	return until, nil
 }
 
-const downloadCommittedOwnerSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id FROM system_backup_evidence WHERE public_id=? FOR UPDATE`
+const downloadCommittedOwnerSQL = `SELECT origin_installation_id,owner_target_type,owner_target_public_id FROM system_backup_v2_evidence WHERE public_id=? FOR UPDATE`
 
 func (c *CommittedDownloadAdmission) checkOwner(ctx context.Context, tx *sql.Tx) error {
 	var installation sql.NullString

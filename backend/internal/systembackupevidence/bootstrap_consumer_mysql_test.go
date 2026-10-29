@@ -340,7 +340,7 @@ func bootstrapMySQLCanonicalA(t *testing.T, db *sql.DB, capsule bootstrapMySQLCa
 	if !reflect.DeepEqual(actual, capsule.Migrations) {
 		t.Fatal("formal migration ledger differs")
 	}
-	for _, name := range []string{"users", "audit_logs", "system_backup_evidence", "system_backup_evidence_chunks", "system_backup_configs", "system_backup_installation_state", "system_backup_operations", "system_backup_metadata_reservations"} {
+	for _, name := range []string{"users", "audit_logs", "system_backup_v2_evidence", "system_backup_v2_evidence_chunks", "system_backup_v2_configs", "system_backup_v2_installation_state", "system_backup_v2_operations", "system_backup_v2_metadata_reservations"} {
 		var got, create string
 		mustSQL(t, db.QueryRow("SHOW CREATE TABLE clawmanager."+name).Scan(&got, &create))
 		if got != name || !strings.HasPrefix(create, "CREATE TABLE `"+name+"`") {
@@ -389,20 +389,20 @@ func bootstrapMySQLCommitted(t *testing.T, a *bootstrapMySQLAuthority) {
 	var version int
 	var enabled bool
 	var config string
-	mustSQL(t, a.f.db.QueryRow("SELECT version,enabled,config_sha256 FROM system_backup_configs").Scan(&version, &enabled, &config))
+	mustSQL(t, a.f.db.QueryRow("SELECT version,enabled,config_sha256 FROM system_backup_v2_configs").Scan(&version, &enabled, &config))
 	if version != 1 || enabled || config != a.g.ConfigSHA256 {
 		t.Fatal("disabled v1 mismatch")
 	}
 	var states, ops, audits, charges int
-	mustSQL(t, a.f.db.QueryRow("SELECT COUNT(*) FROM system_backup_installation_state WHERE active_config_version=1 AND last_effective_enabled=FALSE").Scan(&states))
-	mustSQL(t, a.f.db.QueryRow("SELECT COUNT(*) FROM system_backup_operations WHERE status='succeeded' AND result_config_version=1 AND http_status=201").Scan(&ops))
+	mustSQL(t, a.f.db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_installation_state WHERE active_config_version=1 AND last_effective_enabled=FALSE").Scan(&states))
+	mustSQL(t, a.f.db.QueryRow("SELECT COUNT(*) FROM system_backup_v2_operations WHERE status='succeeded' AND result_config_version=1 AND http_status=201").Scan(&ops))
 	mustSQL(t, a.f.db.QueryRow("SELECT COUNT(*) FROM audit_logs WHERE action LIKE 'system_backup.config_bootstrap.%'").Scan(&audits))
 	mustSQL(t, a.f.db.QueryRow("SELECT COUNT(*) FROM synthetic_guard_marker WHERE n=99").Scan(&charges))
 	if states != 1 || ops != 1 || audits != 2 || charges != 1 {
 		t.Fatal("partial or repeated transaction", states, ops, audits, charges)
 	}
 	var reserved int64
-	mustSQL(t, a.f.db.QueryRow("SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1").Scan(&reserved))
+	mustSQL(t, a.f.db.QueryRow("SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1").Scan(&reserved))
 	if reserved != a.priorReserved+73728 {
 		t.Fatal("real capacity ledger charged repeatedly or reset", reserved, a.priorReserved)
 	}
@@ -448,18 +448,18 @@ func TestDBootstrapConsumerMySQL(t *testing.T) {
 			}
 			if mode == "capacity_preserves_outstanding" {
 				a.priorReserved = 77
-				_, e := db.Exec("INSERT INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,UTC_TIMESTAMP(6),77)")
+				_, e := db.Exec("INSERT INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,UTC_TIMESTAMP(6),77)")
 				mustSQL(t, e)
 			}
 			if strings.HasPrefix(mode, "fail_") {
 				table, condition := "audit_logs", "TRUE"
 				switch mode {
 				case "fail_config":
-					table = "system_backup_configs"
+					table = "system_backup_v2_configs"
 				case "fail_state":
-					table = "system_backup_installation_state"
+					table = "system_backup_v2_installation_state"
 				case "fail_operation":
-					table = "system_backup_operations"
+					table = "system_backup_v2_operations"
 				case "fail_intent":
 					condition = "NEW.action='system_backup.config_bootstrap.intent'"
 				case "fail_result_audit":
@@ -482,11 +482,11 @@ func TestDBootstrapConsumerMySQL(t *testing.T) {
 				// For late_operation, 202 satisfies the formal HTTP CHECK but
 				// differs from the original 201 receipt required by fixed readback.
 				q := map[string]string{
-					"late_config":          "UPDATE system_backup_configs SET alert_profile=IF(alert_profile='production','development','production')",
-					"late_operation":       "UPDATE system_backup_operations SET http_status=202 WHERE operation_type='config_update' AND target_type='system' AND http_status=201",
+					"late_config":          "UPDATE system_backup_v2_configs SET alert_profile=IF(alert_profile='production','development','production')",
+					"late_operation":       "UPDATE system_backup_v2_operations SET http_status=202 WHERE operation_type='config_update' AND target_type='system' AND http_status=201",
 					"late_audit":           "UPDATE audit_logs SET resource_type='corrupted' WHERE action='system_backup.config_bootstrap.result'",
-					"late_evidence_chunk":  "UPDATE system_backup_evidence_chunks SET gcm_nonce=UNHEX('000000000000000000000000')",
-					"late_capacity_ledger": "UPDATE system_backup_metadata_reservations SET reserved_bytes=0 WHERE id=1",
+					"late_evidence_chunk":  "UPDATE system_backup_v2_evidence_chunks SET gcm_nonce=UNHEX('000000000000000000000000')",
+					"late_capacity_ledger": "UPDATE system_backup_v2_metadata_reservations SET reserved_bytes=0 WHERE id=1",
 				}[mode]
 				_, e := db.Exec("CREATE FUNCTION bootstrap_mutate() RETURNS INT DETERMINISTIC MODIFIES SQL DATA BEGIN " + q + "; RETURN ROW_COUNT(); END")
 				mustSQL(t, e)
@@ -502,7 +502,7 @@ func TestDBootstrapConsumerMySQL(t *testing.T) {
 			if mode == "orphan_config" {
 				_, err := bootstrapMySQLCall(svc, a)
 				mustSQL(t, err)
-				_, err = db.Exec("DELETE FROM system_backup_installation_state")
+				_, err = db.Exec("DELETE FROM system_backup_v2_installation_state")
 				mustSQL(t, err)
 			}
 			before := dMySQLSnapshot(t, db)

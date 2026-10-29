@@ -47,7 +47,7 @@ func TestDDownloadGCFullProfileMySQLSeed(t *testing.T) {
 		t.Fatal("full-profile case catalog changed")
 	}
 	grants := aGCRoleGrants("full_profile_seed", "full_profile_seed")
-	grants = append(grants, "GRANT INSERT ON `full_profile_seed`.`system_backup_metadata_reservations` TO 'full_profile_seed'@'%'")
+	grants = append(grants, "GRANT INSERT ON `full_profile_seed`.`system_backup_v2_metadata_reservations` TO 'full_profile_seed'@'%'")
 	for _, body := range []string{"BACKUP_ADMIN ON *.*", "SELECT ON `performance_schema`.`metadata_locks`", "SELECT ON `performance_schema`.`threads`"} {
 		grants = append(grants, "GRANT "+body+" TO 'full_profile_seed'@'%'")
 	}
@@ -141,7 +141,7 @@ func newDGCFullProfileFixture(t *testing.T, input aDownloadMFAInputs) *dGCFullPr
 		_, err = f.role.root.ExecContext(f.ddl.ctx, "GRANT "+body+" TO '"+f.role.user+"'@'%'")
 		dGCFreezeOK(t, err)
 	}
-	_, err = f.role.root.ExecContext(f.ddl.ctx, "GRANT INSERT ON `"+f.role.c.Database.Database+"`.`system_backup_metadata_reservations` TO '"+f.role.user+"'@'%'")
+	_, err = f.role.root.ExecContext(f.ddl.ctx, "GRANT INSERT ON `"+f.role.c.Database.Database+"`.`system_backup_v2_metadata_reservations` TO '"+f.role.user+"'@'%'")
 	dGCFreezeOK(t, err)
 	for _, body := range []string{"SELECT, SHOW VIEW, TRIGGER, EVENT ON *.*", "SHOW_ROUTINE ON *.*"} {
 		_, err = f.role.root.ExecContext(f.ddl.ctx, "GRANT "+body+" TO '"+f.observerUser+"'@'%'")
@@ -273,8 +273,8 @@ func TestDDownloadGCFullProfileMySQL(t *testing.T) {
 				revoke = "REVOKE SHOW_ROUTINE ON *.* FROM '" + f.observerUser + "'@'%'"
 				restore = "GRANT SHOW_ROUTINE ON *.* TO '" + f.observerUser + "'@'%'"
 			case "missing_reservation_insert":
-				revoke = "REVOKE INSERT ON `" + f.role.c.Database.Database + "`.`system_backup_metadata_reservations` FROM '" + f.role.user + "'@'%'"
-				restore = "GRANT INSERT ON `" + f.role.c.Database.Database + "`.`system_backup_metadata_reservations` TO '" + f.role.user + "'@'%'"
+				revoke = "REVOKE INSERT ON `" + f.role.c.Database.Database + "`.`system_backup_v2_metadata_reservations` FROM '" + f.role.user + "'@'%'"
+				restore = "GRANT INSERT ON `" + f.role.c.Database.Database + "`.`system_backup_v2_metadata_reservations` TO '" + f.role.user + "'@'%'"
 			}
 			if revoke != "" {
 				_, e = f.role.root.ExecContext(f.ddl.ctx, revoke)
@@ -282,15 +282,15 @@ func TestDDownloadGCFullProfileMySQL(t *testing.T) {
 				defer func() { _, e := f.role.root.ExecContext(f.ddl.ctx, restore); dGCFreezeOK(t, e) }()
 			}
 			if name == "missing_reservation_insert" {
-				_, e = f.role.root.ExecContext(f.ddl.ctx, "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,UTC_TIMESTAMP(6),0)")
+				_, e = f.role.root.ExecContext(f.ddl.ctx, "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,UTC_TIMESTAMP(6),0)")
 				dGCFreezeOK(t, e)
-				_, e = f.role.db.ExecContext(f.ddl.ctx, "INSERT IGNORE INTO system_backup_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,UTC_TIMESTAMP(6),0)")
+				_, e = f.role.db.ExecContext(f.ddl.ctx, "INSERT IGNORE INTO system_backup_v2_metadata_reservations(id,sample_at,reserved_bytes) VALUES(1,UTC_TIMESTAMP(6),0)")
 				var denied *mysql.MySQLError
 				if !errors.As(e, &denied) || denied.Number != 1142 {
 					t.Fatal("existing row did not still require native INSERT privilege")
 				}
 				defer func() {
-					_, e := f.role.root.ExecContext(f.ddl.ctx, "DELETE FROM system_backup_metadata_reservations WHERE id=1")
+					_, e := f.role.root.ExecContext(f.ddl.ctx, "DELETE FROM system_backup_v2_metadata_reservations WHERE id=1")
 					dGCFreezeOK(t, e)
 				}()
 			}
@@ -340,10 +340,10 @@ func (f *dGCFullProfileFixture) capacityReservation(t *testing.T, r *downloadGCF
 	file := filepath.Join(t.TempDir(), "synthetic-physical-capacity.json")
 	capacity, err := sec.NewConfigMutationCapacity(f.role.c.Database, file, 1)
 	dGCFreezeOK(t, err)
-	_, err = f.role.root.ExecContext(f.ddl.ctx, "DELETE FROM system_backup_metadata_reservations WHERE id=1")
+	_, err = f.role.root.ExecContext(f.ddl.ctx, "DELETE FROM system_backup_v2_metadata_reservations WHERE id=1")
 	dGCFreezeOK(t, err)
 	t.Cleanup(func() {
-		_, e := f.role.root.ExecContext(f.ddl.ctx, "DELETE FROM system_backup_metadata_reservations WHERE id=1")
+		_, e := f.role.root.ExecContext(f.ddl.ctx, "DELETE FROM system_backup_v2_metadata_reservations WHERE id=1")
 		dGCFreezeOK(t, e)
 	})
 	var reservation sec.ConfigMutationCapacityReservation
@@ -384,7 +384,7 @@ func (f *dGCFullProfileFixture) capacityReservation(t *testing.T, r *downloadGCF
 		t.Fatal("actual Reserve insert/update/final recheck failed under Full grants")
 	}
 	var bytes int64
-	dGCFreezeOK(t, f.role.root.QueryRowContext(f.ddl.ctx, "SELECT reserved_bytes FROM system_backup_metadata_reservations WHERE id=1").Scan(&bytes))
+	dGCFreezeOK(t, f.role.root.QueryRowContext(f.ddl.ctx, "SELECT reserved_bytes FROM system_backup_v2_metadata_reservations WHERE id=1").Scan(&bytes))
 	if bytes != 65536 {
 		t.Fatal("actual reservation ledger did not commit exact cost")
 	}

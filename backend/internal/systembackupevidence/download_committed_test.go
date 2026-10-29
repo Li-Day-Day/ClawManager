@@ -271,12 +271,12 @@ func TestCommittedDownloadRejectsChangedSQLAndLatchesFailure(t *testing.T) {
 		change        func(*admissionTxFixture, *SQLDownloadAuthority)
 	}
 	attacks := []attack{
-		{"session_revoked", "FROM system_backup_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.sessionRevoked = true }},
-		{"password", "FROM system_backup_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.password = "changed" }},
+		{"session_revoked", "FROM system_backup_v2_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.sessionRevoked = true }},
+		{"password", "FROM system_backup_v2_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.password = "changed" }},
 		{"role", "FROM users", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.role = "user" }},
 		{"user_disabled", "FROM users", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.userActive = false }},
-		{"account_revoked", "FROM system_backup_admin_revocations", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.revokedBefore = f.db.now }},
-		{"session_shortened", "FROM system_backup_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.sessionUntil = f.db.now.Add(time.Minute) }},
+		{"account_revoked", "FROM system_backup_v2_admin_revocations", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.revokedBefore = f.db.now }},
+		{"session_shortened", "FROM system_backup_v2_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.sessionUntil = f.db.now.Add(time.Minute) }},
 		{"active_config", "SELECT active_config_version", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.activeConfig++ }},
 		{"materialized_config", "canonical_config_json", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.fault = "materialized_drift" }},
 		{"legacy_config", "canonical_config_json", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.fault = "canonical_missing" }},
@@ -315,7 +315,7 @@ func TestCommittedDownloadRejectsChangedSQLAndLatchesFailure(t *testing.T) {
 		}},
 		{"ref", "SELECT id,owner_target_type", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.record.Ref.ImmutableVersion = "v2" }},
 		{"clock_backwards", "canonical_config_json", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.now = f.db.now.Add(-time.Microsecond) }},
-		{"expired_sql", "FROM system_backup_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.now = f.db.now.Add(time.Hour) }},
+		{"expired_sql", "FROM system_backup_v2_admin_sessions", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.now = f.db.now.Add(time.Hour) }},
 		{"unknown_read_commit", "SELECT UTC_TIMESTAMP(6)", func(f *admissionTxFixture, _ *SQLDownloadAuthority) { f.db.commitUnknown = true }},
 		{"rbac_file", "", func(_ *admissionTxFixture, a *SQLDownloadAuthority) {
 			if err := os.WriteFile(filepath.Join(a.c.RegistryDirectory, "rbac_bindings", "v1", a.c.RBACSHA256+".json"), []byte("changed"), 0600); err != nil {
@@ -439,10 +439,10 @@ func TestCommittedDownloadFinalReadFollowsOwnerAuthorizationCallback(t *testing.
 				switch mode {
 				case "session":
 					f.db.sessionRevoked = true
-					witness = "FROM system_backup_admin_sessions"
+					witness = "FROM system_backup_v2_admin_sessions"
 				case "account_revocation":
 					f.db.revokedBefore = f.db.now
-					witness = "FROM system_backup_admin_revocations"
+					witness = "FROM system_backup_v2_admin_revocations"
 				case "nonce":
 					f.db.nonce[2] = strings.Repeat("f", 64)
 					witness = downloadAdmissionNonceReadSQL

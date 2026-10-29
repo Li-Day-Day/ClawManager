@@ -41,10 +41,10 @@ type taskTable struct {
 }
 
 var taskTables = map[TaskKind]taskTable{
-	BackupTask:       {"system_backups", "sbk_", statusSet("pending", "preparing", "ready_for_capture", "acquiring_gate", "capturing", "validating", "publishing", "finalization_unknown", "canceling", "succeeded", "failed", "canceled")},
-	DrillTask:        {"system_restore_drills", "sdr_", statusSet("pending", "preflighting", "provisioning", "restoring", "normalizing", "verifying", "canceling", "succeeded", "failed", "canceled")},
-	PreflightTask:    {"system_backup_preflights", "spf_", statusSet("pending", "running", "canceling", "succeeded", "failed", "canceled")},
-	VerificationTask: {"system_backup_artifact_verifications", "sav_", statusSet("pending", "running", "canceling", "succeeded", "failed", "canceled")},
+	BackupTask:       {"system_backup_v2_backups", "sbk_", statusSet("pending", "preparing", "ready_for_capture", "acquiring_gate", "capturing", "validating", "publishing", "finalization_unknown", "canceling", "succeeded", "failed", "canceled")},
+	DrillTask:        {"system_backup_v2_restore_drills", "sdr_", statusSet("pending", "preflighting", "provisioning", "restoring", "normalizing", "verifying", "canceling", "succeeded", "failed", "canceled")},
+	PreflightTask:    {"system_backup_v2_preflights", "spf_", statusSet("pending", "running", "canceling", "succeeded", "failed", "canceled")},
+	VerificationTask: {"system_backup_v2_artifact_verifications", "sav_", statusSet("pending", "running", "canceling", "succeeded", "failed", "canceled")},
 }
 
 func statusSet(values ...string) map[string]bool {

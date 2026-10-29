@@ -65,9 +65,9 @@ func TestControlExclusionRejectsRegistryDrift(t *testing.T) {
 		name, object, field string
 		value               any
 	}{
-		{"new control name", "system_backup_configs", "name", "system_backup_new_control"},
+		{"new control name", "system_backup_v2_configs", "name", "system_backup_new_control"},
 		{"missing migration identity", "schema_migrations", "name", "schema_migrations_old"},
-		{"control strategy drift", "system_backup_configs", "backup_strategy", "mysql_dump"},
+		{"control strategy drift", "system_backup_v2_configs", "backup_strategy", "mysql_dump"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			document := frozenFixture(t)
@@ -110,7 +110,7 @@ func TestControlExclusionEmptyTarget(t *testing.T) {
 
 func TestControlExclusionDetectsSourceRows(t *testing.T) {
 	state := controlFixture()
-	state.rows["system_backup_configs"] = 2
+	state.rows["system_backup_v2_configs"] = 2
 	verifier := SQLControlExclusionVerifier{DB: countDatabase(t, state), Proof: fixtureTargetProof{}}
 	checks, err := verifier.VerifyRestoreTarget(context.Background(), frozenRegistryBytes(t), "sev_control_fixture")
 	if err != nil {
@@ -120,7 +120,7 @@ func TestControlExclusionDetectsSourceRows(t *testing.T) {
 	for _, check := range checks {
 		if check.Status == "failed" {
 			failed++
-			if check.ID != "control_plane.empty.system_backup_configs" || check.FailureCategory != "normalization_failed" {
+			if check.ID != "control_plane.empty.system_backup_v2_configs" || check.FailureCategory != "normalization_failed" {
 				t.Fatalf("unexpected failure: %+v", check)
 			}
 		}
@@ -146,9 +146,9 @@ func TestControlExclusionFailsClosed(t *testing.T) {
 	}{
 		{"missing proof", nil, func(*countFixture) {}},
 		{"rejected proof", fixtureTargetProof{errors.New("wrong target")}, func(*countFixture) {}},
-		{"missing table", fixtureTargetProof{}, func(f *countFixture) { delete(f.engines, "system_backup_configs") }},
-		{"nontransactional", fixtureTargetProof{}, func(f *countFixture) { f.engines["system_backup_configs"] = "MyISAM" }},
-		{"count failed", fixtureTargetProof{}, func(f *countFixture) { f.failure = "count:system_backup_configs" }},
+		{"missing table", fixtureTargetProof{}, func(f *countFixture) { delete(f.engines, "system_backup_v2_configs") }},
+		{"nontransactional", fixtureTargetProof{}, func(f *countFixture) { f.engines["system_backup_v2_configs"] = "MyISAM" }},
+		{"count failed", fixtureTargetProof{}, func(f *countFixture) { f.failure = "count:system_backup_v2_configs" }},
 		{"commit failed", fixtureTargetProof{}, func(f *countFixture) { f.failure = "commit" }},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

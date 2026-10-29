@@ -25,8 +25,8 @@ var dGCTaskMySQLCases = []string{
 	"late_owner_fact", "late_dependent_fact", "late_prune_reference",
 }
 
-const dGCTaskPruneRunSQL = `INSERT INTO system_backup_prune_runs(public_id,origin_installation_id,create_actor_type,create_actor_id,create_endpoint,create_idempotency_key,create_request_hash,config_version,older_than,started_at,created_at) VALUES(? ,?,'admin','42','createSystemBackupPruneDryRun','gc-task-prune-run-seed',REPEAT('a',64),1,?,?,?)`
-const dGCTaskPruneItemSQL = `INSERT INTO system_backup_prune_items(public_id,origin_installation_id,prune_run_id,artifact_public_id,item_type,status,canonical_location_key,canonical_location_size_bytes,canonical_location_hash,immutable_version,artifact_plan_hash,planned_backup_status,planned_backup_finished_at,planned_artifact_state,planned_prune_guard_version) VALUES(?,?,?,?,'object_version','planned',?,?,?,'gc-task-version',REPEAT('c',64),'failed',?,'committed',1)`
+const dGCTaskPruneRunSQL = `INSERT INTO system_backup_v2_prune_runs(public_id,origin_installation_id,create_actor_type,create_actor_id,create_endpoint,create_idempotency_key,create_request_hash,config_version,older_than,started_at,created_at) VALUES(? ,?,'admin','42','createSystemBackupPruneDryRun','gc-task-prune-run-seed',REPEAT('a',64),1,?,?,?)`
+const dGCTaskPruneItemSQL = `INSERT INTO system_backup_v2_prune_items(public_id,origin_installation_id,prune_run_id,artifact_public_id,item_type,status,canonical_location_key,canonical_location_size_bytes,canonical_location_hash,immutable_version,artifact_plan_hash,planned_backup_status,planned_backup_finished_at,planned_artifact_state,planned_prune_guard_version) VALUES(?,?,?,?,'object_version','planned',?,?,?,'gc-task-version',REPEAT('c',64),'failed',?,'committed',1)`
 
 func dGCTaskPruneItemArgs(installation, backup string, run int64, finished time.Time) []any {
 	location := []byte("isolated-gc-task-prune-object")
@@ -70,7 +70,7 @@ func TestDDownloadGCTaskMySQLSeed(t *testing.T) {
 				t.Fatal("GC task source range narrowed", kind)
 			}
 		}
-		if downloadGCTaskPruneDependencySQL != "SELECT id FROM system_backup_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE" {
+		if downloadGCTaskPruneDependencySQL != "SELECT id FROM system_backup_v2_prune_items WHERE artifact_public_id=? LIMIT 1 FOR UPDATE" {
 			t.Fatal("GC task prune range narrowed")
 		}
 	})
@@ -96,7 +96,7 @@ func newDGCTaskMySQLFixture(t *testing.T, input aDownloadMFAInputs, owner string
 	_, err := db.ExecContext(ctx, "INSERT INTO users(id,username,email,password_hash,role,is_active) VALUES(42,'gc-task-probe','gc-task@example.invalid','synthetic-unused-password-hash','admin',TRUE)")
 	mustSQL(t, err)
 	cells := aDownloadMFAConfigCells(p)
-	columns, err := db.QueryContext(ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_configs' ORDER BY ORDINAL_POSITION")
+	columns, err := db.QueryContext(ctx, "SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='system_backup_v2_configs' ORDER BY ORDINAL_POSITION")
 	mustSQL(t, err)
 	var names []string
 	var args []any
@@ -109,7 +109,7 @@ func newDGCTaskMySQLFixture(t *testing.T, input aDownloadMFAInputs, owner string
 	}
 	mustSQL(t, columns.Err())
 	mustSQL(t, columns.Close())
-	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_configs("+strings.Join(names, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
+	_, err = db.ExecContext(ctx, "INSERT INTO system_backup_v2_configs("+strings.Join(names, ",")+") VALUES("+strings.TrimSuffix(strings.Repeat("?,", len(args)), ",")+")", args...)
 	mustSQL(t, err)
 	now := aDownloadMFANow(t, ctx, db)
 	f := &dGCTaskMySQLFixture{ctx: ctx, db: db, rows: map[string]aTaskOwnerSQLSeed{}, now: now, finished: now.Add(-3 * time.Hour)}
@@ -121,9 +121,9 @@ func newDGCTaskMySQLFixture(t *testing.T, input aDownloadMFAInputs, owner string
 		f.rows[row.kind] = row
 	}
 	f.backup = f.rows["backup"].id
-	_, err = db.ExecContext(ctx, "UPDATE system_backups SET artifact_state='deleted',artifact_unusable_reason='deleted' WHERE public_id=?", f.backup)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_backups SET artifact_state='deleted',artifact_unusable_reason='deleted' WHERE public_id=?", f.backup)
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, "UPDATE system_restore_drills SET cleanup_status='succeeded' WHERE public_id=?", f.rows["drill"].id)
+	_, err = db.ExecContext(ctx, "UPDATE system_backup_v2_restore_drills SET cleanup_status='succeeded' WHERE public_id=?", f.rows["drill"].id)
 	mustSQL(t, err)
 	result, err := db.ExecContext(ctx, dGCTaskPruneRunSQL, "spr_88888888-8888-4888-8888-888888888888", installation, now.Add(-time.Hour), now, now)
 	mustSQL(t, err)
@@ -142,7 +142,7 @@ func newDGCTaskMySQLFixture(t *testing.T, input aDownloadMFAInputs, owner string
 func (f *dGCTaskMySQLFixture) fingerprint(t *testing.T) string {
 	t.Helper()
 	var snapshot []any
-	for _, table := range []string{"system_backups", "system_restore_drills", "system_backup_preflights", "system_backup_artifact_verifications", "system_backup_prune_runs", "system_backup_prune_items", "system_backup_operations", "audit_logs", "system_backup_strong_auth_nonces", "system_backup_download_admission_receipts", "system_backup_download_result_receipts", "system_backup_compact_tombstones"} {
+	for _, table := range []string{"system_backup_v2_backups", "system_backup_v2_restore_drills", "system_backup_v2_preflights", "system_backup_v2_artifact_verifications", "system_backup_v2_prune_runs", "system_backup_v2_prune_items", "system_backup_v2_operations", "audit_logs", "system_backup_v2_strong_auth_nonces", "system_backup_v2_download_admission_receipts", "system_backup_v2_download_result_receipts", "system_backup_v2_compact_tombstones"} {
 		rows, err := f.db.QueryContext(f.ctx, "SELECT * FROM "+table+" ORDER BY 1")
 		mustSQL(t, err)
 		columns, err := rows.Columns()
@@ -170,7 +170,7 @@ func (f *dGCTaskMySQLFixture) plan(t *testing.T, kind string) {
 	t.Helper()
 	q, table := downloadGCTaskDependentSQL(kind), taskTable(kind)
 	if kind == "prune" {
-		q, table = downloadGCTaskPruneDependencySQL, "system_backup_prune_items"
+		q, table = downloadGCTaskPruneDependencySQL, "system_backup_v2_prune_items"
 	}
 	var raw []byte
 	mustSQL(t, f.db.QueryRowContext(f.ctx, "EXPLAIN FORMAT=JSON "+q, f.backup).Scan(&raw))
@@ -290,7 +290,7 @@ func (f *dGCTaskMySQLFixture) pruneLocks(t *testing.T, tx *sql.Tx) []dGCTaskSQLL
 	mustSQL(t, tx.QueryRowContext(f.ctx, "SELECT CONNECTION_ID()").Scan(&connection))
 	rows, err := f.db.QueryContext(f.ctx, `SELECT COALESCE(l.INDEX_NAME,''),l.LOCK_MODE,COALESCE(l.LOCK_DATA,'')
 FROM performance_schema.data_locks l JOIN performance_schema.threads p ON p.THREAD_ID=l.THREAD_ID
-WHERE l.OBJECT_SCHEMA=? AND l.OBJECT_NAME='system_backup_prune_items' AND l.LOCK_TYPE='RECORD'
+WHERE l.OBJECT_SCHEMA=? AND l.OBJECT_NAME='system_backup_v2_prune_items' AND l.LOCK_TYPE='RECORD'
 AND l.LOCK_STATUS='GRANTED' AND p.PROCESSLIST_ID=? ORDER BY BINARY l.INDEX_NAME,BINARY l.LOCK_MODE,BINARY l.LOCK_DATA`, f.scope.Database.Database, connection)
 	mustSQL(t, err)
 	facts := []dGCTaskSQLLockFact{}
@@ -327,7 +327,7 @@ func (f *dGCTaskMySQLFixture) pruneRange(t *testing.T, component *sql.Tx, args [
 	if !reflect.DeepEqual(full, f.pruneLocks(t, isolated)) {
 		t.Fatal("isolated prune predicate did not reproduce component locks")
 	}
-	f.blockedWrite(t, isolated, "system_backup_prune_items", dGCTaskPruneItemSQL, args...)
+	f.blockedWrite(t, isolated, "system_backup_v2_prune_items", dGCTaskPruneItemSQL, args...)
 	t.Logf("OBSERVED gc_task_prune_lock_equivalence component_and_predicate=same record_locks=%d sha256=%s parent_fk_wait_excluded=yes", len(full), hash(canonical(full)))
 }
 
@@ -357,7 +357,7 @@ func TestDDownloadGCTaskMySQL(t *testing.T) {
 				mustSQL(t, err)
 			}
 			if name == "owner_deadline_not_expired" {
-				_, err = f.db.ExecContext(f.ctx, "UPDATE system_backups SET deadline_at=UTC_TIMESTAMP(6)+INTERVAL 1 HOUR WHERE public_id=?", f.backup)
+				_, err = f.db.ExecContext(f.ctx, "UPDATE system_backup_v2_backups SET deadline_at=UTC_TIMESTAMP(6)+INTERVAL 1 HOUR WHERE public_id=?", f.backup)
 				mustSQL(t, err)
 			}
 			pruneArgs := dGCTaskPruneItemArgs(f.scope.Installation, f.backup, f.pruneRun, f.finished)
@@ -398,7 +398,7 @@ func TestDDownloadGCTaskMySQL(t *testing.T) {
 			mustSQL(t, g.Recheck(f.ctx, tx, f.scope, aDownloadMFANow(t, f.ctx, f.db)))
 			switch {
 			case name == "backup_row_lock":
-				f.blockedWrite(t, tx, "system_backups", "UPDATE system_backups SET row_version=row_version+1 WHERE public_id=?", f.backup)
+				f.blockedWrite(t, tx, "system_backup_v2_backups", "UPDATE system_backup_v2_backups SET row_version=row_version+1 WHERE public_id=?", f.backup)
 			case name == "dependent_row_lock":
 				row := f.rows["preflight"]
 				f.blockedWrite(t, tx, row.table, "UPDATE "+row.table+" SET row_version=row_version+1 WHERE public_id=?", row.id)
@@ -424,7 +424,7 @@ func TestDDownloadGCTaskMySQL(t *testing.T) {
 					t.Fatal("late actual fact/reference accepted")
 				}
 				if name == "late_prune_reference" {
-					_, err = tx.ExecContext(f.ctx, "DELETE FROM system_backup_prune_items WHERE public_id=?", pruneArgs[0])
+					_, err = tx.ExecContext(f.ctx, "DELETE FROM system_backup_v2_prune_items WHERE public_id=?", pruneArgs[0])
 				} else {
 					row := f.rows["backup"]
 					if name == "late_dependent_fact" {

@@ -312,7 +312,7 @@ func (g RecoveryGuards) FreezePrune(ctx context.Context, id string, retention in
 	}
 	defer tx.Rollback()
 	var stored []byte
-	e = tx.QueryRowContext(ctx, "SELECT plan_json FROM system_backup_prune_runs WHERE run_id=? AND task_id=? FOR UPDATE", id, g.Task.ID).Scan(&stored)
+	e = tx.QueryRowContext(ctx, "SELECT plan_json FROM system_backup_v2_prune_runs WHERE run_id=? AND task_id=? FOR UPDATE", id, g.Task.ID).Scan(&stored)
 	if e == nil {
 		if json.Unmarshal(stored, &p) != nil || p.Retention != retention || p.Minimum != minimum || !sameDocument(p.Groups, groups) || p.Plan.Config != config {
 			return p, ErrConflict
@@ -336,7 +336,7 @@ func (g RecoveryGuards) FreezePrune(ctx context.Context, id string, retention in
 	}
 	p = FrozenPrune{id, n, until, retention, minimum, groups, plan}
 	b, _ := recovery.Marshal(p)
-	if _, e = tx.ExecContext(ctx, "INSERT INTO system_backup_prune_runs(run_id,task_id,plan_json,run_state) VALUES(?,?,?,'prepared')", id, g.Task.ID, b); e != nil {
+	if _, e = tx.ExecContext(ctx, "INSERT INTO system_backup_v2_prune_runs(run_id,task_id,plan_json,run_state) VALUES(?,?,?,'prepared')", id, g.Task.ID, b); e != nil {
 		return p, ErrNotReady
 	}
 	return p, g.commit(ctx, tx)
@@ -352,7 +352,7 @@ func (g RecoveryGuards) ClaimPrune(ctx context.Context, p FrozenPrune) error {
 	defer tx.Rollback()
 	var b []byte
 	var state string
-	if tx.QueryRowContext(ctx, "SELECT plan_json,run_state FROM system_backup_prune_runs WHERE run_id=? AND task_id=? FOR UPDATE", p.ID, g.Task.ID).Scan(&b, &state) != nil || !sameDocument(json.RawMessage(b), p) {
+	if tx.QueryRowContext(ctx, "SELECT plan_json,run_state FROM system_backup_v2_prune_runs WHERE run_id=? AND task_id=? FOR UPDATE", p.ID, g.Task.ID).Scan(&b, &state) != nil || !sameDocument(json.RawMessage(b), p) {
 		return ErrConflict
 	}
 	if state == "claimed" || state == "completed" {
@@ -377,11 +377,11 @@ func (g RecoveryGuards) ClaimPrune(ctx context.Context, p FrozenPrune) error {
 		}
 		d := PruneDispatch{p.ID, p.Plan.SHA256, strconv.Itoa(g.Task.Actor), a, p.ExpiresAt}
 		raw, _ := recovery.Marshal(d)
-		if _, e = tx.ExecContext(ctx, "INSERT INTO system_backup_prune_items(run_id,artifact_id,dispatch_json,item_state) VALUES(?,?,?,'prepared')", p.ID, a.ID, raw); e != nil {
+		if _, e = tx.ExecContext(ctx, "INSERT INTO system_backup_v2_prune_items(run_id,artifact_id,dispatch_json,item_state) VALUES(?,?,?,'prepared')", p.ID, a.ID, raw); e != nil {
 			return ErrNotReady
 		}
 	}
-	if e = changed(tx.ExecContext(ctx, "UPDATE system_backup_prune_runs SET run_state='claimed' WHERE run_id=? AND run_state='prepared'", p.ID)); e != nil {
+	if e = changed(tx.ExecContext(ctx, "UPDATE system_backup_v2_prune_runs SET run_state='claimed' WHERE run_id=? AND run_state='prepared'", p.ID)); e != nil {
 		return e
 	}
 	return g.commit(ctx, tx)
@@ -395,7 +395,7 @@ func (g RecoveryGuards) dispatch(ctx context.Context, p FrozenPrune, id string) 
 	var b []byte
 	var state string
 	var d PruneDispatch
-	if tx.QueryRowContext(ctx, "SELECT dispatch_json,item_state FROM system_backup_prune_items WHERE run_id=? AND artifact_id=? FOR UPDATE", p.ID, id).Scan(&b, &state) != nil || json.Unmarshal(b, &d) != nil || d.Run != p.ID || d.CandidateSHA256 != p.Plan.SHA256 {
+	if tx.QueryRowContext(ctx, "SELECT dispatch_json,item_state FROM system_backup_v2_prune_items WHERE run_id=? AND artifact_id=? FOR UPDATE", p.ID, id).Scan(&b, &state) != nil || json.Unmarshal(b, &d) != nil || d.Run != p.ID || d.CandidateSHA256 != p.Plan.SHA256 {
 		return d, state, ErrConflict
 	}
 	if state != "prepared" {
@@ -404,7 +404,7 @@ func (g RecoveryGuards) dispatch(ctx context.Context, p FrozenPrune, id string) 
 	if n >= d.Deadline {
 		return d, state, ErrFence
 	}
-	if e = changed(tx.ExecContext(ctx, "UPDATE system_backup_prune_items SET item_state='request_sent' WHERE run_id=? AND artifact_id=? AND item_state='prepared'", p.ID, id)); e != nil {
+	if e = changed(tx.ExecContext(ctx, "UPDATE system_backup_v2_prune_items SET item_state='request_sent' WHERE run_id=? AND artifact_id=? AND item_state='prepared'", p.ID, id)); e != nil {
 		return d, state, e
 	}
 	if e = g.commit(ctx, tx); e != nil {
@@ -426,7 +426,7 @@ func (g RecoveryGuards) confirm(ctx context.Context, d PruneDispatch, o PruneObs
 	}
 	var raw []byte
 	var state string
-	if tx.QueryRowContext(ctx, "SELECT dispatch_json,item_state FROM system_backup_prune_items WHERE run_id=? AND artifact_id=? FOR UPDATE", d.Run, d.Artifact.ID).Scan(&raw, &state) != nil || !sameDocument(json.RawMessage(raw), d) {
+	if tx.QueryRowContext(ctx, "SELECT dispatch_json,item_state FROM system_backup_v2_prune_items WHERE run_id=? AND artifact_id=? FOR UPDATE", d.Run, d.Artifact.ID).Scan(&raw, &state) != nil || !sameDocument(json.RawMessage(raw), d) {
 		return ErrConflict
 	}
 	if state == "completed" {
@@ -448,7 +448,7 @@ func (g RecoveryGuards) confirm(ctx context.Context, d PruneDispatch, o PruneObs
 		return e
 	}
 	b, _ := recovery.Marshal(o)
-	if e = changed(tx.ExecContext(ctx, "UPDATE system_backup_prune_items SET item_state='completed',observation_json=? WHERE run_id=? AND artifact_id=? AND item_state='request_sent'", b, d.Run, a.ID)); e != nil {
+	if e = changed(tx.ExecContext(ctx, "UPDATE system_backup_v2_prune_items SET item_state='completed',observation_json=? WHERE run_id=? AND artifact_id=? AND item_state='request_sent'", b, d.Run, a.ID)); e != nil {
 		return e
 	}
 	return g.commit(ctx, tx)
@@ -465,7 +465,7 @@ func (g RecoveryGuards) AbortPrune(ctx context.Context, p FrozenPrune) error {
 	defer tx.Rollback()
 	var raw []byte
 	var state string
-	if tx.QueryRowContext(ctx, "SELECT plan_json,run_state FROM system_backup_prune_runs WHERE run_id=? AND task_id=? FOR UPDATE", p.ID, g.Task.ID).Scan(&raw, &state) != nil || !sameDocument(json.RawMessage(raw), p) {
+	if tx.QueryRowContext(ctx, "SELECT plan_json,run_state FROM system_backup_v2_prune_runs WHERE run_id=? AND task_id=? FOR UPDATE", p.ID, g.Task.ID).Scan(&raw, &state) != nil || !sameDocument(json.RawMessage(raw), p) {
 		return ErrConflict
 	}
 	if state == "canceled" {
@@ -475,7 +475,7 @@ func (g RecoveryGuards) AbortPrune(ctx context.Context, p FrozenPrune) error {
 		return ErrConflict
 	}
 	var sent int
-	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_prune_items WHERE run_id=? AND item_state<>'prepared'", p.ID).Scan(&sent) != nil || sent != 0 {
+	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_prune_items WHERE run_id=? AND item_state<>'prepared'", p.ID).Scan(&sent) != nil || sent != 0 {
 		return ErrConflict
 	}
 	if state == "claimed" {
@@ -496,7 +496,7 @@ func (g RecoveryGuards) AbortPrune(ctx context.Context, p FrozenPrune) error {
 			}
 		}
 	}
-	if _, e = tx.ExecContext(ctx, "UPDATE system_backup_prune_runs SET run_state='canceled' WHERE run_id=? AND task_id=?", p.ID, g.Task.ID); e != nil {
+	if _, e = tx.ExecContext(ctx, "UPDATE system_backup_v2_prune_runs SET run_state='canceled' WHERE run_id=? AND task_id=?", p.ID, g.Task.ID); e != nil {
 		return ErrNotReady
 	}
 	return g.commit(ctx, tx)
@@ -517,7 +517,7 @@ func (p PruneJournalProof) evidence(ctx context.Context) (PruneDispatch, PruneOb
 	var o PruneObservation
 	var raw, observation []byte
 	var state string
-	if tx.QueryRowContext(ctx, "SELECT i.dispatch_json,i.item_state,i.observation_json FROM system_backup_prune_items i JOIN system_backup_prune_runs r ON r.run_id=i.run_id WHERE i.run_id=? AND i.artifact_id=? AND r.task_id=? FOR UPDATE", p.Run, p.Artifact, p.Guards.Task.ID).Scan(&raw, &state, &observation) != nil || state != "completed" || json.Unmarshal(raw, &d) != nil || json.Unmarshal(observation, &o) != nil || !sameDocument(d, o.Dispatch) || !o.AllVersionsAbsent || !o.WriterStopped || o.Evidence.Validate() != nil {
+	if tx.QueryRowContext(ctx, "SELECT i.dispatch_json,i.item_state,i.observation_json FROM system_backup_v2_prune_items i JOIN system_backup_v2_prune_runs r ON r.run_id=i.run_id WHERE i.run_id=? AND i.artifact_id=? AND r.task_id=? FOR UPDATE", p.Run, p.Artifact, p.Guards.Task.ID).Scan(&raw, &state, &observation) != nil || state != "completed" || json.Unmarshal(raw, &d) != nil || json.Unmarshal(observation, &o) != nil || !sameDocument(d, o.Dispatch) || !o.AllVersionsAbsent || !o.WriterStopped || o.Evidence.Validate() != nil {
 		return d, o, ErrNotReady
 	}
 	a, e := readGuard(ctx, tx, p.Artifact)
@@ -591,10 +591,10 @@ func (g RecoveryGuards) ExecutePrune(ctx context.Context, p FrozenPrune, provide
 	}
 	defer tx.Rollback()
 	var pending int
-	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_prune_items WHERE run_id=? AND item_state<>'completed'", p.ID).Scan(&pending) != nil || pending != 0 {
+	if tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM system_backup_v2_prune_items WHERE run_id=? AND item_state<>'completed'", p.ID).Scan(&pending) != nil || pending != 0 {
 		return out, ErrConflict
 	}
-	if _, e = tx.ExecContext(ctx, "UPDATE system_backup_prune_runs SET run_state='completed' WHERE run_id=? AND task_id=?", p.ID, g.Task.ID); e != nil {
+	if _, e = tx.ExecContext(ctx, "UPDATE system_backup_v2_prune_runs SET run_state='completed' WHERE run_id=? AND task_id=?", p.ID, g.Task.ID); e != nil {
 		return out, ErrNotReady
 	}
 	return out, g.commit(ctx, tx)

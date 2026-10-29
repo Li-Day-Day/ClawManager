@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-const reviewedRuntimeMigration = "080_add_system_backup_registration_runtime.sql"
+const reviewedRuntimeMigration = "109_backup_v2_add_system_backup_registration_runtime.sql"
 
 // MigrationHistoryReview is constructed only by ParseMigrationHistoryReview.
 // It records operator-reviewed source provenance, not SQL equivalence or backup

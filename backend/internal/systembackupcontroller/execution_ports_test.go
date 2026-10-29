@@ -319,7 +319,7 @@ func TestExecutionAuthorityReadLocksDoNotRequireHistoryWriteGrants(t *testing.T)
 		t.Fatal(err)
 	}
 	for _, q := range m.queries {
-		if strings.Contains(q, "system_backup_configs") || strings.Contains(q, "system_backup_attempts") {
+		if strings.Contains(q, "system_backup_v2_configs") || strings.Contains(q, "system_backup_v2_attempts") {
 			if strings.Contains(q, "FOR UPDATE") || !strings.HasSuffix(q, "FOR SHARE") {
 				t.Fatal("read-only history acquired a write privilege requirement")
 			}

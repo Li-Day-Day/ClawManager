@@ -32,19 +32,19 @@ type ControlHealthWriter struct {
 
 func (ControlHealthWriter) MarshalJSON() ([]byte, error) { return nil, ErrControlHealthFence }
 
-const controlHealthInitialSQL = `INSERT INTO system_backup_control_health
+const controlHealthInitialSQL = `INSERT INTO system_backup_v2_control_health
 (origin_installation_id,schema_version,config_version,writer_epoch,writer_owner,observation_sequence,controller_health,database_health,observed_at,expires_at)
 SELECT s.origin_installation_id,'system-backup-control-health.v1',c.version,1,?,0,'unknown','unknown',UTC_TIMESTAMP(6),
 TIMESTAMPADD(SECOND,3*c.controller_reconcile_interval_seconds,UTC_TIMESTAMP(6))
-FROM system_backup_installation_state s JOIN system_backup_configs c
+FROM system_backup_v2_installation_state s JOIN system_backup_v2_configs c
 ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
 WHERE s.origin_installation_id=? AND c.version=? AND s.schema_version='system-backup-installation-state.v1'
 AND c.schema_version='system-backup-config.v1' AND c.controller_reconcile_interval_seconds BETWEEN 1 AND 60
 AND TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(6),CURRENT_TIMESTAMP(6))=0`
 
-const controlHealthTakeoverSQL = `UPDATE system_backup_control_health h
-JOIN system_backup_installation_state s ON s.origin_installation_id=h.origin_installation_id
-JOIN system_backup_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
+const controlHealthTakeoverSQL = `UPDATE system_backup_v2_control_health h
+JOIN system_backup_v2_installation_state s ON s.origin_installation_id=h.origin_installation_id
+JOIN system_backup_v2_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
 SET h.config_version=c.version,h.writer_epoch=h.writer_epoch+1,h.writer_owner=?,h.observation_sequence=0,
 h.controller_health='unknown',h.database_health='unknown',h.observed_at=UTC_TIMESTAMP(6),
 h.expires_at=TIMESTAMPADD(SECOND,3*c.controller_reconcile_interval_seconds,UTC_TIMESTAMP(6))
@@ -75,9 +75,9 @@ func (s ControlHealthStore) BeginWriter(ctx context.Context, installation string
 	return ControlHealthWriter{database: s.DB, installation: installation, config: configVersion, owner: owner, epoch: previousEpoch + 1}, nil
 }
 
-const controlHealthRecordSQL = `UPDATE system_backup_control_health h
-JOIN system_backup_installation_state s ON s.origin_installation_id=h.origin_installation_id
-JOIN system_backup_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
+const controlHealthRecordSQL = `UPDATE system_backup_v2_control_health h
+JOIN system_backup_v2_installation_state s ON s.origin_installation_id=h.origin_installation_id
+JOIN system_backup_v2_configs c ON c.origin_installation_id=s.origin_installation_id AND c.version=s.active_config_version
 SET h.observation_sequence=h.observation_sequence+1,h.controller_health=?,h.database_health=?,h.observed_at=UTC_TIMESTAMP(6),
 h.expires_at=TIMESTAMPADD(SECOND,3*c.controller_reconcile_interval_seconds,UTC_TIMESTAMP(6))
 WHERE h.origin_installation_id=? AND h.config_version=? AND c.version=h.config_version

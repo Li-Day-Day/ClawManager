@@ -57,8 +57,8 @@ const downloadGCEarlyColumnsSQL = `SELECT TABLE_NAME,COLUMN_NAME,CAST(ORDINAL_PO
 // must not make a foreign-schema CASCADE invisible to a deleting worker.
 const downloadGCEarlyForeignKeysSQL = `SELECT k.TABLE_SCHEMA,k.TABLE_NAME,k.CONSTRAINT_NAME,CAST(k.ORDINAL_POSITION AS CHAR),k.COLUMN_NAME,k.REFERENCED_TABLE_SCHEMA,k.REFERENCED_TABLE_NAME,k.REFERENCED_COLUMN_NAME,r.UPDATE_RULE,r.DELETE_RULE FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS r ON r.CONSTRAINT_SCHEMA=k.CONSTRAINT_SCHEMA AND r.TABLE_NAME=k.TABLE_NAME AND r.CONSTRAINT_NAME=k.CONSTRAINT_NAME WHERE k.REFERENCED_TABLE_NAME IS NOT NULL AND (k.TABLE_SCHEMA=DATABASE() OR k.REFERENCED_TABLE_SCHEMA=DATABASE()) ORDER BY BINARY k.TABLE_SCHEMA,BINARY k.TABLE_NAME,BINARY k.CONSTRAINT_NAME,k.ORDINAL_POSITION LIMIT 10001`
 const downloadGCEarlyIndexesSQL = `SELECT TABLE_NAME,INDEX_NAME,CAST(SEQ_IN_INDEX AS CHAR),CAST(NON_UNIQUE AS CHAR),COALESCE(COLUMN_NAME,''),COALESCE(COLLATION,''),COALESCE(CAST(SUB_PART AS CHAR),''),INDEX_TYPE,IS_VISIBLE,COALESCE(EXPRESSION,'') FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA=DATABASE() ORDER BY BINARY TABLE_NAME,BINARY INDEX_NAME,SEQ_IN_INDEX LIMIT 10001`
-const downloadGCEarlyIntentReferenceSQL = `SELECT id FROM system_backup_config_maintenance_receipts WHERE intent_audit_id=? LIMIT 1 FOR UPDATE`
-const downloadGCEarlyResultReferenceSQL = `SELECT id FROM system_backup_config_maintenance_receipts WHERE result_audit_id=? LIMIT 1 FOR UPDATE`
+const downloadGCEarlyIntentReferenceSQL = `SELECT id FROM system_backup_v2_config_maintenance_receipts WHERE intent_audit_id=? LIMIT 1 FOR UPDATE`
+const downloadGCEarlyResultReferenceSQL = `SELECT id FROM system_backup_v2_config_maintenance_receipts WHERE result_audit_id=? LIMIT 1 FOR UPDATE`
 
 type gcMetadataDefinition struct {
 	query, domain string
@@ -93,14 +93,14 @@ func NewSQLDownloadGCEarlyReferences(c DownloadGCEarlyReferenceConfig) (*SQLDown
 }
 
 var gcDeleteTables = map[string]bool{
-	"audit_logs": true, "system_backup_operations": true, "system_backup_strong_auth_nonces": true,
-	"system_backup_download_admission_receipts": true, "system_backup_download_result_receipts": true,
+	"audit_logs": true, "system_backup_v2_operations": true, "system_backup_v2_strong_auth_nonces": true,
+	"system_backup_v2_download_admission_receipts": true, "system_backup_v2_download_result_receipts": true,
 }
 
 func gcRequiredReadTables(maintenance bool) []string {
-	tables := []string{"audit_logs", "system_backup_installation_state", "system_backup_configs", "system_backup_operations", "system_backup_strong_auth_nonces", "system_backup_download_admission_receipts", "system_backup_download_result_receipts", "system_backup_metadata_reservations", "system_backup_compact_tombstones"}
+	tables := []string{"audit_logs", "system_backup_v2_installation_state", "system_backup_v2_configs", "system_backup_v2_operations", "system_backup_v2_strong_auth_nonces", "system_backup_v2_download_admission_receipts", "system_backup_v2_download_result_receipts", "system_backup_v2_metadata_reservations", "system_backup_v2_compact_tombstones"}
 	if maintenance {
-		tables = append(tables, "system_backup_config_maintenance_receipts")
+		tables = append(tables, "system_backup_v2_config_maintenance_receipts")
 	}
 	return tables
 }
@@ -172,13 +172,13 @@ func (s *SQLDownloadGCEarlyReferences) grants(statements []string) error {
 					}
 					continue
 				}
-				if table == "system_backup_config_maintenance_receipts" && s.c.MaintenanceReceipts != "installed" {
+				if table == "system_backup_v2_config_maintenance_receipts" && s.c.MaintenanceReceipts != "installed" {
 					return ErrDenied
 				}
 				if table != "audit_logs" && !strings.HasPrefix(table, "system_") {
 					return ErrDenied
 				}
-				allowed := privilege == "SELECT" || privilege == "DELETE" && gcDeleteTables[table] || privilege == "INSERT" && table == "system_backup_compact_tombstones" || privilege == "UPDATE" && table == "system_backup_metadata_reservations"
+				allowed := privilege == "SELECT" || privilege == "DELETE" && gcDeleteTables[table] || privilege == "INSERT" && table == "system_backup_v2_compact_tombstones" || privilege == "UPDATE" && table == "system_backup_v2_metadata_reservations"
 				if !allowed {
 					return ErrDenied
 				}
@@ -199,7 +199,7 @@ func (s *SQLDownloadGCEarlyReferences) grants(statements []string) error {
 			return ErrDenied
 		}
 	}
-	if !privileges[object("system_backup_compact_tombstones")]["INSERT"] || !privileges[object("system_backup_metadata_reservations")]["UPDATE"] {
+	if !privileges[object("system_backup_v2_compact_tombstones")]["INSERT"] || !privileges[object("system_backup_v2_metadata_reservations")]["UPDATE"] {
 		return ErrDenied
 	}
 	return nil
@@ -284,7 +284,7 @@ func (s *SQLDownloadGCEarlyReferences) metadata(ctx context.Context, tx *sql.Tx)
 					return ErrDenied
 				}
 			}
-			_, present := tables["system_backup_config_maintenance_receipts"]
+			_, present := tables["system_backup_v2_config_maintenance_receipts"]
 			if present != (s.c.MaintenanceReceipts == "installed") {
 				return ErrDenied
 			}

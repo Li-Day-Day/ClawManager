@@ -21,7 +21,7 @@ type riskRuleRepository struct {
 	sess db.Session
 }
 
-// NewRiskRuleRepository creates a new risk rule repository and ensures defaults exist.
+// NewRiskRuleRepository creates a new risk rule repository and initializes its default rules.
 func NewRiskRuleRepository(sess db.Session) RiskRuleRepository {
 	repo := &riskRuleRepository{sess: sess}
 	repo.normalizeDeprecatedActions()

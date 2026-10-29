@@ -54,7 +54,7 @@ func (c *operationListConn) QueryContext(_ context.Context, query string, args [
 	if c.f.failQuery {
 		return nil, errors.New("database unavailable")
 	}
-	if !strings.Contains(query, "system_backup_operations") || len(args) == 0 || args[0].Value != c.f.installation ||
+	if !strings.Contains(query, "system_backup_v2_operations") || len(args) == 0 || args[0].Value != c.f.installation ||
 		strings.Contains(query, "failure_message") || strings.Contains(query, "response_evidence") ||
 		strings.Contains(query, "external_action_public_ids_canonical_json") || strings.Contains(query, "SELECT *") {
 		return nil, errors.New("unsafe operation list SQL")

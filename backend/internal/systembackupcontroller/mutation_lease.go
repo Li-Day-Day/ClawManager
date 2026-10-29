@@ -130,7 +130,7 @@ func AcquireMutationLease(ctx context.Context, tx CoordinationTransaction, reque
 		return MutationLeaseToken{}, ErrMutationLeaseRejected
 	}
 	result, err := tx.ExecContext(ctx,
-		"INSERT INTO system_maintenance_mutation_leases (lease_id, origin_installation_id, scope, operation_identity, request_id, lease_owner, gate_generation, lease_ttl_seconds, heartbeat_at, expires_at, row_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(6), DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), 1)",
+		"INSERT INTO system_backup_v2_maintenance_mutation_leases (lease_id, origin_installation_id, scope, operation_identity, request_id, lease_owner, gate_generation, lease_ttl_seconds, heartbeat_at, expires_at, row_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(6), DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), 1)",
 		request.LeaseID, request.Key.InstallationID, request.Key.Scope, request.OperationIdentity, request.RequestID, request.Owner, request.ExpectedGeneration, gateSeconds(policy.TTL), gateSeconds(policy.TTL),
 	)
 	if err != nil {
@@ -205,7 +205,7 @@ func RenewMutationLease(ctx context.Context, tx CoordinationTransaction, token M
 		return MutationLeaseToken{}, err
 	}
 	result, err := tx.ExecContext(ctx,
-		"UPDATE system_maintenance_mutation_leases SET lease_ttl_seconds = ?, heartbeat_at = UTC_TIMESTAMP(6), expires_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), row_version = row_version + 1 WHERE lease_id = ? AND origin_installation_id = ? AND scope = ? AND lease_owner = ? AND gate_generation = ? AND row_version = ? AND expires_at > UTC_TIMESTAMP(6)",
+		"UPDATE system_backup_v2_maintenance_mutation_leases SET lease_ttl_seconds = ?, heartbeat_at = UTC_TIMESTAMP(6), expires_at = DATE_ADD(UTC_TIMESTAMP(6), INTERVAL ? SECOND), row_version = row_version + 1 WHERE lease_id = ? AND origin_installation_id = ? AND scope = ? AND lease_owner = ? AND gate_generation = ? AND row_version = ? AND expires_at > UTC_TIMESTAMP(6)",
 		gateSeconds(policy.TTL), gateSeconds(policy.TTL), token.LeaseID, token.Key.InstallationID, token.Key.Scope, token.Owner, token.Generation, token.RowVersion,
 	)
 	if err != nil {
@@ -258,7 +258,7 @@ func ReleaseMutationLease(ctx context.Context, tx CoordinationTransaction, token
 		return ErrMutationLeaseLost
 	}
 	result, err := tx.ExecContext(ctx,
-		"DELETE FROM system_maintenance_mutation_leases WHERE lease_id = ? AND origin_installation_id = ? AND scope = ? AND lease_owner = ? AND gate_generation = ? AND row_version = ?",
+		"DELETE FROM system_backup_v2_maintenance_mutation_leases WHERE lease_id = ? AND origin_installation_id = ? AND scope = ? AND lease_owner = ? AND gate_generation = ? AND row_version = ?",
 		token.LeaseID, token.Key.InstallationID, token.Key.Scope, token.Owner, token.Generation, token.RowVersion,
 	)
 	if err != nil {

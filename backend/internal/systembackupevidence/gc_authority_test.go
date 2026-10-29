@@ -56,8 +56,8 @@ func newGCFixture(t *testing.T) *gcFixture {
 	row.values[25] = r.ExpiresAt
 	row.values[26] = r.ProtectedUntil
 	base.db.plan = []authorityQuery{old[0], old[1], old[2],
-		{"FROM system_backup_configs", []driver.Value{c.Registry.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, c.Store.Identity, c.Store.Version, c.Delete.Identity, c.Delete.Version, int64(60)}}, old[6],
-		{"FROM system_backup_operations", []driver.Value{c.Registry.Installation, c.OperationID}, []driver.Value{"evidence_gc", "system", c.Registry.Installation, "system", "system:controller", "running", c.OperationClaim, now.Add(time.Minute), c.OperationRowVersion, now.Add(2 * time.Minute)}}, row, old[8],
+		{"FROM system_backup_v2_configs", []driver.Value{c.Registry.Installation, c.ConfigVersion}, []driver.Value{c.ConfigSHA256, c.Store.Identity, c.Store.Version, c.Delete.Identity, c.Delete.Version, int64(60)}}, old[6],
+		{"FROM system_backup_v2_operations", []driver.Value{c.Registry.Installation, c.OperationID}, []driver.Value{"evidence_gc", "system", c.Registry.Installation, "system", "system:controller", "running", c.OperationClaim, now.Add(time.Minute), c.OperationRowVersion, now.Add(2 * time.Minute)}}, row, old[8],
 		{"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}}, {"SELECT UTC_TIMESTAMP(6)", nil, []driver.Value{now}},
 	}
 	a, err := NewSQLGCAuthority(c)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"encoding/json"
 	"errors"
 	"io"
 	"os"
@@ -21,9 +22,15 @@ type migrationPinState struct {
 	recorded                                 []string
 	ledgerMissing                            bool
 }
+type migrationPinDriver struct{}
+
+func (migrationPinDriver) Open(string) (driver.Conn, error) {
+	return nil, errors.New("connector required")
+}
+
 type migrationPinConnector struct{ state *migrationPinState }
 
-func (c migrationPinConnector) Driver() driver.Driver { return bootstrapSchemaDriver{} }
+func (c migrationPinConnector) Driver() driver.Driver { return migrationPinDriver{} }
 func (c migrationPinConnector) Connect(context.Context) (driver.Conn, error) {
 	c.state.connections++
 	return &migrationPinConn{s: c.state}, nil
@@ -32,6 +39,7 @@ func (c migrationPinConnector) Connect(context.Context) (driver.Conn, error) {
 type migrationPinConn struct {
 	s                  *migrationPinState
 	locked, identified bool
+	locks              int
 }
 
 func (*migrationPinConn) Prepare(string) (driver.Stmt, error) {
@@ -59,7 +67,11 @@ func (r *migrationPinRows) Next(out []driver.Value) error {
 }
 func pinRow(v ...driver.Value) driver.Rows { return &migrationPinRows{len(v), [][]driver.Value{v}} }
 func (c *migrationPinConn) QueryContext(_ context.Context, q string, _ []driver.NamedValue) (driver.Rows, error) {
+	if strings.HasPrefix(q, "SELECT CONCAT(") {
+		return pinRow("cm:migrate:fixture"), nil
+	}
 	if strings.HasPrefix(q, "SELECT GET_LOCK(") {
+		c.locks++
 		c.locked = true
 		return pinRow(int64(1)), nil
 	}
@@ -67,7 +79,8 @@ func (c *migrationPinConn) QueryContext(_ context.Context, q string, _ []driver.
 		if !c.locked {
 			return nil, errors.New("lock absent")
 		}
-		c.locked = false
+		c.locks--
+		c.locked = c.locks > 0
 		c.s.releases++
 		return pinRow(int64(1)), nil
 	}
@@ -82,7 +95,10 @@ func (c *migrationPinConn) QueryContext(_ context.Context, q string, _ []driver.
 	if !c.identified {
 		return nil, errors.New("query before database pin check")
 	}
-	if strings.Contains(q, "information_schema.tables") {
+	if strings.Contains(q, "information_schema.COLUMNS") {
+		return pinRow(int64(0), int64(0), int64(0)), nil
+	}
+	if strings.Contains(strings.ToLower(q), "information_schema.tables") {
 		if c.s.ledgerMissing {
 			return pinRow(int64(0)), nil
 		}
@@ -95,14 +111,14 @@ func (c *migrationPinConn) QueryContext(_ context.Context, q string, _ []driver.
 		}
 		return rows, nil
 	}
-	if strings.Contains(q, "FROM system_maintenance_locks") {
+	if strings.Contains(q, "SELECT COUNT(*) FROM `system_backup_") {
 		c.s.gates++
 		return pinRow(c.s.activeGate), nil
 	}
 	return nil, errors.New("unexpected query")
 }
 func (c *migrationPinConn) ExecContext(_ context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
-	if !c.locked || !c.identified || c.s.gates != 1 || c.s.activeGate != 0 {
+	if !c.locked || !c.identified || c.s.gates != 5 || c.s.activeGate != 0 {
 		return nil, errors.New("unguarded DDL")
 	}
 	c.s.writes = append(c.s.writes, q)
@@ -141,7 +157,7 @@ func TestPinnedMigrationTargetAndCaptureExclusion(t *testing.T) {
 				// whichever unrelated migration was appended most recently.
 				state.applied = nil
 				for _, filename := range catalog.Filenames {
-					if filename != "080_add_system_backup_registration_runtime.sql" {
+					if filename != "109_backup_v2_add_system_backup_registration_runtime.sql" {
 						state.applied = append(state.applied, filename)
 					}
 				}
@@ -162,14 +178,14 @@ func TestPinnedMigrationTargetAndCaptureExclusion(t *testing.T) {
 				}
 				return
 			}
-			if state.connections != 1 || state.identities != 1 || state.releases != 1 {
+			if state.connections != 1 || state.identities != 1 || state.releases != 2 {
 				t.Fatal("target and DDL did not share one released connection")
 			}
 			if name != "apply-runtime" && len(state.writes) != 0 {
 				t.Fatal("rejection/retry executed DDL")
 			}
 			if name == "apply-runtime" {
-				if len(state.writes) != 5 || state.gates != 1 {
+				if len(state.writes) != 5 || state.gates != 5 {
 					t.Fatal("runtime migration was not guarded or recorded exactly once")
 				}
 				for _, q := range state.writes[:4] {
@@ -183,13 +199,20 @@ func TestPinnedMigrationTargetAndCaptureExclusion(t *testing.T) {
 }
 
 func TestRuntimeMigrationPreservesProvenAddendumDDL(t *testing.T) {
-	formal, err := embeddedMigrations.ReadFile("migrations/080_add_system_backup_registration_runtime.sql")
+	formal, err := embeddedMigrations.ReadFile("migrations/109_backup_v2_add_system_backup_registration_runtime.sql")
 	if err != nil {
 		t.Fatal(err)
 	}
-	previous, err := os.ReadFile("../../../deployments/k8s/system-backup-provider-lab/registration-runtime.sql")
+	previous, err := os.ReadFile("../../../docs/backup-team-integration/reference/080_add_system_backup_registration_runtime.sql")
 	if err != nil {
 		t.Fatal(err)
+	}
+	var mapping backupImportMap
+	if json.Unmarshal(backupImportMapJSON, &mapping) != nil {
+		t.Fatal("invalid import map")
+	}
+	for before, after := range mapping.Tables {
+		previous = []byte(strings.ReplaceAll(string(previous), before, after))
 	}
 	if !reflect.DeepEqual(splitSQLStatements(string(formal)), splitSQLStatements(string(previous))) {
 		t.Fatal("formal migration diverged from previously validated runtime DDL")

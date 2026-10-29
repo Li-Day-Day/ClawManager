@@ -65,7 +65,7 @@ func event(ctx context.Context, tx *sql.Tx, t Task, code string) error {
 	if !identifier.MatchString(code) {
 		return ErrInvalid
 	}
-	_, e := tx.ExecContext(ctx, "INSERT INTO system_backup_events(task_id,row_version,code,created_at_ms) VALUES(?,?,?,"+dbNow+")", t.ID, t.RowVersion, code)
+	_, e := tx.ExecContext(ctx, "INSERT INTO system_backup_v2_events(task_id,row_version,code,created_at_ms) VALUES(?,?,?,"+dbNow+")", t.ID, t.RowVersion, code)
 	if e != nil {
 		return ErrNotReady
 	}
@@ -283,7 +283,7 @@ func (s SQLStore) Advance(ctx context.Context, t Task, next, code string) (Task,
 		// A terminal task must never strand a closed source gate or an unresolved
 		// pause. Worker/provider evidence is additionally checked by the executor.
 		var pending int
-		e = tx.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM system_backup_pauses WHERE task_id=? AND resumed=FALSE)+(SELECT COUNT(*) FROM system_backup_maintenance WHERE task_id=? AND closed=TRUE)+"+pendingWorkersSQL+"+(SELECT COUNT(*) FROM system_backup_credentials WHERE task_id=? AND removed=FALSE)+(SELECT COUNT(*) FROM system_backup_identities WHERE task_id=? AND deleted=FALSE)+(SELECT COUNT(*) FROM system_backup_redis_items WHERE task_id=? AND item_state='request_sent')+(SELECT COUNT(*) FROM system_backup_recovery_leases WHERE task_id=? AND released=FALSE)+(SELECT COUNT(*) FROM system_backup_prune_runs WHERE task_id=? AND run_state='claimed')+IF(?='succeeded',(SELECT COUNT(*) FROM system_backup_redis_plans p WHERE task_id=? AND COALESCE(JSON_LENGTH(JSON_EXTRACT(plan_json,'$.Items')),-1)<>(SELECT COUNT(*) FROM system_backup_redis_items i WHERE i.task_id=p.task_id AND i.item_state='completed')),0)", t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, next, t.ID).Scan(&pending)
+		e = tx.QueryRowContext(ctx, "SELECT (SELECT COUNT(*) FROM system_backup_pauses WHERE task_id=? AND resumed=FALSE)+(SELECT COUNT(*) FROM system_backup_maintenance WHERE task_id=? AND closed=TRUE)+"+pendingWorkersSQL+"+(SELECT COUNT(*) FROM system_backup_credentials WHERE task_id=? AND removed=FALSE)+(SELECT COUNT(*) FROM system_backup_identities WHERE task_id=? AND deleted=FALSE)+(SELECT COUNT(*) FROM system_backup_redis_items WHERE task_id=? AND item_state='request_sent')+(SELECT COUNT(*) FROM system_backup_recovery_leases WHERE task_id=? AND released=FALSE)+(SELECT COUNT(*) FROM system_backup_v2_prune_runs WHERE task_id=? AND run_state='claimed')+IF(?='succeeded',(SELECT COUNT(*) FROM system_backup_redis_plans p WHERE task_id=? AND COALESCE(JSON_LENGTH(JSON_EXTRACT(plan_json,'$.Items')),-1)<>(SELECT COUNT(*) FROM system_backup_redis_items i WHERE i.task_id=p.task_id AND i.item_state='completed')),0)", t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, t.ID, next, t.ID).Scan(&pending)
 		if e != nil || pending != 0 {
 			return Task{}, ErrConflict
 		}

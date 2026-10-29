@@ -21,7 +21,7 @@ func TestInsertGateTransitionEventUsesClosedRedactedSystemProjection(t *testing.
 	}
 	query := executor.queries[0]
 	for _, required := range []string{
-		"INSERT INTO system_backup_events",
+		"INSERT INTO system_backup_v2_events",
 		"'system'",
 		"'gate_changed'",
 		"'info'",

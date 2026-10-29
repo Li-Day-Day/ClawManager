@@ -46,11 +46,11 @@ func TestRecoveryManagerRevocationMySQL(t *testing.T) {
 	mustSQL(t, err)
 	credential, err := hex.DecodeString(facts.CredentialBindingHash)
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_installation_state
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_installation_state
 (origin_installation_id,active_config_version,last_effective_enabled_transition_at,matrix_key)
 VALUES (?,1,UTC_TIMESTAMP(6),'k8s-cluster')`, string(scope.Installation))
 	mustSQL(t, err)
-	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_recovery_managers
+	_, err = db.ExecContext(ctx, `INSERT INTO system_backup_v2_recovery_managers
 (scope_key,management_identity_hash,origin_installation_id,issuer_identity_hash,credential_binding_hash,
 can_read_fence,can_write_fence,can_manage_deployment,enabled,authorized_until,row_version)
 VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, identity, string(scope.Installation), issuer, credential, now.Add(time.Minute))
@@ -79,7 +79,7 @@ VALUES (?,?,?,?,?,TRUE,TRUE,TRUE,TRUE,?,1)`, key, identity, string(scope.Install
 	var enabled, read, write, manage bool
 	var revoked time.Time
 	mustSQL(t, db.QueryRowContext(ctx, `SELECT row_version,enabled,can_read_fence,can_write_fence,can_manage_deployment,revoked_at
-FROM system_backup_recovery_managers WHERE scope_key=? AND management_identity_hash=?`, key, identity).
+FROM system_backup_v2_recovery_managers WHERE scope_key=? AND management_identity_hash=?`, key, identity).
 		Scan(&version, &enabled, &read, &write, &manage, &revoked))
 	if version != 2 || enabled || read || write || manage || revoked.IsZero() {
 		t.Fatal("L1b revocation did not commit")

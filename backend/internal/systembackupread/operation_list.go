@@ -62,7 +62,7 @@ func (r *Reader) listOperations(ctx context.Context, request operationPageReques
 	}
 	cutoff := request.cutoff
 	if cutoff == 0 {
-		if err := tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(id),0) FROM system_backup_operations WHERE origin_installation_id=?`, installation).Scan(&cutoff); err != nil {
+		if err := tx.QueryRowContext(ctx, `SELECT COALESCE(MAX(id),0) FROM system_backup_v2_operations WHERE origin_installation_id=?`, installation).Scan(&cutoff); err != nil {
 			return operationPage{}, ErrUnavailable
 		}
 	}

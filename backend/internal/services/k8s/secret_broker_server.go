@@ -31,8 +31,7 @@ var (
 )
 
 // SecretBrokerConfig closes the broker identity and namespace policy. Tenant
-// namespaces are derived by Client.GetNamespace from the system namespace, not
-// directly from the installation prefix. An empty allowlist means arbitrary
+// namespaces are derived by Client.GetNamespace from the installation prefix. An empty allowlist means arbitrary
 // Secret references are denied; generated Team and instance Secrets and the
 // fixed northbound certificate set remain available.
 type SecretBrokerConfig struct {
@@ -81,6 +80,7 @@ func NewSecretBrokerHandler(client kubernetes.Interface, cfg SecretBrokerConfig)
 	mux.Handle("POST /v1/secrets/get", server.authenticated(http.HandlerFunc(server.get)))
 	mux.Handle("POST /v1/secrets/get-value", server.authenticated(http.HandlerFunc(server.getValue)))
 	mux.Handle("POST /v1/secrets/upsert", server.authenticated(http.HandlerFunc(server.upsert)))
+	mux.Handle("POST /v1/secrets/create", server.authenticated(http.HandlerFunc(server.create)))
 	mux.Handle("POST /v1/secrets/delete", server.authenticated(http.HandlerFunc(server.delete)))
 	mux.Handle("POST /v1/secrets/delete-by-labels", server.authenticated(http.HandlerFunc(server.deleteByLabels)))
 	return mux, nil
@@ -101,6 +101,11 @@ func newSecretBrokerPolicy(cfg SecretBrokerConfig) (*secretBrokerPolicy, error) 
 	if cfg.SystemNamespace != cfg.NamespacePrefix+"-system" {
 		return nil, errors.New("system namespace must equal <namespace-prefix>-system")
 	}
+	// Reject prefixes that Client would rewrite or truncate. Otherwise the
+	// advertised policy and the namespaces actually used by provisioning differ.
+	if sanitizeK8sName(cfg.NamespacePrefix) != cfg.NamespacePrefix || len(cfg.NamespacePrefix) > 37 {
+		return nil, errors.New("namespace prefix must be canonical and leave room for a numeric user ID")
+	}
 	allowlist := map[string]struct{}{}
 	for _, raw := range cfg.ReadAllowlist {
 		entry := strings.TrimSpace(raw)
@@ -114,11 +119,10 @@ func newSecretBrokerPolicy(cfg SecretBrokerConfig) (*secretBrokerPolicy, error) 
 		}
 		allowlist[path[0]+"/"+path[1]+":"+strings.TrimSpace(parts[1])] = struct{}{}
 	}
-	// Client.GetNamespace builds tenant namespaces from Client.Namespace. The
-	// application client is initialized with the system namespace, so the only
-	// valid tenant form is <system-namespace>-user-<positive-id>. Using the base
-	// installation prefix here rejects every real tenant Secret operation.
-	quotedTenantPrefix := regexp.QuoteMeta(cfg.SystemNamespace)
+	// Match the actual Client initialized from cfg.GetNamespace(): its Namespace
+	// is the installation prefix, and GetSystemNamespace adds -system separately.
+	// Never derive a user namespace from the App Pod's system namespace.
+	quotedTenantPrefix := regexp.QuoteMeta(cfg.NamespacePrefix)
 	return &secretBrokerPolicy{
 		prefix:             cfg.NamespacePrefix,
 		systemNamespace:    cfg.SystemNamespace,
