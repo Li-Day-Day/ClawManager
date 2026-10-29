@@ -13,7 +13,7 @@
 | participant probe | `runtimeLeaseProbe` 查询当前 application gate 和未释放 mutation leases。仅适用于所有写入均受该 lease 约束的已审查 participant；外部写入者不能冒充这一类型。 |
 | Deployment probe | 固定 namespace/name/UID，检查 HPA、实际 Pod 节点 UID/Linux；恢复仍使用原 resume fence 与实际新 Pod 的绑定 CAS。 |
 | Pro stop proof | `StopProofForTask(a, namespace)` 构造原 `PublicJobOwner.StopWitnessIn`；停止前建立 kubelet watch，原 Pod UID、Node UID、container IDs 的 terminated ACK 写入 `SQLStopProofs`。缺失、断流、强删均不生成证明。 |
-| Lite stop/restart | 原真实 `BackupGatewayAgent` 查询 generation、process/cgroup 停止证明；D 提供 `ClaimRestart/CompleteRestart` 及原绑定 CAS。Agent token 只从固定私有文件读取。 |
+| Lite stop/restart | D 提供 `ClaimRestart/CompleteRestart` 及原绑定 CAS。重新核对发现原 `BackupGatewayWriter` 仍以 DELETE 后 state absent/stopped 判断停止，没有调用进程停止收据接口，更没有 cgroup 证明；这一部分仍需实现，不能宣称完整停止屏障已交付。Agent token 只从固定私有文件读取。 |
 | TLS server → `/relay` | `DeploymentService.controlHandler` 实际注册 B `NewAuthenticatedRelayHandler`。先通过原 `WorkloadIdentity` 的 TLS + TokenReview，再匹配已登记原 Job process、原 immutable IdentitySecret、原证书 pin；每请求关闭 authenticator。 |
 | relay SQL | `SQLAuthenticatedRelayAcceptor` 锁原 authority/Job，事务内 A Bind → receipt INSERT → A Recheck → 最终 authority/SQL clock → COMMIT。没有新增控制授权。 |
 
@@ -26,7 +26,7 @@ relay 游标改为在原 Job 行锁下读取 `system_backup_v2_relay_receipts` �
 保留原 `system-backup-public-deployment.v1` 参数，显式选 `capture_scope=runtime-workspace`，增加 `runtime_sources`：
 
 - `supported`：B `AgentKind` 的完整 `Type/Mode/Variant/OS` 组合，仅受支持 Linux 类型。
-- `namespaces`：所有来源 namespace；遗漏或混入其他 namespace 拒绝。
+- `namespaces`：必须只有一个条目，且等于 deployment 的 `namespace`；平台 writer、Runtime Deployment 也必须在同一 namespace，不生成跨 namespace 的控制 Role。
 - `workspace_root`：来源容器内的原 workspace 根路径；本 profile 只接受与目标采集 PVC 同一 PV、对应子路径的实际挂载。HostPath/其他存储需独立 profile，不会以路径字符串替代存储身份。
 - `lease_participants`：全部经审查的 application mutation lease participant ID；不是“所有未知 participant 都返回成功”。
 - `deployments`：Runtime 所属 Deployment 的 namespace/name/UID，用于真实 HPA/节点及恢复探针。
@@ -83,7 +83,7 @@ bash scripts/system-backup-d-runtime-discover.sh clawmanager-zhanghui08-system
 
 用户确认这是测试环境，最终目标是多用户环境成功备份、恢复。保留实际 NFS 路径作为验证对象；PVC-only 通过不能替代此目标。以下是只读现场证据和待实现工作，不代表新增 profile 已可运行。
 
-用户进一步明确产品边界：在指定 namespace 部署的页面操作，仅备份和恢复该 namespace 对应的数据。服务端需固定 namespace 身份与 installation、数据库范围和 NFS 数据子树的归属；不能因为页面位于该 namespace，就推定共享数据库或 NFS 根目录全属于它。其他 namespace 不自动加入备份、停止或恢复范围；如果来源实例确实位于范围之外，应明确报出范围不匹配，不能静默漏掉实例，也不能自动扩大权限。跨 namespace 读取只是此次管理员现场排查共享存储关系的手段，不是普通备份页面应具备的集群权限。本节限定产品目标；生产 namespace/目录归属的完整强制校验尚待实现。
+用户进一步明确产品边界：在指定 namespace 部署的页面操作，仅备份和恢复该 namespace 对应的数据。服务端需固定 namespace 身份与 installation、数据库范围和 NFS 数据子树的归属；不能因为页面位于该 namespace，就推定共享数据库或 NFS 根目录全属于它。其他 namespace 不自动加入备份、停止或恢复范围；如果来源实例确实位于范围之外，应明确报出范围不匹配，不能静默漏掉实例，也不能自动扩大权限。跨 namespace 读取只是此次管理员现场排查共享存储关系的手段，不是普通备份页面应具备的集群权限。现在已强制 deployment/writer/Runtime namespace 一致；NFS 数据子树归属的完整强制校验仍待实现。
 
 现场 app、OpenClaw、Hermes 挂载的是同一个直接 NFS export `/`，其 Service 位于另一 installation 的 namespace。本 namespace 的 workspace PVC 则绑定另一条 hostPath，不能拿该 PVC 的内容代表正在使用的数据。不能仅凭 namespace 名切换 NFS server，也不能将另一个 installation 的写入者自动纳入停止授权。
 
@@ -115,3 +115,17 @@ python3 -B scripts/system-backup-d-nfs-inventory.py \
 5. **多用户验收**：至少两个用户，各自独立样本、同名但不同内容文件、目录、权限和运行实例；验证文件 hash、UID/GID/mode、用户/实例归属、用户间访问隔离、真实 Agent 重启及恢复后的读写。并发写入必须被 fence；停止失败、绑定漂移、部分失败及重复恢复不得冒充成功。首次恢复验证后，再单独设计原实例切换和回退。
 
 NFS 盘点工具本地 8 项测试通过，覆盖跨 namespace/DNS/endpoint、PVC UID 漂移、hostPath 与 NFS 区分、CSI 未解析状态、子路径边界、只读标志和失败不泄露输出。使用 `python -B`，不产生字节码或构建产物；此结果不代表现场 NFS、MySQL 或 Agent 联调通过。
+
+## 原 source 与实际 Runtime locator 的版本化交接
+
+`RuntimeWriterSpec` 新增可比较的 `Runtime RuntimeLocator`（JSON `omitzero`，原有无 locator 的 custody 字节不因零值增加字段）。D 生成 `Version=runtime-locator.v1`，字段为 `Namespace/Pod/RegisteredPodUID/Deployment/AgentEpoch/RuntimePodID/GatewayPID`；实际 Kubernetes Pod UID 仍在 `spec.UID`，endpoint/port 仍使用原 spec 字段。B 通过 `RuntimeNamespace()`、`RuntimePod()` 获得有效定位；旧 custody 回退到原非空 source 定位，不重新发现或回填。
+
+`Source` 仍是原 `instances` 投影，包括空 Pod/namespace；source inventory/hash 不变，B 继续逐字段匹配 source。新 `ResolveGatewaySource` 是只读查询，通过原控制连接读取实际 binding，而不扩大 source 只读账号的 SQL 权限。它先拒绝 namespace 越界，再核验 generation/workspace/gateway/port/PID、注册 UID（若有）、Kubernetes Pod UID/Ready/IP、真实 ReplicaSet→Deployment UID 和固定部署探针，最后核验 Agent UID/epoch/协议能力。NULL 注册 UID 只表示未登记，不生成或修改该列；实际 UID 取控制面并与 Agent 相互验证。
+
+`Prepare` 使用该投影，原授权事务下 `save` 再锁原 source 和 binding；`Guard/ClaimRestart/CompleteRestart` 复查同一 Runtime row ID、注册 UID、endpoint、PID、Agent epoch 和原身份。读取原配置仍用未改写的 raw source，重启预留和原恢复 CAS 沿用原链。部署预检的实际卷检查也先解析 Lite locator，不能拿空的 `instances` Pod 字段拼 API 地址。单 namespace 的配置、资源访问授权和运行时定位检查均拒绝越界，而非过滤后继续备份。
+
+这些是定位及范围校验的实现，不是完整 quiesce 实现。2026-10-29 用户执行 `system-backup-d-agent-capabilities.py`，远侧 `openclaw-runtime`、`hermes-runtime` 均返回 HTTP 404；公开读回存于 `docs/evidence/d-runtime-agent-capabilities-20261029.json`。脚本只在目标 namespace 内读取元数据，通过 Deployment/ReplicaSet UID 选择 Pod；仅在远侧内存中使用 app 现有控制 token 发起能力 GET，不打印 token/任意响应体、不发送停止请求。返回 404 不作为成功或空进程证明。
+
+此现场证据要求继续补 Agent 协议与构建/部署接点：现有文档的 `process_group` 能力本身也不覆盖脱离进程组的工作进程，且没有完成原代次受控恢复协议。不能只部署一个返回能力 JSON 的 handler、复用升级中的不可释放隔离，或把 DELETE/404 当作备份停止证明。generation 0、直接 NFS admission、完整 writer fencing、旧库副本导入及多用户恢复仍是未完成项。
+
+本次映射更新验证：`systembackupcontroller`、`systembackup/publicadapter`、`systembackupexecution`、`cmd/system-backup-v2-controller` 测试通过，`cmd/system-backup-controller-grants` 编译通过；Agent 只读探测脚本 7 项测试通过。边界覆盖 raw source 不改写、旧 custody 零 locator 字节兼容、注册 UID 缺失/漂移、Pod IP/owner/Ready、Agent epoch 漂移、PID 缺失、跨 namespace 在 API 调用前拒绝、越界 Role 不生成，以及探测凭据不进入输出或命令参数。SQL-driver/Kubernetes fake 的通过不替代真实 MySQL/Agent/NFS 联调。测试缓存和临时构建目录在测试结束后删除。

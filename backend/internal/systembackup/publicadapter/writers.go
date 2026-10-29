@@ -2,6 +2,7 @@ package publicadapter
 
 import (
 	"context"
+	"encoding/hex"
 	"strconv"
 	"time"
 
@@ -18,13 +19,34 @@ import (
 // input. Source must match the frozen SQL projection exactly. RestartRef names
 // encrypted original material held by D; no Pod env/Secret enters the plan.
 type RuntimeWriterSpec struct {
-	Source                     InstanceIdentity
-	Kind                       string // gateway, pod, deployment, stopped
+	Source InstanceIdentity
+	// Runtime is D's independent, versioned binding projection. It never
+	// overwrites nullable location fields in the frozen SQL Source inventory.
+	Runtime                    RuntimeLocator `json:",omitzero"`
+	Kind                       string         // gateway, pod, deployment, stopped
 	UID, Name, Endpoint        string
 	RestartRef                 string
 	ResumeGeneration           int // original public reservation; never inferred +1
 	UIDNumber, GIDNumber, Port int
 	Stopped                    flow.State
+}
+
+type RuntimeLocator struct {
+	Version, Namespace, Pod, RegisteredPodUID, Deployment, AgentEpoch string
+	RuntimePodID, GatewayPID                                          int
+}
+
+func (s RuntimeWriterSpec) RuntimeNamespace() string {
+	if s.Runtime.Version != "" {
+		return s.Runtime.Namespace
+	}
+	return s.Source.Namespace
+}
+func (s RuntimeWriterSpec) RuntimePod() string {
+	if s.Runtime.Version != "" {
+		return s.Runtime.Pod
+	}
+	return s.Source.Pod
 }
 
 type RestartObservation struct {
@@ -145,13 +167,20 @@ func validateWriterSpec(s RuntimeWriterSpec, deps RuntimeWriterDependencies) err
 		return d.ErrNotReady
 	}
 	c := deps.Callbacks
+	if s.Runtime != (RuntimeLocator{}) {
+		epoch, epochErr := hex.DecodeString(s.Runtime.AgentEpoch)
+		if epochErr != nil || len(epoch) != 16 || hex.EncodeToString(epoch) != s.Runtime.AgentEpoch || s.Kind != "gateway" || s.Runtime.Version != "runtime-locator.v1" || s.Runtime.Namespace == "" || s.Runtime.Pod == "" || s.Runtime.RuntimePodID <= 0 || s.Runtime.GatewayPID <= 0 || s.Runtime.Deployment == "" ||
+			(s.Source.Namespace != "" && s.Source.Namespace != s.Runtime.Namespace) || (s.Source.Pod != "" && s.Source.Pod != s.Runtime.Pod) || (s.Runtime.RegisteredPodUID != "" && s.Runtime.RegisteredPodUID != s.UID) {
+			return d.ErrNotReady
+		}
+	}
 	switch s.Kind {
 	case "stopped":
 		if s.Source.Status != "stopped" || !validParticipant(ParticipantSpec{"stopped/" + strconv.Itoa(s.Source.ID), s.Stopped}) || s.Stopped.Generation != int64(s.Source.Generation) {
 			return d.ErrNotReady
 		}
 	case "gateway":
-		if plan.Mode != "lite" || s.Source.Status != "running" || nilValue(deps.Agent) || s.UID == "" || s.Source.Pod == "" || s.Source.Namespace == "" || s.Endpoint == "" || s.Source.Workspace == "" || s.RestartRef == "" || s.ResumeGeneration <= s.Source.Generation || s.UIDNumber <= 0 || s.GIDNumber <= 0 || s.Port <= 0 || s.Port > 65535 || c.LoadGateway == nil || c.ClaimRestart == nil || c.CompleteRestart == nil {
+		if plan.Mode != "lite" || s.Source.Status != "running" || nilValue(deps.Agent) || s.UID == "" || s.RuntimePod() == "" || s.RuntimeNamespace() == "" || s.Endpoint == "" || s.Source.Workspace == "" || s.RestartRef == "" || s.ResumeGeneration <= s.Source.Generation || s.UIDNumber <= 0 || s.GIDNumber <= 0 || s.Port <= 0 || s.Port > 65535 || c.LoadGateway == nil || c.ClaimRestart == nil || c.CompleteRestart == nil {
 			return d.ErrNotReady
 		}
 	case "pod", "deployment":

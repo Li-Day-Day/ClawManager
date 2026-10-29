@@ -35,6 +35,7 @@ type RuntimeArmedStopProof interface {
 // it before returning a writer spec. It must never be populated from HTTP input.
 // Each non-runtime registered participant requires its actual drain/health probe.
 type RuntimeControlConfig struct {
+	Namespace              string // pinned installation namespace; no discovery expansion
 	Gate                   SQLCaptureGate
 	Keys                   ExecutionRecordKeys
 	Client                 kubernetes.Interface
@@ -52,7 +53,7 @@ type RuntimeControlConfig struct {
 type SQLRuntimeControl struct{ cfg RuntimeControlConfig }
 
 func NewSQLRuntimeControl(c RuntimeControlConfig) (*SQLRuntimeControl, error) {
-	if !c.Gate.ready() || absentExecutionDependency(c.Keys) || absentExecutionDependency(c.Client) || (absentExecutionDependency(c.StopProof) && c.StopProofForTask == nil) || len(c.ParticipantChecks) == 0 || c.PollInterval <= 0 || c.PollInterval > time.Second {
+	if c.Namespace == "" || !c.Gate.ready() || absentExecutionDependency(c.Keys) || absentExecutionDependency(c.Client) || (absentExecutionDependency(c.StopProof) && c.StopProofForTask == nil) || len(c.ParticipantChecks) == 0 || c.PollInterval <= 0 || c.PollInterval > time.Second {
 		return nil, d.ErrNotReady
 	}
 	probes := map[string]ReadinessProbe{}
@@ -109,6 +110,9 @@ func (o *SQLRuntimeControl) Prepare(ctx context.Context, a d.Authority) ([]b.Run
 	}
 	specs := make([]b.RuntimeWriterSpec, 0, len(sources))
 	for _, source := range sources {
+		if source.Namespace != "" && source.Namespace != o.cfg.Namespace {
+			return nil, ErrExecutionRecord
+		}
 		spec := b.RuntimeWriterSpec{Source: source, Name: source.Pod, RestartRef: a.TaskPublicID + "/" + strconv.FormatUint(a.AttemptNo, 10) + "/" + strconv.Itoa(source.ID)}
 		var material []byte
 		switch {
@@ -120,18 +124,13 @@ func (o *SQLRuntimeControl) Prepare(ctx context.Context, a d.Authority) ([]b.Run
 			if (o.cfg.GatewayOriginal == nil && o.cfg.GatewayOriginalForTask == nil) || absentExecutionDependency(o.cfg.Agent) || source.Generation >= 2147483647 {
 				return nil, d.ErrNotReady
 			}
-			spec.Kind = "gateway"
+			mapped, err := o.ResolveGatewaySource(ctx, source)
+			if err != nil {
+				return nil, err
+			}
+			mapped.RestartRef = spec.RestartRef
+			spec = mapped
 			spec.ResumeGeneration = source.Generation + 1
-			var podName, namespace, workspace, state, gateway string
-			var generation int
-			e = o.cfg.Gate.Authority.DB.QueryRowContext(ctx, `SELECT p.pod_uid,p.pod_name,p.namespace,p.agent_endpoint,b.gateway_port,b.workspace_path,b.generation,b.state,b.gateway_id FROM instance_runtime_bindings b JOIN runtime_pods p ON p.id=b.runtime_pod_id WHERE b.instance_id=? AND p.state='ready' AND p.draining=FALSE`, source.ID).Scan(&spec.UID, &podName, &namespace, &spec.Endpoint, &spec.Port, &workspace, &generation, &state, &gateway)
-			if e != nil || podName != source.Pod || namespace != source.Namespace || workspace != source.Workspace || generation != source.Generation || state != "running" || gateway != fmt.Sprintf("gw-%d-%d", source.ID, source.Generation) {
-				return nil, ErrExecutionRecord
-			}
-			pod, e := o.cfg.Client.CoreV1().Pods(namespace).Get(ctx, podName, metav1.GetOptions{})
-			if e != nil || string(pod.UID) != spec.UID {
-				return nil, ErrExecutionRecord
-			}
 			var original services.RuntimeAgentCreateGatewayRequest
 			if o.cfg.GatewayOriginalForTask != nil {
 				original, e = o.cfg.GatewayOriginalForTask(ctx, a, source)
@@ -258,6 +257,17 @@ func (o *SQLRuntimeControl) save(ctx context.Context, a d.Authority, s b.Runtime
 	return nil
 }
 func (o *SQLRuntimeControl) gatewayBinding(ctx context.Context, tx *sql.Tx, s b.RuntimeWriterSpec, resumed bool) error {
+	if s.Runtime.Version != "" {
+		r, e := readGatewayBinding(ctx, tx, s.Source.ID, true)
+		want := s.Source
+		if resumed {
+			want.Generation = s.ResumeGeneration
+		}
+		if e != nil || s.Runtime.Version != "runtime-locator.v1" || !bindingMatchesSource(r, want, o.cfg.Namespace) || r.ID != s.Runtime.RuntimePodID || r.UID != s.Runtime.RegisteredPodUID || r.Namespace != s.Runtime.Namespace || r.Pod != s.Runtime.Pod || r.Deployment != s.Runtime.Deployment || r.Endpoint != s.Endpoint || r.Port != s.Port || (!resumed && r.PID != s.Runtime.GatewayPID) {
+			return ErrExecutionRecord
+		}
+		return o.checkGatewayPod(ctx, s)
+	}
 	var uid, endpoint, workspace, state, gateway string
 	var generation, port int
 	if tx.QueryRowContext(ctx, `SELECT p.pod_uid,p.agent_endpoint,b.workspace_path,b.generation,b.gateway_port,b.state,b.gateway_id FROM instance_runtime_bindings b JOIN runtime_pods p ON p.id=b.runtime_pod_id WHERE b.instance_id=? AND p.namespace=? AND p.pod_name=? AND p.state='ready' AND p.draining=FALSE FOR UPDATE`, s.Source.ID, s.Source.Namespace, s.Source.Pod).Scan(&uid, &endpoint, &workspace, &generation, &port, &state, &gateway) != nil {
@@ -448,9 +458,8 @@ func (o *SQLRuntimeControl) Guard(ctx context.Context, a d.Authority, id, point 
 			if e = o.gatewayBinding(ctx, tx, r.Spec, r.Completed); e != nil {
 				return e
 			}
-			pod, e := o.cfg.Client.CoreV1().Pods(r.Spec.Source.Namespace).Get(ctx, r.Spec.Source.Pod, metav1.GetOptions{})
-			if e != nil || string(pod.UID) != r.Spec.UID || pod.DeletionTimestamp != nil {
-				return ErrExecutionRecord
+			if e := o.checkGatewayPod(ctx, r.Spec); e != nil {
+				return e
 			}
 		}
 		if r.Spec.Kind == "deployment" {
@@ -690,7 +699,7 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 					return ErrExecutionRecord
 				}
 			}
-			pod, e := o.cfg.Client.CoreV1().Pods(spec.Source.Namespace).Get(ctx, spec.Source.Pod, metav1.GetOptions{})
+			pod, e := o.cfg.Client.CoreV1().Pods(spec.RuntimeNamespace()).Get(ctx, spec.RuntimePod(), metav1.GetOptions{})
 			if e != nil || string(pod.UID) != ob.PodUID || pod.DeletionTimestamp != nil {
 				return ErrExecutionRecord
 			}
@@ -709,9 +718,8 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 			if e != nil || live == nil || live.GatewayID != ob.GatewayID || live.InstanceID != spec.Source.ID || live.Generation != spec.ResumeGeneration || live.State != "running" {
 				return ErrExecutionRecord
 			}
-			pod, e := o.cfg.Client.CoreV1().Pods(spec.Source.Namespace).Get(ctx, spec.Source.Pod, metav1.GetOptions{})
-			if e != nil || string(pod.UID) != spec.UID || pod.DeletionTimestamp != nil {
-				return ErrExecutionRecord
+			if e := o.checkGatewayPod(ctx, spec); e != nil {
+				return e
 			}
 			if e = o.gatewayBinding(ctx, tx, spec, false); e != nil {
 				return e

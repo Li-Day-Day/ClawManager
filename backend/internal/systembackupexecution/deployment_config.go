@@ -119,6 +119,9 @@ func (cnf DeploymentConfig) Validate() error {
 	if (cnf.CaptureScope == "runtime-workspace") != (cnf.RuntimeSources != nil) || (cnf.RuntimeSources != nil && cnf.RuntimeSources.validate() != nil) {
 		return c.ErrExecutionAuthority
 	}
+	if cnf.RuntimeSources != nil && cnf.RuntimeSources.Namespaces[0] != cnf.Namespace {
+		return c.ErrExecutionAuthority
+	}
 	if cnf.Version != "system-backup-public-deployment.v1" || cnf.InstallationID == "" || cnf.ControllerOwner == "" || cnf.ApplicationScope == "" || cnf.Namespace == "" || cnf.NamespaceUID == "" || cnf.TrustDomain == "" || strings.ContainsAny(cnf.TrustDomain, "/: ") || !strings.Contains(cnf.WorkerImage, "@sha256:") || cnf.StagingClaim == "" || cnf.Workspace.Claim == "" || cnf.Security.ServiceAccountName == "" || cnf.Security.ServiceAccountUID == "" || len(cnf.Security.NodeUIDs) == 0 || len(cnf.Writers) == 0 || len(cnf.Writers) > 1000 || cnf.AcquireSeconds < 10 || cnf.AcquireSeconds > 600 || cnf.HoldSeconds < 30 || time.Duration(cnf.HoldSeconds)*time.Second > time.Hour || cnf.Listen == "" || !strings.HasPrefix(cnf.ControlURL, "https://") || cnf.SourceUser == "" || strings.EqualFold(cnf.SourceUser, "root") || cnf.SourceDatabase == "" || cnf.SourceServerUUID == "" {
 		return c.ErrExecutionAuthority
 	}
@@ -136,7 +139,7 @@ func (cnf DeploymentConfig) Validate() error {
 	seen := map[string]bool{}
 	for _, w := range cnf.Writers {
 		id := w.Namespace + "/" + w.Name
-		if w.Namespace == "" || w.Name == "" || w.UID == "" || seen[id] {
+		if w.Namespace != cnf.Namespace || w.Name == "" || w.UID == "" || seen[id] {
 			return c.ErrExecutionAuthority
 		}
 		seen[id] = true

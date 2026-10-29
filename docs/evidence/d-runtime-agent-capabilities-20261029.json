@@ -1,0 +1,25 @@
+{
+  "evidence_source": "user-executed remote read-only capability probe",
+  "received_on": "2026-10-29",
+  "namespace": "clawmanager-zhanghui08-system",
+  "status": "incomplete",
+  "runtimes": [
+    {
+      "deployment": "hermes-runtime",
+      "pod": "hermes-runtime-544c99ff7-7ghcw",
+      "pod_uid": "39b187c9-dbb4-49c9-a305-e14503b82a2d",
+      "observation": "unavailable",
+      "http_status": 404
+    },
+    {
+      "deployment": "openclaw-runtime",
+      "pod": "openclaw-runtime-59c5549fd5-75mtw",
+      "pod_uid": "3c2b2f89-a10d-4bf9-a8d6-afca470c8ce2",
+      "observation": "unavailable",
+      "http_status": 404
+    }
+  ],
+  "mutation_sent": false,
+  "backup_ready": false,
+  "note": "Capability metadata is not a stop or restore proof. Neither runtime provided a usable stop capability response."
+}

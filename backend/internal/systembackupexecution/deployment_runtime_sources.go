@@ -42,7 +42,7 @@ type RuntimeSourceConfig struct {
 }
 
 func (r RuntimeSourceConfig) validate() error {
-	if len(r.Supported) == 0 || len(r.Namespaces) == 0 || len(r.LeaseParticipants) == 0 || !path.IsAbs(r.WorkspaceRoot) || path.Clean(r.WorkspaceRoot) != r.WorkspaceRoot || r.WorkspaceRoot == "/" {
+	if len(r.Supported) == 0 || len(r.Namespaces) != 1 || len(r.LeaseParticipants) == 0 || !path.IsAbs(r.WorkspaceRoot) || path.Clean(r.WorkspaceRoot) != r.WorkspaceRoot || r.WorkspaceRoot == "/" {
 		return d.ErrNotReady
 	}
 	namespaces := map[string]bool{}
@@ -61,7 +61,7 @@ func (r RuntimeSourceConfig) validate() error {
 	}
 	sources := map[int]bool{}
 	for _, ref := range r.Originals {
-		if ref.Source.ID <= 0 || ref.Source.Generation <= 0 || ref.Source.Mode != "lite" || sources[ref.Source.ID] || !namespaces[ref.Source.Namespace] || !filepath.IsAbs(ref.File) || ref.KeyRef == "" || len(ref.CipherSHA256) != 64 || len(ref.PlainSHA256) != 64 {
+		if ref.Source.ID <= 0 || ref.Source.Generation <= 0 || ref.Source.Mode != "lite" || sources[ref.Source.ID] || (ref.Source.Namespace != "" && !namespaces[ref.Source.Namespace]) || !filepath.IsAbs(ref.File) || ref.KeyRef == "" || len(ref.CipherSHA256) != 64 || len(ref.PlainSHA256) != 64 {
 			return d.ErrNotReady
 		}
 		sources[ref.Source.ID] = true
@@ -165,7 +165,7 @@ func (s *DeploymentService) attachRuntimeSources(o *PublicJobOwner, profile b.Li
 	if cfg.validate() != nil || s.Config.SourceDatabase != grant.Database || s.Config.SourceServerUUID != grant.ServerUUID {
 		return profile, c.ErrExecutionAuthority
 	}
-	controls := c.RuntimeControlConfig{Gate: o.Gate, Keys: deploymentRecordKeys{o}, Client: o.Client, GatewayOriginalForTask: s.originalGateway, ParticipantChecks: map[string]c.ReadinessProbe{}, DeploymentChecks: map[string]c.ReadinessProbe{}, PollInterval: 200 * time.Millisecond, StopProofForTask: func(a d.Authority, ns string) c.RuntimeArmedStopProof { return o.StopWitnessIn(a, ns) }}
+	controls := c.RuntimeControlConfig{Namespace: s.Config.Namespace, Gate: o.Gate, Keys: deploymentRecordKeys{o}, Client: o.Client, GatewayOriginalForTask: s.originalGateway, ParticipantChecks: map[string]c.ReadinessProbe{}, DeploymentChecks: map[string]c.ReadinessProbe{}, PollInterval: 200 * time.Millisecond, StopProofForTask: func(a d.Authority, ns string) c.RuntimeArmedStopProof { return o.StopWitnessIn(a, ns) }}
 	for _, id := range cfg.LeaseParticipants {
 		controls.ParticipantChecks[id] = runtimeLeaseProbe{o}
 	}
@@ -239,7 +239,7 @@ func (s *DeploymentService) attachRuntimeSources(o *PublicJobOwner, profile b.Li
 
 func (s *DeploymentService) validateRuntimeInventory(inv b.SourceInventory) error {
 	cfg := s.Config.RuntimeSources
-	if cfg == nil || inv.Database != s.Config.SourceDatabase || inv.ServerUUID != s.Config.SourceServerUUID {
+	if cfg == nil || len(cfg.Namespaces) != 1 || cfg.Namespaces[0] != s.Config.Namespace || inv.Database != s.Config.SourceDatabase || inv.ServerUUID != s.Config.SourceServerUUID {
 		return d.ErrNotReady
 	}
 	allowed := map[string]bool{}
@@ -251,7 +251,10 @@ func (s *DeploymentService) validateRuntimeInventory(inv b.SourceInventory) erro
 		kinds[k] = true
 	}
 	for _, source := range inv.Instances {
-		if !allowed[source.Namespace] || !kinds[b.AgentKind{Type: source.Type, Mode: source.Mode, Variant: source.Variant, OS: source.OS}] || (source.Status != "running" && source.Status != "stopped") {
+		// A null Lite locator is resolved by D from the actual binding before
+		// contacting the source. The raw inventory and its hash remain unchanged.
+		missingLiteLocator := source.Namespace == "" && source.Mode == "lite" && source.Status == "running"
+		if (!allowed[source.Namespace] && !missingLiteLocator) || (source.Namespace != "" && source.Namespace != s.Config.Namespace) || !kinds[b.AgentKind{Type: source.Type, Mode: source.Mode, Variant: source.Variant, OS: source.OS}] || (source.Status != "running" && source.Status != "stopped") {
 			return d.ErrNotReady
 		}
 		// The capture mounts one reviewed workspace tree. A runtime outside it
@@ -378,8 +381,25 @@ func (s *DeploymentService) checkRuntimeWorkspace(ctx context.Context, client ku
 		if source.Status != "running" {
 			continue
 		}
-		pod, e := client.CoreV1().Pods(source.Namespace).Get(ctx, source.Pod, metav1.GetOptions{})
+		namespace, name, uid := source.Namespace, source.Pod, ""
+		if source.Mode == "lite" {
+			if s.RuntimeControl == nil {
+				return d.ErrNotReady
+			}
+			mapped, e := s.RuntimeControl.ResolveGatewaySource(ctx, source)
+			if e != nil {
+				return e
+			}
+			namespace, name, uid = mapped.RuntimeNamespace(), mapped.RuntimePod(), mapped.UID
+		}
+		if namespace != s.Config.Namespace || name == "" {
+			return d.ErrNotReady
+		}
+		pod, e := client.CoreV1().Pods(namespace).Get(ctx, name, metav1.GetOptions{})
 		if e != nil || pod.DeletionTimestamp != nil {
+			return d.ErrNotReady
+		}
+		if uid != "" && string(pod.UID) != uid {
 			return d.ErrNotReady
 		}
 		found := false
@@ -410,7 +430,7 @@ func (s *DeploymentService) checkRuntimeWorkspace(ctx context.Context, client ku
 					if volume.Name != mount.Name || volume.PersistentVolumeClaim == nil {
 						continue
 					}
-					claim, e := client.CoreV1().PersistentVolumeClaims(source.Namespace).Get(ctx, volume.PersistentVolumeClaim.ClaimName, metav1.GetOptions{})
+					claim, e := client.CoreV1().PersistentVolumeClaims(namespace).Get(ctx, volume.PersistentVolumeClaim.ClaimName, metav1.GetOptions{})
 					if e == nil && claim.DeletionTimestamp == nil && claim.Spec.VolumeName == target.Spec.VolumeName {
 						matched = true
 					}

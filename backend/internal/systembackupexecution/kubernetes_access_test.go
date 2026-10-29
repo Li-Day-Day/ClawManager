@@ -23,6 +23,10 @@ func captureAccessFixture(t *testing.T) DeploymentConfig {
 func TestCaptureKubernetesGrantsDoNotGrantSourceSecretsOrAdministration(t *testing.T) {
 	cfg := captureAccessFixture(t)
 	cfg.Writers = append(cfg.Writers, PlatformDeployment{Namespace: "source-other", Name: "original-source", UID: "dep-2"})
+	if _, err := CaptureKubernetesGrants(cfg, "controller"); err == nil {
+		t.Fatal("cross-namespace writer widened backup scope")
+	}
+	cfg.Writers[1].Namespace = cfg.Namespace
 	objects, err := CaptureKubernetesGrants(cfg, "controller")
 	if err != nil {
 		t.Fatal(err)

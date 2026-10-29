@@ -16,7 +16,7 @@ import (
 func runtimeDeploymentFixture(t *testing.T) DeploymentConfig {
 	cfg := captureAccessFixture(t)
 	cfg.CaptureScope = "runtime-workspace"
-	cfg.RuntimeSources = &RuntimeSourceConfig{Supported: []b.AgentKind{{Type: "openclaw", Mode: "pro", Variant: "linux", OS: "linux"}}, Namespaces: []string{"runtime"}, LeaseParticipants: []string{"application-mutations"}, WorkspaceRoot: "/workspaces"}
+	cfg.RuntimeSources = &RuntimeSourceConfig{Supported: []b.AgentKind{{Type: "openclaw", Mode: "pro", Variant: "linux", OS: "linux"}}, Namespaces: []string{cfg.Namespace}, LeaseParticipants: []string{"application-mutations"}, WorkspaceRoot: "/workspaces"}
 	return cfg
 }
 func TestDeploymentRuntimeScopeAndRBACAreExplicit(t *testing.T) {
@@ -29,17 +29,26 @@ func TestDeploymentRuntimeScopeAndRBACAreExplicit(t *testing.T) {
 		t.Fatal(e)
 	}
 	podAccess := false
+	secretRules := 0
 	for _, item := range access {
-		if item.Namespace == "runtime" {
+		if item.Namespace != "" && item.Namespace != cfg.Namespace {
+			t.Fatal("runtime role escaped namespace")
+		}
+		if item.Namespace == cfg.Namespace {
 			if slices.Contains(item.Rule.Resources, "secrets") {
-				t.Fatal("source secret granted")
+				// Worker identity Secrets already require this exact rule in the
+				// installation namespace. Runtime admission must not expand it.
+				secretRules++
+				if !slices.Equal(item.Rule.Verbs, []string{"get", "create"}) || len(item.Rule.ResourceNames) != 0 {
+					t.Fatal("runtime expanded identity secret rule")
+				}
 			}
 			if slices.Contains(item.Rule.Resources, "pods") && slices.Contains(item.Rule.Verbs, "patch") && slices.Contains(item.Rule.Verbs, "create") {
 				podAccess = true
 			}
 		}
 	}
-	if !podAccess {
+	if !podAccess || secretRules != 1 {
 		t.Fatal("actual Pod resume calls lack RBAC")
 	}
 	cfg.CaptureScope = "platform-workspace"
@@ -52,10 +61,34 @@ func TestDeploymentRuntimeScopeAndRBACAreExplicit(t *testing.T) {
 		t.Fatal("missing participants accepted")
 	}
 }
+
+func TestDeploymentRuntimeCannotExpandNamespaceScope(t *testing.T) {
+	for _, fault := range []string{"runtime-namespace", "additional-namespace", "runtime-deployment", "platform-deployment"} {
+		t.Run(fault, func(t *testing.T) {
+			cfg := runtimeDeploymentFixture(t)
+			switch fault {
+			case "runtime-namespace":
+				cfg.RuntimeSources.Namespaces[0] = "other"
+			case "additional-namespace":
+				cfg.RuntimeSources.Namespaces = append(cfg.RuntimeSources.Namespaces, "other")
+			case "runtime-deployment":
+				cfg.RuntimeSources.Deployments = []PlatformDeployment{{Namespace: "other", Name: "runtime", UID: "uid"}}
+			case "platform-deployment":
+				cfg.Writers[0].Namespace = "other"
+			}
+			if cfg.Validate() == nil {
+				t.Fatal("scope expansion accepted")
+			}
+			if _, err := RequiredCaptureAccess(cfg); err == nil {
+				t.Fatal("out-of-scope role generated")
+			}
+		})
+	}
+}
 func TestDeploymentRuntimeChecksActualCapturedVolume(t *testing.T) {
 	cfg := runtimeDeploymentFixture(t)
 	s := &DeploymentService{Config: cfg}
-	source := b.InstanceIdentity{ID: 7, UserID: 2, Generation: 3, Mode: "pro", Type: "openclaw", Variant: "linux", OS: "linux", Status: "running", Namespace: "runtime", Pod: "original", Workspace: "/workspaces/2/7"}
+	source := b.InstanceIdentity{ID: 7, UserID: 2, Generation: 3, Mode: "pro", Type: "openclaw", Variant: "linux", OS: "linux", Status: "running", Namespace: cfg.Namespace, Pod: "original", Workspace: "/workspaces/2/7"}
 	for _, fault := range []string{"", "namespace", "path", "volume", "subpath", "missing", "replacement", "overlay"} {
 		t.Run(fault, func(t *testing.T) {
 			item := source
