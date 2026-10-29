@@ -153,5 +153,84 @@ class ApplyTrustTests(unittest.TestCase):
         self.assertEqual(result["config_readback_sha256"], subject.hashlib.sha256(subject.canonical(actual)).hexdigest())
         self.assertNotEqual(result["config_readback_sha256"], self.plan["config_request_sha256"])
 
+    def kek_probe(self, data):
+        provider = Provider()
+        subject.apply(provider, self.plan)
+        pin = subject.inspect(provider, self.plan)["config_readback_sha256"]
+        original = provider.request
+        calls = []
+        def readonly(method, path, body=None):
+            self.assertEqual(method, "GET")
+            self.assertIsNone(body)
+            calls.append(path)
+            if path == "transit/keys/backup-key":
+                return {"data": data} if data is not None else None
+            return original(method, path, body)
+        provider.request = readonly
+        return provider, pin, calls
+
+    def key_data(self):
+        return {"name": "backup-key", "type": "aes256-gcm96", "keys": {"1": 1793200000},
+                "kdf": "hkdf_sha256", "min_available_version": 0, "min_decryption_version": 1,
+                "min_encryption_version": 0, "latest_version": 1, **subject.KEY_FLAGS}
+
+    def test_kek_read_is_exact_metadata_get_after_trust_pin(self):
+        data = self.key_data()
+        data["unexpected_field"] = "private_value_must_not_escape"
+        provider, pin, calls = self.kek_probe(data)
+        result = subject.inspect_kek(provider, self.plan, "backup-key", 1, pin)
+        self.assertTrue(result["profile_matches"])
+        self.assertFalse(result["registry_admitted"])
+        self.assertFalse(result["task_authorized"])
+        self.assertFalse(result["provider_mutated"])
+        self.assertEqual(calls[-1], "transit/keys/backup-key")
+        self.assertEqual(sum(p.startswith("transit/") for p in calls), 1)
+        self.assertNotIn("private_value_must_not_escape", json.dumps(result))
+        self.assertEqual(len(provider.writes), 2)  # Fixture trust setup only.
+
+    def test_kek_metadata_mismatches_are_not_admitted_or_repaired(self):
+        cases = [(f, not value, f) for f, value in subject.KEY_FLAGS.items()]
+        cases += [(f, 2, f) for f in subject.KEY_WATERMARKS if f != "latest_version"]
+        cases += [("latest_version", 0, "latest_version"), ("keys", {}, "requested_version_present"),
+                  ("name", "other", "name_matches"), ("type", "rsa-2048", "type_matches"),
+                  ("kdf", "other", "kdf"), ("min_decryption_version", True, "min_decryption_version")]
+        for field, value, mismatch in cases:
+            with self.subTest(field=field):
+                data = self.key_data(); data[field] = value
+                provider, pin, calls = self.kek_probe(data)
+                result = subject.inspect_kek(provider, self.plan, "backup-key", 1, pin)
+                self.assertFalse(result["profile_matches"])
+                self.assertIn(mismatch, result["mismatch_fields"])
+                self.assertFalse(result["registry_admitted"])
+                self.assertEqual(len(provider.writes), 2)
+        data = self.key_data(); del data["exportable"]
+        provider, pin, _ = self.kek_probe(data)
+        result = subject.inspect_kek(provider, self.plan, "backup-key", 1, pin)
+        self.assertIsNone(result["observation"]["exportable"])
+        self.assertFalse(result["profile_matches"])
+
+    def test_rotated_key_keeps_explicit_version_and_missing_key_is_not_created(self):
+        data = self.key_data(); data["keys"]["2"] = 1793300000; data["latest_version"] = 2
+        provider, pin, _ = self.kek_probe(data)
+        result = subject.inspect_kek(provider, self.plan, "backup-key", 1, pin)
+        self.assertTrue(result["profile_matches"])
+        self.assertEqual(result["provider_version"], "1")
+        provider, pin, _ = self.kek_probe(None)
+        result = subject.inspect_kek(provider, self.plan, "backup-key", 1, pin)
+        self.assertEqual(result["status"], "backup_kek_not_found")
+        self.assertFalse(result["profile_matches"])
+        self.assertEqual(len(provider.writes), 2)
+
+    def test_trust_drift_or_unsafe_key_input_prevents_key_read(self):
+        provider, pin, calls = self.kek_probe(self.key_data())
+        with self.assertRaises(subject.support.Rejected):
+            subject.inspect_kek(provider, self.plan, "backup-key", 1, "0" * 64)
+        self.assertFalse(any(p.startswith("transit/") for p in calls))
+        for name, version in (("../export/key", 1), ("backup-key", True), ("backup-key", 0), ("backup-key", "latest")):
+            calls.clear()
+            with self.assertRaises(subject.support.Rejected):
+                subject.inspect_kek(provider, self.plan, name, version, pin)
+            self.assertEqual(calls, [])
+
 
 if __name__ == "__main__": unittest.main()

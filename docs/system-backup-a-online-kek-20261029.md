@@ -86,6 +86,12 @@ python3 -B scripts/system-backup-a-site-jwt-trust.py --apply
 
 ### 原 Job 用途策略与 role
 
+在正式映射准入前，使用 `python3 -B scripts/system-backup-a-site-jwt-trust.py --inspect-kek` 补齐此前未记录的 backup KEK 属性。该入口复用原 namespace/CA/Bao Pod/恢复凭据引用和按 UID 清理的临时管理 Pod；先 GET 并匹配已验收的完整 JWT trust readback SHA，再仅 GET `transit/keys/sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1`。它不调用 datakey、encrypt/decrypt、export、backup、rotate、配置或授权接口，不创建任务身份。现有 key 名和 numeric version 1 保持不变，不进行 key 列举或推导 registry identity/version。
+
+返回 `backup_kek_profile_observed` 及白名单 observation，检查 derived AES-256-GCM、不可导出、不可明文备份、不可删除、非收敛加密、非 soft-deleted、加解密/派生能力和 min available/decryption/encryption、latest 水位；仍明确选择 version 1，不自动切到 latest。缺失 key 返回 `backup_kek_not_found`，不补建；不符合条件则 `profile_matches:false` 并列出字段名，不修改 provider。`key_profile_sha256` 是读回元数据摘要，**不是** registry identity/version。`registry_admitted:false` 与 `task_authorized:false` 在所有观察回执中保持不变，实际操作、任务授权和历史恢复仍需后续验收。
+
+字段来源按 [OpenBao v2.6.2 formatKeyPolicy](https://raw.githubusercontent.com/openbao/openbao/v2.6.2/builtin/logical/transit/path_keys.go) 核对：对称 key 的 `keys` 记录版本及创建时间，实际 key material 需另行 export；本入口不调用 export。新版本地 trust/profile 13 项、site 10 项测试通过，覆盖只发 GET、先检查 trust pin、精确 key/version、属性缺失或漂移、历史水位拒绝、rotation 后不改选版本、缺失不补建、回执不能伪报准入及临时 Pod 清理。Python `-B`，未生成 bytecode 或构建产物。**目前只是现场核验入口准备完成，尚无 KEK 属性核验回执。**
+
 `scripts/system-backup-a-apply-kek-policy.py` 消费 `backupTransitPlan` 的公共输出及独立审核 SHA。默认 dry-run，`--apply` 才下发两个 exact context 的内容寻址 ACL 并读回。增加四个成组参数后才建立原 Pod 的单一已审用途 role：`--job-identity`、`--job-identity-sha256`、`--jwt-mount`、`--jwt-config-sha256`。最后一个必须是上一步的完整 config **读回** hash，不能误用 config request hash。
 
 身份 JSON 必须含 `operation: backup_dek_generate` 或 `backup_dek_unwrap`；一次仅建立对应的一个 role，不给同一 capture 身份同时发 unwrap。身份模板见 `examples/backup-controller/online-kek-capture-identity.example.json`；字段必须取自原 Job/API/授权回执，不从请求自报 UID 拼装。role audience 分别固定为 `clawmanager-backup-kek-generate` 或 `clawmanager-backup-kek-unwrap`、namespace/SA subject、Pod UID、SA UID，并将验证过的三个 UID/namespace claim 映射到 token metadata。token 为 batch、最大 20s、无 default/identity 额外 policy、不可续租；clock/expiration/not-before leeway 为 -1。原 mTLS/TokenReview 的 worker audience `clawmanager-backup-worker` 保持原用途；D/B 应另建 provider JWT projection 并将其纳入原 Job/WorkerObserver 的准入，而不是替换原控制身份。

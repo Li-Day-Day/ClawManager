@@ -31,6 +31,9 @@ ENDPOINT = "https://bao.sbk-provider-zh-7474d6e0b052.svc:8200"
 IMAGE = "10.130.14.23:5000/clawmanager@sha256:8829a85386402301f06f00a766a8b3627001bb4d7f327e16af228d3b337d9cb3"
 PLAN_SHA = "6e9de9b8d822810fa7f32ef7fa31f137cd8eb873c03c987662eb049794f8aed5"
 LABEL = "clawmanager.io/a-jwt-trust"
+BACKUP_KEY = "sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1"
+BACKUP_VERSION = 1
+TRUST_READBACK_SHA = "595ab8034b889490a055b56094ffdd1d71ace5a188d10fa77eab19d3deb89244"
 
 
 class CommandFailed(trust.support.Rejected):
@@ -150,8 +153,10 @@ p=json.load(sys.stdin)
 for name,source in p["sources"].items():
     pathlib.Path("/work",name).write_text(source,encoding="utf-8")
 pathlib.Path("/work/plan.json").write_bytes(bytes.fromhex(p["plan_hex"]))
-assert p["mode"] in ("apply", "inspect")
+assert p["mode"] in ("apply", "inspect", "inspect-kek")
 sys.argv=["setup","--plan","/work/plan.json","--plan-sha256",p["plan_sha256"],"--endpoint",p["endpoint"],"--ca-file","/trust/ca.crt","--ca-sha256",p["ca_sha256"],"--operator-token-file","/identity/root_token","--"+p["mode"]]
+if p["mode"] == "inspect-kek":
+    sys.argv += ["--key-name", p["key_name"], "--key-version", str(p["key_version"]), "--trust-readback-sha256", p["trust_readback_sha256"]]
 try:
     runpy.run_path("/work/system-backup-a-apply-jwt-trust.py",run_name="__main__")
 except SystemExit as error:
@@ -162,7 +167,7 @@ except SystemExit as error:
 '''
 
 
-def validate_receipt(receipt, plan_raw, inspect, progress):
+def validate_receipt(receipt, plan_raw, inspect, progress, inspect_kek=False):
     require(isinstance(receipt, dict))
     if receipt.get("status") == "failed_or_outcome_unknown":
         base = {"status", "failure_stage", "provider_write_attempted"}
@@ -179,6 +184,23 @@ def validate_receipt(receipt, plan_raw, inspect, progress):
         progress["provider_write_attempted"] = receipt["provider_write_attempted"]
         require(not inspect or receipt["provider_write_attempted"] is False)
         raise trust.support.Rejected("provider_operation_failed")
+    if inspect_kek:
+        require(set(receipt) == {"status", "key_name", "provider_version", "trust_config_readback_sha256",
+                                "key_profile_sha256", "observation", "profile_matches", "mismatch_fields",
+                                "provider_mutated", "registry_admitted", "credentials_created", "task_authorized"})
+        require(receipt["key_name"] == BACKUP_KEY and receipt["provider_version"] == str(BACKUP_VERSION))
+        require(receipt["trust_config_readback_sha256"] == TRUST_READBACK_SHA)
+        require(all(receipt[k] is False for k in ("provider_mutated", "registry_admitted", "credentials_created", "task_authorized")))
+        require(type(receipt["profile_matches"]) is bool)
+        if receipt["status"] == "backup_kek_not_found":
+            require(receipt["key_profile_sha256"] is None and receipt["observation"] is None and
+                    receipt["profile_matches"] is False and receipt["mismatch_fields"] == [])
+        else:
+            require(receipt["status"] == "backup_kek_profile_observed")
+            require(isinstance(receipt["key_profile_sha256"], str) and re.fullmatch(r"[0-9a-f]{64}", receipt["key_profile_sha256"]))
+            mismatches = trust.key_mismatches(receipt["observation"], BACKUP_VERSION)
+            require(receipt["mismatch_fields"] == mismatches and receipt["profile_matches"] == (not mismatches))
+        return
     expected = {"status", "mount", "config_request_sha256", "config_readback_sha256",
                 "roles_created", "credentials_created", "task_authorized"}
     expected |= {"mount_exists", "config_exists", "provider_mutated"} if inspect else {"created"}
@@ -202,7 +224,8 @@ def validate_receipt(receipt, plan_raw, inspect, progress):
         require(receipt["config_readback_sha256"] is None)
 
 
-def execute(plan_raw, name, inspect=False, progress=None):
+def execute(plan_raw, name, inspect=False, progress=None, inspect_kek=False):
+    inspect = inspect or inspect_kek
     if progress is None:
         progress = {}
     progress.update({"failure_stage": "preflight", "cleanup_stage": "not_started",
@@ -233,11 +256,14 @@ def execute(plan_raw, name, inspect=False, progress=None):
         progress["provider_write_attempted"] = not inspect
         raw = kube("-n", NS, "exec", "-i", name, "-c", "control", "--", "python", "-B", "-c", CLIENT,
                    data=json.dumps({"sources": sources, "plan_hex": plan_raw.hex(), "plan_sha256": PLAN_SHA,
-                                    "endpoint": ENDPOINT, "ca_sha256": CA_SHA, "mode": "inspect" if inspect else "apply"}).encode(), timeout=60)
+                                    "endpoint": ENDPOINT, "ca_sha256": CA_SHA,
+                                    "mode": "inspect-kek" if inspect_kek else "inspect" if inspect else "apply",
+                                    "key_name": BACKUP_KEY, "key_version": BACKUP_VERSION,
+                                    "trust_readback_sha256": TRUST_READBACK_SHA}).encode(), timeout=60)
         stage(progress, "provider_receipt")
         require(len(raw) <= 65536)
         receipt = trust.support.decode(raw)
-        validate_receipt(receipt, plan_raw, inspect, progress)
+        validate_receipt(receipt, plan_raw, inspect, progress, inspect_kek=inspect_kek)
         require(guard(progress) == original)
         stage(progress, "complete")
     finally:
@@ -279,6 +305,7 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--apply", action="store_true")
     mode.add_argument("--inspect", action="store_true", help="Use a temporary Pod for GET-only provider readback; no trust writes")
+    mode.add_argument("--inspect-kek", action="store_true", help="Read exact backup KEK metadata with verified JWT trust; no key operations or grants")
     args = parser.parse_args()
     name = "a-jwt-trust-" + secrets.token_hex(8)
     progress = {"failure_stage": "plan", "cleanup_stage": "not_started",
@@ -287,11 +314,11 @@ def main():
         raw = (ROOT / "docs/evidence/a-site-kek-jwt-trust-prepared-20261029.json").read_bytes()
         require(hashlib.sha256(raw).hexdigest() == PLAN_SHA)
         mount, _ = trust.reviewed_plan(trust.support.decode(raw))
-        if not args.apply and not args.inspect:
+        if not args.apply and not args.inspect and not args.inspect_kek:
             print(json.dumps({"status": "review_only_not_applied", "mount": mount, "plan_sha256": PLAN_SHA,
                               "namespace": NS, "operator_secret_reference": "lab-recovery/root_token"}))
             return 0
-        print(json.dumps(execute(raw, name, inspect=args.inspect, progress=progress)))
+        print(json.dumps(execute(raw, name, inspect=args.inspect, progress=progress, inspect_kek=args.inspect_kek)))
         return 0
     except Exception as error:
         error_kind = "kubectl_timeout" if isinstance(error, subprocess.TimeoutExpired) else "rejected_or_invalid_response"
@@ -299,7 +326,7 @@ def main():
             error_kind = "kubectl_failed"
             progress["kubectl_exit_code"] = error.returncode
         print(json.dumps({"status": "failed_or_outcome_unknown", "temporary_pod_name": name,
-                          **progress, "error_kind": error_kind, "mode": "inspect" if args.inspect else "apply",
+                          **progress, "error_kind": error_kind, "mode": "inspect-kek" if args.inspect_kek else "inspect" if args.inspect else "apply",
                           "next": "Check public mount receipt and temporary Pod cleanup; no implicit retry, raw errors withheld."}))
         return 1
 

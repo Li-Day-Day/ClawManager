@@ -14,7 +14,8 @@ spec.loader.exec_module(s)
 
 
 class SiteTests(unittest.TestCase):
-    def run_site(self, mode, inspect=False):
+    def run_site(self, mode, inspect=False, inspect_kek=False):
+        inspect = inspect or inspect_kek
         name = "a-jwt-trust-0000000000000000"
         live = None
         deleted = []
@@ -45,12 +46,21 @@ class SiteTests(unittest.TestCase):
                 payload = json.loads(data)
                 self.assertEqual(set(payload["sources"]), {"system-backup-a-apply-jwt-trust.py", "system-backup-a-apply-kek-policy.py"})
                 self.assertNotIn("token", payload)
-                self.assertEqual(payload["mode"], "inspect" if inspect else "apply")
+                self.assertEqual(payload["mode"], "inspect-kek" if inspect_kek else "inspect" if inspect else "apply")
                 if mode == "exec": raise s.trust.support.Rejected()
                 if mode == "replacement": live["metadata"]["uid"] = "replacement-uid"
                 if mode == "provider-failure":
                     return json.dumps({"status": "failed_or_outcome_unknown", "failure_stage": "config_read",
                                        "provider_write_attempted": not inspect}).encode()
+                if inspect_kek:
+                    self.assertEqual(payload["key_name"], s.BACKUP_KEY)
+                    self.assertEqual(payload["key_version"], 1)
+                    self.assertEqual(payload["trust_readback_sha256"], s.TRUST_READBACK_SHA)
+                    return json.dumps({"status": "backup_kek_not_found", "key_name": s.BACKUP_KEY,
+                                       "provider_version": "1", "trust_config_readback_sha256": s.TRUST_READBACK_SHA,
+                                       "key_profile_sha256": None, "observation": None, "profile_matches": False,
+                                       "mismatch_fields": [], "provider_mutated": False, "registry_admitted": False,
+                                       "credentials_created": False, "task_authorized": False}).encode()
                 receipt = {"status": "jwt_trust_readback_verified", "mount": plan["mount"],
                            "config_request_sha256": plan["config_request_sha256"], "config_readback_sha256": "a" * 64,
                            "roles_created": False, "credentials_created": False, "task_authorized": False}
@@ -72,9 +82,9 @@ class SiteTests(unittest.TestCase):
 
         with patch.object(s, "guard", return_value={"uid": "root-ref", "resource_version": "1"}), patch.object(s, "get", side_effect=get), patch.object(s, "kube", side_effect=kube):
             if mode in ("valid", "absent"):
-                self.assertTrue(s.execute(plan_raw, name, inspect=inspect, progress=progress)["temporary_control_pod_removed"])
+                self.assertTrue(s.execute(plan_raw, name, inspect=inspect, progress=progress, inspect_kek=inspect_kek)["temporary_control_pod_removed"])
             else:
-                with self.assertRaises(s.trust.support.Rejected): s.execute(plan_raw, name, inspect=inspect, progress=progress)
+                with self.assertRaises(s.trust.support.Rejected): s.execute(plan_raw, name, inspect=inspect, progress=progress, inspect_kek=inspect_kek)
         self.assertEqual(deleted, [] if mode == "replacement" else ["original-uid"])
         if mode in ("admission", "wait", "unknown-create"):
             self.assertFalse(any("exec" in cmd for cmd in commands))
@@ -94,6 +104,33 @@ class SiteTests(unittest.TestCase):
     def test_inspection_transports_mode_and_cleans_up_on_failure(self):
         for mode in ("valid", "absent", "provider-failure", "exec"):
             with self.subTest(mode=mode): self.run_site(mode, inspect=True)
+
+    def test_key_inspection_reuses_original_guard_and_cleanup(self):
+        for mode in ("valid", "provider-failure", "exec"):
+            with self.subTest(mode=mode): self.run_site(mode, inspect_kek=True)
+
+    def test_key_receipt_cannot_change_key_version_pin_or_authorization(self):
+        receipt = {"status": "backup_kek_not_found", "key_name": s.BACKUP_KEY, "provider_version": "1",
+                   "trust_config_readback_sha256": s.TRUST_READBACK_SHA, "key_profile_sha256": None,
+                   "observation": None, "profile_matches": False, "mismatch_fields": [],
+                   "provider_mutated": False, "registry_admitted": False, "credentials_created": False, "task_authorized": False}
+        for field, value in (("key_name", "other"), ("provider_version", "2"), ("trust_config_readback_sha256", "0" * 64),
+                             ("registry_admitted", True), ("provider_mutated", True), ("task_authorized", True), ("profile_matches", True)):
+            altered = {**receipt, field: value}
+            with self.subTest(field=field), self.assertRaises(s.trust.support.Rejected):
+                s.validate_receipt(altered, b"", True, {}, inspect_kek=True)
+        observed = {"name_matches": True, "type_matches": True, "requested_version_present": True,
+                    "kdf": "hkdf_sha256", "min_available_version": 0, "min_decryption_version": 1,
+                    "min_encryption_version": 0, "latest_version": 1, **s.trust.KEY_FLAGS}
+        receipt.update({"status": "backup_kek_profile_observed", "observation": observed,
+                        "profile_matches": True, "key_profile_sha256": "a" * 64})
+        s.validate_receipt(receipt, b"", True, {}, inspect_kek=True)
+        receipt["observation"]["exportable"] = True
+        with self.assertRaises(s.trust.support.Rejected):
+            s.validate_receipt(receipt, b"", True, {}, inspect_kek=True)
+        receipt["profile_matches"] = False
+        receipt["mismatch_fields"] = ["exportable"]
+        s.validate_receipt(receipt, b"", True, {}, inspect_kek=True)
 
     def test_failure_receipt_does_not_print_raw_exception_or_claim_cleanup(self):
         output = io.StringIO()
