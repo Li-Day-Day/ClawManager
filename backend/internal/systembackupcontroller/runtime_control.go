@@ -137,11 +137,16 @@ func (o *SQLRuntimeControl) Prepare(ctx context.Context, a d.Authority) ([]b.Run
 			} else {
 				original, e = o.cfg.GatewayOriginal(ctx, source)
 			}
-			if e != nil || original.InstanceID != source.ID || original.UserID != source.UserID || original.Generation != source.Generation || original.WorkspacePath != source.Workspace || original.GatewayPort != spec.Port || original.UpgradeID != "" || original.UID <= 0 || original.GID <= 0 {
+			if e != nil || original.InstanceID != source.ID || original.UserID != source.UserID || original.Generation != source.Generation || original.WorkspacePath != source.Workspace || original.GatewayPort != spec.Port || original.UpgradeID != "" || original.PodUID != spec.UID || original.PortRange.Start != spec.Port || original.PortRange.End < spec.Port || original.PortRange.End > 65535 || original.UID <= 0 || original.GID <= 0 {
 				return nil, ErrExecutionRecord
 			}
 			spec.UIDNumber, spec.GIDNumber = original.UID, original.GID
 			original.Generation = spec.ResumeGeneration
+			restartDigest, digestErr := services.RuntimeBackupRestartDigest(original)
+			if digestErr != nil {
+				return nil, digestErr
+			}
+			spec.Backup = b.RuntimeGatewayBackup{Protocol: services.RuntimeBackupProtocol, OperationID: gatewayOperationID(a, runtimeWriterID(spec)), RestartSHA256: restartDigest}
 			material, e = json.Marshal(original)
 			if e != nil {
 				return nil, e
@@ -263,7 +268,7 @@ func (o *SQLRuntimeControl) gatewayBinding(ctx context.Context, tx *sql.Tx, s b.
 		if resumed {
 			want.Generation = s.ResumeGeneration
 		}
-		if e != nil || s.Runtime.Version != "runtime-locator.v1" || !bindingMatchesSource(r, want, o.cfg.Namespace) || r.ID != s.Runtime.RuntimePodID || r.UID != s.Runtime.RegisteredPodUID || r.Namespace != s.Runtime.Namespace || r.Pod != s.Runtime.Pod || r.Deployment != s.Runtime.Deployment || r.Endpoint != s.Endpoint || r.Port != s.Port || (!resumed && r.PID != s.Runtime.GatewayPID) {
+		if e != nil || s.Runtime.Version != "runtime-locator.v2" || !bindingMatchesSource(r, want, o.cfg.Namespace) || r.ID != s.Runtime.RuntimePodID || r.UID != s.Runtime.RegisteredPodUID || r.Namespace != s.Runtime.Namespace || r.Pod != s.Runtime.Pod || r.Deployment != s.Runtime.Deployment || r.Endpoint != s.Endpoint || r.Port != s.Port || (!resumed && r.PID != s.Runtime.GatewayPID) {
 			return ErrExecutionRecord
 		}
 		return o.checkGatewayPod(ctx, s)
@@ -309,7 +314,7 @@ func runtimeRecoveryPoint(point string) (bool, error) {
 	switch point {
 	case "observe", "observed", "before-stop", "check-stopped":
 		return false, nil
-	case "before-resume", "recovery-check-stopped", "recovery-stop-old", "before-restart-dispatch", "restart-dispatched", "check-resumed", "commit-resumed", "claim-restart", "complete-restart":
+	case "before-resume", "recovery-check-stopped", "recovery-stop-old", "before-restart-dispatch", "restart-dispatched", "check-resumed", "commit-resumed", "claim-restart", "complete-restart", "release-restart":
 		return true, nil
 	}
 	return false, ErrExecutionAuthority
@@ -552,8 +557,20 @@ func (o *SQLRuntimeControl) ClaimRestart(ctx context.Context, a d.Authority, id 
 			if e = o.gatewayBinding(ctx, tx, r.Spec, false); e != nil {
 				return e
 			}
-			old, e := o.cfg.Agent.GatewayState(ctx, r.Spec.Endpoint, fmt.Sprintf("gw-%d-%d", r.Spec.Source.ID, r.Spec.Source.Generation))
-			if !errors.Is(e, services.ErrRuntimeAgentNotFound) && (e != nil || old == nil || old.InstanceID != r.Spec.Source.ID || old.Generation != r.Spec.Source.Generation || old.GatewayID != fmt.Sprintf("gw-%d-%d", r.Spec.Source.ID, r.Spec.Source.Generation) || old.State != "stopped") {
+			req, err := gatewayBackupRequest(a, r.Spec)
+			if err != nil {
+				return err
+			}
+			proof, err := readGatewayProof(ctx, tx, a, id, req, "stopped")
+			if err != nil || !r.Stopped.Valid || recordHash(proof.Raw) != r.Stopped.String {
+				return ErrExecutionRecoveryRequired
+			}
+			agent, ok := o.cfg.Agent.(services.RuntimeAgentBackupClient)
+			if !ok {
+				return ErrExecutionRecoveryRequired
+			}
+			live, err := agent.BackupControl(ctx, r.Spec.Endpoint, "state", req, nil)
+			if err != nil || live.Pending || live.Receipt.State != "stopped" || !bytes.Equal(live.Raw, proof.Raw) {
 				return ErrExecutionRecoveryRequired
 			}
 		}
@@ -677,6 +694,25 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 			return e
 		}
 		spec := r.Spec
+		var gatewayResume services.RuntimeBackupObservation
+		if spec.Kind == "gateway" {
+			req, err := gatewayBackupRequest(a, spec)
+			if err != nil || !r.Claimed {
+				return ErrExecutionRecoveryRequired
+			}
+			gatewayResume, err = readGatewayProof(ctx, tx, a, id, req, "resumed")
+			if err != nil {
+				return err
+			}
+			agent, ok := o.cfg.Agent.(services.RuntimeAgentBackupClient)
+			if !ok {
+				return ErrExecutionRecoveryRequired
+			}
+			live, err := agent.BackupControl(ctx, spec.Endpoint, "state", req, nil)
+			if err != nil || live.Pending || !bytes.Equal(live.Raw, gatewayResume.Raw) {
+				return ErrExecutionRecoveryRequired
+			}
+		}
 		raw, _ := json.Marshal(ob)
 		if r.Completed {
 			if !bytes.Equal(r.Resumed, raw) {
@@ -695,7 +731,11 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 					return e
 				}
 				live, e := o.cfg.Agent.GatewayState(ctx, spec.Endpoint, ob.GatewayID)
-				if e != nil || live == nil || live.GatewayID != ob.GatewayID || live.InstanceID != spec.Source.ID || live.Generation != spec.ResumeGeneration || live.State != "running" {
+				if e != nil || live == nil || live.GatewayID != ob.GatewayID || live.InstanceID != spec.Source.ID || live.Generation != spec.ResumeGeneration || live.State != "running" || live.UserID != spec.Source.UserID || live.Port != spec.Port || live.PID != gatewayResume.Receipt.PID {
+					return ErrExecutionRecord
+				}
+				binding, e := readGatewayBinding(ctx, tx, spec.Source.ID, true)
+				if e != nil || binding.PID != gatewayResume.Receipt.PID {
 					return ErrExecutionRecord
 				}
 			}
@@ -715,7 +755,7 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 				return ErrExecutionRecord
 			}
 			live, e := o.cfg.Agent.GatewayState(ctx, spec.Endpoint, ob.GatewayID)
-			if e != nil || live == nil || live.GatewayID != ob.GatewayID || live.InstanceID != spec.Source.ID || live.Generation != spec.ResumeGeneration || live.State != "running" {
+			if e != nil || live == nil || live.GatewayID != ob.GatewayID || live.InstanceID != spec.Source.ID || live.Generation != spec.ResumeGeneration || live.State != "running" || live.UserID != spec.Source.UserID || live.Port != spec.Port || live.PID != gatewayResume.Receipt.PID {
 				return ErrExecutionRecord
 			}
 			if e := o.checkGatewayPod(ctx, spec); e != nil {
@@ -724,7 +764,7 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 			if e = o.gatewayBinding(ctx, tx, spec, false); e != nil {
 				return e
 			}
-			result, e := tx.ExecContext(ctx, `UPDATE instance_runtime_bindings SET generation=?,gateway_id=?,state='running' WHERE instance_id=? AND generation=? AND gateway_port=?`, spec.ResumeGeneration, ob.GatewayID, spec.Source.ID, spec.Source.Generation, spec.Port)
+			result, e := tx.ExecContext(ctx, `UPDATE instance_runtime_bindings SET generation=?,gateway_id=?,gateway_pid=?,state='running' WHERE instance_id=? AND generation=? AND gateway_port=? AND runtime_pod_id=? AND gateway_pid=?`, spec.ResumeGeneration, ob.GatewayID, gatewayResume.Receipt.PID, spec.Source.ID, spec.Source.Generation, spec.Port, spec.Runtime.RuntimePodID, spec.Runtime.GatewayPID)
 			if e != nil {
 				return e
 			}
@@ -763,7 +803,7 @@ func (o *SQLRuntimeControl) CompleteRestart(ctx context.Context, a d.Authority, 
 	})
 }
 func (o *SQLRuntimeControl) Callbacks() b.WriterCallbacks {
-	return b.WriterCallbacks{Guard: o.Guard, ClaimRestart: o.ClaimRestart, CompleteRestart: o.CompleteRestart, ConfirmStopped: o.ConfirmStopped, ConfirmResumed: o.ConfirmResumed,
+	return b.WriterCallbacks{GatewayControl: o.GatewayControl, Guard: o.Guard, ClaimRestart: o.ClaimRestart, CompleteRestart: o.CompleteRestart, ConfirmStopped: o.ConfirmStopped, ConfirmResumed: o.ConfirmResumed,
 		LoadGateway: func(ctx context.Context, a d.Authority, id, ref string) (services.RuntimeAgentCreateGatewayRequest, error) {
 			var v services.RuntimeAgentCreateGatewayRequest
 			raw, e := o.load(ctx, a, id, ref)
@@ -798,10 +838,22 @@ func (o *SQLRuntimeControl) Dependencies(ctx context.Context, a d.Authority, spe
 	out := b.RuntimeWriterDependencies{Ports: o.cfg.Gate, Client: o.cfg.Client, Agent: o.cfg.Agent, Callbacks: o.Callbacks(), PollInterval: o.cfg.PollInterval}
 	physical := map[string]bool{}
 	for _, id := range o.cfg.AdditionalWriterIDs {
+		if id == "" || len(id) > 128 || physical[id] {
+			return out, ErrExecutionRecord
+		}
 		physical[id] = true
 	}
 	for _, s := range specs {
-		physical[runtimeWriterID(s)] = true
+		id := runtimeWriterID(s)
+		if id == "" || len(id) > 128 || physical[id] {
+			return out, ErrExecutionRecord
+		}
+		physical[id] = true
+	}
+	for id := range o.cfg.ParticipantChecks {
+		if physical[id] {
+			return out, ErrExecutionRecord
+		}
 	}
 	rows, e := o.cfg.Gate.Authority.DB.QueryContext(ctx, `SELECT participant_id FROM system_backup_participants WHERE scope=? ORDER BY participant_id`, o.cfg.Gate.Authority.ApplicationScope)
 	if e != nil {

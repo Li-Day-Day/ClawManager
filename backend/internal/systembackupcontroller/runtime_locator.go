@@ -58,12 +58,12 @@ func gatewayEndpointMatchesPod(endpoint string, pod *corev1.Pod) bool {
 	return false
 }
 
-func validGatewayCapabilities(caps *services.RuntimeAgentStopCapabilities, uid string) bool {
+func validGatewayCapabilities(caps *services.RuntimeBackupCapabilities, uid, namespace string, port int) bool {
 	if caps == nil {
 		return false
 	}
 	epoch, e := hex.DecodeString(caps.AgentEpoch)
-	return e == nil && len(epoch) == 16 && hex.EncodeToString(epoch) == caps.AgentEpoch && caps.Protocol == 1 && caps.PodUID == uid && caps.GracefulStop && caps.ExpectedPIDGuard && caps.ConfirmationScope == "process_group"
+	return e == nil && len(epoch) == 16 && hex.EncodeToString(epoch) == caps.AgentEpoch && caps.Protocol == services.RuntimeBackupProtocol && caps.PodUID == uid && caps.Namespace == namespace && caps.GatewayPort == port && caps.Slot != "" && caps.Supported && caps.DurableReservation && caps.Scope == services.RuntimeBackupStopScope
 }
 
 // ResolveGatewaySource is read-only discovery, not an execution grant. The
@@ -79,7 +79,7 @@ func (o *SQLRuntimeControl) ResolveGatewaySource(ctx context.Context, source b.I
 		return zero, ErrExecutionRecord
 	}
 	spec := b.RuntimeWriterSpec{Source: source, Kind: "gateway", Name: r.Pod, Endpoint: r.Endpoint, Port: r.Port,
-		Runtime: b.RuntimeLocator{Version: "runtime-locator.v1", Namespace: r.Namespace, Pod: r.Pod, RegisteredPodUID: r.UID, RuntimePodID: r.ID, Deployment: r.Deployment, GatewayPID: r.PID}}
+		Runtime: b.RuntimeLocator{Version: "runtime-locator.v2", Namespace: r.Namespace, Pod: r.Pod, RegisteredPodUID: r.UID, RuntimePodID: r.ID, Deployment: r.Deployment, GatewayPID: r.PID}}
 	pod, e := o.cfg.Client.CoreV1().Pods(r.Namespace).Get(ctx, r.Pod, metav1.GetOptions{})
 	if e != nil || !gatewayEndpointMatchesPod(r.Endpoint, pod) || (r.UID != "" && r.UID != string(pod.UID)) {
 		return zero, ErrExecutionRecord
@@ -93,7 +93,7 @@ func (o *SQLRuntimeControl) ResolveGatewaySource(ctx context.Context, source b.I
 	return spec, nil
 }
 
-func (o *SQLRuntimeControl) gatewayCapabilities(ctx context.Context, spec b.RuntimeWriterSpec) (*services.RuntimeAgentStopCapabilities, error) {
+func (o *SQLRuntimeControl) gatewayCapabilities(ctx context.Context, spec b.RuntimeWriterSpec) (*services.RuntimeBackupCapabilities, error) {
 	if spec.RuntimeNamespace() != o.cfg.Namespace {
 		return nil, ErrExecutionRecord
 	}
@@ -109,12 +109,12 @@ func (o *SQLRuntimeControl) gatewayCapabilities(ctx context.Context, spec b.Runt
 	if e != nil || dep.Name != spec.Runtime.Deployment {
 		return nil, ErrExecutionRecord
 	}
-	agent, ok := o.cfg.Agent.(services.RuntimeAgentStopClient)
+	agent, ok := o.cfg.Agent.(services.RuntimeAgentBackupClient)
 	if !ok {
 		return nil, ErrExecutionRecord
 	}
-	caps, e := agent.StopCapabilities(ctx, spec.Endpoint)
-	if e != nil || !validGatewayCapabilities(caps, spec.UID) || (spec.Runtime.AgentEpoch != "" && caps.AgentEpoch != spec.Runtime.AgentEpoch) {
+	caps, e := agent.BackupCapabilities(ctx, spec.Endpoint, spec.Port)
+	if e != nil || !validGatewayCapabilities(caps, spec.UID, spec.RuntimeNamespace(), spec.Port) || (spec.Runtime.AgentEpoch != "" && caps.AgentEpoch != spec.Runtime.AgentEpoch) {
 		return nil, ErrExecutionRecord
 	}
 	return caps, nil
@@ -122,7 +122,7 @@ func (o *SQLRuntimeControl) gatewayCapabilities(ctx context.Context, spec b.Runt
 
 func (o *SQLRuntimeControl) checkGatewayPod(ctx context.Context, spec b.RuntimeWriterSpec) error {
 	if spec.Runtime.Version != "" {
-		if spec.Runtime.Version != "runtime-locator.v1" {
+		if spec.Runtime.Version != "runtime-locator.v2" {
 			return ErrExecutionRecord
 		}
 		_, e := o.gatewayCapabilities(ctx, spec)

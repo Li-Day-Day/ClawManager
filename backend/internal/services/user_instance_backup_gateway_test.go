@@ -20,6 +20,7 @@ type backupGatewayFixture struct {
 	states                                    map[string]*RuntimeAgentGatewayState
 	creates, deletes, completed               int
 	claimed, loseCreate, holdCreate, loseStop bool
+	stopProof                                 bool
 	blockPoint                                string
 	writer                                    *BackupGatewayWriter
 }
@@ -115,6 +116,53 @@ func newBackupGatewayFixture(t *testing.T, agent string, running bool) *backupGa
 		f.completed++
 		return nil
 	}
+	w.GatewayControl = func(_ context.Context, point string, _ flow.State) (bool, error) {
+		f.mu.Lock()
+		defer f.mu.Unlock()
+		switch point {
+		case "before-stop", "recovery-stop-old":
+			if point == "recovery-stop-old" && f.claimed {
+				return f.stopProof, nil
+			}
+			if f.states["gw-7-4"] != nil {
+				return false, errors.New("successor already present")
+			}
+			if f.stopProof {
+				return true, nil
+			}
+			old := f.states["gw-7-3"]
+			if old == nil || old.InstanceID != 7 || old.Generation != 3 {
+				return false, errors.New("no positive source identity")
+			}
+			f.deletes++
+			delete(f.states, "gw-7-3")
+			f.stopProof = true
+			if f.loseStop {
+				f.loseStop = false
+				return false, errors.New("synthetic-private-error")
+			}
+			return true, nil
+		case "check-stopped", "recovery-check-stopped":
+			return f.stopProof && f.states["gw-7-4"] == nil, nil
+		case "restart-dispatched":
+			if !f.claimed || !f.stopProof {
+				return false, errors.New("unreserved dispatch")
+			}
+			f.creates++
+			if !f.holdCreate {
+				f.states["gw-7-4"] = &RuntimeAgentGatewayState{GatewayID: "gw-7-4", InstanceID: 7, Generation: 4, State: "running"}
+			}
+			if f.loseCreate || f.holdCreate {
+				return false, errors.New("uncertain dispatch")
+			}
+			return true, nil
+		case "check-resumed":
+			return f.states["gw-7-4"] != nil && f.stopProof && f.claimed, nil
+		case "release-restart":
+			return f.completed > 0, nil
+		}
+		return false, errors.New("unknown control point")
+	}
 	f.writer = w
 	return f
 }
@@ -159,21 +207,13 @@ func TestBackupGatewayWriterLinuxMatrixAndLateStop(t *testing.T) {
 		})
 	}
 }
-func TestBackupGatewayWriterKeepsStoppedSourceStopped(t *testing.T) {
+func TestBackupGatewayWriterDoesNotTreatMissingRunningSourceAsStopped(t *testing.T) {
 	f := newBackupGatewayFixture(t, "hermes", false)
-	ctx := backupContext(t)
-	s, err := f.writer.Observe(ctx)
-	if err != nil || s.Running {
-		t.Fatal(err)
-	}
-	if _, err = f.writer.Pause(ctx, s); err != nil {
-		t.Fatal(err)
-	}
-	if err = f.writer.Resume(ctx, s); err != nil {
-		t.Fatal(err)
+	if _, err := f.writer.Observe(backupContext(t)); err == nil {
+		t.Fatal("missing source became stop evidence")
 	}
 	if f.creates != 0 || f.deletes != 0 || f.completed != 0 {
-		t.Fatal("stopped instance started or changed")
+		t.Fatal("missing source mutated")
 	}
 }
 func TestBackupGatewayWriterLostStopAndCreateResponses(t *testing.T) {
@@ -232,7 +272,7 @@ func TestBackupGatewayWriterUncertainCreateIsOnlyReconciled(t *testing.T) {
 	}
 }
 func TestBackupGatewayWriterRejectsDriftAndMissingRecoveryDependencies(t *testing.T) {
-	for _, mode := range []string{"guard", "restart-ref", "generation", "identity", "recovery-exists", "windows", "checkpoint", "no-deadline"} {
+	for _, mode := range []string{"guard", "restart-ref", "generation", "identity", "recovery-exists", "windows", "checkpoint", "no-deadline", "no-proof-callback"} {
 		t.Run(mode, func(t *testing.T) {
 			f := newBackupGatewayFixture(t, "workbuddy", true)
 			ctx := backupContext(t)
@@ -261,6 +301,8 @@ func TestBackupGatewayWriterRejectsDriftAndMissingRecoveryDependencies(t *testin
 				f.writer.Source.Runtime.Variant = "windows"
 			case "checkpoint":
 				s.Checkpoint += " "
+			case "no-proof-callback":
+				f.writer.GatewayControl = nil
 			case "no-deadline":
 				ctx = context.Background()
 			}

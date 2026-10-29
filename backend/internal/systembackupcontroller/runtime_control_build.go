@@ -28,6 +28,7 @@ func (o *SQLRuntimeControl) Ready(ctx context.Context) error {
 	for _, query := range []string{
 		"SELECT task_public_id,attempt_no,writer_id,instance_id,spec_json,material_sha256,key_ref,sealed_material,restart_claimed,restart_completed,resumed_json,stopped_sha256,row_version FROM system_backup_v2_runtime_controls WHERE 1=0",
 		"SELECT origin_installation_id,task_public_id,attempt_no,phase,job_unit_key,sequence_no,body_sha256,body_json FROM system_backup_v2_relay_receipts WHERE 1=0",
+		"SELECT task_public_id,attempt_no,writer_id,proof_kind,request_sha256,body_sha256,body_raw FROM system_backup_v2_gateway_proofs WHERE 1=0",
 	} {
 		rows, e := o.cfg.Gate.Authority.DB.QueryContext(ctx, query)
 		if e != nil {
@@ -218,6 +219,7 @@ func runtimeControlTableGrants() map[string][]string {
 	out["instance_runtime_bindings"] = []string{"SELECT", "UPDATE"}
 	out["runtime_pods"] = []string{"SELECT", "UPDATE"}
 	out["system_backup_v2_runtime_controls"] = []string{"SELECT", "INSERT", "UPDATE"}
+	out["system_backup_v2_gateway_proofs"] = []string{"SELECT", "INSERT"}
 	out["system_backup_v2_relay_receipts"] = []string{"SELECT", "INSERT"}
 	out["system_backup_v2_evidence"] = []string{"SELECT"}
 	return out

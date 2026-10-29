@@ -156,6 +156,9 @@ type RuntimeAgentSessionSQLiteRestore struct {
 }
 
 type RuntimeAgentGatewayState struct {
+	UserID     int    `json:"user_id,omitempty"`
+	PID        int    `json:"gateway_pid,omitempty"`
+	Port       int    `json:"gateway_port,omitempty"`
 	GatewayID  string `json:"gateway_id"`
 	InstanceID int    `json:"instance_id"`
 	Generation int    `json:"generation"`
@@ -188,6 +191,12 @@ type RuntimeAgentCreateGatewayRequest struct {
 	Generation          int                   `json:"generation"`
 	UpgradeID           string                `json:"upgrade_id,omitempty"`
 	Environment         map[string]string     `json:"environment,omitempty"`
+	// Native slot identity is retained in original encrypted create receipts.
+	// Omitted fields preserve the serialized form of existing legacy custody.
+	PodUID          string            `json:"pod_uid,omitempty"`
+	SecurityProfile string            `json:"security_profile,omitempty"`
+	RequestID       string            `json:"request_id,omitempty"`
+	Env             map[string]string `json:"env,omitempty"`
 }
 
 type RuntimeAgentCreateGatewayResponse struct {

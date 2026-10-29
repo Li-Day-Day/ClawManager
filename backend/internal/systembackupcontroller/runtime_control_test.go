@@ -99,3 +99,23 @@ func TestRuntimeControlRelayRejectsUnauthenticatedInput(t *testing.T) {
 		}
 	}
 }
+
+func TestRuntimeDependenciesRejectWriterAndParticipantCollisions(t *testing.T) {
+	ctx := context.Background()
+	a := d.Authority{ConfigVersion: 1}
+	spec := b.RuntimeWriterSpec{Kind: "gateway", UID: "pod-uid", Source: b.InstanceIdentity{ID: 7}}
+	id := runtimeWriterID(spec)
+	for _, cfg := range []RuntimeControlConfig{
+		{AdditionalWriterIDs: []string{id}},
+		{ParticipantChecks: map[string]ReadinessProbe{id: nil}},
+	} {
+		owner := &SQLRuntimeControl{cfg: cfg}
+		if _, err := owner.Dependencies(ctx, a, []b.RuntimeWriterSpec{spec}); !errors.Is(err, ErrExecutionRecord) {
+			t.Fatalf("writer collision accepted: %v", err)
+		}
+	}
+	owner := &SQLRuntimeControl{}
+	if _, err := owner.Dependencies(ctx, a, []b.RuntimeWriterSpec{spec, spec}); !errors.Is(err, ErrExecutionRecord) {
+		t.Fatalf("duplicate runtime writer accepted: %v", err)
+	}
+}

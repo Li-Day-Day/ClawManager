@@ -2373,6 +2373,7 @@ func (s *RuntimeScheduler) createGatewayOnPod(ctx context.Context, instance mode
 		}
 	}
 	resp, err := s.agentClient.CreateGateway(ctx, start.endpoint, RuntimeAgentCreateGatewayRequest{
+		PodUID:              stringValue(pod.PodUID),
 		InstanceID:          instance.ID,
 		UserID:              instance.UserID,
 		AgentType:           runtimeType,
@@ -2380,8 +2381,8 @@ func (s *RuntimeScheduler) createGatewayOnPod(ctx context.Context, instance mode
 		ProjectRelativePath: strings.TrimSpace(start.environment["CLAWMANAGER_DEFAULT_PROJECT_RELATIVE_PATH"]),
 		GatewayPort:         start.reservedBinding.GatewayPort,
 		PortRange: RuntimeAgentPortRange{
-			Start: s.gatewayPortStart,
-			End:   s.gatewayPortEnd,
+			Start: start.reservedBinding.GatewayPort,
+			End:   start.reservedBinding.GatewayPort + RuntimeGatewayPortBlockSize(runtimeType) - 1,
 		},
 		UID:         start.uid,
 		GID:         start.gid,

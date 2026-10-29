@@ -42,6 +42,7 @@ type backupGatewayCheckpoint struct {
 // Guard at check-resumed/commit-resumed must also prove that the reserved
 // generation belongs to this attempt's durable dispatch, not merely match an ID.
 type BackupGatewayWriter struct {
+	GatewayControl  func(context.Context, string, flow.State) (bool, error)
 	Agent           BackupGatewayAgent
 	Source          BackupGatewaySource
 	Guard           func(context.Context, string, flow.State) error
@@ -66,7 +67,7 @@ func (w *BackupGatewayWriter) ready(ctx context.Context) error {
 	s := w.Source
 	p, err := scope.PlanRuntime(s.Runtime)
 	u, urlErr := url.Parse(s.Endpoint)
-	if err != nil || p.Mode != "lite" || urlErr != nil || u.Host == "" || (u.Scheme != "https" && u.Scheme != "http") || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") || s.PodUID == "" || s.RestartRef == "" || s.InstanceID <= 0 || s.UserID <= 0 || s.Generation <= 0 || s.ResumeGeneration <= s.Generation || s.UID <= 0 || s.GID <= 0 || s.Port < 1 || s.Port > 65535 || !path.IsAbs(s.Workspace) || path.Clean(s.Workspace) != s.Workspace || s.Workspace == "/" || w.Agent == nil || w.Guard == nil || w.LoadRestart == nil || w.ClaimRestart == nil || w.CompleteRestart == nil {
+	if err != nil || p.Mode != "lite" || urlErr != nil || u.Host == "" || (u.Scheme != "https" && u.Scheme != "http") || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") || s.PodUID == "" || s.RestartRef == "" || s.InstanceID <= 0 || s.UserID <= 0 || s.Generation <= 0 || s.ResumeGeneration <= s.Generation || s.UID <= 0 || s.GID <= 0 || s.Port < 1 || s.Port > 65535 || !path.IsAbs(s.Workspace) || path.Clean(s.Workspace) != s.Workspace || s.Workspace == "/" || w.Agent == nil || w.Guard == nil || w.LoadRestart == nil || w.ClaimRestart == nil || w.CompleteRestart == nil || w.GatewayControl == nil {
 		return flow.ErrNotReady
 	}
 	return ctx.Err()
@@ -74,7 +75,7 @@ func (w *BackupGatewayWriter) ready(ctx context.Context) error {
 func (w *BackupGatewayWriter) checkpoint() string {
 	s := w.Source
 	p, _ := scope.PlanRuntime(s.Runtime)
-	b, _ := json.Marshal(backupGatewayCheckpoint{Version: "gateway-quiesce.v1", PodUID: s.PodUID, Workspace: s.Workspace, RestartRef: s.RestartRef, AgentType: p.Type, InstanceID: s.InstanceID, UserID: s.UserID, Generation: s.Generation, ResumeGeneration: s.ResumeGeneration, UID: s.UID, GID: s.GID, Port: s.Port})
+	b, _ := json.Marshal(backupGatewayCheckpoint{Version: "gateway-quiesce.v2", PodUID: s.PodUID, Workspace: s.Workspace, RestartRef: s.RestartRef, AgentType: p.Type, InstanceID: s.InstanceID, UserID: s.UserID, Generation: s.Generation, ResumeGeneration: s.ResumeGeneration, UID: s.UID, GID: s.GID, Port: s.Port})
 	return string(b)
 }
 func (w *BackupGatewayWriter) validState(s flow.State) bool {
@@ -118,7 +119,10 @@ func (w *BackupGatewayWriter) Observe(ctx context.Context) (flow.State, error) {
 	if err != nil || (state != "running" && state != "stopped" && state != "absent") {
 		return flow.State{}, flow.ErrQuiesce
 	}
-	s.Running = state == "running"
+	if state != "running" {
+		return flow.State{}, flow.ErrQuiesce
+	}
+	s.Running = true
 	// Do not stop a healthy source unless its immutable restart material is
 	// available and matches the reserved source identity. Never journal secrets.
 	if s.Running {
@@ -132,28 +136,12 @@ func (w *BackupGatewayWriter) Observe(ctx context.Context) (flow.State, error) {
 	return s, nil
 }
 func (w *BackupGatewayWriter) Pause(ctx context.Context, s flow.State) (flow.ACK, error) {
-	if w.ready(ctx) != nil || !w.validState(s) {
+	if w.ready(ctx) != nil || !w.validState(s) || !s.Running || w.Guard(ctx, "before-stop", s) != nil {
 		return flow.ACK{}, flow.ErrQuiesce
 	}
-	if w.Guard(ctx, "before-stop", s) != nil {
-		return flow.ACK{}, flow.ErrJournal
-	}
-	if future, e := w.state(ctx, w.Source.ResumeGeneration); e != nil || future != "absent" {
-		return flow.ACK{}, flow.ErrQuiesce
-	}
-	state, err := w.state(ctx, w.Source.Generation)
-	if err != nil {
-		return flow.ACK{}, err
-	}
-	if !s.Running && state != "stopped" && state != "absent" {
-		return flow.ACK{}, flow.ErrQuiesce
-	}
-	if s.Running && state != "stopped" && state != "absent" {
-		if err = w.Agent.DeleteGateway(ctx, w.Source.Endpoint, w.gateway(w.Source.Generation)); err != nil && !errors.Is(err, ErrRuntimeAgentNotFound) {
-			return flow.ACK{}, flow.ErrQuiesce
-		}
-	}
-	if err = w.waitStopped(ctx, s, false); err != nil {
+	// A raw state/404 is never a stop acknowledgement. D binds the native
+	// operation, persists the raw receipt, and performs the final authority check.
+	if ready, err := w.GatewayControl(ctx, "before-stop", s); err != nil || !ready {
 		return flow.ACK{}, flow.ErrQuiesce
 	}
 	if w.CheckPaused(ctx, s) != nil {
@@ -161,113 +149,48 @@ func (w *BackupGatewayWriter) Pause(ctx context.Context, s flow.State) (flow.ACK
 	}
 	return flow.ACK{UID: s.UID, Generation: s.Generation, Stopped: true}, nil
 }
-func (w *BackupGatewayWriter) waitStopped(ctx context.Context, s flow.State, recovery bool) error {
-	point := "check-stopped"
-	if recovery {
-		point = "recovery-check-stopped"
-	}
-	return w.poll(ctx, func() (bool, error) {
-		if w.Guard(ctx, point, s) != nil {
-			return false, flow.ErrJournal
-		}
-		state, err := w.state(ctx, w.Source.Generation)
-		if err != nil {
-			return false, err
-		}
-		return state == "absent" || state == "stopped", nil
-	})
-}
 func (w *BackupGatewayWriter) CheckPaused(ctx context.Context, s flow.State) error {
-	if w.ready(ctx) != nil || !w.validState(s) || w.Guard(ctx, "check-stopped", s) != nil {
+	if w.ready(ctx) != nil || !w.validState(s) || !s.Running || w.Guard(ctx, "check-stopped", s) != nil {
 		return flow.ErrQuiesce
 	}
-	state, err := w.state(ctx, w.Source.Generation)
-	if err != nil || (state != "absent" && state != "stopped") {
-		return flow.ErrQuiesce
-	}
-	// A recovery process appearing during capture invalidates the barrier.
-	state, err = w.state(ctx, w.Source.ResumeGeneration)
-	if err != nil || state != "absent" {
+	if ready, err := w.GatewayControl(ctx, "check-stopped", s); err != nil || !ready {
 		return flow.ErrQuiesce
 	}
 	return nil
 }
 func (w *BackupGatewayWriter) Resume(ctx context.Context, s flow.State) error {
-	if w.ready(ctx) != nil || !w.validState(s) || w.Guard(ctx, "before-resume", s) != nil {
+	if w.ready(ctx) != nil || !w.validState(s) || !s.Running || w.Guard(ctx, "before-resume", s) != nil {
 		return flow.ErrResume
 	}
-	old, err := w.state(ctx, w.Source.Generation)
+	if ready, err := w.GatewayControl(ctx, "recovery-stop-old", s); err != nil || !ready {
+		return flow.ErrResume
+	}
+	if w.Guard(ctx, "before-restart-dispatch", s) != nil {
+		return flow.ErrResume
+	}
+	claimed, err := w.ClaimRestart(ctx, s)
 	if err != nil {
 		return flow.ErrResume
 	}
-	if !s.Running {
-		if old != "absent" && old != "stopped" {
+	if claimed {
+		if w.Guard(ctx, "restart-dispatched", s) != nil {
 			return flow.ErrResume
 		}
-		current, e := w.state(ctx, w.Source.ResumeGeneration)
-		if e != nil || current != "absent" {
-			return flow.ErrResume
-		}
-		return nil
-	}
-	// Always retire the old gateway before recreating a running source. A late
-	// DELETE addresses only the old generation, never this reserved new ID.
-	if old != "absent" && old != "stopped" {
-		if w.Guard(ctx, "recovery-stop-old", s) != nil {
-			return flow.ErrResume
-		}
-		if e := w.Agent.DeleteGateway(ctx, w.Source.Endpoint, w.gateway(w.Source.Generation)); e != nil && !errors.Is(e, ErrRuntimeAgentNotFound) {
-			return flow.ErrResume
-		}
-	}
-	if w.waitStopped(ctx, s, true) != nil {
-		return flow.ErrResume
-	}
-	current, err := w.state(ctx, w.Source.ResumeGeneration)
-	if err != nil {
-		return flow.ErrResume
-	}
-	if current == "absent" {
-		r, e := w.restart(ctx)
-		if e != nil {
-			return flow.ErrResume
-		}
-		if w.Guard(ctx, "before-restart-dispatch", s) != nil {
-			return flow.ErrResume
-		}
-		claimed, e := w.ClaimRestart(ctx, s)
-		if e != nil {
-			return flow.ErrResume
-		}
-		if claimed {
-			if w.Guard(ctx, "restart-dispatched", s) != nil {
-				return flow.ErrResume
-			}
-			response, e := w.Agent.CreateGateway(ctx, w.Source.Endpoint, r)
-			if e == nil && (response == nil || response.GatewayID != w.gateway(w.Source.ResumeGeneration) || response.Port != w.Source.Port) {
-				return flow.ErrResume
-			}
-			// On an uncertain HTTP result, only poll the reserved generation.
-		}
-	} else if current != "starting" && current != "running" {
-		return flow.ErrResume
+		// On uncertain dispatch, only query the operation's reserved successor.
+		_, _ = w.GatewayControl(ctx, "restart-dispatched", s)
 	}
 	if w.poll(ctx, func() (bool, error) {
 		if w.Guard(ctx, "check-resumed", s) != nil {
 			return false, flow.ErrResume
 		}
-		state, e := w.state(ctx, w.Source.ResumeGeneration)
-		if e != nil {
-			return false, e
-		}
-		if state == "stopped" || state == "stopping" {
-			return false, flow.ErrResume
-		}
-		return state == "running", nil
+		return w.GatewayControl(ctx, "check-resumed", s)
 	}) != nil {
 		return flow.ErrResume
 	}
 	if w.Guard(ctx, "commit-resumed", s) != nil || w.CompleteRestart(ctx, s, w.gateway(w.Source.ResumeGeneration), w.Source.Port) != nil {
+		return flow.ErrResume
+	}
+	if ready, err := w.GatewayControl(ctx, "release-restart", s); err != nil || !ready {
 		return flow.ErrResume
 	}
 	return nil

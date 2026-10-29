@@ -115,7 +115,7 @@ func TestRuntimeSchedulerAssignsCreatingInstanceToReadyPod(t *testing.T) {
 	if req.req.ProjectRelativePath != "starter" {
 		t.Fatalf("project relative path = %q, want starter", req.req.ProjectRelativePath)
 	}
-	if req.req.PortRange.Start != RuntimeGatewayPortStart || req.req.PortRange.End != RuntimeGatewayPortEnd {
+	if req.req.PortRange.Start != RuntimeGatewayPortStart || req.req.PortRange.End != RuntimeGatewayPortStart+RuntimeGatewayPortBlockSize(RuntimeTypeOpenClaw)-1 {
 		t.Fatalf("port range = %+v", req.req.PortRange)
 	}
 	if req.req.GatewayPort != RuntimeGatewayPortStart {

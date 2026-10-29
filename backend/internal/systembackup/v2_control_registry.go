@@ -59,5 +59,6 @@ func init() {
 		"system_backup_v2_runtime_stop_proofs",
 		"system_backup_v2_relay_receipts",
 		"system_backup_v2_runtime_controls",
+		"system_backup_v2_gateway_proofs",
 	)
 }

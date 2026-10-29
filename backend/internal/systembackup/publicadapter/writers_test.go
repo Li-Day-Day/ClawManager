@@ -99,6 +99,9 @@ func writerTestDeps(t *testing.T) (*writerScopePorts, RuntimeWriterDependencies)
 	f, _, _ := setup(t)
 	ports := &writerScopePorts{fixture: f, normal: true, recovery: true}
 	deps := RuntimeWriterDependencies{Ports: ports, PollInterval: time.Millisecond, Participants: []ParticipantSpec{{ID: "platform-db", Original: flow.State{UID: "registered-platform-participant", Generation: 1, Checkpoint: "reviewed-registry-proof-ref"}}}, Callbacks: WriterCallbacks{
+		GatewayControl: func(context.Context, d.Authority, string, string, flow.State) (bool, error) {
+			return false, errors.New("unconfigured gateway control")
+		},
 		Guard: func(ctx context.Context, a d.Authority, id, point string, s flow.State) error {
 			if ctx.Err() != nil || a != ports.in.Authority || id == "" || point == "" {
 				return errors.New("wrong public scope")
@@ -191,6 +194,34 @@ func TestConcreteGatewayFactoryRestoresOriginalStateWithPublicRecoveryScope(t *t
 				}
 			}
 			spec := RuntimeWriterSpec{Source: source, Kind: "gateway", UID: "runtime-pod-uid", Endpoint: srv.URL, RestartRef: "encrypted-original-ref", ResumeGeneration: 19, UIDNumber: 200007, GIDNumber: 200007, Port: 20007}
+			spec.Runtime = RuntimeLocator{Version: "runtime-locator.v2", Namespace: source.Namespace, Pod: source.Pod, Deployment: "runtime", RuntimePodID: 6, GatewayPID: 123, AgentEpoch: strings.Repeat("a", 32)}
+			spec.Backup = RuntimeGatewayBackup{Protocol: services.RuntimeBackupProtocol, OperationID: strings.Repeat("b", 32), RestartSHA256: strings.Repeat("c", 64)}
+			deps.Callbacks.GatewayControl = func(_ context.Context, a d.Authority, id, point string, s flow.State) (bool, error) {
+				if a != ports.in.Authority || id != "gateway/runtime-pod-uid/7" || s.Generation != 7 {
+					return false, errors.New("wrong native control scope")
+				}
+				mu.Lock()
+				defer mu.Unlock()
+				switch point {
+				case "before-stop", "recovery-stop-old":
+					if runningOld {
+						deletes.Add(1)
+						runningOld = false
+					}
+					return true, nil
+				case "check-stopped", "recovery-check-stopped":
+					return !runningOld && !runningNew, nil
+				case "restart-dispatched":
+					creates.Add(1)
+					runningNew = true
+					return true, nil
+				case "check-resumed":
+					return runningNew, nil
+				case "release-restart":
+					return completed > 0, nil
+				}
+				return false, errors.New("unknown native control point")
+			}
 			builder, err := NewRuntimeWriterBuilder([]RuntimeWriterSpec{spec}, deps)
 			if err != nil {
 				t.Fatal(err)

@@ -22,8 +22,9 @@ type RuntimeWriterSpec struct {
 	Source InstanceIdentity
 	// Runtime is D's independent, versioned binding projection. It never
 	// overwrites nullable location fields in the frozen SQL Source inventory.
-	Runtime                    RuntimeLocator `json:",omitzero"`
-	Kind                       string         // gateway, pod, deployment, stopped
+	Runtime                    RuntimeLocator       `json:",omitzero"`
+	Backup                     RuntimeGatewayBackup `json:",omitzero"`
+	Kind                       string               // gateway, pod, deployment, stopped
 	UID, Name, Endpoint        string
 	RestartRef                 string
 	ResumeGeneration           int // original public reservation; never inferred +1
@@ -34,6 +35,10 @@ type RuntimeWriterSpec struct {
 type RuntimeLocator struct {
 	Version, Namespace, Pod, RegisteredPodUID, Deployment, AgentEpoch string
 	RuntimePodID, GatewayPID                                          int
+}
+
+type RuntimeGatewayBackup struct {
+	Protocol, OperationID, RestartSHA256 string
 }
 
 func (s RuntimeWriterSpec) RuntimeNamespace() string {
@@ -58,6 +63,9 @@ type RestartObservation struct {
 // restart journal checks. All calls carry the full current Authority. These
 // callbacks never receive a B SQLStore or an independently minted generation.
 type WriterCallbacks struct {
+	// GatewayControl performs the native operation and persists its raw positive
+	// receipt under the same original task authority. bool is readiness, not ACK.
+	GatewayControl  func(context.Context, d.Authority, string, string, flow.State) (bool, error)
 	Guard           func(context.Context, d.Authority, string, string, flow.State) error
 	LoadGateway     func(context.Context, d.Authority, string, string) (services.RuntimeAgentCreateGatewayRequest, error)
 	LoadPod         func(context.Context, d.Authority, string, string) (*corev1.Pod, error)
@@ -169,7 +177,7 @@ func validateWriterSpec(s RuntimeWriterSpec, deps RuntimeWriterDependencies) err
 	c := deps.Callbacks
 	if s.Runtime != (RuntimeLocator{}) {
 		epoch, epochErr := hex.DecodeString(s.Runtime.AgentEpoch)
-		if epochErr != nil || len(epoch) != 16 || hex.EncodeToString(epoch) != s.Runtime.AgentEpoch || s.Kind != "gateway" || s.Runtime.Version != "runtime-locator.v1" || s.Runtime.Namespace == "" || s.Runtime.Pod == "" || s.Runtime.RuntimePodID <= 0 || s.Runtime.GatewayPID <= 0 || s.Runtime.Deployment == "" ||
+		if epochErr != nil || len(epoch) != 16 || hex.EncodeToString(epoch) != s.Runtime.AgentEpoch || s.Kind != "gateway" || s.Runtime.Version != "runtime-locator.v2" || s.Runtime.Namespace == "" || s.Runtime.Pod == "" || s.Runtime.RuntimePodID <= 0 || s.Runtime.GatewayPID <= 0 || s.Runtime.Deployment == "" ||
 			(s.Source.Namespace != "" && s.Source.Namespace != s.Runtime.Namespace) || (s.Source.Pod != "" && s.Source.Pod != s.Runtime.Pod) || (s.Runtime.RegisteredPodUID != "" && s.Runtime.RegisteredPodUID != s.UID) {
 			return d.ErrNotReady
 		}
@@ -180,6 +188,11 @@ func validateWriterSpec(s RuntimeWriterSpec, deps RuntimeWriterDependencies) err
 			return d.ErrNotReady
 		}
 	case "gateway":
+		op, opErr := hex.DecodeString(s.Backup.OperationID)
+		digest, digestErr := hex.DecodeString(s.Backup.RestartSHA256)
+		if s.Runtime.Version != "runtime-locator.v2" || s.Backup.Protocol != services.RuntimeBackupProtocol || opErr != nil || len(op) != 16 || hex.EncodeToString(op) != s.Backup.OperationID || digestErr != nil || len(digest) != 32 || hex.EncodeToString(digest) != s.Backup.RestartSHA256 || c.GatewayControl == nil {
+			return d.ErrNotReady
+		}
 		if plan.Mode != "lite" || s.Source.Status != "running" || nilValue(deps.Agent) || s.UID == "" || s.RuntimePod() == "" || s.RuntimeNamespace() == "" || s.Endpoint == "" || s.Source.Workspace == "" || s.RestartRef == "" || s.ResumeGeneration <= s.Source.Generation || s.UIDNumber <= 0 || s.GIDNumber <= 0 || s.Port <= 0 || s.Port > 65535 || c.LoadGateway == nil || c.ClaimRestart == nil || c.CompleteRestart == nil {
 			return d.ErrNotReady
 		}
@@ -204,7 +217,7 @@ func writerGuard(ctx context.Context, deps RuntimeWriterDependencies, a d.Author
 	switch point {
 	case "observe", "observed", "before-stop", "check-stopped":
 		err = deps.Ports.Check(ctx, a)
-	case "before-resume", "recovery-check-stopped", "recovery-stop-old", "before-restart-dispatch", "restart-dispatched", "check-resumed", "commit-resumed", "claim-restart", "complete-restart":
+	case "before-resume", "recovery-check-stopped", "recovery-stop-old", "before-restart-dispatch", "restart-dispatched", "check-resumed", "commit-resumed", "claim-restart", "complete-restart", "release-restart":
 		err = deps.Ports.CheckRecovery(ctx, a, id, state(s))
 	default:
 		return d.ErrNotReady
@@ -241,6 +254,15 @@ func constructRuntimeWriter(in d.Input, spec RuntimeWriterSpec, deps RuntimeWrit
 	fenceID := a.TaskPublicID + "/attempt/" + strconv.FormatUint(a.AttemptNo, 10)
 	if spec.Kind == "gateway" {
 		w := &services.BackupGatewayWriter{Agent: deps.Agent, Source: services.BackupGatewaySource{Runtime: runtime, Endpoint: spec.Endpoint, PodUID: spec.UID, Workspace: source.Workspace, RestartRef: spec.RestartRef, InstanceID: source.ID, UserID: source.UserID, Generation: source.Generation, ResumeGeneration: spec.ResumeGeneration, UID: spec.UIDNumber, GID: spec.GIDNumber, Port: spec.Port}, Guard: guard, PollInterval: deps.PollInterval,
+			GatewayControl: func(ctx context.Context, point string, s flow.State) (bool, error) {
+				if point == "check-stopped" && ctx.Value(sourceRecoveryContext{}) == true {
+					point = "recovery-check-stopped"
+				}
+				if err := guard(ctx, point, s); err != nil {
+					return false, err
+				}
+				return c.GatewayControl(ctx, a, id, point, s)
+			},
 			LoadRestart: func(ctx context.Context, ref string) (services.RuntimeAgentCreateGatewayRequest, error) {
 				return c.LoadGateway(ctx, a, id, ref)
 			}, ClaimRestart: claim,

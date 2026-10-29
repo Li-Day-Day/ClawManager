@@ -41,17 +41,17 @@ func (c locatorConn) QueryContext(_ context.Context, q string, args []driver.Nam
 }
 
 type locatorAgent struct {
-	caps  services.RuntimeAgentStopCapabilities
+	caps  services.RuntimeBackupCapabilities
 	calls int
 }
 
-func (a *locatorAgent) StopCapabilities(context.Context, string) (*services.RuntimeAgentStopCapabilities, error) {
+func (a *locatorAgent) BackupCapabilities(context.Context, string, int) (*services.RuntimeBackupCapabilities, error) {
 	a.calls++
 	copy := a.caps
 	return &copy, nil
 }
-func (*locatorAgent) ConfirmGatewayStop(context.Context, string, services.RuntimeAgentStopRequest) (*services.RuntimeAgentStopReceipt, error) {
-	panic("discovery sent a stop")
+func (*locatorAgent) BackupControl(context.Context, string, string, services.RuntimeBackupRequest, *services.RuntimeAgentCreateGatewayRequest) (services.RuntimeBackupObservation, error) {
+	panic("discovery mutated a gateway")
 }
 func (*locatorAgent) GatewayState(context.Context, string, string) (*services.RuntimeAgentGatewayState, error) {
 	panic("unexpected state read")
@@ -64,7 +64,7 @@ func (*locatorAgent) CreateGateway(context.Context, string, services.RuntimeAgen
 }
 
 func TestRuntimeLocatorPreservesNullSourceAndChecksIndependentIdentity(t *testing.T) {
-	for _, fault := range []string{"", "registered-uid", "source-namespace", "binding-namespace", "source-pod", "workspace", "generation", "pid", "port", "endpoint", "not-ready", "owner", "agent-uid", "agent-epoch", "no-pid-guard", "probe"} {
+	for _, fault := range []string{"", "registered-uid", "source-namespace", "binding-namespace", "source-pod", "workspace", "generation", "pid", "port", "endpoint", "not-ready", "owner", "agent-uid", "agent-epoch", "no-durable-reservation", "probe"} {
 		t.Run(fault, func(t *testing.T) {
 			source := b.InstanceIdentity{ID: 7, UserID: 1, Generation: 3, Mode: "lite", Status: "running", Workspace: "/workspaces/user-1/instance-7"}
 			row := gatewayBindingRow{ID: 6, Pod: "runtime-pod", Namespace: "backup", Endpoint: "http://10.1.2.3:8080", Port: 20000, Workspace: source.Workspace, Generation: 3, State: "running", Gateway: "gw-7-3", Deployment: "runtime", PID: 123}
@@ -72,7 +72,7 @@ func TestRuntimeLocatorPreservesNullSourceAndChecksIndependentIdentity(t *testin
 			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: row.Pod, Namespace: row.Namespace, UID: "actual-pod-uid", OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet", Name: "runtime-rs", UID: "rs-uid", Controller: &controller}}}, Spec: corev1.PodSpec{NodeName: "node"}, Status: corev1.PodStatus{Phase: corev1.PodRunning, PodIP: "10.1.2.3", Conditions: []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionTrue}}}}
 			rs := &appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "runtime-rs", Namespace: "backup", UID: "rs-uid", OwnerReferences: []metav1.OwnerReference{{Kind: "Deployment", Name: "runtime", UID: "dep-uid", Controller: &controller}}}}
 			dep := &appsv1.Deployment{ObjectMeta: metav1.ObjectMeta{Name: "runtime", Namespace: "backup", UID: "dep-uid"}}
-			agent := &locatorAgent{caps: services.RuntimeAgentStopCapabilities{Protocol: 1, PodUID: string(pod.UID), AgentEpoch: strings.Repeat("a", 32), GracefulStop: true, ExpectedPIDGuard: true, ConfirmationScope: "process_group"}}
+			agent := &locatorAgent{caps: services.RuntimeBackupCapabilities{Protocol: services.RuntimeBackupProtocol, Namespace: row.Namespace, GatewayPort: row.Port, Slot: "slot-0", PodUID: string(pod.UID), AgentEpoch: strings.Repeat("a", 32), Supported: true, DurableReservation: true, Scope: services.RuntimeBackupStopScope}}
 			switch fault {
 			case "registered-uid":
 				row.UID = "old-pod"
@@ -100,8 +100,8 @@ func TestRuntimeLocatorPreservesNullSourceAndChecksIndependentIdentity(t *testin
 				agent.caps.PodUID = "different"
 			case "agent-epoch":
 				agent.caps.AgentEpoch = strings.Repeat("z", 32)
-			case "no-pid-guard":
-				agent.caps.ExpectedPIDGuard = false
+			case "no-durable-reservation":
+				agent.caps.DurableReservation = false
 			}
 			db := sql.OpenDB(locatorConnector{&row})
 			defer db.Close()

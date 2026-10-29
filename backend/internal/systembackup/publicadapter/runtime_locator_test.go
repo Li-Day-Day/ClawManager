@@ -19,7 +19,8 @@ func TestRuntimeLocatorKeepsRawSourceInventoryAndCustodyCompatibility(t *testing
 		return services.RuntimeAgentCreateGatewayRequest{}, nil
 	}
 	spec := RuntimeWriterSpec{Source: source, Kind: "gateway", UID: "pod-uid", Endpoint: "http://10.1.2.3:8080", RestartRef: "encrypted-original", ResumeGeneration: 8, UIDNumber: 200007, GIDNumber: 200007, Port: 20000,
-		Runtime: RuntimeLocator{Version: "runtime-locator.v1", Namespace: "backup", Pod: "actual-pod", Deployment: "runtime", RuntimePodID: 6, GatewayPID: 123, AgentEpoch: strings.Repeat("a", 32)}}
+		Runtime: RuntimeLocator{Version: "runtime-locator.v2", Namespace: "backup", Pod: "actual-pod", Deployment: "runtime", RuntimePodID: 6, GatewayPID: 123, AgentEpoch: strings.Repeat("a", 32)}}
+	spec.Backup = RuntimeGatewayBackup{Protocol: services.RuntimeBackupProtocol, OperationID: strings.Repeat("b", 32), RestartSHA256: strings.Repeat("c", 64)}
 	builder, err := NewRuntimeWriterBuilder([]RuntimeWriterSpec{spec}, deps)
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +58,7 @@ func TestRuntimeLocatorKeepsRawSourceInventoryAndCustodyCompatibility(t *testing
 	if strings.Contains(string(raw), `"Runtime":`) {
 		t.Fatal("zero locator changed historical custody serialization")
 	}
-	if _, err := NewRuntimeWriterBuilder([]RuntimeWriterSpec{spec}, deps); err != nil {
-		t.Fatal("original explicit source locator rejected", err)
+	if _, err := NewRuntimeWriterBuilder([]RuntimeWriterSpec{spec}, deps); err == nil {
+		t.Fatal("legacy custody admitted without native protocol")
 	}
 }
