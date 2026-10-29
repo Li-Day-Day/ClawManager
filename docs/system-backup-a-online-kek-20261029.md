@@ -122,6 +122,8 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 
 ## 仍需 owner 交付的受控引用
 
+后续新增 `backend/internal/systembackupkekadmission.CheckUnadmittedInput`：在 D 的中立 `AdmissionInput` 上检查原两用途 typed ref 的完整原字节 SHA/用途/provider-scope 对应、安装/key/version/provider endpoint、来源引用、有效窗口和四类历史覆盖结构；缺失、重复、错用途、跨安装、错版本或过期均拒绝。该函数只检查候选输入，返回 nil **不代表**独立原映射来源已认证、历史扫描完整或 `PreparedAdmission` 已形成；D 的事务 Bind/Stage/最终 Recheck 与原权限来源仍需实现。专项 Go 测试在最终代码上通过；首次并发编译时 vet 曾报告标准库 `net/url` 导入失败，使用同一隔离缓存重跑 exit=0。隔离目录 `.tmp-a-kek-candidate-20261029` 已清理并确认不存在，未进行现场授权或 provider I/O。
+
 **代码缺口与现场材料分别处理。** 公共 C 在 `f76c7439` 基线上核对确认：当前仓库尚无将原 KEK 注册/准入事实转换成 C `KeyBinding` / `kms.Config` 的生产实现；三用途 `ResolveSigning` 也仅有接口、消费者及测试实现。详见 [公共 C 来源与入口核对](system-backup-c-crypto-sources-20261029.md)。因此，不能仅要求部署方提供“正式映射”来关闭这两项代码缺口，也不能把本次 profile 通过当作准入成功。
 
 KEK 接线继续复用原 typed reference、`reference:kek`、`BootstrapAdmissionSources.References["kek"]` 和 `ConfigMutationResolverSources.References["kek"]`。公共 C 交付组合映射与 retained 引用扫描合同；A 按该合同实现安全 validator；D 确认原注册/配置存储、装配及事务内最终复查。首次身份与 opaque version 的来源尚待 D 确认，禁止从 key 名、provider numeric version 或 profile SHA 推造。实现前保持缺 adapter 拒绝，不补恒成功 Original，不新增执行授权。当前已向 C/D 发出上述具体交接；B 的冻结上下文与最终 writer 已由用户明确确认为尚未交付。
