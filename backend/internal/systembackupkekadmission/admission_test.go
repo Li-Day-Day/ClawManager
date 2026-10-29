@@ -1,7 +1,10 @@
 package systembackupkekadmission
 
 import (
+	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"testing"
 	"time"
@@ -75,12 +78,32 @@ func TestPrepareRequiresIndependentMappingAndCompleteCoverage(t *testing.T) {
 	base.Snapshot.Bindings = []r.BindingFacts{{Binding: base.Candidate, BindingSHA256: keyBindingHash(base.Candidate), RowVersion: 1}}
 	base.Coverage = coverageFixture{base.Snapshot, now.Add(time.Minute)}
 	orig := originalFixture{base.Observation.MappingSource, base.Candidate, base.Observation.SourceRevision, now.Add(time.Minute)}
+	first := copyInput(base)
+	first.Snapshot.Bindings = []r.BindingFacts{}
+	first.Coverage = coverageFixture{first.Snapshot, now.Add(time.Minute)}
+	if _, err := Prepare(context.Background(), first, orig, capabilitiesFor(first, now), now); err != nil {
+		t.Fatalf("independently authenticated first binding rejected: %v", err)
+	}
+	metadataChange := copyInput(base)
+	oldRef := &metadataChange.Snapshot.Bindings[0].Binding.GenerateRef
+	oldRef.RawJSON = bytes.Replace(oldRef.RawJSON, []byte("synthetic reference"), []byte("earlier description"), 1)
+	oldHash := sha256.Sum256(oldRef.RawJSON)
+	oldRef.SHA256 = hex.EncodeToString(oldHash[:])
+	metadataChange.Coverage = coverageFixture{metadataChange.Snapshot, now.Add(time.Minute)}
+	if _, err := Prepare(context.Background(), metadataChange, orig, capabilitiesFor(metadataChange, now), now); err != nil {
+		t.Fatalf("redacted description change rejected: %v", err)
+	}
 	for name, change := range map[string]func(*r.AdmissionInput, *originalFixture){
 		"missing original": func(_ *r.AdmissionInput, o *originalFixture) { o.SourceRecord.RecordID = "other" },
 		"rebound key":      func(_ *r.AdmissionInput, o *originalFixture) { o.binding.Key.ProviderVersion = "2" },
-		"stale scan":       func(v *r.AdmissionInput, _ *originalFixture) { v.Coverage = coverageFixture{v.Snapshot, now} },
-		"missing current binding": func(v *r.AdmissionInput, _ *originalFixture) {
+		"stored rebind": func(v *r.AdmissionInput, _ *originalFixture) {
+			v.Snapshot.Bindings[0].Binding.Key.ProviderVersion = "2"
+			v.Coverage = coverageFixture{v.Snapshot, now.Add(time.Minute)}
+		},
+		"stale scan": func(v *r.AdmissionInput, _ *originalFixture) { v.Coverage = coverageFixture{v.Snapshot, now} },
+		"dangling historical reference": func(v *r.AdmissionInput, _ *originalFixture) {
 			v.Snapshot.Bindings = []r.BindingFacts{}
+			v.Snapshot.References = []r.Reference{{Partition: r.RetainedArtifacts, SourceRecordID: "source", SourceRecordVersion: "v1", BackupPublicID: "sbk_one", AttemptNo: "1", EnvelopeID: "envelope", Key: v.Candidate.Key, BindingSHA256: keyBindingHash(v.Candidate), MappingSource: v.Observation.MappingSource, ExpectedRequestSource: v.Observation.MappingSource, LifecycleSource: v.Observation.MappingSource}}
 			v.Coverage = coverageFixture{v.Snapshot, now.Add(time.Minute)}
 		},
 		"revoked generate": func(v *r.AdmissionInput, _ *originalFixture) {

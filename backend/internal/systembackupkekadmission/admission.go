@@ -52,10 +52,11 @@ func Prepare(ctx context.Context, in reg.AdmissionInput, original reg.PreparedMa
 	// The first binding is inserted only later by D's original transaction.
 	// Independent mapping/capability sources and complete coverage are already
 	// mandatory above; absence here cannot by itself authorize an empty scan.
-	// An existing identity/version must match exactly and remain unrevoked.
+	// An existing identity/version must retain its security semantics and
+	// remain unrevoked. Redacted descriptions may change between observations.
 	for _, b := range in.Snapshot.Bindings {
 		if b.Binding.Key.IdentityHash == in.Candidate.Key.IdentityHash && b.Binding.Key.RegistryVersion == in.Candidate.Key.RegistryVersion {
-			if !reflect.DeepEqual(b.Binding, in.Candidate) || b.GenerateRevoked != nil || b.UnwrapRevoked != nil {
+			if !reg.SameSecurityBinding(b.Binding, in.Candidate) || b.GenerateRevoked != nil || b.UnwrapRevoked != nil {
 				return nil, ErrCandidate
 			}
 		}
@@ -139,7 +140,7 @@ func (p *prepared) Recheck(ctx context.Context, view reg.SQLReadView, locked reg
 		return ErrCandidate
 	}
 	current := locked.Facts()
-	if !reflect.DeepEqual(current, p.input.Snapshot) ||
+	if !reg.SameSnapshotFacts(current, p.input.Snapshot) ||
 		p.original.Recheck(ctx, view, locked, now) != nil || p.input.Coverage.Recheck(ctx, view, locked, now) != nil ||
 		p.capabilities.Generate.Recheck(ctx, view, locked, now) != nil || p.capabilities.Unwrap.Recheck(ctx, view, locked, now) != nil {
 		return ErrCandidate
