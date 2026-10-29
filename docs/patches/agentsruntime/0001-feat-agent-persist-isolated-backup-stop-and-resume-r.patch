@@ -1,0 +1,1103 @@
+From ac9079ce58c954c9ea93f45e640f628d9a6c21fb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?hui=20zhang=20=28=E5=BC=A0=E5=8D=89=29-=E6=B5=AA=E6=BD=AE?=
+ =?UTF-8?q?=E4=BF=A1=E6=81=AF?= <zhanghui08@inspur.com>
+Date: Thu, 29 Oct 2026 15:04:58 +0800
+Subject: [PATCH] feat(agent): persist isolated backup stop and resume
+ reservations
+
+---
+ clawmanager-agent/gateway/backup_protocol.go  | 103 ++++++
+ .../gateway/backup_protocol_test.go           |  49 +++
+ clawmanager-agent/slots/assignment.go         |   9 +-
+ clawmanager-agent/slots/backup.go             | 330 ++++++++++++++++++
+ clawmanager-agent/slots/backup_test.go        | 294 ++++++++++++++++
+ clawmanager-agent/slots/pool.go               |   4 +
+ clawmanager-agent/slots/worker.go             |  23 +-
+ clawmanager-agent/slots/writer.go             |  24 +-
+ docs/isolated-backup-protocol.md              | 107 ++++++
+ 9 files changed, 923 insertions(+), 20 deletions(-)
+ create mode 100644 clawmanager-agent/gateway/backup_protocol.go
+ create mode 100644 clawmanager-agent/gateway/backup_protocol_test.go
+ create mode 100644 clawmanager-agent/slots/backup.go
+ create mode 100644 clawmanager-agent/slots/backup_test.go
+ create mode 100644 docs/isolated-backup-protocol.md
+
+diff --git a/clawmanager-agent/gateway/backup_protocol.go b/clawmanager-agent/gateway/backup_protocol.go
+new file mode 100644
+index 0000000..f905dd4
+--- /dev/null
++++ b/clawmanager-agent/gateway/backup_protocol.go
+@@ -0,0 +1,103 @@
++package gateway
++
++import (
++	"context"
++	"crypto/sha256"
++	"encoding/hex"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"time"
++)
++
++const BackupProtocol = "isolated-backup.v1"
++const BackupStopScope = "instance_pid_namespaces_and_mounts"
++
++// BackupRequest binds one source writer and exactly one authorized successor.
++// RestartSHA256 hashes json.Marshal(CreateGatewayRequest), including its secret
++// configuration. Only the digest, never that configuration, enters the ledger.
++type BackupRequest struct {
++	Protocol         string `json:"protocol"`
++	Namespace        string `json:"namespace"`
++	PodUID           string `json:"pod_uid"`
++	AgentEpoch       string `json:"agent_epoch"`
++	OperationID      string `json:"operation_id"`
++	RuntimeType      string `json:"runtime_type"`
++	InstanceID       int    `json:"instance_id"`
++	UserID           int    `json:"user_id"`
++	Generation       int    `json:"generation"`
++	GatewayID        string `json:"gateway_id"`
++	GatewayPort      int    `json:"gateway_port"`
++	ExpectedPID      int    `json:"expected_pid"`
++	ResumeGeneration int    `json:"resume_generation"`
++	RestartSHA256    string `json:"restart_sha256"`
++}
++
++func lowerHex(value string, size int) bool {
++	b, err := hex.DecodeString(value)
++	return err == nil && len(b) == size && hex.EncodeToString(b) == value
++}
++
++func (r BackupRequest) Valid() bool {
++	return r.Protocol == BackupProtocol && r.Namespace != "" && r.PodUID != "" &&
++		lowerHex(r.AgentEpoch, 16) && lowerHex(r.OperationID, 16) && lowerHex(r.RestartSHA256, 32) &&
++		r.RuntimeType != "" && r.InstanceID > 0 && r.UserID > 0 && r.Generation > 0 &&
++		r.ResumeGeneration > r.Generation && r.ExpectedPID > 0 && r.GatewayPort > 0 && r.GatewayPort <= 65535 &&
++		r.GatewayID == fmt.Sprintf("gw-%d-%d", r.InstanceID, r.Generation)
++}
++
++type BackupReceipt struct {
++	Request     BackupRequest `json:"request"`
++	State       string        `json:"state"`
++	Scope       string        `json:"confirmation_scope"`
++	PID         int           `json:"pid,omitempty"`
++	ConfirmedAt time.Time     `json:"confirmed_at"`
++}
++
++type BackupResumeRequest struct {
++	Request BackupRequest        `json:"request"`
++	Restart CreateGatewayRequest `json:"restart"`
++}
++
++func BackupRestartDigest(req CreateGatewayRequest) (string, error) {
++	b, err := json.Marshal(req)
++	if err != nil {
++		return "", err
++	}
++	h := sha256.Sum256(b)
++	return hex.EncodeToString(h[:]), nil
++}
++
++// StopGatewayForBackup pins and cancels the lifecycle under the same mutex.
++// Missing gateways are not evidence. The lifecycle owner must join auxiliary
++// commands, reap the isolated process tree and release execution mounts.
++func (m *GatewayManager) StopGatewayForBackup(ctx context.Context, req BackupRequest) error {
++	if !req.Valid() || !m.IsolatedGatewayLifecycle() || req.Namespace != m.cfg.Namespace || req.PodUID != m.cfg.PodUID || req.AgentEpoch != m.stopEpoch || req.RuntimeType != m.cfg.RuntimeType {
++		return ErrGatewayStopConflict
++	}
++	m.mu.Lock()
++	record := m.gateways[req.GatewayID]
++	if record == nil {
++		m.mu.Unlock()
++		return ErrGatewayStopConflict
++	}
++	s := record.state
++	if s.InstanceID != req.InstanceID || s.UserID != req.UserID || s.Generation != req.Generation || s.Port != req.GatewayPort || (record.stopOperation != "" && record.stopOperation != req.OperationID) {
++		m.mu.Unlock()
++		return ErrGatewayStopConflict
++	}
++	if record.stopOperation == "" && (s.State != "running" || s.PID != req.ExpectedPID || record.process.PID != req.ExpectedPID) {
++		m.mu.Unlock()
++		return ErrGatewayStopConflict
++	}
++	record.stopOperation = req.OperationID
++	record.cancel()
++	m.mu.Unlock()
++	if err := m.deleteIsolatedGateway(ctx, req.GatewayID); err != nil {
++		return err
++	}
++	if _, exists := m.GatewayState(req.GatewayID); exists {
++		return errors.New("backup writer still present")
++	}
++	return nil
++}
+diff --git a/clawmanager-agent/gateway/backup_protocol_test.go b/clawmanager-agent/gateway/backup_protocol_test.go
+new file mode 100644
+index 0000000..1e8f50a
+--- /dev/null
++++ b/clawmanager-agent/gateway/backup_protocol_test.go
+@@ -0,0 +1,49 @@
++package gateway
++
++import (
++	"context"
++	"strings"
++	"sync/atomic"
++	"testing"
++)
++
++func TestBackupStopPinsActualProcessBeforeCancelling(t *testing.T) {
++	var stops atomic.Int32
++	m := isolatedTestManager(t, isolatedTestProfile{}, isolatedTestStarter{start: func(GatewayStartSpec) (ManagedProcess, error) {
++		return ManagedProcess{PID: 101, Stop: func(context.Context) error { stops.Add(1); return nil }}, nil
++	}})
++	m.cfg.Namespace, m.cfg.PodUID = "tenant-system", "source-pod"
++	created, err := m.CreateGateway(context.Background(), isolatedRequest(m, 7, 5, 20000))
++	if err != nil {
++		t.Fatal(err)
++	}
++	awaitIsolatedState(t, m, created.GatewayID, "running")
++	req := BackupRequest{Protocol: BackupProtocol, Namespace: m.cfg.Namespace, PodUID: m.cfg.PodUID, AgentEpoch: m.stopEpoch, OperationID: strings.Repeat("a", 32), RuntimeType: "hermes", InstanceID: 7, UserID: 1, Generation: 5, GatewayID: "gw-7-5", GatewayPort: 20000, ExpectedPID: 102, ResumeGeneration: 9, RestartSHA256: strings.Repeat("b", 64)}
++	if err := m.StopGatewayForBackup(context.Background(), req); err == nil || stops.Load() != 0 {
++		t.Fatal("stale PID cancelled current process")
++	}
++	req.ExpectedPID = 101
++	if err := m.StopGatewayForBackup(context.Background(), req); err != nil {
++		t.Fatal(err)
++	}
++	if stops.Load() < 1 || len(m.GatewayStates()) != 0 {
++		t.Fatal("cleanup did not finish")
++	}
++	if err := m.StopGatewayForBackup(context.Background(), req); err == nil {
++		t.Fatal("absence converted into fresh stop proof")
++	}
++}
++
++func TestBackupRequestRequiresReservedSuccessorAndCanonicalHashes(t *testing.T) {
++	r := BackupRequest{Protocol: BackupProtocol, Namespace: "n", PodUID: "p", AgentEpoch: strings.Repeat("a", 32), OperationID: strings.Repeat("b", 32), RuntimeType: "openclaw", InstanceID: 7, UserID: 2, Generation: 5, GatewayID: "gw-7-5", GatewayPort: 20000, ExpectedPID: 42, ResumeGeneration: 9, RestartSHA256: strings.Repeat("c", 64)}
++	if !r.Valid() {
++		t.Fatal("valid request rejected")
++	}
++	for _, mutate := range []func(*BackupRequest){func(r *BackupRequest) { r.ResumeGeneration = 5 }, func(r *BackupRequest) { r.ExpectedPID = 0 }, func(r *BackupRequest) { r.RestartSHA256 = strings.Repeat("C", 64) }, func(r *BackupRequest) { r.OperationID = "" }, func(r *BackupRequest) { r.GatewayID = "gw-8-5" }, func(r *BackupRequest) { r.Namespace = "" }} {
++		bad := r
++		mutate(&bad)
++		if bad.Valid() {
++			t.Fatal("invalid request accepted")
++		}
++	}
++}
+diff --git a/clawmanager-agent/slots/assignment.go b/clawmanager-agent/slots/assignment.go
+index efe98c9..71225f3 100644
+--- a/clawmanager-agent/slots/assignment.go
++++ b/clawmanager-agent/slots/assignment.go
+@@ -13,8 +13,9 @@ import (
+ )
+ 
+ type book struct {
+-	Assignment  *Assignment `json:"assignment,omitempty"`
+-	Digest      string      `json:"digest,omitempty"`
++	Backup      *backupRecord `json:"backup,omitempty"`
++	Assignment  *Assignment   `json:"assignment,omitempty"`
++	Digest      string        `json:"digest,omitempty"`
+ 	path        string
+ 	quarantined bool
+ }
+@@ -34,12 +35,12 @@ func openBook(dir string) (*book, error) {
+ 	if err = json.Unmarshal(data, b); err != nil {
+ 		return nil, fmt.Errorf("invalid slot assignment: %w", err)
+ 	}
+-	b.quarantined = b.Assignment != nil && b.Assignment.State != "stopped"
++	b.quarantined = b.backupActive() || (b.Assignment != nil && b.Assignment.State != "stopped")
+ 	return b, nil
+ }
+ 
+ func (b *book) begin(req gateway.CreateGatewayRequest) error {
+-	if b.quarantined {
++	if b.quarantined || b.backupActive() {
+ 		return errors.New("slot writer state requires reconciliation")
+ 	}
+ 	raw, err := json.Marshal(req)
+diff --git a/clawmanager-agent/slots/backup.go b/clawmanager-agent/slots/backup.go
+new file mode 100644
+index 0000000..2eac63f
+--- /dev/null
++++ b/clawmanager-agent/slots/backup.go
+@@ -0,0 +1,330 @@
++package slots
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"fmt"
++	"io"
++	"net/http"
++	"runtime"
++	"strconv"
++	"time"
++
++	"github.com/iamlovingit/clawmanager-agent/gateway"
++)
++
++// Both the slot journal and the shared per-instance writer ledger retain the
++// operation. A crash never converts a pending operation into a stop proof.
++type backupRecord struct {
++	Request gateway.BackupRequest  `json:"request"`
++	State   string                 `json:"state"`
++	Stop    *gateway.BackupReceipt `json:"stop,omitempty"`
++	Resume  *gateway.BackupReceipt `json:"resume,omitempty"`
++}
++
++func (b *book) backupActive() bool { return b.Backup != nil && b.Backup.State != "completed" }
++
++func decodeBackup(data []byte, value any) error {
++	d := json.NewDecoder(bytes.NewReader(data))
++	d.DisallowUnknownFields()
++	if err := d.Decode(value); err != nil {
++		return err
++	}
++	var extra any
++	if d.Decode(&extra) != io.EOF {
++		return fmt.Errorf("trailing JSON")
++	}
++	return nil
++}
++
++// Caller holds w.mu throughout dispatch and persistence. Ordinary creates,
++// deletes, upgrades and pending cancellations use this same mutex and fence.
++func (w *Worker) serveBackup(out http.ResponseWriter, r *http.Request) {
++	if r.URL.Path == "/v1/backup/capabilities" {
++		port, err := strconv.Atoi(r.URL.Query().Get("gateway_port"))
++		if r.Method != http.MethodGet {
++			out.WriteHeader(405)
++			return
++		}
++		if err != nil || port != w.cfg.GatewayPortStart {
++			out.WriteHeader(400)
++			return
++		}
++		writeJSON(out, 200, map[string]any{"protocol": gateway.BackupProtocol, "namespace": w.cfg.Namespace, "pod_uid": w.cfg.PodUID,
++			"agent_epoch": w.manager.StopCapabilities().AgentEpoch, "slot": w.slotName, "gateway_port": port,
++			"confirmation_scope": gateway.BackupStopScope, "supported": runtime.GOOS == "linux" && w.cfg.PodUID != "" && w.cfg.Namespace != "" && w.manager.IsolatedGatewayLifecycle(),
++			"durable_reservation": true, "agent_restart_reconciliation": false})
++		return
++	}
++	if r.Method != http.MethodPost {
++		out.WriteHeader(405)
++		return
++	}
++	if runtime.GOOS != "linux" {
++		out.WriteHeader(http.StatusNotImplemented)
++		return
++	}
++	data, err := io.ReadAll(io.LimitReader(r.Body, (1<<20)+1))
++	if err != nil || len(data) > 1<<20 {
++		out.WriteHeader(400)
++		return
++	}
++	var req gateway.BackupRequest
++	var resume gateway.BackupResumeRequest
++	if r.URL.Path == "/v1/backup/resume" {
++		err = decodeBackup(data, &resume)
++		req = resume.Request
++	} else {
++		err = decodeBackup(data, &req)
++	}
++	if err != nil || !req.Valid() || req.Namespace != w.cfg.Namespace || req.PodUID != w.cfg.PodUID || req.RuntimeType != w.cfg.RuntimeType || req.GatewayPort != w.cfg.GatewayPortStart || req.AgentEpoch != w.manager.StopCapabilities().AgentEpoch {
++		http.Error(out, "invalid backup identity", 400)
++		return
++	}
++	if w.book.quarantined || w.lease == nil {
++		http.Error(out, "backup writer requires reconciliation", 409)
++		return
++	}
++	ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
++	defer cancel()
++	var receipt *gateway.BackupReceipt
++	switch r.URL.Path {
++	case "/v1/backup/stop":
++		receipt, err = w.stopForBackup(ctx, req)
++	case "/v1/backup/resume":
++		receipt, err = w.resumeForBackup(ctx, resume)
++	case "/v1/backup/state":
++		receipt, err = w.backupState(req)
++	case "/v1/backup/complete":
++		receipt, err = w.completeBackup(req)
++	default:
++		out.WriteHeader(404)
++		return
++	}
++	if err != nil {
++		http.Error(out, "backup transition is not confirmed", 409)
++		return
++	}
++	if receipt == nil {
++		writeJSON(out, 202, map[string]string{"state": "resuming"})
++		return
++	}
++	writeJSON(out, 200, receipt)
++}
++
++// Any durability error can include an unknown rename/fsync outcome. Retain the
++// lease and quarantine instead of rolling memory back and dispatching again.
++func (w *Worker) saveBackup(next backupRecord, generation int) error {
++	previous, err := readWriter(w.writerPath)
++	if err != nil {
++		w.book.quarantined = true
++		return err
++	}
++	r := next.Request
++	if previous.InstanceID != r.InstanceID || previous.UserID != r.UserID || previous.RuntimeType != r.RuntimeType || previous.PodUID != r.PodUID || previous.Slot != w.slotName {
++		w.book.quarantined = true
++		return fmt.Errorf("shared writer identity changed")
++	}
++	if previous.Backup == nil {
++		if next.State != "stopping" || previous.State != "running" || previous.Generation != r.Generation {
++			return fmt.Errorf("writer cannot reserve backup")
++		}
++	} else if previous.Backup.Request != r {
++		return fmt.Errorf("backup operation changed")
++	}
++	previous.Generation, previous.State, previous.Backup = generation, "backup_"+next.State, &next
++	if err = atomicJSON(w.writerPath, previous); err != nil {
++		w.book.quarantined = true
++		return err
++	}
++	w.book.Backup = &next
++	if err = w.book.save(); err != nil {
++		w.book.quarantined = true
++	}
++	return err
++}
++
++func (w *Worker) backupMatches(req gateway.BackupRequest) error {
++	if w.book.Backup == nil || w.book.Backup.Request != req {
++		return fmt.Errorf("different backup operation")
++	}
++	stored, err := readWriter(w.writerPath)
++	if err != nil || stored.Backup == nil || stored.Backup.Request != req || stored.State != "backup_"+w.book.Backup.State || stored.Generation != w.book.Assignment.Generation || stored.PodUID != req.PodUID || stored.Slot != w.slotName || stored.InstanceID != req.InstanceID || stored.UserID != req.UserID || stored.RuntimeType != req.RuntimeType {
++		return fmt.Errorf("shared backup reservation changed")
++	}
++	return nil
++}
++
++func (w *Worker) stopForBackup(ctx context.Context, req gateway.BackupRequest) (*gateway.BackupReceipt, error) {
++	if w.book.backupActive() {
++		if err := w.backupMatches(req); err != nil {
++			return nil, err
++		}
++		if w.book.Backup.State == "stopped" {
++			return w.book.Backup.Stop, nil
++		}
++		if w.book.Backup.State != "stopping" {
++			return nil, fmt.Errorf("source already resumed")
++		}
++	} else {
++		a := w.book.Assignment
++		s, ok := w.manager.GatewayState(req.GatewayID)
++		if a == nil || a.GatewayID != req.GatewayID || a.UserID != req.UserID || a.Generation != req.Generation || !ok || s.State != "running" || s.PID != req.ExpectedPID {
++			return nil, fmt.Errorf("source identity changed")
++		}
++		if err := w.saveBackup(backupRecord{Request: req, State: "stopping"}, req.Generation); err != nil {
++			return nil, err
++		}
++	}
++	if err := w.manager.StopGatewayForBackup(ctx, req); err != nil {
++		return nil, err
++	}
++	receipt := &gateway.BackupReceipt{Request: req, State: "stopped", Scope: gateway.BackupStopScope, ConfirmedAt: time.Now().UTC()}
++	w.book.Assignment.State = "stopped"
++	if err := w.saveBackup(backupRecord{Request: req, State: "stopped", Stop: receipt}, req.Generation); err != nil {
++		return nil, err
++	}
++	return receipt, nil
++}
++
++func (w *Worker) resumeForBackup(ctx context.Context, input gateway.BackupResumeRequest) (*gateway.BackupReceipt, error) {
++	req, next := input.Request, input.Restart
++	if err := w.backupMatches(req); err != nil {
++		return nil, err
++	}
++	digest, err := gateway.BackupRestartDigest(next)
++	if err != nil || digest != req.RestartSHA256 || next.PodUID != req.PodUID || next.AgentType != req.RuntimeType || next.InstanceID != req.InstanceID || next.UserID != req.UserID || next.Generation != req.ResumeGeneration || next.GatewayPort != req.GatewayPort || next.PortRange.Start != req.GatewayPort || next.PortRange.End != w.cfg.GatewayPortEnd || next.UID <= 0 || next.GID <= 0 || !matchingNetworkProfile(w.cfg.NetworkSecurityProfile, next.SecurityProfile) {
++		return nil, fmt.Errorf("restart differs from reserved payload")
++	}
++	if _, err := gateway.ValidateWorkspacePath(w.cfg.WorkspaceRoot, w.cfg.RuntimeType, next); err != nil {
++		return nil, err
++	}
++	if w.cfg.NetworkSecurityProfile != "" {
++		if _, err := validateNetworkAssignment(w.cfg, next, next.GatewayPort); err != nil {
++			return nil, err
++		}
++	}
++	if w.book.Backup.State == "resuming" || w.book.Backup.State == "resumed" {
++		return w.backupState(req)
++	}
++	if w.book.Backup.State != "stopped" || w.book.Backup.Stop == nil || next.WorkspacePath != w.writerRequest.WorkspacePath || next.UID != w.writerRequest.UID || next.GID != w.writerRequest.GID {
++		return nil, fmt.Errorf("source stop unconfirmed")
++	}
++	if len(w.manager.GatewayStates()) != 0 {
++		return nil, fmt.Errorf("slot contains another writer")
++	}
++	journal := *w.book.Backup
++	journal.State = "resuming"
++	w.book.Assignment = &Assignment{GatewayID: fmt.Sprintf("gw-%d-%d", next.InstanceID, next.Generation), InstanceID: next.InstanceID, UserID: next.UserID, Generation: next.Generation, State: "starting"}
++	w.book.Digest = digest
++	if err := w.saveBackup(journal, next.Generation); err != nil {
++		return nil, err
++	}
++	w.writerRequest = next
++	// The dispatch is durable before this call. Subsequent retries only observe;
++	// a missing or failed start cannot cause a second CreateGateway invocation.
++	if _, err := w.manager.CreateGateway(ctx, next); err != nil {
++		return nil, err
++	}
++	return w.backupState(req)
++}
++
++func (w *Worker) backupState(req gateway.BackupRequest) (*gateway.BackupReceipt, error) {
++	if err := w.backupMatches(req); err != nil {
++		return nil, err
++	}
++	b := w.book.Backup
++	if b.State == "stopped" {
++		if len(w.manager.GatewayStates()) != 0 || b.Stop == nil {
++			return nil, fmt.Errorf("stopped slot changed")
++		}
++		return b.Stop, nil
++	}
++	if b.State != "resuming" && b.State != "resumed" {
++		return nil, fmt.Errorf("stop unconfirmed")
++	}
++	s, ok := w.manager.GatewayState(fmt.Sprintf("gw-%d-%d", req.InstanceID, req.ResumeGeneration))
++	if !ok {
++		return nil, fmt.Errorf("restart dispatch outcome unknown")
++	}
++	if s.InstanceID != req.InstanceID || s.UserID != req.UserID || s.Generation != req.ResumeGeneration || s.Port != req.GatewayPort {
++		return nil, fmt.Errorf("resumed identity changed")
++	}
++	if s.State != "running" || s.PID <= 0 {
++		return nil, nil
++	}
++	if b.Resume != nil {
++		if b.Resume.PID != s.PID {
++			return nil, fmt.Errorf("resumed process changed")
++		}
++		return b.Resume, nil
++	}
++	next := *b
++	next.State = "resumed"
++	next.Resume = &gateway.BackupReceipt{Request: req, State: "resumed", Scope: gateway.BackupStopScope, PID: s.PID, ConfirmedAt: time.Now().UTC()}
++	w.book.Assignment.State = "running"
++	if err := w.saveBackup(next, req.ResumeGeneration); err != nil {
++		return nil, err
++	}
++	return next.Resume, nil
++}
++
++// The controller calls complete only after its source-binding recovery CAS has
++// committed. Until then even a healthy successor remains reserved to this task.
++func (w *Worker) completeBackup(req gateway.BackupRequest) (*gateway.BackupReceipt, error) {
++	if w.book.Backup != nil && w.book.Backup.Request == req && w.book.Backup.State == "completed" {
++		return w.book.Backup.Resume, nil
++	}
++	receipt, err := w.backupState(req)
++	if err != nil || receipt == nil || receipt.State != "resumed" {
++		return nil, fmt.Errorf("resume unconfirmed")
++	}
++	stored, err := readWriter(w.writerPath)
++	if err != nil {
++		return nil, err
++	}
++	stored.State, stored.Backup = "running", nil
++	if err = atomicJSON(w.writerPath, stored); err != nil {
++		w.book.quarantined = true
++		return nil, err
++	}
++	w.book.Backup.State = "completed"
++	if err = w.book.save(); err != nil {
++		w.book.quarantined = true
++		return nil, err
++	}
++	return receipt, nil
++}
++
++func (p *Pool) serveBackup(out http.ResponseWriter, r *http.Request, body []byte) {
++	var port int
++	if r.URL.Path == "/v1/backup/capabilities" {
++		port, _ = strconv.Atoi(r.URL.Query().Get("gateway_port"))
++	} else {
++		var req gateway.BackupRequest
++		if r.URL.Path == "/v1/backup/resume" {
++			var input gateway.BackupResumeRequest
++			if decodeBackup(body, &input) != nil {
++				out.WriteHeader(400)
++				return
++			}
++			req = input.Request
++		} else if decodeBackup(body, &req) != nil {
++			out.WriteHeader(400)
++			return
++		}
++		if !req.Valid() || req.Namespace != p.cfg.Namespace || req.PodUID != p.cfg.PodUID || req.RuntimeType != p.cfg.RuntimeType {
++			out.WriteHeader(400)
++			return
++		}
++		port = req.GatewayPort
++	}
++	offset := port - p.cfg.GatewayPortStart
++	if offset < 0 || offset%p.cfg.GatewayPortBlockSize != 0 || offset/p.cfg.GatewayPortBlockSize >= p.count {
++		out.WriteHeader(400)
++		return
++	}
++	// Do not rewrite the restart payload: the frozen digest covers every field.
++	p.forward(out, r, offset/p.cfg.GatewayPortBlockSize, body)
++}
+diff --git a/clawmanager-agent/slots/backup_test.go b/clawmanager-agent/slots/backup_test.go
+new file mode 100644
+index 0000000..53563a1
+--- /dev/null
++++ b/clawmanager-agent/slots/backup_test.go
+@@ -0,0 +1,294 @@
++//go:build linux
++
++package slots
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"errors"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/iamlovingit/clawmanager-agent/control"
++	"github.com/iamlovingit/clawmanager-agent/gateway"
++	"github.com/iamlovingit/clawmanager-agent/runtime/generic"
++)
++
++type backupStarter struct {
++	starts, stops atomic.Int32
++	failStop      atomic.Bool
++}
++
++func (p *backupStarter) StartGateway(context.Context, gateway.GatewayStartSpec) (gateway.ManagedProcess, error) {
++	pid := int(p.starts.Add(1)) + 100
++	return gateway.ManagedProcess{PID: pid, Stop: func(context.Context) error {
++		p.stops.Add(1)
++		if p.failStop.Load() {
++			return errors.New("injected namespace cleanup failure")
++		}
++		return nil
++	}}, nil
++}
++
++func backupHTTP(w http.Handler, method, path, token string, input any) *httptest.ResponseRecorder {
++	raw, _ := json.Marshal(input)
++	r := httptest.NewRequest(method, path, bytes.NewReader(raw))
++	r.Header.Set(gateway.ControlTokenHeader, token)
++	out := httptest.NewRecorder()
++	w.ServeHTTP(out, r)
++	return out
++}
++
++func newBackupWorker(t *testing.T) (*Worker, *backupStarter, gateway.BackupRequest, gateway.CreateGatewayRequest) {
++	t.Helper()
++	cfg := gateway.Config{ControlToken: "control", RuntimeType: "openclaw", Runtime: generic.NewProfile("openclaw"), Namespace: "tenant-system", PodUID: "pod-original", WorkspaceRoot: t.TempDir(), AgentDataDir: t.TempDir(), GatewayPortStart: 20000, GatewayPortEnd: 20002, GatewayPortBlockSize: 3, Capacity: 1, IsolatedLifecycle: true}
++	w, err := NewWorker(cfg)
++	if err != nil {
++		t.Fatal(err)
++	}
++	process := &backupStarter{}
++	w.manager = gateway.NewGatewayManager(cfg, process, gateway.NewPortAllocator(func(int) bool { return false }))
++	w.manager.SetHealthChecker(gateway.NewNoopGatewayHealthChecker())
++	w.handler = control.NewControlHandler(cfg, w.manager, discardReporter{})
++	t.Cleanup(func() {
++		process.failStop.Store(false)
++		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
++		defer cancel()
++		_ = w.Shutdown(ctx)
++		if w.lease != nil {
++			_ = w.lease.Close()
++		}
++	})
++	create := gateway.CreateGatewayRequest{PodUID: cfg.PodUID, AgentType: cfg.RuntimeType, InstanceID: 7, UserID: 2, Generation: 5, GatewayPort: 20000, PortRange: gateway.PortRange{Start: 20000, End: 20002}, UID: 1001, GID: 1001, WorkspacePath: filepath.Join(cfg.WorkspaceRoot, "openclaw", "user-2", "instance-7"), Env: map[string]string{"MODEL_KEY": "secret-config-sentinel"}}
++	if out := backupHTTP(w, "POST", "/v1/gateways", "control", create); out.Code != 200 {
++		t.Fatalf("create=%d: %s", out.Code, out.Body.String())
++	}
++	deadline := time.Now().Add(3 * time.Second)
++	for {
++		s, ok := w.manager.GatewayState("gw-7-5")
++		if ok && s.State == "running" {
++			break
++		}
++		if time.Now().After(deadline) {
++			t.Fatalf("gateway never ready: %+v", s)
++		}
++		time.Sleep(time.Millisecond)
++	}
++	create.Generation = 9
++	digest, err := gateway.BackupRestartDigest(create)
++	if err != nil {
++		t.Fatal(err)
++	}
++	req := gateway.BackupRequest{Protocol: gateway.BackupProtocol, Namespace: cfg.Namespace, PodUID: cfg.PodUID, AgentEpoch: w.manager.StopCapabilities().AgentEpoch, OperationID: strings.Repeat("a", 32), RuntimeType: cfg.RuntimeType, InstanceID: 7, UserID: 2, Generation: 5, GatewayID: "gw-7-5", GatewayPort: 20000, ExpectedPID: 101, ResumeGeneration: 9, RestartSHA256: digest}
++	return w, process, req, create
++}
++
++func TestBackupStopResumeRetainsDurableWriterReservation(t *testing.T) {
++	w, process, req, restart := newBackupWorker(t)
++	first := backupHTTP(w, "POST", "/v1/backup/stop", "control", req)
++	if first.Code != 200 {
++		t.Fatalf("stop=%d: %s", first.Code, first.Body.String())
++	}
++	if second := backupHTTP(w, "POST", "/v1/backup/stop", "control", req); second.Code != 200 || second.Body.String() != first.Body.String() {
++		t.Fatal("stop retry changed receipt")
++	}
++	if process.starts.Load() != 1 || w.lease == nil {
++		t.Fatal("stop lost reservation")
++	}
++	for _, route := range []string{"/v1/gateways", "/v1/gateways/gw-7-5/stop", "/v1/gateways/cancel-pending", "/v1/openclaw/upgrade", "/v1/drain"} {
++		if out := backupHTTP(w, "POST", route, "control", restart); out.Code != 409 {
++			t.Fatalf("ordinary writer bypass: %s = %d", route, out.Code)
++		}
++	}
++	if err := claimWriter(w.writerPath, restart, "slot-other"); err == nil {
++		t.Fatal("other slot claimed backup-reserved writer")
++	}
++	if err := stopWriter(w.writerPath, w.writerRequest, w.slotName); err == nil {
++		t.Fatal("ordinary stop released backup reservation")
++	}
++	changed := req
++	changed.OperationID = strings.Repeat("b", 32)
++	if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", changed); out.Code != 409 {
++		t.Fatal("operation replacement accepted")
++	}
++	bad := restart
++	bad.MemoryMB++
++	if out := backupHTTP(w, "POST", "/v1/backup/resume", "control", gateway.BackupResumeRequest{Request: req, Restart: bad}); out.Code != 409 || process.starts.Load() != 1 {
++		t.Fatal("changed restart config dispatched")
++	}
++	resuming := gateway.BackupResumeRequest{Request: req, Restart: restart}
++	if out := backupHTTP(w, "POST", "/v1/backup/resume", "control", resuming); out.Code != 200 && out.Code != 202 {
++		t.Fatalf("resume=%d: %s", out.Code, out.Body.String())
++	}
++	deadline := time.Now().Add(3 * time.Second)
++	for {
++		out := backupHTTP(w, "POST", "/v1/backup/state", "control", req)
++		if out.Code == 200 {
++			break
++		}
++		if out.Code != 202 || time.Now().After(deadline) {
++			t.Fatalf("resume proof=%d %s", out.Code, out.Body.String())
++		}
++		time.Sleep(time.Millisecond)
++	}
++	for i := 0; i < 3; i++ {
++		if out := backupHTTP(w, "POST", "/v1/backup/resume", "control", resuming); out.Code != 200 {
++			t.Fatal("resume retry unavailable")
++		}
++	}
++	if process.starts.Load() != 2 {
++		t.Fatalf("duplicate dispatches: %d", process.starts.Load())
++	}
++	if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", req); out.Code != 409 {
++		t.Fatal("historical stop presented as current barrier")
++	}
++	for _, name := range []string{w.writerPath, w.book.path} {
++		data, err := os.ReadFile(name)
++		if err != nil || bytes.Contains(data, []byte("secret-config-sentinel")) {
++			t.Fatal("configuration escaped into proof ledger")
++		}
++	}
++	if out := backupHTTP(w, "POST", "/v1/backup/complete", "control", req); out.Code != 200 {
++		t.Fatal("completion failed")
++	}
++	if out := backupHTTP(w, "POST", "/v1/backup/complete", "control", req); out.Code != 200 {
++		t.Fatal("completion retry failed")
++	}
++	if out := backupHTTP(w, "DELETE", "/v1/gateways/gw-7-9", "control", nil); out.Code != 200 {
++		t.Fatalf("completed reservation not released: %d", out.Code)
++	}
++}
++
++func TestBackupFailedCleanupNeverReturnsProof(t *testing.T) {
++	w, process, req, restart := newBackupWorker(t)
++	process.failStop.Store(true)
++	if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", req); out.Code != 409 {
++		t.Fatal("failed namespace teardown confirmed")
++	}
++	if w.book.Backup == nil || w.book.Backup.Stop != nil || w.book.Backup.State != "stopping" {
++		t.Fatal("failed cleanup generated proof")
++	}
++	if out := backupHTTP(w, "POST", "/v1/backup/resume", "control", gateway.BackupResumeRequest{Request: req, Restart: restart}); out.Code != 409 || process.starts.Load() != 1 {
++		t.Fatal("unconfirmed stop resumed")
++	}
++	if err := claimWriter(w.writerPath, restart, "slot-other"); err == nil {
++		t.Fatal("failed stop released writer")
++	}
++}
++
++func TestBackupUncertainRestartDispatchIsNeverRepeated(t *testing.T) {
++	w, process, req, restart := newBackupWorker(t)
++	if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", req); out.Code != 200 {
++		t.Fatal(out.Code)
++	}
++	// Force CreateGateway to reject after the durable dispatch record. Even
++	// after that transient condition clears, a retry may only reconcile.
++	w.manager.SetDraining(true)
++	input := gateway.BackupResumeRequest{Request: req, Restart: restart}
++	if out := backupHTTP(w, "POST", "/v1/backup/resume", "control", input); out.Code != 409 {
++		t.Fatal("failed dispatch confirmed")
++	}
++	w.manager.SetDraining(false)
++	for i := 0; i < 3; i++ {
++		if out := backupHTTP(w, "POST", "/v1/backup/resume", "control", input); out.Code != 409 {
++			t.Fatal("unknown dispatch retried")
++		}
++	}
++	if process.starts.Load() != 1 || w.book.Backup.State != "resuming" {
++		t.Fatal("unknown dispatch resurrected writer")
++	}
++}
++
++func TestBackupRejectsChangedIdentityBeforeMutation(t *testing.T) {
++	w, process, req, _ := newBackupWorker(t)
++	for _, change := range []func(*gateway.BackupRequest){
++		func(r *gateway.BackupRequest) { r.PodUID = "replacement" }, func(r *gateway.BackupRequest) { r.Namespace = "another" },
++		func(r *gateway.BackupRequest) { r.UserID++ }, func(r *gateway.BackupRequest) { r.ExpectedPID++ },
++		func(r *gateway.BackupRequest) { r.AgentEpoch = strings.Repeat("c", 32) }, func(r *gateway.BackupRequest) { r.ResumeGeneration = r.Generation },
++	} {
++		changed := req
++		change(&changed)
++		if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", changed); out.Code < 400 {
++			t.Fatal("identity drift accepted")
++		}
++	}
++	if out := backupHTTP(w, "POST", "/v1/backup/stop", "", req); out.Code != 401 {
++		t.Fatal("unauthenticated stop")
++	}
++	if process.stops.Load() != 0 || w.book.Backup != nil {
++		t.Fatal("invalid request mutated source")
++	}
++}
++
++func TestBackupRestartAndPersistenceFailuresRemainQuarantined(t *testing.T) {
++	t.Run("restart after confirmed stop", func(t *testing.T) {
++		w, _, req, restart := newBackupWorker(t)
++		if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", req); out.Code != 200 {
++			t.Fatal(out.Code)
++		}
++		reloaded, err := openBook(w.cfg.AgentDataDir)
++		if err != nil || !reloaded.quarantined || reloaded.Backup.Stop == nil {
++			t.Fatal("restart fabricated live proof or lost evidence")
++		}
++		w.book = reloaded
++		if out := backupHTTP(w, "POST", "/v1/backup/state", "control", req); out.Code != 409 {
++			t.Fatal("restart claimed current stop without reconciliation")
++		}
++		_ = w.lease.Close()
++		w.lease = nil
++		if err := claimWriter(w.writerPath, restart, "other-pod"); err == nil {
++			t.Fatal("crash released durable reservation")
++		}
++	})
++	t.Run("intent sync failure", func(t *testing.T) {
++		w, process, req, _ := newBackupWorker(t)
++		w.book.path = filepath.Join(t.TempDir(), "missing", "book.json")
++		if out := backupHTTP(w, "POST", "/v1/backup/stop", "control", req); out.Code != 409 || !w.book.quarantined || process.stops.Load() != 0 {
++			t.Fatal("stop dispatched before durable intent")
++		}
++	})
++}
++
++func TestBackupPoolPreservesFrozenPayloadAndSlotBoundary(t *testing.T) {
++	w, _, req, restart := newBackupWorker(t)
++	cfg := w.cfg
++	cfg.GatewayPortStart = 19997
++	cfg.GatewayPortEnd = 20002
++	var calls int
++	p, err := NewPool(cfg, 2, func(_ context.Context, slot int, method, path string, body []byte) (int, []byte, error) {
++		calls++
++		if slot != 1 {
++			t.Errorf("wrong slot %d", slot)
++		}
++		if path == "/v1/backup/resume" {
++			var input gateway.BackupResumeRequest
++			if decodeBackup(body, &input) != nil {
++				t.Fatal("invalid forwarded payload")
++			}
++			hash, _ := gateway.BackupRestartDigest(input.Restart)
++			if hash != req.RestartSHA256 {
++				t.Error("pool rewrote frozen payload")
++			}
++		}
++		return 200, []byte(`{}`), nil
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if out := backupHTTP(p, "GET", "/v1/backup/capabilities?gateway_port=20000", "control", nil); out.Code != 200 {
++		t.Fatal(out.Code)
++	}
++	if out := backupHTTP(p, "POST", "/v1/backup/resume", "control", gateway.BackupResumeRequest{Request: req, Restart: restart}); out.Code != 200 {
++		t.Fatal(out.Code)
++	}
++	if out := backupHTTP(p, "GET", "/v1/backup/capabilities?gateway_port=20001", "control", nil); out.Code != 400 || calls != 2 {
++		t.Fatal("non-slot port forwarded")
++	}
++}
+diff --git a/clawmanager-agent/slots/pool.go b/clawmanager-agent/slots/pool.go
+index fe00795..af69eab 100644
+--- a/clawmanager-agent/slots/pool.go
++++ b/clawmanager-agent/slots/pool.go
+@@ -125,6 +125,10 @@ func (p *Pool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ 		http.Error(w, "invalid request body", 400)
+ 		return
+ 	}
++	if strings.HasPrefix(r.URL.Path, "/v1/backup/") {
++		p.serveBackup(w, r, body)
++		return
++	}
+ 	if r.URL.Path == "/v1/drain" && r.Method == http.MethodPost {
+ 		var req struct {
+ 			Draining bool `json:"draining"`
+diff --git a/clawmanager-agent/slots/worker.go b/clawmanager-agent/slots/worker.go
+index 4cf1e7a..32fadc4 100644
+--- a/clawmanager-agent/slots/worker.go
++++ b/clawmanager-agent/slots/worker.go
+@@ -76,6 +76,16 @@ func (w *Worker) ServeHTTP(out http.ResponseWriter, r *http.Request) {
+ 		http.Error(out, "unauthorized", 401)
+ 		return
+ 	}
++	w.mu.Lock()
++	defer w.mu.Unlock()
++	if strings.HasPrefix(r.URL.Path, "/v1/backup/") {
++		w.serveBackup(out, r)
++		return
++	}
++	if r.Method != http.MethodGet && w.book.backupActive() {
++		http.Error(out, "writer reserved by backup operation", 409)
++		return
++	}
+ 	if r.URL.Path == "/v1/slot-skills" && r.Method == http.MethodGet {
+ 		writeJSON(out, 200, gateway.BuildSkillReportPayload(w.cfg, w.manager, 0, "full"))
+ 		return
+@@ -89,8 +99,6 @@ func (w *Worker) ServeHTTP(out http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	if r.URL.Path == "/v1/slot-state" && r.Method == http.MethodGet {
+-		w.mu.Lock()
+-		defer w.mu.Unlock()
+ 		snapshot := Snapshot{Gateways: w.manager.GatewayStates(), Assignment: w.book.Assignment, Quarantined: w.book.quarantined || w.manager.Health() != nil || w.network.unavailable()}
+ 		writeJSON(out, 200, snapshot)
+ 		return
+@@ -106,8 +114,6 @@ func (w *Worker) ServeHTTP(out http.ResponseWriter, r *http.Request) {
+ 			http.Error(out, "invalid cancellation scope", 400)
+ 			return
+ 		}
+-		w.mu.Lock()
+-		defer w.mu.Unlock()
+ 		if err = w.cancelPending(req); err != nil {
+ 			http.Error(out, "pending cancellation is not confirmed", 409)
+ 			return
+@@ -142,8 +148,6 @@ func (w *Worker) ServeHTTP(out http.ResponseWriter, r *http.Request) {
+ 				return
+ 			}
+ 		}
+-		w.mu.Lock()
+-		defer w.mu.Unlock()
+ 		if w.book.quarantined {
+ 			http.Error(out, "slot requires writer reconciliation", 409)
+ 			return
+@@ -177,8 +181,6 @@ func (w *Worker) ServeHTTP(out http.ResponseWriter, r *http.Request) {
+ 	stop := strings.HasPrefix(r.URL.Path, "/v1/gateways/") && (r.Method == http.MethodDelete || (r.Method == http.MethodPost && strings.HasSuffix(r.URL.Path, "/stop")))
+ 	if stop {
+ 		id := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, "/v1/gateways/"), "/stop")
+-		w.mu.Lock()
+-		defer w.mu.Unlock()
+ 		if w.book.quarantined || w.book.Assignment == nil || w.book.Assignment.GatewayID != id {
+ 			http.Error(out, "slot cannot confirm unknown writer stop", 409)
+ 			return
+@@ -264,6 +266,11 @@ func (w *Worker) acquire(req gateway.CreateGatewayRequest) (*os.File, error) {
+ func (w *Worker) Shutdown(ctx context.Context) error {
+ 	w.mu.Lock()
+ 	defer w.mu.Unlock()
++	if w.book.backupActive() {
++		// Shutdown may stop processes but must not release the durable backup
++		// reservation or synthesize an operation-bound stop receipt.
++		return w.manager.StopAll(ctx)
++	}
+ 	if w.book.Assignment == nil || w.book.Assignment.State == "stopped" {
+ 		return w.manager.StopAll(ctx)
+ 	}
+diff --git a/clawmanager-agent/slots/writer.go b/clawmanager-agent/slots/writer.go
+index 81ad96a..35586c0 100644
+--- a/clawmanager-agent/slots/writer.go
++++ b/clawmanager-agent/slots/writer.go
+@@ -11,13 +11,14 @@ import (
+ )
+ 
+ type writerRecord struct {
+-	InstanceID  int    `json:"instance_id"`
+-	UserID      int    `json:"user_id"`
+-	Generation  int    `json:"generation"`
+-	RuntimeType string `json:"runtime_type"`
+-	PodUID      string `json:"pod_uid"`
+-	Slot        string `json:"slot"`
+-	State       string `json:"state"`
++	Backup      *backupRecord `json:"backup,omitempty"`
++	InstanceID  int           `json:"instance_id"`
++	UserID      int           `json:"user_id"`
++	Generation  int           `json:"generation"`
++	RuntimeType string        `json:"runtime_type"`
++	PodUID      string        `json:"pod_uid"`
++	Slot        string        `json:"slot"`
++	State       string        `json:"state"`
+ }
+ 
+ // Callers hold the stable sibling lock file across read/compare/rename and for
+@@ -49,6 +50,9 @@ func stopWriter(path string, req gateway.CreateGatewayRequest, slot string) erro
+ 	if err != nil {
+ 		return err
+ 	}
++	if previous.Backup != nil {
++		return fmt.Errorf("backup reservation requires its bound recovery operation")
++	}
+ 	if previous.InstanceID != req.InstanceID || previous.UserID != req.UserID || previous.Generation != req.Generation || previous.RuntimeType != req.AgentType || previous.PodUID != req.PodUID || previous.Slot != slot {
+ 		return fmt.Errorf("writer stop identity changed")
+ 	}
+@@ -65,9 +69,13 @@ func readWriter(path string) (*writerRecord, error) {
+ 	if err = json.Unmarshal(data, &record); err != nil {
+ 		return nil, err
+ 	}
+-	if record.InstanceID < 1 || record.UserID < 1 || record.Generation < 1 || record.PodUID == "" || record.Slot == "" || (record.State != "running" && record.State != "stopped" && record.State != "upgrading") {
++	backupState := record.State == "backup_stopping" || record.State == "backup_stopped" || record.State == "backup_resuming" || record.State == "backup_resumed"
++	if record.InstanceID < 1 || record.UserID < 1 || record.Generation < 1 || record.PodUID == "" || record.Slot == "" || (record.State != "running" && record.State != "stopped" && record.State != "upgrading" && !backupState) {
+ 		return nil, fmt.Errorf("invalid writer record")
+ 	}
++	if backupState != (record.Backup != nil) || (backupState && (!record.Backup.Request.Valid() || record.State != "backup_"+record.Backup.State)) {
++		return nil, fmt.Errorf("invalid backup writer reservation")
++	}
+ 	return &record, nil
+ }
+ 
+diff --git a/docs/isolated-backup-protocol.md b/docs/isolated-backup-protocol.md
+new file mode 100644
+index 0000000..6e8377a
+--- /dev/null
++++ b/docs/isolated-backup-protocol.md
+@@ -0,0 +1,107 @@
++# Isolated runtime backup protocol v1
++
++Status: Agent-side implementation for native fixed-slot runtimes. This is not
++a legacy-agent API, a ClawManager deployment change, or an end-to-end backup
++acceptance result. The zhanghui08 site returned 404 for the legacy
++`/v1/stop-capabilities` route on 2026-10-29. That observation alone does not
++identify its image source revision or establish support for this protocol.
++
++## Scope and caller
++
++ClawManager D's runtime control owner is the intended caller. Before a mutation
++it must validate the original task/attempt authority, namespace and Pod UID,
++raw source inventory, current binding, complete participant barrier, encrypted
++original create request and reserved successor generation. It journals the
++intent before dispatch and performs the final authority check before accepting
++the receipt. B consumes D callbacks; it must not construct control SQL itself.
++
++All routes require the existing `X-ClawManager-Control-Token`. Deployment must
++provide the existing trusted management transport. The token grants Agent
++control access, not a new backup task authority. The API has no arbitrary shell,
++path, SQL, namespace discovery or user-selected process target.
++
++The stop scope is `instance_pid_namespaces_and_mounts`: the isolated lifecycle
++owner joins its tracked auxiliary commands, stops the sandbox process tree and
++cleans execution resources before the receipt is persisted. It does not prove
++that other Pods, installations or external NFS clients cannot write the same
++directory. Installation ownership of the NFS subtree and all other participants
++remain mandatory controller checks. A shared NFS export is never the backup
++scope by itself.
++
++## Wire contract
++
++Shared request/receipt definitions and digest helper are in
++`clawmanager-agent/gateway/backup_protocol.go`. Routes are registered by the
++native `slots.Worker` and `slots.Pool` constructors:
++
++| Route | Input | Success |
++| --- | --- | --- |
++| GET `/v1/backup/capabilities?gateway_port=N` | Exact slot primary port | Metadata only; never a stop proof |
++| POST `/v1/backup/stop` | `BackupRequest` | Persisted `BackupReceipt`, state `stopped` |
++| POST `/v1/backup/resume` | `BackupResumeRequest` | 202 while starting, or persisted receipt, state `resumed` |
++| POST `/v1/backup/state` | Original `BackupRequest` | Current operation receipt, or 202 while starting |
++| POST `/v1/backup/complete` | Original `BackupRequest` | Resumed receipt; releases the backup fence after controller CAS |
++
++`BackupRequest` binds protocol `isolated-backup.v1`, namespace, Pod UID,
++per-worker Agent epoch, 32-character lowercase hex operation ID, runtime type,
++instance/user IDs, original generation/gateway ID, exact primary port, expected
++PID, reserved successor generation, and restart digest. The epoch is obtained
++from that slot's new capability endpoint, not the pool's legacy capability API.
++
++`RestartSHA256` is the lowercase SHA-256 of
++`json.Marshal(gateway.CreateGatewayRequest)` as defined in this protocol's
++source revision. Use `gateway.BackupRestartDigest`; do not hash a different
++DTO, ciphertext, YAML or user-supplied JSON bytes. This includes the exact
++Pod UID, security profile, UID/GID, workspace, port block, generation and all
++configuration fields. The pool forwards the request unchanged. Secret values
++are carried only in the authenticated resume request and runtime memory; the
++proof journals contain the digest, not the configuration.
++
++## Durable transitions and retries
++
++1. `stop` persists `stopping` in the shared instance ledger and slot journal
++   before cancellation. The stable instance flock stays held. The manager pins
++   the current generation/PID and cancels its lifecycle under the same mutex.
++2. Only completed cleanup can persist `stopped`. HTTP 404, missing manager
++   state, a capability response or a stopped root PID cannot create a receipt.
++   A repeated identical stop returns the same persisted receipt. A different
++   operation is rejected.
++3. Ordinary creates, deletes, pending cancellations and maintenance mutations
++   are rejected while the backup fence is active. Other slots/Pods cannot claim
++   the durable backup state, even if the original flock disappears in a crash.
++4. `resume` requires the exact authorized payload and positive stop receipt. It
++   persists `resuming` and the successor assignment before CreateGateway. A
++   failed/unknown create is never dispatched again on retry. Retries observe
++   the same reserved generation; absence stays an unknown outcome.
++5. A positive running identity produces the persisted resumed receipt. The
++   controller must commit its original `CompleteRestart` binding CAS before
++   calling `complete`. Until then ordinary mutation remains fenced.
++
++Controller restart with the same live Agent can reconcile by the bound state
++route. Agent process restart is deliberately different: a persisted active
++backup is quarantined and capability metadata reports
++`agent_restart_reconciliation: false`. The old receipt remains evidence but
++cannot establish a current stop barrier. Automatic cross-incarnation recovery
++requires an additional reconciliation protocol; changing epoch, deleting the
++ledger or inventing a fresh operation is not a supported recovery procedure.
++Persistence errors also quarantine because a rename/fsync may have an unknown
++commit outcome.
++
++## Validation and outstanding integration
++
++On 2026-10-29, the Linux `slots` and `gateway` test binaries passed in local
++Docker Desktop WSL. The new cases use a simulated process starter and real
++temporary-file persistence/flocks. They cover current-PID drift, cleanup
++failure, operation replacement, ordinary/cross-slot writer exclusion, secret
++absence from journals, configuration digest mismatch, dispatch retry, resume
++completion, process restart quarantine and persistence failure. Existing
++environment-gated kernel/container acceptance cases remain gated; this run is
++not evidence of real sandbox, MySQL, Kubernetes or shared-NFS operation.
++
++Still required in ClawManager D: a new client/capability projection, native
++original-request DTO/custody compatibility, operation-bound SQL receipt storage,
++real gateway callbacks replacing the DELETE/404 flow, source binding CAS using
++the new PID, deployment wiring, complete participants and scoped NFS admission.
++The legacy site cannot be upgraded by replacing an image tag alone. Its
++historical original-generation configurations and existing database import
++profile are separate prerequisites.
