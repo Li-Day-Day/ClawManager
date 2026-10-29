@@ -1,6 +1,6 @@
 # D：Runtime 生产构造、原配置留存和 relay 注册
 
-本补丁承接 `f2f78aef`（C current facts v1）和 `af7c3ad5`（D Runtime/relay SQL）。范围仍为 `functional_test` 的 workspace；`acceptance_ready=false`，没有扩大成完整六域或正式成品。现场执行由用户在远侧 zhanghui08 测试环境完成；尚未获得现场运行输出。
+本补丁承接 `f2f78aef`（C current facts v1）和 `af7c3ad5`（D Runtime/relay SQL）。范围仍为 `functional_test` 的 workspace；`acceptance_ready=false`，没有扩大成完整六域或正式成品。现场执行由用户在远侧 zhanghui08 测试环境完成；已获得部署、存储及只读 SQL 元数据，尚未获得实际停止、备份和恢复的运行证明。
 
 ## 实际构造与 caller
 
@@ -78,3 +78,36 @@ bash scripts/system-backup-d-runtime-discover.sh clawmanager-zhanghui08-system
 新增本地边界测试覆盖：创建请求先留存后 POST、失败不派发、原 generation/installation/key/密文完整性、Runtime 固定配置和精确 RBAC、实际 PVC/子路径拒绝、生产 relay 路由拒绝匿名、Pod 等待异步停止证明，以及 relay SQL 的失败回滚/未知提交/replay/序列/旧 attempt evidence 边界。这些测试使用 SQL driver 和 Kubernetes fake；真实现场验证状态仍为待执行。
 
 本轮本地结果：`runtimecustody`、`systembackupexecution`、`systembackupcontroller`、`quiesce`、`publicadapter`、`cmd/system-backup-v2-controller` 完整包测试通过，grants 命令编译通过；`services -run '^TestRuntimeAgent'` 通过。只读脚本 `bash -n` 通过。测试使用独立临时 Go cache/tmp，测试结束清理，不提交二进制或构建缓存。
+
+## 现场 NFS 路径与后续验收
+
+用户确认这是测试环境，最终目标是多用户环境成功备份、恢复。保留实际 NFS 路径作为验证对象；PVC-only 通过不能替代此目标。以下是只读现场证据和待实现工作，不代表新增 profile 已可运行。
+
+现场 app、OpenClaw、Hermes 挂载的是同一个直接 NFS export `/`，其 Service 位于另一 installation 的 namespace。本 namespace 的 workspace PVC 则绑定另一条 hostPath，不能拿该 PVC 的内容代表正在使用的数据。不能仅凭 namespace 名切换 NFS server，也不能将另一个 installation 的写入者自动纳入停止授权。
+
+现库只有 user 1 的三个运行 Lite 实例，原 `instances.pod_name/pod_namespace` 为 NULL；实际位置来自 `instance_runtime_bindings → runtime_pods`，后者 `pod_uid` 也为 NULL。另有 generation 0 的未启动 Pro 实例。因此当前运行证据既不能证明多用户隔离，也不能通过 D 现有要求非空原 Pod 身份的控制链。后续需保持原 source projection/hash 不变，另行冻结实际 Runtime locator，交叉验证 Kubernetes UID、Agent 身份及原绑定，并在执行/恢复时复查；不得靠回填 Pod 名或虚构 generation 修复。
+
+数据库为 MySQL 8.4.8，迁移 ledger 到 080，仅发现旧 `system_maintenance_participants`。它不是新版完整 participant registry。`4fe83bcd` 导入 profile 仍由 D 独立负责：需覆盖现场 080 的真实 schema 差异，并与仓库已审查导入基线区分。在独立数据库副本上验证保留用户/实例主键和关系、迁移 journal、导入结果及重跑边界，再形成现库升级步骤；新环境继续使用当前 reviewed migration runner。不能只修改 source SHA，也不能直接向旧库执行全部新增 SQL。
+
+只读盘点命令（现有远侧仓库目录；本脚本仅需 Python 3 和 kubectl）：
+
+```bash
+python3 -B scripts/system-backup-d-nfs-inventory.py \
+  --context kubernetes-admin@kubernetes \
+  --namespace clawmanager-zhanghui08-system \
+  --server 10.107.165.245 --export /
+```
+
+该脚本跨 namespace 枚举直接 NFS、绑定身份匹配的 NFS PV、容器/init/ephemeral 挂载及工作负载模板；列出 Service/EndpointSlice/实际 exporter Pod 的存储链。输出只有白名单元数据，不打印 env、启动命令、Secret、日志或文件内容。不执行 exec、数据库查询或任何集群变更。无法读取任何一类资源时返回 `incomplete` 和非零退出码，不用空清单冒充成功。
+
+该输出是候选写入者清单，始终标记 `writer_coverage_proven=false` 和 `ready_for_backup=false`。Kubernetes 外部 NFS 客户端、未知 DNS 别名、CSI、文件系统别名/符号链接、export 实际目录及访问权限仍需核实；多次 API 读取不是一致性快照。特别需要确认两个 installation 是否共用同一目录树，不能假定同名 `user-1/instance-7` 属于同一用户。发现跨 installation 目录重叠时先明确数据所有权和迁移方案，不能继续把整 export 作为本 installation 的恢复目标。
+
+实施顺序及出口：
+
+1. **数据范围**：将 installation、NFS endpoint/export、实际目录与用户/实例关系绑定；明确独立采集子树。盘点所有实际和可重新创建的写入者。未知 writer 或跨 installation 范围不明时不进入停止阶段。
+2. **Runtime 控制**：补空 source locator 的真实映射、UID/Agent 交叉验证、未启动 generation 0 的明确合同；保留原 source 字节语义和恢复 CAS。启用真实创建请求的加密留存后，使用受控测试实例生命周期产生新 generation 收据；当前 ENV 或手写 JSON 不能替代历史原配置。以原配置加密读取、实际停止证明、完整 probes 和 relay 持久化完成 B 接入。
+3. **一致性采集**：在同一授权和维护周期内关闭入口、暂停后台和 Runtime writer，核实停止证据，再捕获对应 SQL 状态与 NFS 子树。固定 export/目录身份及完整 writer 清单到计划，最终复查后提交。当前生产 `runtime-workspace` 仍仅实现同 PV 校验；直接 NFS admission 和采集构造尚需实现，不能放宽成路径字符串相同即通过。
+4. **首次恢复**：在同一 NFS 上预留独立、可核实归属的测试恢复目录，配合隔离数据库及测试实例恢复，避免覆盖原目录。保留用户和实例主键关系；仅按明确的目标位置映射调整 workspace locator。不能将另一个 installation 的相同数字 ID 当作同一主体。原配置解密、ClaimRestart/CompleteRestart 及恢复 CAS 必须沿真实 caller 执行。
+5. **多用户验收**：至少两个用户，各自独立样本、同名但不同内容文件、目录、权限和运行实例；验证文件 hash、UID/GID/mode、用户/实例归属、用户间访问隔离、真实 Agent 重启及恢复后的读写。并发写入必须被 fence；停止失败、绑定漂移、部分失败及重复恢复不得冒充成功。首次恢复验证后，再单独设计原实例切换和回退。
+
+NFS 盘点工具本地 8 项测试通过，覆盖跨 namespace/DNS/endpoint、PVC UID 漂移、hostPath 与 NFS 区分、CSI 未解析状态、子路径边界、只读标志和失败不泄露输出。使用 `python -B`，不产生字节码或构建产物；此结果不代表现场 NFS、MySQL 或 Agent 联调通过。
