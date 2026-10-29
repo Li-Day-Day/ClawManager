@@ -1,0 +1,29 @@
+{
+  "source": "operator_returned_stdout_and_followup_read_only_diagnostics",
+  "recorded_date": "2026-10-29",
+  "bundle_source_commit": "b14bf695d3b59420ac5a9abb1fd9bef67673ba0e",
+  "bundle_sha256": "2e887e4f64ebaaa789b080e6a56cdc9c2a7ee33e9682af271c1e022890c04279",
+  "bundle_checksum_verified_by_operator_command": true,
+  "apply_status": "failed_or_outcome_unknown",
+  "temporary_pod_name": "a-jwt-trust-677d1cd653b4430b",
+  "followup": {
+    "namespace_uid": "a285351a-b52a-4b91-af78-1e5fa8e78387",
+    "namespace_matches_expected": true,
+    "ca_uid": "dfa905e3-e00d-4c45-a955-b8547e806757",
+    "ca_pem_sha256": "e7ff215f4fb96613cba2c0c89e9b28afe19b412b5d63be0593843a45fe99f518",
+    "ca_matches_expected": true,
+    "bao_pod_uid": "a9e53b50-905a-446e-8edc-7361c45b269d",
+    "bao_pod_phase": "Running",
+    "bao_container_ready": true,
+    "bao_pod_deleting": false,
+    "temporary_pod_exists": false,
+    "recovery_secret_uid": "7deddb55-edaa-4886-aec6-223fc249170b",
+    "recovery_secret_resource_version": "88290258",
+    "recovery_secret_immutable": true,
+    "api_insecure_skip_tls_verify": "unset"
+  },
+  "provider_mount_state": "not_yet_read_back",
+  "provider_authorization_verified": false,
+  "failure_cause": "not_identified",
+  "next_action": "GET-only inspection of the same pinned JWT mount/config; do not replay apply blindly"
+}

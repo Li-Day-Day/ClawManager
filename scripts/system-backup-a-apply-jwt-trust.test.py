@@ -51,5 +51,61 @@ class ApplyTrustTests(unittest.TestCase):
         self.plan["config"]["bound_issuer"] = "https://other"
         with self.assertRaises(subject.support.Rejected): subject.reviewed_plan(self.plan)
 
+    def test_inspection_is_get_only_for_absent_partial_and_complete(self):
+        for mode, status in (("absent", "jwt_trust_mount_absent"),
+                             ("partial", "jwt_trust_config_absent"),
+                             ("complete", "jwt_trust_readback_verified")):
+            with self.subTest(mode=mode):
+                provider = Provider()
+                if mode != "absent": subject.apply(provider, self.plan)
+                if mode == "partial": provider.config = None
+                writes = list(provider.writes)
+                original = provider.request
+                def readonly(method, path, body=None):
+                    self.assertEqual(method, "GET")
+                    self.assertIsNone(body)
+                    return original(method, path, body)
+                provider.request = readonly
+                result = subject.inspect(provider, self.plan)
+                self.assertEqual(result["status"], status)
+                self.assertFalse(result["provider_mutated"])
+                self.assertEqual(provider.writes, writes)
+                self.assertEqual(result["config_exists"], mode == "complete")
+
+    def test_inspection_rejects_drift_without_repair(self):
+        for mode, expected in (("type", "mount_validate"), ("issuer", "config_validate"),
+                               ("remote-jwks", "config_validate"), ("ttl", "tune_validate")):
+            with self.subTest(mode=mode):
+                provider = Provider()
+                subject.apply(provider, self.plan)
+                if mode == "type": provider.mounts[self.plan["mount"] + "/"]["type"] = "userpass"
+                elif mode == "issuer": provider.config["data"]["bound_issuer"] = "https://other"
+                elif mode == "remote-jwks": provider.config["data"]["jwks_url"] = "https://other"
+                original = provider.request
+                def readonly(method, path, body=None):
+                    self.assertEqual(method, "GET")
+                    if mode == "ttl" and path.endswith("/tune"):
+                        return {"data": {"default_lease_ttl": 3600, "max_lease_ttl": 3600}}
+                    return original(method, path, body)
+                provider.request = readonly
+                progress = {}
+                with self.assertRaises(subject.support.Rejected):
+                    subject.inspect(provider, self.plan, progress)
+                self.assertEqual(progress["failure_stage"], expected)
+                self.assertEqual(len(provider.writes), 2)
+
+    def test_write_attempt_and_failure_stage_survive_unknown_post(self):
+        provider = Provider()
+        original = provider.request
+        def unknown(method, path, body=None):
+            result = original(method, path, body)
+            if method == "POST": raise TimeoutError("must_not_be_printed")
+            return result
+        provider.request = unknown
+        progress = {"provider_write_attempted": False}
+        with self.assertRaises(TimeoutError): subject.apply(provider, self.plan, progress)
+        self.assertEqual(progress, {"provider_write_attempted": True, "failure_stage": "mount_create"})
+        self.assertEqual(len(provider.writes), 1)
+
 
 if __name__ == "__main__": unittest.main()
