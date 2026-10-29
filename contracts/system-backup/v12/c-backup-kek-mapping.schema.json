@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Public C backup KEK mapping input, pending D persistence alignment",
+  "x-contract-version": "public-c-backup-kek-mapping.v1",
+  "x-contract-status": "candidate-pending-d-alignment",
+  "description": "Non-authorizing input to the original reference:kek admission. No field proves approval. Identity/version must already exist in the original registry; no derivation from provider names or probe hashes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "installation_id", "config_sha256", "config_ref", "key_binding", "provider", "generate_ref", "unwrap_ref", "source_revision"],
+  "properties": {
+    "schema_version": {"const": "public-c-backup-kek-mapping.v1"},
+    "installation_id": {"$ref": "#/$defs/Text"},
+    "config_sha256": {"$ref": "#/$defs/Hash"},
+    "config_ref": {
+      "type": "object", "additionalProperties": false,
+      "required": ["purpose", "identity_hash", "version"],
+      "properties": {
+        "purpose": {"const": "kek"},
+        "identity_hash": {"$ref": "#/$defs/Hash"},
+        "version": {"$ref": "#/$defs/Version"}
+      }
+    },
+    "key_binding": {"$ref": "#/$defs/KeyBinding"},
+    "provider": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint", "key_name", "provider_identity_hash", "scope_hash", "ca_pem_sha256"],
+      "properties": {
+        "endpoint": {"type": "string", "pattern": "^https://", "maxLength": 2048},
+        "key_name": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$"},
+        "provider_identity_hash": {"$ref": "#/$defs/Hash"},
+        "scope_hash": {"$ref": "#/$defs/Hash"},
+        "ca_pem_sha256": {"$ref": "#/$defs/Hash"}
+      }
+    },
+    "generate_ref": {
+      "allOf": [
+        {"$ref": "secret-ref.schema.json"},
+        {"properties": {"ref_kind": {"const": "external_kms_key"}, "purpose": {"const": "data_key_generation"}, "kms_capability": {"const": "generate_data_key"}}}
+      ]
+    },
+    "unwrap_ref": {
+      "allOf": [
+        {"$ref": "secret-ref.schema.json"},
+        {"properties": {"ref_kind": {"const": "external_kms_key"}, "purpose": {"const": "kek_unwrap"}, "kms_capability": {"const": "unwrap_data_key"}}}
+      ]
+    },
+    "source_revision": {"$ref": "#/$defs/Version"}
+  },
+  "$defs": {
+    "Hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "Text": {"type": "string", "minLength": 1, "maxLength": 256},
+    "Version": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$", "not": {"enum": ["latest", "current", "default"]}},
+    "KeyBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider", "identity_hash", "registry_version", "provider_key_id", "provider_version"],
+      "properties": {
+        "provider": {"const": "external-kms"},
+        "identity_hash": {"$ref": "#/$defs/Hash"},
+        "registry_version": {"$ref": "#/$defs/Version"},
+        "provider_key_id": {"$ref": "#/$defs/Text"},
+        "provider_version": {"type": "string", "pattern": "^[1-9][0-9]*$", "maxLength": 10}
+      }
+    }
+  },
+  "x-runtime-validation": [
+    "config_ref must equal the original current/proposed reference:kek pin for this installation/config.",
+    "key_binding.identity_hash and registry_version equal config_ref.identity_hash and version byte for byte.",
+    "Both operation refs must be authenticated by the original registry. Their provider_identity_hash and scope_hash equal the provider descriptor. Do not assume distinct operation refs have the same identity/version; require the original registry relation to the same logical KEK.",
+    "provider_key_id, endpoint, key_name and provider numeric version are resolved from authenticated original mapping, never inferred from names, versions or probe SHA.",
+    "Current permission, validity interval, revocation and mapping retention are supplied by the original trusted authority and rechecked in its transaction. They are deliberately not self-asserted approval fields in this document.",
+    "A scalar snapshot/source_revision is not evidence of complete retained scanning or shared locking. Missing source or recheck rejects admission."
+  ]
+}

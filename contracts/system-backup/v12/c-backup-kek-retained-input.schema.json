@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Public C retained backup KEK scan input, pending D persistence alignment",
+  "x-contract-version": "public-c-backup-kek-retained-input.v1",
+  "x-contract-status": "candidate-pending-d-alignment",
+  "description": "Data returned by an authenticated complete-scan source. This JSON never establishes completeness, transaction isolation, authority or permission to retire a key.",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "installation_id", "config_sha256", "source_revision", "observed_at", "valid_until", "coverage", "references", "references_sha256"],
+  "properties": {
+    "schema_version": {"const": "public-c-backup-kek-retained-input.v1"},
+    "installation_id": {"$ref": "#/$defs/Text"},
+    "config_sha256": {"$ref": "#/$defs/Hash"},
+    "source_revision": {"$ref": "#/$defs/Version"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "valid_until": {"type": "string", "format": "date-time"},
+    "coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["retained_artifacts", "inflight_and_unknown_writes", "holds_and_catalog", "restore_and_prune"],
+      "properties": {
+        "retained_artifacts": {"$ref": "#/$defs/Partition"},
+        "inflight_and_unknown_writes": {"$ref": "#/$defs/Partition"},
+        "holds_and_catalog": {"$ref": "#/$defs/Partition"},
+        "restore_and_prune": {"$ref": "#/$defs/Partition"}
+      }
+    },
+    "references": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["partition", "source_record_id", "source_record_version", "backup_public_id", "attempt_no", "envelope_id", "key_binding", "binding_sha256"],
+        "properties": {
+          "partition": {"enum": ["retained_artifacts", "inflight_and_unknown_writes", "holds_and_catalog", "restore_and_prune"]},
+          "source_record_id": {"$ref": "#/$defs/Text"},
+          "source_record_version": {"$ref": "#/$defs/Version"},
+          "backup_public_id": {"type": "string", "pattern": "^sbk_[A-Za-z0-9_-]+$"},
+          "attempt_no": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+          "envelope_id": {"$ref": "#/$defs/Text"},
+          "key_binding": {"$ref": "c-backup-kek-mapping.schema.json#/$defs/KeyBinding"},
+          "binding_sha256": {"$ref": "#/$defs/Hash"}
+        }
+      }
+    },
+    "references_sha256": {"$ref": "#/$defs/Hash"}
+  },
+  "$defs": {
+    "Text": {"type": "string", "minLength": 1, "maxLength": 256},
+    "Hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "Version": {"$ref": "c-backup-kek-mapping.schema.json#/$defs/Version"},
+    "Partition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "snapshot_revision", "fence_revision", "record_count", "record_set_sha256"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/Text"},
+        "snapshot_revision": {"$ref": "#/$defs/Version"},
+        "fence_revision": {"$ref": "#/$defs/Version"},
+        "record_count": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "record_set_sha256": {"$ref": "#/$defs/Hash"}
+      }
+    }
+  },
+  "x-runtime-validation": [
+    "All four partitions are mandatory; source_id/revisions are opaque values supplied by D's original source, not invented timestamps or row maxima.",
+    "A trusted source authenticates full enumeration/EOF and a fence covering concurrent append, unknown write, hold, restore/prune and retirement. A caller-provided count/hash or complete=true cannot prove this.",
+    "Missing source, nil scan, omitted partition, expiry, pagination gap or changed fence rejects retirement. A non-nil empty list is acceptable only after every original source has proven empty under the shared fence.",
+    "Unknown writes and reservations retain the planned exact key before a final envelope exists. Unresolved binding is unavailable, never skipped.",
+    "references are unique and sorted by UTF-16 order of JCS([partition,source_record_id,source_record_version,envelope_id]); references_sha256 is SHA256(UTF8(JCS(references))).",
+    "Each partition count/hash covers its filtered references array using the same order. binding_sha256 is SHA256(UTF8(JCS(key_binding))).",
+    "Do not exclude references solely on task terminal state, expired timestamp or deleted SQL flag. D must supply authoritative lifecycle and absence/cleanup facts.",
+    "The original bootstrap/config-mutation transaction must recheck source_revision, all snapshot/fence revisions and the proposed map before commit. No network IO or independent commit in locked Recheck."
+  ]
+}
