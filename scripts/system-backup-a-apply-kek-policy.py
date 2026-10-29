@@ -77,7 +77,9 @@ def policies(plan):
 
 def workload_roles(reviewed_policies, identity):
     """One exact Pod, one operation, one policy; no shared SA-wide role."""
-    require(set(identity) == {"namespace", "service_account", "service_account_uid", "pod_uid", "job_uid", "invocation_sha256", "execution_grant_sha256"})
+    require(set(identity) == {"namespace", "service_account", "service_account_uid", "pod_uid", "job_uid", "invocation_sha256", "execution_grant_sha256", "operation"})
+    require(identity["operation"] in ("backup_dek_generate", "backup_dek_unwrap"))
+    operation = identity["operation"].removeprefix("backup_dek_")
     require(all(isinstance(v, str) and 0 < len(v) <= 256 for v in identity.values()))
     require(re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", identity["namespace"]))
     require(re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", identity["service_account"]))
@@ -85,9 +87,11 @@ def workload_roles(reviewed_policies, identity):
         require(re.fullmatch(r"[0-9a-f]{64}", identity[field]))
     output = {}
     for policy in reviewed_policies:
+        if not policy.endswith("-" + operation):
+            continue
         suffix = hashlib.sha256(canonical({"identity": identity, "policy": policy})).hexdigest()
         output["sbk-job-" + suffix] = {
-            "role_type": "jwt", "bound_audiences": ["clawmanager-backup-kek"],
+            "role_type": "jwt", "bound_audiences": ["clawmanager-backup-kek-" + operation],
             "bound_subject": "system:serviceaccount:" + identity["namespace"] + ":" + identity["service_account"],
             "bound_claims_type": "string",
             "bound_claims": {"/kubernetes.io/namespace": identity["namespace"], "/kubernetes.io/serviceaccount/uid": identity["service_account_uid"], "/kubernetes.io/pod/uid": identity["pod_uid"]},
@@ -98,6 +102,7 @@ def workload_roles(reviewed_policies, identity):
             "token_no_default_policy": True, "token_policies": [policy], "token_num_uses": 0, "token_period": 0,
             "groups_claim": "", "verbose_oidc_logging": False, "token_policies_template_claims": False,
         }
+    require(len(output) == 1)
     return output
 
 

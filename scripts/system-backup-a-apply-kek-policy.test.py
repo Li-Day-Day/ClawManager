@@ -119,23 +119,33 @@ console.log(JSON.stringify(backupTransitPlan({installation:context.origin_instal
         self.assertEqual(len(provider.writes), 2)
 
     def job_identity(self):
-        return {"namespace": "backup", "service_account": "backup-worker", "service_account_uid": "sa-original", "pod_uid": "pod-original", "job_uid": "job-original", "invocation_sha256": "a" * 64, "execution_grant_sha256": "b" * 64}
+        return {"namespace": "backup", "service_account": "backup-worker", "service_account_uid": "sa-original", "pod_uid": "pod-original", "job_uid": "job-original", "invocation_sha256": "a" * 64, "execution_grant_sha256": "b" * 64, "operation": "backup_dek_generate"}
 
     def test_roles_bind_exact_pod_and_separate_operation(self):
         identity = self.job_identity()
         roles = subject.workload_roles(subject.policies(self.plan), identity)
-        self.assertEqual(len(roles), 2)
+        self.assertEqual(len(roles), 1)
         policies = []
         for role in roles.values():
             self.assertEqual(role["bound_claims"]["/kubernetes.io/pod/uid"], "pod-original")
             self.assertEqual(role["bound_claims"]["/kubernetes.io/serviceaccount/uid"], "sa-original")
-            self.assertEqual(role["bound_audiences"], ["clawmanager-backup-kek"])
+            self.assertEqual(role["bound_audiences"], ["clawmanager-backup-kek-generate"])
             self.assertEqual(role["token_type"], "batch")
             self.assertTrue(role["token_no_default_policy"])
             self.assertEqual(role["token_explicit_max_ttl"], 20)
             self.assertEqual(role["claim_mappings"]["/kubernetes.io/pod/uid"], "pod_uid")
             policies += role["token_policies"]
-        self.assertEqual(len(set(policies)), 2)
+        self.assertEqual(len(set(policies)), 1)
+        self.assertTrue(policies[0].endswith("-generate"))
+        recovery = dict(identity, operation="backup_dek_unwrap", pod_uid="recovery-pod", job_uid="recovery-job")
+        unwrap = subject.workload_roles(subject.policies(self.plan), recovery)
+        role = next(iter(unwrap.values()))
+        self.assertEqual(role["bound_audiences"], ["clawmanager-backup-kek-unwrap"])
+        self.assertTrue(role["token_policies"][0].endswith("-unwrap"))
+        self.assertEqual(len(unwrap), 1)
+        for operation in ("", "backup_dek_sign", "both"):
+            with self.assertRaises(subject.Rejected):
+                subject.workload_roles(subject.policies(self.plan), dict(identity, operation=operation))
         identity["pod_uid"] = "replacement"
         self.assertTrue(set(roles).isdisjoint(subject.workload_roles(subject.policies(self.plan), identity)))
 
@@ -164,13 +174,13 @@ console.log(JSON.stringify(backupTransitPlan({installation:context.origin_instal
         with self.assertRaises(subject.Rejected): subject.apply_roles(provider, "job-jwt", "0" * 64, roles)
         self.assertEqual(provider.writes, 0)
         receipt = subject.apply_roles(provider, "job-jwt", config_sha, roles)
-        self.assertEqual(provider.writes, 2)
+        self.assertEqual(provider.writes, 1)
         self.assertTrue(all(x["created"] for x in receipt))
         subject.apply_roles(provider, "job-jwt", config_sha, roles)
-        self.assertEqual(provider.writes, 2)
+        self.assertEqual(provider.writes, 1)
         next(iter(roles.values()))["bound_claims"] = {}
         with self.assertRaises(subject.Rejected): subject.apply_roles(provider, "job-jwt", config_sha, roles)
-        self.assertEqual(provider.writes, 2)
+        self.assertEqual(provider.writes, 1)
 
 
 if __name__ == "__main__":

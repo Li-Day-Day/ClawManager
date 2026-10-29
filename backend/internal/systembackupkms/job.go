@@ -2,6 +2,8 @@ package systembackupkms
 
 import (
 	"context"
+	"sync"
+	"time"
 
 	w "clawreef/internal/systembackupwire"
 )
@@ -12,8 +14,11 @@ import (
 // Missing OriginalJobAuthority is a hard deployment error, not a fallback to
 // the old functional Lease.DEK path.
 type CaptureJob struct {
-	g *CaptureGenerator
-	r w.KeyRequest
+	g         *CaptureGenerator
+	r         w.KeyRequest
+	mu        sync.Mutex
+	attempted bool
+	until     time.Time
 }
 
 func NewCaptureJob(ctx context.Context, c Config, m PermitMount, original OriginalJobAuthority, frozen w.KeyRequest) (*CaptureJob, error) {
@@ -25,20 +30,45 @@ func NewCaptureJob(ctx context.Context, c Config, m PermitMount, original Origin
 	if ctx == nil || original.Recheck(ctx, a) != nil {
 		return nil, ErrPermission
 	}
-	if _, e = r.permit(ctx, a); e != nil {
+	p, e := r.permit(ctx, a)
+	if e != nil {
 		return nil, ErrPermission
 	}
 	g, e := NewCaptureGenerator(c, r)
 	if e != nil {
 		return nil, e
 	}
-	return &CaptureJob{g: g, r: frozen}, nil
+	until := p.ExpiresAt
+	if c.NotAfter.Before(until) {
+		until = c.NotAfter
+	}
+	if original.ValidUntil().Before(until) {
+		until = original.ValidUntil()
+	}
+	return &CaptureJob{g: g, r: frozen, until: until}, nil
+}
+
+// ValidUntil is the fixed shortest admitted window, including provider permit
+// and mapping bounds. Writers must use it as their cancellation deadline.
+func (j *CaptureJob) ValidUntil() time.Time {
+	if j == nil {
+		return time.Time{}
+	}
+	return j.until
 }
 
 func (j *CaptureJob) WithDEK(ctx context.Context, use w.WithDEK) (w.WrappedKey, error) {
 	if j == nil || j.g == nil {
 		return w.WrappedKey{}, ErrPermission
 	}
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	if j.attempted {
+		return w.WrappedKey{}, ErrPermission
+	}
+	// Generate may have succeeded remotely even when its response was lost.
+	// This original envelope identity is single-use on every outcome.
+	j.attempted = true
 	return j.g.Generate(ctx, j.r, use)
 }
 func (j *CaptureJob) Close() {

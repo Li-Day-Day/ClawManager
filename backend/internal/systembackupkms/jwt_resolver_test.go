@@ -122,11 +122,25 @@ func TestProjectedJWTKeepsOriginalJobScope(t *testing.T) {
 				t.Fatal("DEK retained")
 			}
 			if mode == "valid" {
-				if _, e = job.WithDEK(context.Background(), func([]byte) error { return nil }); e != nil || logins.Load() != 2 {
-					t.Fatal("cached or failed token")
+				if _, e = job.WithDEK(context.Background(), func([]byte) error { t.Fatal("reused envelope"); return nil }); e == nil || logins.Load() != 1 {
+					t.Fatal("original envelope was generated again")
+				}
+				resolver, e := NewJobResolver(testConfig(server), m, o)
+				if e != nil {
+					t.Fatal(e)
+				}
+				for n := 0; n < 2; n++ {
+					grant, e := resolver.Resolve(context.Background(), o.access)
+					clear(grant.Secret)
+					if e != nil {
+						t.Fatal(e)
+					}
+				}
+				if logins.Load() != 3 {
+					t.Fatal("resolver cached JWT exchange")
 				}
 				o.until = o.until.Add(time.Minute)
-				if _, e = job.WithDEK(context.Background(), func([]byte) error { t.Fatal("renewed original used"); return nil }); e == nil {
+				if _, e = resolver.Resolve(context.Background(), o.access); e == nil {
 					t.Fatal("original lifetime silently extended")
 				}
 			}

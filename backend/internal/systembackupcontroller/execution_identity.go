@@ -323,6 +323,15 @@ func (p *PinnedExecutionIdentity) Resolve(ctx context.Context, a d.Authority, re
 var _ ExecutionAuthorization = (*PinnedExecutionIdentity)(nil)
 var _ ExecutionRecordKeys = (*PinnedExecutionIdentity)(nil)
 
+// GrantSHA256 identifies the original independently pinned envelope. It is
+// public metadata only and never replaces current authorization checks.
+func (p *PinnedExecutionIdentity) GrantSHA256() string {
+	if p == nil {
+		return ""
+	}
+	return p.digest
+}
+
 // DeploymentBinding is public metadata, never a grant to execute a task.
 func (p *PinnedExecutionIdentity) DeploymentBinding() ExecutionGrant {
 	if p == nil {

@@ -32,7 +32,7 @@ func testConfig(s *httptest.Server) Config {
 }
 
 func TestOnlineGenerateUnwrapBindingAndRevocation(t *testing.T) {
-	for _, mode := range []string{"valid", "wrong-purpose", "wrong-installation", "wrong-key", "wrong-version", "wrong-registry", "wrong-context", "expired", "not-yet-valid", "revoked-before", "revoked-after-provider", "revoke-at-use", "wrong-response-version", "wrong-ciphertext", "bad-plaintext", "duplicate-json", "provider-denied", "callback-fails", "use-not-called", "callback-error-swallowed", "cancel-at-provider", "revoked-after-use"} {
+	for _, mode := range []string{"valid", "wrong-purpose", "wrong-installation", "wrong-key", "wrong-version", "wrong-registry", "wrong-context", "expired", "not-yet-valid", "revoked-before", "revoked-after-provider", "revoke-at-use", "wrong-response-version", "wrong-ciphertext", "bad-plaintext", "duplicate-json", "provider-denied", "callback-fails", "use-not-called", "callback-error-swallowed", "cancel-at-provider", "revoked-after-use", "unknown-use-commit"} {
 		t.Run(mode, func(t *testing.T) {
 			r := testRequest()
 			calls, used := 0, 0
@@ -101,6 +101,9 @@ func TestOnlineGenerateUnwrapBindingAndRevocation(t *testing.T) {
 					if mode == "use-not-called" {
 						return nil
 					}
+					if mode == "unknown-use-commit" {
+						return ErrUnknown
+					}
 					e := f()
 					if mode == "revoked-after-use" {
 						revoked = true
@@ -148,6 +151,9 @@ func TestOnlineGenerateUnwrapBindingAndRevocation(t *testing.T) {
 				}
 				return nil
 			})
+			if mode == "unknown-use-commit" && !errors.Is(e, ErrUnknown) {
+				t.Fatal("unknown use commit disguised", e)
+			}
 			if mode == "valid" {
 				if e != nil || used != 1 || calls != 1 || string(result.Ciphertext) != testCiphertext() {
 					t.Fatalf("valid: %v, %d, %d", e, used, calls)

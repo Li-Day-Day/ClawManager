@@ -29,7 +29,7 @@
     "role": "REPLACE_WITH_ORIGINAL_POD_AND_PURPOSE_CONTENT_ADDRESSED_ROLE",
     "policy": "REPLACE_WITH_EXACT_CONTEXT_GENERATE_OR_UNWRAP_POLICY",
     "identity_file": "/run/system-backup/provider-jwt/token",
-    "audience": "clawmanager-backup-kek",
+    "audience": "clawmanager-backup-kek-generate",
     "projection_expiration_seconds": 600,
     "provider_batch_token_max_seconds": 20,
     "renewable": false
@@ -44,7 +44,7 @@
   "limits": [
     "This example is not parsed by DeploymentConfig; map reviewed fields to kms.Config and PermitMount in the owner composition.",
     "JWT projection requires original Job admission and WorkerObserver validation; do not change the worker control audience.",
-    "Use separate capture and recovery constructors, roles and permits; recovery uses its retained exact historical request.",
+    "Recovery uses audience clawmanager-backup-kek-unwrap. Use separate capture and recovery constructors, roles and permits; recovery uses its retained exact historical request.",
     "Candidate provider name/version above are observed metadata, not registry admission.",
     "No credentials or private signing keys belong in this file."
   ]

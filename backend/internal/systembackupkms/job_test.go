@@ -32,6 +32,9 @@ func TestJobConstructionUsesIndependentCaptureAndRecovery(t *testing.T) {
 		t.Fatal(e)
 	}
 	defer j.Close()
+	if !j.ValidUntil().Equal(p.ExpiresAt) {
+		t.Fatal("writer deadline exceeds the pinned permit")
+	}
 	var borrowed []byte
 	wrapped, e := j.WithDEK(context.Background(), func(b []byte) error { borrowed = b; return nil })
 	if e != nil {
@@ -41,6 +44,9 @@ func TestJobConstructionUsesIndependentCaptureAndRecovery(t *testing.T) {
 		t.Fatal("callback buffer retained")
 	}
 	o.revoked = true
+	if _, err := NewCaptureJob(context.Background(), testConfig(s), m, o, testRequest()); err == nil {
+		t.Fatal("revoked forward authority constructed another capture")
+	}
 	if _, e = j.WithDEK(context.Background(), func([]byte) error { t.Fatal("revoked capture used"); return nil }); e == nil {
 		t.Fatal("revoked capture success")
 	}

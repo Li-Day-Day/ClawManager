@@ -26,10 +26,11 @@ type JobIdentity struct {
 
 // OriginalJobAuthority is a reference to the EXISTING execution authorization.
 // Recheck verifies the original task/attempt/config/fence/Job/workload and the
-// complete frozen provider request. WithUse holds that authority's shared
-// revocation boundary while invoking use synchronously IN THE ORIGINAL JOB.
-// RPC adapters which check, close their SQL transaction, and then run use do
-// not implement this contract. No permissive production implementation exists.
+// complete frozen provider request. WithUse invokes use synchronously IN THE
+// ORIGINAL JOB, within either its shared local revocation lock or a persisted
+// original-Job use window. A remote window requires reserve/begin/end, fixed
+// original expiry, no replay, and real StopJob/Stopped before revocation is
+// complete. A detached check followed by an unrecorded callback is insufficient.
 type OriginalJobAuthority interface {
 	Identity() JobIdentity
 	ValidUntil() time.Time

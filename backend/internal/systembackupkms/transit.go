@@ -382,6 +382,9 @@ func (t *transit) run(ctx context.Context, r w.KeyRequest, wrapped []byte, use w
 		return useErr
 	})
 	if err != nil || !called || repeated || useErr != nil {
+		if errors.Is(err, ErrUnknown) {
+			return zero, ErrUnknown
+		}
 		return zero, ErrPermission
 	}
 	if e := check(); e != nil {

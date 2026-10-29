@@ -463,7 +463,7 @@ func (o *PublicJobOwner) Stopped(ctx context.Context, a d.Authority, binding d.J
 func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.ControlRequest) (worker.Lease, error) {
 	var lease worker.Lease
 	pod, ok := boundPod(ctx)
-	if !ok || !o.ready() || pod.Namespace != o.Namespace || pod.ServiceAccountUID != o.Security.ServiceAccountUID {
+	if !ok || !o.ready() || !worker.ValidateControl(req) || pod.Namespace != o.Namespace || pod.ServiceAccountUID != o.Security.ServiceAccountUID {
 		return lease, worker.ErrExecution
 	}
 	task := req.Invocation.Request.Binding.BackupID
@@ -493,6 +493,12 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 	original, _ := json.Marshal(req.Invocation)
 	if !bytes.Equal(original, part.InvocationJSON) {
 		return lease, worker.ErrExecution
+	}
+	if req.Invocation.ProviderKey != nil {
+		keyContext := req.Invocation.ProviderKey.Request.Context
+		if keyContext.InstallationID != a.InstallationID || keyContext.Part != part.Part {
+			return lease, worker.ErrExecution
+		}
 	}
 	var rawBinding []byte
 	var revoked bool
@@ -545,11 +551,34 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 	if e = guard.Recheck(ctx, tx); e != nil {
 		return lease, worker.ErrExecution
 	}
+	// A detached worker may never use a longer relay certificate lifetime to
+	// outlive the original claim, capture hold or signed execution grant.
+	until := binding.RelayExpiresAt
+	if bound := guard.ValidUntil(); bound.IsZero() || bound.Before(until) {
+		until = bound
+	}
+	if req.Invocation.Request.Deadline.Before(until) {
+		until = req.Invocation.Request.Deadline
+	}
+	if !time.Now().Before(until) {
+		return lease, worker.ErrExecution
+	}
+	lease = worker.Lease{InvocationSHA256: req.InvocationSHA256, ExpiresAt: until}
+	if req.Invocation.ProviderKey != nil && req.Action != "ready" {
+		lease.KeyUse, e = o.keyUseTx(ctx, tx, a, binding, pod, req, until)
+		if e != nil {
+			return worker.Lease{}, worker.ErrExecution
+		}
+		lease.ExpiresAt = lease.KeyUse.Until
+	}
 	observationRaw, _ := json.Marshal(req)
 	observationHash := hash(observationRaw)
 	clear(observationRaw)
 	if e = recordPublicObservation(ctx, tx, a, binding, "running", observationHash); e != nil {
 		return lease, worker.ErrNotReady
+	}
+	if req.Invocation.ProviderKey != nil && guard.Recheck(ctx, tx) != nil {
+		return worker.Lease{}, worker.ErrExecution
 	}
 	if e = tx.Commit(); e != nil {
 		return lease, worker.ErrNotReady
@@ -557,9 +586,8 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 	if e = o.Gate.ValidateCollectors(ctx, a); e != nil {
 		return lease, worker.ErrExecution
 	}
-	lease = worker.Lease{InvocationSHA256: req.InvocationSHA256, ExpiresAt: binding.RelayExpiresAt}
 	switch req.Action {
-	case "ready", "check":
+	case "ready", "check", "key-reserve", "key-check", "key-begin", "key-end":
 		return lease, nil
 	case "acquire":
 		if req.Invocation.Request.Database != nil {

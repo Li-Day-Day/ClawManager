@@ -3,6 +3,7 @@ package worker
 import (
 	"bytes"
 	"clawreef/internal/systembackup/staging"
+	"clawreef/internal/systembackupkms"
 	"context"
 	"crypto/sha256"
 	"crypto/tls"
@@ -22,10 +23,11 @@ import (
 // Invocation contains no credentials. The immutable hash binds paths and policy
 // to the task-authorized worker, not just its public backup ID.
 type Invocation struct {
-	Request       Request `json:"request"`
-	WorkspacePath string  `json:"workspace_path"`
-	StagingPath   string  `json:"staging_path"`
-	EvidencePath  string  `json:"evidence_path,omitempty"`
+	Request       Request                 `json:"request"`
+	WorkspacePath string                  `json:"workspace_path"`
+	StagingPath   string                  `json:"staging_path"`
+	EvidencePath  string                  `json:"evidence_path,omitempty"`
+	ProviderKey   *systembackupkms.Access `json:"provider_key,omitempty"`
 }
 
 func (i Invocation) Hash() (string, error) {
@@ -49,6 +51,7 @@ type Lease struct {
 	ExpiresAt        time.Time           `json:"expires_at"`
 	DEK              []byte              `json:"dek,omitempty"`
 	Database         *DatabaseCredential `json:"database,omitempty"`
+	KeyUse           *KeyUseLease        `json:"key_use,omitempty"`
 }
 
 // Clear releases mutable credential buffers. Driver password strings cannot be
@@ -61,6 +64,12 @@ func (l *Lease) Clear() {
 }
 func validLeasePayload(l Lease, r ControlRequest) bool {
 	if !validLease(l, r) {
+		return false
+	}
+	if r.Invocation.ProviderKey != nil {
+		return validKeyUseLease(l, r)
+	}
+	if l.KeyUse != nil {
 		return false
 	}
 	if r.Action != "acquire" {
@@ -140,6 +149,9 @@ func validControl(r ControlRequest) bool {
 	h, e := r.Invocation.Hash()
 	if e != nil || h != r.InvocationSHA256 || !time.Now().Before(r.Invocation.Request.Deadline) {
 		return false
+	}
+	if r.Invocation.ProviderKey != nil {
+		return validKeyUseRequest(r)
 	}
 	switch r.Action {
 	case "ready", "acquire":

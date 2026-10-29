@@ -6,7 +6,7 @@
 
 ## 公共 C 合同接收与授权计划增量
 
-**在线实现最新增量：** 公共 C 已提交 `a7424ce1`。A 已新增在线 `systembackupkms` adapter、受控 provider permit resolver、Job 内调用构造和精确 policy 下发工具。测试均通过，但真实 `OriginalJobAuthority.WithUse`、控制器/Job 生产注册及正式现场凭据仍未完成，不能将下述早期离线计划或测试当作正式验收。接口、撤销边界、命令、材料与结果分列见 [在线 KEK 交接](system-backup-a-online-kek-20261029.md)。
+**在线实现最新增量：** 公共 C 已提交 `a7424ce1`。A 已新增在线 `systembackupkms` adapter、受控 provider permit resolver、Job 内调用构造和精确 policy 下发工具。后续已增加原控制通道的有界 `OriginalKeyAuthority` 和 `NewCaptureKeyJob` 构造；最终 writer/cmd 调用、真实 SQL/Pod 验收及正式现场凭据仍未完成，不能将下述早期离线计划或测试当作正式验收。接口、撤销边界、命令、材料与结果分列见 [在线 KEK 交接](system-backup-a-online-kek-20261029.md)。
 
 原交付见 [C 合同](system-backup-c-crypto-contract-20261029.md) 和 `contracts/system-backup/v12/public-c-crypto-v1/bundle-manifest.json`。正式 external-kms capture 固定 `Generator.Generate`，恢复固定 `Unwrapper.Unwrap(expectedRequest,wrapped)`；Secret variants 才使用 AES-256-KW，并限 functional_test/same-cluster-copy。capture Job 不能注入 Unwrapper；不允许 GenerateDataKey 降级为本地随机+encrypt。
 

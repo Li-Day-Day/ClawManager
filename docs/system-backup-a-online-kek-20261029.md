@@ -24,14 +24,25 @@ provider 网络调用在事务外进行；进入回调之前、之后都复查�
 
 ## 给 D/B 的原授权和撤销接点
 
-**缺少的真实实现是 `OriginalJobAuthority.WithUse` 以及其 Job 生产调用点。** 当前新增构造在缺少原 guard 时拒绝。现有 `PublicJobOwner.Authorize` 提交 SQL 事务后才返回 functional `Lease.DEK`，不可直接换成正式 provider DEK。继续复用 `WorkloadIdentity` 的 mTLS + TokenReview + 当前 Pod/SA/Job 核对；不能用 DownwardAPI、自报 UID 或测试 authority 替代。
+**当前增量已实现原控制通道的 `worker.OriginalKeyAuthority` 和 `worker.NewCaptureKeyJob`，以及 `PublicJobOwner.Authorize` 的使用记录接线；尚未取得真实 SQL/Job 并发回执，B 的最终 writer/cmd 调用仍缺失。** 原 invocation 增加可选 `provider_key`，完整原字节仍由已有加密 plan 固定；缺少它时新构造拒绝。现有 `PublicJobOwner.Authorize` 提交 SQL 事务后才返回 functional `Lease.DEK`，不可直接换成正式 provider DEK。继续复用 `WorkloadIdentity` 的 mTLS + TokenReview + 当前 Pod/SA/Job 核对；不能用 DownwardAPI、自报 UID 或测试 authority 替代。
 
 1. B 在读取源前把 C 完整 frozen request 与原 invocation/Job 绑定，保存到现有加密执行日记。原 guard 检查安装、任务、attempt、config SHA/version、claim/fence、Job/Pod/SA、operation 和完整 request；`Identity()` 的 execution grant SHA 不能来自调用请求。
 2. 同进程 guard 必须沿已有 gate → maintenance → installation → task → Job 锁序，在同一最终使用边界内复查原 guard/Job 未撤销、同步执行 Job 本地 callback、末次检查原时间界限。不得先 commit 再裸调用 callback；不得为实现接口把控制器 SQL 凭据随意下发 worker。
-3. 授权端与 Job 分离时，需要原 Job journal 上受控、有界的 in-flight use lease 和停止屏障。可行语义：同锁序准入窗口；撤销阻止新窗口并进入 draining；原窗口关闭且有真实 worker 停止证明后，才报告撤销完成。断线或超时导致结果不可发布，不续租原许可。使用记录只是原 Job 的观察，不是第二套任务授权。这一跨 Pod 协议尚未实现。
+3. 授权端与 Job 分离时，需要原 Job journal 上受控、有界的 in-flight use lease 和停止屏障。可行语义：同锁序准入窗口；撤销阻止新窗口并进入 draining；原窗口关闭且有真实 worker 停止证明后，才报告撤销完成。断线或超时导致结果不可发布，不续租原许可。使用记录只是原 Job 的观察，不是第二套任务授权。该协议现已落在原控制通道和 migration 125 的原 Job 行 `key_use_json` 上；真实 SQL/Pod 并发验收仍未完成。
 4. 必须区分“撤销请求已接收”和“撤销已完成”。已进入 callback 的字节不能事后收回。最终准入点之前已撤销的调用不得进入 callback；已准入的使用由有界窗口和停止证明收束。当前 `Revoke` 的 flag commit 不是 DEK 已停止使用的证明，应与原 `StopJob` / kubelet witness 组合，并保留独立 recovery。
 
-D 已在 2026-10-29 回复：目前没有开发中的正式 DEK use 协议、没有新的未提交代码；可复用 `Revoke → StopJob → Stopped`，但生产 `WithUse` 仍缺失。A 保留 `public_jobs.go` 原两处 typed task-key 修改，未覆盖 D 的 relay/runtime 代码。B 的本地独立聊天未找到；本文交付 B 所需合同。测试 mutex 只验证 adapter 的 guard 合同，不能替代真实 SQL/Job 并发联调。
+D 已确认 migration 125 未占用，并要求 `key_use_json` 只作为原 Job 使用观察；`finished` 不替代真实停止证明。A 本轮仅在 `public_jobs.go.Authorize` 增加冻结请求/元数据/最短期限与同事务 key-use 接点，`execution_identity.go` 增加原 grant digest 的公开 getter；未覆盖 D 的 relay/runtime 实现。B 的本地独立聊天未找到；本文交付 B 所需合同。测试 mutex 只验证 adapter 的 guard 合同，不能替代真实 SQL/Job 并发联调。
+
+### 原通道的单次使用协议
+
+1. B 在读取源前把完整 `kms.Access` 作为 `worker.Invocation.ProviderKey` 冻结到原加密 plan。原安装/task/attempt/phase、part、envelope、context 必须与 C/B 签收的冻结业务合同一致；不能把现有 functional staging 的 config hash 改名成 C capture context。
+2. Job 内 `worker.NewCaptureKeyJob(ctx, originalControlClient, originalInvocation, kmsConfig, permitMount)` 先通过原 mTLS/TokenReview 通道 `key-reserve`。原 SQL guard 后锁同一个 Job 行，记录完整请求、原 grant/claim 摘要、Job/Pod/SA、随机 nonce、最短期限和 `reserved`。已有记录拒绝再次 reserve，包括同 nonce；未知 commit 不重试、不换 nonce。
+3. 只有 reserve 成功才构造/调用 provider。当前身份检查走 `key-check`；取得 DEK 后 `key-begin` 在同一 Job 行把 `reserved` 变成 `using`，再进入 Job 本地同步 callback。回调签名是 `func(context.Context, []byte) error`；context 的 deadline 包含原授权、permit 和 KEK mapping 的最短期限。
+4. callback 成功后 `key-end` 只能把 `using` 变为 `finished`；末次原授权检查成功才返回 wrapped result。callback 失败、断线、超时、撤销或未知提交都不返回可发布结果。`CaptureJob` 本身也只允许一次 Generate，防止复用同 envelope；临时失败不能以重试原 identity 修复。
+5. 原 `Revoke` 同样锁该 Job 行：先提交者确定新 use 是否准入。撤销之后无法 reserve/begin/end；已准入 callback 由截止时间及原 StopJob 物理终止收束。`finished` 只是回调已返回的观察，**不是**停止证明、业务接受或撤销完成。未知结果留待原 recovery/StopJob 处理。
+6. `Lease.ExpiresAt` 现在也限制到原 SQL guard、relay 和 invocation 的最短期限；不会以证书期限延长 claim。新 key-use response 仅含公开元数据，不含 DEK/JWT/token；`provider_key` invocation 明确拒绝 functional `acquire/complete` 和 unwrap。旧 invocation 缺省字段用 `omitempty`，原哈希字节保持不变。
+
+migration 125 只给 `system_backup_v2_runtime_resources` 增加有界 JSON 观察列，未改历史 SQL，catalog 同步更新；**未在现场执行迁移**。现有 backup-worker main 仍没有 C 最终 writer 分支，不能仅修改 invocation 就启用；B 必须在原受审 worker 镜像内调用新构造，并提供 C framing writer。单独的 backup cleanup recovery grant 不能据此授予历史 restore unwrap。
 
 ## 给公共 C 的签名与 provider 接口
 
@@ -65,11 +76,11 @@ python3 -B scripts/system-backup-a-site-jwt-trust.py --apply
 
 ### 原 Job 用途策略与 role
 
-`scripts/system-backup-a-apply-kek-policy.py` 消费 `backupTransitPlan` 的公共输出及独立审核 SHA。默认 dry-run，`--apply` 才下发两个 exact context 的内容寻址 ACL 并读回。增加四个成组参数后才建立原 Pod 的两种独立 role：`--job-identity`、`--job-identity-sha256`、`--jwt-mount`、`--jwt-config-sha256`。最后一个必须是上一步的完整 config **读回** hash，不能误用 config request hash。
+`scripts/system-backup-a-apply-kek-policy.py` 消费 `backupTransitPlan` 的公共输出及独立审核 SHA。默认 dry-run，`--apply` 才下发两个 exact context 的内容寻址 ACL 并读回。增加四个成组参数后才建立原 Pod 的单一已审用途 role：`--job-identity`、`--job-identity-sha256`、`--jwt-mount`、`--jwt-config-sha256`。最后一个必须是上一步的完整 config **读回** hash，不能误用 config request hash。
 
-role 固定 audience `clawmanager-backup-kek`、namespace/SA subject、Pod UID、SA UID，并将验证过的三个 UID/namespace claim 映射到 token metadata。token 为 batch、最大 20s、无 default/identity 额外 policy、不可续租；clock/expiration/not-before leeway 为 -1。原 mTLS/TokenReview 的 worker audience `clawmanager-backup-worker` 保持原用途；D/B 应另建 provider JWT projection 并将其纳入原 Job/WorkerObserver 的准入，而不是替换原控制身份。
+身份 JSON 必须含 `operation: backup_dek_generate` 或 `backup_dek_unwrap`；一次仅建立对应的一个 role，不给同一 capture 身份同时发 unwrap。身份模板见 `examples/backup-controller/online-kek-capture-identity.example.json`；字段必须取自原 Job/API/授权回执，不从请求自报 UID 拼装。role audience 分别固定为 `clawmanager-backup-kek-generate` 或 `clawmanager-backup-kek-unwrap`、namespace/SA subject、Pod UID、SA UID，并将验证过的三个 UID/namespace claim 映射到 token metadata。token 为 batch、最大 20s、无 default/identity 额外 policy、不可续租；clock/expiration/not-before leeway 为 -1。原 mTLS/TokenReview 的 worker audience `clawmanager-backup-worker` 保持原用途；D/B 应另建 provider JWT projection 并将其纳入原 Job/WorkerObserver 的准入，而不是替换原控制身份。
 
-Job resolver 校验 provider 返回的 role、namespace、Pod/SA UID、准确 policy、TTL 和 token type；不把本地解码 JWT 当认证。JWT 签名自身不证明 Pod 当前存活，原 `OriginalJobAuthority` 的当前身份、任务/fence 和撤销检查仍是必要条件。移除 projected token 阻止后续登录；已取得 DEK 的撤销仍依赖原使用屏障。
+Job resolver 校验 provider 返回的 role、namespace、Pod/SA UID、准确 policy、TTL 和 token type；不把本地解码 JWT 当认证。JWT 签名自身不证明 Pod 当前存活或任务仍获授权；注销用途 role/policy 是 provider 权限撤销的一部分，原 DB revoked 不能自动撤销 provider token。该 provider 侧注销尚未自动接入原 StopJob 流程，现场关闭必须分别取得精确 role/policy 删除与原进程停止回执。JWT 签名自身不证明 Pod 当前存活，原 `OriginalJobAuthority` 的当前身份、任务/fence 和撤销检查仍是必要条件。移除 projected token 阻止后续登录；已取得 DEK 的撤销仍依赖原使用屏障。
 
 工具的 `--revoke generate` 只删除已审 capture policy 及相应 role 并检查不存在，保留 unwrap；`--revoke unwrap` 只删除恢复用途。ACL 消失不能证明已开始的 callback 停止，输出固定 `worker_stopped:false`。禁止在没有原停止证明时报告完整撤销成功。
 
@@ -94,7 +105,7 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 | Owner | 所需材料 | 用途与当前限制 |
 | --- | --- | --- |
 | D/B | 原 encrypted journal 的 C frozen request、invocation SHA、Job/Pod/SA UID、原 execution grant SHA、截止时间 | 由原授权核验，不能由 HTTP 请求自报；真实任务尚未交回 |
-| D/B | 原 Job `WithUse`、callback writer 接线、draining/StopJob/Stopped 并发回执 | 生产缺口，不能用 SQL commit 后的 functional Lease.DEK 替代 |
+| D/B | 原 Job callback writer/cmd 接线、C 冻结 context 业务来源和真实并发回执 | 原控制通道 reserve/begin/end 已有代码；缺最终 writer、实际 SQL/Pod 验收及部署启用，不能使用 functional Lease.DEK 替代 |
 | registry owner / 公共 C | identity_hash、opaque registry_version、installation、provider key ID/name、numeric version、用途、期限与撤销位置 | 已有五个候选 key 不能自动成为已签收正式映射；不能从 key 名猜 registry 字段 |
 | 部署 owner | JWT trust 公开读回；精确 policy/role 读回；受控 permit、独立 SHA/公钥 pin | 上述脚本准备完成，现场未执行；permit 私钥和 JWT/token 不上传 |
 | 公共 C/D/B | 三种 signing input 的原业务授权、三独立 key/version、当前 resolver、历史验签公钥 | 原字节已固定；不能仅凭调用方 purpose/hash 放行 |
@@ -110,3 +121,9 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 - 提交前按当前共享 HEAD 再跑四个全包：`systembackupkms` 6.762s、`systembackupcontroller` 5.110s、`systembackupsecurity` 74.357s、`systembackupexecution` 1.607s，全部通过（`-mod=readonly -p=2 -count=1 -timeout=180s`，默认 vet）；Python 20 项与 JS 18 项再次全部通过。
 - 前述 Go 临时目录 `.tmp-a-online-kms-20261029`、`.tmp-a-online-jwt-20261029`、`.tmp-a-kek-final-20261029` 已 finally 清理并独立确认不存在。未清理其他聊天产物。
 - **尚未调用现场正式 KEK、下发本轮 trust/policy/role、取得正式 JWT batch token，亦无真实 SQL/Job/撤销完成回执。** 本地 synthetic key/token/authority 与正式材料分开。当前可提交的是可复用组件及明确交接，整体生产装配目标仍未完成。
+
+### 原 key-use 接线本轮验证（现场尚未执行）
+
+五包测试通过：worker 4.749s、KMS 7.246s、execution 2.422s、controller 6.491s、migrationcatalog 1.199s；隔离目录 `.tmp-a-key-use-20261029` 已清理并确认不存在。新增真实本地 mTLS 控制通信测试、原使用状态的换 Pod/SA/Job/claim/grant/key/version/用途/nonce/期限拒绝、单次 reserve/begin/end 和旧 invocation 兼容检查。SQL 转移测试是协议模型，**不是**真实 MySQL 锁竞争或 kubelet 停止证明。
+
+随后补充 reserve/begin/end 未知提交错误传递，worker 4.769s、KMS 6.408s 全包再次通过，`.tmp-a-key-use-final-20261029` 已清理。另发现原 staging binding 已含 PartIndex，已增加 C part/part_index 的逐字段对照，worker 最终全包回归 3.858s 通过；`.tmp-a-worker-binding-final-20261029` 已清理并独立确认不存在。role 工具已修复原计划会为同 Pod 同时生成两种 role 的问题，身份现在必须包含一个 operation，两个用途使用不同 JWT audience；policy 11 项和 trust/apply/清理相关 6 项回归通过。旧 `493040af` 远程命令只配置公开 trust，不调用 role 生成，仍可使用；下发 role 必须使用修复后的脚本。公共 C bundle 的 16 个文件 hash 未变，migration catalog 检查通过。
