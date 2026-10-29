@@ -74,3 +74,5 @@ schema 的四个 coverage 分区是**覆盖分类**，不是新增数据库 stat
 ## 交付与验证范围
 
 本轮仅新增 JSON Schema 提案和对齐文档，JSON 可解析、相对 `$ref` 可解析；没有生产转换/扫描实现或正式准入结论。已有 C crypto 回归不因文档提案重跑，也没有新增构建产物。D 来源与锁协议确认后，再补转换/校验实现和负例：跨安装/配置、两用途错配、同 ref 重绑定、缺/过期扫描、分页缺口、未知写入、并发新引用及历史读/旧 key 禁写。
+
+后续独立交付：[公共 C 纯候选解码 API](system-backup-c-kek-candidate-api-20261029.md) 已实现不依赖来源/SQL 的闭集解码、候选内部关系、immutable mapping 对比与 retained 结构/排序/hash 检查，并通过本地回归。输出始终是 Unadmitted 类型；这只补齐无依赖部分，生产来源认证、scanner 完整性、分页 EOF/共享 fence、原授权与生产 Config 装配仍按本对齐单交由 A/D。
