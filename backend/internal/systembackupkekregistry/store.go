@@ -150,7 +150,10 @@ func (SQLStore) ReadSnapshot(ctx context.Context, db *sql.DB, installationID str
 	}
 	defer tx.Rollback()
 	s := Snapshot{InstallationID: installationID, Bindings: []BindingFacts{}, Coverage: []CoverageSource{}, References: []Reference{}}
-	if err = tx.QueryRowContext(ctx, `SELECT epoch FROM system_backup_v2_kek_fences WHERE installation_id=? FOR SHARE`, installationID).Scan(&s.Epoch); err != nil {
+	// A never-before-admitted installation has no fence yet. Keep its epoch at
+	// zero and its coverage empty; Bind creates the fence in the original write
+	// transaction and checks the same zero-epoch facts before any admission.
+	if err = tx.QueryRowContext(ctx, `SELECT epoch FROM system_backup_v2_kek_fences WHERE installation_id=? FOR SHARE`, installationID).Scan(&s.Epoch); err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return Snapshot{}, ErrKEKFacts
 	}
 	if err = tx.QueryRowContext(ctx, `SELECT @@server_uuid,DATABASE(),UTC_TIMESTAMP(6)`).Scan(&s.Database.ServerUUID, &s.Database.Database, &s.ObservedAt); err != nil || s.Database.ServerUUID == "" || s.Database.Database == "" || s.ObservedAt.IsZero() {
