@@ -70,6 +70,9 @@ def outputs():
                     "system_backup_v2_runtime_captures", "system_backup_v2_runtime_stop_proofs",
                     "system_backup_v2_relay_receipts", "system_backup_v2_runtime_controls",
                     "system_backup_v2_gateway_proofs",
+                    "system_backup_v2_kek_fences", "system_backup_v2_kek_bindings",
+                    "system_backup_v2_kek_admissions", "system_backup_v2_kek_coverage",
+                    "system_backup_v2_kek_references",
                 ]) + '\t)\n}\n')
     yield ROOT / "backend/internal/systembackup/v2_control_registry.go", registry
 

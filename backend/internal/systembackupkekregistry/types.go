@@ -82,12 +82,22 @@ const (
 
 type Reference struct {
 	Partition                                             Partition
+	State                                                 ReferenceState
 	SourceRecordID, SourceRecordVersion                   string
 	BackupPublicID, AttemptNo, EnvelopeID                 string
 	Key                                                   wire.KeyBinding
 	BindingSHA256                                         string
 	MappingSource, ExpectedRequestSource, LifecycleSource SourceRecord
 }
+
+type ReferenceState string
+
+const (
+	ReferencePlanned  ReferenceState = "planned"
+	ReferenceUnknown  ReferenceState = "unknown"
+	ReferenceRetained ReferenceState = "retained"
+	ReferenceReleased ReferenceState = "released"
+)
 
 // CoverageSource names the original adoption/backfill and source receipts.
 // Merely populating this DTO never establishes that writers participate.

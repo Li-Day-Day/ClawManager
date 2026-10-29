@@ -6,13 +6,14 @@
 
 现有 `system_backup_v2_configs.kek_identity_hash/kek_ref_version` 继续是配置选择的 pin；原 installation/config/operation/audit 事务继续拥有准入。现有表不保存完整 KEK 映射，D 将在同一 v2 控制域追加存储，不能把 provider profile SHA、key 名或 numeric version 生成新的 identity。
 
-拟追加 `126_backup_v2_kek_registry.sql`（若并发占用编号，提交前调整，不覆盖已有迁移），四类存储如下：
+新增 `127_backup_v2_kek_registry.sql`；126 已由 native gateway proofs 使用，不覆盖。当前 Store 仍在本地实现和验证，不能作为已部署 schema。五张控制表如下：
 
 | 存储 | 内容与约束 |
 | --- | --- |
 | `system_backup_v2_kek_fences` | 每个 installation 的稳定 fence 行及单调 epoch；所有 mapping/admission/reference/coverage/撤销变化都在同一事务推进它。coverage 保存四类原 adoption/source receipt 引用，不使用 `complete=true`。未完成历史回填/所有写入口接入时不提供完整扫描能力。 |
 | `system_backup_v2_kek_bindings` | PK 为原 installation + identity_hash + opaque registry_version；不可变核心包含完整 KeyBinding、provider endpoint/key_name/provider identity/scope、CA SHA 与不可变 ca_source、generate_ref/unwrap_ref 原字节及摘要。核心 canonical bytes/hash 永不 UPDATE；同 key 不同核心拒绝。当前 write/unwrap 撤销各有独立 revision/source，不能由 write 撤销推导历史 key 可删除。 |
 | `system_backup_v2_kek_admissions` | 独立保存 config_sha256、source_revision、原准入 operation/config 关系与 A 认证的观察来源/有效窗口，指向不可变 binding。多个配置可以引用同一 binding；这些变化不算重绑定，不能混入核心 hash。无原已提交 config/operation 关系的候选记录不得被生产组合消费。 |
+| `system_backup_v2_kek_coverage` | 分区及原 source/adoption receipt；每类来源须有独立 PreparedCoverage 复查。缺真实历史回填与所有 writer/GC 参与时不提供完整扫描结论。 |
 | `system_backup_v2_kek_references` | 四类分区的原 source record ID/version、backup/attempt/envelope、完整 binding、mapping_source、expected_request_source、原生命周期/保护来源。planned/unknown 与最终成品同样保留。无原已认证 release/cleanup/absence 证据不释放；不因任务终态、过期或 SQL deleted 标志自动删除。 |
 
 与 C 的 `CheckSameKeyMapping` 对齐：`description_redacted` 仅是 typed ref 的展示/来源元数据，不参与同一逻辑 key 的安全语义重绑定判定。首次登记的原始 typed ref 字节和 SHA 永远保留在首笔 binding 证据中；后续配置若只改变说明文字，可以复用相同安全映射，但新原始字节与 SHA 必须另存于该次 admission 的来源证据，不得 UPDATE 首笔 binding。D Store 的判等须分别检查安全语义字段和原字节来源，不能把整份 JSON 字节相等当成唯一的“同 key”规则。
@@ -91,3 +92,24 @@ PrepareConfigMutationKEK(context.Context, ConfigMutationResourceInput,
 同 ref 重绑定；跨安装/配置；旧配置读取同一 immutable mapping；原 source/撤销 revision 改变；write 退休不销毁历史解密材料；恢复不能继承旧 grant；缺任何 coverage/未回填的新索引；缺/过期/分页不完整扫描；并发 planned append 导致观察失效；未知外部结果不能 release；在最终 Recheck 中首次 Bind/Stage；提交失败/未知不能输出已准入配置。
 
 本文件是 D 对 C 五项问题的存储/锁协议答复。A/C 可据此对齐具体类型；实现、测试与生产装配能力将在本文件追加实际结果。当前没有现场变更，没有生成测试构建产物。
+
+## 2026-10-29 存储候选进度
+
+127 已新增 installation fence、immutable binding、原 config/operation admission、
+四分区 coverage 来源和 planned/unknown/retained reference 表。`SQLStore`
+提供锁外 `ReadSnapshot`、调用方原事务内的 `Bind`、`StageAdmission`、
+`AdoptCoverage`、`RetainPlanned`、独立用途撤销和最终 `Recheck`；
+`ReadCommitted` 只在原 config 与 succeeded operation 可联合读回时返回
+历史映射事实，不签发当前使用权限。Store 不开始写事务、不提交、不调用 provider。
+`CompleteScan` 在原 scanner、历史 adoption 和全部 writer 写入口就绪前固定拒绝。
+
+本候选尚未接进 bootstrap/config mutation/Job 的生产 caller，也没有
+真实 MySQL 或四分区 source adapter 验收。A 的 `PreparedAdmission` 现已允许
+独立来源认证后的首次 binding 缺席；D 不通过伪造 SQL binding 来满足它。
+本段只记录存储候选，不把初次 KEK 准入或密钥退休宣称完成。
+
+## 6. 当前实现接口与接手边界
+
+`internal/systembackupkekregistry` 已提供非授权 DTO、`SQLStore.Observe/ReadSnapshot`（准备比较数据）、`SQLStore.Bind(ctx, originalTx, installationID)`（原事务在既有引用锁之后获取稳定 fence 与当前锁读）、`Bound.StageAdmission`（已准备原映射的 binding/admission 同事务落表）、`Bound.AdoptCoverage`（四分区原来源收据）、`Bound.RetainPlanned`（原 provider 调用前 planned 引用）、`Bound.Revoke`（generate/unwrap 分立撤销）、`Bound.Recheck` 与 `SQLStore.ReadCommitted`（仅在原 config/operation succeeded 后回读）。`SameSecurityBinding` 是 A/D 共用的安全语义判等：仅排除 redacted description 和随之变化的原字节 SHA；首笔 `core_json` 不覆盖，每次 admission 保存本次 typed ref 原字节/SHA。`SameSnapshotFacts` 比较全部持久事实与 epoch，允许准备和 Bind 的 SQL 采样时间不同。
+
+这些接口都不返回 Generate/Unwrap/Job 授权；`ReadCommitted` 的输出仍需当前用途 authority。`CompleteScan` 目前恒拒绝，直到 C 的四类完整原 source scanner、B/原 writer 的 append/unknown/hold/release 接线、历史 adoption/EOF 与退休持久意图均落实。原 bootstrap/config mutation 的 Stage/最终 Recheck 装配尚未完成；没有该接点不能称生产 KEK 已接入。新增五表在正式 schema registry 中均为 `pending_owner_review`，未补写审批。没有现场 key 导入或发布动作。
