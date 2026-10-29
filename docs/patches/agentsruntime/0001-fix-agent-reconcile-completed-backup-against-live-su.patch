@@ -1,0 +1,59 @@
+From 4d5040999b9cae9cb51a6ffa48f185476bdc9518 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?hui=20zhang=20=28=E5=BC=A0=E5=8D=89=29-=E6=B5=AA=E6=BD=AE?=
+ =?UTF-8?q?=E4=BF=A1=E6=81=AF?= <zhanghui08@inspur.com>
+Date: Thu, 29 Oct 2026 16:32:23 +0800
+Subject: [PATCH] fix(agent): reconcile completed backup against live successor
+
+---
+ clawmanager-agent/slots/backup.go      | 10 +++++++++-
+ clawmanager-agent/slots/backup_test.go |  6 ++++++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/clawmanager-agent/slots/backup.go b/clawmanager-agent/slots/backup.go
+index 2eac63f..a9e4492 100644
+--- a/clawmanager-agent/slots/backup.go
++++ b/clawmanager-agent/slots/backup.go
+@@ -231,6 +231,14 @@ func (w *Worker) resumeForBackup(ctx context.Context, input gateway.BackupResume
+ }
+ 
+ func (w *Worker) backupState(req gateway.BackupRequest) (*gateway.BackupReceipt, error) {
++	if b := w.book.Backup; b != nil && b.Request == req && b.State == "completed" {
++		stored, err := readWriter(w.writerPath)
++		s, ok := w.manager.GatewayState(fmt.Sprintf("gw-%d-%d", req.InstanceID, req.ResumeGeneration))
++		if err != nil || stored.Backup != nil || stored.State != "running" || stored.InstanceID != req.InstanceID || stored.UserID != req.UserID || stored.Generation != req.ResumeGeneration || stored.PodUID != req.PodUID || stored.Slot != w.slotName || stored.RuntimeType != req.RuntimeType || !ok || s.State != "running" || s.Generation != req.ResumeGeneration || s.UserID != req.UserID || s.Port != req.GatewayPort || b.Resume == nil || s.PID != b.Resume.PID {
++			return nil, fmt.Errorf("completed successor changed")
++		}
++		return b.Resume, nil
++	}
+ 	if err := w.backupMatches(req); err != nil {
+ 		return nil, err
+ 	}
+@@ -274,7 +282,7 @@ func (w *Worker) backupState(req gateway.BackupRequest) (*gateway.BackupReceipt,
+ // committed. Until then even a healthy successor remains reserved to this task.
+ func (w *Worker) completeBackup(req gateway.BackupRequest) (*gateway.BackupReceipt, error) {
+ 	if w.book.Backup != nil && w.book.Backup.Request == req && w.book.Backup.State == "completed" {
+-		return w.book.Backup.Resume, nil
++		return w.backupState(req)
+ 	}
+ 	receipt, err := w.backupState(req)
+ 	if err != nil || receipt == nil || receipt.State != "resumed" {
+diff --git a/clawmanager-agent/slots/backup_test.go b/clawmanager-agent/slots/backup_test.go
+index 53563a1..6308e6c 100644
+--- a/clawmanager-agent/slots/backup_test.go
++++ b/clawmanager-agent/slots/backup_test.go
+@@ -161,9 +161,15 @@ func TestBackupStopResumeRetainsDurableWriterReservation(t *testing.T) {
+ 	if out := backupHTTP(w, "POST", "/v1/backup/complete", "control", req); out.Code != 200 {
+ 		t.Fatal("completion retry failed")
+ 	}
++	if out := backupHTTP(w, "POST", "/v1/backup/state", "control", req); out.Code != 200 {
++		t.Fatal("completed successor cannot be reconciled")
++	}
+ 	if out := backupHTTP(w, "DELETE", "/v1/gateways/gw-7-9", "control", nil); out.Code != 200 {
+ 		t.Fatalf("completed reservation not released: %d", out.Code)
+ 	}
++	if out := backupHTTP(w, "POST", "/v1/backup/state", "control", req); out.Code != 409 {
++		t.Fatal("old completed receipt substituted for live successor")
++	}
+ }
+ 
+ func TestBackupFailedCleanupNeverReturnsProof(t *testing.T) {

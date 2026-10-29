@@ -70,7 +70,7 @@ B 的 worker 主动 relay sender 与正式流式 writer 属于 B；D 已有 `/re
 C 提供 envelope/AAD/签名 resolver 等公共合同；D 负责真实 caller 把原认证
 快照与配置交给 B，并修通统一分支的精确依赖。
 
-Agent 上游仓库对当前账号返回 403；已将源码补丁保存在 ClawManager 的
-`docs/patches/agentsruntime/`。该补丁还需要镜像构建、当前 namespace 部署
+Agent 上游仓库对当前账号返回 403；已将基线后的首补丁和完成状态复查增量
+保存在 ClawManager 的 `docs/patches/agentsruntime/`。两份补丁还需要镜像构建、当前 namespace 部署
 和真实 MySQL、Agent、Kubernetes、NFS 联调。`4fe83bcd` 现库导入 profile
 及现场 080→目标 schema 升级仍由 D 单独交付，不能只改 source SHA。

@@ -23,6 +23,12 @@ hostPath PVC 不是同一存储来源。后续备份仍限定当前安装、当�
 - 为便于复现与接手，将完整源码补丁交付在本 ClawManager 仓库：
   [`patches/agentsruntime/0001-feat-agent-persist-isolated-backup-stop-and-resume-r.patch`](patches/agentsruntime/0001-feat-agent-persist-isolated-backup-stop-and-resume-r.patch)。
 - 补丁 SHA-256：`6d6498efc5eb900937f0bcd6ed0a07cfd51d6d94458d021a6885aefe14179ea7`。
+- 后续 Agent 提交 `4d5040999b9cae9cb51a6ffa48f185476bdc9518` 修复了
+  `complete` 后的状态复查：只在实际继任进程仍运行且 PID、端口、用户、generation
+  与账本一致时返回恢复证明。增量补丁为
+  [`patches/agentsruntime/0001-fix-agent-reconcile-completed-backup-against-live-su.patch`](patches/agentsruntime/0001-fix-agent-reconcile-completed-backup-against-live-su.patch)，
+  SHA-256 `7859b616d33b14af5f84bf7b66686ea4d7b62df89d8f5d5e93b223bd52e968b3`。
+  按基线→首补丁→此增量顺序应用。该提交同样尚未推到 Agent 上游。
 
 补丁包含版本化 `BackupRequest`、`BackupResumeRequest`、`BackupReceipt`、摘要函数、
 native `slots.Worker`/`slots.Pool` 的真实路由、共享实例写入账本及测试，另附
