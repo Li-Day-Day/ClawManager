@@ -12,10 +12,17 @@ MySQL/Agent 测试容器。因此这轮没有目标库 migration 126、Agent 镜
 本批源码复核：证明表读取改用 `FOR SHARE`，对应精确 `SELECT/INSERT`
 grants；migration catalog 更新为 167 文件，证明表加入控制表分类与 v12
 registry（仍为 `pending_owner_review`）。七个相关 Go 包完整测试退出码 0。
-本机 `AgentsRuntime` checkout HEAD `293ceaca` 缺补丁所需 `slots/*`，
-`git apply --check` 失败；不能以它构建所述 native Agent 镜像。必须在远侧
-核实对应 Agent 源码/镜像 SHA 后，再执行现场停止/恢复。Agent 自身进程重启
-后的 active backup 仍隔离，`agent_restart_reconciliation=false`。
+此处的 167 是 migration 126 入库时的记录；共享分支随后加入 migration 127，
+当前 catalog 为 168 文件。migration 127 写入期间的控制器校验曾读到过渡态；
+在 catalog 常量更新后，`TestRepositoryMigrationCatalogMatchesControllerAdmission`
+单项重测通过。
+旧的 `AgentsRuntime` checkout HEAD `293ceaca` 缺补丁所需 `slots/*`。
+现在已在隔离 checkout `.worktrees/runtime-backup-proof` 上以 `8a0dddb`
+为基线构建两次 Agent 提交；第一份协议补丁和第二份完成状态复查补丁按顺序保存在
+`docs/patches/agentsruntime/`。第二份补丁在该基线上通过 Linux `TestBackup`
+测试，且通过反向应用检查。上游推送返回 403，因此远侧镜像尚未包含这两份补丁；
+必须核实镜像源码 SHA 并部署后再执行现场停止/恢复。Agent 自身进程重启后的
+active backup 仍隔离，`agent_restart_reconciliation=false`。
 
 ## 生产构造
 
