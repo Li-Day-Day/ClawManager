@@ -1,6 +1,6 @@
 # A 在线 backup KEK 与 Job 使用边界交接
 
-2026-10-29；沿用 `102928ff` 的原执行授权，复用公共 C `a7424ce18eb616886f1087159fc8c8d2ae138770` 的 `public-c-crypto.v1`。已交付在线组件、本地验证及现场 JWT trust 配置读回；尚无正式 KEK 操作或完整生产装配成功回执。用户已授权完成后提交并推送远程；不会将阶段测试替代整体完成。
+2026-10-29；沿用 `102928ff` 的原执行授权，复用公共 C `a7424ce18eb616886f1087159fc8c8d2ae138770` 的 `public-c-crypto.v1`。已交付在线组件、本地验证、现场 JWT trust 配置读回及 backup KEK version 1 属性核验；尚无正式 KEK generate/unwrap 操作或完整生产装配成功回执。用户已授权完成后提交并推送远程；不会将阶段测试替代整体完成。
 
 ## 已实现的调用入口
 
@@ -23,6 +23,8 @@ provider 网络调用在事务外进行；进入回调之前、之后都复查�
 恢复使用当前独立 recovery authority 和保留的 exact mapping，不依赖 forward generator/token。mapping 当前读授权窗口与历史 key 写入窗口不同；历史 key material 的存在不是当前 unwrap 权限。provider numeric version 与 registry opaque version 始终分列。
 
 ## 给 D/B 的原授权和撤销接点
+
+用户本轮明确确认：**B 的原任务冻结上下文和最终 writer 尚未交付**。因此下方原 request/Job/permit 的用途授权接线仍缺真实输入，不能用 synthetic context 或旧 functional staging 的 config hash 填入生产。
 
 **当前增量已实现原控制通道的 `worker.OriginalKeyAuthority` 和 `worker.NewCaptureKeyJob`，以及 `PublicJobOwner.Authorize` 的使用记录接线；尚未取得真实 SQL/Job 并发回执，B 的最终 writer/cmd 调用仍缺失。** 原 invocation 增加可选 `provider_key`，完整原字节仍由已有加密 plan 固定；缺少它时新构造拒绝。现有 `PublicJobOwner.Authorize` 提交 SQL 事务后才返回 functional `Lease.DEK`，不可直接换成正式 provider DEK。继续复用 `WorkloadIdentity` 的 mTLS + TokenReview + 当前 Pod/SA/Job 核对；不能用 DownwardAPI、自报 UID 或测试 authority 替代。
 
@@ -86,11 +88,13 @@ python3 -B scripts/system-backup-a-site-jwt-trust.py --apply
 
 ### 原 Job 用途策略与 role
 
+**现场属性核验已通过。** 用户回传 `backup_kek_profile_observed`、`profile_matches:true`、`mismatch_fields:[]`，且临时 Pod 已清理，完整回执在 `docs/evidence/a-site-backup-kek-profile-20261029.json`。已有 backup key 的 numeric version 1 存在，latest 为 1，min available/decryption/encryption 分别为 0/1/0；derived AES-256-GCM、HKDF-SHA256，不可导出/明文备份/删除，非收敛加密、非 soft-deleted，支持加解密和派生。读回元数据摘要为 `fd5c182837152d128d00ece72520a90baa924d07cc76311f151f4f2ab05d4e9f`。这是当时 key 属性的证据，不证明历史 ciphertext 已成功恢复、未来 key 保留水位受保护或任务可获得 DEK。`registry_admitted`、`credentials_created`、`task_authorized` 均为 false。无需重复采集相同属性；正式准入仍需原映射、用途/期限、撤销及历史引用材料。
+
 在正式映射准入前，使用 `python3 -B scripts/system-backup-a-site-jwt-trust.py --inspect-kek` 补齐此前未记录的 backup KEK 属性。该入口复用原 namespace/CA/Bao Pod/恢复凭据引用和按 UID 清理的临时管理 Pod；先 GET 并匹配已验收的完整 JWT trust readback SHA，再仅 GET `transit/keys/sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1`。它不调用 datakey、encrypt/decrypt、export、backup、rotate、配置或授权接口，不创建任务身份。现有 key 名和 numeric version 1 保持不变，不进行 key 列举或推导 registry identity/version。
 
 返回 `backup_kek_profile_observed` 及白名单 observation，检查 derived AES-256-GCM、不可导出、不可明文备份、不可删除、非收敛加密、非 soft-deleted、加解密/派生能力和 min available/decryption/encryption、latest 水位；仍明确选择 version 1，不自动切到 latest。缺失 key 返回 `backup_kek_not_found`，不补建；不符合条件则 `profile_matches:false` 并列出字段名，不修改 provider。`key_profile_sha256` 是读回元数据摘要，**不是** registry identity/version。`registry_admitted:false` 与 `task_authorized:false` 在所有观察回执中保持不变，实际操作、任务授权和历史恢复仍需后续验收。
 
-字段来源按 [OpenBao v2.6.2 formatKeyPolicy](https://raw.githubusercontent.com/openbao/openbao/v2.6.2/builtin/logical/transit/path_keys.go) 核对：对称 key 的 `keys` 记录版本及创建时间，实际 key material 需另行 export；本入口不调用 export。新版本地 trust/profile 13 项、site 10 项测试通过，覆盖只发 GET、先检查 trust pin、精确 key/version、属性缺失或漂移、历史水位拒绝、rotation 后不改选版本、缺失不补建、回执不能伪报准入及临时 Pod 清理。Python `-B`，未生成 bytecode 或构建产物。**目前只是现场核验入口准备完成，尚无 KEK 属性核验回执。**
+字段来源按 [OpenBao v2.6.2 formatKeyPolicy](https://raw.githubusercontent.com/openbao/openbao/v2.6.2/builtin/logical/transit/path_keys.go) 核对：对称 key 的 `keys` 记录版本及创建时间，实际 key material 需另行 export；本入口不调用 export。新版本地 trust/profile 13 项、site 10 项测试通过，覆盖只发 GET、先检查 trust pin、精确 key/version、属性缺失或漂移、历史水位拒绝、rotation 后不改选版本、缺失不补建、回执不能伪报准入及临时 Pod 清理。Python `-B`，未生成 bytecode 或构建产物。**后续现场回执现已通过，结果及限制见本节开头。**
 
 `scripts/system-backup-a-apply-kek-policy.py` 消费 `backupTransitPlan` 的公共输出及独立审核 SHA。默认 dry-run，`--apply` 才下发两个 exact context 的内容寻址 ACL 并读回。增加四个成组参数后才建立原 Pod 的单一已审用途 role：`--job-identity`、`--job-identity-sha256`、`--jwt-mount`、`--jwt-config-sha256`。最后一个必须是上一步的完整 config **读回** hash，不能误用 config request hash。
 
@@ -122,7 +126,7 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 | --- | --- | --- |
 | D/B | 原 encrypted journal 的 C frozen request、invocation SHA、Job/Pod/SA UID、原 execution grant SHA、截止时间 | 由原授权核验，不能由 HTTP 请求自报；真实任务尚未交回 |
 | D/B | 原 Job callback writer/cmd 接线、C 冻结 context 业务来源和真实并发回执 | 原控制通道 reserve/begin/end 已有代码；缺最终 writer、实际 SQL/Pod 验收及部署启用，不能使用 functional Lease.DEK 替代 |
-| registry owner / 公共 C | identity_hash、opaque registry_version、installation、provider key ID/name、numeric version、用途、期限与撤销位置 | 已有五个候选 key 不能自动成为已签收正式映射；不能从 key 名猜 registry 字段 |
+| registry owner / 公共 C | identity_hash、opaque registry_version、installation、provider key ID/name、numeric version、用途、期限与撤销位置 | backup key v1 属性已核验；仍不能自动成为已签收正式映射，也不能从 key 名或属性摘要推导 registry 字段 |
 | 部署 owner | 精确 policy/role 读回；受控 permit、独立 SHA/公钥 pin | JWT trust 读回已完成并固定 SHA；本轮 policy/role 尚未下发；permit 私钥和 JWT/token 不上传 |
 | 公共 C/D/B | 三种 signing input 的原业务授权、三独立 key/version、当前 resolver、历史验签公钥 | 原字节已固定；不能仅凭调用方 purpose/hash 放行 |
 | C/D / 恢复 owner | 历史 request/envelope、旧 KEK/ref/version/CA、当前独立 recovery grant、引用扫描及水位 | forward 不可用时仍可恢复；旧 key 存在不等于当前读授权，保留历史引用期间不得销毁 |
@@ -136,7 +140,7 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 - 修正公开 JSON 的 LF bytes 后，重跑公钥转换、trust apply 和 runner 测试全部通过。Python `-B` 不留 bytecode，测试不创建现场资源。
 - 提交前按当前共享 HEAD 再跑四个全包：`systembackupkms` 6.762s、`systembackupcontroller` 5.110s、`systembackupsecurity` 74.357s、`systembackupexecution` 1.607s，全部通过（`-mod=readonly -p=2 -count=1 -timeout=180s`，默认 vet）；Python 20 项与 JS 18 项再次全部通过。
 - 前述 Go 临时目录 `.tmp-a-online-kms-20261029`、`.tmp-a-online-jwt-20261029`、`.tmp-a-kek-final-20261029` 已 finally 清理并独立确认不存在。未清理其他聊天产物。
-- **JWT trust 的 mount/config 现场读回已验收；尚未调用现场正式 KEK、下发本轮 policy/role、取得正式 JWT batch token，亦无真实 SQL/Job/撤销完成回执。** 本地 synthetic key/token/authority 与正式材料分开。当前可提交的是可复用组件及明确交接，整体生产装配目标仍未完成。
+- **JWT trust 的 mount/config 读回及 backup KEK v1 属性已验收；尚未实际执行 KEK generate/unwrap、下发本轮 policy/role、取得正式 JWT batch token，亦无真实 SQL/Job/撤销完成回执。** 本地 synthetic key/token/authority 与正式材料分开。用户已确认 B 冻结上下文及最终 writer 未交付；整体生产装配目标仍未完成。
 
 ### 原 key-use 接线本轮验证（现场尚未执行）
 
