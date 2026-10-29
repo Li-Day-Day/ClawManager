@@ -22,6 +22,8 @@ type PublicCaptureConfig struct {
 	Inventory         func(context.Context, d.Input, b.Discovery) error
 	Guard             c.ReadinessProbe
 	RecoveryTimeout   time.Duration
+	// Optional D SQL runtime control. It supplies the concrete B writer factory.
+	RuntimeControl *c.SQLRuntimeControl
 }
 type PublicCapture struct {
 	Loop      c.TaskExecutionLoop
@@ -65,6 +67,12 @@ func NewPublicCapture(cfg PublicCaptureConfig) (*PublicCapture, error) {
 	ports, e := c.NewExecutionJobPorts(o.Gate, o)
 	if e != nil {
 		return nil, e
+	}
+	if cfg.RuntimeControl != nil {
+		if e = cfg.RuntimeControl.CheckGate(o.Gate); e != nil {
+			return nil, e
+		}
+		cfg.Source.BuildWriters = cfg.RuntimeControl.BuildWriters
 	}
 	profile, e := b.NewLinuxProfile(cfg.Source)
 	if e != nil {

@@ -254,7 +254,9 @@ func (o *PublicJobOwner) bindOriginal(ctx context.Context, a d.Authority, i d.Jo
 	if until.After(inv.Request.Deadline) {
 		until = inv.Request.Deadline
 	}
-	now := time.Now().UTC()
+	// Relay SQL and A's peer binding use DATETIME(6) precision.
+	now := time.Now().UTC().Truncate(time.Microsecond)
+	until = until.UTC().Truncate(time.Microsecond)
 	if !recovery && (!until.After(now) || now.Before(cert.NotBefore)) {
 		return zero, c.ErrExecutionAuthority
 	}
