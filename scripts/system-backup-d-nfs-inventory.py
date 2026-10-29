@@ -121,6 +121,7 @@ def build_report(data, namespace, server, export, cluster_domain='cluster.local'
         return out
 
     candidates, unresolved, exporters = [], [], []
+    external_unresolved_count = 0
     for obj in pods + data['workloads']:
         observed_mounts = mounts(obj)
         matched = []
@@ -130,7 +131,12 @@ def build_report(data, namespace, server, export, cluster_domain='cluster.local'
                 if (backing.get('server') or '').rstrip('.').lower() in aliases and overlaps(backing.get('export'), export):
                     matched.append(mount)
             elif backing['kind'] in ('unresolved-pvc', 'csi-or-other-pv'):
-                unresolved.append(dict(workload=identity(obj), mount=mount))
+                if obj['metadata']['namespace'] == namespace:
+                    unresolved.append(dict(workload=identity(obj), mount=mount))
+                else:
+                    # Unknown storage elsewhere is not evidence of a shared
+                    # export. Do not flood the target installation's report.
+                    external_unresolved_count += 1
         if matched:
             candidates.append(dict(workload=identity(obj), node=pod_spec(obj).get('nodeName'),
                                    phase=obj.get('status', {}).get('phase'),
@@ -143,12 +149,51 @@ def build_report(data, namespace, server, export, cluster_domain='cluster.local'
                 target=dict(server=server, export=clean_path(export)), aliases=sorted(aliases),
                 services=[identity(s) for s in matched_services], endpoints=endpoints,
                 exporter_pods=exporters, mount_candidates=candidates, unresolved_mounts=unresolved,
+                external_unresolved_mount_count=external_unresolved_count,
                 writer_coverage_proven=False, ready_for_backup=False, cluster_mutated=False,
                 limitations=['Sequential Kubernetes reads are not an atomic snapshot or stop proof.',
                              'Mounts are potential writers; controller templates include future writers.',
                              'External NFS clients, unobserved DNS aliases, CSI and non-Pod writers require separate inventory.',
                              'Export server paths, filesystem aliases, ACLs and dataset ownership are not verified.',
                              'Endpoint and Service matches are observations, not permission to stop another installation.'])
+
+
+def summary(report):
+    """Bounded default output. --full retains the detailed evidence projection."""
+    if report['status'] != 'observed':
+        return 'Inventory INCOMPLETE: ' + report.get('failed_stage', 'unknown') + '\nBackup readiness: NOT PROVEN'
+    ns = report['namespace']
+    target = report['target']
+    local = [c for c in report['mount_candidates'] if not c['outside_requested_namespace']]
+    outside = [c for c in report['mount_candidates'] if c['outside_requested_namespace']]
+    lines = ['Inventory: observed (read-only)', 'Backup namespace: ' + ns,
+             'NFS under inspection: ' + target['server'] + ':' + target['export']]
+    services = report['services']
+    lines.append('NFS Service: ' + (', '.join(s['namespace'] + '/' + s['name'] for s in services[:5]) or 'unresolved'))
+    local_pods = [c for c in local if c['workload']['kind'] == 'Pod']
+    lines.append('Local matching mounts: %d Pods, %d templates (templates are not running-writer proof)' %
+                 (len(local_pods), len(local) - len(local_pods)))
+    for candidate in local_pods[:5]:
+        workload = candidate['workload']
+        paths = sorted({m.get('mount_path') or '?' for m in candidate['mounts']})
+        lines.append('  Pod %s [%s] mounts=%s' % (workload['name'], candidate.get('phase') or 'unknown', ','.join(paths[:5])))
+    if len(local_pods) > 5:
+        lines.append('  ... %d more local Pods; use --full for details' % (len(local_pods) - 5))
+    # External matches are conflict candidates, never selected backup objects.
+    groups = {}
+    for candidate in outside:
+        workload = candidate['workload']
+        counts = groups.setdefault(workload['namespace'], [0, 0])
+        counts[0 if workload['kind'] == 'Pod' else 1] += 1
+    lines.append('External overlapping NFS mount candidates: %d namespaces; EXCLUDED from backup scope' % len(groups))
+    for name, counts in sorted(groups.items())[:5]:
+        lines.append('  %s: %d Pods, %d templates' % (name, counts[0], counts[1]))
+    if len(groups) > 5:
+        lines.append('  ... %d more namespaces; use --full for details' % (len(groups) - 5))
+    lines.append('Local unresolved PVC/CSI mounts: %d' % len(report['unresolved_mounts']))
+    lines.append('Unrelated external PVC/CSI details omitted; their storage relationship is unverified.')
+    lines.append('Backup readiness: NOT PROVEN (dataset ownership, external clients and stop proofs still required)')
+    return '\n'.join(lines)
 
 
 def collect(args, run=subprocess.run):
@@ -192,9 +237,10 @@ def main():
     parser.add_argument('--server', required=True)
     parser.add_argument('--export', required=True)
     parser.add_argument('--cluster-domain', default='cluster.local')
+    parser.add_argument('--full', action='store_true', help='Print detailed JSON instead of the bounded summary')
     args = parser.parse_args()
     report = collect(args)
-    print(json.dumps(report, ensure_ascii=False, indent=2))
+    print(json.dumps(report, ensure_ascii=False, indent=2) if args.full else summary(report))
     return 0 if report['status'] == 'observed' else 2
 
 

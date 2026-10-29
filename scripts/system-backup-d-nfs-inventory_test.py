@@ -122,6 +122,33 @@ class NFSInventoryTests(unittest.TestCase):
         self.assertEqual(result['status'], 'incomplete')
         self.assertNotIn('DO-NOT-LEAK', json.dumps(result))
 
+    def test_unrelated_external_csi_details_are_not_part_of_target_report(self):
+        self.data['pods'].append(mounted('Pod', 'unrelated', 'unrelated-private-name',
+                                        dict(persistentVolumeClaim=dict(claimName='unknown'))))
+        report = self.report()
+        self.assertEqual(report['unresolved_mounts'], [])
+        self.assertEqual(report['external_unresolved_mount_count'], 1)
+        self.assertNotIn('unrelated-private-name', json.dumps(report))
+
+    def test_default_summary_is_bounded_and_does_not_expand_backup_scope(self):
+        for i in range(100):
+            for ns in ('test', 'outside-%d' % i):
+                self.data['pods'].append(mounted('Pod', ns, 'runtime-%d' % i,
+                                                dict(nfs=dict(server='10.0.0.1', path='/'))))
+        report = self.report()
+        output = probe.summary(report)
+        self.assertLess(len(output.splitlines()), 25)
+        self.assertIn('Backup namespace: test', output)
+        self.assertIn('EXCLUDED from backup scope', output)
+        self.assertIn('NOT PROVEN', output)
+        self.assertNotIn('DO-NOT-LEAK', output)
+        self.assertEqual(len(report['mount_candidates']), 202)
+
+    def test_incomplete_summary_does_not_claim_empty_inventory(self):
+        output = probe.summary(dict(status='incomplete', failed_stage='pods'))
+        self.assertIn('INCOMPLETE: pods', output)
+        self.assertNotIn('0 Pods', output)
+
 
 if __name__ == '__main__':
     unittest.main()

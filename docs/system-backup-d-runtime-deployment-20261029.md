@@ -83,6 +83,8 @@ bash scripts/system-backup-d-runtime-discover.sh clawmanager-zhanghui08-system
 
 用户确认这是测试环境，最终目标是多用户环境成功备份、恢复。保留实际 NFS 路径作为验证对象；PVC-only 通过不能替代此目标。以下是只读现场证据和待实现工作，不代表新增 profile 已可运行。
 
+用户进一步明确产品边界：在指定 namespace 部署的页面操作，仅备份和恢复该 namespace 对应的数据。服务端需固定 namespace 身份与 installation、数据库范围和 NFS 数据子树的归属；不能因为页面位于该 namespace，就推定共享数据库或 NFS 根目录全属于它。其他 namespace 不自动加入备份、停止或恢复范围；如果来源实例确实位于范围之外，应明确报出范围不匹配，不能静默漏掉实例，也不能自动扩大权限。跨 namespace 读取只是此次管理员现场排查共享存储关系的手段，不是普通备份页面应具备的集群权限。本节限定产品目标；生产 namespace/目录归属的完整强制校验尚待实现。
+
 现场 app、OpenClaw、Hermes 挂载的是同一个直接 NFS export `/`，其 Service 位于另一 installation 的 namespace。本 namespace 的 workspace PVC 则绑定另一条 hostPath，不能拿该 PVC 的内容代表正在使用的数据。不能仅凭 namespace 名切换 NFS server，也不能将另一个 installation 的写入者自动纳入停止授权。
 
 现库只有 user 1 的三个运行 Lite 实例，原 `instances.pod_name/pod_namespace` 为 NULL；实际位置来自 `instance_runtime_bindings → runtime_pods`，后者 `pod_uid` 也为 NULL。另有 generation 0 的未启动 Pro 实例。因此当前运行证据既不能证明多用户隔离，也不能通过 D 现有要求非空原 Pod 身份的控制链。后续需保持原 source projection/hash 不变，另行冻结实际 Runtime locator，交叉验证 Kubernetes UID、Agent 身份及原绑定，并在执行/恢复时复查；不得靠回填 Pod 名或虚构 generation 修复。
@@ -99,6 +101,8 @@ python3 -B scripts/system-backup-d-nfs-inventory.py \
 ```
 
 该脚本跨 namespace 枚举直接 NFS、绑定身份匹配的 NFS PV、容器/init/ephemeral 挂载及工作负载模板；列出 Service/EndpointSlice/实际 exporter Pod 的存储链。输出只有白名单元数据，不打印 env、启动命令、Secret、日志或文件内容。不执行 exec、数据库查询或任何集群变更。无法读取任何一类资源时返回 `incomplete` 和非零退出码，不用空清单冒充成功。
+
+默认输出已缩为有数量上限的摘要：本 namespace 的匹配 Pod、未解析挂载数量，以及同 NFS 的外部挂载冲突候选数量。外部候选明确排除在备份范围外。其他 namespace 未知 PVC/CSI 仅计数，不再倾倒其历史 ReplicaSet 明细；需要核查详细证据时显式传 `--full`。摘要不会将模板数量视为实际运行 writer 数量，也不会因输出缩短而宣称 writer 清单完整。该修改的本地测试共 11 项通过，使用 `-B` 未生成构建或字节码产物。
 
 该输出是候选写入者清单，始终标记 `writer_coverage_proven=false` 和 `ready_for_backup=false`。Kubernetes 外部 NFS 客户端、未知 DNS 别名、CSI、文件系统别名/符号链接、export 实际目录及访问权限仍需核实；多次 API 读取不是一致性快照。特别需要确认两个 installation 是否共用同一目录树，不能假定同名 `user-1/instance-7` 属于同一用户。发现跨 installation 目录重叠时先明确数据所有权和迁移方案，不能继续把整 export 作为本 installation 的恢复目标。
 
