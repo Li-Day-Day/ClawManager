@@ -122,6 +122,10 @@ python3 -B scripts/system-backup-a-apply-kek-policy.py \
 
 ## 仍需 owner 交付的受控引用
 
+**代码缺口与现场材料分别处理。** 公共 C 在 `f76c7439` 基线上核对确认：当前仓库尚无将原 KEK 注册/准入事实转换成 C `KeyBinding` / `kms.Config` 的生产实现；三用途 `ResolveSigning` 也仅有接口、消费者及测试实现。详见 [公共 C 来源与入口核对](system-backup-c-crypto-sources-20261029.md)。因此，不能仅要求部署方提供“正式映射”来关闭这两项代码缺口，也不能把本次 profile 通过当作准入成功。
+
+KEK 接线继续复用原 typed reference、`reference:kek`、`BootstrapAdmissionSources.References["kek"]` 和 `ConfigMutationResolverSources.References["kek"]`。公共 C 交付组合映射与 retained 引用扫描合同；A 按该合同实现安全 validator；D 确认原注册/配置存储、装配及事务内最终复查。首次身份与 opaque version 的来源尚待 D 确认，禁止从 key 名、provider numeric version 或 profile SHA 推造。实现前保持缺 adapter 拒绝，不补恒成功 Original，不新增执行授权。当前已向 C/D 发出上述具体交接；B 的冻结上下文与最终 writer 已由用户明确确认为尚未交付。
+
 | Owner | 所需材料 | 用途与当前限制 |
 | --- | --- | --- |
 | D/B | 原 encrypted journal 的 C frozen request、invocation SHA、Job/Pod/SA UID、原 execution grant SHA、截止时间 | 由原授权核验，不能由 HTTP 请求自报；真实任务尚未交回 |
