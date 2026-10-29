@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unsigned capture certificate v1",
+  "x-contract-version": "public-c-crypto.v1",
+  "x-contract-status": "candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "origin_installation_id",
+    "backup_public_id",
+    "attempt_no",
+    "fencing_token",
+    "capture_context_hash",
+    "jobs",
+    "checkpoints",
+    "staging_resources",
+    "capture_completed_at",
+    "issued_at",
+    "expires_at",
+    "signing_key"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "system-backup-capture-certificate.v1"
+    },
+    "origin_installation_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "backup_public_id": {
+      "type": "string",
+      "pattern": "^sbk_[A-Za-z0-9_-]+$"
+    },
+    "attempt_no": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "fencing_token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "capture_context_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "jobs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "uid",
+          "generation",
+          "phase"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "generation": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "phase": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "part",
+          "checkpoint_hash"
+        ],
+        "properties": {
+          "part": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "checkpoint_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "staging_resources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "uid",
+          "location_hash"
+        ],
+        "properties": {
+          "uid": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "location_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "capture_completed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signing_key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "purpose",
+        "key_id",
+        "key_version"
+      ],
+      "properties": {
+        "purpose": {
+          "const": "capture_certificate"
+        },
+        "key_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "key_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    }
+  }
+}

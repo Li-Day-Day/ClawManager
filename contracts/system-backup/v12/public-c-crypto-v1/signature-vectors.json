@@ -1,0 +1,564 @@
+{
+  "version": "public-c-crypto.v1",
+  "kind": "synthetic-public-only",
+  "vectors": [
+    {
+      "name": "capture",
+      "trust": {
+        "installation": "installation_synthetic",
+        "purpose": "capture_certificate",
+        "key_id": "capture_certificate-synthetic",
+        "key_version": "registry-r17",
+        "provider_version": "3",
+        "public_key_base64url": "Ej7kD8G0CSt2BipKzPRMqbF_97LrvPsszCOxuL2aOGQ",
+        "not_before": "2026-09-01T00:00:00Z",
+        "not_after": "2026-10-01T00:00:00Z",
+        "revoked": false
+      },
+      "expected": {
+        "installation": "installation_synthetic",
+        "purpose": "capture_certificate",
+        "key_id": "capture_certificate-synthetic",
+        "key_version": "registry-r17",
+        "provider_version": "3",
+        "backup_public_id": "sbk_example01",
+        "attempt_no": 1,
+        "manifest_checksum": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "marker_checksum": "e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75"
+      },
+      "payload_json": "{\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"capture_completed_at\":\"2026-09-15T01:20:00Z\",\"capture_context_hash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"checkpoints\":[{\"checkpoint_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"part\":\"mysql\"}],\"expires_at\":\"2026-09-16T01:21:00Z\",\"fencing_token\":\"17\",\"issued_at\":\"2026-09-15T01:21:00Z\",\"jobs\":[{\"generation\":1,\"phase\":\"capture\",\"uid\":\"job-capture-synthetic\"}],\"origin_installation_id\":\"installation_synthetic\",\"schema_version\":\"system-backup-capture-certificate.v1\",\"signing_key\":{\"key_id\":\"capture_certificate-synthetic\",\"key_version\":\"registry-r17\",\"purpose\":\"capture_certificate\"},\"staging_resources\":[{\"location_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"uid\":\"pvc-synthetic\"}]}",
+      "payload_sha256": "aa25e0d8eecc3c509b39b96edabf676805c45d600f01bc74ac64d1bbe4e457d7",
+      "header_json": "{\"alg\":\"EdDSA\",\"key_version\":\"registry-r17\",\"kid\":\"capture_certificate-synthetic\",\"purpose\":\"capture_certificate\",\"typ\":\"clawmanager.system-backup.capture_certificate.v1\"}",
+      "protected_header": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2FwdHVyZV9jZXJ0aWZpY2F0ZS1zeW50aGV0aWMiLCJwdXJwb3NlIjoiY2FwdHVyZV9jZXJ0aWZpY2F0ZSIsInR5cCI6ImNsYXdtYW5hZ2VyLnN5c3RlbS1iYWNrdXAuY2FwdHVyZV9jZXJ0aWZpY2F0ZS52MSJ9",
+      "payload_base64url": "eyJhdHRlbXB0X25vIjoxLCJiYWNrdXBfcHVibGljX2lkIjoic2JrX2V4YW1wbGUwMSIsImNhcHR1cmVfY29tcGxldGVkX2F0IjoiMjAyNi0wOS0xNVQwMToyMDowMFoiLCJjYXB0dXJlX2NvbnRleHRfaGFzaCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2MiLCJjaGVja3BvaW50cyI6W3siY2hlY2twb2ludF9oYXNoIjoiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsInBhcnQiOiJteXNxbCJ9XSwiZXhwaXJlc19hdCI6IjIwMjYtMDktMTZUMDE6MjE6MDBaIiwiZmVuY2luZ190b2tlbiI6IjE3IiwiaXNzdWVkX2F0IjoiMjAyNi0wOS0xNVQwMToyMTowMFoiLCJqb2JzIjpbeyJnZW5lcmF0aW9uIjoxLCJwaGFzZSI6ImNhcHR1cmUiLCJ1aWQiOiJqb2ItY2FwdHVyZS1zeW50aGV0aWMifV0sIm9yaWdpbl9pbnN0YWxsYXRpb25faWQiOiJpbnN0YWxsYXRpb25fc3ludGhldGljIiwic2NoZW1hX3ZlcnNpb24iOiJzeXN0ZW0tYmFja3VwLWNhcHR1cmUtY2VydGlmaWNhdGUudjEiLCJzaWduaW5nX2tleSI6eyJrZXlfaWQiOiJjYXB0dXJlX2NlcnRpZmljYXRlLXN5bnRoZXRpYyIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3IiwicHVycG9zZSI6ImNhcHR1cmVfY2VydGlmaWNhdGUifSwic3RhZ2luZ19yZXNvdXJjZXMiOlt7ImxvY2F0aW9uX2hhc2giOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwidWlkIjoicHZjLXN5bnRoZXRpYyJ9XX0",
+      "signing_input_ascii": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2FwdHVyZV9jZXJ0aWZpY2F0ZS1zeW50aGV0aWMiLCJwdXJwb3NlIjoiY2FwdHVyZV9jZXJ0aWZpY2F0ZSIsInR5cCI6ImNsYXdtYW5hZ2VyLnN5c3RlbS1iYWNrdXAuY2FwdHVyZV9jZXJ0aWZpY2F0ZS52MSJ9.eyJhdHRlbXB0X25vIjoxLCJiYWNrdXBfcHVibGljX2lkIjoic2JrX2V4YW1wbGUwMSIsImNhcHR1cmVfY29tcGxldGVkX2F0IjoiMjAyNi0wOS0xNVQwMToyMDowMFoiLCJjYXB0dXJlX2NvbnRleHRfaGFzaCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2MiLCJjaGVja3BvaW50cyI6W3siY2hlY2twb2ludF9oYXNoIjoiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsInBhcnQiOiJteXNxbCJ9XSwiZXhwaXJlc19hdCI6IjIwMjYtMDktMTZUMDE6MjE6MDBaIiwiZmVuY2luZ190b2tlbiI6IjE3IiwiaXNzdWVkX2F0IjoiMjAyNi0wOS0xNVQwMToyMTowMFoiLCJqb2JzIjpbeyJnZW5lcmF0aW9uIjoxLCJwaGFzZSI6ImNhcHR1cmUiLCJ1aWQiOiJqb2ItY2FwdHVyZS1zeW50aGV0aWMifV0sIm9yaWdpbl9pbnN0YWxsYXRpb25faWQiOiJpbnN0YWxsYXRpb25fc3ludGhldGljIiwic2NoZW1hX3ZlcnNpb24iOiJzeXN0ZW0tYmFja3VwLWNhcHR1cmUtY2VydGlmaWNhdGUudjEiLCJzaWduaW5nX2tleSI6eyJrZXlfaWQiOiJjYXB0dXJlX2NlcnRpZmljYXRlLXN5bnRoZXRpYyIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3IiwicHVycG9zZSI6ImNhcHR1cmVfY2VydGlmaWNhdGUifSwic3RhZ2luZ19yZXNvdXJjZXMiOlt7ImxvY2F0aW9uX2hhc2giOiJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiIiwidWlkIjoicHZjLXN5bnRoZXRpYyJ9XX0",
+      "signing_input_sha256": "e0bcb8b5f2568fc43824ad36e57ee9e6e2965e8b8ae1345e64de7a60cfb645cf",
+      "signature_base64url": "q0YhBtUth_mZz3k9EjfPqHJGDmuaQQjKbnDG4oBSAc-Amj-JZw8Tz2YRQSc2_Q44RVddRrIIRBC9WgUNgNedDw",
+      "record_json": "{\"payload\":{\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"capture_completed_at\":\"2026-09-15T01:20:00Z\",\"capture_context_hash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"checkpoints\":[{\"checkpoint_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"part\":\"mysql\"}],\"expires_at\":\"2026-09-16T01:21:00Z\",\"fencing_token\":\"17\",\"issued_at\":\"2026-09-15T01:21:00Z\",\"jobs\":[{\"generation\":1,\"phase\":\"capture\",\"uid\":\"job-capture-synthetic\"}],\"origin_installation_id\":\"installation_synthetic\",\"schema_version\":\"system-backup-capture-certificate.v1\",\"signing_key\":{\"key_id\":\"capture_certificate-synthetic\",\"key_version\":\"registry-r17\",\"purpose\":\"capture_certificate\"},\"staging_resources\":[{\"location_hash\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"uid\":\"pvc-synthetic\"}]},\"signature\":{\"algorithm\":\"EdDSA\",\"domain_separator\":\"clawmanager.system-backup.capture_certificate.v1\",\"key_id\":\"capture_certificate-synthetic\",\"key_purpose\":\"capture_certificate\",\"key_version\":\"registry-r17\",\"protected_header\":\"eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2FwdHVyZV9jZXJ0aWZpY2F0ZS1zeW50aGV0aWMiLCJwdXJwb3NlIjoiY2FwdHVyZV9jZXJ0aWZpY2F0ZSIsInR5cCI6ImNsYXdtYW5hZ2VyLnN5c3RlbS1iYWNrdXAuY2FwdHVyZV9jZXJ0aWZpY2F0ZS52MSJ9\",\"value\":\"q0YhBtUth_mZz3k9EjfPqHJGDmuaQQjKbnDG4oBSAc-Amj-JZw8Tz2YRQSc2_Q44RVddRrIIRBC9WgUNgNedDw\"}}",
+      "object_sha256": "b07d2ccdd986ddfa44ee4111f215aab3dc597087d1276c517d01896f6a5db3e0",
+      "negative": [
+        {
+          "name": "payload-byte",
+          "target": "record",
+          "path": [
+            "payload",
+            "backup_public_id"
+          ],
+          "value": "sbk_example02"
+        },
+        {
+          "name": "wrong-purpose",
+          "target": "record",
+          "path": [
+            "signature",
+            "key_purpose"
+          ],
+          "value": "manifest"
+        },
+        {
+          "name": "wrong-domain",
+          "target": "record",
+          "path": [
+            "signature",
+            "domain_separator"
+          ],
+          "value": "clawmanager/legacy/v1"
+        },
+        {
+          "name": "wrong-header",
+          "target": "record",
+          "path": [
+            "signature",
+            "protected_header"
+          ],
+          "value": "e30"
+        },
+        {
+          "name": "wrong-key",
+          "target": "trust",
+          "path": [
+            "key_id"
+          ],
+          "value": "other"
+        },
+        {
+          "name": "wrong-registry-version",
+          "target": "trust",
+          "path": [
+            "key_version"
+          ],
+          "value": "latest"
+        },
+        {
+          "name": "wrong-provider-version",
+          "target": "trust",
+          "path": [
+            "provider_version"
+          ],
+          "value": "4"
+        },
+        {
+          "name": "cross-installation",
+          "target": "expected",
+          "path": [
+            "installation"
+          ],
+          "value": "other-installation"
+        },
+        {
+          "name": "revoked",
+          "target": "trust",
+          "path": [
+            "revoked"
+          ],
+          "value": true
+        },
+        {
+          "name": "outside-key-validity",
+          "target": "trust",
+          "path": [
+            "not_after"
+          ],
+          "value": "2026-09-15T00:00:00Z"
+        },
+        {
+          "name": "padded-signature",
+          "target": "record",
+          "path": [
+            "signature",
+            "value"
+          ],
+          "value": "q0YhBtUth_mZz3k9EjfPqHJGDmuaQQjKbnDG4oBSAc-Amj-JZw8Tz2YRQSc2_Q44RVddRrIIRBC9WgUNgNedDw="
+        },
+        {
+          "name": "wrong-public-key",
+          "target": "trust",
+          "path": [
+            "public_key_base64url"
+          ],
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        {
+          "name": "expired-job-certificate",
+          "target": "clock",
+          "value": "2026-09-16T01:21:00Z",
+          "mode": "job"
+        }
+      ]
+    },
+    {
+      "name": "acceptance",
+      "trust": {
+        "installation": "installation_synthetic",
+        "purpose": "acceptance_record",
+        "key_id": "acceptance-key-example",
+        "key_version": "7",
+        "provider_version": "3",
+        "public_key_base64url": "2y5kcMl2J4hFGoZsKSbWjx_do8SU2rUuZtiROE_iiX0",
+        "not_before": "2026-09-01T00:00:00Z",
+        "not_after": "2026-10-01T00:00:00Z",
+        "revoked": false
+      },
+      "expected": {
+        "installation": "installation_synthetic",
+        "purpose": "acceptance_record",
+        "key_id": "acceptance-key-example",
+        "key_version": "7",
+        "provider_version": "3",
+        "backup_public_id": "sbk_example01",
+        "attempt_no": 1,
+        "manifest_checksum": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "marker_checksum": "e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75"
+      },
+      "payload_json": "{\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"config_version\":3,\"decision_at\":\"2026-09-15T01:30:00Z\",\"local_acceptance\":true,\"local_reason_codes\":[\"eligible\"],\"local_reason_codes_hash\":\"2654f73bffcbf548541f1f09e0bf75eee7644095e9eafddf1219d38d3ca66690\",\"manifest_checksum\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"marker_checksum\":\"e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75\",\"schema_version\":\"system-backup-acceptance.v1\",\"signing_key\":{\"key_id\":\"acceptance-key-example\",\"key_version\":\"7\",\"purpose\":\"acceptance_record\"},\"staging_cleanup_evidence_hash\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"staging_cleanup_evidence_id\":\"sev_example_cleanup\"}",
+      "payload_sha256": "b4c514dd26987c88ea6965157fab375d93bbb3271a6e5d2a5ed61f2f19f6e38a",
+      "header_json": "{\"alg\":\"EdDSA\",\"key_version\":\"7\",\"kid\":\"acceptance-key-example\",\"purpose\":\"acceptance_record\",\"typ\":\"clawmanager.system-backup.acceptance.v1\"}",
+      "protected_header": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoiNyIsImtpZCI6ImFjY2VwdGFuY2Uta2V5LWV4YW1wbGUiLCJwdXJwb3NlIjoiYWNjZXB0YW5jZV9yZWNvcmQiLCJ0eXAiOiJjbGF3bWFuYWdlci5zeXN0ZW0tYmFja3VwLmFjY2VwdGFuY2UudjEifQ",
+      "payload_base64url": "eyJhdHRlbXB0X25vIjoxLCJiYWNrdXBfcHVibGljX2lkIjoic2JrX2V4YW1wbGUwMSIsImNvbmZpZ192ZXJzaW9uIjozLCJkZWNpc2lvbl9hdCI6IjIwMjYtMDktMTVUMDE6MzA6MDBaIiwibG9jYWxfYWNjZXB0YW5jZSI6dHJ1ZSwibG9jYWxfcmVhc29uX2NvZGVzIjpbImVsaWdpYmxlIl0sImxvY2FsX3JlYXNvbl9jb2Rlc19oYXNoIjoiMjY1NGY3M2JmZmNiZjU0ODU0MWYxZjA5ZTBiZjc1ZWVlNzY0NDA5NWU5ZWFmZGRmMTIxOWQzOGQzY2E2NjY5MCIsIm1hbmlmZXN0X2NoZWNrc3VtIjoiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIm1hcmtlcl9jaGVja3N1bSI6ImUxZDFkOTVlYmFkOWFjZTgwOWQzMjAwZDA0YzcyMzc2YWM4ZTNjZmYxMTFmNTY1YzU4ZGEyZGM2Yjg2NTBmNzUiLCJzY2hlbWFfdmVyc2lvbiI6InN5c3RlbS1iYWNrdXAtYWNjZXB0YW5jZS52MSIsInNpZ25pbmdfa2V5Ijp7ImtleV9pZCI6ImFjY2VwdGFuY2Uta2V5LWV4YW1wbGUiLCJrZXlfdmVyc2lvbiI6IjciLCJwdXJwb3NlIjoiYWNjZXB0YW5jZV9yZWNvcmQifSwic3RhZ2luZ19jbGVhbnVwX2V2aWRlbmNlX2hhc2giOiJmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmIiwic3RhZ2luZ19jbGVhbnVwX2V2aWRlbmNlX2lkIjoic2V2X2V4YW1wbGVfY2xlYW51cCJ9",
+      "signing_input_ascii": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoiNyIsImtpZCI6ImFjY2VwdGFuY2Uta2V5LWV4YW1wbGUiLCJwdXJwb3NlIjoiYWNjZXB0YW5jZV9yZWNvcmQiLCJ0eXAiOiJjbGF3bWFuYWdlci5zeXN0ZW0tYmFja3VwLmFjY2VwdGFuY2UudjEifQ.eyJhdHRlbXB0X25vIjoxLCJiYWNrdXBfcHVibGljX2lkIjoic2JrX2V4YW1wbGUwMSIsImNvbmZpZ192ZXJzaW9uIjozLCJkZWNpc2lvbl9hdCI6IjIwMjYtMDktMTVUMDE6MzA6MDBaIiwibG9jYWxfYWNjZXB0YW5jZSI6dHJ1ZSwibG9jYWxfcmVhc29uX2NvZGVzIjpbImVsaWdpYmxlIl0sImxvY2FsX3JlYXNvbl9jb2Rlc19oYXNoIjoiMjY1NGY3M2JmZmNiZjU0ODU0MWYxZjA5ZTBiZjc1ZWVlNzY0NDA5NWU5ZWFmZGRmMTIxOWQzOGQzY2E2NjY5MCIsIm1hbmlmZXN0X2NoZWNrc3VtIjoiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIm1hcmtlcl9jaGVja3N1bSI6ImUxZDFkOTVlYmFkOWFjZTgwOWQzMjAwZDA0YzcyMzc2YWM4ZTNjZmYxMTFmNTY1YzU4ZGEyZGM2Yjg2NTBmNzUiLCJzY2hlbWFfdmVyc2lvbiI6InN5c3RlbS1iYWNrdXAtYWNjZXB0YW5jZS52MSIsInNpZ25pbmdfa2V5Ijp7ImtleV9pZCI6ImFjY2VwdGFuY2Uta2V5LWV4YW1wbGUiLCJrZXlfdmVyc2lvbiI6IjciLCJwdXJwb3NlIjoiYWNjZXB0YW5jZV9yZWNvcmQifSwic3RhZ2luZ19jbGVhbnVwX2V2aWRlbmNlX2hhc2giOiJmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmIiwic3RhZ2luZ19jbGVhbnVwX2V2aWRlbmNlX2lkIjoic2V2X2V4YW1wbGVfY2xlYW51cCJ9",
+      "signing_input_sha256": "5f30e6766f750a024733c2152b7da00eb82c455a7ca3f750e52835ff4364e7d0",
+      "signature_base64url": "vUzF134_G88xvo2uzfOa66nclPg00D30rSaCaucFZgkAOJQm6NqEl3upmp9rrb5S2S1KiWytTb9kLm-ZrNEcDA",
+      "record_json": "{\"payload\":{\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"config_version\":3,\"decision_at\":\"2026-09-15T01:30:00Z\",\"local_acceptance\":true,\"local_reason_codes\":[\"eligible\"],\"local_reason_codes_hash\":\"2654f73bffcbf548541f1f09e0bf75eee7644095e9eafddf1219d38d3ca66690\",\"manifest_checksum\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"marker_checksum\":\"e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75\",\"schema_version\":\"system-backup-acceptance.v1\",\"signing_key\":{\"key_id\":\"acceptance-key-example\",\"key_version\":\"7\",\"purpose\":\"acceptance_record\"},\"staging_cleanup_evidence_hash\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"staging_cleanup_evidence_id\":\"sev_example_cleanup\"},\"signature\":{\"algorithm\":\"EdDSA\",\"domain_separator\":\"clawmanager.system-backup.acceptance.v1\",\"key_id\":\"acceptance-key-example\",\"key_purpose\":\"acceptance_record\",\"key_version\":\"7\",\"protected_header\":\"eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoiNyIsImtpZCI6ImFjY2VwdGFuY2Uta2V5LWV4YW1wbGUiLCJwdXJwb3NlIjoiYWNjZXB0YW5jZV9yZWNvcmQiLCJ0eXAiOiJjbGF3bWFuYWdlci5zeXN0ZW0tYmFja3VwLmFjY2VwdGFuY2UudjEifQ\",\"value\":\"vUzF134_G88xvo2uzfOa66nclPg00D30rSaCaucFZgkAOJQm6NqEl3upmp9rrb5S2S1KiWytTb9kLm-ZrNEcDA\"}}",
+      "object_sha256": "4a9757f9714face9b5b44a46894daae88f3119f781550000ef781bc5d7556e52",
+      "negative": [
+        {
+          "name": "payload-byte",
+          "target": "record",
+          "path": [
+            "payload",
+            "backup_public_id"
+          ],
+          "value": "sbk_example02"
+        },
+        {
+          "name": "wrong-purpose",
+          "target": "record",
+          "path": [
+            "signature",
+            "key_purpose"
+          ],
+          "value": "manifest"
+        },
+        {
+          "name": "wrong-domain",
+          "target": "record",
+          "path": [
+            "signature",
+            "domain_separator"
+          ],
+          "value": "clawmanager/legacy/v1"
+        },
+        {
+          "name": "wrong-header",
+          "target": "record",
+          "path": [
+            "signature",
+            "protected_header"
+          ],
+          "value": "e30"
+        },
+        {
+          "name": "wrong-key",
+          "target": "trust",
+          "path": [
+            "key_id"
+          ],
+          "value": "other"
+        },
+        {
+          "name": "wrong-registry-version",
+          "target": "trust",
+          "path": [
+            "key_version"
+          ],
+          "value": "latest"
+        },
+        {
+          "name": "wrong-provider-version",
+          "target": "trust",
+          "path": [
+            "provider_version"
+          ],
+          "value": "4"
+        },
+        {
+          "name": "cross-installation",
+          "target": "expected",
+          "path": [
+            "installation"
+          ],
+          "value": "other-installation"
+        },
+        {
+          "name": "revoked",
+          "target": "trust",
+          "path": [
+            "revoked"
+          ],
+          "value": true
+        },
+        {
+          "name": "outside-key-validity",
+          "target": "trust",
+          "path": [
+            "not_after"
+          ],
+          "value": "2026-09-15T00:00:00Z"
+        },
+        {
+          "name": "padded-signature",
+          "target": "record",
+          "path": [
+            "signature",
+            "value"
+          ],
+          "value": "vUzF134_G88xvo2uzfOa66nclPg00D30rSaCaucFZgkAOJQm6NqEl3upmp9rrb5S2S1KiWytTb9kLm-ZrNEcDA="
+        },
+        {
+          "name": "wrong-public-key",
+          "target": "trust",
+          "path": [
+            "public_key_base64url"
+          ],
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ]
+    },
+    {
+      "name": "registration",
+      "trust": {
+        "installation": "installation_synthetic",
+        "purpose": "catalog_record",
+        "key_id": "catalog_record-synthetic",
+        "key_version": "registry-r17",
+        "provider_version": "3",
+        "public_key_base64url": "Xb4_dS4SqSjCAZ_V6jkrmM8aY2-G_fUfOl5P3Pxc-TA",
+        "not_before": "2026-09-01T00:00:00Z",
+        "not_after": "2026-10-01T00:00:00Z",
+        "revoked": false
+      },
+      "expected": {
+        "installation": "installation_synthetic",
+        "purpose": "catalog_record",
+        "key_id": "catalog_record-synthetic",
+        "key_version": "registry-r17",
+        "provider_version": "3",
+        "backup_public_id": "sbk_example01",
+        "attempt_no": 1,
+        "manifest_checksum": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "marker_checksum": "e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75"
+      },
+      "payload_json": "{\"acceptance_checksum\":\"4a9757f9714face9b5b44a46894daae88f3119f781550000ef781bc5d7556e52\",\"artifact_index_checksum\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"capture_certificate_hash\":\"b07d2ccdd986ddfa44ee4111f215aab3dc597087d1276c517d01896f6a5db3e0\",\"event_type\":\"artifact_registered\",\"manifest\":{\"identity_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"key\":\"synthetic/manifest.json\",\"provider\":\"s3\",\"version\":\"immutable-object-v7\"},\"manifest_checksum\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"marker_checksum\":\"e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75\",\"origin_installation_id\":\"installation_synthetic\",\"record_id\":\"scr_synthetic_registration\",\"recorded_at\":\"2026-09-15T01:31:00Z\",\"schema_version\":\"system-backup-catalog-record.v1\",\"signing_key\":{\"key_id\":\"catalog_record-synthetic\",\"key_version\":\"registry-r17\",\"purpose\":\"catalog_record\"}}",
+      "payload_sha256": "42f8895b90108abdc628f6b013579b4fced87189ee3c7c8c3cafcc793d7d2201",
+      "header_json": "{\"alg\":\"EdDSA\",\"key_version\":\"registry-r17\",\"kid\":\"catalog_record-synthetic\",\"purpose\":\"catalog_record\",\"typ\":\"clawmanager.system-backup.catalog_record.v1\"}",
+      "protected_header": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwicHVycG9zZSI6ImNhdGFsb2dfcmVjb3JkIiwidHlwIjoiY2xhd21hbmFnZXIuc3lzdGVtLWJhY2t1cC5jYXRhbG9nX3JlY29yZC52MSJ9",
+      "payload_base64url": "eyJhY2NlcHRhbmNlX2NoZWNrc3VtIjoiNGE5NzU3Zjk3MTRmYWNlOWI1YjQ0YTQ2ODk0ZGFhZTg4ZjMxMTlmNzgxNTUwMDAwZWY3ODFiYzVkNzU1NmU1MiIsImFydGlmYWN0X2luZGV4X2NoZWNrc3VtIjoiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsImF0dGVtcHRfbm8iOjEsImJhY2t1cF9wdWJsaWNfaWQiOiJzYmtfZXhhbXBsZTAxIiwiY2FwdHVyZV9jZXJ0aWZpY2F0ZV9oYXNoIjoiYjA3ZDJjY2RkOTg2ZGRmYTQ0ZWU0MTExZjIxNWFhYjNkYzU5NzA4N2QxMjc2YzUxN2QwMTg5NmY2YTVkYjNlMCIsImV2ZW50X3R5cGUiOiJhcnRpZmFjdF9yZWdpc3RlcmVkIiwibWFuaWZlc3QiOnsiaWRlbnRpdHlfaGFzaCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLCJrZXkiOiJzeW50aGV0aWMvbWFuaWZlc3QuanNvbiIsInByb3ZpZGVyIjoiczMiLCJ2ZXJzaW9uIjoiaW1tdXRhYmxlLW9iamVjdC12NyJ9LCJtYW5pZmVzdF9jaGVja3N1bSI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJtYXJrZXJfY2hlY2tzdW0iOiJlMWQxZDk1ZWJhZDlhY2U4MDlkMzIwMGQwNGM3MjM3NmFjOGUzY2ZmMTExZjU2NWM1OGRhMmRjNmI4NjUwZjc1Iiwib3JpZ2luX2luc3RhbGxhdGlvbl9pZCI6Imluc3RhbGxhdGlvbl9zeW50aGV0aWMiLCJyZWNvcmRfaWQiOiJzY3Jfc3ludGhldGljX3JlZ2lzdHJhdGlvbiIsInJlY29yZGVkX2F0IjoiMjAyNi0wOS0xNVQwMTozMTowMFoiLCJzY2hlbWFfdmVyc2lvbiI6InN5c3RlbS1iYWNrdXAtY2F0YWxvZy1yZWNvcmQudjEiLCJzaWduaW5nX2tleSI6eyJrZXlfaWQiOiJjYXRhbG9nX3JlY29yZC1zeW50aGV0aWMiLCJrZXlfdmVyc2lvbiI6InJlZ2lzdHJ5LXIxNyIsInB1cnBvc2UiOiJjYXRhbG9nX3JlY29yZCJ9fQ",
+      "signing_input_ascii": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwicHVycG9zZSI6ImNhdGFsb2dfcmVjb3JkIiwidHlwIjoiY2xhd21hbmFnZXIuc3lzdGVtLWJhY2t1cC5jYXRhbG9nX3JlY29yZC52MSJ9.eyJhY2NlcHRhbmNlX2NoZWNrc3VtIjoiNGE5NzU3Zjk3MTRmYWNlOWI1YjQ0YTQ2ODk0ZGFhZTg4ZjMxMTlmNzgxNTUwMDAwZWY3ODFiYzVkNzU1NmU1MiIsImFydGlmYWN0X2luZGV4X2NoZWNrc3VtIjoiYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsImF0dGVtcHRfbm8iOjEsImJhY2t1cF9wdWJsaWNfaWQiOiJzYmtfZXhhbXBsZTAxIiwiY2FwdHVyZV9jZXJ0aWZpY2F0ZV9oYXNoIjoiYjA3ZDJjY2RkOTg2ZGRmYTQ0ZWU0MTExZjIxNWFhYjNkYzU5NzA4N2QxMjc2YzUxN2QwMTg5NmY2YTVkYjNlMCIsImV2ZW50X3R5cGUiOiJhcnRpZmFjdF9yZWdpc3RlcmVkIiwibWFuaWZlc3QiOnsiaWRlbnRpdHlfaGFzaCI6ImFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWEiLCJrZXkiOiJzeW50aGV0aWMvbWFuaWZlc3QuanNvbiIsInByb3ZpZGVyIjoiczMiLCJ2ZXJzaW9uIjoiaW1tdXRhYmxlLW9iamVjdC12NyJ9LCJtYW5pZmVzdF9jaGVja3N1bSI6ImJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmIiLCJtYXJrZXJfY2hlY2tzdW0iOiJlMWQxZDk1ZWJhZDlhY2U4MDlkMzIwMGQwNGM3MjM3NmFjOGUzY2ZmMTExZjU2NWM1OGRhMmRjNmI4NjUwZjc1Iiwib3JpZ2luX2luc3RhbGxhdGlvbl9pZCI6Imluc3RhbGxhdGlvbl9zeW50aGV0aWMiLCJyZWNvcmRfaWQiOiJzY3Jfc3ludGhldGljX3JlZ2lzdHJhdGlvbiIsInJlY29yZGVkX2F0IjoiMjAyNi0wOS0xNVQwMTozMTowMFoiLCJzY2hlbWFfdmVyc2lvbiI6InN5c3RlbS1iYWNrdXAtY2F0YWxvZy1yZWNvcmQudjEiLCJzaWduaW5nX2tleSI6eyJrZXlfaWQiOiJjYXRhbG9nX3JlY29yZC1zeW50aGV0aWMiLCJrZXlfdmVyc2lvbiI6InJlZ2lzdHJ5LXIxNyIsInB1cnBvc2UiOiJjYXRhbG9nX3JlY29yZCJ9fQ",
+      "signing_input_sha256": "71354300a096f3babac5200f0a221196e1eae234b9d4b97a730a270511257533",
+      "signature_base64url": "7QLGqdRoP2_zDCnR6-HvwmwZnzVLhm_nyikJCTf-1nHCh8JNmhQqhjnWJXmPBMzNI6mP3bSchNB6tVKyCt2RAg",
+      "record_json": "{\"payload\":{\"acceptance_checksum\":\"4a9757f9714face9b5b44a46894daae88f3119f781550000ef781bc5d7556e52\",\"artifact_index_checksum\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"capture_certificate_hash\":\"b07d2ccdd986ddfa44ee4111f215aab3dc597087d1276c517d01896f6a5db3e0\",\"event_type\":\"artifact_registered\",\"manifest\":{\"identity_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"key\":\"synthetic/manifest.json\",\"provider\":\"s3\",\"version\":\"immutable-object-v7\"},\"manifest_checksum\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"marker_checksum\":\"e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75\",\"origin_installation_id\":\"installation_synthetic\",\"record_id\":\"scr_synthetic_registration\",\"recorded_at\":\"2026-09-15T01:31:00Z\",\"schema_version\":\"system-backup-catalog-record.v1\",\"signing_key\":{\"key_id\":\"catalog_record-synthetic\",\"key_version\":\"registry-r17\",\"purpose\":\"catalog_record\"}},\"signature\":{\"algorithm\":\"EdDSA\",\"domain_separator\":\"clawmanager.system-backup.catalog_record.v1\",\"key_id\":\"catalog_record-synthetic\",\"key_purpose\":\"catalog_record\",\"key_version\":\"registry-r17\",\"protected_header\":\"eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwicHVycG9zZSI6ImNhdGFsb2dfcmVjb3JkIiwidHlwIjoiY2xhd21hbmFnZXIuc3lzdGVtLWJhY2t1cC5jYXRhbG9nX3JlY29yZC52MSJ9\",\"value\":\"7QLGqdRoP2_zDCnR6-HvwmwZnzVLhm_nyikJCTf-1nHCh8JNmhQqhjnWJXmPBMzNI6mP3bSchNB6tVKyCt2RAg\"}}",
+      "object_sha256": "00a6f63b6372123850997be3381dc98daf5d59cca2dccfb5580300d7cc0104a1",
+      "negative": [
+        {
+          "name": "payload-byte",
+          "target": "record",
+          "path": [
+            "payload",
+            "backup_public_id"
+          ],
+          "value": "sbk_example02"
+        },
+        {
+          "name": "wrong-purpose",
+          "target": "record",
+          "path": [
+            "signature",
+            "key_purpose"
+          ],
+          "value": "manifest"
+        },
+        {
+          "name": "wrong-domain",
+          "target": "record",
+          "path": [
+            "signature",
+            "domain_separator"
+          ],
+          "value": "clawmanager/legacy/v1"
+        },
+        {
+          "name": "wrong-header",
+          "target": "record",
+          "path": [
+            "signature",
+            "protected_header"
+          ],
+          "value": "e30"
+        },
+        {
+          "name": "wrong-key",
+          "target": "trust",
+          "path": [
+            "key_id"
+          ],
+          "value": "other"
+        },
+        {
+          "name": "wrong-registry-version",
+          "target": "trust",
+          "path": [
+            "key_version"
+          ],
+          "value": "latest"
+        },
+        {
+          "name": "wrong-provider-version",
+          "target": "trust",
+          "path": [
+            "provider_version"
+          ],
+          "value": "4"
+        },
+        {
+          "name": "cross-installation",
+          "target": "expected",
+          "path": [
+            "installation"
+          ],
+          "value": "other-installation"
+        },
+        {
+          "name": "revoked",
+          "target": "trust",
+          "path": [
+            "revoked"
+          ],
+          "value": true
+        },
+        {
+          "name": "outside-key-validity",
+          "target": "trust",
+          "path": [
+            "not_after"
+          ],
+          "value": "2026-09-15T00:00:00Z"
+        },
+        {
+          "name": "padded-signature",
+          "target": "record",
+          "path": [
+            "signature",
+            "value"
+          ],
+          "value": "7QLGqdRoP2_zDCnR6-HvwmwZnzVLhm_nyikJCTf-1nHCh8JNmhQqhjnWJXmPBMzNI6mP3bSchNB6tVKyCt2RAg="
+        },
+        {
+          "name": "wrong-public-key",
+          "target": "trust",
+          "path": [
+            "public_key_base64url"
+          ],
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ]
+    },
+    {
+      "name": "tombstone",
+      "trust": {
+        "installation": "installation_synthetic",
+        "purpose": "catalog_record",
+        "key_id": "catalog_record-synthetic",
+        "key_version": "registry-r17",
+        "provider_version": "3",
+        "public_key_base64url": "Xb4_dS4SqSjCAZ_V6jkrmM8aY2-G_fUfOl5P3Pxc-TA",
+        "not_before": "2026-09-01T00:00:00Z",
+        "not_after": "2026-10-01T00:00:00Z",
+        "revoked": false
+      },
+      "expected": {
+        "installation": "installation_synthetic",
+        "purpose": "catalog_record",
+        "key_id": "catalog_record-synthetic",
+        "key_version": "registry-r17",
+        "provider_version": "3",
+        "backup_public_id": "sbk_example01",
+        "attempt_no": 1,
+        "manifest_checksum": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "marker_checksum": "e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75"
+      },
+      "payload_json": "{\"acceptance_checksum\":\"4a9757f9714face9b5b44a46894daae88f3119f781550000ef781bc5d7556e52\",\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"deletion_evidence_hash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"deletion_evidence_id\":\"sev_synthetic_deletion\",\"event_type\":\"artifact_deleted\",\"manifest_checksum\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"marker_checksum\":\"e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75\",\"origin_installation_id\":\"installation_synthetic\",\"prune_public_id\":\"spr_synthetic\",\"record_id\":\"scr_synthetic_tombstone\",\"recorded_at\":\"2026-09-15T02:31:00Z\",\"registration_checksum\":\"00a6f63b6372123850997be3381dc98daf5d59cca2dccfb5580300d7cc0104a1\",\"schema_version\":\"system-backup-catalog-record.v1\",\"signing_key\":{\"key_id\":\"catalog_record-synthetic\",\"key_version\":\"registry-r17\",\"purpose\":\"catalog_record\"}}",
+      "payload_sha256": "fc3cae55cbb64110556938f2faa022667c69096f9ac9df9470a3a0ba64d073f1",
+      "header_json": "{\"alg\":\"EdDSA\",\"key_version\":\"registry-r17\",\"kid\":\"catalog_record-synthetic\",\"purpose\":\"catalog_record\",\"typ\":\"clawmanager.system-backup.catalog_record.v1\"}",
+      "protected_header": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwicHVycG9zZSI6ImNhdGFsb2dfcmVjb3JkIiwidHlwIjoiY2xhd21hbmFnZXIuc3lzdGVtLWJhY2t1cC5jYXRhbG9nX3JlY29yZC52MSJ9",
+      "payload_base64url": "eyJhY2NlcHRhbmNlX2NoZWNrc3VtIjoiNGE5NzU3Zjk3MTRmYWNlOWI1YjQ0YTQ2ODk0ZGFhZTg4ZjMxMTlmNzgxNTUwMDAwZWY3ODFiYzVkNzU1NmU1MiIsImF0dGVtcHRfbm8iOjEsImJhY2t1cF9wdWJsaWNfaWQiOiJzYmtfZXhhbXBsZTAxIiwiZGVsZXRpb25fZXZpZGVuY2VfaGFzaCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2MiLCJkZWxldGlvbl9ldmlkZW5jZV9pZCI6InNldl9zeW50aGV0aWNfZGVsZXRpb24iLCJldmVudF90eXBlIjoiYXJ0aWZhY3RfZGVsZXRlZCIsIm1hbmlmZXN0X2NoZWNrc3VtIjoiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIm1hcmtlcl9jaGVja3N1bSI6ImUxZDFkOTVlYmFkOWFjZTgwOWQzMjAwZDA0YzcyMzc2YWM4ZTNjZmYxMTFmNTY1YzU4ZGEyZGM2Yjg2NTBmNzUiLCJvcmlnaW5faW5zdGFsbGF0aW9uX2lkIjoiaW5zdGFsbGF0aW9uX3N5bnRoZXRpYyIsInBydW5lX3B1YmxpY19pZCI6InNwcl9zeW50aGV0aWMiLCJyZWNvcmRfaWQiOiJzY3Jfc3ludGhldGljX3RvbWJzdG9uZSIsInJlY29yZGVkX2F0IjoiMjAyNi0wOS0xNVQwMjozMTowMFoiLCJyZWdpc3RyYXRpb25fY2hlY2tzdW0iOiIwMGE2ZjYzYjYzNzIxMjM4NTA5OTdiZTMzODFkYzk4ZGFmNWQ1OWNjYTJkY2NmYjU1ODAzMDBkN2NjMDEwNGExIiwic2NoZW1hX3ZlcnNpb24iOiJzeXN0ZW0tYmFja3VwLWNhdGFsb2ctcmVjb3JkLnYxIiwic2lnbmluZ19rZXkiOnsia2V5X2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwia2V5X3ZlcnNpb24iOiJyZWdpc3RyeS1yMTciLCJwdXJwb3NlIjoiY2F0YWxvZ19yZWNvcmQifX0",
+      "signing_input_ascii": "eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwicHVycG9zZSI6ImNhdGFsb2dfcmVjb3JkIiwidHlwIjoiY2xhd21hbmFnZXIuc3lzdGVtLWJhY2t1cC5jYXRhbG9nX3JlY29yZC52MSJ9.eyJhY2NlcHRhbmNlX2NoZWNrc3VtIjoiNGE5NzU3Zjk3MTRmYWNlOWI1YjQ0YTQ2ODk0ZGFhZTg4ZjMxMTlmNzgxNTUwMDAwZWY3ODFiYzVkNzU1NmU1MiIsImF0dGVtcHRfbm8iOjEsImJhY2t1cF9wdWJsaWNfaWQiOiJzYmtfZXhhbXBsZTAxIiwiZGVsZXRpb25fZXZpZGVuY2VfaGFzaCI6ImNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2MiLCJkZWxldGlvbl9ldmlkZW5jZV9pZCI6InNldl9zeW50aGV0aWNfZGVsZXRpb24iLCJldmVudF90eXBlIjoiYXJ0aWZhY3RfZGVsZXRlZCIsIm1hbmlmZXN0X2NoZWNrc3VtIjoiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYiIsIm1hcmtlcl9jaGVja3N1bSI6ImUxZDFkOTVlYmFkOWFjZTgwOWQzMjAwZDA0YzcyMzc2YWM4ZTNjZmYxMTFmNTY1YzU4ZGEyZGM2Yjg2NTBmNzUiLCJvcmlnaW5faW5zdGFsbGF0aW9uX2lkIjoiaW5zdGFsbGF0aW9uX3N5bnRoZXRpYyIsInBydW5lX3B1YmxpY19pZCI6InNwcl9zeW50aGV0aWMiLCJyZWNvcmRfaWQiOiJzY3Jfc3ludGhldGljX3RvbWJzdG9uZSIsInJlY29yZGVkX2F0IjoiMjAyNi0wOS0xNVQwMjozMTowMFoiLCJyZWdpc3RyYXRpb25fY2hlY2tzdW0iOiIwMGE2ZjYzYjYzNzIxMjM4NTA5OTdiZTMzODFkYzk4ZGFmNWQ1OWNjYTJkY2NmYjU1ODAzMDBkN2NjMDEwNGExIiwic2NoZW1hX3ZlcnNpb24iOiJzeXN0ZW0tYmFja3VwLWNhdGFsb2ctcmVjb3JkLnYxIiwic2lnbmluZ19rZXkiOnsia2V5X2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwia2V5X3ZlcnNpb24iOiJyZWdpc3RyeS1yMTciLCJwdXJwb3NlIjoiY2F0YWxvZ19yZWNvcmQifX0",
+      "signing_input_sha256": "b5ce65ebccdeda12ac5e4ea43bdaa6d1cdb068bb36fb60c2e5798a2e0f9f0039",
+      "signature_base64url": "QamYghoNF3wE-AATh6hQlhdEnBolGeu_ULwVxYeP7V3_dLWyrVobc2KMqx5rtd9zmT50iwpfzUU5f-tlG32sBg",
+      "record_json": "{\"payload\":{\"acceptance_checksum\":\"4a9757f9714face9b5b44a46894daae88f3119f781550000ef781bc5d7556e52\",\"attempt_no\":1,\"backup_public_id\":\"sbk_example01\",\"deletion_evidence_hash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"deletion_evidence_id\":\"sev_synthetic_deletion\",\"event_type\":\"artifact_deleted\",\"manifest_checksum\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"marker_checksum\":\"e1d1d95ebad9ace809d3200d04c72376ac8e3cff111f565c58da2dc6b8650f75\",\"origin_installation_id\":\"installation_synthetic\",\"prune_public_id\":\"spr_synthetic\",\"record_id\":\"scr_synthetic_tombstone\",\"recorded_at\":\"2026-09-15T02:31:00Z\",\"registration_checksum\":\"00a6f63b6372123850997be3381dc98daf5d59cca2dccfb5580300d7cc0104a1\",\"schema_version\":\"system-backup-catalog-record.v1\",\"signing_key\":{\"key_id\":\"catalog_record-synthetic\",\"key_version\":\"registry-r17\",\"purpose\":\"catalog_record\"}},\"signature\":{\"algorithm\":\"EdDSA\",\"domain_separator\":\"clawmanager.system-backup.catalog_record.v1\",\"key_id\":\"catalog_record-synthetic\",\"key_purpose\":\"catalog_record\",\"key_version\":\"registry-r17\",\"protected_header\":\"eyJhbGciOiJFZERTQSIsImtleV92ZXJzaW9uIjoicmVnaXN0cnktcjE3Iiwia2lkIjoiY2F0YWxvZ19yZWNvcmQtc3ludGhldGljIiwicHVycG9zZSI6ImNhdGFsb2dfcmVjb3JkIiwidHlwIjoiY2xhd21hbmFnZXIuc3lzdGVtLWJhY2t1cC5jYXRhbG9nX3JlY29yZC52MSJ9\",\"value\":\"QamYghoNF3wE-AATh6hQlhdEnBolGeu_ULwVxYeP7V3_dLWyrVobc2KMqx5rtd9zmT50iwpfzUU5f-tlG32sBg\"}}",
+      "object_sha256": "7899a9ce84252ca92719db6cbd7f878558b53d93c88904006fc97e28255cbf37",
+      "negative": [
+        {
+          "name": "payload-byte",
+          "target": "record",
+          "path": [
+            "payload",
+            "backup_public_id"
+          ],
+          "value": "sbk_example02"
+        },
+        {
+          "name": "wrong-purpose",
+          "target": "record",
+          "path": [
+            "signature",
+            "key_purpose"
+          ],
+          "value": "manifest"
+        },
+        {
+          "name": "wrong-domain",
+          "target": "record",
+          "path": [
+            "signature",
+            "domain_separator"
+          ],
+          "value": "clawmanager/legacy/v1"
+        },
+        {
+          "name": "wrong-header",
+          "target": "record",
+          "path": [
+            "signature",
+            "protected_header"
+          ],
+          "value": "e30"
+        },
+        {
+          "name": "wrong-key",
+          "target": "trust",
+          "path": [
+            "key_id"
+          ],
+          "value": "other"
+        },
+        {
+          "name": "wrong-registry-version",
+          "target": "trust",
+          "path": [
+            "key_version"
+          ],
+          "value": "latest"
+        },
+        {
+          "name": "wrong-provider-version",
+          "target": "trust",
+          "path": [
+            "provider_version"
+          ],
+          "value": "4"
+        },
+        {
+          "name": "cross-installation",
+          "target": "expected",
+          "path": [
+            "installation"
+          ],
+          "value": "other-installation"
+        },
+        {
+          "name": "revoked",
+          "target": "trust",
+          "path": [
+            "revoked"
+          ],
+          "value": true
+        },
+        {
+          "name": "outside-key-validity",
+          "target": "trust",
+          "path": [
+            "not_after"
+          ],
+          "value": "2026-09-15T00:00:00Z"
+        },
+        {
+          "name": "padded-signature",
+          "target": "record",
+          "path": [
+            "signature",
+            "value"
+          ],
+          "value": "QamYghoNF3wE-AATh6hQlhdEnBolGeu_ULwVxYeP7V3_dLWyrVobc2KMqx5rtd9zmT50iwpfzUU5f-tlG32sBg="
+        },
+        {
+          "name": "wrong-public-key",
+          "target": "trust",
+          "path": [
+            "public_key_base64url"
+          ],
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ]
+    }
+  ]
+}

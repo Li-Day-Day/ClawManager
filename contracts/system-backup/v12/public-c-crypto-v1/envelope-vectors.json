@@ -1,0 +1,61 @@
+{
+  "version": "public-c-crypto.v1",
+  "kind": "synthetic-functional-test-only",
+  "test_dek_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "test_kek_hex": "fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0",
+  "wrapped_dek_hex": "cc060a8f130e850ee97167c98d4c2d41fb77b3fe9de36c5ec508ac29f823974aa64ccd6fbfc694d5",
+  "binding": {
+    "schema_version": "aes-gcm-chunked.v1",
+    "origin_installation_id": "installation_synthetic",
+    "backup_public_id": "sbk_example01",
+    "attempt_no": "1",
+    "phase": "capture",
+    "part": "mysql",
+    "part_index": "0",
+    "path": "mysql/part-00001.enc",
+    "envelope_id": "env_synthetic_01",
+    "capture_context_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "kek_binding_sha256": "5878eaf082063123158ca53b74b12ade2c4a9ded9787366f6f9aa1130f281bed"
+  },
+  "frames": [
+    {
+      "index": 0,
+      "plaintext_hex": "73796e746865746963206261636b757020e58e9fe5a78be695b0e68dae",
+      "nonce_hex": "000102030405060708090a0b",
+      "final": false,
+      "aad_hex": "00000022636c61776d616e616765722e73797374656d2d6261636b75702e6368756e6b2e7631000000126165732d67636d2d6368756e6b65642e763100000016696e7374616c6c6174696f6e5f73796e7468657469630000000d73626b5f6578616d706c65303100000001310000000763617074757265000000056d7973716c0000000130000000146d7973716c2f706172742d30303030312e656e6300000010656e765f73796e7468657469635f30310000004063636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363000000403538373865616630383230363331323331353863613533623734623132616465326334613964656439373837333636663666396161313133306632383162656400000000000000000000001d00",
+      "frame_hex": "434d424b474330310000002900000000000000000000001d0000001d00000102030405060708090a0b347bb86fad80b672ee61f5ead2820d1da33309ab15dcd49aadd70308b354c7f60b79cc200a1a8e23514107fb14",
+      "frame_sha256": "6785256bfab5f7f5d67b1c9b86014a740ac501a52eeea56ccb642e49e716df04"
+    },
+    {
+      "index": 1,
+      "plaintext_hex": "",
+      "nonce_hex": "0c0d0e0f1011121314151617",
+      "final": true,
+      "aad_hex": "00000022636c61776d616e616765722e73797374656d2d6261636b75702e6368756e6b2e7631000000126165732d67636d2d6368756e6b65642e763100000016696e7374616c6c6174696f6e5f73796e7468657469630000000d73626b5f6578616d706c65303100000001310000000763617074757265000000056d7973716c0000000130000000146d7973716c2f706172742d30303030312e656e6300000010656e765f73796e7468657469635f30310000004063636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363636363000000403538373865616630383230363331323331353863613533623734623132616465326334613964656439373837333636663666396161313133306632383162656400000000000000010000000001",
+      "frame_hex": "434d424b474330310000002900000000000000010000000000000000010c0d0e0f10111213141516171bbec5b1357388287a916d89bf1332a0",
+      "frame_sha256": "1c2bf83ed55f295df12644af7482f64438b1921bd9d530654d81dbb4c61dc50c"
+    }
+  ],
+  "envelope_json": "{\"entries\":[{\"chunks\":[{\"chunk_index\":0,\"ciphertext_length\":29,\"final\":false,\"frame_sha256\":\"6785256bfab5f7f5d67b1c9b86014a740ac501a52eeea56ccb642e49e716df04\",\"nonce\":\"000102030405060708090a0b\",\"path\":\"mysql/part-00001.enc\",\"plaintext_length\":29,\"tag\":\"54c7f60b79cc200a1a8e23514107fb14\"},{\"chunk_index\":1,\"ciphertext_length\":0,\"final\":true,\"frame_sha256\":\"1c2bf83ed55f295df12644af7482f64438b1921bd9d530654d81dbb4c61dc50c\",\"nonce\":\"0c0d0e0f1011121314151617\",\"path\":\"mysql/part-00001.enc\",\"plaintext_length\":0,\"tag\":\"1bbec5b1357388287a916d89bf1332a0\"}],\"context\":{\"attempt_no\":\"1\",\"backup_public_id\":\"sbk_example01\",\"capture_context_hash\":\"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"envelope_id\":\"env_synthetic_01\",\"origin_installation_id\":\"installation_synthetic\",\"part\":\"mysql\",\"part_index\":\"0\",\"phase\":\"capture\"},\"data_algorithm\":\"AES-256-GCM\",\"envelope_id\":\"env_synthetic_01\",\"framing_version\":\"aes-gcm-chunked.v1\",\"kek\":{\"identity_hash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"provider\":\"external-secret\",\"provider_key_id\":\"synthetic-backup-kek\",\"provider_version\":\"immutable-v3\",\"registry_version\":\"opaque-r17\"},\"wrap_algorithm\":\"AES-256-KW\",\"wrapped_dek\":\"zAYKjxMOhQ7pcWfJjUwtQft3s_6d42xexQisKfgjl0qmTM1vv8aU1Q\"}],\"schema_version\":\"system-backup-envelope.v1\"}",
+  "envelope_sha256": "21c5b6525d4d886ebc211f90e155747a8b324518eab2d628c9fe7b2653efa205",
+  "negative": [
+    "wrong-installation",
+    "wrong-task",
+    "wrong-attempt",
+    "wrong-phase",
+    "wrong-part",
+    "wrong-part-index",
+    "wrong-path",
+    "wrong-envelope",
+    "wrong-capture-context",
+    "wrong-kek-binding",
+    "wrong-key",
+    "wrong-index",
+    "wrong-tag",
+    "truncated",
+    "trailing",
+    "missing-eof",
+    "wrong-wrap-key"
+  ]
+}

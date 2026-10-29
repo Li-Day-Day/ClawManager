@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unsigned catalog record v1",
+  "x-contract-version": "public-c-crypto.v1",
+  "x-contract-status": "candidate",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "origin_installation_id",
+        "backup_public_id",
+        "attempt_no",
+        "record_id",
+        "recorded_at",
+        "signing_key",
+        "event_type",
+        "manifest",
+        "manifest_checksum",
+        "marker_checksum",
+        "acceptance_checksum",
+        "capture_certificate_hash",
+        "artifact_index_checksum"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "system-backup-catalog-record.v1"
+        },
+        "origin_installation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "backup_public_id": {
+          "type": "string",
+          "pattern": "^sbk_[A-Za-z0-9_-]+$"
+        },
+        "attempt_no": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "record_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signing_key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "purpose",
+            "key_id",
+            "key_version"
+          ],
+          "properties": {
+            "purpose": {
+              "const": "catalog_record"
+            },
+            "key_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "key_version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        },
+        "event_type": {
+          "const": "artifact_registered"
+        },
+        "manifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "provider",
+            "identity_hash",
+            "key",
+            "version"
+          ],
+          "properties": {
+            "provider": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "identity_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        },
+        "manifest_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "marker_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "acceptance_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "capture_certificate_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_index_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "origin_installation_id",
+        "backup_public_id",
+        "attempt_no",
+        "record_id",
+        "recorded_at",
+        "signing_key",
+        "event_type",
+        "registration_checksum",
+        "manifest_checksum",
+        "marker_checksum",
+        "acceptance_checksum",
+        "prune_public_id",
+        "deletion_evidence_id",
+        "deletion_evidence_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "system-backup-catalog-record.v1"
+        },
+        "origin_installation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "backup_public_id": {
+          "type": "string",
+          "pattern": "^sbk_[A-Za-z0-9_-]+$"
+        },
+        "attempt_no": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "record_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signing_key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "purpose",
+            "key_id",
+            "key_version"
+          ],
+          "properties": {
+            "purpose": {
+              "const": "catalog_record"
+            },
+            "key_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "key_version": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        },
+        "event_type": {
+          "const": "artifact_deleted"
+        },
+        "registration_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "manifest_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "marker_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "acceptance_checksum": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "prune_public_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "deletion_evidence_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "deletion_evidence_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  ]
+}

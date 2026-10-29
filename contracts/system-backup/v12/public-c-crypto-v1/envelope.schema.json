@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Final backup envelope v1",
+  "x-contract-version": "public-c-crypto.v1",
+  "x-contract-status": "candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "system-backup-envelope.v1"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "envelope_id",
+          "context",
+          "kek",
+          "wrap_algorithm",
+          "wrapped_dek",
+          "data_algorithm",
+          "framing_version",
+          "chunks"
+        ],
+        "properties": {
+          "envelope_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "context": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "origin_installation_id",
+              "backup_public_id",
+              "attempt_no",
+              "phase",
+              "part",
+              "part_index",
+              "envelope_id",
+              "capture_context_hash"
+            ],
+            "properties": {
+              "origin_installation_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "backup_public_id": {
+                "type": "string",
+                "pattern": "^sbk_[A-Za-z0-9_-]+$"
+              },
+              "attempt_no": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]*$"
+              },
+              "phase": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "part": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "part_index": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$"
+              },
+              "envelope_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "capture_context_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "kek": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "provider",
+              "identity_hash",
+              "registry_version",
+              "provider_key_id",
+              "provider_version"
+            ],
+            "properties": {
+              "provider": {
+                "enum": [
+                  "external-kms",
+                  "external-secret",
+                  "k8s-secret"
+                ]
+              },
+              "identity_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "registry_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "provider_key_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "provider_version": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          },
+          "wrap_algorithm": {
+            "enum": [
+              "provider-native",
+              "AES-256-KW"
+            ]
+          },
+          "wrapped_dek": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "data_algorithm": {
+            "const": "AES-256-GCM"
+          },
+          "framing_version": {
+            "const": "aes-gcm-chunked.v1"
+          },
+          "chunks": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "chunk_index",
+                "plaintext_length",
+                "ciphertext_length",
+                "final",
+                "nonce",
+                "tag",
+                "frame_sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1024
+                },
+                "chunk_index": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "plaintext_length": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1048576
+                },
+                "ciphertext_length": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1048576
+                },
+                "final": {
+                  "type": "boolean"
+                },
+                "nonce": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{24}$"
+                },
+                "tag": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{32}$"
+                },
+                "frame_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
