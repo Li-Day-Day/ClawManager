@@ -35,16 +35,17 @@ const (
 )
 
 var (
-	ErrPermission  = errors.New("permission_denied")
-	ErrBinding     = errors.New("binding_mismatch")
-	ErrIntegrity   = errors.New("integrity_failed")
-	ErrUnavailable = errors.New("key_unavailable")
-	ErrDeadline    = errors.New("deadline_exceeded")
-	ErrUnknown     = errors.New("outcome_unknown")
-	digest         = regexp.MustCompile(`^[0-9a-f]{64}$`)
-	decimal        = regexp.MustCompile(`^(0|[1-9][0-9]*)$`)
-	keyName        = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
-	backupID       = regexp.MustCompile(`^sbk_[A-Za-z0-9_-]+$`)
+	ErrPermission   = errors.New("permission_denied")
+	ErrBinding      = errors.New("binding_mismatch")
+	ErrIntegrity    = errors.New("integrity_failed")
+	ErrUnavailable  = errors.New("key_unavailable")
+	ErrDeadline     = errors.New("deadline_exceeded")
+	ErrUnknown      = errors.New("outcome_unknown")
+	digest          = regexp.MustCompile(`^[0-9a-f]{64}$`)
+	registryVersion = regexp.MustCompile(`^[A-Za-z0-9._:-]{1,128}$`)
+	decimal         = regexp.MustCompile(`^(0|[1-9][0-9]*)$`)
+	keyName         = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
+	backupID        = regexp.MustCompile(`^sbk_[A-Za-z0-9_-]+$`)
 )
 
 // Access binds a provider operation to one frozen request. Endpoint/key name
@@ -160,7 +161,11 @@ func absent(v any) bool {
 func hash(b []byte) string { h := sha256.Sum256(b); return hex.EncodeToString(h[:]) }
 func validKey(k w.KeyBinding) bool {
 	v, e := strconv.ParseUint(k.ProviderVersion, 10, 32)
-	return k.Provider == "external-kms" && digest.MatchString(k.IdentityHash) && text(k.RegistryVersion) && text(k.ProviderKeyID) && e == nil && v > 0 && strconv.FormatUint(v, 10) == k.ProviderVersion
+	// Registry versions stay opaque, but must name an immutable version under
+	// the original typed-reference contract. Matching mutable aliases on both
+	// sides of a request is not an exact-version binding.
+	exact := registryVersion.MatchString(k.RegistryVersion) && k.RegistryVersion != "latest" && k.RegistryVersion != "current" && k.RegistryVersion != "default"
+	return k.Provider == "external-kms" && digest.MatchString(k.IdentityHash) && exact && text(k.ProviderKeyID) && e == nil && v > 0 && strconv.FormatUint(v, 10) == k.ProviderVersion
 }
 func canonical(v any) ([]byte, error) {
 	b, e := json.Marshal(v)

@@ -139,6 +139,7 @@ KEK 接线继续复用原 typed reference、`reference:kek`、`BootstrapAdmissio
 
 ## 本地验证与现场状态
 
+- 后续精确版本复审发现：旧 KMS 仅要求 registry version 为非空文本，配置和请求同时使用 `latest/current/default` 时不会产生“不匹配”。新增回归先在旧代码复现；构造和 TransitContext 现按原 typed-reference 版本格式拒绝这些别名、空值、空白/路径字符及超长版本，provider numeric version 继续独立固定。KMS 全包回归 exit=0（18.117s），包含合法不透明版本、既有撤销与独立 recovery 用例。隔离目录 `.tmp-a-kek-exact-version-20261029` 已清理并确认不存在；本次没有调用现场 provider。
 - Go `systembackupkms` 最近一轮全包 exit=0（7.289s），含真实本地 TLS fixture、签名/pin resolver、独立 capture/recovery 构造和 JWT 17 类路径；覆盖合法、错用途/安装/key/context/version、到期/撤销、错误 provider metadata/policy/type/TTL、无缓存重登录、callback 超过 token TTL 但未超过原许可等。并发边界使用测试 authority，不是生产 SQL 证明。
 - Python policy/role/revoke 11 项；JWT 公钥转换 3 项；trust apply/readback 3 项；临时管理 Pod runner 3 项（含成功/未知创建/准入变更/等待或执行失败清理，以及替换 UID 不删除）均通过。原 JS planner 18 项通过。
 - 修正公开 JSON 的 LF bytes 后，重跑公钥转换、trust apply 和 runner 测试全部通过。Python `-B` 不留 bytecode，测试不创建现场资源。
