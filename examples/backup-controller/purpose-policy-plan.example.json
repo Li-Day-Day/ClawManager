@@ -1,0 +1,94 @@
+{
+  "schema_version": "system-backup-purpose-policy-plan.v1",
+  "status": "review_only_not_applied",
+  "installation_id": "installation_dfa02579009349938c8125490d9dfd41",
+  "provider_scope": "existing_same_cluster_lab_candidate",
+  "operator_confirmed": "New-purpose policies and credentials have not been created.",
+  "signing_policy_candidates": [
+    {
+      "name": "sbk-dfa02579-capture-sign-v1",
+      "purpose": "capture_certificate",
+      "provider_key_version": 1,
+      "policy": {
+        "path": {
+          "transit/sign/sbk-zh08-dfa02579009349938c8125490d9dfd41-capture-v1": {
+            "capabilities": ["update"],
+            "required_parameters": ["input", "key_version"],
+            "allowed_parameters": {"input": [], "key_version": ["1"]}
+          }
+        }
+      }
+    },
+    {
+      "name": "sbk-dfa02579-acceptance-sign-v1",
+      "purpose": "acceptance_record",
+      "provider_key_version": 1,
+      "policy": {
+        "path": {
+          "transit/sign/sbk-zh08-dfa02579009349938c8125490d9dfd41-acceptance-v1": {
+            "capabilities": ["update"],
+            "required_parameters": ["input", "key_version"],
+            "allowed_parameters": {"input": [], "key_version": ["1"]}
+          }
+        }
+      }
+    },
+    {
+      "name": "sbk-dfa02579-catalog-sign-v1",
+      "purpose": "catalog_record",
+      "provider_key_version": 1,
+      "policy": {
+        "path": {
+          "transit/sign/sbk-zh08-dfa02579009349938c8125490d9dfd41-catalog-v1": {
+            "capabilities": ["update"],
+            "required_parameters": ["input", "key_version"],
+            "allowed_parameters": {"input": [], "key_version": ["1"]}
+          }
+        }
+      }
+    }
+  ],
+  "evidence_policy_requirements": {
+    "provider_key": "sbk-zh08-dfa02579009349938c8125490d9dfd41-evidence-kek-v1",
+    "provider_key_version": 1,
+    "separate_policies": ["evidence_dek_wrap", "evidence_dek_unwrap"],
+    "missing_inputs": ["admitted KeyRef.Identity", "admitted KeyRef.Version", "authenticated workload and current authorization source"],
+    "context_source": "EvidenceTransitContext(installation_id, admitted_KeyRef)",
+    "wrap_required_parameters": ["plaintext", "context", "key_version"],
+    "wrap_version_wire_type": "JSON number 1",
+    "unwrap_required_parameters": ["ciphertext", "context"],
+    "historical_ciphertext_version_rule": "exact original KeyRef routing and vault:v1: frame verification by TransitKeys; provider ACL alone is insufficient"
+  },
+  "backup_policy_requirements": {
+    "provider_key": "sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1",
+    "provider_key_version": 1,
+    "status": "C_contract_received_provider_composition_pending",
+    "contract": "public-c-crypto.v1",
+    "capture_operation": "external-kms GenerateDataKey only; no encrypt/wrap fallback",
+    "recovery_operation": "Decrypt with current recovery authority and trusted exact original request",
+    "generate_path": "transit/datakey/plaintext/sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1",
+    "unwrap_path": "transit/decrypt/sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1",
+    "generate_parameters": {"bits": "256", "key_version": "1", "context": "base64(UTF8(JCS(original KeyContext plus kek_binding_sha256)))"},
+    "offline_plan_builder": "scripts/system-backup-a-backup-transit-plan.mjs:backupTransitPlan",
+    "offline_unwrap_builder": "scripts/system-backup-a-backup-transit-plan.mjs:backupTransitUnwrapRequest",
+    "missing_inputs": ["admitted full KeyBinding and frozen task KeyContext", "authenticated originating Job workload and current authorization/revocation", "provider adapter and deployment link", "deployed OpenBao exact-version and ACL parameter conformance"]
+  },
+  "credential_requirements": {
+    "status": "not_issued",
+    "one_purpose_policy_per_identity": true,
+    "no_default_policy": true,
+    "no_root_or_key_management_permissions": true,
+    "evidence_existing_adapter": "JWT exchange; nonrenewable batch token; lease_duration 1..20 seconds; exact single policy and role; no added identity policies",
+    "signer_existing_adapter": "Live resolver authenticates workload, original bytes and binding; returns original NotBefore/ExpiresAt and Recheck; provider call <=15 seconds and bounded by grant/key expiry",
+    "revocation": "Current authoritative grant checked before and after use; define parent/role revocation and short batch TTL behavior. Do not claim individually revocable batch tokens.",
+    "missing_inputs": ["actual authenticated workload", "JWT issuer/audience/subject and role mapping where applicable", "registry versions and key validity windows", "current revocation authority"],
+    "secret_delivery": "controlled mount or live resolver only; no tokens, private keys, Secret data or generated grants in Git"
+  },
+  "application_notes": [
+    "This is a review bundle, not a direct OpenBao request body or deployment configuration.",
+    "Policy candidates do not authenticate the workload or validate the signed payload purpose. CredentialTransitSigner plus the original authority must enforce those bindings.",
+    "Signing key_version is deliberately the string 1 to match the existing signer wire; evidence wrap uses numeric 1. Verify ACL parameter type behavior against the deployed OpenBao version before issuance.",
+    "Do not attach policy candidates to tokens until workload mapping, original authorization and required contract review are complete.",
+    "Reuse recorded provider identities and public key observations; only recheck targeted pins, state and expiry when applying. Do not repeat broad discovery."
+  ]
+}

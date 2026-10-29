@@ -1,0 +1,41 @@
+{
+  "schema_version": "system-backup-site-jwt-trust-observation.v1",
+  "status": "operator_reported_public_material_not_applied",
+  "observed_date": "2026-10-29",
+  "kubernetes_context": "kubernetes-admin@kubernetes",
+  "installation_id": "installation_dfa02579009349938c8125490d9dfd41",
+  "provider": {
+    "version": "2.6.2",
+    "commit": "dd9c19c37a878cf4a81b18efb8d6f0599c7da923",
+    "committed_at": "2026-08-18T15:48:19Z",
+    "namespace": "sbk-provider-zh-7474d6e0b052",
+    "pod": "bao-recovery-tls2-20261028"
+  },
+  "discovery": {
+    "issuer": "https://kubernetes.default.svc.cluster.local",
+    "jwks_uri": "https://10.130.14.23:6443/openid/v1/jwks",
+    "response_types_supported": ["id_token"],
+    "subject_types_supported": ["public"],
+    "id_token_signing_alg_values_supported": ["RS256"]
+  },
+  "jwks": {
+    "keys": [{
+      "use": "sig",
+      "kty": "RSA",
+      "kid": "hJdzzIdsquCaYdXN062zwOqXT0cVvxBEabgRBYGXgdQ",
+      "alg": "RS256",
+      "n": "v8iUD3roNlBu6nu0WOHfMq7r6W4feuE4bVUz-VzGNNfEljy10S8Q23Osc4ZiBZ2ghFllEvlaxz6f_RjG8cSPatlwcE2On6IMkujO70IC2UgyFgMSciXLYZ8idqQl84k-XN0S0EQCoPNldc7WTL8W96Btb18gRezQZxOOJA4cDF3Q1_ecmlM5HfxjfQx6b7_ScFKM_bhtTQCGyO2-uZBPdZ83BTZQUHAwVM9f43nQ4jNVNZDGQa_ID4K9Dzl2sZ4gTh6e9YT59-UKSxLu8LLwRnUDvHHOAz_9YFQ-FGHQ2fkIvxInyRWygYGCRs97HTdOpo20rfgahZdUT40RRrjv5w",
+      "e": "AQAB"
+    }]
+  },
+  "sources": [
+    "operator: kubectl exec bao-recovery-tls2-20261028 -c bao -- bao version",
+    "operator: kubectl get --raw /.well-known/openid-configuration",
+    "operator: kubectl get --raw /openid/v1/jwks"
+  ],
+  "limits": [
+    "Public verification material only; contains no token, private key or DEK.",
+    "Does not prove that a JWT auth mount, policy, role or formal task grant exists.",
+    "Kubernetes key rotation requires explicit new review; no automatic trust replacement."
+  ]
+}

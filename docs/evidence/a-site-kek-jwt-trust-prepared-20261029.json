@@ -1,0 +1,26 @@
+{
+  "status": "review_only_not_applied",
+  "mount": "sbk-kek-jwt-32cefa6049533b732d3a099f1993330eac961d5bb8960766429647ed9bb757b3",
+  "config": {
+    "bound_issuer": "https://kubernetes.default.svc.cluster.local",
+    "jwt_supported_algs": [
+      "RS256"
+    ],
+    "jwt_validation_pubkeys": [
+      "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv8iUD3roNlBu6nu0WOHf\nMq7r6W4feuE4bVUz+VzGNNfEljy10S8Q23Osc4ZiBZ2ghFllEvlaxz6f/RjG8cSP\natlwcE2On6IMkujO70IC2UgyFgMSciXLYZ8idqQl84k+XN0S0EQCoPNldc7WTL8W\n96Btb18gRezQZxOOJA4cDF3Q1/ecmlM5HfxjfQx6b7/ScFKM/bhtTQCGyO2+uZBP\ndZ83BTZQUHAwVM9f43nQ4jNVNZDGQa/ID4K9Dzl2sZ4gTh6e9YT59+UKSxLu8LLw\nRnUDvHHOAz/9YFQ+FGHQ2fkIvxInyRWygYGCRs97HTdOpo20rfgahZdUT40RRrjv\n5wIDAQAB\n-----END PUBLIC KEY-----\n"
+    ],
+    "default_role": ""
+  },
+  "config_request_sha256": "32cefa6049533b732d3a099f1993330eac961d5bb8960766429647ed9bb757b3",
+  "keys": [
+    {
+      "kid": "hJdzzIdsquCaYdXN062zwOqXT0cVvxBEabgRBYGXgdQ",
+      "spki_sha256": "849773cc876caae09a61d5cdd3adb3c0ea974f4715bf104469b81105819781d4"
+    }
+  ],
+  "limits": [
+    "No remote JWKS fetching or TOFU; only the operator-supplied public keys are trusted.",
+    "This config grants no role or task execution permission.",
+    "The role must bind exact audience, namespace, Pod UID and SA UID; live TokenReview/Job revocation remains required."
+  ]
+}

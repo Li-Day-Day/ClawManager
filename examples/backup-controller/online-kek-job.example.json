@@ -1,0 +1,51 @@
+{
+  "example_only": true,
+  "status": "composition_reference_not_a_deployable_grant",
+  "contract": "public-c-crypto.v1",
+  "provider": {
+    "endpoint": "https://bao.sbk-provider-zh-7474d6e0b052.svc:8200",
+    "installation_id": "installation_dfa02579009349938c8125490d9dfd41",
+    "key_name": "sbk-zh08-dfa02579009349938c8125490d9dfd41-backup-kek-v1",
+    "key": {
+      "provider": "external-kms",
+      "identity_hash": "REPLACE_WITH_ADMITTED_REGISTRY_IDENTITY_SHA256",
+      "registry_version": "REPLACE_WITH_ADMITTED_OPAQUE_REGISTRY_VERSION",
+      "provider_key_id": "REPLACE_WITH_ADMITTED_PROVIDER_KEY_ID",
+      "provider_version": "1"
+    },
+    "ca_file": "/run/system-backup/provider/ca.crt",
+    "ca_pem_sha256": "e7ff215f4fb96613cba2c0c89e9b28afe19b412b5d63be0593843a45fe99f518",
+    "not_before": "REPLACE_WITH_ADMITTED_CURRENT_READ_OR_WRITE_WINDOW",
+    "not_after": "REPLACE_WITH_ADMITTED_CURRENT_READ_OR_WRITE_WINDOW"
+  },
+  "permit_mount": {
+    "permit_path": "/run/system-backup/provider/permit.json",
+    "permit_sha256": "REPLACE_WITH_INDEPENDENT_PERMIT_FILE_SHA256",
+    "public_key_base64": "REPLACE_WITH_INDEPENDENT_PERMIT_SIGNER_PUBLIC_KEY",
+    "credential_directory": "/run/system-backup/provider"
+  },
+  "jwt_role_reference": {
+    "mount": "sbk-kek-jwt-32cefa6049533b732d3a099f1993330eac961d5bb8960766429647ed9bb757b3",
+    "role": "REPLACE_WITH_ORIGINAL_POD_AND_PURPOSE_CONTENT_ADDRESSED_ROLE",
+    "policy": "REPLACE_WITH_EXACT_CONTEXT_GENERATE_OR_UNWRAP_POLICY",
+    "identity_file": "/run/system-backup/provider-jwt/token",
+    "audience": "clawmanager-backup-kek",
+    "projection_expiration_seconds": 600,
+    "provider_batch_token_max_seconds": 20,
+    "renewable": false
+  },
+  "required_original_inputs": [
+    "OriginalJobAuthority from existing execution or independent recovery authorization",
+    "Frozen C KeyRequest from the original encrypted journal and admitted registry",
+    "Original invocation hash, execution grant hash, Job UID, Pod UID, SA UID and deadline",
+    "Original Job final-use admission and actual StopJob/Stopped revocation proof",
+    "CaptureJob.WithDEK callback writes C final framing in this same Job"
+  ],
+  "limits": [
+    "This example is not parsed by DeploymentConfig; map reviewed fields to kms.Config and PermitMount in the owner composition.",
+    "JWT projection requires original Job admission and WorkerObserver validation; do not change the worker control audience.",
+    "Use separate capture and recovery constructors, roles and permits; recovery uses its retained exact historical request.",
+    "Candidate provider name/version above are observed metadata, not registry admission.",
+    "No credentials or private signing keys belong in this file."
+  ]
+}

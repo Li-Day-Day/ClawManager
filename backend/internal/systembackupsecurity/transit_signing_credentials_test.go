@@ -23,7 +23,7 @@ func (f signingCredentialResolver) ResolveSigning(ctx context.Context, r Transit
 }
 
 func TestCredentialTransitSignerCallAuthority(t *testing.T) {
-	for _, mode := range []string{"valid", "wrong-purpose", "wrong-input", "wrong-provider-version", "expired", "future", "resolve-error", "no-recheck", "revoked-before", "revoked-after", "expires-during-call", "clock-rollback", "expires-after-recheck", "cancel-after", "input-mutated"} {
+	for _, mode := range []string{"valid", "wrong-purpose", "wrong-installation", "wrong-key-id", "wrong-key-version", "wrong-input", "wrong-provider-version", "expired", "future", "resolve-error", "no-recheck", "revoked-before", "revoked-after", "expires-during-call", "clock-rollback", "expires-after-recheck", "cancel-after", "input-mutated"} {
 		t.Run(mode, func(t *testing.T) {
 			pub, private, err := ed25519.GenerateKey(rand.Reader)
 			if err != nil {
@@ -84,6 +84,12 @@ func TestCredentialTransitSignerCallAuthority(t *testing.T) {
 				switch mode {
 				case "wrong-purpose":
 					c.Request.Binding.Purpose = "catalog_record"
+				case "wrong-installation":
+					c.Request.Binding.InstallationID = "installation_other"
+				case "wrong-key-id":
+					c.Request.Binding.KeyID = "another-key"
+				case "wrong-key-version":
+					c.Request.Binding.KeyVersion = "opaque-v4"
 				case "wrong-input":
 					c.Request.InputSHA256 = strings.Repeat("0", 64)
 				case "wrong-provider-version":

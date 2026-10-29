@@ -558,7 +558,6 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 		return lease, worker.ErrExecution
 	}
 	lease = worker.Lease{InvocationSHA256: req.InvocationSHA256, ExpiresAt: binding.RelayExpiresAt}
-	keyInput, _ := json.Marshal(req.Invocation.Request.Binding)
 	switch req.Action {
 	case "ready", "check":
 		return lease, nil
@@ -566,7 +565,7 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 		if req.Invocation.Request.Database != nil {
 			return worker.Lease{}, worker.ErrNotReady
 		} // no implicit SQL credentials
-		lease.DEK, e = o.Identity.DeriveCaptureKey(ctx, a, keyInput)
+		lease.DEK, e = o.Identity.DeriveTaskCaptureKey(ctx, a, req.Invocation.Request.Binding)
 		if e != nil {
 			return worker.Lease{}, worker.ErrExecution
 		}
@@ -575,7 +574,7 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 		if req.Result == nil || !worker.ValidateResult(req.Invocation.Request, req.Result) {
 			return worker.Lease{}, worker.ErrExecution
 		}
-		key, e := o.Identity.DeriveCaptureKey(ctx, a, keyInput)
+		key, e := o.Identity.DeriveTaskCaptureKey(ctx, a, req.Invocation.Request.Binding)
 		if e != nil {
 			return worker.Lease{}, worker.ErrExecution
 		}

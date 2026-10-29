@@ -1,0 +1,51 @@
+{
+  "schema_version": "system-backup-public-deployment.v1",
+  "capture_scope": "platform-workspace",
+  "installation_id": "REPLACE_WITH_REGISTERED_INSTALLATION",
+  "controller_owner": "REPLACE_WITH_CONTROLLER_OWNER",
+  "application_scope": "REPLACE_WITH_ADMITTED_SCOPE",
+  "namespace": "REPLACE_WITH_NAMESPACE",
+  "namespace_uid": "REPLACE_WITH_NAMESPACE_UID",
+  "trust_domain": "backup.example.invalid",
+  "forward_grant": {
+    "path": "/run/system-backup/forward-grant.json",
+    "public_key_base64": "REPLACE_WITH_INDEPENDENT_ED25519_PUBLIC_KEY"
+  },
+  "recovery_grant": {
+    "path": "/run/system-backup/recovery-grant.json",
+    "public_key_base64": "REPLACE_WITH_INDEPENDENT_ED25519_PUBLIC_KEY"
+  },
+  "key_directory": "/run/system-backup/record-and-staging-keys",
+  "profile_file": "/run/system-backup/execution-profile.json",
+  "capacity_file": "/run/system-backup/capacity.json",
+  "source_dsn_file": "/run/system-backup/source-dsn",
+  "source_user": "REPLACE_WITH_DEDICATED_READ_ACCOUNT",
+  "source_database": "REPLACE_WITH_SOURCE_DATABASE",
+  "source_server_uuid": "REPLACE_WITH_SOURCE_SERVER_UUID",
+  "staging_directory": "/var/lib/system-backup/staging",
+  "staging_claim": "REPLACE_WITH_STAGING_PVC",
+  "worker_image": "registry.example.invalid/worker@sha256:REPLACE_WITH_IMAGE_DIGEST",
+  "worker_security": {
+    "ServiceAccountName": "REPLACE_WITH_WORKER_SA",
+    "ServiceAccountUID": "REPLACE_WITH_WORKER_SA_UID",
+    "node_uids": {"REPLACE_WITH_NODE": "REPLACE_WITH_NODE_UID"},
+    "volumes": [
+      {"Volume": "workspace", "Kind": "PersistentVolumeClaim", "Name": "REPLACE_WITH_SOURCE_PVC", "UID": "REPLACE_WITH_SOURCE_PVC_UID", "PVName": "REPLACE_WITH_SOURCE_PV", "PVUID": "REPLACE_WITH_SOURCE_PV_UID", "SHA256": ""},
+      {"Volume": "staging", "Kind": "PersistentVolumeClaim", "Name": "REPLACE_WITH_STAGING_PVC", "UID": "REPLACE_WITH_STAGING_PVC_UID", "PVName": "REPLACE_WITH_STAGING_PV", "PVUID": "REPLACE_WITH_STAGING_PV_UID", "SHA256": ""}
+    ]
+  },
+  "control_url": "https://control.example.invalid:8443/worker/v1",
+  "listen": ":8443",
+  "server_certificate": "/run/system-backup/tls/server.crt",
+  "server_key": "/run/system-backup/tls/server.key",
+  "issuer_certificate": "/run/system-backup/tls/worker-issuer.crt",
+  "issuer_certificate_sha256": "REPLACE_WITH_ISSUER_DER_SHA256",
+  "issuer_key": "/run/system-backup/tls/worker-issuer.key",
+  "platform_writers": [{"namespace": "REPLACE_WITH_NAMESPACE", "name": "REPLACE_WITH_WRITER", "uid": "REPLACE_WITH_WRITER_UID"}],
+  "workspace": {
+    "claim": "REPLACE_WITH_SOURCE_PVC", "sub_path": "", "node": "REPLACE_WITH_NODE",
+    "max_files": 1000, "max_file_bytes": 1048576, "max_archive_bytes": 16777216, "max_compressed_bytes": 16777216
+  },
+  "acquire_seconds": 60,
+  "hold_seconds": 120
+}

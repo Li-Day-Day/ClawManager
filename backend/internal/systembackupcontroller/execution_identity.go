@@ -13,9 +13,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
+	"clawreef/internal/systembackup/staging"
 	d "clawreef/internal/systembackupdispatch"
 )
 
@@ -233,10 +235,28 @@ func (p *PinnedExecutionIdentity) checkSQLAction(ctx context.Context, tx *sql.Tx
 
 func (p *PinnedExecutionIdentity) AuthorizeWorkerIssuer(ctx context.Context, tx *sql.Tx, a d.Authority, digest string) error {
 	var now time.Time
-	if p == nil || digest != p.grant.WorkerIssuerSHA256 || !executionHash.MatchString(digest) || tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now) != nil {
+	if p == nil || ctx == nil || ctx.Err() != nil || tx == nil || digest != p.grant.WorkerIssuerSHA256 || !executionHash.MatchString(digest) || tx.QueryRowContext(ctx, "SELECT UTC_TIMESTAMP(6)").Scan(&now) != nil {
 		return ErrExecutionAuthority
 	}
 	return p.checkSQLAction(ctx, tx, a, now, "issue_worker")
+}
+
+// DeriveTaskCaptureKey binds functional staging to the already authorized task
+// and attempt. It preserves the original derivation bytes for saved envelopes.
+// Callers still enforce current SQL claim/fence, Job identity and revocation;
+// this method grants neither provider access nor historical restore unwrap.
+func (p *PinnedExecutionIdentity) DeriveTaskCaptureKey(ctx context.Context, a d.Authority, binding staging.Binding) ([]byte, error) {
+	if a.TaskType != "backup" || a.Phase != "capture" || a.TaskPublicID == "" || a.AttemptNo == 0 ||
+		a.DeadlineAt.IsZero() || !time.Now().Before(a.DeadlineAt) ||
+		binding.BackupID != a.TaskPublicID || binding.Attempt != strconv.FormatUint(a.AttemptNo, 10) ||
+		binding.Path == "" || binding.EnvelopeID == "" || !executionHash.MatchString(binding.CaptureContextHash) {
+		return nil, ErrExecutionAuthority
+	}
+	raw, err := json.Marshal(binding)
+	if err != nil {
+		return nil, ErrExecutionAuthority
+	}
+	return p.DeriveCaptureKey(ctx, a, raw)
 }
 
 // DeriveCaptureKey is a task/part-specific INTERNAL staging key for functional
