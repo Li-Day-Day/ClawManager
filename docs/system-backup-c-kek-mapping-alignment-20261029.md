@@ -16,6 +16,8 @@
 4. 结构转换只能产生**未准入候选值**。A 原 authority 认证来源、检查用途权限/期限/撤销/历史保留并生成 Prepare observation；D 原事务最终 Recheck 成功后，生产组合才能消费为 `kms.Config`。JSON 不提供 `approved`、`healthy` 或 `complete` 布尔许可。
 5. source_revision 是原来源版本，必须在 Recheck 中重新核对。相同逻辑 identity+registry version 不允许重绑定另一个 provider key/version/endpoint；更换 provider 要有另外受审的迁移合同。
 
+immutable mapping 与观察分开：`config_sha256`、`source_revision` 和当前权限窗口属于本次观察绑定，不属于不可变 key identity；不同 config 可以继续引用完全相同的原 mapping。禁重绑定不能实现成“config 改变就拒绝复用同一 key”。当前 generate/write 许可、当前独立 unwrap 许可、撤销事实及材料保护/保留期限分别检查；停止新写不意味着删除历史映射，也不自动授予历史读取。
+
 ## D 原持久化/事务：已知事实与待确认项
 
 已核对的现有来源：
@@ -44,8 +46,8 @@ D 需确认后才能进入实现的五项决定：
 
 | 事实集 | 最小逻辑字段 | 不可变与复查要求 |
 |---|---|---|
-| KEK 映射版本 | installation_id；原 config_ref identity_hash/version；完整 KeyBinding；provider 描述；generate_ref/unwrap_ref 原字节与各自 SHA；原来源引用及 source_revision；记录 row_version | 唯一逻辑身份使用原 installation+identity_hash+registry_version；原 provider 绑定和两用途对应关系不可在同版本下覆盖。新版本保留旧版本，不能从当前映射集合推断历史完整 |
-| 当前安全事实 | 原 authority/观察来源 ID 与版本、观察有效窗口、当前允许用途、撤销来源及其 revision；历史保留/可读状态的原来源 | 由 A 原准入认证后持久保存事实或受控引用，不能提供自报 approved/granted=true。变更须递增 source/fence revision；这些字段不授予 Job 执行或恢复权限 |
+| KEK 映射版本 | installation_id；原 config_ref identity_hash/version；完整 KeyBinding；provider 描述及不可变 ca_source；generate_ref/unwrap_ref 原字节与各自 SHA；记录 row_version。config_sha256/source_revision 在独立观察关系中保存 | 唯一逻辑身份使用原 installation+identity_hash+registry_version；原 provider 绑定和两用途对应关系不可在同版本下覆盖。不同 config 可引用同一 mapping；新版本保留旧版本，不能从当前映射集合推断历史完整 |
+| 当前安全事实 | 原 authority/观察来源 ID 与版本、观察有效窗口；分别记录当前 generate/write 许可、独立 recovery unwrap 许可、对应撤销来源/revision、材料保护/保留期限的原来源 | 由 A 原准入认证后持久保存事实或受控引用，不能提供自报 approved/granted=true。变更须递增 source/fence revision；停止写入不删除历史 mapping，不推导恢复权限；这些字段不新增 Job 执行或恢复授权 |
 | 引用成员事实 | coverage 分区、原 source_record_id/version、backup/attempt/envelope_id、完整 KEK identity/version 与 binding hash、原生命周期/保护事实引用 | 新生成调用之前登记 planned key；unknown 调用/写入保留成员。release 只能引用原已认证的完成清理/不存在性/解除保护事实，不能依赖单个 SQL deleted 标记 |
 | 全局扫描/变更水位 | installation/source_id；覆盖全集的 snapshot_revision、fence_revision；分区计数与集合 hash 可派生 | 水位要覆盖映射变更、planned 引用、新/未知写入、hold、restore/prune 和成员释放；仅有 MAX(id)、时间戳或某一张表 row_version 不足 |
 
@@ -63,7 +65,9 @@ A 已表示会把这些合同和字段转交 D，并由 D 实现生产存储/事
 
 schema 的四个 coverage 分区是**覆盖分类**，不是新增数据库 status enum。每个分区必须由可信 source 返回 snapshot_revision、fence_revision、计数和精确引用集合 hash；完整性与水位由原来源认证，不由 JSON 自证。没有扫描/分页未结束/缺分区/过期/未知 key binding 时 fail closed；非 nil 空列表只在全部来源经原 fence 证明为空时可用。
 
-每个引用保留原 source record ID/version、backup/attempt/envelope identity 和完整 KeyBinding。未知/尚未完成的写入使用原计划已保留的精确 key；不能等到最终 envelope 才纳入扫描。不得只过滤 succeeded、未过期或 SQL 未删除的行。每个分区 hash 与全量 hash 的排序/JCS 算法已写入 schema；hash 只检查集合字节，不能替代原来源完整性。
+每个引用保留原 source record ID/version、backup/attempt/envelope identity 和完整 KeyBinding。`binding_sha256` 单独不足以恢复；新增必填 `mapping_source` 和 `expected_request_source`，分别引用原完整 mapping（包含不可变 CA 来源）和原 plan/envelope 中完整 KeyRequest/context。SourceRecord 闭集为 source_id、record_id、record_version、content_sha256；它是原可信来源中的记录引用，不是可直接打开的任意文件路径/URL。实际取回必须验证原来源与完整字节 hash，不从不可信 wrapped 数据单独重建 expectedRequest，不复制旧 grant 充当当前恢复许可。provider.ca_source 的 PEM 字节还须匹配 ca_pem_sha256。
+
+未知/尚未完成的写入使用原计划已保留的精确 key；不能等到最终 envelope 才纳入扫描。不得只过滤 succeeded、未过期或 SQL 未删除的行。每个分区 hash 与全量 hash 的排序/JCS 算法已写入 schema；hash 只检查集合字节，不能替代原来源完整性。
 
 删除旧 key 前，必须确认全量旧映射未丢失、所有仍引用版本可恢复、当前写入已切换、未知调用仍受保护，并在与新写/GC/配置修改共享的原边界最终复查。A 的安全 adapter 消费这些原事实；C 提供业务引用范围/格式；D 提供 SQL/原持久化与锁协议。暂无正式 scanner，也不提供恒成功 Original。
 

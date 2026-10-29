@@ -26,7 +26,7 @@
     "references": {
       "type": "array", "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["partition", "source_record_id", "source_record_version", "backup_public_id", "attempt_no", "envelope_id", "key_binding", "binding_sha256"],
+        "required": ["partition", "source_record_id", "source_record_version", "backup_public_id", "attempt_no", "envelope_id", "key_binding", "binding_sha256", "mapping_source", "expected_request_source"],
         "properties": {
           "partition": {"enum": ["retained_artifacts", "inflight_and_unknown_writes", "holds_and_catalog", "restore_and_prune"]},
           "source_record_id": {"$ref": "#/$defs/Text"},
@@ -35,7 +35,9 @@
           "attempt_no": {"type": "string", "pattern": "^[1-9][0-9]*$"},
           "envelope_id": {"$ref": "#/$defs/Text"},
           "key_binding": {"$ref": "c-backup-kek-mapping.schema.json#/$defs/KeyBinding"},
-          "binding_sha256": {"$ref": "#/$defs/Hash"}
+          "binding_sha256": {"$ref": "#/$defs/Hash"},
+          "mapping_source": {"$ref": "c-backup-kek-mapping.schema.json#/$defs/SourceRecord"},
+          "expected_request_source": {"$ref": "c-backup-kek-mapping.schema.json#/$defs/SourceRecord"}
         }
       }
     },
@@ -64,6 +66,7 @@
     "Unknown writes and reservations retain the planned exact key before a final envelope exists. Unresolved binding is unavailable, never skipped.",
     "references are unique and sorted by UTF-16 order of JCS([partition,source_record_id,source_record_version,envelope_id]); references_sha256 is SHA256(UTF8(JCS(references))).",
     "Each partition count/hash covers its filtered references array using the same order. binding_sha256 is SHA256(UTF8(JCS(key_binding))).",
+    "binding_sha256 alone is insufficient for recovery. mapping_source retains the original full immutable mapping and its CA source; expected_request_source retains the original full KeyRequest from the existing plan/envelope source, including its complete context. Authenticate and verify referenced bytes before use. Never reconstruct expectedRequest solely from untrusted wrapped data or copy an old grant as current recovery authority.",
     "Do not exclude references solely on task terminal state, expired timestamp or deleted SQL flag. D must supply authoritative lifecycle and absence/cleanup facts.",
     "The original bootstrap/config-mutation transaction must recheck source_revision, all snapshot/fence revisions and the proposed map before commit. No network IO or independent commit in locked Recheck."
   ]

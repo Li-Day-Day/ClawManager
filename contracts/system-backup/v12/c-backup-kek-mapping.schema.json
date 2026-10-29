@@ -23,13 +23,14 @@
     "key_binding": {"$ref": "#/$defs/KeyBinding"},
     "provider": {
       "type": "object", "additionalProperties": false,
-      "required": ["endpoint", "key_name", "provider_identity_hash", "scope_hash", "ca_pem_sha256"],
+      "required": ["endpoint", "key_name", "provider_identity_hash", "scope_hash", "ca_pem_sha256", "ca_source"],
       "properties": {
         "endpoint": {"type": "string", "pattern": "^https://", "maxLength": 2048},
         "key_name": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$"},
         "provider_identity_hash": {"$ref": "#/$defs/Hash"},
         "scope_hash": {"$ref": "#/$defs/Hash"},
-        "ca_pem_sha256": {"$ref": "#/$defs/Hash"}
+        "ca_pem_sha256": {"$ref": "#/$defs/Hash"},
+        "ca_source": {"$ref": "#/$defs/SourceRecord"}
       }
     },
     "generate_ref": {
@@ -50,6 +51,16 @@
     "Hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "Text": {"type": "string", "minLength": 1, "maxLength": 256},
     "Version": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,128}$", "not": {"enum": ["latest", "current", "default"]}},
+    "SourceRecord": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "record_id", "record_version", "content_sha256"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/Text"},
+        "record_id": {"$ref": "#/$defs/Text"},
+        "record_version": {"$ref": "#/$defs/Version"},
+        "content_sha256": {"$ref": "#/$defs/Hash"}
+      }
+    },
     "KeyBinding": {
       "type": "object", "additionalProperties": false,
       "required": ["provider", "identity_hash", "registry_version", "provider_key_id", "provider_version"],
@@ -63,11 +74,12 @@
     }
   },
   "x-runtime-validation": [
-    "config_ref must equal the original current/proposed reference:kek pin for this installation/config.",
+    "config_ref must equal the original current/proposed reference:kek pin for this installation/config. config_sha256 and source_revision are observation bindings, not immutable key identity: another config may reference the identical immutable mapping.",
     "key_binding.identity_hash and registry_version equal config_ref.identity_hash and version byte for byte.",
     "Both operation refs must be authenticated by the original registry. Their provider_identity_hash and scope_hash equal the provider descriptor. Do not assume distinct operation refs have the same identity/version; require the original registry relation to the same logical KEK.",
     "provider_key_id, endpoint, key_name and provider numeric version are resolved from authenticated original mapping, never inferred from names, versions or probe SHA.",
-    "Current permission, validity interval, revocation and mapping retention are supplied by the original trusted authority and rechecked in its transaction. They are deliberately not self-asserted approval fields in this document.",
+    "Current permission, validity interval, revocation and mapping retention are supplied by the original trusted authority and rechecked in its transaction. Generate/write permission, current independent retained unwrap permission and preservation deadlines are separate facts; loss of write permission must not erase historical mapping or imply unwrap permission.",
+    "ca_source is an immutable record in the authenticated original source, never an arbitrary path/URL to open. Its retrieved PEM bytes must match ca_pem_sha256. Preserve mapping and CA while referenced, without preserving an old execution grant as authority.",
     "A scalar snapshot/source_revision is not evidence of complete retained scanning or shared locking. Missing source or recheck rejects admission."
   ]
 }
