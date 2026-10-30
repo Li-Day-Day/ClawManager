@@ -105,6 +105,13 @@ catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异�
   活跃备份、非 idle gate、mutation lease 均为 0。这说明升级副本必须保留
   现有多用户与 3 条 Runtime 绑定，而不能以空库迁移代替验证；计数为零
   也不能替代隔离副本上的全表行与关系保全证明。
+- 2026-10-30 远侧只读关系核对：`instances.user_id`、
+  `instance_runtime_bindings.instance_id`、
+  `instance_runtime_bindings.runtime_pod_id` 的孤儿数均为 0；运行状态为
+  3 个 `lite/running` 和 1 个 `pro/stopped`。Workbuddy 实例数和
+  `system_image_settings` 中的 Workbuddy 行数均为 0。这些是副本保全时的
+  **现场基线计数**，不能单凭零孤儿证明全部表行、加密配置或工作区字节
+  已复制。
 - 同一现场的 `mysqldump --no-data` 只读输出进一步显示：`instances` 已有
   `pvc_name`、`runtime_variant` 及由 `owner` 生成的
   `owner_normalized`；`instance_runtime_bindings` 对 `instance_id` 唯一，
@@ -191,7 +198,9 @@ SHA。它在只读事务内两次核对完整 ledger 与 schema，拒绝已存�
 journal 和未完成备份工作。副本结构只接受现场原指纹或已审查的 MySQL 8.4.8
 `mysqldump` 重建指纹；输出固定为 `data_preservation_verified=false`、
 `migration_authorized=false`。此预检**不写入**数据库，也不调用现有
-136 项的 `ImportBackupCopy`。
+136 项的 `ImportBackupCopy`。新构建的 App 镜像会包含同名可执行文件；
+需要运行时应将它作为隔离操作员命令启动，不要为预检而滚动当前 App
+Deployment，因为 App 启动路径另有数据库迁移行为。
 
 对已经用测试数据建立的隔离副本，可在本地仓库 `backend` 目录运行：
 
