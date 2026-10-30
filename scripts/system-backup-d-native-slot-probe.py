@@ -6,6 +6,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 import secrets
 import socket
 import ssl
@@ -42,6 +43,26 @@ def secret_env(name, secret, key):
     return {"name": name, "valueFrom": {"secretKeyRef": {"name": secret, "key": key}}}
 
 
+def decode_chunked(data):
+    output = bytearray()
+    offset = 0
+    while True:
+        end = data.find(b"\r\n", offset)
+        if end < 0:
+            raise RuntimeError("truncated Agent chunk header")
+        try:
+            size = int(data[offset:end].split(b";", 1)[0], 16)
+        except ValueError as exc:
+            raise RuntimeError("invalid Agent chunk header") from exc
+        offset = end + 2
+        if size < 0 or size > 65536 - len(output) or data[offset + size:offset + size + 2] != b"\r\n":
+            raise RuntimeError("invalid Agent chunk size or trailer")
+        if size == 0:
+            return bytes(output)
+        output.extend(data[offset:offset + size])
+        offset += size + 2
+
+
 def agent_request(ip, cert, token, method, path, value=None):
     context = ssl.create_default_context(cafile=cert)
     context.minimum_version = ssl.TLSVersion.TLSv1_3
@@ -66,8 +87,7 @@ def agent_request(ip, cert, token, method, path, value=None):
     head, body = raw_response.split(b"\r\n\r\n", 1)
     code = int(head.split(b"\r\n", 1)[0].split()[1])
     if b"transfer-encoding: chunked" in head.lower():
-        size, rest = body.split(b"\r\n", 1)
-        body = rest[: int(size, 16)]
+        body = decode_chunked(body)
     return code, body
 
 
@@ -144,7 +164,7 @@ def main():
     parser.add_argument("--image", required=True)
     parser.add_argument("--synthetic-lifecycle", action="store_true")
     OPT = parser.parse_args()
-    if "@sha256:" not in OPT.image:
+    if re.fullmatch(r"[^@\s]+@sha256:[0-9a-f]{64}", OPT.image) is None:
         raise RuntimeError("image must be pinned by digest")
     name = "d-native-probe-" + secrets.token_hex(4)
     token_name, tls_name = name + "-token", name + "-tls"
@@ -168,7 +188,7 @@ def main():
             created.append(("secret", tls_name))
             common = [env("CLAWMANAGER_RUNTIME_TYPE", "openclaw"), env("CLAWMANAGER_RUNTIME_IMAGE_REF", OPT.image),
                       env("CLAWMANAGER_BACKEND_URL", "http://clawmanager-gateway." + OPT.namespace + ".svc.cluster.local:9001"),
-                      env("RUNTIME_WORKSPACE_ROOT", "/workspaces"),
+                      env("RUNTIME_WORKSPACE_ROOT", "/workspaces"), env("RUNTIME_AGENT_DATA_DIR", "/var/lib/clawmanager-agent"),
                       env("RUNTIME_GATEWAY_PORT_START", "20000"), env("RUNTIME_GATEWAY_PORT_END", "20002"),
                       env("RUNTIME_GATEWAY_PORT_BLOCK_SIZE", "3"),
                       env("RUNTIME_GATEWAY_CAPACITY", "1"), field("POD_UID", "metadata.uid"), field("POD_NAME", "metadata.name"),
@@ -199,6 +219,12 @@ def main():
             k(["wait", "pod/" + name, "--for=condition=Ready", "--timeout=120s"])
             pod = json.loads(k(["get", "pod", name, "-o", "json"]).stdout)
             result.update(pod_uid=pod["metadata"]["uid"], pod_ip=pod["status"]["podIP"])
+            running = {item.get("name"): item for item in pod.get("status", {}).get("containerStatuses", [])}
+            expected_digest = OPT.image.split("@sha256:", 1)[1]
+            result["runtime_image_ids"] = {container: running.get(container, {}).get("imageID", "") for container in ("pool", "slot")}
+            if any(not running.get(container, {}).get("ready") or not result["runtime_image_ids"][container].endswith("sha256:" + expected_digest)
+                   for container in ("pool", "slot")):
+                raise RuntimeError("pool/slot actual image digest or readiness differs from requested image")
             deadline = time.monotonic() + 60
             while True:
                 try:
@@ -211,7 +237,12 @@ def main():
             result.update(http_status=200, capability=capability)
             if (capability.get("protocol") != "isolated-backup.v1" or capability.get("namespace") != OPT.namespace
                     or capability.get("pod_uid") != result["pod_uid"] or capability.get("gateway_port") != 20000
-                    or not capability.get("supported") or not capability.get("durable_reservation")):
+                    or not isinstance(capability.get("slot"), str) or not capability["slot"]
+                    or not isinstance(capability.get("agent_epoch"), str)
+                    or re.fullmatch(r"[0-9a-f]{32}", capability["agent_epoch"]) is None
+                    or capability.get("confirmation_scope") != "instance_pid_namespaces_and_mounts"
+                    or capability.get("supported") is not True or capability.get("durable_reservation") is not True
+                    or capability.get("agent_restart_reconciliation") is not False):
                 raise RuntimeError("native Agent capability fields did not bind to the test Pod")
             result["status"] = "capability_passed"
             if OPT.synthetic_lifecycle:
