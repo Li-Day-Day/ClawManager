@@ -40,6 +40,14 @@
   特定场景。现场 080 ledger 不满足这个合同。普通
   `system-backup-migrate --apply` 会拒绝未知历史项；不能为了让它通过
   而改写历史 ledger、直接重放旧 SQL，或仅替换 source SHA。
+- 用户随后在同一测试 namespace 对 `information_schema.COLUMNS` 做只读
+  查询：现场有 `system_backups`、`system_backup_configs`、
+  `system_maintenance_participants`、`instances`、`runtime_pods`、
+  `instance_runtime_bindings` 等旧表；输出中没有 `system_backup_v2_*` 表。
+  当前执行代码查询 `system_backup_v2_backups`、
+  `system_backup_v2_maintenance_participants` 等新版表。现场输出只包含
+  列名、类型、空值和键标记，尚无完整 DDL、索引、外键或行数据证明。
+  因此替换 App/Runtime 镜像不能代替版本化现库升级。
 
 ## 可重复运行的本地只读审计
 
