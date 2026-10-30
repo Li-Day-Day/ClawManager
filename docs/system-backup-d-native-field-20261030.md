@@ -35,6 +35,8 @@
 
 第七次使用已提交的 Python `-c` 测试命令和同一精确镜像 digest。受控脚本加载临时 profile 后，独立 Pod `d-native-probe-eb455701` UID `bd23c220-cb3d-445b-9f36-ef3d486d5226` 的 pool/slot 均就绪，实际 imageID 均为 `d57b751e…`。TLS 1.3 能力 GET 返回 HTTP 200；Agent epoch 为 `8af4e2bd935bb37e018c5572b3e95da8`，namespace、Pod UID、端口和确认范围均与请求匹配。一次性测试 Gateway 原 PID 为 **78**，Agent 返回 `state=stopped`、`confirmation_scope=instance_pid_namespaces_and_mounts` 的正向停止回执；恢复后返回 `state=resumed`、新 PID **87**，complete 回执与恢复回执 SHA 一致。探针比较回执内完整 request 与发送值、原 generation 1、恢复 generation 2 的 restart SHA，并保留原回执字节的 base64 与 SHA-256：stop `0da22dadb8bfa9f4705befb24e32db73afe9af1313875c6ab39013d6a16bdafb`，resume 和 complete 均为 `42c12aa12c424f5a8dd942471e4ae020fbd33153c66c2097ecb3ee591671fcc7`；restart JSON SHA-256 `8344b2ac0964fc3f198aa5d6f8899ef783a7789f98a0923e08ca4b168f654f26`。现场 JSON 状态为 `synthetic_lifecycle_passed`，`D_NATIVE_PROFILE_PROBE_EXIT=0`、`D_NATIVE_PROFILE_RUN_EXIT=0`；Pod 与两个 Secret 删除退出码均为 0，独立 `aa-status | grep -i bwrap` 退出 1，临时 profile 已卸载。该测试没有控制器 task/attempt、SQL 写入、真实用户实例或跨节点存储，因此不能替代 SQL proof/CAS 与完整备份验收。
 
+用户返回的停止和恢复原字节已保存在[原回执证据](evidence/system-backup-d-native-agent-lifecycle-20261030.json)；本地重新 base64 解码并计算两个 SHA-256，均与现场输出逐字节一致，解析后重新核对 namespace、Pod UID、epoch、原 PID、原/目标 generation、restart SHA、正向确认范围和恢复 PID，验证退出 0。该文件没有 `complete` 原字节，complete 的相同 SHA 仅采用现场探针输出。
+
 客户端修复 `16815597` 固定 pool CA/TLS 1.3 并拒绝明文 locator；`7c1951de` 进一步使备份专用 HTTP 调用在发送控制 token 前拒绝非 HTTPS，定向测试退出 0。原生 Dockerfile 完整镜像本地构建因 Docker Hub 匿名令牌连接超时而失败，未产生目标镜像；已使用本地私有仓库中精确旧基础镜像叠加的测试镜像进行隔离探针，不将其当作已验收的完整原生 Lite 镜像。
 
 ## 下一现场门槛
