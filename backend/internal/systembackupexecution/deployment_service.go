@@ -305,11 +305,20 @@ func (s *DeploymentService) inventory(ctx context.Context, in d.Input, x b.Disco
 var sourceSelect = regexp.MustCompile("^GRANT SELECT ON `([A-Za-z0-9_]+)`\\.`(users|instances)` TO (?:'[^']+'|`[^`]+`)@(?:'[^']+'|`[^`]+`)$")
 
 func (s *DeploymentService) checkSource(ctx context.Context) error {
+	return s.checkSourceIdentity(ctx, s.Source)
+}
+
+type sourceIdentityReader interface {
+	QueryRowContext(context.Context, string, ...any) *sql.Row
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
+}
+
+func (s *DeploymentService) checkSourceIdentity(ctx context.Context, source sourceIdentityReader) error {
 	var account, role, database, server string
-	if s.Source.QueryRowContext(ctx, "SELECT CURRENT_USER(),CURRENT_ROLE(),DATABASE(),@@server_uuid").Scan(&account, &role, &database, &server) != nil || !strings.HasPrefix(account, s.Config.SourceUser+"@") || role != "NONE" || database != s.Config.SourceDatabase || server != s.Config.SourceServerUUID {
+	if source.QueryRowContext(ctx, "SELECT CURRENT_USER(),CURRENT_ROLE(),DATABASE(),@@server_uuid").Scan(&account, &role, &database, &server) != nil || !strings.HasPrefix(account, s.Config.SourceUser+"@") || role != "NONE" || database != s.Config.SourceDatabase || server != s.Config.SourceServerUUID {
 		return c.ErrExecutionAuthority
 	}
-	rows, e := s.Source.QueryContext(ctx, "SHOW GRANTS")
+	rows, e := source.QueryContext(ctx, "SHOW GRANTS")
 	if e != nil {
 		return c.ErrExecutionAuthority
 	}
@@ -354,6 +363,24 @@ func (s *DeploymentService) RuntimeBaseReady(ctx context.Context) error {
 	return s.Runtime.Owner.namespace(ctx)
 }
 func (s *DeploymentService) checkControlGrants(ctx context.Context, db *sql.DB) error {
+	return checkDeploymentGrantMode(ctx, s.ForwardEnabled,
+		func(ctx context.Context) error { return s.Recovery.CheckDeployment(ctx, db) },
+		func(ctx context.Context) error { return s.checkCaptureControlGrants(ctx, db) })
+}
+
+// Recovery authenticates its independent signed identity, without requiring
+// capture table privileges. Every recovery operation still uses SQLRecoveryAuthority.
+func checkDeploymentGrantMode(ctx context.Context, forward bool, recovery, capture func(context.Context) error) error {
+	if err := recovery(ctx); err != nil {
+		return err
+	}
+	if forward {
+		return capture(ctx)
+	}
+	return nil
+}
+
+func (s *DeploymentService) checkCaptureControlGrants(ctx context.Context, db *sql.DB) error {
 	g := s.Forward.DeploymentBinding()
 	if s.Config.RuntimeSources != nil {
 		return (c.SQLRuntimeControlGrantProbe{DB: db, Schema: g.Database, User: strings.Split(g.DatabaseAccount, "@")[0]}).Check(ctx)

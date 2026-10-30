@@ -33,6 +33,9 @@ type AgentKind struct{ Type, Mode, Variant, OS string }
 // Runtime Agent, kubernetes/dynamic clients and CRI/NFS Proof clients belong to
 // these explicit builders; no private Driver, SQLStore or Vault is accepted.
 type LinuxProfileConfig struct {
+	// VerifySource checks the actual discovery transaction before and after
+	// reading inventory. It must not commit or roll back the transaction.
+	VerifySource func(context.Context, *sql.Tx) error
 	// RecoveryOnly binds the original frozen plan without source discovery.
 	// It cannot produce a fresh source inventory or authorize another capture.
 	RecoveryOnly         bool
@@ -70,6 +73,9 @@ func (p *LinuxProfile) inventory(ctx context.Context) (SourceInventory, error) {
 		return out, d.ErrNotReady
 	}
 	defer tx.Rollback()
+	if p.cfg.VerifySource != nil && p.cfg.VerifySource(ctx, tx) != nil {
+		return SourceInventory{}, d.ErrNotReady
+	}
 	if tx.QueryRowContext(ctx, "SELECT DATABASE(), @@server_uuid").Scan(&out.Database, &out.ServerUUID) != nil || out.Database != p.cfg.Database || out.ServerUUID != p.cfg.ServerUUID {
 		return out, d.ErrNotReady
 	}
@@ -104,8 +110,8 @@ func (p *LinuxProfile) inventory(ctx context.Context) (SourceInventory, error) {
 		seen[i.ID] = true
 		out.Instances = append(out.Instances, i)
 	}
-	if ctx.Err() != nil {
-		return out, d.ErrNotReady
+	if ctx.Err() != nil || (p.cfg.VerifySource != nil && p.cfg.VerifySource(ctx, tx) != nil) {
+		return SourceInventory{}, d.ErrNotReady
 	}
 	// Read-only rollback ends the snapshot; this component never runs source DDL
 	// or commits a control transaction, nor does it read password/secret columns.

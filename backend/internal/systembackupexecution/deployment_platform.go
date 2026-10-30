@@ -2,6 +2,7 @@ package systembackupexecution
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"strings"
@@ -21,6 +22,9 @@ import (
 func (s *DeploymentService) platformProfile(o *PublicJobOwner) (b.LinuxProfileConfig, error) {
 	cfg := s.Config
 	source := b.LinuxProfileConfig{Source: s.Source, RecoveryOnly: !s.ForwardEnabled, Database: cfg.SourceDatabase, ServerUUID: cfg.SourceServerUUID, Supported: map[b.AgentKind]bool{{Type: "openclaw", Mode: "pro", Variant: "linux", OS: "linux"}: true}, HoldLimit: time.Duration(cfg.HoldSeconds) * time.Second}
+	source.VerifySource = func(ctx context.Context, tx *sql.Tx) error {
+		return s.checkSourceIdentity(ctx, tx)
+	}
 	source.BuildWriters = func(ctx context.Context, in d.Input, inventory b.SourceInventory, frozen []b.FrozenWriter) ([]flow.Writer, error) {
 		if len(inventory.Instances) != 0 {
 			return nil, d.ErrNotReady
