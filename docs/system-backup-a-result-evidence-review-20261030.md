@@ -32,3 +32,5 @@ D 已在 `a113760a` 补齐上述本地 seal 接线：`staging.ObserveFile` 将 w
 D 的 `e1baddba` 将生产复制接到 `ObserveManaged`：部署配置固定 `seal_custody_max_bytes`，同一 custody 根把安装 ID 与预算写入只创建的策略文件；跨进程文件锁覆盖扫描、容量判断、intent 写入与复制。扫描将旧文件、中断 partial 和未知普通文件计入预算，遇子目录、符号链接、计数上限或剩余空间不足时拒绝新封存。A 的部署样例 `7650dc81` 已给出 1 GiB 示例，该值须由部署 owner 按实际卷容量重新核定。
 
 维护入口只在准确 intent、原任务终态、原 Job 已撤权且无结果/任何 evidence 引用时允许清理；SQL 任务与 Job 锁持有至文件删除结束。缺失任务/Job、畸形 intent、数据库错误和未知文件均保留。此实现使本地 seal 的容量和遗留版本有受控处理路径，但尚未证明现场 PVC 的跨 Pod 锁、硬链接、目录 fsync 和 worker sibling 隔离。D 提供的 `scripts/system-backup-seal-custody-probe.py` 要求同一次输出 `passed=true`、`cleaned=true` 并记录实际 Pod/PVC/PV/image/node 身份；未取得该回执前，不把本地测试称为现场封存验收。正式成品 envelope、KEK/签名和 B 最终 writer 仍按各自合同验收。
+
+后续 `2488663d` 收紧维护 owner：从 intent 重算 `controller-staging-seal.v1/<精确名称>`，调用方传入的引用不一致时在 SQL 查询和文件删除前拒绝。D 的正确引用及错引用定向测试通过，专用缓存已清理；这是本地接口回归，不能替代真实 SQL/PVC 清理回执。
