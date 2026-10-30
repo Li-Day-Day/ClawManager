@@ -1,7 +1,7 @@
 # D 独立交付：`4fe83bcd` 现库导入 profile
 
-状态：已固定现场完整 ledger，确认镜像内 94 项 catalog 对应 `acf59b79`
-的 Git blob 原字节，并核对 `4fe83bcd` 差异；
+状态：已固定现场完整 ledger 和直接采集的只读全库结构，确认镜像内 94 项
+catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异；
 未执行现库迁移，未取得现库可导入证明。
 此工作不包含 Runtime 镜像下载、构建或部署。
 
@@ -18,8 +18,8 @@
 - 现场完整文件名列表保存在
   [d-existing-db-ledger-20261030.txt](evidence/d-existing-db-ledger-20261030.txt)，
   恰为 97 行；审计脚本在运行前校验上述完整文件 SHA-256，拒绝 CRLF、
-  重复项、非 ASCII 名称及输入变更。该列表来自用户在远侧的只读查询，
-  尚未通过独立数据库连接再次采集。
+  重复项、非 ASCII 名称及输入变更。该列表先来自用户在远侧的只读查询，
+  后由下述 App Pod 内直接只读采集再次核对。
 - `4fe83bcde5a8a693dddb2635e9a3e397d6e3472e` 中旧备份迁移以
   `065_add_system_backup_control_metadata_core.sql` 至
   `080_add_system_backup_registration_runtime.sql` 命名；当前仓库迁移
@@ -72,16 +72,33 @@
   [完整候选元数据](evidence/d-existing-db-source-schema-candidate-20261030.json)
   明确标记为**从 DDL 重建**，不冒充远侧直接采集。该候选有 99 表、
   1948 列、896 条索引记录、188 条外键记录、266 条 CHECK 记录。
-  仍需远侧直接采集同算法指纹、确认 3 项旧 SQL 原字节，再在含真实行的
-  隔离副本上验证迁移及回滚。
+  此指纹不能替代现场直接采集。
+- 2026-10-30 在现场 App Pod 内运行同一只读采集器，绑定上述 server UUID、
+  库名及 97 行 ledger SHA，得到 511588 字节的
+  [现场直接采集元数据](evidence/d-existing-db-live-inventory-direct-20261030.json)，
+  文件 SHA-256 为 `71b22c009b3ad9bdeef324d2cafd2aa4c1a646110f2080d1b6f42746f8f7013f`，
+  结构指纹为 `140b053e6d3a40a8b5d7c305e3429020a1bc394b3c156167d9683072ec0908bf`。
+  两份元数据都有 99 表、1948 列、896 条索引记录、188 条外键记录、
+  266 条 CHECK 记录；表名/列清单、表、索引、外键、CHECK 元数据一致。
+  唯一记录差异是 `system_artifact_leases.delete_source_guard` 的生成表达式：
+  现场为 `concat(source_artifact_type, ':', source_public_id)`，本地从
+  `mysqldump` 重建后表达式在 `source_public_id` 周围多一层
+  `convert(... using utf8mb4)`。因此两个结构指纹**不相同**，不得把
+  重建结构标作现场等价。直接采集固定了真实来源；仍需确认 3 项旧 SQL
+  原字节，并在含真实行的隔离副本上验证迁移、重试与回滚。
 - 用户随后在同一测试 namespace 对 `information_schema.COLUMNS` 做只读
   查询：现场有 `system_backups`、`system_backup_configs`、
   `system_maintenance_participants`、`instances`、`runtime_pods`、
   `instance_runtime_bindings` 等旧表；输出中没有 `system_backup_v2_*` 表。
   当前执行代码查询 `system_backup_v2_backups`、
   `system_backup_v2_maintenance_participants` 等新版表。现场输出只包含
-  列名、类型、空值和键标记，尚无完整 DDL、索引、外键或行数据证明。
+  列名、类型、空值和键标记；完整元数据已由上述直接采集补足，仍无行数据证明。
   因此替换 App/Runtime 镜像不能代替版本化现库升级。
+- 同一现场只读计数：`users=8`、`instances=4`、`runtime_pods=9`、
+  `instance_runtime_bindings=3`；旧备份配置、备份任务、participant 均为 0，
+  活跃备份、非 idle gate、mutation lease 均为 0。这说明升级副本必须保留
+  现有多用户与 3 条 Runtime 绑定，而不能以空库迁移代替验证；计数为零
+  也不能替代隔离副本上的全表行与关系保全证明。
 - 同一现场的 `mysqldump --no-data` 只读输出进一步显示：`instances` 已有
   `pvc_name`、`runtime_variant` 及由 `owner` 生成的
   `owner_normalized`；`instance_runtime_bindings` 对 `instance_id` 唯一，
@@ -122,8 +139,9 @@ py -3 -B scripts/system-backup-d-legacy-ledger-audit.test.py
 `migration_authorized=false`、`schema_equivalence_verified=false` 固定为
 false。它不调用 `ImportBackupCopy`，也不执行 DDL。
 
-仅当待检 App 容器镜像**已经包含该命令、且未自动升级现场库**时，在远侧
-root shell 执行如下完整只读命令；不要为了采集而直接滚动替换当前 App：
+下面是后续复查时针对**已包含该命令且未自动升级现场库**的 App 镜像的
+命令；本次现场采集使用了同一 Go 命令的临时 Linux 构建，按摘要校验后
+复制进当前 App Pod 执行，没有替换 App 镜像或执行 DDL：
 
 ```bash
 ns=clawmanager-zhanghui08-system
@@ -137,9 +155,8 @@ kubectl --context kubernetes-admin@kubernetes -n "$ns" exec deploy/clawmanager-a
 sha256sum "$out"
 ```
 
-把 JSON 文件作为证据交接；本命令的返回成功只表示结构采集成功，不能
-执行迁移或放行备份。当前现场 App 镜像尚未证明含有该新命令，因此这条
-命令目前不能作为已完成的远侧验证。
+把 JSON 文件作为证据交接；采集成功只表示结构读取成功，不能执行迁移或
+放行备份。当前现场 App 镜像仍未证明含有该新命令。
 
 ## 两条环境路径
 
@@ -159,9 +176,9 @@ server UUID/database、原始历史 SQL 字节与摘要、当前 catalog SHA、
 
 ## 本 profile 的交付出口
 
-1. 已从 `4fe83bcd` Git blob 提取该提交的 137 项 SQL 原字节摘要，并与现场
-   **完整** 97 行 ledger 核对文件名；仍需定位 3 项额外历史 SQL 的真实
-   来源，并采集现场实际 schema 与数据关系，不猜测 ledger 或表结构。
+1. 已从 `4fe83bcd` Git blob 提取该提交的 137 项 SQL 原字节摘要，与现场
+   **完整** 97 行 ledger 核对文件名，并直接采集现场实际 schema；仍需定位
+   3 项额外历史 SQL 的真实来源和验证现有数据关系。
 2. 固定旧→新版本化映射；对创建表、列类型、唯一键、外键、索引、默认值、
    时间语义及已有数据做差异测试。无法证明等价的项明确列为修复 DDL，
    不自动标为已应用。
