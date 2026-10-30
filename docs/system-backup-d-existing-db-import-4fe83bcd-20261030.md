@@ -45,6 +45,19 @@
   migration，并要求隔离副本库名为 `cm_import_<32hex>`、完整源 schema
   指纹、源 ledger 全集、无未完成工作。现场 97 项相对该 map 有 3 项额外、
   42 项缺失，不能直接复用其 `--apply` 路径或只替换源提交 SHA。
+- 用户提供的全库 `mysqldump --no-data` 文件 SHA-256 为
+  `1f1fa2d156c2527587d21a727e1e273cb02635b0e1e3ce1391443cfce7f5a655`，
+  大小 341234 字节；含 99 张表、无 INSERT、无视图、无 v2 表。它的表名
+  全部属于现有 122 表参考 profile；缺少的 23 张表属于后来合入的业务
+  结构。此结果符合用户说明的 A/D 现场基线与 B/C 后续合入顺序。
+- 在本地无网络的临时 MySQL 8.4.8 容器中，只导入该 DDL 和 97 个迁移
+  文件名，容器内 ledger SHA 与现场一致。用只读采集器取得的候选结构
+  指纹为 `ec1b3e004d83fb6e82aebecf33d1d5ad1d88cb2e094325c26aea9d3530d5e28b`；
+  [完整候选元数据](evidence/d-existing-db-source-schema-candidate-20261030.json)
+  明确标记为**从 DDL 重建**，不冒充远侧直接采集。该候选有 99 表、
+  1948 列、896 条索引记录、188 条外键记录、266 条 CHECK 记录。
+  仍需远侧直接采集同算法指纹、确认 3 项旧 SQL 原字节，再在含真实行的
+  隔离副本上验证迁移及回滚。
 - 用户随后在同一测试 namespace 对 `information_schema.COLUMNS` 做只读
   查询：现场有 `system_backups`、`system_backup_configs`、
   `system_maintenance_participants`、`instances`、`runtime_pods`、
