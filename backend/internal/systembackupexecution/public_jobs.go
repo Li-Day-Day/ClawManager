@@ -48,6 +48,7 @@ type PublicJobOwner struct {
 	Staging                              *os.Root
 	Proof                                StopProof
 	AllowKubeletStopWitness              bool
+	RelayEnabled                         bool
 }
 
 func hash(v []byte) string { s := sha256.Sum256(v); return hex.EncodeToString(s[:]) }
@@ -564,6 +565,12 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 		return lease, worker.ErrExecution
 	}
 	lease = worker.Lease{InvocationSHA256: req.InvocationSHA256, ExpiresAt: until}
+	if o.RelayEnabled && (req.Action == "ready" || req.Action == "acquire") {
+		lease.Relay, e = workerRelayTemplate(a, binding, req.Action)
+		if e != nil {
+			return worker.Lease{}, worker.ErrExecution
+		}
+	}
 	if req.Invocation.ProviderKey != nil && req.Action != "ready" {
 		lease.KeyUse, e = o.keyUseTx(ctx, tx, a, binding, pod, req, until)
 		if e != nil {

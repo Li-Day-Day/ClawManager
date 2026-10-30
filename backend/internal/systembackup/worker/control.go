@@ -2,6 +2,7 @@ package worker
 
 import (
 	"bytes"
+	"clawreef/internal/systembackup/relaywire"
 	"clawreef/internal/systembackup/staging"
 	"clawreef/internal/systembackupkms"
 	"context"
@@ -47,11 +48,12 @@ type ControlRequest struct {
 	Result           *Result    `json:"result,omitempty"`
 }
 type Lease struct {
-	InvocationSHA256 string              `json:"invocation_sha256"`
-	ExpiresAt        time.Time           `json:"expires_at"`
-	DEK              []byte              `json:"dek,omitempty"`
-	Database         *DatabaseCredential `json:"database,omitempty"`
-	KeyUse           *KeyUseLease        `json:"key_use,omitempty"`
+	Relay            *relaywire.RelayMessage `json:"relay,omitempty"`
+	InvocationSHA256 string                  `json:"invocation_sha256"`
+	ExpiresAt        time.Time               `json:"expires_at"`
+	DEK              []byte                  `json:"dek,omitempty"`
+	Database         *DatabaseCredential     `json:"database,omitempty"`
+	KeyUse           *KeyUseLease            `json:"key_use,omitempty"`
 }
 
 // Clear releases mutable credential buffers. Driver password strings cannot be
@@ -63,7 +65,7 @@ func (l *Lease) Clear() {
 	}
 }
 func validLeasePayload(l Lease, r ControlRequest) bool {
-	if !validLease(l, r) {
+	if !validLease(l, r) || !validLeaseRelay(l.Relay, r) {
 		return false
 	}
 	if r.Invocation.ProviderKey != nil {
@@ -318,6 +320,15 @@ func (c *ControlClient) send(ctx context.Context, request ControlRequest) (Lease
 	if decodeBounded(response.Body, &lease, 64<<10) != nil || !validLeasePayload(lease, request) {
 		lease.Clear()
 		return Lease{}, ErrExecution
+	}
+	if lease.Relay != nil {
+		bounded, cancel := context.WithDeadline(ctx, lease.ExpiresAt)
+		err := c.sendRelay(bounded, *lease.Relay)
+		cancel()
+		if err != nil {
+			lease.Clear()
+			return Lease{}, err
+		}
 	}
 	return lease, nil
 }

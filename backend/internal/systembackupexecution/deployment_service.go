@@ -223,6 +223,7 @@ func NewDeploymentService(ctx context.Context, db *sql.DB, client kubernetes.Int
 	gate := c.SQLCaptureGate{Authority: authority, Recovery: recovery, Records: records, AcquisitionTimeout: time.Duration(cfg.AcquireSeconds) * time.Second, HoldTimeout: time.Duration(cfg.HoldSeconds) * time.Second}
 	owner := &PublicJobOwner{Gate: gate, Client: client, Dynamic: dyn, Namespace: cfg.Namespace, NamespaceUID: cfg.NamespaceUID, TrustDomain: cfg.TrustDomain, Security: cfg.Security, Identity: s.Forward, Issuer: control.IdentityIssuer{Certificate: root, Signer: signer, TrustDomain: cfg.TrustDomain, ServerRoots: rootRaw}, Staging: s.staging, AllowKubeletStopWitness: true}
 	source, e := s.platformProfile(owner)
+	owner.RelayEnabled = cfg.RuntimeSources != nil
 	if e != nil {
 		return nil, e
 	}
