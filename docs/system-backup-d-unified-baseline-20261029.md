@@ -2,6 +2,8 @@
 
 本提交接收 C `5874d7d7fba480fcefbd8ae6e9a3ef22d61442d3` 的执行链，以本地 `4fe83bcde5a8a693dddb2635e9a3e397d6e3472e` 为父提交。所有后续 owner 从本文件所在集成提交开发，不再各自续写两套 controller。C 的历史验证见 `backup-team-integration/validation.json`；它不是本次集成字节的验证结果。本轮验证记录见 `system-backup-d-baseline-validation-20261029.md`。
 
+2026-10-30 更正：`5874d7d7` 是本页所述首次接收点，不是 C 的最新提交。C 后续交付点为 `50b27d7763d545a7905862fa1a1e544a5e14235e`，新增 Team 数据准入、重试、恢复库存及交接文件。后续集成应以该完整 SHA 核对增量；不能用本页的旧来源号宣称 C 最新代码已合入。
+
 配套 E2E、CI、部署与本地 TLS/RBAC 保留审查见 [后续补齐记录](system-backup-d-team-companion-review-20261029.md)。该记录同时纠正了首次接收 Team 部署清单造成的旧初始化/TLS 配置回退。
 
 后续已提交接口增量：`f2f78aef` 的 [D→C 当前事实入口](system-backup-d-c-current-v1-20261029.md)、`af7c3ad5` 的 [D→B Runtime 回调与认证 relay](system-backup-d-b-runtime-control-20261029.md)、`a7424ce1` 的 [公共 C crypto candidate](system-backup-c-crypto-contract-20261029.md)。这些源码交付不等于现场装配、正式成品或恢复验收。原 CI 失败与补验范围见 [CI 修复记录](system-backup-d-ci-repair-20261029.md)。
