@@ -88,6 +88,10 @@ catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异�
   `convert(... using utf8mb4)`。因此两个结构指纹**不相同**，不得把
   重建结构标作现场等价。直接采集固定了真实来源；仍需确认 3 项旧 SQL
   原字节，并在含真实行的隔离副本上验证迁移、重试与回滚。
+  后续若以 `mysqldump` 重建隔离副本，必须分别核对现场直接指纹与副本
+  指纹，并逐字段确认只有这一个生成表达式差异；副本指纹相等本身不证明
+  行数据已完整复制。导入 profile 应把这一步列为显式来源到副本的桥接
+  检查，不能仅用候选指纹冒充现场源指纹。
 - 用户随后在同一测试 namespace 对 `information_schema.COLUMNS` 做只读
   查询：现场有 `system_backups`、`system_backup_configs`、
   `system_maintenance_participants`、`instances`、`runtime_pods`、
