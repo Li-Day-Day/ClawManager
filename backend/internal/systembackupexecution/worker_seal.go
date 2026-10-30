@@ -31,7 +31,7 @@ func (o *PublicJobOwner) observeWorkerSeal(ctx context.Context, a d.Authority, j
 		return b.SealedPart{}, err
 	}
 	defer source.Close()
-	observed, err := staging.ObserveFile(ctx, source, custody, workerSealScope(a, j, i), r.Receipt, key, i.Request.MaxCompressedBytes)
+	observed, err := staging.ObserveManaged(ctx, source, custody, staging.CustodyPolicy{Installation: a.InstallationID, MaxBytes: o.SealCustodyMaxBytes}, workerSealScope(a, j, i), r.Receipt, key, i.Request.MaxCompressedBytes)
 	if err != nil {
 		return b.SealedPart{}, err
 	}

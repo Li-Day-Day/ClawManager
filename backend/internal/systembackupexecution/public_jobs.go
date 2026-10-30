@@ -46,6 +46,7 @@ type PublicJobOwner struct {
 	Identity                             *c.PinnedExecutionIdentity
 	Issuer                               control.IdentityIssuer
 	Staging                              *os.Root
+	SealCustodyMaxBytes                  int64
 	Proof                                StopProof
 	AllowKubeletStopWitness              bool
 	RelayEnabled                         bool

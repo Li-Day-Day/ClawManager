@@ -30,7 +30,7 @@ func TestWorkerSealUsesObservedVersionAndChecksStoredReport(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer source.Close()
-	owner := PublicJobOwner{Staging: root}
+	owner := PublicJobOwner{Staging: root, SealCustodyMaxBytes: 1 << 30}
 	i := worker.Invocation{Request: worker.Request{Operation: "capture-workspace", ArtifactName: "workspace.enc", MaxCompressedBytes: 1 << 20, Binding: staging.Binding{BackupID: a.TaskPublicID, Attempt: "1", Path: j.JobUnitKey, PartIndex: 1, CaptureContextHash: a.ConfigSHA256, EnvelopeID: "original"}}}
 	key := make([]byte, 32)
 	receipt, err := staging.SealFile(context.Background(), source, i.Request.ArtifactName, key, i.Request.Binding, func(w io.Writer) error { _, e := io.WriteString(w, "original ciphertext content"); return e })

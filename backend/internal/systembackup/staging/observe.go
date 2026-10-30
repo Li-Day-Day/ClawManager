@@ -94,6 +94,7 @@ func OpenObserved(ctx context.Context, custody *os.Root, scope SealScope, origin
 // its exact bytes and AEAD final frame, fsyncs it, then publishes create-only.
 // A retry verifies the existing version, including when the source is gone.
 // The caller persists the returned reference in its original Job transaction.
+// Production callers must use ObserveManaged for the shared lock and budget.
 func ObserveFile(ctx context.Context, source, custody *os.Root, scope SealScope, original Receipt, key []byte, max int64) (Observation, error) {
 	receipt, err := observedReceipt(scope, original)
 	if err != nil || ctx == nil || ctx.Err() != nil || source == nil || custody == nil || max <= 0 || max > 1<<50 || original.Size > max+(max/chunkSize+2)*64+8192 {
