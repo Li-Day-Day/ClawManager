@@ -20,9 +20,9 @@
 
 生产 readiness 目前仍明确拒绝 acceptance：`deployment_service.go` 的 `system_backup_v2_execution_readiness` 写入和 `deployment_platform.go` 的 profile 都将 `acceptance_ready` 固定为 `FALSE`。当前生产构造路径也没有给 `worker.Invocation.ProviderKey` 赋值；`NewCaptureKeyJob` 仅存在于定义和测试。B/D 必须提交原冻结 writer、ProviderKey 来源及 acceptance 发布接线，读回 readiness 和原 Job/SQL 记录后，才能开始正式 capture/acceptance 的现场验收。现有 OpenBao trust/key profile 回执不能替代此接线。
 
-### recovery-only 启动复审发现（待 D 修正）
+### recovery-only 启动复审（D 修正已提交，部署验收待完成）
 
-`NewDeploymentService` 在 forward grant 缺失/失效时会令 `Forward=Recovery` 且关闭 forward，但随后无条件调用 `checkControlGrants`。该 probe 以 `Forward.DeploymentBinding()` 的数据库账号核对完整 capture/runtime-control 表权限；恢复账号若仅有恢复权限，服务可能在原 recovery authority 有效时仍启动失败。D 当前负责的 `deployment_service.go` 有在途修改，A 已交其共享文件 owner 处理，未覆盖。验收应证明：缺失或撤销 forward grant 时，精确恢复账号可建立 recovery-only 服务、不能公布 forward readiness 或签发 worker；恢复仍使用独立签名 grant 与当前任务/历史 ref 检查，缺恢复必要权限则拒绝。不能通过给恢复账号补全 capture 权限来掩盖此问题。
+原问题是 `NewDeploymentService` 在 forward grant 缺失/失效并关闭 forward 后，仍无条件核对完整 capture/runtime-control 表权限，令仅有恢复权限的账号可能启动失败。D 的 `b0a1015f` 已令 `checkControlGrants` 在两种模式均复查独立 Recovery 的签名 grant，仅 forward 模式执行 capture grant probe；`PublishReadiness` 仍在 `ForwardEnabled=false` 时拒绝。D 的 closure 模式测试覆盖恢复 grant 拒绝和 capture probe 分支，定向复测通过；这尚不证明 `NewDeploymentService` 的完整降级构造、真实 MySQL 仅恢复账号操作、历史 ref/version 读取和 forward readiness/worker 的现场拒绝。部署验收仍须覆盖这些项，且不能通过给恢复账号补全 capture 权限来掩盖原问题。
 
 ## 材料与测试口径
 
