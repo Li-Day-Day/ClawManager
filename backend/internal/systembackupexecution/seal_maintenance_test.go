@@ -117,7 +117,12 @@ func (c *sealMaintenanceConn) QueryContext(_ context.Context, q string, args []d
 func TestSealMaintenanceRequiresTerminalRevokedUnreferencedJob(t *testing.T) {
 	for _, mode := range []string{"ok", "server", "missing_task", "active", "config", "recent", "missing_job", "binding", "result", "not_revoked", "evidence", "sql"} {
 		t.Run(mode, func(t *testing.T) {
-			scope := staging.SealScope{Installation: "installation_test", Task: "sbk_original", Phase: "capture", Unit: "workspace", Namespace: "ns", JobName: "job", JobUID: "uid", Attempt: 2, Generation: 3, ConfigVersion: 4, ConfigSHA256: strings.Repeat("a", 64)}
+			scope := staging.SealScope{Installation: "installation_test", Task: "sbk_original", Phase: "capture", Unit: "workspace", Namespace: "ns", JobName: "job", JobUID: "uid", Attempt: 2, Generation: 3, ConfigVersion: 4, ConfigSHA256: strings.Repeat("a", 64), InvocationSHA256: strings.Repeat("b", 64), Binding: staging.Binding{BackupID: "sbk_original"}}
+			intent := staging.SealIntent{Schema: "controller-staging-seal-intent.v1", Scope: scope, Original: staging.Receipt{Name: "source.enc", Size: 64, SHA256: strings.Repeat("c", 64)}}
+			reference, err := staging.SealReferenceForIntent(intent)
+			if err != nil {
+				t.Fatal(err)
+			}
 			m := &sealMaintenanceModel{fault: mode, scope: scope}
 			name := fmt.Sprintf("seal-maintenance-%s-%d", mode, time.Now().UnixNano())
 			sql.Register(name, sealMaintenanceDriver{m})
@@ -128,7 +133,7 @@ func TestSealMaintenanceRequiresTerminalRevokedUnreferencedJob(t *testing.T) {
 			defer db.Close()
 			owner := SealMaintenance{DB: db, Installation: scope.Installation, ServerUUID: "server", Database: "db"}
 			removed := false
-			allowed, err := owner.WithUnreferencedSeal(context.Background(), staging.SealIntent{Scope: scope}, "reference", func() error {
+			allowed, err := owner.WithUnreferencedSeal(context.Background(), intent, reference, func() error {
 				if !m.locked {
 					t.Fatal("SQL locks released before delete")
 				}
@@ -146,5 +151,24 @@ func TestSealMaintenanceRequiresTerminalRevokedUnreferencedJob(t *testing.T) {
 				t.Fatal("SQL locks leaked")
 			}
 		})
+	}
+}
+
+func TestSealMaintenanceRejectsWrongReferenceBeforeSQL(t *testing.T) {
+	scope := staging.SealScope{Installation: "installation_test", Task: "sbk_original", Phase: "capture", Unit: "workspace", Namespace: "ns", JobName: "job", JobUID: "uid", Attempt: 2, Generation: 3, ConfigVersion: 4, ConfigSHA256: strings.Repeat("a", 64), InvocationSHA256: strings.Repeat("b", 64), Binding: staging.Binding{BackupID: "sbk_original"}}
+	intent := staging.SealIntent{Schema: "controller-staging-seal-intent.v1", Scope: scope, Original: staging.Receipt{Name: "source.enc", Size: 64, SHA256: strings.Repeat("c", 64)}}
+	m := &sealMaintenanceModel{fault: "ok", scope: scope}
+	name := fmt.Sprintf("seal-maintenance-ref-%d", time.Now().UnixNano())
+	sql.Register(name, sealMaintenanceDriver{m})
+	db, err := sql.Open(name, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	owner := SealMaintenance{DB: db, Installation: scope.Installation, ServerUUID: "server", Database: "db"}
+	removed := false
+	allowed, err := owner.WithUnreferencedSeal(context.Background(), intent, "controller-staging-seal.v1/seal-"+strings.Repeat("0", 64)+".enc", func() error { removed = true; return nil })
+	if err == nil || allowed || removed || m.locked {
+		t.Fatal("wrong reference reached SQL or removed a seal", allowed, err)
 	}
 }

@@ -24,6 +24,10 @@ func (m SealMaintenance) WithUnreferencedSeal(ctx context.Context, intent stagin
 	if m.DB == nil || s.Installation != m.Installation || m.ServerUUID == "" || m.Database == "" || remove == nil {
 		return false, errors.New("seal maintenance scope invalid")
 	}
+	expected, err := staging.SealReferenceForIntent(intent)
+	if err != nil || reference != expected {
+		return false, errors.New("seal maintenance reference mismatch")
+	}
 	tx, err := m.DB.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 	if err != nil {
 		return false, err

@@ -76,6 +76,20 @@ func observedReceipt(scope SealScope, original Receipt) (Receipt, error) {
 	return Receipt{Name: "seal-" + hex.EncodeToString(sum[:]) + ".enc", Size: original.Size, SHA256: original.SHA256}, nil
 }
 
+// SealReferenceForIntent recomputes the exact reference whose ciphertext may
+// be removed. An owner must compare this with its caller's reference before it
+// looks up any task or Job rows.
+func SealReferenceForIntent(intent SealIntent) (string, error) {
+	if intent.Schema != "controller-staging-seal-intent.v1" {
+		return "", ErrFile
+	}
+	receipt, err := observedReceipt(intent.Scope, intent.Original)
+	if err != nil {
+		return "", err
+	}
+	return "controller-staging-seal.v1/" + receipt.Name, nil
+}
+
 // OpenObserved rehashes the exact original version on every read/restart.
 // No fallback to the worker's mutable source is allowed.
 func OpenObserved(ctx context.Context, custody *os.Root, scope SealScope, original Receipt) (*os.File, Observation, error) {
