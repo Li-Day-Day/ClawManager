@@ -3,6 +3,7 @@ package worker
 import (
 	"bytes"
 	"clawreef/internal/systembackup/relaywire"
+	"clawreef/internal/systembackup/staging"
 	"context"
 	"encoding/json"
 	"errors"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -31,6 +33,10 @@ func TestControlRelayUsesOriginalTLSAndExactRetryBytes(t *testing.T) {
 			m.Status = "running"
 			l.DEK = make([]byte, 32)
 		}
+		if q.Action == "complete" {
+			m.Sequence, m.Status = "3", "completed"
+			m.ResultEvidence = &relaywire.RelayEvidence{PublicID: "sev_33333333-3333-4333-8333-333333333333", SHA256: strings.Repeat("d", 64)}
+		}
 		return l, nil
 	})}
 	client, _ := mutualTLSFixture(t, http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -47,7 +53,7 @@ func TestControlRelayUsesOriginalTLSAndExactRetryBytes(t *testing.T) {
 		mu.Lock()
 		defer mu.Unlock()
 		bodies = append(bodies, raw)
-		if len(bodies) == 1 {
+		if len(bodies) == 1 || len(bodies) == 4 {
 			w.WriteHeader(503)
 			return
 		}
@@ -72,14 +78,20 @@ func TestControlRelayUsesOriginalTLSAndExactRetryBytes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if err := client.Complete(context.Background(), i, Result{Receipt: staging.Receipt{Name: r.ArtifactName, Size: 100, SHA256: strings.Repeat("d", 64)}}); err != nil {
+		t.Fatal(err)
+	}
 	mu.Lock()
 	defer mu.Unlock()
-	if controlCalls != 3 || len(bodies) != 3 || !bytes.Equal(bodies[0], bodies[1]) {
+	if controlCalls != 5 || len(bodies) != 5 || !bytes.Equal(bodies[0], bodies[1]) || !bytes.Equal(bodies[3], bodies[4]) {
 		t.Fatal("retry changed bytes or bypassed original authorization")
 	}
 	var m relaywire.RelayMessage
 	if json.Unmarshal(bodies[2], &m) != nil || m.Sequence != "2" || m.Status != "running" {
 		t.Fatal("missing running observation")
+	}
+	if json.Unmarshal(bodies[4], &m) != nil || m.Sequence != "3" || m.Status != "completed" || m.ResultEvidence == nil {
+		t.Fatal("missing registered completion")
 	}
 }
 

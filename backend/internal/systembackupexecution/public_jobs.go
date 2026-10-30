@@ -640,8 +640,17 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 			return worker.Lease{}, worker.ErrExecution
 		}
 		resultRaw, _ := json.Marshal(result)
+		if !inlineResultBody(resultRaw) || b.ValidatePartResult(in, inner, binding, resultRaw) != nil {
+			return worker.Lease{}, worker.ErrExecution
+		}
 		if e = o.saveResult(ctx, a, binding, resultRaw); e != nil {
 			return worker.Lease{}, worker.ErrNotReady
+		}
+		if o.RelayEnabled {
+			lease.Relay, e = completedWorkerRelay(a, binding, resultEvidenceRef(a, binding, hash(resultRaw)))
+			if e != nil {
+				return worker.Lease{}, worker.ErrExecution
+			}
 		}
 		return lease, nil
 	}
@@ -681,6 +690,9 @@ func (o *PublicJobOwner) saveResult(ctx context.Context, a d.Authority, binding 
 			return e
 		}
 	}
+	if e = o.registerResult(ctx, tx, a, binding, raw); e != nil {
+		return e
+	}
 	if e = guard.Recheck(ctx, tx); e != nil {
 		return e
 	}
@@ -700,7 +712,18 @@ func (o *PublicJobOwner) Evidence(ctx context.Context, a d.Authority, binding d.
 	if !digest.Valid {
 		return nil, nil
 	}
-	return &d.EvidenceRef{PublicID: "sev_" + digest.String, SHA256: digest.String}, nil
+	ref := resultEvidenceRef(a, binding, digest.String)
+	var registered string
+	if e := o.Gate.Authority.DB.QueryRowContext(ctx, "SELECT content_checksum FROM system_backup_v2_evidence WHERE public_id=? AND owner_target_type='backup' AND owner_target_public_id=? AND evidence_type='diagnostic' AND storage_state='inline' AND evidence_failure_code='none' AND expires_at>UTC_TIMESTAMP(6)", ref.PublicID, a.TaskPublicID).Scan(&registered); e != nil || registered != digest.String {
+		if e == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, c.ErrExecutionRecord
+	}
+	if e := o.Gate.Check(ctx, a); e != nil {
+		return nil, e
+	}
+	return &ref, nil
 }
 func (o *PublicJobOwner) ReadResult(ctx context.Context, a d.Authority, binding d.JobBinding, ref d.EvidenceRef) ([]byte, error) {
 	if _, _, e := o.Read(ctx, a, binding, false); e != nil {
@@ -714,7 +737,7 @@ func (o *PublicJobOwner) ReadResult(ctx context.Context, a d.Authority, binding 
 	if e := o.Gate.Authority.DB.QueryRowContext(ctx, "SELECT result_sha256,result_key_ref,result_cipher FROM system_backup_v2_runtime_resources WHERE task_public_id=? AND resource_kind='Job' AND observed_uid=?", a.TaskPublicID, binding.UID).Scan(&digest, &keyRef, &cipher); e != nil {
 		return nil, e
 	}
-	if ref.PublicID != "sev_"+digest || ref.SHA256 != digest || len(cipher) > 1<<20 {
+	if ref != resultEvidenceRef(a, binding, digest) || len(cipher) > 1<<20 {
 		return nil, c.ErrExecutionRecord
 	}
 	actual, key, e := o.Identity.Resolve(ctx, a, keyRef)
@@ -739,6 +762,10 @@ func (o *PublicJobOwner) ReadResult(ctx context.Context, a d.Authority, binding 
 	}
 	defer clear(inner.CanonicalJSON)
 	if b.ValidatePartResult(in, inner, binding, plain.Bytes()) != nil {
+		return nil, c.ErrExecutionRecord
+	}
+	var registered []byte
+	if e = o.Gate.Authority.DB.QueryRowContext(ctx, `SELECT inline_payload FROM system_backup_v2_evidence WHERE public_id=? AND owner_target_type='backup' AND owner_target_public_id=? AND evidence_type='diagnostic' AND storage_state='inline' AND evidence_failure_code='none' AND observed_health='healthy' AND content_checksum=? AND content_size_bytes=? AND media_type='application/json' AND encryption='none' AND redaction_classification='internal' AND expires_at>UTC_TIMESTAMP(6)`, ref.PublicID, a.TaskPublicID, digest, len(plain.Bytes())).Scan(&registered); e != nil || !bytes.Equal(registered, plain.Bytes()) {
 		return nil, c.ErrExecutionRecord
 	}
 	if e = o.Gate.Check(ctx, a); e != nil {

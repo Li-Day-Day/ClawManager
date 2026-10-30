@@ -22,6 +22,7 @@ var publicCaptureTableGrants = map[string][]string{
 	"system_backup_v2_execution_plans":       {"SELECT"},
 	"system_backup_v2_execution_readiness":   {"SELECT", "INSERT", "UPDATE"},
 	"system_backup_v2_execution_records":     {"SELECT", "INSERT"},
+	"system_backup_v2_evidence":              {"SELECT", "INSERT"},
 	"system_backup_v2_maintenance_locks":     {"SELECT", "UPDATE"},
 	"system_backup_v2_attempts":              {"SELECT", "INSERT", "UPDATE"},
 	"system_backup_v2_backups":               {"SELECT", "UPDATE"},

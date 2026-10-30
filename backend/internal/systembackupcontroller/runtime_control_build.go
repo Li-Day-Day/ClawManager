@@ -221,7 +221,6 @@ func runtimeControlTableGrants() map[string][]string {
 	out["system_backup_v2_runtime_controls"] = []string{"SELECT", "INSERT", "UPDATE"}
 	out["system_backup_v2_gateway_proofs"] = []string{"SELECT", "INSERT"}
 	out["system_backup_v2_relay_receipts"] = []string{"SELECT", "INSERT"}
-	out["system_backup_v2_evidence"] = []string{"SELECT"}
 	return out
 }
 func RuntimeControlGrantSQL(schema, user, host string, allowAnyHost bool) ([]string, error) {

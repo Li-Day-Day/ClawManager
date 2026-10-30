@@ -360,8 +360,21 @@ func (c *ControlClient) Complete(ctx context.Context, i Invocation, result Resul
 	if e != nil {
 		return e
 	}
-	_, e = c.send(ctx, ControlRequest{Invocation: i, InvocationSHA256: hash, Action: "complete", Result: &result})
-	return e
+	ctx, cancel := context.WithDeadline(ctx, i.Request.Deadline)
+	defer cancel()
+	for {
+		_, e = c.send(ctx, ControlRequest{Invocation: i, InvocationSHA256: hash, Action: "complete", Result: &result})
+		if !errors.Is(e, ErrNotReady) {
+			return e
+		}
+		timer := time.NewTimer(200 * time.Millisecond)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return ctx.Err()
+		case <-timer.C:
+		}
+	}
 }
 func decodeBounded(r io.Reader, dst any, limit int64) error {
 	b, e := io.ReadAll(io.LimitReader(r, limit+1))

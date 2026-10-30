@@ -91,9 +91,10 @@ func (s SQLAuthenticatedRelayAcceptor) AcceptAuthenticatedRelay(ctx context.Cont
 		if tx.QueryRowContext(ctx, `SELECT result_sha256 FROM system_backup_v2_runtime_resources WHERE task_public_id=? AND resource_kind='Job' AND namespace_name=? AND resource_name=? AND observed_uid=? AND attempt_no=? AND revoked=FALSE FOR SHARE`, a.TaskPublicID, job.Namespace, job.Name, job.UID, a.AttemptNo).Scan(&resultDigest) != nil || !resultDigest.Valid || resultDigest.String != m.ResultEvidence.SHA256 {
 			return "", ErrExecutionRecord
 		}
-		var schema, kind, owner, hash string
+		var schema, kind, owner, hash, state, failure, health string
+		var expires time.Time
 		var created, attemptStarted time.Time
-		if tx.QueryRowContext(ctx, `SELECT schema_version,owner_target_type,owner_target_public_id,content_checksum,created_at FROM system_backup_v2_evidence WHERE public_id=? FOR SHARE`, m.ResultEvidence.PublicID).Scan(&schema, &kind, &owner, &hash, &created) != nil || schema != "system-backup-evidence.v1" || kind != a.TaskType || owner != a.TaskPublicID || hash != m.ResultEvidence.SHA256 {
+		if tx.QueryRowContext(ctx, `SELECT schema_version,owner_target_type,owner_target_public_id,content_checksum,created_at,storage_state,evidence_failure_code,observed_health,expires_at FROM system_backup_v2_evidence WHERE public_id=? FOR SHARE`, m.ResultEvidence.PublicID).Scan(&schema, &kind, &owner, &hash, &created, &state, &failure, &health, &expires) != nil || schema != "system-backup-evidence.v1" || kind != a.TaskType || owner != a.TaskPublicID || hash != m.ResultEvidence.SHA256 || (state != "inline" && state != "ready") || failure != "none" || health != "healthy" || !now.Before(expires) {
 			return "", ErrExecutionRecord
 		}
 		if tx.QueryRowContext(ctx, `SELECT started_at FROM system_backup_v2_attempts WHERE target_type=? AND target_public_id=? AND attempt_no=? AND phase=? FOR SHARE`, a.TaskType, a.TaskPublicID, a.AttemptNo, a.Phase).Scan(&attemptStarted) != nil || created.Before(attemptStarted) {

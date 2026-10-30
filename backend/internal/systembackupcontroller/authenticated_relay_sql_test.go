@@ -49,15 +49,16 @@ func (r *relaySQLRows) Next(v []driver.Value) error {
 }
 
 type relaySQLModel struct {
-	base        *executionModel
-	job         d.JobBinding
-	cursor      b.RelayCursor
-	exists      bool
-	raw         []byte
-	unknown     bool
-	failInsert  bool
-	oldEvidence bool
-	resultFault string
+	base          *executionModel
+	job           d.JobBinding
+	cursor        b.RelayCursor
+	exists        bool
+	raw           []byte
+	unknown       bool
+	failInsert    bool
+	oldEvidence   bool
+	resultFault   string
+	evidenceState string
 }
 type relaySQLDriver struct{ m *relaySQLModel }
 type relaySQLConn struct {
@@ -115,7 +116,11 @@ func (c *relaySQLConn) QueryContext(ctx context.Context, q string, args []driver
 		if c.m.oldEvidence {
 			created = created.Add(-time.Hour)
 		}
-		return row("system-backup-evidence.v1", "backup", c.m.base.a.TaskPublicID, strings.Repeat("d", 64), created)
+		state := c.m.evidenceState
+		if state == "" {
+			state = "ready"
+		}
+		return row("system-backup-evidence.v1", "backup", c.m.base.a.TaskPublicID, strings.Repeat("d", 64), created, state, "none", "healthy", c.m.base.now.Add(time.Hour))
 	case strings.HasPrefix(q, "SELECT result_sha256 FROM system_backup_v2_runtime_resources"):
 		if len(args) != 5 || args[0].Value != c.m.base.a.TaskPublicID || args[1].Value != j.Namespace || args[2].Value != j.Name || args[3].Value != j.UID || args[4].Value != int64(c.m.base.a.AttemptNo) {
 			return nil, errors.New("result lookup escaped original Job")
@@ -265,6 +270,14 @@ func TestRuntimeControlAuthenticatedRelaySQLCommitReplayAndRollback(t *testing.T
 				}
 			}
 			m.resultFault = ""
+			for _, state := range []string{"pending", "write_unknown", "write_failed", "deleting", "delete_failed", "deleted"} {
+				m.evidenceState = state
+				commits := base.commits
+				if send(message) == 200 || m.cursor.Sequence != 2 || base.commits != commits {
+					t.Fatal("unavailable evidence accepted", state)
+				}
+			}
+			m.evidenceState = "inline"
 			if send(message) != 200 || m.cursor.Sequence != 3 {
 				t.Fatal("current completion evidence rejected")
 			}

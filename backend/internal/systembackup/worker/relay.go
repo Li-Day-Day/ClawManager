@@ -8,8 +8,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 )
+
+var resultEvidenceID = regexp.MustCompile(`^sev_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
+var resultEvidenceSHA = regexp.MustCompile(`^[0-9a-f]{64}$`)
 
 // Templates come only from the authenticated owner after process registration.
 // No worker-generated sequence, terminal evidence or alternate URL is accepted.
@@ -20,10 +24,15 @@ func validLeaseRelay(m *relaywire.RelayMessage, r ControlRequest) bool {
 	status, sequence := "ready", "1"
 	if r.Action == "acquire" {
 		status, sequence = "running", "2"
+	} else if r.Action == "complete" {
+		status, sequence = "completed", "3"
+		if m.ResultEvidence == nil || !resultEvidenceID.MatchString(m.ResultEvidence.PublicID) || !resultEvidenceSHA.MatchString(m.ResultEvidence.SHA256) {
+			return false
+		}
 	} else if r.Action != "ready" {
 		return false
 	}
-	return m.SchemaVersion == relaywire.RelayVersion && m.TaskPublicID == r.Invocation.Request.Binding.BackupID && m.AttemptNo == r.Invocation.Request.Binding.Attempt && m.JobUnitKey == r.Invocation.Request.Binding.Path && m.TaskType == "backup" && m.Phase == "capture" && m.Status == status && m.Sequence == sequence && m.ResultEvidence == nil && m.InstallationID != "" && m.Namespace != "" && m.JobName != "" && m.JobUID != "" && m.JobGeneration != "" && m.RelayIdentityRef != "" && m.RelayIdentityVersion != ""
+	return m.SchemaVersion == relaywire.RelayVersion && m.TaskPublicID == r.Invocation.Request.Binding.BackupID && m.AttemptNo == r.Invocation.Request.Binding.Attempt && m.JobUnitKey == r.Invocation.Request.Binding.Path && m.TaskType == "backup" && m.Phase == "capture" && m.Status == status && m.Sequence == sequence && (r.Action == "complete" || m.ResultEvidence == nil) && m.InstallationID != "" && m.Namespace != "" && m.JobName != "" && m.JobUID != "" && m.JobGeneration != "" && m.RelayIdentityRef != "" && m.RelayIdentityVersion != ""
 }
 
 func (c *ControlClient) sendRelay(ctx context.Context, m relaywire.RelayMessage) error {
