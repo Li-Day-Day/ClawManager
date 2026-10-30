@@ -20,9 +20,9 @@
 
 生产 readiness 目前仍明确拒绝 acceptance：`deployment_service.go` 的 `system_backup_v2_execution_readiness` 写入和 `deployment_platform.go` 的 profile 都将 `acceptance_ready` 固定为 `FALSE`。当前生产构造路径也没有给 `worker.Invocation.ProviderKey` 赋值；`NewCaptureKeyJob` 仅存在于定义和测试。B/D 必须提交原冻结 writer、ProviderKey 来源及 acceptance 发布接线，读回 readiness 和原 Job/SQL 记录后，才能开始正式 capture/acceptance 的现场验收。现有 OpenBao trust/key profile 回执不能替代此接线。
 
-### recovery-only 启动复审（D 修正已提交，部署验收待完成）
+### recovery-only 启动复审（生产入口已修正，部署验收待完成）
 
-原问题是 `NewDeploymentService` 在 forward grant 缺失/失效并关闭 forward 后，仍无条件核对完整 capture/runtime-control 表权限，令仅有恢复权限的账号可能启动失败。D 的 `b0a1015f` 已令 `checkControlGrants` 在两种模式均复查独立 Recovery 的签名 grant，仅 forward 模式执行 capture grant probe；`PublishReadiness` 仍在 `ForwardEnabled=false` 时拒绝。D 的 closure 模式测试覆盖恢复 grant 拒绝和 capture probe 分支，定向复测通过；这尚不证明 `NewDeploymentService` 的完整降级构造、真实 MySQL 仅恢复账号操作、历史 ref/version 读取和 forward readiness/worker 的现场拒绝。部署验收仍须覆盖这些项，且不能通过给恢复账号补全 capture 权限来掩盖原问题。
+原问题是 `NewDeploymentService` 在 forward grant 缺失/失效并关闭 forward 后，仍核对完整 capture/runtime-control 表权限。D 的 `b0a1015f` 令该 probe 只在 forward 模式运行，但 A 复审又发现生产命令在进入服务前无条件检查 capture 权限、失效 forward 的残留 profile/issuer 可阻断恢复，且 `/readyz` 会误报 `effective=enabled`。D 的 `ab9c3510` 将生产数据库入口改为原签名 Recovery 身份准入、失效或显式关闭的 Forward 指针切回独立 Recovery，并按实际 `ForwardEnabled` 报告健康模式；`PublishReadiness` 仍拒绝 recovery-only 的 forward 公布。本地签名 grant/隔离 SQL driver 与 HTTP 回归通过，覆盖过期或错配 forward 降级、错误恢复身份/账号/用途/key/签名拒绝和健康状态；这些测试尚未证明完整 Linux/Kubernetes 启动、真实 MySQL 仅恢复账号、旧 ref/version 历史读取、worker 禁发及 forward readiness 的现场拒绝。部署验收仍须逐项覆盖，不能通过给恢复账号补全 capture 权限来掩盖原问题。
 
 ## 材料与测试口径
 
