@@ -55,6 +55,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpat
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/system-backup-artifact ./cmd/system-backup-artifact \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/clawmanager-secret-broker ./cmd/secret-broker \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/system-backup-import ./cmd/system-backup-import \
+    && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/system-backup-legacy-inventory ./cmd/system-backup-legacy-inventory \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/system-backup-migrate ./cmd/system-backup-migrate \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/system-backup-bootstrap ./cmd/system-backup-bootstrap \
     && CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -trimpath -buildvcs=false -ldflags="-s -w -buildid=" -o /out/system-backup-registration ./cmd/system-backup-registration \
@@ -85,6 +86,7 @@ COPY --from=backend-builder /out/clawmanager-secret-broker /usr/local/bin/clawma
 # Preserve the command used by the reviewed TLS/RBAC installation profiles.
 COPY --from=backend-builder /out/clawmanager-secret-broker /usr/local/bin/clawreef-secret-broker
 COPY --from=backend-builder /out/system-backup-import /usr/local/bin/system-backup-import
+COPY --from=backend-builder /out/system-backup-legacy-inventory /usr/local/bin/system-backup-legacy-inventory
 COPY --from=backend-builder /out/system-backup-migrate /usr/local/bin/system-backup-migrate
 COPY --from=backend-builder /out/system-backup-bootstrap /usr/local/bin/system-backup-bootstrap
 COPY --from=backend-builder /out/system-backup-registration /usr/local/bin/system-backup-registration

@@ -83,6 +83,35 @@ py -3 -B scripts/system-backup-d-legacy-ledger-audit.test.py
 `schema_equivalence_verified=false` 与 `migration_authorized=false` 是固定
 拒绝边界，不是可更改的准入开关。
 
+## 现场全库结构采集入口
+
+`system-backup-legacy-inventory` 是单独的只读命令，已加入 App 镜像构建。
+它使用 `START TRANSACTION READ ONLY`，绑定 MySQL server UUID、库名和
+上述 97 行 ledger SHA；两次读取 ledger 与完整
+`information_schema` 表、列、索引、外键、CHECK 元数据，变化即拒绝。
+输出包含结构元数据和迁移文件名，不含业务行、密码或 DSN；输出中的
+`migration_authorized=false`、`schema_equivalence_verified=false` 固定为
+false。它不调用 `ImportBackupCopy`，也不执行 DDL。
+
+仅当待检 App 容器镜像**已经包含该命令、且未自动升级现场库**时，在远侧
+root shell 执行如下完整只读命令；不要为了采集而直接滚动替换当前 App：
+
+```bash
+ns=clawmanager-zhanghui08-system
+out=/tmp/clawmanager-zhanghui08-legacy-inventory.json
+kubectl --context kubernetes-admin@kubernetes -n "$ns" exec deploy/clawmanager-app -- \
+  /usr/local/bin/system-backup-legacy-inventory --app-env \
+  --expected-server-uuid f1f5f76a-95f5-11f1-b08e-366835b4a029 \
+  --expected-database clawmanager \
+  --expected-ledger-sha256 5d303453289c28d0b8abf7abab8b3abe15ad605079feb01e599d919b53068903 \
+  > "$out"
+sha256sum "$out"
+```
+
+把 JSON 文件作为证据交接；本命令的返回成功只表示结构采集成功，不能
+执行迁移或放行备份。当前现场 App 镜像尚未证明含有该新命令，因此这条
+命令目前不能作为已完成的远侧验证。
+
 ## 两条环境路径
 
 **空白隔离测试库**：创建独立 MySQL 8.4.8 实例及空库，记录其真实
