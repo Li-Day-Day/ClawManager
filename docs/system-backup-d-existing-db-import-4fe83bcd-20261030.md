@@ -40,6 +40,11 @@
   特定场景。现场 080 ledger 不满足这个合同。普通
   `system-backup-migrate --apply` 会拒绝未知历史项；不能为了让它通过
   而改写历史 ledger、直接重放旧 SQL，或仅替换 source SHA。
+- 仓库已有的 `ImportBackupCopy` 是另一个受限方案：其内嵌
+  `backup_import_map.json` 固定源提交 `d3c5715a…` 和 **136 项**完整
+  migration，并要求隔离副本库名为 `cm_import_<32hex>`、完整源 schema
+  指纹、源 ledger 全集、无未完成工作。现场 97 项相对该 map 有 3 项额外、
+  42 项缺失，不能直接复用其 `--apply` 路径或只替换源提交 SHA。
 - 用户随后在同一测试 namespace 对 `information_schema.COLUMNS` 做只读
   查询：现场有 `system_backups`、`system_backup_configs`、
   `system_maintenance_participants`、`instances`、`runtime_pods`、
