@@ -11,9 +11,9 @@
 
 ## 原来源 reader 和生产 caller
 
-`OriginalKEKPreparation.PrepareKEK(ctx, AdmissionInput)` 是 A 的注入入口。它必须由 **D 的原安装/配置 owner** 实现，读取并认证与候选独立的原 mapping 记录，返回 `PreparedMappingSource` 及两个目的各自的当前权限准备对象。reader 必须固定原安装、identity_hash、opaque registry_version、完整 provider locator/key/version、两份 typed ref 原字节与 SHA、来源 revision、有效窗口和撤销位置；不能把 candidate 与其 expected hash 当作两个独立来源。D 的 SQL Store、迁移和扫描接口正在共享工作树中开发，尚未形成生产 caller 与正式准入回执；A 不提供恒成功默认实现。
+`OriginalKEKPreparation.PrepareKEK(ctx, AdmissionInput)` 是 A 的注入入口。它必须由 **D 的原安装/配置 owner** 实现，读取并认证与候选独立的原 mapping 记录，返回 `PreparedMappingSource` 及两个目的各自的当前权限准备对象。reader 必须固定原安装、identity_hash、opaque registry_version、完整 provider locator/key/version、两份 typed ref 原字节与 SHA、来源 revision、有效窗口和撤销位置；不能把 candidate 与其 expected hash 当作两个独立来源。D 已提交 SQL Store、迁移和原事务可选接点，但尚未实现这个独立原 mapping reader，也未在生产构造注入该接点或取得正式准入回执；A 不提供恒成功默认实现。
 
-具体 caller 为 D 的 `BootstrapOwnerAdapters.References["kek"]` 与 `ConfigMutationResolverSources.References["kek"]`。它们在 SQL 锁外取得 A 准备对象；D 在原授权及既有引用锁之后 `Bind` 同一 KEK fence，提供 `LockedSnapshot`，于原事务内调用 A `Recheck`，再将不可变 binding/admission 与配置/operation/audit 一同 stage/commit。提交成功并读回准确 config/operation 关系后，运行组合才能创建 `systembackupkms.Config`。D 的 Store/Stage 仍在开发且原来源 reader 和生产接线未交付，故当前生产 caller 仍应 fail closed；不能从 A 准备对象直接构造 Config。
+具体 caller 为 D 的原 bootstrap/config mutation owner：`ConfigBootstrapService.KEK` 与 `ConfigMutationService.KEK` 在 SQL 锁外通过 `systembackupkekadapter.BootstrapComposition` / `MutationComposition` 取得 A 准备对象；在原授权及既有引用锁之后 `Bind` 同一 KEK fence，在原 config/operation 事务内 `StageAdmission` 并最终 `Recheck`。这些原事务接点已由 D 提交于 `abd6565c`，但现有生产构造尚未注入可选 KEK 接点。`BootstrapOwnerAdapters.References["kek"]` 与 `ConfigMutationResolverSources.References["kek"]` 仍须固定同一原 registry 引用及配置关系。提交成功并读回准确 config/operation 关系后，运行组合才能创建 `systembackupkms.Config`。`Bound.CompleteScan` 仍返回 `ErrKEKCoverage`；独立原 mapping reader、C 四分区 scanner/adoption 和 B/原 writer 覆盖均未接通，故当前生产 caller 应 fail closed，不能从 A 准备对象直接构造 Config。
 
 四分区完整扫描需要 C/B/原 producer、hold、catalog、restore/prune owners 接入同一个 D fence。缺 adoption/backfill、分页 EOF 或 writer 参与时，`PreparedCoverage` 不得由空列表替代。D 的 [持久化与锁协议交接](system-backup-d-kek-persistence-locks-20261029.md) 给出了需落盘的事实和锁序；该文档目前明确实现未完成。
 
