@@ -4,6 +4,12 @@
 
 **最新状态：公共 C 的 `public-c-crypto.v1` 已交付，A 已完成原字节/pin 核对。以下早期“等待 C 提供合同”的记录由本节替代，不再作为缺项。** 本地 bundle 16 个文件 SHA 全匹配；A 实际执行 C 的 Node conformance 回归 85/85 通过、exit=0。其状态仍为 candidate，A 字节核对不代替 B/D 业务签收或真实 provider 准入。
 
+## 2026-10-30 给 D/B 的当前调用边界
+
+D 的 `SQLRuntimeControl.BuildWriters` 已调用 `publicadapter.NewRuntimeWriterBuilder`，从原 SQL runtime control 读取 specs、恢复时只使用冻结记录，并用当前 participant 表校验清单；这条 Runtime 暂停/恢复 writer 接线不应再列作完全缺失。它不等于最终 artifact capture writer。
+
+正式 capture 仍缺生产调用：`backend/cmd/backup-worker/main.go` 只执行 `Ready`→functional `Acquire`→`Run/RunDatabase`→`Complete`，从 `Lease.DEK` 取旧 staging key；没有调用 `worker.NewCaptureKeyJob`。`DeploymentService.workspaceInvocation` 当前固定 `functional-workspace`，以 config SHA 填 `CaptureContextHash`，没有 `ProviderKey`。`PublicCapture` 和 `PublicJobOwner` 也仍限定 `functional_test` 单 workspace。B/C 须先签收完整冻结 capture context、final framing writer 与真实 part 范围；D 再从原加密计划生成准确 invocation，B 在原 worker 进程内用 `NewCaptureKeyJob(ctx, control, invocation, admittedKMSConfig, permitMount)`，仅在 `WithDEK` 的有界同步回调中写未发布密文。原 SQL Job 的 reserve/begin/end、停止证明和最终 seal/结果授权仍须复查，不能把旧 `Lease.DEK` 或 config SHA 重命名为正式 backup DEK/context。生产缺项保持拒绝；此段是源码接点复核，不是现场验收。
+
 ## 公共 C 合同接收与授权计划增量
 
 **在线实现最新增量：** 公共 C 已提交 `a7424ce1`。A 已新增在线 `systembackupkms` adapter、受控 provider permit resolver、Job 内调用构造和精确 policy 下发工具。后续已增加原控制通道的有界 `OriginalKeyAuthority` 和 `NewCaptureKeyJob` 构造；最终 writer/cmd 调用、真实 SQL/Pod 验收及正式现场凭据仍未完成，不能将下述早期离线计划或测试当作正式验收。接口、撤销边界、命令、材料与结果分列见 [在线 KEK 交接](system-backup-a-online-kek-20261029.md)。
