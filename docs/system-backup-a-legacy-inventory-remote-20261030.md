@@ -2,9 +2,9 @@
 
 状态更新（2026-10-30）：D 已在固定现场 App Pod 内完成同算法的直接只读采集，并于 `4798e778` 提交 [完整现场元数据](evidence/d-existing-db-live-inventory-direct-20261030.json)。文件 SHA-256 为 `71b22c009b3ad9bdeef324d2cafd2aa4c1a646110f2080d1b6f42746f8f7013f`，现场结构指纹为 `140b053e6d3a40a8b5d7c305e3429020a1bc394b3c156167d9683072ec0908bf`。**不需要再运行本页 A 入口。** 原 A 远测运行出现多次 SSH 密码提示，但未回传最终退出码，也未产生 A 的直接 JSON，不能记为成功。本轮复查已无 A Python、Go、SSH 进程，A 临时构建缓存已删除；先前被误认成 A 子进程的 Go test 实属 D。现场与隔离 DDL 重建的结构指纹不同，差异在 `system_artifact_leases.delete_source_guard` 的生成表达式。D 仍需取得三项旧 SQL 原字节，并在含真实行的隔离副本验证迁移、重试与回退。
 
-2026-10-30。当前现场 App 容器对 `/usr/local/bin/system-backup-legacy-inventory` 的只读可执行检查返回 `SSH_EXIT=1`。D 已从用户提供的全库无数据 DDL 在隔离 MySQL 中重建候选结构指纹 `ec1b3e004d83fb6e82aebecf33d1d5ad1d88cb2e094325c26aea9d3530d5e28b`，但那不是现场数据库的直接采集。[D 的现库导入交接](system-backup-d-existing-db-import-4fe83bcd-20261030.md)要求同算法现场读回。
+2026-10-30。当前现场 App 容器对 `/usr/local/bin/system-backup-legacy-inventory` 的只读可执行检查返回 `SSH_EXIT=1`。D 从用户提供的全库无数据 DDL 在隔离 MySQL 中重建候选结构指纹 `ec1b3e004d83fb6e82aebecf33d1d5ad1d88cb2e094325c26aea9d3530d5e28b`；它与上述现场直接采集不是同一份结构证据。差异与现库升级要求见 [D 的现库导入交接](system-backup-d-existing-db-import-4fe83bcd-20261030.md)。
 
-从本地仓库 PowerShell 执行：
+以下重复采集入口仅保留备查，当前不需执行：
 
 ```powershell
 py -3 -B scripts/system-backup-a-legacy-inventory-remote.py; "A_REMOTE_EXIT=$LASTEXITCODE"
