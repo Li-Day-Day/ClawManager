@@ -1,6 +1,6 @@
 # D → B：native Runtime 控制回调交接
 
-状态：源码接入中；此文档只描述当前构造和生产 caller。未取得 zhanghui08 现场备份成功证明。
+状态：D 的生产回调源码已提交，B 可按下述构造调用。2026-10-30 一次性 native Agent 的正向停止与恢复已现场通过；现有 Deployment、控制器 SQL 证明表及完整备份未现场验收。
 
 2026-10-29 本地复核：`Dependencies` 现在拒绝重复物理 writer ID，以及与 lease
 participant 重名的物理 writer，防止 participant 在集合构造时被静默跳过。
@@ -87,3 +87,14 @@ Agent 上游仓库对当前账号返回 403；已将基线后的首补丁和完�
 `/v1/backup/capabilities?gateway_port=20000` 都返回 HTTP 404；
 证据见 `docs/evidence/d-native-backup-capabilities-20261030.json`。
 因此当前部署不能准入 native 停止/恢复，尚未发送任何 mutation。
+
+随后用精确镜像 `d57b751e4790ed8e9af5efca4f230de32762982d7e04fd65819c6b603377d34f`
+创建独立 pool/slot Pod，不修改原 Deployment 或实例。隔离 Pod 的能力 GET
+为 HTTP 200，测试 Gateway 获得原 PID 78，Agent 返回正向 `stopped` 原回执，
+以新 PID 87 返回 `resumed` 原回执；complete 状态也一致。原回执字节、
+SHA-256、完整 request 相等性及 Pod UID/Agent epoch/generation/PID 绑定见
+[现场证据](evidence/system-backup-d-native-agent-lifecycle-20261030.json)和
+[核验记录](system-backup-d-native-field-20261030.md)。Pod 与 Secret 均清理，
+临时 bwrap AppArmor profile 已卸载。此测试没有 B worker 的 task/attempt、
+SQL `system_backup_v2_gateway_proofs` 写入或真实用户实例；B 不能将其作为
+完整备份通过，当前共享 Runtime Deployment 的能力路径仍为 404。
