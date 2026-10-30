@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 
 	"clawreef/internal/systembackup/staging"
@@ -30,6 +31,10 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 	if err := run(ctx, *mode, *config, *digest, *dsn, *apply, *age, *path, *id); err != nil {
+		if strings.HasPrefix(*mode, "probe-") {
+			// Probe operations only touch synthetic run-owned files, never DSNs or backup data.
+			fmt.Fprintf(os.Stderr, "probe diagnostic: %v\n", err)
+		}
 		fmt.Fprintln(os.Stderr, "seal custody operation rejected; retain probe output and inspect deployment pins/ownership")
 		os.Exit(1)
 	}

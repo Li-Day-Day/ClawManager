@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -114,32 +115,44 @@ func ProbeSealHold(ctx context.Context, parent *os.Root, id string) error {
 
 // Run INSIDE a Pod with the same task subPath and security context as a worker.
 // Parent also proves the sibling marker exists before and after this request.
-func ProbeSealWorker(ctx context.Context, path, id string) error {
+func ProbeSealWorker(ctx context.Context, path, id string) (result error) {
+	step := "validate-input"
+	defer func() {
+		if result != nil {
+			result = fmt.Errorf("seal probe worker step=%s: %w", step, result)
+		}
+	}()
 	if runtime.GOOS != "linux" || !probeID.MatchString(id) || !filepath.IsAbs(path) {
 		return ErrFile
 	}
+	step = "open-task-root"
 	root, err := os.OpenRoot(path)
 	if err != nil {
 		return err
 	}
 	defer root.Close()
+	step = "read-own-marker"
 	raw, err := root.ReadFile(".probe-public")
 	if err != nil || string(raw) != id {
 		return ErrFile
 	}
+	step = "reject-parent-marker"
 	forbidden := filepath.Join(path, "..", ".controller-seals", ".probe-"+id)
 	if _, err = os.ReadFile(forbidden); !errors.Is(err, os.ErrNotExist) && !errors.Is(err, os.ErrPermission) {
 		return ErrFile
 	}
+	step = "reject-workspace-alias"
 	for _, alias := range []string{filepath.Join("/workspace", ".controller-seals", ".probe-"+id), filepath.Join("/workspace", "..", ".controller-seals", ".probe-"+id)} {
 		if _, err = os.ReadFile(alias); !errors.Is(err, os.ErrNotExist) && !errors.Is(err, os.ErrPermission) {
 			return ErrFile
 		}
 	}
+	step = "create-escape-symlink"
 	if err = root.Symlink("../.controller-seals/.probe-"+id, ".escape"); err != nil {
 		return err
 	}
 	defer root.Remove(".escape")
+	step = "reject-escape-symlink"
 	if _, err = os.ReadFile(filepath.Join(path, ".escape")); !errors.Is(err, os.ErrNotExist) && !errors.Is(err, os.ErrPermission) {
 		return ErrFile
 	}
@@ -164,19 +177,23 @@ func ProbeSealWorker(ctx context.Context, path, id string) error {
 			}
 		}
 	}
+	step = "wait-lock-ready"
 	if err = wait(".lock-ready"); err != nil {
 		return err
 	}
+	step = "lock-must-block"
 	blocked, cancel := context.WithTimeout(ctx, 2*time.Second)
 	defer cancel()
 	acquired := false
 	err = WithCustodyLock(blocked, root, func() error { acquired = true; return nil })
 	if acquired || !errors.Is(err, context.DeadlineExceeded) {
-		return ErrFile
+		return fmt.Errorf("acquired=%t lock_error=%v: %w", acquired, err, ErrFile)
 	}
+	step = "wait-lock-release"
 	if err = wait(".lock-release"); err != nil {
 		return err
 	}
+	step = "lock-after-release"
 	return WithCustodyLock(ctx, root, func() error { return nil })
 }
 

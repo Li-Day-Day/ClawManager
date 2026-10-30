@@ -149,14 +149,17 @@ def run(args):
               "worker_image": cfg["worker_image"], "worker_node_uid": security["node_uids"][node],
               "cross_node": node != initial_controller["spec"]["nodeName"], "passed": False, "cleaned": False}
     print(json.dumps({"probe_started": report}), flush=True)
+    stage = "initialize"
     try:
         # An error here may still leave a run-owned directory; cleanup is tried.
         initialized = True
         command(control_args("probe-init"))
+        stage = "create-worker"
         create_attempted = True
         created = json.loads(command(["-n", ns, "create", "-f", "-", "-o", "json"], wanted))
         uid = created["metadata"]["uid"]
         report["worker_pod_uid"] = uid
+        stage = "wait-worker-running"
         end = time.monotonic() + 60
         while True:
             pod = get("pod", wanted["metadata"]["name"])
@@ -167,6 +170,7 @@ def run(args):
                 raise RuntimeError("probe did not reach running")
             time.sleep(1)
         hold = subprocess.Popen(base + control_args("probe-hold"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stage = "wait-worker-result"
         end = time.monotonic() + 65
         while True:
             pod = get("pod", wanted["metadata"]["name"])
@@ -178,6 +182,7 @@ def run(args):
                 raise RuntimeError("worker isolation/locking probe failed")
             time.sleep(1)
         out, _ = hold.communicate(timeout=20)
+        stage = "read-receipts"
         if hold.returncode or json.loads(out).get("run_id") != run_id:
             raise RuntimeError("controller lock probe failed")
         worker = json.loads(command(["-n", ns, "logs", wanted["metadata"]["name"], "-c", "probe"]))
@@ -186,6 +191,19 @@ def run(args):
         controller()
         command(control_args("probe-verify"))
         report["passed"] = True
+    except Exception as exc:
+        report["failure_stage"] = stage
+        report["failure"] = str(exc)[:1000]
+        if uid is not None:
+            try:
+                failed_pod = get("pod", wanted["metadata"]["name"])
+                verify_probe(failed_pod, wanted, uid)
+                report["worker_status"] = failed_pod.get("status", {})
+                report["worker_log_tail"] = command(["-n", ns, "logs", wanted["metadata"]["name"],
+                    "-c", "probe", "--tail=30", "--limit-bytes=4096"])
+            except Exception as diagnostic_error:
+                report["worker_diagnostic_error"] = type(diagnostic_error).__name__
+        raise
     finally:
         cleanup_ok = True
         if create_attempted and uid is None:
@@ -198,13 +216,18 @@ def run(args):
                 report["worker_pod_uid"] = uid
             except Exception:
                 cleanup_ok = False
-        if hold is not None and hold.poll() is None:
+        if hold is not None:
             try:
-                hold.communicate(timeout=20)
+                hold_out, hold_err = hold.communicate(timeout=20)
+                if not report["passed"]:
+                    report["holder_stdout"] = hold_out[-4096:]
+                    report["holder_stderr"] = hold_err[-4096:]
             except subprocess.TimeoutExpired:
                 cleanup_ok = False  # Never remove a lock inode with a possible holder.
         if hold is not None and hold.poll() != 0:
             cleanup_ok = False  # A lost exec response does not prove remote exit.
+        if hold is not None:
+            report["holder_exit"] = hold.poll()
         if uid is not None:
             try:
                 options = {"apiVersion": "v1", "kind": "DeleteOptions", "preconditions": {"uid": uid}}
