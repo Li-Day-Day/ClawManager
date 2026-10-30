@@ -1,6 +1,7 @@
 # D 独立交付：`4fe83bcd` 现库导入 profile
 
-状态：已固定现场完整 ledger，并完成对 `4fe83bcd` Git blob 原字节的只读审计；
+状态：已固定现场完整 ledger，确认镜像内 94 项 catalog 对应 `acf59b79`
+的 Git blob 原字节，并核对 `4fe83bcd` 差异；
 未执行现库迁移，未取得现库可导入证明。
 此工作不包含 Runtime 镜像下载、构建或部署。
 
@@ -35,6 +36,21 @@
   现场与旧提交及当前 catalog 的三方同名 SQL **0 项原字节不同**。
   此比较只对旧提交中能找到的原始 blob 成立；那 3 项的执行 SQL 来源
   尚未确认，原字节、摘要及 schema 效果仍需单独核对。
+- 本地缓存的**现场实际 App 镜像 ID**
+  `sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d`
+  离线执行其 `/usr/local/bin/clawreef-system-backup-migrate --catalog-only`，
+  得到 94 项、catalog SHA-256
+  `0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93`；
+  与现场 97 行 ledger 比较，差集**恰为上述 3 项**，无其他缺项。
+  [镜像 catalog 证据](evidence/d-deployed-app-catalog-20261030.json)
+  固定了镜像 ID、全部 94 个文件名和差集；它仍未恢复这 3 项的原 SQL 字节。
+- Git 提交 `acf59b7933303b879af80ed192fa0ca4466c79d7` 的 94 个 SQL
+  Git blob 原字节按 catalog 算法重算，**精确等于现场镜像 catalog**。
+  由此确认这 94 项的版本化来源。`4fe83bcd` 中同名 94 项重算 catalog
+  不同；逐项比较发现 `001_init_schema.sql`、
+  `046_add_enterprise_auth_identity.sql` 两项原字节已变化。因此
+  `4fe83bcd` 不是现场镜像的精确 SQL 来源，不能拿其全部原字节充当
+  现场已执行历史。审计脚本同时输出两个 Git 提交的逐文件摘要与差集。
 - 当前 `MigrationHistoryReview` 仅允许“当前 catalog 全部已应用、仅
   `109_backup_v2_add_system_backup_registration_runtime.sql` 待应用”的
   特定场景。现场 080 ledger 不满足这个合同。普通

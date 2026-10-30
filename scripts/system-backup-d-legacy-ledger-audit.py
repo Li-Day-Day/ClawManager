@@ -14,6 +14,9 @@ from pathlib import Path
 
 
 SOURCE_COMMIT = "4fe83bcde5a8a693dddb2635e9a3e397d6e3472e"
+DEPLOYED_SOURCE_COMMIT = "acf59b7933303b879af80ed192fa0ca4466c79d7"
+DEPLOYED_IMAGE_ID = "sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d"
+DEPLOYED_CATALOG_SHA256 = "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
 MIGRATION_DIR = "backend/internal/db/migrations"
 NAME = re.compile(r"[0-9]{3}_[A-Za-z0-9_-]+\.sql\Z")
 HEX = re.compile(r"[0-9a-f]{64}\Z")
@@ -38,9 +41,9 @@ def read_ledger(path, expected):
     return names
 
 
-def source_sql(repo):
+def source_blobs(repo, commit):
     proc = subprocess.run(
-        ["git", "-C", str(repo), "ls-tree", "-r", "-z", SOURCE_COMMIT, MIGRATION_DIR],
+        ["git", "-C", str(repo), "ls-tree", "-r", "-z", commit, MIGRATION_DIR],
         check=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
     )
     objects = []
@@ -89,10 +92,39 @@ def source_sql(repo):
         if len(raw) != size or payload[offset:offset + 1] != b"\n":
             raise ValueError("source blob response invalid")
         offset += 1
-        out[name] = digest(raw)
+        out[name] = raw
     if offset != len(payload):
         raise ValueError("source blob response invalid")
     return out
+
+
+def source_sql(repo):
+    return {name: digest(raw) for name, raw in source_blobs(repo, SOURCE_COMMIT).items()}
+
+
+def catalog_hash_blobs(blobs, filenames):
+    h = hashlib.sha256(b"system-backup-migration-catalog.v1\x00")
+    for name in sorted(filenames):
+        raw = blobs[name].replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+        for value in (name.encode("ascii"), raw):
+            h.update(len(value).to_bytes(8, "big"))
+            h.update(value)
+    return h.hexdigest()
+
+
+def deployed_source(repo, ledger):
+    evidence = json.loads((repo / "docs/evidence/d-deployed-app-catalog-20261030.json").read_text("utf-8"))
+    catalog = evidence["catalog"]
+    filenames = catalog["filenames"]
+    blobs = source_blobs(repo, DEPLOYED_SOURCE_COMMIT)
+    if (evidence["image_id"] != DEPLOYED_IMAGE_ID or
+            catalog["sha256"] != DEPLOYED_CATALOG_SHA256 or
+            catalog["file_count"] != 94 or len(filenames) != 94 or
+            set(filenames) != set(blobs) or len(set(filenames)) != 94 or
+            not set(filenames).issubset(set(ledger)) or
+            catalog_hash_blobs(blobs, filenames) != DEPLOYED_CATALOG_SHA256):
+        raise ValueError("deployed image catalog source invalid")
+    return {name: digest(raw) for name, raw in blobs.items()}
 
 
 def current_sql(repo):
@@ -168,7 +200,19 @@ def main():
         current = current_sql(repo)
         result = analyze(names, source_sql(repo), current, args.expected_ledger_sha256,
                          current_catalog_hash(repo, current))
-    except (OSError, ValueError, subprocess.CalledProcessError):
+        deployed = deployed_source(repo, names)
+        result.update({
+            "deployed_source_commit": DEPLOYED_SOURCE_COMMIT,
+            "deployed_image_id": DEPLOYED_IMAGE_ID,
+            "deployed_catalog_sha256": DEPLOYED_CATALOG_SHA256,
+            "deployed_catalog_count": len(deployed),
+            "ledger_not_in_deployed_catalog": sorted(set(names) - set(deployed)),
+            "deployed_source_sql_sha256": {name: deployed[name] for name in sorted(deployed)},
+            "four_fe_sql_changed_from_deployed": sorted(
+                name for name in deployed if result["applied_source_sql_sha256"].get(name) != deployed[name]
+            ),
+        })
+    except (OSError, ValueError, KeyError, TypeError, subprocess.CalledProcessError):
         print("legacy ledger audit rejected; no migration authorized", file=sys.stderr)
         return 1
     json.dump(result, sys.stdout, ensure_ascii=False, sort_keys=True, separators=(",", ":"))

@@ -66,6 +66,17 @@ class LedgerAuditTest(unittest.TestCase):
             "d82eb65ecd839741255722bc8bdcd77de28c4fa25f8c1c25a622ba588f4156b5",
         )
 
+    def test_deployed_image_catalog_matches_pinned_git_source(self):
+        repo = MODULE_PATH.resolve().parents[1]
+        names = audit.read_ledger(repo / "docs/evidence/d-existing-db-ledger-20261030.txt", audit.digest((repo / "docs/evidence/d-existing-db-ledger-20261030.txt").read_bytes()))
+        deployed = audit.deployed_source(repo, names)
+        self.assertEqual(len(deployed), 94)
+        self.assertEqual(sorted(set(names) - set(deployed)), [
+            "045_update_workbuddy_windows_runtime.sql",
+            "046_add_instance_pvc_name.sql",
+            "047_add_instance_runtime_variant.sql",
+        ])
+
 
 if __name__ == "__main__":
     unittest.main()
