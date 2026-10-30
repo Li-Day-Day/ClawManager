@@ -36,7 +36,7 @@ A 新定向回归 `node scripts/system-backup-a-backup-transit-plan.test.mjs` �
 - `RecordKeys` 加密执行记录和 worker 身份私钥；`CaptureKeys` 只用于 functional staging；task DEK 不写入 invocation/plan/Git。二者不是正式 backup/evidence KEK，也不能赋予 provider unwrap。`DeriveCaptureKey` 原低层入口保留兼容，新 worker 调用走 typed 入口。
 - 当前 [PublicCapture](../backend/internal/systembackupexecution/public_runtime.go) 仅支持 `functional_test`、单 `workspace`。此轮不取消这个门槛。最终 artifact/envelope、正式 KEK 和签名仍必须通过各原合同组合。
 
-复审限制：worker 授权中的 Job 撤销行锁在密钥交付前已提交，之后执行 `ValidateCollectors` 与 grant/key 检查；这不能证明与并发 Job 撤销原子。D/B 须明确在途 lease/最终交付的撤销线性化策略和测试回执。不得将本地 typed binding 检查解释为补齐该并发保证。
+复审增量：functional `acquire/complete` 的 staging key 现在于原 Job 行 `FOR UPDATE` 仍持有的授权事务内派生，并在提交前再次复查原执行 authority；提交失败清零密钥，只有提交及 `ValidateCollectors` 通过后才向 `acquire` 返回拷贝。Revoke 更新同一 Job 行，故**准入顺序点**为该事务提交。已先准入的 worker 仍可能在 Revoke 返回前后运行，须由原 `StopJob/Stopped` 的 Pod 停止证明关闭；本改动不声称网络响应与撤销原子，也不替代 provider `key-begin/key-end` 使用协议。D/B 仍需给出真实 SQL 行锁竞争、worker 停止和最终交付回执。
 
 ## 给 D/B：执行与 worker 授权构造
 

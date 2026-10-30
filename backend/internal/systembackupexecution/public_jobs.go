@@ -580,6 +580,23 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 	if req.Invocation.ProviderKey != nil && guard.Recheck(ctx, tx) != nil {
 		return worker.Lease{}, worker.ErrExecution
 	}
+	// Functional staging key admission must occur while the original Job row
+	// remains locked. Revoke takes that same row lock; the transaction commit is
+	// the admission order point, and StopJob/Stopped handles an admitted worker.
+	var captureKey []byte
+	defer func() { clear(captureKey) }()
+	if req.Invocation.ProviderKey == nil && (req.Action == "acquire" || req.Action == "complete") {
+		if req.Action == "acquire" && req.Invocation.Request.Database != nil {
+			return worker.Lease{}, worker.ErrNotReady
+		}
+		if req.Action == "complete" && (req.Result == nil || !worker.ValidateResult(req.Invocation.Request, req.Result)) {
+			return worker.Lease{}, worker.ErrExecution
+		}
+		captureKey, e = o.Identity.DeriveTaskCaptureKey(ctx, a, req.Invocation.Request.Binding)
+		if e != nil || len(captureKey) != 32 || guard.Recheck(ctx, tx) != nil {
+			return worker.Lease{}, worker.ErrExecution
+		}
+	}
 	if e = tx.Commit(); e != nil {
 		return lease, worker.ErrNotReady
 	}
@@ -590,23 +607,9 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 	case "ready", "check", "key-reserve", "key-check", "key-begin", "key-end":
 		return lease, nil
 	case "acquire":
-		if req.Invocation.Request.Database != nil {
-			return worker.Lease{}, worker.ErrNotReady
-		} // no implicit SQL credentials
-		lease.DEK, e = o.Identity.DeriveTaskCaptureKey(ctx, a, req.Invocation.Request.Binding)
-		if e != nil {
-			return worker.Lease{}, worker.ErrExecution
-		}
+		lease.DEK = bytes.Clone(captureKey)
 		return lease, nil
 	case "complete":
-		if req.Result == nil || !worker.ValidateResult(req.Invocation.Request, req.Result) {
-			return worker.Lease{}, worker.ErrExecution
-		}
-		key, e := o.Identity.DeriveTaskCaptureKey(ctx, a, req.Invocation.Request.Binding)
-		if e != nil {
-			return worker.Lease{}, worker.ErrExecution
-		}
-		defer clear(key)
 		root, e := o.Staging.OpenRoot(a.TaskPublicID)
 		if e != nil {
 			return worker.Lease{}, worker.ErrExecution
@@ -617,7 +620,7 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 			return worker.Lease{}, worker.ErrExecution
 		}
 		defer file.Close()
-		if e = staging.Open(ctx, file, io.Discard, key, req.Invocation.Request.Binding, req.Invocation.Request.MaxCompressedBytes); e != nil {
+		if e = staging.Open(ctx, file, io.Discard, captureKey, req.Invocation.Request.Binding, req.Invocation.Request.MaxCompressedBytes); e != nil {
 			return worker.Lease{}, worker.ErrExecution
 		}
 		inner, e := d.UnwrapTaskPlan(in, plan, b.PlanVersion)
