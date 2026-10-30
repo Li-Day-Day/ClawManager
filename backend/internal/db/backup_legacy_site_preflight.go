@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"strings"
 )
 
 // These pins describe the directly observed 97-migration test installation.
@@ -33,6 +34,7 @@ type LegacySiteCopyPreflight struct {
 	CopySchemaVariant        string `json:"copy_schema_variant"`
 	LedgerSHA256             string `json:"ledger_sha256"`
 	TableCount               int    `json:"table_count"`
+	LegacyControlTables      int    `json:"legacy_control_tables"`
 	DataPreservationVerified bool   `json:"data_preservation_verified"`
 	MigrationAuthorized      bool   `json:"migration_authorized"`
 }
@@ -102,6 +104,14 @@ func PreflightLegacySiteCopy(ctx context.Context, pool *sql.DB, inventoryRaw []b
 	if err = assertImportSourceIdle(ctx, tx, backupImportMap{}, false); err != nil {
 		return report, err
 	}
+	controlTables, err := assertLegacyControlTablesEmpty(source.Schema, func(query string) (uint64, error) {
+		var rows uint64
+		err := tx.QueryRowContext(ctx, query).Scan(&rows)
+		return rows, err
+	})
+	if err != nil {
+		return report, err
+	}
 	secondLedger, err := readLegacyInventoryLedger(ctx, tx)
 	if err != nil || !sameLegacyLedger(firstLedger, secondLedger) {
 		return report, errors.New("legacy copy ledger changed during preflight")
@@ -116,7 +126,35 @@ func PreflightLegacySiteCopy(ctx context.Context, pool *sql.DB, inventoryRaw []b
 	return LegacySiteCopyPreflight{State: "read_only_schema_and_ledger_verified", SourceServerUUID: source.ServerUUID,
 		SourceSchemaSHA256: source.SchemaSHA256, SourceInventorySHA256: legacySiteInventorySHA,
 		CopyServerUUID: server, CopyDatabase: database, CopySchemaSHA256: schemaSHA,
-		CopySchemaVariant: variant, LedgerSHA256: legacySiteLedgerSHA, TableCount: len(firstSchema.Tables)}, nil
+		CopySchemaVariant: variant, LedgerSHA256: legacySiteLedgerSHA, TableCount: len(firstSchema.Tables),
+		LegacyControlTables: controlTables}, nil
+}
+
+func assertLegacyControlTablesEmpty(source importSchema, countRows func(string) (uint64, error)) (int, error) {
+	if countRows == nil {
+		return 0, errors.New("legacy control table counter unavailable")
+	}
+	count := 0
+	for _, table := range source.Tables {
+		name := table.Name
+		if !(strings.HasPrefix(name, "system_backup") || strings.HasPrefix(name, "system_maintenance") ||
+			strings.HasPrefix(name, "system_restore") || strings.HasPrefix(name, "system_artifact")) {
+			continue
+		}
+		quoted, err := importIdentifier(name)
+		if err != nil {
+			return 0, err
+		}
+		rows, err := countRows("SELECT COUNT(*) FROM " + quoted)
+		if err != nil || rows != 0 {
+			return 0, errors.New("legacy copy contains control history; reviewed empty-table conversion unavailable")
+		}
+		count++
+	}
+	if count != 35 {
+		return 0, errors.New("legacy copy control table set changed")
+	}
+	return count, nil
 }
 
 func sameLegacyLedger(a, b []string) bool {

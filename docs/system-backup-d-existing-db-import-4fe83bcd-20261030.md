@@ -112,6 +112,11 @@ catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异�
   `system_image_settings` 中的 Workbuddy 行数均为 0。这些是副本保全时的
   **现场基线计数**，不能单凭零孤儿证明全部表行、加密配置或工作区字节
   已复制。
+- 同日按现场表名逐表只读 `COUNT(*)`：匹配到 **35 张**旧
+  `system_backup*`、`system_maintenance*`、`system_restore*`、
+  `system_artifact*` 控制表，未发现非零行。这支持在隔离副本上保留旧空表、
+  单独创建 v2 控制表的设计；查询由多个连接顺序完成，不是原子快照，
+  实施前必须在隔离副本的同一只读事务内重新证明 35 表全部为空。
 - 同一现场的 `mysqldump --no-data` 只读输出进一步显示：`instances` 已有
   `pvc_name`、`runtime_variant` 及由 `owner` 生成的
   `owner_normalized`；`instance_runtime_bindings` 对 `instance_id` 唯一，
@@ -194,8 +199,9 @@ server UUID/database、原始历史 SQL 字节与摘要、当前 catalog SHA、
 
 `system-backup-legacy-preflight` 使用私有 DSN 文件连接独立的
 `cm_import_<32hex>` 库，读取上文直接采集 JSON 的**原字节**并校验固定
-SHA。它在只读事务内两次核对完整 ledger 与 schema，拒绝已存在的导入
-journal 和未完成备份工作。副本结构只接受现场原指纹或已审查的 MySQL 8.4.8
+SHA。它在只读事务内两次核对完整 ledger 与 schema，逐表要求 35 张旧控制
+表全空，并拒绝已存在的导入 journal 和未完成备份工作。副本结构只接受现场
+原指纹或已审查的 MySQL 8.4.8
 `mysqldump` 重建指纹；输出固定为 `data_preservation_verified=false`、
 `migration_authorized=false`。此预检**不写入**数据库，也不调用现有
 136 项的 `ImportBackupCopy`。新构建的 App 镜像会包含同名可执行文件；

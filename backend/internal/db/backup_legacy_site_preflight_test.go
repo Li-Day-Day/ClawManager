@@ -76,4 +76,20 @@ func TestLegacySitePreflightPinsDirectSourceAndCopyDelta(t *testing.T) {
 	if _, err := PreflightLegacySiteCopy(context.Background(), nil, liveRaw); err == nil {
 		t.Fatal("preflight accepted a missing isolated database")
 	}
+	queries := map[string]bool{}
+	count, err := assertLegacyControlTablesEmpty(source.Schema, func(query string) (uint64, error) {
+		queries[query] = true
+		return 0, nil
+	})
+	if err != nil || count != 35 || len(queries) != 35 {
+		t.Fatal("reviewed empty control table set changed", count, err)
+	}
+	if _, err := assertLegacyControlTablesEmpty(source.Schema, func(query string) (uint64, error) {
+		if query == "SELECT COUNT(*) FROM `system_backup_events`" {
+			return 1, nil
+		}
+		return 0, nil
+	}); err == nil {
+		t.Fatal("nonempty legacy control table accepted")
+	}
 }
