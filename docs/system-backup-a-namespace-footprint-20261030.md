@@ -12,6 +12,8 @@
 
 第二次只读观察补齐了卷类型与挂载路径：运行中的 `clawmanager-team-redis` 将 **`emptyDir` 挂在 `/data` 且可写**；已绑定的 `redis-data` PVC 没有运行 Pod 使用。MySQL `mysql-data` 挂 `/var/lib/mysql`，MinIO `minio-data` 挂 `/data`。当前 `workspace-store` 把 `clawmanager-workspaces` PVC 挂 `/exports/workspaces`，但 app、Hermes、OpenClaw 的实际 `/workspaces` 都直接挂 `10.107.165.245:/` 且可写；不能以本 namespace 的 workspace PVC 代替实际运行目录。MySQL 另有仅供测试 TLS 运行时的 `emptyDir`，不属于数据库持久卷。
 
+随后通过只读 Deployment 模板查询确认，现场 `clawmanager-team-redis` 模板同样没有 PVC claim，卷是 `emptyDir`；操作者回传 `SSH_EXIT=0`。仓库 `deployments/k8s/cluster/clawmanager.yaml` 的 Redis Deployment 模板写的是 `persistentVolumeClaim: redis-data`，与现场运行 Pod 和现场 Deployment 模板均不一致。备份准入应以现场实际绑定为准；不能因为仓库模板期望 PVC 就从未挂载的 PVC 取数。现场模板即使重建新 Pod 仍采用 `emptyDir`，旧 Pod 中的数据不会随之保留。
+
 这些是不同数据域：完整备份必须在一致性窗口覆盖现库、真实 Redis 状态、MinIO 对象及三个运行实例的 NFS 子树，并明确已停止实例 12 的旧 PVC/孤儿数据边界。Redis 的当前 `/data` 是 `emptyDir`：删除或替换 Pod 会丢失该卷，不能在捕获 Redis 前把它缩容/删除，也不能从未使用的 `redis-data` PVC 读取旧快照冒充现状。运行 Runtime 的 NFS 和本 namespace `workspace-store` 使用的 PVC 不是同一已证明的数据源。`system-backup-capacity-report` 的用途及保留边界也需按原业务事实判断。直接采整个共享 NFS export 或只采这三个目录都不能自动证明“当前 namespace 所有数据”。
 
 工具本地四项离线测试 `py -3 -B scripts/system-backup-a-namespace-footprint.test.py` 退出 0，覆盖已停止实例与 PVC、重复/异常 SQL 行拒绝、Pod/PVC 输出不含环境值和非法身份拒绝。没有构建产物。该工具只观察，`ready_for_backup=false`；正式采集仍依赖 B/C 冻结 context、D 现库升级及全域 writer/停止证明、A KEK 准入与凭据接线。
