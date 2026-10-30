@@ -8,12 +8,12 @@
 
 ## 执行
 
-将两个脚本放在远端同一目录。镜像必须使用构建推送后得到的准确 digest：
+将两个脚本放在远端同一目录。已推送的准确镜像 digest：
 
 ```sh
 python3 -B system-backup-seal-isolated-probe.py \
   --context kubernetes-admin@kubernetes \
-  --image '10.130.14.23:5000/backup-seal-probe@sha256:<实际推送摘要>' \
+  --image '10.130.14.23:5000/backup-seal-probe@sha256:2eb69e495f8bceabdda1a0e7205f910f0857d828cb67e58ac12f018a9e96ac2c' \
   --execute
 ```
 
@@ -22,3 +22,9 @@ python3 -B system-backup-seal-isolated-probe.py \
 退出路径使用 namespace UID precondition 删除本轮独占 namespace，再等待 namespace 及已绑定 PV 消失。Delete 策略交由存储 provisioner 回收实际卷，不直接递归删除主机路径。清理超时或身份不明会明确失败，并输出可追踪名称；不能把资源删除请求已提交视为已清理完成。
 
 该结果只证明本轮临时卷和节点组合的 hardlink、chmod、fsync、跨 Pod flock 及 subPath 隔离行为。不能证明断电耐久性，不能替代真实 staging PVC、正式 controller/worker 镜像、原配置、工作区挂载组合的再次验收，也不能证明 MySQL 清理引用判定已在现场通过。后续正式部署仍按 `system-backup-d-seal-custody-operations-20261030.md` 执行。
+
+## 本轮本地回执
+
+独立编排 Python 5 项测试及原 PVC 探针 3 项测试通过。Linux/amd64 工具从上述固定提交编译成功；Docker Hub 超时后使用本地已存在的 `alpine@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b` 构建。
+
+本地 Linux Docker 临时卷运行 `probe-init`、跨容器 `probe-hold`/`probe-worker`、`probe-verify`、`probe-clean` 全部退出 0，worker 报告 `cross_process_lock=true`、`worker_isolation=true`；临时容器和卷已删除。运行 ID 为 `sbk_ff132f15-8b81-41ab-afa4-62769748b5ac`。此为本地 Docker 结果，尚无 Kubernetes/Longhorn 现场回执。
