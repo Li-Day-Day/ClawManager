@@ -90,6 +90,12 @@ bash scripts/system-backup-d-runtime-discover.sh clawmanager-zhanghui08-system
 
 现场 app、OpenClaw、Hermes 挂载的是同一个直接 NFS export `/`，其 Service 位于另一 installation 的 namespace。本 namespace 的 workspace PVC 则绑定另一条 hostPath，不能拿该 PVC 的内容代表正在使用的数据。不能仅凭 namespace 名切换 NFS server，也不能将另一个 installation 的写入者自动纳入停止授权。
 
+2026-10-30 现场 App 容器的 `/proc/mounts` 再次直接确认：`/workspaces` 来源为
+`10.107.165.245:/`、类型为 `nfs4`。同一条命令中的 `du -sk /workspaces`
+结果未随回传出现，因此容量仍未知；只将挂载身份列为已验证。该 IP 对应
+前述另一 installation 的 `workspace-store` Service，不能把本 namespace
+的 hostPath PVC 或整条共享 NFS export 当成本 installation 的独占备份源。
+
 现库只有 user 1 的三个运行 Lite 实例，原 `instances.pod_name/pod_namespace` 为 NULL；实际位置来自 `instance_runtime_bindings → runtime_pods`，后者 `pod_uid` 也为 NULL。另有 generation 0 的未启动 Pro 实例。因此当前运行证据既不能证明多用户隔离，也不能通过 D 现有要求非空原 Pod 身份的控制链。后续需保持原 source projection/hash 不变，另行冻结实际 Runtime locator，交叉验证 Kubernetes UID、Agent 身份及原绑定，并在执行/恢复时复查；不得靠回填 Pod 名或虚构 generation 修复。
 
 数据库为 MySQL 8.4.8，迁移 ledger 到 080，仅发现旧 `system_maintenance_participants`。它不是新版完整 participant registry。`4fe83bcd` 导入 profile 仍由 D 独立负责：需覆盖现场 080 的真实 schema 差异，并与仓库已审查导入基线区分。在独立数据库副本上验证保留用户/实例主键和关系、迁移 journal、导入结果及重跑边界，再形成现库升级步骤；新环境继续使用当前 reviewed migration runner。不能只修改 source SHA，也不能直接向旧库执行全部新增 SQL。
