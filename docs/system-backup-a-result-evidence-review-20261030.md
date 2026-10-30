@@ -20,3 +20,9 @@
 剩余接线事实更具体：`backend/internal/systembackupexecution/public_jobs.go` 的 complete 分支在 `staging.Open` 校验后，以 `req.Result.Receipt.Name` 和 `SHA256` 直接构造 `publicadapter.SealedPart`；`backend/internal/systembackup/publicadapter/results.go` 对该类型的合同要求来自 C 的 immutable seal observer，明确说文件名或 worker 自报成功不能铸造它。当前文件校验能证明读取当时的密文与绑定一致，尚未在此调用点证明不可变版本/最终 seal 观察回执。B/C 最终 writer 接入时须给出该回执及与同一 Job、原字节、冻结 part 的绑定；此前 completed relay 只能按上述内部结果范围使用。
 
 原明文可见性问题缩小为这份 closed checkpoint/统计 JSON 对持有 evidence 表读取权限者的范围：数据库 `inline_payload` 是未加密的 `internal`，而 runtime 结果另有加密副本。部署 owner 仍须核对实际 SQL grant 与访问路径；本次源码/合成测试不能证明现场 reader 范围。已将 seal 观察者要求交给 D，不修改 D 的共享文件。
+
+## 后续接收：controller 私有 staging 封存
+
+D 已在 `a113760a` 补齐上述本地 seal 接线：`staging.ObserveFile` 将 worker 密文复制到 controller 专用 sibling `.controller-seals`，核对原长度/SHA、AAD/AEAD 完整帧，fsync 后 create-only 发布；绑定摘要包含安装、任务/attempt、Job UID/generation、config、冻结 invocation 和原 receipt。原 Job 模板只把 task subPath 挂入 worker，`ReadResult` 从冻结输入重建引用并重新核对私有副本，不回退到 worker 可改写的原文件。D 的 staging/execution 本地专项测试覆盖源改写/删除、错 key/AAD、篡改、跨 Job/config/invocation 与重启读取，并报告通过；这是本地文件系统与合成任务证据。
+
+因此上一节“尚未在调用点证明不可变版本”的代码缺口，以该提交为本地接线已补。部署验收仍需证明实际共享 PVC 支持 hard link、chmod 与目录 fsync、controller 对 sibling custody 的写入边界、worker 仅挂准确 task subPath，以及真实 SQL/Job/撤销后重试。私有 staging seal 不是最终 artifact envelope/对象版本、capture certificate 或备份验收。失败后遗留私有副本的容量与清理责任也需由原任务 owner 固定，不能在当前授权重试可能使用时批量删除。前述 inline 明文 reader 范围仍待现场 SQL grant 核验。
