@@ -97,4 +97,6 @@ SHA-256、完整 request 相等性及 Pod UID/Agent epoch/generation/PID 绑定�
 [核验记录](system-backup-d-native-field-20261030.md)。Pod 与 Secret 均清理，
 临时 bwrap AppArmor profile 已卸载。此测试没有 B worker 的 task/attempt、
 SQL `system_backup_v2_gateway_proofs` 写入或真实用户实例；B 不能将其作为
-完整备份通过，当前共享 Runtime Deployment 的能力路径仍为 404。
+完整备份通过，当前共享 Runtime Deployment 的能力路径仍为 404。测试完成后
+该唯一测试镜像 manifest 已按产物清理规则从私有仓库删除（DELETE 202，
+标签 HEAD 404）；digest 留在证据中作版本固定值，不能作为继续部署的现成镜像。

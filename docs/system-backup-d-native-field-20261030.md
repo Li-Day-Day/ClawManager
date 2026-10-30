@@ -46,4 +46,4 @@
 3. 现场库最后观测到 migration 080。先按独立的 [080 升级/导入方案](system-backup-d-legacy-source-upgrade-handoff-20260929.md) 在副本上验证；不直接升级现场库到 126/127。只有原配置密文、完整 participants/writers、B 原 callback、migration 126/权限和目标库全齐，才能在单测试实例上执行停止/恢复，并逐字节核对 Agent 原回执与 SQL `system_backup_v2_gateway_proofs`、恢复 PID/generation CAS。
 4. KEK Store/原 bootstrap/config 事务接点见 [独立交接](system-backup-d-kek-persistence-locks-20261029.md)。缺 C 的历史覆盖 scanner/来源及 Job `PreparedReferenceChange` 时继续拒绝完整扫描和生产准入。
 
-本地测试二进制、缓存、覆盖构建上下文和本地测试 overlay 镜像已清理。用户已清理两份 D: 归档和远端 `/tmp` 的两份归档/只读脚本，退出码 0；其他 owner 的共享工作区文件未清理。
+本地测试二进制、缓存、覆盖构建上下文和本地测试 overlay 镜像已清理。用户已清理两份 D: 归档和远端 `/tmp` 的两份归档/只读脚本，退出码 0。隔离生命周期测试结束后，远端只读盘点未发现一次性 Pod、Secret、`/tmp` profile/探针文件或运行中 Pod 对测试 digest 的引用；[标签别名探针](../scripts/system-backup-d-native-image-aliases.py)逐一 HEAD 核对 67 个标签，只有 `d-native-52f47fc-20261030` 指向该 digest。首次删除命令因 Windows SSH 引号传递失败，没有执行 DELETE，标签仍为 HTTP 200。随后[固定 digest 清理脚本](../scripts/system-backup-d-native-image-cleanup.py)再次核对全部标签和 Pod 引用，远端仓库 DELETE 返回 HTTP 202、标签 HEAD 复查为 404、脚本退出 0，远端 `/tmp` 脚本也已删除。其他 owner 的共享工作区文件未清理。
