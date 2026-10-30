@@ -67,7 +67,7 @@ func (w *BackupGatewayWriter) ready(ctx context.Context) error {
 	s := w.Source
 	p, err := scope.PlanRuntime(s.Runtime)
 	u, urlErr := url.Parse(s.Endpoint)
-	if err != nil || p.Mode != "lite" || urlErr != nil || u.Host == "" || (u.Scheme != "https" && u.Scheme != "http") || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") || s.PodUID == "" || s.RestartRef == "" || s.InstanceID <= 0 || s.UserID <= 0 || s.Generation <= 0 || s.ResumeGeneration <= s.Generation || s.UID <= 0 || s.GID <= 0 || s.Port < 1 || s.Port > 65535 || !path.IsAbs(s.Workspace) || path.Clean(s.Workspace) != s.Workspace || s.Workspace == "/" || w.Agent == nil || w.Guard == nil || w.LoadRestart == nil || w.ClaimRestart == nil || w.CompleteRestart == nil || w.GatewayControl == nil {
+	if err != nil || p.Mode != "lite" || urlErr != nil || u.Host == "" || u.Scheme != "https" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") || s.PodUID == "" || s.RestartRef == "" || s.InstanceID <= 0 || s.UserID <= 0 || s.Generation <= 0 || s.ResumeGeneration <= s.Generation || s.UID <= 0 || s.GID <= 0 || s.Port < 1 || s.Port > 65535 || !path.IsAbs(s.Workspace) || path.Clean(s.Workspace) != s.Workspace || s.Workspace == "/" || w.Agent == nil || w.Guard == nil || w.LoadRestart == nil || w.ClaimRestart == nil || w.CompleteRestart == nil || w.GatewayControl == nil {
 		return flow.ErrNotReady
 	}
 	return ctx.Err()

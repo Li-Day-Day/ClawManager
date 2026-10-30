@@ -31,7 +31,7 @@ func newBackupGatewayFixture(t *testing.T, agent string, running bool) *backupGa
 	if running {
 		f.states["gw-7-3"] = &RuntimeAgentGatewayState{GatewayID: "gw-7-3", InstanceID: 7, Generation: 3, State: "running"}
 	}
-	server := httptest.NewServer(http.HandlerFunc(func(out http.ResponseWriter, r *http.Request) {
+	server := httptest.NewTLSServer(http.HandlerFunc(func(out http.ResponseWriter, r *http.Request) {
 		f.mu.Lock()
 		defer f.mu.Unlock()
 		if r.Header.Get("X-ClawManager-Control-Token") != "fixture-control" {
@@ -82,7 +82,7 @@ func newBackupGatewayFixture(t *testing.T, agent string, running bool) *backupGa
 		}
 	}))
 	t.Cleanup(server.Close)
-	agentClient := NewRuntimeAgentClient("fixture-control").(BackupGatewayAgent)
+	agentClient := NewRuntimeAgentClientWithHTTPClient("fixture-control", server.Client()).(BackupGatewayAgent)
 	w := &BackupGatewayWriter{Agent: agentClient, Source: BackupGatewaySource{Runtime: scope.Runtime{Type: agent, Mode: "lite", Backend: "gateway", Variant: "linux", OS: "linux"}, Endpoint: server.URL, PodUID: "runtime-pod-uid", Workspace: "/workspaces/fixture/user-4/instance-7", RestartRef: "encrypted-task-ref", InstanceID: 7, UserID: 4, Generation: 3, ResumeGeneration: 4, UID: 200007, GID: 200007, Port: 20007}, PollInterval: time.Millisecond}
 	w.Guard = func(_ context.Context, p string, _ flow.State) error {
 		f.mu.Lock()
@@ -170,6 +170,16 @@ func backupContext(t *testing.T) context.Context {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	t.Cleanup(cancel)
 	return ctx
+}
+func TestBackupGatewayWriterRejectsPlaintextBeforeAgentRequest(t *testing.T) {
+	requests := 0
+	server := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { requests++ }))
+	t.Cleanup(server.Close)
+	f := newBackupGatewayFixture(t, "openclaw", true)
+	f.writer.Source.Endpoint = server.URL
+	if _, err := f.writer.Observe(backupContext(t)); err == nil || requests != 0 {
+		t.Fatal("plaintext Agent endpoint was contacted")
+	}
 }
 func TestBackupGatewayWriterLinuxMatrixAndLateStop(t *testing.T) {
 	for _, agent := range []string{"openclaw", "hermes", "opencode", "deepseek-harness", "workbuddy"} {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ephemeral live pool/slot TLS capability probe; never stops an instance."""
+"""Ephemeral pool/slot probe; never stops an existing instance."""
 
 import argparse
 import base64
@@ -163,6 +163,8 @@ def main():
     parser.add_argument("--namespace", required=True)
     parser.add_argument("--image", required=True)
     parser.add_argument("--synthetic-lifecycle", action="store_true")
+    parser.add_argument("--privileged-slot", action="store_true",
+                        help="give only the disposable slot bubblewrap mount permissions")
     OPT = parser.parse_args()
     if re.fullmatch(r"[^@\s]+@sha256:[0-9a-f]{64}", OPT.image) is None:
         raise RuntimeError("image must be pinned by digest")
@@ -213,8 +215,15 @@ def main():
                            + ([env("RUNTIME_GATEWAY_COMMAND", "python3 -m http.server 20000 --bind 127.0.0.1"),
                                env("RUNTIME_GATEWAY_STARTUP_HEALTH_TIMEOUT", "45s")] if OPT.synthetic_lifecycle else []),
                     "volumeMounts": common_mounts + [{"name": "slot-data", "mountPath": "/var/lib/clawmanager-agent"}]}
+            if OPT.privileged_slot:
+                slot["securityContext"] = {"privileged": True, "allowPrivilegeEscalation": True,
+                                           "capabilities": {"add": ["SYS_ADMIN"]},
+                                           "seccompProfile": {"type": "Unconfined"},
+                                           "appArmorProfile": {"type": "Unconfined"}}
             apply({"apiVersion": "v1", "kind": "Pod", "metadata": {"name": name, "labels": {"app": "d-native-backup-probe"}},
-                   "spec": {"restartPolicy": "Never", "nodeName": "k8s-master", "volumes": volumes, "containers": [pool, slot]}})
+                   "spec": {"restartPolicy": "Never", "nodeName": "k8s-master", "automountServiceAccountToken": False,
+                            "enableServiceLinks": False, "activeDeadlineSeconds": 600,
+                            "volumes": volumes, "containers": [pool, slot]}})
             created.append(("pod", name))
             k(["wait", "pod/" + name, "--for=condition=Ready", "--timeout=120s"])
             pod = json.loads(k(["get", "pod", name, "-o", "json"]).stdout)
@@ -251,6 +260,7 @@ def main():
                                                                      result["pod_uid"], capability["agent_epoch"])
                 result["status"] = "synthetic_lifecycle_passed"
     except Exception as exc:
+        result["status"] = "incomplete"
         result["error"] = str(exc)
         if ("pod", name) in created:
             observed = k(["get", "pod", name, "-o", "json"], check=False)
@@ -273,7 +283,7 @@ def main():
         if any(item["exit"] for item in cleanup):
             result["status"] = "cleanup_failed"
         print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0 if result["status"] in ("capability_passed", "synthetic_lifecycle_passed") else 2
+    return 0 if "error" not in result and result["status"] in ("capability_passed", "synthetic_lifecycle_passed") else 2
 
 
 if __name__ == "__main__":
