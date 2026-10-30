@@ -114,9 +114,13 @@ catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异�
   已复制。
 - 同日按现场表名逐表只读 `COUNT(*)`：匹配到 **35 张**旧
   `system_backup*`、`system_maintenance*`、`system_restore*`、
-  `system_artifact*` 控制表，未发现非零行。这支持在隔离副本上保留旧空表、
-  单独创建 v2 控制表的设计；查询由多个连接顺序完成，不是原子快照，
-  实施前必须在隔离副本的同一只读事务内重新证明 35 表全部为空。
+  `system_artifact*` 控制表，未发现非零行。查询由多个连接顺序完成，不是
+  原子快照；实施前必须在隔离副本的同一只读事务内重新证明 35 表全部为空。
+  **不能因此直接顺序执行当前 catalog**：当前
+  `079_add_system_backup_control.sql` 对 `system_backup_events`、
+  `system_backup_installation_state` 等同名表使用 `CREATE TABLE IF NOT EXISTS`，
+  会跳过已有旧表而留下不匹配的结构。转换必须先审查表名与约束冲突，
+  选择有 journal 的版本化改名或数据为空时的显式处理，再在副本上验证。
 - 同一现场的 `mysqldump --no-data` 只读输出进一步显示：`instances` 已有
   `pvc_name`、`runtime_variant` 及由 `owner` 生成的
   `owner_normalized`；`instance_runtime_bindings` 对 `instance_id` 唯一，
