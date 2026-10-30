@@ -40,6 +40,7 @@ class LedgerAuditTest(unittest.TestCase):
             {"001_one.sql": "a" * 64, "002_two.sql": "b" * 64},
             {"001_one.sql": "c" * 64, "003_three.sql": "d" * 64},
             "e" * 64,
+            "f" * 64,
         )
         self.assertEqual(report["ledger_not_in_current"], ["002_two.sql"])
         self.assertEqual(report["same_name_sql_changed"], [{
@@ -55,6 +56,14 @@ class LedgerAuditTest(unittest.TestCase):
         self.assertEqual(
             source["001_init_schema.sql"],
             "f08923b5e4dfab3b560a7736833cc53b8733f55cdae4c2990393d07770f9451b",
+        )
+
+    def test_current_catalog_matches_reviewed_pin(self):
+        repo = MODULE_PATH.resolve().parents[1]
+        current = audit.current_sql(repo)
+        self.assertEqual(
+            audit.current_catalog_hash(repo, current),
+            "d82eb65ecd839741255722bc8bdcd77de28c4fa25f8c1c25a622ba588f4156b5",
         )
 
 

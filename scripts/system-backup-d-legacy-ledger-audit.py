@@ -110,7 +110,26 @@ def current_sql(repo):
     return out
 
 
-def analyze(names, source, current, ledger_sha):
+def current_catalog_hash(repo, filenames):
+    """Match migrationcatalog.Compute and its reviewed source pin."""
+    h = hashlib.sha256()
+    h.update(b"system-backup-migration-catalog.v1\x00")
+    for name in sorted(filenames):
+        raw = (repo / MIGRATION_DIR / name).read_bytes()
+        normalized = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+        for value in (name.encode("ascii"), normalized):
+            h.update(len(value).to_bytes(8, "big"))
+            h.update(value)
+    result = h.hexdigest()
+    reviewed = (repo / "backend/internal/migrationcatalog/reviewed_catalog.go").read_text("ascii")
+    expected = re.search(r'const ReviewedHash = "([0-9a-f]{64})"', reviewed)
+    count = re.search(r"const ReviewedFileCount = ([0-9]+)", reviewed)
+    if expected is None or count is None or result != expected.group(1) or len(filenames) != int(count.group(1)):
+        raise ValueError("current migration catalog does not match reviewed source pin")
+    return result
+
+
+def analyze(names, source, current, ledger_sha, catalog_sha):
     applied = set(names)
     old = set(source)
     new = set(current)
@@ -122,6 +141,7 @@ def analyze(names, source, current, ledger_sha):
         "ledger_count": len(names),
         "source_sql_count": len(source),
         "current_sql_count": len(current),
+        "current_catalog_sha256": catalog_sha,
         "ledger_not_in_source": sorted(applied - old),
         "source_not_in_ledger": sorted(old - applied),
         "ledger_not_in_current": sorted(applied - new),
@@ -145,7 +165,9 @@ def main():
     try:
         names = read_ledger(args.ledger_file, args.expected_ledger_sha256)
         repo = args.repo_root.resolve(strict=True)
-        result = analyze(names, source_sql(repo), current_sql(repo), args.expected_ledger_sha256)
+        current = current_sql(repo)
+        result = analyze(names, source_sql(repo), current, args.expected_ledger_sha256,
+                         current_catalog_hash(repo, current))
     except (OSError, ValueError, subprocess.CalledProcessError):
         print("legacy ledger audit rejected; no migration authorized", file=sys.stderr)
         return 1

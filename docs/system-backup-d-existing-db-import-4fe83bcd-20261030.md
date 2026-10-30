@@ -48,6 +48,16 @@
   `system_backup_v2_maintenance_participants` 等新版表。现场输出只包含
   列名、类型、空值和键标记，尚无完整 DDL、索引、外键或行数据证明。
   因此替换 App/Runtime 镜像不能代替版本化现库升级。
+- 同一现场的 `mysqldump --no-data` 只读输出进一步显示：`instances` 已有
+  `pvc_name`、`runtime_variant` 及由 `owner` 生成的
+  `owner_normalized`；`instance_runtime_bindings` 对 `instance_id` 唯一，
+  对 `(runtime_pod_id,gateway_port)` 唯一，并以外键分别引用 `instances`
+  与 `runtime_pods`；`system_maintenance_participants` 对
+  `(origin_installation_id,scope,participant_id)` 唯一，以外键引用
+  `system_maintenance_locks`，且有状态、检查点、时间等 CHECK 约束；
+  `system_backup_installation_state` 的当前配置版本以外键引用
+  `system_backup_configs`。这为 3 个额外历史迁移中的列效果提供了部分
+  结构旁证，但不证明原 SQL 字节、全库数据迁移或新版表等价。
 
 ## 可重复运行的本地只读审计
 
@@ -62,6 +72,9 @@ py -3 -B scripts/system-backup-d-legacy-ledger-audit.test.py
 
 脚本直接从固定 Git 提交读取 blob 原字节；Windows `git archive` 会在这个
 仓库导出 CRLF，不能用其输出计算旧 SQL 摘要。JSON 中
+`current_catalog_sha256=d82eb65ecd839741255722bc8bdcd77de28c4fa25f8c1c25a622ba588f4156b5`
+按当前 Go catalog 的规范化与长度前缀算法计算，并与仓库的 reviewed pin
+比对；pin 不匹配时脚本拒绝输出审计通过结果。JSON 中
 `schema_equivalence_verified=false` 与 `migration_authorized=false` 是固定
 拒绝边界，不是可更改的准入开关。
 
