@@ -2,7 +2,7 @@
 
 状态：已固定现场完整 ledger 和直接采集的只读全库结构，确认镜像内 94 项
 catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异；
-未执行现库迁移，未取得现库可导入证明。
+已提供隔离副本只读预检，未执行现库迁移，未取得现库可导入证明。
 此工作不包含 Runtime 镜像下载、构建或部署。
 
 ## 已核对的拒绝边界
@@ -182,6 +182,32 @@ server UUID/database、原始历史 SQL 字节与摘要、当前 catalog SHA、
 审核人及审核引用；逐项证明旧迁移的实际表/列/约束和新版预期的关系，
 为差异提供版本化 DDL/数据修复。先在副本上执行并验证可重跑、失败后的
 恢复和应用查询；再制定现场升级及回退步骤。新库初始化成功不替代这条路径。
+
+### 97 项现库副本的只读预检
+
+`system-backup-legacy-preflight` 使用私有 DSN 文件连接独立的
+`cm_import_<32hex>` 库，读取上文直接采集 JSON 的**原字节**并校验固定
+SHA。它在只读事务内两次核对完整 ledger 与 schema，拒绝已存在的导入
+journal 和未完成备份工作。副本结构只接受现场原指纹或已审查的 MySQL 8.4.8
+`mysqldump` 重建指纹；输出固定为 `data_preservation_verified=false`、
+`migration_authorized=false`。此预检**不写入**数据库，也不调用现有
+136 项的 `ImportBackupCopy`。
+
+对已经用测试数据建立的隔离副本，可在本地仓库 `backend` 目录运行：
+
+```powershell
+go run -mod=readonly ./cmd/system-backup-legacy-preflight `
+  --dsn-file C:\private\cm-import.dsn `
+  --source-inventory-file ..\docs\evidence\d-existing-db-live-inventory-direct-20261030.json `
+  --timeout 5m
+```
+
+DSN 文件应只供操作员读取，并指向隔离副本；命令不会打印其内容。实际
+隔离副本还须与现场源建立**行数据保全证明**，上述预检成功不能替代它。
+本地临时 MySQL 8.4.8 集成试验用现场 no-data DDL 与 97 行 ledger 构造
+空数据副本：预检接受 99 表的 `mysqldump_8_4_8` 结构，拒绝非隔离库和
+额外列漂移。该试验未使用现场业务数据；测试容器、二进制、DSN、缓存及
+镜像已清理。
 
 ## 本 profile 的交付出口
 

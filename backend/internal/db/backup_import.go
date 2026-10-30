@@ -248,7 +248,7 @@ func assertSourceLedger(ctx context.Context, conn *sql.Conn, mapping backupImpor
 	return nil
 }
 
-func assertImportSourceIdle(ctx context.Context, conn *sql.Conn, m backupImportMap, renamed bool) error {
+func assertImportSourceIdle(ctx context.Context, conn importQueryer, m backupImportMap, renamed bool) error {
 	checks := map[string]string{
 		"system_backups":                       "status NOT IN ('succeeded','failed','canceled')",
 		"system_restore_drills":                "status NOT IN ('succeeded','failed','canceled')",
