@@ -210,7 +210,7 @@ def main():
                     "command": ["/usr/local/bin/clawmanager-agent"],
                     "env": common + [env("RUNTIME_AGENT_ROLE", "slot"), env("RUNTIME_SLOT_INDEX", "0"),
                                      env("RUNTIME_SLOT_SOCKET", "/run/clawmanager-slots/slot-0.sock")]
-                           + ([env("RUNTIME_GATEWAY_COMMAND", "python3 -m http.server 20000 --bind 0.0.0.0"),
+                           + ([env("RUNTIME_GATEWAY_COMMAND", "python3 -m http.server 20000 --bind 127.0.0.1"),
                                env("RUNTIME_GATEWAY_STARTUP_HEALTH_TIMEOUT", "45s")] if OPT.synthetic_lifecycle else []),
                     "volumeMounts": common_mounts + [{"name": "slot-data", "mountPath": "/var/lib/clawmanager-agent"}]}
             apply({"apiVersion": "v1", "kind": "Pod", "metadata": {"name": name, "labels": {"app": "d-native-backup-probe"}},
