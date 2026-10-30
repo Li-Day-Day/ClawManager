@@ -20,7 +20,7 @@
 
 A 对 35→40 控制表范围的复审见 [C50 控制排除准入记录](system-backup-a-c50-control-exclusion-review-20261030.md)：五张新表仍待 owner 和交叉评审，当前恢复路径须继续拒绝未审 registry。
 
-A 对本轮源码的只读复审确认：新增公共 recovery 仍通过独立 `Recovery.CheckTx`，未见放宽原 Job 用途/撤销；丢失 writer intent 时仅重建未恢复的元数据，final 仍要求冻结集合和逐条完成。该结论不包含真实 SQL 或 Agent 现场证明。基线中的 `backupHTTP` 仍允许 HTTP 发送 control token，是独立的远测前阻断，需由 Agent owner 修正后再做现场停止/恢复。
+A 对本轮源码的只读复审确认：新增公共 recovery 仍通过独立 `Recovery.CheckTx`，未见放宽原 Job 用途/撤销；丢失 writer intent 时仅重建未恢复的元数据，final 仍要求冻结集合和逐条完成。该结论不包含真实 SQL 或 Agent 现场证明。初始候选基底中的 `backupHTTP` 明文令牌风险已在合入前由 `7c1951de` 修复，客户端会在发送 control token 前拒绝非 HTTPS；现场 TLS、停止与恢复证明仍须单独验收。
 
 ## 验证与未完成项
 
