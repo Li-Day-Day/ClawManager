@@ -115,6 +115,8 @@ def synthetic_lifecycle(ip, cert, token, namespace, pod_uid, epoch):
         state = json.loads(raw) if code == 200 else {}
         if code == 200 and state.get("state") == "running" and type(state.get("gateway_pid")) is int and state["gateway_pid"] > 0:
             break
+        if code == 200 and state.get("state") == "error":
+            raise RuntimeError("synthetic gateway terminated before running")
         if time.monotonic() >= deadline:
             raise RuntimeError(f"synthetic gateway not running (HTTP {code}, state {state.get('state')})")
         time.sleep(2)
@@ -162,17 +164,20 @@ def main():
     parser.add_argument("--context", required=True)
     parser.add_argument("--namespace", required=True)
     parser.add_argument("--image", required=True)
+    parser.add_argument("--node", default="k8s-master")
     parser.add_argument("--synthetic-lifecycle", action="store_true")
     parser.add_argument("--privileged-slot", action="store_true",
                         help="give only the disposable slot bubblewrap mount permissions")
     OPT = parser.parse_args()
     if re.fullmatch(r"[^@\s]+@sha256:[0-9a-f]{64}", OPT.image) is None:
         raise RuntimeError("image must be pinned by digest")
+    if re.fullmatch(r"[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?", OPT.node) is None:
+        raise RuntimeError("invalid node name")
     name = "d-native-probe-" + secrets.token_hex(4)
     token_name, tls_name = name + "-token", name + "-tls"
     token = secrets.token_hex(32)
     created = []
-    result = {"status": "incomplete", "mutation_sent": False, "pod": name, "image": OPT.image}
+    result = {"status": "incomplete", "mutation_sent": False, "pod": name, "image": OPT.image, "node": OPT.node}
     try:
         with tempfile.TemporaryDirectory(prefix="d-native-probe-") as temp:
             key, cert = os.path.join(temp, "tls.key"), os.path.join(temp, "tls.crt")
@@ -221,7 +226,7 @@ def main():
                                            "seccompProfile": {"type": "Unconfined"},
                                            "appArmorProfile": {"type": "Unconfined"}}
             apply({"apiVersion": "v1", "kind": "Pod", "metadata": {"name": name, "labels": {"app": "d-native-backup-probe"}},
-                   "spec": {"restartPolicy": "Never", "nodeName": "k8s-master", "automountServiceAccountToken": False,
+                   "spec": {"restartPolicy": "Never", "nodeName": OPT.node, "automountServiceAccountToken": False,
                             "enableServiceLinks": False, "activeDeadlineSeconds": 600,
                             "volumes": volumes, "containers": [pool, slot]}})
             created.append(("pod", name))
