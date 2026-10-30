@@ -227,6 +227,7 @@ type configBootstrapCandidateSession struct {
 	authority     BootstrapCandidateAuthoritySession
 	kekPrepared   reg.PreparedAdmission
 	kekBound      *reg.Bound
+	kekWrite      pd.BootstrapSQL
 	canonical     bool
 	operationID   string
 	hash          pd.Hash
@@ -401,6 +402,7 @@ func (s *configBootstrapCandidateSession) WriteBootstrap(ctx context.Context, tx
 			return zero, pd.ErrGuardRequired
 		}
 		s.kekBound = bound
+		s.kekWrite = tx
 	}
 	result, err := insertBootstrapAudit(ctx, tx, s.plan.grant, op, string(hash), "result")
 	if err != nil || result == nil {
@@ -425,7 +427,7 @@ func (s *configBootstrapCandidateSession) Recheck(ctx context.Context, tx pd.Boo
 	if err := verifyBootstrapConfigValues(ctx, tx, s.plan.grant, s.plan.config, s.canonical); err != nil {
 		return err
 	}
-	if s.kekPrepared != nil && (s.kekBound == nil || s.kekBound.Recheck(ctx, s.kekPrepared) != nil) {
+	if s.kekPrepared != nil && (s.kekBound == nil || !pd.SameBootstrapTransaction(s.kekWrite, tx) || s.kekBound.RecheckWithReadView(ctx, tx, s.kekPrepared) != nil) {
 		return pd.ErrGuardRequired
 	}
 	return nil

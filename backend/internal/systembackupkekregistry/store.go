@@ -349,14 +349,25 @@ func (b *Bound) advance(ctx context.Context) error {
 // earlier domain locks, perform provider I/O, or turn a prepared candidate into
 // an execution grant.
 func (b *Bound) Recheck(ctx context.Context, prepared PreparedAdmission) error {
-	if ctx == nil || ctx.Err() != nil || b == nil || !present(prepared) || !present(prepared.OriginalMapping()) {
+	if b == nil {
+		return ErrKEKFacts
+	}
+	return b.RecheckWithReadView(ctx, b.tx, prepared)
+}
+
+// RecheckWithReadView accepts the original transaction's sealed read callback
+// after its write capability has closed. It never reopens that capability or
+// starts another transaction; bootstrap candidate final checks use this form.
+func (b *Bound) RecheckWithReadView(ctx context.Context, read SQLReadView, prepared PreparedAdmission) error {
+	if ctx == nil || ctx.Err() != nil || b == nil || !present(read) || !present(prepared) || !present(prepared.OriginalMapping()) {
 		return ErrKEKFacts
 	}
 	var epoch uint64
-	if err := b.tx.QueryRowContext(ctx, `SELECT epoch FROM system_backup_v2_kek_fences WHERE installation_id=? FOR UPDATE`, b.installationID).Scan(&epoch); err != nil || epoch != b.epoch {
+	if err := read.QueryRowContext(ctx, `SELECT epoch FROM system_backup_v2_kek_fences WHERE installation_id=? FOR UPDATE`, b.installationID).Scan(&epoch); err != nil || epoch != b.epoch {
 		return ErrKEKFacts
 	}
-	now, err := b.sqlNow(ctx)
+	var now time.Time
+	err := read.QueryRowContext(ctx, `SELECT UTC_TIMESTAMP(6)`).Scan(&now)
 	expected := prepared.ExpectedSnapshot()
 	if err != nil || !SameSnapshotFacts(expected, b.original) || expected.ObservedAt.IsZero() || expected.ObservedAt.After(now) || !now.Before(prepared.ValidUntil()) {
 		return ErrKEKFacts
@@ -365,7 +376,7 @@ func (b *Bound) Recheck(ctx context.Context, prepared PreparedAdmission) error {
 	// rows and epoch above were checked against current locking reads.
 	locked := cloneSnapshot(b.original)
 	locked.ObservedAt = expected.ObservedAt
-	if prepared.Recheck(ctx, b.tx, LockedSnapshot{facts: locked}, now) != nil {
+	if prepared.Recheck(ctx, read, LockedSnapshot{facts: locked}, now) != nil {
 		return ErrKEKFacts
 	}
 	return nil
