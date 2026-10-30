@@ -2,6 +2,7 @@ import copy
 import importlib.util
 import pathlib
 import unittest
+from unittest.mock import Mock
 
 spec = importlib.util.spec_from_file_location("seal_probe", pathlib.Path(__file__).with_name("system-backup-seal-custody-probe.py"))
 probe = importlib.util.module_from_spec(spec)
@@ -46,6 +47,24 @@ class ProbeTests(unittest.TestCase):
         with self.assertRaises(ValueError): probe.manifest(self.cfg, self.run, "unadmitted")
         self.cfg["worker_image"] = "example:latest"
         with self.assertRaises(ValueError): probe.manifest(self.cfg, self.run, "node")
+
+    def test_failure_snapshot_retains_exit_and_step(self):
+        self.actual["status"] = {"phase": "Failed", "containerStatuses": [{"name": "probe", "state": {"terminated": {"exitCode": 1}}}]}
+        command = Mock(return_value="probe diagnostic: step=lock-must-block\n")
+        snapshot = probe.worker_failure_snapshot(Mock(return_value=self.actual), command, "backup", self.expected, "original-pod-uid")
+        self.assertEqual(snapshot["worker_status"]["containerStatuses"][0]["state"]["terminated"]["exitCode"], 1)
+        self.assertIn("step=lock-must-block", snapshot["worker_log_tail"])
+        self.assertIn("--limit-bytes=4096", command.call_args.args[0])
+
+    def test_replaced_pod_diagnostics_rejected(self):
+        replacement = copy.deepcopy(self.actual)
+        replacement["metadata"]["uid"] = "replacement"
+        command = Mock(return_value="untrusted log")
+        with self.assertRaises(ValueError):
+            probe.worker_failure_snapshot(Mock(return_value=replacement), command, "backup", self.expected, "original-pod-uid")
+        command.assert_not_called()
+        with self.assertRaises(ValueError):
+            probe.worker_failure_snapshot(Mock(side_effect=[self.actual, replacement]), command, "backup", self.expected, "original-pod-uid")
 
 
 if __name__ == "__main__":

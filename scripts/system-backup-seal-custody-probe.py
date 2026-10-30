@@ -73,6 +73,16 @@ def verify_probe(actual, wanted, uid):
         raise ValueError("source PVC replaced")
 
 
+def worker_failure_snapshot(get, command, ns, wanted, uid):
+    name = wanted["metadata"]["name"]
+    pod = get("pod", name)
+    verify_probe(pod, wanted, uid)
+    logs = command(["-n", ns, "logs", name, "-c", "probe", "--tail=30", "--limit-bytes=4096"])
+    # Do not attach logs if the named Pod was replaced during retrieval.
+    verify_probe(get("pod", name), wanted, uid)
+    return {"worker_status": pod.get("status", {}), "worker_log_tail": logs}
+
+
 def run(args):
     raw = open(args.config, "rb").read()
     if hashlib.sha256(raw).hexdigest() != args.config_sha256:
@@ -196,11 +206,7 @@ def run(args):
         report["failure"] = str(exc)[:1000]
         if uid is not None:
             try:
-                failed_pod = get("pod", wanted["metadata"]["name"])
-                verify_probe(failed_pod, wanted, uid)
-                report["worker_status"] = failed_pod.get("status", {})
-                report["worker_log_tail"] = command(["-n", ns, "logs", wanted["metadata"]["name"],
-                    "-c", "probe", "--tail=30", "--limit-bytes=4096"])
+                report.update(worker_failure_snapshot(get, command, ns, wanted, uid))
             except Exception as diagnostic_error:
                 report["worker_diagnostic_error"] = type(diagnostic_error).__name__
         raise

@@ -4,7 +4,7 @@
 
 `scripts/system-backup-seal-isolated-probe.py` 复用正式 PVC 探针，但只创建随机 `seal-capability-*` namespace、独立 ServiceAccount、两个 1Gi RWX PVC 及临时 Pod。默认打印方案，`--execute` 才执行。默认存储类 `longhorn-rwx`，controller 在 `k8s-master`，worker 在 `node1`；要求两个不同 Linux/amd64 节点、Immediate 绑定及 Delete 回收策略。无业务卷、业务凭据、数据库连接或生产 Deployment 修改。
 
-工具镜像的 Go 二进制来自精确提交 `e1baddbad220174cbf5660754b1f8852b6b703a1`，不是持续变化的工作区。镜像用 `deployments/backup-seal-probe.Dockerfile` 构建，只包含 Alpine 和维护 CLI。此镜像有 shell，专用于验收，不是正式 worker 镜像。
+当前诊断镜像的 Go 二进制来自精确提交 `39265b45ef414c76ef46153de34b83e8392571f3`，不是持续变化的工作区（初版来自 `e1baddba`）。镜像用 `deployments/backup-seal-probe.Dockerfile` 构建，只包含 Alpine 和维护 CLI。此镜像有 shell，专用于验收，不是正式 worker 镜像。
 
 ## 执行
 
@@ -13,7 +13,7 @@
 ```sh
 python3 -B system-backup-seal-isolated-probe.py \
   --context kubernetes-admin@kubernetes \
-  --image '10.130.14.23:5000/backup-seal-probe@sha256:2eb69e495f8bceabdda1a0e7205f910f0857d828cb67e58ac12f018a9e96ac2c' \
+  --image '10.130.14.23:5000/backup-seal-probe@sha256:fbd2fe4a84256354a3a142cb42f64cefe458f137e3af528379bee89f47efdcd6' \
   --execute
 ```
 
@@ -27,4 +27,10 @@ python3 -B system-backup-seal-isolated-probe.py \
 
 独立编排 Python 5 项测试及原 PVC 探针 3 项测试通过。Linux/amd64 工具从上述固定提交编译成功；Docker Hub 超时后使用本地已存在的 `alpine@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b` 构建。
 
-本地 Linux Docker 临时卷运行 `probe-init`、跨容器 `probe-hold`/`probe-worker`、`probe-verify`、`probe-clean` 全部退出 0，worker 报告 `cross_process_lock=true`、`worker_isolation=true`；临时容器和卷已删除。运行 ID 为 `sbk_ff132f15-8b81-41ab-afa4-62769748b5ac`。此为本地 Docker 结果，尚无 Kubernetes/Longhorn 现场回执。
+初版本地 Linux Docker 临时卷运行 `probe-init`、跨容器 `probe-hold`/`probe-worker`、`probe-verify`、`probe-clean` 全部退出 0，worker 报告 `cross_process_lock=true`、`worker_isolation=true`；临时容器和卷已删除。运行 ID 为 `sbk_ff132f15-8b81-41ab-afa4-62769748b5ac`。此为本地 Docker 结果，不是 Kubernetes/Longhorn 现场成功回执。
+
+## 首轮现场失败与诊断修正
+
+用户回传运行 `sbk_bac4fd17-7520-4b72-b21f-e1a8e5f4c28f`：跨节点 true，worker isolation/locking 阶段失败，退出 1；内外两层 cleaned=true。结构化摘要保存在 `docs/evidence/d-seal-capability-failed-20261030.json`。原脚本清理前没有保存 worker 状态和日志，无法据此判定是隔离、锁、等待超时或存储驱动问题。
+
+诊断版保留原成功判定和安全上下文，仅增加 worker 失败步骤、容器状态/退出码、有界日志及 holder 输出。日志采集前后校验原 Pod UID。Go staging 全包 7.515s 通过，两个 Python 测试文件各 5 项通过；尚待诊断版现场复测，不能将初版失败改记为通过。
