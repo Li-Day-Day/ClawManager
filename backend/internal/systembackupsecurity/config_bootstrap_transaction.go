@@ -11,6 +11,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	reg "clawreef/internal/systembackupkekregistry"
 	pd "clawreef/internal/systembackupproducer"
 )
 
@@ -41,6 +42,7 @@ type BootstrapAdmission interface {
 type ConfigBootstrapService struct {
 	DB                *sql.DB
 	Admission         BootstrapAdmission
+	KEK               BootstrapKEKPreparation
 	CanonicalSnapshot bool                       // Isolated candidate path until the column is formally migrated.
 	Candidates        *ConfigBootstrapCandidates // Explicit trusted candidate assembly; never an HTTP input.
 }
@@ -61,7 +63,7 @@ func (s ConfigBootstrapService) Bootstrap(ctx context.Context, g OfflineBootstra
 		return zero, err
 	}
 	if s.Candidates != nil {
-		return s.Candidates.bootstrap(ctx, s.DB, g, c, s.CanonicalSnapshot)
+		return s.Candidates.bootstrap(ctx, s.DB, g, c, s.CanonicalSnapshot, s.KEK)
 	}
 	if candidateAuthorityNil(ctx) || ctx.Err() != nil || s.DB == nil || candidateAuthorityNil(s.Admission) || !validBootstrapGrant(g) || c.SHA256() != g.ConfigSHA256 {
 		return zero, ErrRegistrationUnavailable
@@ -81,6 +83,17 @@ func (s ConfigBootstrapService) bootstrapLegacyPrepared(ctx context.Context, g O
 	}
 	if _, bounded := ctx.Deadline(); !bounded {
 		return zero, ErrRegistrationUnavailable
+	}
+	var kekPrepared reg.PreparedAdmission
+	if s.KEK != nil {
+		if candidateAuthorityNil(s.KEK) {
+			return zero, ErrRegistrationUnavailable
+		}
+		var prepErr error
+		kekPrepared, prepErr = s.KEK.PrepareBootstrapKEK(ctx, s.DB, g, c)
+		if prepErr != nil || candidateAuthorityNil(kekPrepared) {
+			return zero, ErrRegistrationUnavailable
+		}
 	}
 	// Include all grant semantics, not transport formatting, in idempotency.
 	binding, _ := json.Marshal(g)
@@ -158,6 +171,12 @@ func (s ConfigBootstrapService) bootstrapLegacyPrepared(ctx context.Context, g O
 		if err = s.finishInlineBootstrap(ctx, tx, g, c, fence, prior.OperationPublicID, digest, now, until); err != nil {
 			return zero, err
 		}
+		if kekPrepared != nil {
+			bound, e := stageBootstrapKEK(ctx, tx, g.InstallationID, prior.OperationPublicID, kekPrepared, true)
+			if e != nil || bound.Recheck(ctx, kekPrepared) != nil {
+				return zero, ErrRegistrationUnavailable
+			}
+		}
 		if err = tx.Commit(); err != nil {
 			return zero, ErrRegistrationCommitUnknown
 		}
@@ -197,6 +216,12 @@ func (s ConfigBootstrapService) bootstrapLegacyPrepared(ctx context.Context, g O
 	}
 	if err = s.finishInlineBootstrap(ctx, tx, g, c, fence, op, digest, now, until); err != nil {
 		return zero, err
+	}
+	if kekPrepared != nil {
+		bound, e := stageBootstrapKEK(ctx, tx, g.InstallationID, op, kekPrepared, false)
+		if e != nil || bound.Recheck(ctx, kekPrepared) != nil {
+			return zero, ErrRegistrationUnavailable
+		}
 	}
 	if err = tx.Commit(); err != nil {
 		return zero, ErrRegistrationCommitUnknown

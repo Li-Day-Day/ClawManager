@@ -14,6 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	reg "clawreef/internal/systembackupkekregistry"
 	"clawreef/internal/systembackupread"
 )
 
@@ -99,6 +100,7 @@ type ConfigMutationService struct {
 	Authority      ConfigMutationAuthority
 	Resolver       ConfigMutationResolver
 	Responses      ConfigMutationResponses
+	KEK            ConfigMutationKEKPreparation
 }
 type ConfigMutationResult struct {
 	OperationPublicID string
@@ -437,6 +439,17 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 	if err != nil || nilConfigMutationBoundary(ready) {
 		return zero, ErrRegistrationUnavailable
 	}
+	var kekPrepared reg.PreparedAdmission
+	if s.KEK != nil {
+		input, ok := ready.(configMutationKEKInputProvider)
+		if candidateAuthorityNil(s.KEK) || !ok {
+			return zero, ErrRegistrationUnavailable
+		}
+		kekPrepared, err = s.KEK.PrepareConfigMutationKEK(ctx, s.DB, input.KEKInput())
+		if err != nil || candidateAuthorityNil(kekPrepared) {
+			return zero, ErrRegistrationUnavailable
+		}
+	}
 	readinessUntil := ready.ValidUntil()
 	if !first.now.Before(readinessUntil) {
 		return zero, ErrRegistrationUnavailable
@@ -506,6 +519,11 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 	risk := configMutationBaseRisk(v.row.values, proposed)
 	risk.SecurityBoundary = risk.SecurityBoundary || extra.SecurityBoundary
 	risk.ProtectionReduction = risk.ProtectionReduction || extra.ProtectionReduction
+	if kekPrepared != nil {
+		kekRisk := kekPrepared.Risk()
+		risk.SecurityBoundary = risk.SecurityBoundary || kekRisk.SecurityBoundary
+		risk.ProtectionReduction = risk.ProtectionReduction || kekRisk.ProtectionReduction
+	}
 	if risk.ProtectionReduction && (r.reason == nil || strings.TrimSpace(*r.reason) == "" || reason == nil || strings.TrimSpace(*reason) == "") {
 		return zero, ErrConfigMutation
 	}
@@ -599,6 +617,13 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 	if err != nil || operationID < 1 {
 		return zero, ErrProviderEvidenceStorage
 	}
+	var kekBound *reg.Bound
+	if kekPrepared != nil {
+		kekBound, _, err = (reg.SQLStore{}).Bind(ctx, v.tx, s.InstallationID)
+		if err != nil || kekBound.StageAdmission(ctx, op, uint64(newVersion), kekPrepared) != nil {
+			return zero, ErrRegistrationUnavailable
+		}
+	}
 	if risk.StrongAuthRequired() {
 		authAt, expiresAt, e := parseTimes(frozenProof.Payload)
 		if e != nil {
@@ -643,6 +668,9 @@ func (s ConfigMutationService) Mutate(ctx context.Context, actor RegistrationAct
 	}
 	if err = capacity.Recheck(ctx, v.tx, finalNow); err != nil {
 		return zero, registrationBoundaryError(err)
+	}
+	if kekBound != nil && kekBound.Recheck(ctx, kekPrepared) != nil {
+		return zero, ErrRegistrationUnavailable
 	}
 	// No more authority/key/provider callbacks after this clock observation.
 	// They can legitimately take time even when each returned valid facts for

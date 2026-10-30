@@ -26,7 +26,7 @@ var kekHash = regexp.MustCompile(`^[0-9a-f]{64}$`)
 type SQLStore struct{}
 
 type Bound struct {
-	tx             *sql.Tx
+	tx             SQLWriteView
 	installationID string
 	epoch          uint64
 	original       Snapshot
@@ -182,8 +182,8 @@ func SameSnapshotFacts(a, b Snapshot) bool {
 	return reflect.DeepEqual(a, b)
 }
 
-func (SQLStore) Bind(ctx context.Context, tx *sql.Tx, installationID string) (*Bound, LockedSnapshot, error) {
-	if ctx == nil || ctx.Err() != nil || tx == nil || installationID == "" || len(installationID) > 128 {
+func (SQLStore) Bind(ctx context.Context, tx SQLWriteView, installationID string) (*Bound, LockedSnapshot, error) {
+	if ctx == nil || ctx.Err() != nil || !present(tx) || installationID == "" || len(installationID) > 128 {
 		return nil, LockedSnapshot{}, ErrKEKFacts
 	}
 	// The stable fence also protects an empty index against concurrent inserts.
@@ -211,7 +211,7 @@ func (SQLStore) Bind(ctx context.Context, tx *sql.Tx, installationID string) (*B
 	return b, LockedSnapshot{facts: cloneSnapshot(s)}, nil
 }
 
-func readBindings(ctx context.Context, tx *sql.Tx, s *Snapshot, locked bool) error {
+func readBindings(ctx context.Context, tx SQLReadView, s *Snapshot, locked bool) error {
 	query := `SELECT identity_hash,registry_version,binding_sha256,core_sha256,core_json,row_version,generate_revocation_json,unwrap_revocation_json FROM system_backup_v2_kek_bindings WHERE installation_id=? ORDER BY identity_hash,registry_version`
 	if locked {
 		query += ` FOR SHARE`
@@ -259,7 +259,7 @@ func readBindings(ctx context.Context, tx *sql.Tx, s *Snapshot, locked bool) err
 	return rows.Err()
 }
 
-func readCoverage(ctx context.Context, tx *sql.Tx, s *Snapshot, locked bool) error {
+func readCoverage(ctx context.Context, tx SQLReadView, s *Snapshot, locked bool) error {
 	query := `SELECT partition_name,source_id,source_sha256,source_json FROM system_backup_v2_kek_coverage WHERE installation_id=? ORDER BY partition_name,source_id`
 	if locked {
 		query += ` FOR SHARE`
@@ -288,7 +288,7 @@ func readCoverage(ctx context.Context, tx *sql.Tx, s *Snapshot, locked bool) err
 	return rows.Err()
 }
 
-func readReferences(ctx context.Context, tx *sql.Tx, s *Snapshot, locked bool) error {
+func readReferences(ctx context.Context, tx SQLReadView, s *Snapshot, locked bool) error {
 	query := `SELECT partition_name,source_record_id,source_record_version,identity_hash,registry_version,reference_state,reference_sha256,reference_json FROM system_backup_v2_kek_references WHERE installation_id=? ORDER BY partition_name,source_record_id,source_record_version`
 	if locked {
 		query += ` FOR SHARE`

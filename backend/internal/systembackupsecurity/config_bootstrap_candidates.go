@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	reg "clawreef/internal/systembackupkekregistry"
 	pd "clawreef/internal/systembackupproducer"
 )
 
@@ -127,17 +128,21 @@ func newConfigBootstrapCandidatePlan(db *sql.DB, g OfflineBootstrapGrant, raw []
 	return &ConfigBootstrapCandidates{db: db, grant: g, config: c, request: owned, authority: authority}, nil
 }
 
-func (p *ConfigBootstrapCandidates) bootstrap(ctx context.Context, db *sql.DB, g OfflineBootstrapGrant, c BootstrapConfig, canonical bool) (ConfigBootstrapResult, error) {
+func (p *ConfigBootstrapCandidates) bootstrap(ctx context.Context, db *sql.DB, g OfflineBootstrapGrant, c BootstrapConfig, canonical bool, keks ...BootstrapKEKPreparation) (ConfigBootstrapResult, error) {
 	var zero ConfigBootstrapResult
-	if p == nil || candidateAuthorityNil(ctx) || ctx.Err() != nil || db == nil || db != p.db || g != p.grant || !bytes.Equal(c.CanonicalJSON(), p.config.CanonicalJSON()) || candidateAuthorityNil(p.authority) {
+	if p == nil || candidateAuthorityNil(ctx) || ctx.Err() != nil || db == nil || db != p.db || g != p.grant || !bytes.Equal(c.CanonicalJSON(), p.config.CanonicalJSON()) || candidateAuthorityNil(p.authority) || len(keks) > 1 {
 		return zero, ErrRegistrationUnavailable
+	}
+	var kek BootstrapKEKPreparation
+	if len(keks) == 1 {
+		kek = keks[0]
 	}
 	// One bounded attempt includes ALL preparation and SQL lock waits. Never
 	// replace this context after a one-shot authority/capacity has bound it, or
 	// use a fresh attempt to extend any original grant/resource observation.
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.numbers["operation_deadline_seconds"])*time.Second)
 	defer cancel()
-	env := &configBootstrapCandidateEnvironment{plan: p, canonical: canonical}
+	env := &configBootstrapCandidateEnvironment{plan: p, canonical: canonical, kek: kek}
 	consumer, err := pd.NewBootstrapCandidateConsumer(db, p.request.Scope, env)
 	if err != nil {
 		return zero, candidateBootstrapError(err)
@@ -185,6 +190,7 @@ func candidateBootstrapError(err error) error {
 type configBootstrapCandidateEnvironment struct {
 	plan      *ConfigBootstrapCandidates
 	canonical bool
+	kek       BootstrapKEKPreparation
 }
 
 func (e *configBootstrapCandidateEnvironment) PrepareBootstrapConsumption(ctx context.Context, r pd.BootstrapConsumptionRequest) (pd.PreparedBootstrapAuthority, error) {
@@ -198,17 +204,29 @@ func (e *configBootstrapCandidateEnvironment) PrepareBootstrapConsumption(ctx co
 	if err != nil || candidateAuthorityNil(a.Session) {
 		return zero, pd.ErrGuardRequired
 	}
+	var kekPrepared reg.PreparedAdmission
+	if e.kek != nil {
+		if candidateAuthorityNil(e.kek) {
+			return zero, pd.ErrGuardRequired
+		}
+		kekPrepared, err = e.kek.PrepareBootstrapKEK(ctx, e.plan.db, e.plan.grant, e.plan.config)
+		if err != nil || candidateAuthorityNil(kekPrepared) {
+			return zero, pd.ErrGuardRequired
+		}
+	}
 	op, err := registrationID("sop_")
 	if err != nil {
 		return zero, pd.ErrUnavailable
 	}
-	s := &configBootstrapCandidateSession{plan: e.plan, authority: a.Session, canonical: e.canonical, operationID: op, hash: want}
+	s := &configBootstrapCandidateSession{plan: e.plan, authority: a.Session, canonical: e.canonical, operationID: op, hash: want, kekPrepared: kekPrepared}
 	return pd.PreparedBootstrapAuthority{Session: s, OperationPublicID: op, CapacityObservedAt: a.CapacityObservedAt}, nil
 }
 
 type configBootstrapCandidateSession struct {
 	plan          *ConfigBootstrapCandidates
 	authority     BootstrapCandidateAuthoritySession
+	kekPrepared   reg.PreparedAdmission
+	kekBound      *reg.Bound
 	canonical     bool
 	operationID   string
 	hash          pd.Hash
@@ -377,6 +395,13 @@ func (s *configBootstrapCandidateSession) WriteBootstrap(ctx context.Context, tx
 	if err := writeBootstrapConfigData(ctx, tx, s.plan.grant, s.plan.config, op, string(hash), now, s.canonical); err != nil {
 		return zero, pd.ErrUnavailable
 	}
+	if s.kekPrepared != nil {
+		bound, kekErr := stageBootstrapKEK(ctx, tx, s.plan.grant.InstallationID, op, s.kekPrepared, false)
+		if kekErr != nil {
+			return zero, pd.ErrGuardRequired
+		}
+		s.kekBound = bound
+	}
 	result, err := insertBootstrapAudit(ctx, tx, s.plan.grant, op, string(hash), "result")
 	if err != nil || result == nil {
 		return zero, pd.ErrUnavailable
@@ -397,7 +422,13 @@ func (s *configBootstrapCandidateSession) Recheck(ctx context.Context, tx pd.Boo
 	}
 	// Independently verify every original flattened value, not just a caller's
 	// stored config hash. The complete installation/config range was locked L1.
-	return verifyBootstrapConfigValues(ctx, tx, s.plan.grant, s.plan.config, s.canonical)
+	if err := verifyBootstrapConfigValues(ctx, tx, s.plan.grant, s.plan.config, s.canonical); err != nil {
+		return err
+	}
+	if s.kekPrepared != nil && (s.kekBound == nil || s.kekBound.Recheck(ctx, s.kekPrepared) != nil) {
+		return pd.ErrGuardRequired
+	}
+	return nil
 }
 
 func verifyBootstrapConfigValues(ctx context.Context, tx pd.ReadSQL, g OfflineBootstrapGrant, c BootstrapConfig, canonical bool) error {

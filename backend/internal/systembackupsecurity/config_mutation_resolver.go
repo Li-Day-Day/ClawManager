@@ -134,6 +134,28 @@ type preparedConfigMutationReadiness struct {
 	risk            ConfigMutationRisk
 }
 
+// KEKInput gives the independently configured C/A adapter the exact proposed
+// reference pair already prepared by the original resolver, without exposing
+// its maps or registry byte slices for mutation.
+func (p *preparedConfigMutationReadiness) KEKInput() ConfigMutationResourceInput {
+	if p == nil {
+		return ConfigMutationResourceInput{}
+	}
+	in := p.input
+	in.slot = "reference:kek"
+	in.registries = make(map[string]ConfigMutationRegistryPair, len(p.input.registries))
+	for kind, pair := range p.input.registries {
+		pair.CurrentJSON = append([]byte(nil), pair.CurrentJSON...)
+		pair.ProposedJSON = append([]byte(nil), pair.ProposedJSON...)
+		in.registries[kind] = pair
+	}
+	in.references = make(map[string]configMutationReferencePair, len(p.input.references))
+	for purpose, pair := range p.input.references {
+		in.references[purpose] = pair
+	}
+	return in
+}
+
 func (r *preparedConfigMutationReadiness) DeploymentEnabled() bool { return r != nil && r.enabled }
 func (r *preparedConfigMutationReadiness) ValidUntil() time.Time {
 	if r == nil {

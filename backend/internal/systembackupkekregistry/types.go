@@ -157,6 +157,13 @@ type SQLReadView interface {
 	QueryRowContext(context.Context, string, ...any) *sql.Row
 }
 
+// SQLWriteView is the original owner's already-open transaction. It exposes
+// neither Commit nor Rollback, so D cannot create a second commit boundary.
+type SQLWriteView interface {
+	SQLReadView
+	ExecContext(context.Context, string, ...any) (sql.Result, error)
+}
+
 // PreparedAdmission is implemented by A, retaining its original authority and
 // C's authenticated source observations. There is deliberately no allow-all
 // implementation here. DTO decoding, a provider profile, or constructor success
