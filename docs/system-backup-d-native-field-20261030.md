@@ -21,7 +21,7 @@
 
 ## 隔离 slot/pool 探针
 
-2026-10-30 同日又用精确 `d57b751e…` 镜像创建了独立临时 pool/slot Pod，未接入现有 Deployment 或实例。第一次 Pod 未就绪并已清理；第二次 Pod `d-native-probe-5a22ca78` UID `8584198e-c356-4c66-80ae-5d8269b0e0a8` 的 pool 正常运行，TLS 请求实际到达 Agent，但能力 GET 返回 503。slot 退出码 1，原日志为 `clock_reference_unavailable`：探针将控制面时钟 HEAD 地址设为不可达的 `127.0.0.1:9`。第二次的 Pod 与两个 Secret 删除退出码均为 0，未发送停止/恢复请求。[隔离探针](../scripts/system-backup-d-native-slot-probe.py)现改用 namespace 内 `clawmanager-gateway` 的时钟地址，待现场复测。它只请求能力 GET，并在结束时删除临时 Pod/Secret。此证据证明 TLS 路由可达，不证明 slot 能力或备份通过。
+2026-10-30 同日又用精确 `d57b751e…` 镜像创建了独立临时 pool/slot Pod，未接入现有 Deployment 或实例。第一次 Pod 未就绪并已清理；第二次 Pod `d-native-probe-5a22ca78` UID `8584198e-c356-4c66-80ae-5d8269b0e0a8` 的 pool 正常运行，TLS 请求实际到达 Agent，但能力 GET 返回 503。slot 退出码 1，原日志为 `clock_reference_unavailable`：探针将控制面时钟 HEAD 地址设为不可达的 `127.0.0.1:9`。第二次的 Pod 与两个 Secret 删除退出码均为 0，未发送停止/恢复请求。[隔离探针](../scripts/system-backup-d-native-slot-probe.py)现改用 namespace 内 `clawmanager-gateway` 的时钟地址，待现场复测。默认只请求能力 GET；显式 `--synthetic-lifecycle` 才会在独立空工作区创建一次性测试进程并测试停止/恢复，结束时删除临时 Pod/Secret。此证据证明 TLS 路由可达，不证明 slot 能力或备份通过。
 
 客户端修复 `16815597` 固定 pool CA/TLS 1.3 并拒绝明文 locator；`7c1951de` 进一步使备份专用 HTTP 调用在发送控制 token 前拒绝非 HTTPS，定向测试退出 0。原生 Dockerfile 完整镜像本地构建因 Docker Hub 匿名令牌连接超时而失败，未产生目标镜像；已使用本地私有仓库中精确旧基础镜像叠加的测试镜像进行隔离探针，不将其当作已验收的完整原生 Lite 镜像。
 
