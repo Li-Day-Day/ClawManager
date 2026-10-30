@@ -34,6 +34,14 @@
 
 上述增量没有提供 B 的最终 capture writer、正式 `NewCaptureKeyJob` 生产调用、原 KEK 映射及历史引用扫描、三用途签名业务 reader 或正式 provider role/permit。因此原表中的生产缺口和拒绝状态继续有效。
 
+### C50 合并后的独立 recovery 复审
+
+共享基线 `05c2f897` 接收公共 C 的 recovery 库存增量。A 逐项核对了 `recovery_inventory.go`、`execution_capture_gate.go` 与 `public_recovery.go`：丢失的 pause intent 仅在冻结 writer 清单、participant checkpoint 摘要及原 recovery 授权的同一事务下重建；重建行保持 `paused=false,resumed=false`，不能铸造停止或恢复 ACK。最终释放再次锁定库存，逐项要求原 writer 已恢复、participant 回到成功状态；`CollectorsStopped` 还要求已创建的 Job 同时有停止时间和撤销标志。恢复路径没有改用 forward grant。
+
+这项源码接线仍需真实 SQL 锁序、旧引用及 worker 停止证明验证。C 的 `system_team_data_backup_jobs` 是独立业务任务，不能替代公共 `system_backup_v2_*` 的 KEK 历史映射或三用途签名。C 提议扩大的五张控制表仍处 `pending_owner_review`，D 保留原 35 表 fail-closed；A 不将其计为已准入。
+
+A 曾启动 C50 后的四包隔离缓存回归；运行中 D 连续修改 `systembackupexecution`，该轮源码快照不再能证明稳定提交，已主动中止且未取得通过结果。专用 Go 缓存和临时构建目录均已删除；待 D 提交后针对受影响包复验。
+
 复用已固定的 OpenBao v2.6.2、JWT trust readback SHA `595ab8034b889490a055b56094ffdd1d71ace5a188d10fa77eab19d3deb89244`、backup KEK v1 profile SHA `fd5c182837152d128d00ece72520a90baa924d07cc76311f151f4f2ab05d4e9f`。这些公开回执证明配置/属性，不证明 role、policy、permit、任务授权或真实 generate/unwrap；不重复昨日采集。
 
 现场正式材料尚需：原 mapping/coverage 来源及 SQL 读回、B 冻结任务上下文和最终 writer、三个签名用途的原业务 reader、受控 provider role/policy/permit/JWT 引用、新部署镜像摘要、历史 ref/version 与当前独立 recovery grant。凭据、JWT、私钥和 DEK 只走受控挂载，不进 Git。没有这些材料时，生产 caller 应继续拒绝；本地测试只报告合成材料的结果。
