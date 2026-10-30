@@ -27,3 +27,7 @@ KEK generate/unwrap 的精确 policy/role 工具仍为 `scripts/system-backup-a-
 接收入口是 `worker.Invocation.ProviderKey` → `worker.NewCaptureKeyJob`（原 mTLS 控制、reserve/begin/end）和 `systembackupkms.PermitMount`（经原 issuer 签名的完整 `ProviderPermit`）。permit 必须固定同一个 `Access` 的 context base64、operation、Pod/SA/Job 身份、原 grant/调用摘要、role/policy/JWT 文件、最短期限；不能由 A 工具自行签出新的任务授权。D 的 KEK Store 完整 coverage/首登提交读回和原 source reader 尚未完成时，任何 policy/role 应停留在准备态。
 
 现场命令将在真实 plan SHA、Job identity SHA、JWT mount、role/policy 和受控文件路径确定后给出。执行顺序是独立审查 plan → exact policy/role 下发读回 → 原 Job permit/凭据装配 → 小范围 generate/unwrap → 错用途、错版本、错 context 拒绝 → 单用途撤销读回及原 worker 停止证明。不能用旧 synthetic spike 的成功代替这些回执。
+
+## 本地验证（2026-10-30）
+
+`go vet -p 1 ./internal/systembackupsecurity` 退出码 0；`go test -p 1 -run '^Test(OriginalSigningResolver|SigningJWT)' ./internal/systembackupsecurity` 退出码 0。KEK policy/role 工具的 11 个 Python 测试与 C plan builder 的 18 个 Node 测试均为 0。A 专用 Go 缓存及临时构建目录已删除。以上仅覆盖本地构造、拒绝和计划校验；没有生产 original signing authority、已准入三用途 signer key/role、现场 generate/unwrap 或撤销读回。

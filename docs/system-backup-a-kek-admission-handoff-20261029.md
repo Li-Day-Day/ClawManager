@@ -19,4 +19,6 @@
 
 ## 验收边界
 
-本地 vet/test 仅验证结构和独立来源接口的拒绝逻辑。正式准入需要 D 的 SQL reader/Bind/Stage、原来源认证、四分区完整扫描和成功提交读回；真实 generate/unwrap 还需要 B 的冻结 `systembackupkms.Access`、原 Job/Pod/SA 身份与 permit、精确 provider policy/role 及现场操作回执。已通过的 JWT trust 和 KEK profile 回执不替代这些证据。
+本地 vet/test 仅验证结构和独立来源接口的拒绝逻辑。正式准入仍需 D 已提交的 SQL reader/Bind/Stage 在生产构造中启用、独立原来源认证、四分区完整扫描和成功提交读回；真实 generate/unwrap 还需要 B 的冻结 `systembackupkms.Access`、原 Job/Pod/SA 身份与 permit、精确 provider policy/role 及现场操作回执。已通过的 JWT trust 和 KEK profile 回执不替代这些证据。
+
+2026-10-29 本批 `go vet -p 1` 与 `go test -p 1` 对 `systembackupkekadmission`、`systembackupkekadapter`、`systembackupsecurity` 三包均退出 0；专用测试构建缓存已清除。此结果不包含后来 D 的事务接线或生产扫描验收。
