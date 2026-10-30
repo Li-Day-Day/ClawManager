@@ -179,7 +179,7 @@ WorkBuddy 没有被悄悄从全量导入中丢弃：上述 SQL 演练一开始�
 - 节点证明使用本目录 `node-proof.pod.yaml`，`NodeEndpoints` 的节点名和服务器 SPIFFE 必须逐一对应。控制器使用自己的 clientAuth 身份访问它。仅有 Pod/Job 消失不能替代节点上原容器进程已退出的证明。
 - 各源命名空间和隔离命名空间预建无 API 权限的 `backup-worker` ServiceAccount，关闭 token 自动挂载。控制器使用 `controller.yaml` 的 RBAC；它需要枚举全局 Pod/PV 和源工作负载，不能只看到部分实例。
 - 控制器运行在 `cm-backup`，不能运行在隔离目标命名空间。通过 Downward API 注入 `POD_NAME/POD_NAMESPACE/POD_UID`。控制器会核对自身 `controller` 容器的实际卷挂载。
-- 控制器与所有 Worker 的 staging 必须通过 RWX PVC 指向同一 NFS export/path 或 CSI driver/volumeHandle；evidence 使用另一共享卷。跨命名空间 PVC 名相同不代表数据相同，配置要填各自真实 UID。根目录必须预先存在且可写，不能设置 subPath。artifact 根独立持久化。Worker 密文输出 root 所有、0400，控制器因此也用 UID 0，但不授予 privileged、宿主目录或额外 capabilities。
+- 控制器与所有 Worker 的 staging 必须通过 RWX PVC 指向同一 NFS export/path 或 CSI driver/volumeHandle；evidence 使用另一共享卷。跨命名空间 PVC 名相同不代表数据相同，配置要填各自真实 UID。根目录必须预先存在且可写，不能设置 subPath。artifact 根独立持久化。Worker 密文输出 root 所有、0400，控制器因此也用 UID 0，但不授予 privileged、宿主目录或额外 capabilities。`seal_custody_max_bytes` 是 controller 私有封存目录的安装级容量上限，样例为 1 GiB；部署时依据受审容量与保留期设定，并核对共享卷的剩余空间及目录锁、hard link、chmod、目录 fsync 能力。Worker 只挂其 task subPath，不得挂封存目录或 staging 卷根。
 - 目标隔离策略见 `quarantine.yaml`，`backup-quarantine` 必须永久保留并由支持 NetworkPolicy 的 CNI 执行。目标只允许本任务账本对应的 Worker Job；禁止应用 Pod/Deployment/ReplicaSet/StatefulSet/DaemonSet/CronJob。目标库需提前安装兼容的业务 schema，只有 bootstrap admin，恢复策略会用源 admin 密码和资料替换。
 
 ## 具体实例映射
