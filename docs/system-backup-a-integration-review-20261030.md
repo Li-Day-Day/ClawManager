@@ -26,6 +26,14 @@
 
 ## 材料与测试口径
 
+### 10 月 30 日 D 现场增量的 A 复审
+
+- `21dd2905`、`2c340c86` 记录了隔离测试 Pod 的 Agent 停止和恢复：原 PID 78、恢复 PID 87，原始回执字节与 SHA 已固定。它证明这一临时 Agent/镜像组合的生命周期调用，尚未证明生产 controller、真实用户实例、原 SQL 停止证明或最终 capture。
+- `849a4e1b`、`bd38b9c7` 提供随机 namespace、两个一次性 PVC 的跨节点 seal 能力探针及固定镜像 digest。A 核对外层仅在内层 `execute=True` 探针正常返回后才标记 `passed`，失败与清理失败均抛出；本地 5 项 Python 测试通过。尚无 Kubernetes/Longhorn 现场回执，更不能据此放行生产 staging PVC。
+- D 的隔离数据库副本预检 `35252e15` 已现场运行并清理；A 复审指出同名 MySQL Pod 替换可能使后续写入或清理落到另一实例。`834026bf` 已在每次操作前复核 namespace UID、Pod UID、server UUID，并在实际 CREATE、导入和 DROP 的同一次 Pod shell 内再次核对 server UUID。A 已核对提交的三处调用；修订版仅通过本地 Bash 语法检查，**尚未现场重跑**，旧现场回执不能证明新修订的运行结果。副本测试不等于现库迁移授权或数据保全验收。
+
+上述增量没有提供 B 的最终 capture writer、正式 `NewCaptureKeyJob` 生产调用、原 KEK 映射及历史引用扫描、三用途签名业务 reader 或正式 provider role/permit。因此原表中的生产缺口和拒绝状态继续有效。
+
 复用已固定的 OpenBao v2.6.2、JWT trust readback SHA `595ab8034b889490a055b56094ffdd1d71ace5a188d10fa77eab19d3deb89244`、backup KEK v1 profile SHA `fd5c182837152d128d00ece72520a90baa924d07cc76311f151f4f2ab05d4e9f`。这些公开回执证明配置/属性，不证明 role、policy、permit、任务授权或真实 generate/unwrap；不重复昨日采集。
 
 现场正式材料尚需：原 mapping/coverage 来源及 SQL 读回、B 冻结任务上下文和最终 writer、三个签名用途的原业务 reader、受控 provider role/policy/permit/JWT 引用、新部署镜像摘要、历史 ref/version 与当前独立 recovery grant。凭据、JWT、私钥和 DEK 只走受控挂载，不进 Git。没有这些材料时，生产 caller 应继续拒绝；本地测试只报告合成材料的结果。
