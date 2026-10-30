@@ -228,6 +228,38 @@ DSN 文件应只供操作员读取，并指向隔离副本；命令不会打印�
 额外列漂移。该试验未使用现场业务数据；测试容器、二进制、DSN、缓存及
 镜像已清理。
 
+### 2026-10-30 现场数据隔离副本预检
+
+远侧测试环境的 `clawmanager` 现库估算 87 MiB、MySQL 数据目录空闲
+1,923,712 MiB。操作员使用
+[`scripts/system-backup-d-legacy-copy-preflight-remote.sh`](../scripts/system-backup-d-legacy-copy-preflight-remote.sh)
+在同一 MySQL 8.4.8 Pod 内创建随机命名的
+`cm_import_301564ebae734fbb8ff3da1aaf1b9024` 隔离库，以
+`mysqldump --single-transaction --quick --skip-lock-tables` 导入现库数据；
+未对原库执行 DDL 或转换。脚本先核对现场 server UUID、结构清单与命令
+二进制 SHA；现场运行的脚本 SHA256 为
+`46550f9f8e253202abf749e2d48fb1db28eaa2fcf00d39f76cf2f939158eed8b`。
+预检在只读事务内完成并输出：
+
+```text
+state=read_only_schema_and_ledger_verified
+copy_schema_variant=mysqldump_8_4_8
+copy_schema_sha256=ec1b3e004d83fb6e82aebecf33d1d5ad1d88cb2e094325c26aea9d3530d5e28b
+ledger_sha256=5d303453289c28d0b8abf7abab8b3abe15ad605079feb01e599d919b53068903
+table_count=99 legacy_control_tables=35
+data_preservation_verified=false migration_authorized=false
+```
+
+预检后的核心计数在原库与副本一致：`users=8`、`instances=4`、
+`runtime_pods=9`、`instance_runtime_bindings=3`、`schema_migrations=97`。
+这些计数不能代替逐表行摘要、外键关系复核或恢复可用性验证。同一 MySQL
+Pod 上的临时副本也不是独立故障域备份。脚本在退出时执行副本和临时文件
+清理；远侧独立只读核验返回 `COPY_ABSENT`、`POD_TEMP_ABSENT`。
+本地测试构建二进制和 Go 缓存也已删除。
+现场运行后又补入每次操作前的 namespace UID、Pod UID、MySQL server UUID
+复查，身份变化时拒绝继续写入并留下待人工核查的副本名。这个脚本修订
+通过本地 Bash 语法检查，尚未在远侧重跑；现场结果对应上面的原脚本 SHA。
+
 ## 本 profile 的交付出口
 
 1. 已从 `4fe83bcd` Git blob 提取该提交的 137 项 SQL 原字节摘要，与现场
