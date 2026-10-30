@@ -60,7 +60,9 @@ catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异�
   `backup_import_map.json` 固定源提交 `d3c5715a…` 和 **136 项**完整
   migration，并要求隔离副本库名为 `cm_import_<32hex>`、完整源 schema
   指纹、源 ledger 全集、无未完成工作。现场 97 项相对该 map 有 3 项额外、
-  42 项缺失，不能直接复用其 `--apply` 路径或只替换源提交 SHA。
+  42 项缺失；map 的 42 张待改名旧表在现场只有 35 张，15 条历史别名中
+  只有 14 条对应现场 ledger，`081_fix_system_backup_prune_item_identity.sql`
+  尚未应用。不能直接复用其 `--apply` 路径或只替换源提交 SHA。
 - 用户提供的全库 `mysqldump --no-data` 文件 SHA-256 为
   `1f1fa2d156c2527587d21a727e1e273cb02635b0e1e3ce1391443cfce7f5a655`，
   大小 341234 字节；含 99 张表、无 INSERT、无视图、无 v2 表。它的表名
@@ -117,7 +119,8 @@ catalog 对应 `acf59b79` 的 Git blob 原字节，并核对 `4fe83bcd` 差异�
 ```powershell
 py -3 -B scripts/system-backup-d-legacy-ledger-audit.py `
   --ledger-file docs/evidence/d-existing-db-ledger-20261030.txt `
-  --expected-ledger-sha256 5d303453289c28d0b8abf7abab8b3abe15ad605079feb01e599d919b53068903
+  --expected-ledger-sha256 5d303453289c28d0b8abf7abab8b3abe15ad605079feb01e599d919b53068903 `
+  --inventory-file docs/evidence/d-existing-db-live-inventory-direct-20261030.json
 py -3 -B scripts/system-backup-d-legacy-ledger-audit.test.py
 ```
 
@@ -127,7 +130,9 @@ py -3 -B scripts/system-backup-d-legacy-ledger-audit.test.py
 按当前 Go catalog 的规范化与长度前缀算法计算，并与仓库的 reviewed pin
 比对；pin 不匹配时脚本拒绝输出审计通过结果。JSON 中
 `schema_equivalence_verified=false` 与 `migration_authorized=false` 是固定
-拒绝边界，不是可更改的准入开关。
+拒绝边界，不是可更改的准入开关。加入 `--inventory-file` 时，脚本还要求
+现场 JSON 原字节 SHA、server UUID、库名、97 行 ledger、结构指纹与各元数据
+计数都符合固定现场 profile；这仍是只读核对，不提供迁移授权。
 
 ## 现场全库结构采集入口
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Read-only, source-pinned inventory for the 4fe83bcd database import profile.
 
-This does not inspect a live schema, authorize replay, or write any SQL.
+The optional direct inventory is pinned to the observed live schema. This
+never authorizes replay or writes SQL.
 """
 
 import argparse
@@ -17,6 +18,11 @@ SOURCE_COMMIT = "4fe83bcde5a8a693dddb2635e9a3e397d6e3472e"
 DEPLOYED_SOURCE_COMMIT = "acf59b7933303b879af80ed192fa0ca4466c79d7"
 DEPLOYED_IMAGE_ID = "sha256:c16f07c25c6dc8362aa09b7a1e81f5d1204f2812ae542bbcb21a3946975c6c9d"
 DEPLOYED_CATALOG_SHA256 = "0de7fd12672eccc8b51fd38b6e3dd49e6342fe3e52da247267e9cd02ba420d93"
+LIVE_INVENTORY_SHA256 = "71b22c009b3ad9bdeef324d2cafd2aa4c1a646110f2080d1b6f42746f8f7013f"
+LIVE_SCHEMA_SHA256 = "140b053e6d3a40a8b5d7c305e3429020a1bc394b3c156167d9683072ec0908bf"
+LIVE_SERVER_UUID = "f1f5f76a-95f5-11f1-b08e-366835b4a029"
+LIVE_DATABASE = "clawmanager"
+LIVE_LEDGER_SHA256 = "5d303453289c28d0b8abf7abab8b3abe15ad605079feb01e599d919b53068903"
 MIGRATION_DIR = "backend/internal/db/migrations"
 NAME = re.compile(r"[0-9]{3}_[A-Za-z0-9_-]+\.sql\Z")
 HEX = re.compile(r"[0-9a-f]{64}\Z")
@@ -39,6 +45,32 @@ def read_ledger(path, expected):
     if not names or any(not NAME.fullmatch(n) for n in names) or len(set(names)) != len(names):
         raise ValueError("ledger filename invalid or duplicated")
     return names
+
+
+def read_live_inventory(path, ledger):
+    raw = path.read_bytes()
+    if len(raw) > 2_000_000 or digest(raw) != LIVE_INVENTORY_SHA256:
+        raise ValueError("live inventory digest mismatch")
+    try:
+        report = json.loads(raw)
+        schema = report["schema"]
+        facts = schema["facts"]
+        tables = schema["tables"]
+        valid = (report["version"] == 1 and
+                 report["server_uuid"] == LIVE_SERVER_UUID and
+                 report["database"] == LIVE_DATABASE and
+                 report["ledger_sha256"] == LIVE_LEDGER_SHA256 and
+                 report["schema_sha256"] == LIVE_SCHEMA_SHA256 and
+                 report["ledger"] == ledger and
+                 report["migration_authorized"] is False and
+                 report["schema_equivalence_verified"] is False and
+                 len(tables) == 99 and
+                 [len(group) for group in facts] == [99, 1948, 896, 188, 266])
+    except (KeyError, TypeError, ValueError, IndexError):
+        valid = False
+    if not valid:
+        raise ValueError("live inventory identity or shape mismatch")
+    return report
 
 
 def source_blobs(repo, commit):
@@ -192,6 +224,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ledger-file", type=Path, required=True)
     parser.add_argument("--expected-ledger-sha256", required=True)
+    parser.add_argument("--inventory-file", type=Path,
+                        help="optional byte-pinned direct live schema inventory")
     parser.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parents[1])
     args = parser.parse_args()
     try:
@@ -212,6 +246,16 @@ def main():
                 name for name in deployed if result["applied_source_sql_sha256"].get(name) != deployed[name]
             ),
         })
+        if args.inventory_file is not None:
+            inventory = read_live_inventory(args.inventory_file, names)
+            result.update({
+                "live_inventory_sha256": LIVE_INVENTORY_SHA256,
+                "live_schema_sha256": inventory["schema_sha256"],
+                "live_server_uuid": inventory["server_uuid"],
+                "live_database": inventory["database"],
+                "live_table_count": len(inventory["schema"]["tables"]),
+                "live_column_count": len(inventory["schema"]["facts"][1]),
+            })
     except (OSError, ValueError, KeyError, TypeError, subprocess.CalledProcessError):
         print("legacy ledger audit rejected; no migration authorized", file=sys.stderr)
         return 1

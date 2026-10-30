@@ -77,6 +77,24 @@ class LedgerAuditTest(unittest.TestCase):
             "047_add_instance_runtime_variant.sql",
         ])
 
+    def test_direct_inventory_requires_exact_bytes_and_ledger(self):
+        repo = MODULE_PATH.resolve().parents[1]
+        path = repo / "docs/evidence/d-existing-db-live-inventory-direct-20261030.json"
+        names = audit.read_ledger(
+            repo / "docs/evidence/d-existing-db-ledger-20261030.txt",
+            audit.LIVE_LEDGER_SHA256,
+        )
+        report = audit.read_live_inventory(path, names)
+        self.assertEqual(report["schema_sha256"], audit.LIVE_SCHEMA_SHA256)
+        self.assertFalse(report["migration_authorized"])
+        with self.assertRaisesRegex(ValueError, "identity or shape mismatch"):
+            audit.read_live_inventory(path, names[:-1])
+        with tempfile.TemporaryDirectory() as folder:
+            modified = Path(folder) / "inventory.json"
+            modified.write_bytes(path.read_bytes() + b" ")
+            with self.assertRaisesRegex(ValueError, "digest mismatch"):
+                audit.read_live_inventory(modified, names)
+
 
 if __name__ == "__main__":
     unittest.main()
