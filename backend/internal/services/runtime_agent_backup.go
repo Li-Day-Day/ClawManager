@@ -120,7 +120,7 @@ func (c *runtimeAgentHTTPClient) backupHTTP(ctx context.Context, endpoint, metho
 		return nil, 0, ErrRuntimeStopUnconfirmed
 	}
 	u, err := url.Parse(endpoint)
-	if err != nil || u.Host == "" || (u.Scheme != "http" && u.Scheme != "https") || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") {
+	if err != nil || u.Host == "" || u.Scheme != "https" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") {
 		return nil, 0, ErrRuntimeStopUnconfirmed
 	}
 	var payload []byte

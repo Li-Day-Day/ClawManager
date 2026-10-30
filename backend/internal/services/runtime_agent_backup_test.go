@@ -45,7 +45,7 @@ func backupClientTestRequest() RuntimeBackupRequest {
 func TestNativeBackupClientRequiresExactAuthenticatedReceipt(t *testing.T) {
 	req := backupClientTestRequest()
 	state := "stopped"
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("X-ClawManager-Control-Token") != "control" {
 			w.WriteHeader(401)
 			return
@@ -73,7 +73,7 @@ func TestNativeBackupClientRequiresExactAuthenticatedReceipt(t *testing.T) {
 		json.NewEncoder(w).Encode(RuntimeBackupReceipt{Request: got, State: "stopped", Scope: RuntimeBackupStopScope, ConfirmedAt: time.Now().UTC()})
 	}))
 	defer server.Close()
-	client := NewRuntimeAgentClient("control").(RuntimeAgentBackupClient)
+	client := NewRuntimeAgentClientWithHTTPClient("control", server.Client()).(RuntimeAgentBackupClient)
 	if _, err := client.BackupCapabilities(context.Background(), server.URL, req.GatewayPort); err != nil {
 		t.Fatal(err)
 	}
@@ -95,18 +95,35 @@ func TestNativeBackupClientRequiresExactAuthenticatedReceipt(t *testing.T) {
 func TestNativeBackupClientRejectsRedirectAndModifiedRestart(t *testing.T) {
 	req := backupClientTestRequest()
 	var reached int
-	redirect := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	redirect := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reached++
 		w.Header().Set("Location", "http://example.invalid/collect")
 		w.WriteHeader(307)
 	}))
 	defer redirect.Close()
-	client := NewRuntimeAgentClient("control").(RuntimeAgentBackupClient)
+	client := NewRuntimeAgentClientWithHTTPClient("control", redirect.Client()).(RuntimeAgentBackupClient)
 	if _, err := client.BackupCapabilities(context.Background(), redirect.URL, req.GatewayPort); err == nil || reached != 1 {
 		t.Fatal("redirect was followed or accepted")
 	}
 	restart := RuntimeAgentCreateGatewayRequest{InstanceID: 7, UserID: 2, Generation: 9, PodUID: req.PodUID, AgentType: "openclaw", GatewayPort: 20000, PortRange: RuntimeAgentPortRange{Start: 20000, End: 20002}, UID: 1001, GID: 1001, WorkspacePath: "/workspaces/openclaw/user-2/instance-7"}
 	if _, err := client.BackupControl(context.Background(), redirect.URL, "resume", req, &restart); err == nil || reached != 1 {
 		t.Fatal("modified restart sent to Agent")
+	}
+}
+
+func TestNativeBackupClientRejectsHTTPBeforeSendingToken(t *testing.T) {
+	reached := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { reached++; w.WriteHeader(200) }))
+	defer server.Close()
+	client := NewRuntimeAgentClient("control").(RuntimeAgentBackupClient)
+	req := backupClientTestRequest()
+	if _, err := client.BackupCapabilities(context.Background(), server.URL, req.GatewayPort); err == nil {
+		t.Fatal("HTTP capability endpoint accepted")
+	}
+	if _, err := client.BackupControl(context.Background(), server.URL, "stop", req, nil); err == nil {
+		t.Fatal("HTTP stop endpoint accepted")
+	}
+	if reached != 0 {
+		t.Fatal("control token sent to an HTTP endpoint")
 	}
 }
