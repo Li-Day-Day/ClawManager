@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"clawreef/internal/backupgate"
+
 	"github.com/go-sql-driver/mysql"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
@@ -22,6 +24,17 @@ func (s *TeamDataService) Run(ctx context.Context) {
 	for ctx.Err() == nil {
 		if e := s.runOwned(ctx); e != nil && ctx.Err() == nil {
 			log.Printf("Team data backup worker: %s", PublicError(e))
+			// runOwned joins execution and all cancellation watchers before it
+			// returns. A failed terminal write must not leave this process's
+			// old owner permanently running. Re-enter under a fresh owner and
+			// reconcile the old outcome, never replay its external operation.
+			prefix := "online_"
+			if s.recoveryOnly {
+				prefix = "recovery_"
+			}
+			if next, err := RandomID(prefix); err == nil {
+				s.owner = next
+			}
 		}
 		select {
 		case <-ctx.Done():
@@ -56,7 +69,7 @@ func (s *TeamDataService) runOwned(ctx context.Context) error {
 	}()
 	// An old process never causes a second capture/restore of the same job.
 	// Keep partial targets and immutable parts for inspection and explicit cleanup.
-	if _, e = s.db.ExecContext(ctx, "UPDATE system_team_data_backup_jobs SET status='failed',phase='interrupted',error_code='process_interrupted',finished_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6),owner_id=NULL WHERE status IN ('running','canceling') AND (owner_id IS NULL OR owner_id<>?)", s.owner); e != nil {
+	if _, e = s.db.ExecContext(ctx, "UPDATE system_team_data_backup_jobs SET report_json=JSON_SET(COALESCE(report_json,JSON_OBJECT()),'$.interrupted_phase',phase),status='failed',phase='interrupted',error_code='process_interrupted',finished_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6),owner_id=NULL WHERE status IN ('running','canceling') AND (owner_id IS NULL OR owner_id<>?)", s.owner); e != nil {
 		return e
 	}
 	for ctx.Err() == nil {
@@ -67,14 +80,14 @@ func (s *TeamDataService) runOwned(ctx context.Context) error {
 		if e != nil && e.Error() != "not_found" {
 			return e
 		}
-		if e == nil {
-			r, e := s.db.ExecContext(ctx, "UPDATE system_team_data_backup_jobs SET status='running',owner_id=?,started_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND status='pending'", s.owner, j.ID)
-			if e != nil {
-				return e
+		if e != nil && e.Error() == "not_found" {
+			if followErr := s.continueQueuedRetry(ctx); followErr != nil {
+				return followErr
 			}
-			n, _ := r.RowsAffected()
-			if n == 1 {
-				s.execute(ctx, conn, j)
+		}
+		if e == nil {
+			if e = s.executeAdmitted(ctx, conn, j); e != nil && !errors.Is(e, backupgate.ErrMaintenance) && !errors.Is(e, ErrMaintenance) {
+				return e
 			}
 		}
 		select {
@@ -86,7 +99,64 @@ func (s *TeamDataService) runOwned(ctx context.Context) error {
 	return ctx.Err()
 }
 
-func (s *TeamDataService) execute(parent context.Context, lock *sql.Conn, j TeamDataJob) {
+// The online worker is a finite application participant, not a second
+// strong-consistency engine. Hold the shared source admission BEFORE claiming
+// work, and retain it through all synchronous execution and settlement. A
+// closed capture gate leaves this operation pending for a later tick.
+func (s *TeamDataService) executeAdmitted(ctx context.Context, lock *sql.Conn, j TeamDataJob) error {
+	release, err := backupgate.HoldWorkUnit(ctx, "backup.team_data")
+	if err != nil {
+		if errors.Is(err, backupgate.ErrMaintenance) || errors.Is(err, ErrMaintenance) {
+			return s.deferSourceAdmission(ctx, j, err)
+		}
+		return err
+	}
+	defer release()
+	result, err := s.db.ExecContext(ctx, "UPDATE system_team_data_backup_jobs SET status='running',owner_id=?,started_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND status='pending'", s.owner, j.ID)
+	if err != nil {
+		return err
+	}
+	n, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return nil
+	}
+	if n != 1 {
+		return ErrFence
+	}
+	return s.execute(ctx, lock, j)
+}
+
+// Waiting for another capture must not occupy the ordinary backup slot
+// forever. Only an unclaimed operation may time out here; this never releases
+// the other owner's source protection or asserts that its writers stopped.
+func (s *TeamDataService) deferSourceAdmission(ctx context.Context, j TeamDataJob, cause error) error {
+	seconds := s.cfg.DeadlineSeconds
+	if seconds < 1 {
+		seconds = 600
+	}
+	result, err := s.db.ExecContext(ctx, "UPDATE system_team_data_backup_jobs SET status='failed',phase='admission_timed_out',error_code='source_gate_wait_timed_out',finished_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND status='pending' AND phase='waiting_for_source' AND TIMESTAMPADD(SECOND,?,updated_at)<=UTC_TIMESTAMP(6)", j.ID, seconds)
+	if err != nil {
+		return err
+	}
+	n, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		// A polling tick is not business progress. Write UTC only on the
+		// transition; historical created_at can use a different session zone.
+		_, err = s.db.ExecContext(ctx, "UPDATE system_team_data_backup_jobs SET phase='waiting_for_source',updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND status='pending' AND phase<>'waiting_for_source'", j.ID)
+		if err != nil {
+			return err
+		}
+	}
+	return cause
+}
+
+func (s *TeamDataService) execute(parent context.Context, lock *sql.Conn, j TeamDataJob) error {
 	ctx, cancel := context.WithTimeout(parent, time.Duration(s.cfg.DeadlineSeconds)*time.Second)
 	defer cancel()
 	stopped := make(chan struct{})
@@ -151,8 +221,11 @@ func (s *TeamDataService) execute(parent context.Context, lock *sql.Conn, j Team
 	finish, stop := context.WithTimeout(context.Background(), 10*time.Second)
 	defer stop()
 	actual, e := s.Get(finish, j.ID)
-	if e != nil || actual.Owner != s.owner {
-		return
+	if e != nil {
+		return e
+	}
+	if actual.Owner != s.owner {
+		return ErrFence
 	}
 	status, phase, code := "succeeded", "complete", ""
 	if err != nil {
@@ -169,8 +242,16 @@ func (s *TeamDataService) execute(parent context.Context, lock *sql.Conn, j Team
 			log.Printf("Team data SQL readback: id=%s detail=%s", j.ID, err.Error())
 		}
 	}
+	report.Retry = teamDataRetry(j)
+	if report.Retry != nil && report.Retry.Next == "restore" && status == "succeeded" && j.Operation == "cleanup" {
+		phase = "retry_pending"
+		if actual.CancelRequested {
+			phase = "retry_stopped"
+		}
+	}
 	raw, _ := json.Marshal(report)
-	_, _ = s.db.ExecContext(finish, "UPDATE system_team_data_backup_jobs SET status=?,phase=?,error_code=?,report_json=?,finished_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND owner_id=? AND status IN ('running','canceling')", status, phase, code, raw, j.ID, s.owner)
+	result, e := s.db.ExecContext(finish, "UPDATE system_team_data_backup_jobs SET status=?,phase=?,error_code=?,report_json=?,finished_at=UTC_TIMESTAMP(6),updated_at=UTC_TIMESTAMP(6) WHERE public_id=? AND owner_id=? AND status IN ('running','canceling')", status, phase, code, raw, j.ID, s.owner)
+	return requireRow(result, e)
 }
 
 func teamDataFailure(err error) string {
