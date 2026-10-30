@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import secrets
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -111,6 +112,18 @@ def source_fingerprint():
     return digest.digest()
 
 
+def resumed_cache():
+    value = os.environ.get("SBK_A_RESUME_GOCACHE", "")
+    if not value:
+        return None
+    cache = Path(value).resolve(strict=True)
+    temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
+    if cache.name != "gocache" or cache.parent.parent != temporary_root or \
+            not cache.parent.name.startswith("sbk-a-legacy-inventory-") or not cache.is_dir():
+        raise RuntimeError("refusing unowned Go cache path")
+    return cache
+
+
 def main():
     if OUTPUT.exists():
         raise RuntimeError("evidence output already exists; preserve prior result")
@@ -123,9 +136,10 @@ def main():
     env_check = 'test -n "$DB_HOST" && test -n "$DB_PORT" && test -n "$DB_USER" && test -n "$DB_PASSWORD" && test "$DB_NAME" = ' + shlex.quote(DATABASE)
     ssh(kubectl("-n", NAMESPACE, "exec", POD, "-c", CONTAINER, "--", "sh", "-c", env_check))
     source_before = source_fingerprint()
+    cache = resumed_cache()
     with tempfile.TemporaryDirectory(prefix="sbk-a-legacy-inventory-") as scratch:
         binary = Path(scratch) / "system-backup-legacy-inventory"
-        build_env = dict(os.environ, GOOS="linux", GOARCH=goarch, CGO_ENABLED="0", GOCACHE=str(Path(scratch) / "gocache"))
+        build_env = dict(os.environ, GOOS="linux", GOARCH=goarch, CGO_ENABLED="0", GOCACHE=str(cache or Path(scratch) / "gocache"))
         build = subprocess.run(
             ["go", "build", "-mod=readonly", "-p", "1", "-o", str(binary), "./cmd/system-backup-legacy-inventory"],
             cwd=ROOT / "backend", env=build_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -183,6 +197,8 @@ def main():
                    "sha256": hashlib.sha256(result.stdout).hexdigest(), "schema_sha256": record["schema_sha256"],
                    "tables": len(record["schema"].get("tables", [])), "remote_binary_cleaned": True,
                    "local_build_cleaned": True, "migration_authorized": False}
+    if cache is not None:
+        shutil.rmtree(cache.parent)
     print(json.dumps(summary))
 
 

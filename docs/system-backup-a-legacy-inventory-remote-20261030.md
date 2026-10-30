@@ -12,4 +12,4 @@ py -3 -B scripts/system-backup-a-legacy-inventory-remote.py; "A_REMOTE_EXIT=$LAS
 
 只有成功读取、固定身份/ledger/只读标志与 JSON 结构均验证后，才会创建 `docs/evidence/a-site-legacy-inventory-direct-20261030.json`，并打印文件 SHA、现场 schema SHA、表数与两侧临时产物清理状态。这个 JSON 是结构证据，不是迁移或备份准入；现场与隔离候选指纹即使相同，也仍需 D 核对三项额外历史 SQL 原字节及真实行的隔离副本迁移和回退。命令失败时保留原现场，若提示远侧临时文件清理未证实，按错误中的唯一 `/tmp/sbk-a-legacy-inventory-*` 路径单独核查，不重建 Pod。
 
-本地 `py -3 -B scripts/system-backup-a-legacy-inventory-remote.test.py` 两项退出 0，覆盖固定身份、拒绝迁移标志、ledger 变更和重复 JSON 字段。`GOOS=linux GOARCH=amd64 CGO_ENABLED=0` 对 D inventory 命令的独立缓存构建退出 0，8,896,807 字节且 ELF 头正确；临时构建目录已删除。现场入口尚未执行，不能记录直接 schema SHA 或成功清理回执。
+本地 `py -3 -B scripts/system-backup-a-legacy-inventory-remote.test.py` 三项退出 0，覆盖固定身份、拒绝迁移标志、ledger 变更、重复 JSON 字段和只接受本轮命名前缀下的缓存续跑。`GOOS=linux GOARCH=amd64 CGO_ENABLED=0` 对 D inventory 命令的独立缓存构建退出 0，8,896,807 字节且 ELF 头正确；该次验证的临时构建目录已删除。现场入口首次执行的 Python 进程已退出而 Go 子进程仍在运行，原窗口的最终退出码和原因尚待操作者回传，且未产生直接 schema JSON；本地残留缓存须取得 Go 终态后才能复用或清理，不能把初次执行记为远测成功。

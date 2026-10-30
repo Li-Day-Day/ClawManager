@@ -2,9 +2,12 @@
 
 import copy
 import json
+import os
 from pathlib import Path
 import runpy
+import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -49,6 +52,16 @@ class InventoryAcceptance(unittest.TestCase):
         raw = raw[:-1] + b',"migration_authorized":false}'
         with self.assertRaises(ValueError):
             runner["accepted_inventory"](raw)
+
+    def test_resume_cache_accepts_only_owned_temp_directory(self):
+        with tempfile.TemporaryDirectory(prefix="sbk-a-legacy-inventory-") as scratch:
+            cache = Path(scratch) / "gocache"
+            cache.mkdir()
+            with mock.patch.dict(os.environ, {"SBK_A_RESUME_GOCACHE": str(cache)}):
+                self.assertEqual(runner["resumed_cache"](), cache.resolve())
+            with mock.patch.dict(os.environ, {"SBK_A_RESUME_GOCACHE": str(Path(scratch))}):
+                with self.assertRaises(RuntimeError):
+                    runner["resumed_cache"]()
 
 
 if __name__ == "__main__":
