@@ -3,6 +3,7 @@ package worker
 import (
 	"clawreef/internal/systembackup/staging"
 	"clawreef/internal/systembackup/workspace"
+	k "clawreef/internal/systembackupkms"
 	"errors"
 )
 
@@ -24,6 +25,13 @@ func captureFailure(err error) error {
 	return &Failure{code: code}
 }
 func FailureCode(err error) string {
+	if errors.Is(err, k.ErrUnknown) {
+		return "provider_outcome_unknown"
+	}
+	var formal *formalCaptureFailure
+	if errors.As(err, &formal) {
+		return formal.code
+	}
 	var f *Failure
 	if errors.As(err, &f) {
 		return f.code

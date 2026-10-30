@@ -11,10 +11,15 @@
 runtime, err := systembackupcontroller.NewSQLRuntimeControl(runtimeConfig)
 if err != nil { return err }
 captureConfig.RuntimeControl = runtime
+// B 接收补齐：显式保留原平台 writer，不允许覆盖掉 C 的停止/恢复证明。
+platform, err := service.PlatformWriterGroup(originalJobOwner)
+if err != nil { return err }
+captureConfig.PlatformWriters = platform
+captureConfig.Modules = moduleCatalog // 可选；nil 保留现有 workspace 工厂
 capture, err := systembackupexecution.NewPublicCapture(captureConfig)
 ```
 
-`NewPublicCapture` 检查与原 JobOwner 相同的 DB/installation/application scope/recovery identity，然后设置 `LinuxProfileConfig.BuildWriters=runtime.BuildWriters`。原 BuildParts、source connection、profile、Admission、Inventory、Guard 仍是已有 deployment 的真实输入。B 不实现 SQL，不创建另一套任务、gate、密钥或身份服务。
+`NewPublicCapture` 检查与原 JobOwner 相同的 DB/installation/application scope/recovery identity，然后将 D runtime.BuildWriters 与原平台组组合，按原 frozen IDs 分组/合并校验；缺平台组明确拒绝，不能覆盖 C 的物理停止证明。可选 Modules 经 B.WithCaptureModules 只替换 part factory，其余 source/profile/Admission/Inventory/Guard 保留；nil 保留原 workspace BuildParts。当前 supportedPublicCapture 和平台零实例门禁不放宽。B 本地接线的准确验证/缺依赖状态见 [B 统一基线记录](system-backup-b-unified-adaptation-20261029.md)；不是 D/现场已签收声明。
 
 需要分步消费时，D `Prepare(ctx,authority)` 返回 `[]publicadapter.RuntimeWriterSpec`；`Dependencies(ctx,authority,specs)` 返回 `RuntimeWriterDependencies`；`Callbacks()` 返回七个真实 `WriterCallbacks`。正常装配用 `BuildWriters`，避免重复准备：它读取既有 custody，首次发现阶段才 Prepare；frozen plan 绑定/恢复缺 custody 会失败，不重新发现来源。
 

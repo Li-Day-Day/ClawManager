@@ -20,35 +20,58 @@ type WorkBuddyUIDIdentity struct {
 }
 
 func WorkBuddyUIDForInstance(s Snapshot, id string) (WorkBuddyUIDIdentity, error) {
+	identities, err := WorkBuddyUIDForInstances(s, []string{id})
+	if err != nil {
+		return WorkBuddyUIDIdentity{}, err
+	}
+	return identities[0], nil
+}
+
+// WorkBuddyUIDForInstances validates the original snapshot once, then returns
+// requested LIVE identities in input order. Historical reservations remain in
+// the snapshot but are never attached to an active workspace. No SQL or IO.
+func WorkBuddyUIDForInstances(s Snapshot, ids []string) ([]WorkBuddyUIDIdentity, error) {
+	if len(ids) == 0 || len(ids) > 9998 {
+		return nil, ErrData
+	}
 	if e := validateSnapshot(s); e != nil {
-		return WorkBuddyUIDIdentity{}, e
+		return nil, e
 	}
 	if e := validateWorkBuddyUID(s, WorkBuddyUIDSchema()); e != nil {
-		return WorkBuddyUIDIdentity{}, e
+		return nil, e
 	}
 	if e := validateRelationshipsWithHistory(s, true); e != nil {
-		return WorkBuddyUIDIdentity{}, e
+		return nil, e
 	}
 	instances, _ := workBuddyTable(s, "instances")
-	live := false
+	live := map[string]bool{}
 	for _, r := range instances.Rows {
-		if r["id"].String() == id && r["type"].String() == "workbuddy" {
-			live = true
+		if r["type"].String() == "workbuddy" {
+			live[r["id"].String()] = true
 		}
 	}
-	if !live {
-		return WorkBuddyUIDIdentity{}, ErrData
-	}
 	t, _ := workBuddyTable(s, workBuddyIdentities)
+	byID := map[string]WorkBuddyUIDIdentity{}
 	for _, r := range t.Rows {
-		if r["instance_id"].String() == id {
+		id := r["instance_id"].String()
+		if live[id] {
 			instance, _ := strconv.Atoi(id)
 			user, _ := strconv.Atoi(r["user_id"].String())
 			uid, _ := strconv.Atoi(r["linux_uid"].String())
-			return WorkBuddyUIDIdentity{Schema: 1, InstanceID: instance, UserID: user, UID: uid, GID: uid}, nil
+			byID[id] = WorkBuddyUIDIdentity{Schema: 1, InstanceID: instance, UserID: user, UID: uid, GID: uid}
 		}
 	}
-	return WorkBuddyUIDIdentity{}, ErrData
+	out := make([]WorkBuddyUIDIdentity, 0, len(ids))
+	seen := map[string]bool{}
+	for _, id := range ids {
+		identity, ok := byID[id]
+		if !ok || seen[id] {
+			return nil, ErrData
+		}
+		seen[id] = true
+		out = append(out, identity)
+	}
+	return out, nil
 }
 
 // VerifyWorkBuddyUIDWorkspace reads only the registered INSTANCE root, which

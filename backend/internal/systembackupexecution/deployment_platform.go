@@ -17,6 +17,25 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// PlatformWriterGroup reuses the signed deployment's existing physical writer
+// factory/IDs for explicit RuntimeControl composition. It preserves all old
+// stop witnesses, autoscaler checks, recovery logic AND the current zero-instance
+// guard. It is not a way to enable nonempty runtime readiness prematurely.
+func (s *DeploymentService) PlatformWriterGroup(o *PublicJobOwner) (*b.PlatformWriterGroup, error) {
+	if s == nil || o == nil || len(s.Config.Writers) == 0 {
+		return nil, d.ErrNotReady
+	}
+	source, err := s.platformProfile(o)
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]string, 0, len(s.Config.Writers))
+	for _, ref := range s.Config.Writers {
+		ids = append(ids, "deployment/"+ref.Namespace+"/"+ref.Name)
+	}
+	return &b.PlatformWriterGroup{IDs: ids, Build: source.BuildWriters}, nil
+}
+
 // platformProfile is deliberately a separate capability from runtime-instance
 // capture. A platform profile cannot silently claim it quiesced Lite gateways.
 func (s *DeploymentService) platformProfile(o *PublicJobOwner) (b.LinuxProfileConfig, error) {

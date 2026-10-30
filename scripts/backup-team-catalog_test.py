@@ -18,4 +18,15 @@ class RegistrySummaryTest(unittest.TestCase):
         for items in [[self.item("a", "guessed")], [self.item("a", "frozen"), self.item("a", "frozen")]]:
             with self.assertRaises(ValueError): catalog.registry_summary(items)
 
+    def test_runtime_custody_and_relay_history_remain_control_metadata(self):
+        output = dict(catalog.outputs())
+        generated = output[catalog.ROOT / "backend/internal/systembackup/v2_control_registry.go"]
+        for table in ("system_backup_v2_runtime_controls", "system_backup_v2_relay_receipts"):
+            self.assertEqual(generated.count('"' + table + '"'), 1)
+        # Metadata refresh must never invent object approval or restore policy.
+        import json
+        original = json.loads((catalog.ROOT / "contracts/system-backup/v12/schema-registry.json").read_text(encoding="utf-8"))
+        refreshed = json.loads(output[catalog.ROOT / "contracts/system-backup/v12/schema-registry.json"])
+        self.assertEqual(original["objects"], refreshed["objects"])
+
 if __name__ == "__main__": unittest.main()

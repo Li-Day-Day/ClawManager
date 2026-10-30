@@ -205,15 +205,48 @@ func NewCaptureKeyJob(ctx context.Context, client *ControlClient, invocation Inv
 	if e != nil {
 		return nil, e
 	}
-	return &CaptureKeyJob{job: job, until: job.ValidUntil()}, nil
+	return &CaptureKeyJob{job: job, until: job.ValidUntil(), original: a, access: *access}, nil
 }
 
 // CaptureKeyJob exposes the original shortest deadline to the streaming writer.
 // The callback must cooperate with cancellation and never retain the DEK. It
 // writes only unpublished output; an error means that output cannot be accepted.
 type CaptureKeyJob struct {
-	job   *k.CaptureJob
-	until time.Time
+	job      *k.CaptureJob
+	until    time.Time
+	original *OriginalKeyAuthority
+	access   k.Access
+}
+
+// Recheck uses the SAME original Job/nonce after local candidate writes. It
+// cannot renew the use window or mint a second provider operation.
+func (j *CaptureKeyJob) Recheck(ctx context.Context) error {
+	if j == nil || j.original == nil || ctx == nil || !time.Now().Before(j.until) {
+		return ErrNotReady
+	}
+	return j.original.Recheck(ctx, j.access)
+}
+
+// recheckDuringUse uses the SAME authenticated key-check protocol without
+// reacquiring OriginalKeyAuthority.mu: WithUse holds that mutex while invoking
+// the synchronous producer. It accepts only the original immutable "using"
+// lease, never reserves/begins/extends use or accepts a finished callback.
+func (j *CaptureKeyJob) recheckDuringUse(ctx context.Context) error {
+	if j == nil || j.original == nil || j.original.client == nil || j.original.failed || ctx == nil || ctx.Err() != nil || !time.Now().Before(j.until) || j.access != j.original.lease.Access {
+		return ErrNotReady
+	}
+	a := j.original
+	l, e := a.client.send(ctx, ControlRequest{Invocation: a.invocation, InvocationSHA256: a.lease.Identity.InvocationSHA256, Action: "key-check", Point: a.lease.Nonce})
+	defer l.Clear()
+	if e != nil || l.KeyUse == nil || l.KeyUse.State != "using" {
+		return ErrNotReady
+	}
+	got, want := *l.KeyUse, a.lease
+	got.State, want.State = "", ""
+	if got != want {
+		return ErrNotReady
+	}
+	return nil
 }
 
 func (j *CaptureKeyJob) WithDEK(ctx context.Context, use func(context.Context, []byte) error) (w.WrappedKey, error) {

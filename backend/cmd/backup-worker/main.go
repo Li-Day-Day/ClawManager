@@ -34,6 +34,7 @@ func run(ctx context.Context, args []string, stdin io.Reader, stdout io.Writer) 
 	cert := f.String("client-cert", "", "task identity certificate PEM")
 	key := f.String("client-key", "", "task identity private key PEM")
 	workloadToken := f.String("workload-token", "", "explicit audience-bound Pod identity file")
+	formalConfig := f.String("formal-config", "", "original invocation SHA-pinned public mapping and permit mounts")
 	if f.Parse(args) != nil || f.NArg() != 0 || *endpoint == "" || *ca == "" || *cert == "" || *key == "" {
 		return worker.ErrRequest
 	}
@@ -72,6 +73,39 @@ func run(ctx context.Context, args []string, stdin io.Reader, stdout io.Writer) 
 	defer store.Close()
 	if e = awaitControl(ctx, func() error { return control.Ready(ctx, i) }); e != nil {
 		return e
+	}
+	if i.ProviderKey != nil || i.FormalCapture != nil {
+		// Provider-backed work NEVER reaches functional Acquire/Complete or
+		// receives Lease.DEK. The original control path reserves key use in Job.
+		materials, err := worker.LoadFormalCaptureMaterials(*formalConfig, i)
+		if err != nil {
+			return err
+		}
+		// A/D have not delivered a provider-mode SELECT-only source credential
+		// lease. Do not read a DSN/token from this public mapping or reuse KEK ACL.
+		if i.Request.Database != nil {
+			return worker.ErrNotReady
+		}
+		workspace, err := os.OpenRoot(i.WorkspacePath)
+		if err != nil {
+			return worker.ErrRequest
+		}
+		defer workspace.Close()
+		job, err := worker.NewCaptureKeyJob(ctx, control, i, materials.KMS, materials.Permit)
+		if err != nil {
+			return err
+		}
+		defer job.Close()
+		result, err := worker.RunFormalCapture(ctx, i, job, worker.FormalCaptureEnvironment{Workspace: workspace, Staging: store})
+		if err != nil {
+			return err
+		}
+		// This is an unpublished C candidate. D/C need their formal result
+		// observer/finalizer; legacy Complete would wrongly parse old framing.
+		return json.NewEncoder(stdout).Encode(result)
+	}
+	if *formalConfig != "" {
+		return worker.ErrNotReady
 	}
 	var lease worker.Lease
 	for {

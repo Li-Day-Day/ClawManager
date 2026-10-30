@@ -106,6 +106,14 @@ func TestOriginalKeyAuthorityUsesExistingMTLSControlAndFailsClosed(t *testing.T)
 			used := false
 			e = a.WithUse(context.Background(), access, func() error {
 				used = true
+				if mode == "valid" {
+					job := &CaptureKeyJob{original: a, access: access, until: until}
+					ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+					defer cancel()
+					if err := job.recheckDuringUse(ctx); err != nil {
+						return err
+					}
+				}
 				if mode == "revoked-during-use" {
 					revoked = true
 				}
@@ -117,6 +125,9 @@ func TestOriginalKeyAuthorityUsesExistingMTLSControlAndFailsClosed(t *testing.T)
 				}
 				if e = a.Recheck(context.Background(), access); e != nil {
 					t.Fatal("final check", e)
+				}
+				if (&CaptureKeyJob{original: a, access: access, until: until}).recheckDuringUse(context.Background()) == nil {
+					t.Fatal("finished use accepted as active stream")
 				}
 			} else {
 				if e == nil {

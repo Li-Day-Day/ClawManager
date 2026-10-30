@@ -24,6 +24,12 @@ type PublicCaptureConfig struct {
 	RecoveryTimeout   time.Duration
 	// Optional D SQL runtime control. It supplies the concrete B writer factory.
 	RuntimeControl *c.SQLRuntimeControl
+	// Runtime opt-in must retain C's concrete platform writers and original IDs.
+	// Missing this explicit group fails rather than overwriting the old hook.
+	PlatformWriters *b.PlatformWriterGroup
+	// Optional B module intake. Nil preserves the current workspace-only factory;
+	// this does not widen supportedPublicCapture, admission, or readiness.
+	Modules *b.CaptureModules
 }
 type PublicCapture struct {
 	Loop      c.TaskExecutionLoop
@@ -68,11 +74,9 @@ func NewPublicCapture(cfg PublicCaptureConfig) (*PublicCapture, error) {
 	if e != nil {
 		return nil, e
 	}
-	if cfg.RuntimeControl != nil {
-		if e = cfg.RuntimeControl.CheckGate(o.Gate); e != nil {
-			return nil, e
-		}
-		cfg.Source.BuildWriters = cfg.RuntimeControl.BuildWriters
+	cfg.Source, e = configuredPublicSource(cfg)
+	if e != nil {
+		return nil, e
 	}
 	profile, e := b.NewLinuxProfile(cfg.Source)
 	if e != nil {
@@ -110,4 +114,32 @@ func NewPublicCapture(cfg PublicCaptureConfig) (*PublicCapture, error) {
 	}
 	handler := WorkloadIdentity{Client: o.Client, Namespace: o.Namespace, ServiceAccount: o.Security.ServiceAccountName, ServiceAccountUID: o.Security.ServiceAccountUID, Next: worker.ControlHandler{Authorizer: o}}
 	return &PublicCapture{Loop: loop, Control: handler, Scheduler: scheduler, Owner: o}, nil
+}
+
+// configuredPublicSource is also used by the production constructor above.
+// Optional B modules never replace D/C's writer authority or current guards.
+func configuredPublicSource(cfg PublicCaptureConfig) (b.LinuxProfileConfig, error) {
+	var e error
+	if cfg.RuntimeControl != nil {
+		if cfg.Owner == nil {
+			return b.LinuxProfileConfig{}, d.ErrNotReady
+		}
+		if e = cfg.RuntimeControl.CheckGate(cfg.Owner.Gate); e != nil {
+			return b.LinuxProfileConfig{}, e
+		}
+		if cfg.PlatformWriters == nil {
+			return b.LinuxProfileConfig{}, d.ErrNotReady
+		}
+		cfg.Source.BuildWriters, e = b.ComposeRuntimeWriters(cfg.RuntimeControl.BuildWriters, *cfg.PlatformWriters)
+		if e != nil {
+			return b.LinuxProfileConfig{}, e
+		}
+	}
+	if cfg.Modules != nil {
+		cfg.Source, e = b.WithCaptureModules(cfg.Source, cfg.Modules)
+		if e != nil {
+			return b.LinuxProfileConfig{}, e
+		}
+	}
+	return cfg.Source, nil
 }

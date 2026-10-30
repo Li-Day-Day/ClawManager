@@ -29,6 +29,7 @@ type Invocation struct {
 	StagingPath   string                  `json:"staging_path"`
 	EvidencePath  string                  `json:"evidence_path,omitempty"`
 	ProviderKey   *systembackupkms.Access `json:"provider_key,omitempty"`
+	FormalCapture *FormalCaptureSpec      `json:"formal_capture,omitempty"`
 }
 
 func (i Invocation) Hash() (string, error) {
@@ -134,6 +135,9 @@ func (h ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 func validControl(r ControlRequest) bool {
 	q := r.Invocation.Request
+	if r.Invocation.FormalCapture != nil && !validFormalInvocation(r.Invocation) {
+		return false
+	}
 	if !validWorkBuddyIdentityRequest(q) {
 		return false
 	}

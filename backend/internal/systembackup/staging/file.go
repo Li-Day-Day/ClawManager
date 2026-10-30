@@ -25,8 +25,18 @@ type Receipt struct {
 // by this invocation may be removed on failure. The caller owns root exclusively
 // and has journaled its intent before calling this function.
 func SealFile(ctx context.Context, root *os.Root, name string, key []byte, b Binding, produce func(io.Writer) error) (receipt Receipt, err error) {
-	if root == nil || !fileName.MatchString(name) {
+	return WriteUnpublishedFile(ctx, root, name, func(dst io.Writer) error { return Seal(ctx, dst, key, b, produce) })
+}
+
+// WriteUnpublishedFile durably creates ONLY a local candidate. It grants no
+// artifact publication/acceptance. The producer must emit ciphertext or public
+// metadata, never source plaintext. Original SealFile uses the same safe path.
+func WriteUnpublishedFile(ctx context.Context, root *os.Root, name string, produce func(io.Writer) error) (receipt Receipt, err error) {
+	if root == nil || ctx == nil || produce == nil || !fileName.MatchString(name) {
 		return receipt, ErrFile
+	}
+	if ctx.Err() != nil {
+		return receipt, ctx.Err()
 	}
 	partial := "." + name + ".partial"
 	f, e := root.OpenFile(partial, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
@@ -51,7 +61,7 @@ func SealFile(ctx context.Context, root *os.Root, name string, key []byte, b Bin
 	}()
 	h := sha256.New()
 	counter := &countWriter{w: io.MultiWriter(f, h)}
-	if e = Seal(ctx, counter, key, b, produce); e != nil {
+	if e = produce(counter); e != nil {
 		return receipt, e
 	}
 	if f.Sync() != nil {
