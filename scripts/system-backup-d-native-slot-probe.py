@@ -3,6 +3,7 @@
 
 import argparse
 import base64
+import hashlib
 import json
 import os
 import secrets
@@ -41,16 +42,18 @@ def secret_env(name, secret, key):
     return {"name": name, "valueFrom": {"secretKeyRef": {"name": secret, "key": key}}}
 
 
-def probe(ip, cert, token):
+def agent_request(ip, cert, token, method, path, value=None):
     context = ssl.create_default_context(cafile=cert)
     context.minimum_version = ssl.TLSVersion.TLSv1_3
+    body = b"" if value is None else json.dumps(value, separators=(",", ":")).encode()
     with socket.create_connection((ip, 19090), timeout=5) as raw:
         with context.wrap_socket(raw, server_hostname="lite-agent.clawmanager.internal") as conn:
-            conn.settimeout(5)
-            request = ("GET /v1/backup/capabilities?gateway_port=20000 HTTP/1.1\r\n"
+            conn.settimeout(45)
+            request = (f"{method} {path} HTTP/1.1\r\n"
                        "Host: lite-agent.clawmanager.internal\r\n"
-                       f"X-ClawManager-Control-Token: {token}\r\nConnection: close\r\n\r\n")
-            conn.sendall(request.encode())
+                       f"X-ClawManager-Control-Token: {token}\r\n"
+                       f"Content-Length: {len(body)}\r\nContent-Type: application/json\r\nConnection: close\r\n\r\n")
+            conn.sendall(request.encode() + body)
             chunks = []
             while True:
                 chunk = conn.recv(8192)
@@ -62,12 +65,75 @@ def probe(ip, cert, token):
     raw_response = b"".join(chunks)
     head, body = raw_response.split(b"\r\n\r\n", 1)
     code = int(head.split(b"\r\n", 1)[0].split()[1])
-    if code != 200:
-        raise RuntimeError(f"Agent capability HTTP {code}")
     if b"transfer-encoding: chunked" in head.lower():
         size, rest = body.split(b"\r\n", 1)
         body = rest[: int(size, 16)]
+    return code, body
+
+
+def probe(ip, cert, token):
+    code, body = agent_request(ip, cert, token, "GET", "/v1/backup/capabilities?gateway_port=20000")
+    if code != 200:
+        raise RuntimeError(f"Agent capability HTTP {code}")
     return json.loads(body)
+
+
+def synthetic_lifecycle(ip, cert, token, namespace, pod_uid, epoch):
+    """Exercise a disposable HTTP process, never a database-backed instance."""
+    instance, user = 987654321, 987654321
+    gateway_id = f"gw-{instance}-1"
+    create = {"pod_uid": pod_uid, "instance_id": instance, "user_id": user, "agent_type": "openclaw",
+              "workspace_path": f"/workspaces/openclaw/user-{user}/instance-{instance}",
+              "gateway_port": 20000, "port_range": {"start": 20000, "end": 20002},
+              "uid": 20000, "gid": 20000, "cpu_cores": 1, "memory_mb": 512, "disk_quota_mb": 512, "generation": 1}
+    code, raw = agent_request(ip, cert, token, "POST", "/v1/gateways", create)
+    if code != 200 or json.loads(raw).get("gateway_id") != gateway_id:
+        raise RuntimeError(f"synthetic gateway create HTTP {code}")
+    deadline = time.monotonic() + 90
+    while True:
+        code, raw = agent_request(ip, cert, token, "GET", "/v1/gateways/" + gateway_id)
+        state = json.loads(raw) if code == 200 else {}
+        if code == 200 and state.get("state") == "running" and type(state.get("gateway_pid")) is int and state["gateway_pid"] > 0:
+            break
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"synthetic gateway not running (HTTP {code}, state {state.get('state')})")
+        time.sleep(2)
+    restart = dict(create)
+    restart["generation"] = 2
+    restart_bytes = json.dumps(restart, separators=(",", ":")).encode()
+    request = {"protocol": "isolated-backup.v1", "namespace": namespace, "pod_uid": pod_uid,
+               "agent_epoch": epoch, "operation_id": secrets.token_hex(16), "runtime_type": "openclaw",
+               "instance_id": instance, "user_id": user, "generation": 1, "gateway_id": gateway_id,
+               "gateway_port": 20000, "expected_pid": state["gateway_pid"], "resume_generation": 2,
+               "restart_sha256": hashlib.sha256(restart_bytes).hexdigest()}
+    code, stop_raw = agent_request(ip, cert, token, "POST", "/v1/backup/stop", request)
+    stop = json.loads(stop_raw) if code == 200 else {}
+    if code != 200 or stop.get("request") != request or stop.get("state") != "stopped" or stop.get("confirmation_scope") != "instance_pid_namespaces_and_mounts" or not stop.get("confirmed_at"):
+        raise RuntimeError(f"synthetic positive stop receipt missing (HTTP {code})")
+    code, raw = agent_request(ip, cert, token, "POST", "/v1/backup/resume", {"request": request, "restart": restart})
+    if code not in (200, 202):
+        raise RuntimeError(f"synthetic resume dispatch HTTP {code}")
+    deadline = time.monotonic() + 90
+    while True:
+        code, resume_raw = agent_request(ip, cert, token, "POST", "/v1/backup/state", request)
+        receipt = json.loads(resume_raw) if code == 200 else {}
+        if (code == 200 and receipt.get("request") == request and receipt.get("state") == "resumed"
+                and type(receipt.get("pid")) is int and receipt["pid"] > 0 and receipt.get("confirmed_at")):
+            break
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"synthetic resume receipt missing (HTTP {code})")
+        time.sleep(2)
+    code, complete_raw = agent_request(ip, cert, token, "POST", "/v1/backup/complete", request)
+    complete = json.loads(complete_raw) if code == 200 else {}
+    if code != 200 or complete.get("state") != "resumed" or complete.get("pid") != receipt["pid"]:
+        raise RuntimeError(f"synthetic completion receipt missing (HTTP {code})")
+    return {"source_pid": state["gateway_pid"], "resumed_pid": receipt["pid"],
+            "restart_sha256": request["restart_sha256"],
+            "stop_raw_base64": base64.b64encode(stop_raw).decode(),
+            "resume_raw_base64": base64.b64encode(resume_raw).decode(),
+            "stop_raw_sha256": hashlib.sha256(stop_raw).hexdigest(),
+            "resume_raw_sha256": hashlib.sha256(resume_raw).hexdigest(),
+            "complete_raw_sha256": hashlib.sha256(complete_raw).hexdigest()}
 
 
 def main():
@@ -76,6 +142,7 @@ def main():
     parser.add_argument("--context", required=True)
     parser.add_argument("--namespace", required=True)
     parser.add_argument("--image", required=True)
+    parser.add_argument("--synthetic-lifecycle", action="store_true")
     OPT = parser.parse_args()
     if "@sha256:" not in OPT.image:
         raise RuntimeError("image must be pinned by digest")
@@ -122,7 +189,9 @@ def main():
             slot = {"name": "slot", "image": OPT.image, "imagePullPolicy": "IfNotPresent",
                     "command": ["/usr/local/bin/clawmanager-agent"],
                     "env": common + [env("RUNTIME_AGENT_ROLE", "slot"), env("RUNTIME_SLOT_INDEX", "0"),
-                                     env("RUNTIME_SLOT_SOCKET", "/run/clawmanager-slots/slot-0.sock")],
+                                     env("RUNTIME_SLOT_SOCKET", "/run/clawmanager-slots/slot-0.sock")]
+                           + ([env("RUNTIME_GATEWAY_COMMAND", "python3 -m http.server 20000 --bind 0.0.0.0"),
+                               env("RUNTIME_GATEWAY_STARTUP_HEALTH_TIMEOUT", "45s")] if OPT.synthetic_lifecycle else []),
                     "volumeMounts": common_mounts + [{"name": "slot-data", "mountPath": "/var/lib/clawmanager-agent"}]}
             apply({"apiVersion": "v1", "kind": "Pod", "metadata": {"name": name, "labels": {"app": "d-native-backup-probe"}},
                    "spec": {"restartPolicy": "Never", "nodeName": "k8s-master", "volumes": volumes, "containers": [pool, slot]}})
@@ -145,6 +214,11 @@ def main():
                     or not capability.get("supported") or not capability.get("durable_reservation")):
                 raise RuntimeError("native Agent capability fields did not bind to the test Pod")
             result["status"] = "capability_passed"
+            if OPT.synthetic_lifecycle:
+                result["mutation_sent"] = True
+                result["synthetic_lifecycle"] = synthetic_lifecycle(result["pod_ip"], cert, token, OPT.namespace,
+                                                                     result["pod_uid"], capability["agent_epoch"])
+                result["status"] = "synthetic_lifecycle_passed"
     except Exception as exc:
         result["error"] = str(exc)
         if ("pod", name) in created:
@@ -168,7 +242,7 @@ def main():
         if any(item["exit"] for item in cleanup):
             result["status"] = "cleanup_failed"
         print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0 if result["status"] == "capability_passed" else 2
+    return 0 if result["status"] in ("capability_passed", "synthetic_lifecycle_passed") else 2
 
 
 if __name__ == "__main__":
