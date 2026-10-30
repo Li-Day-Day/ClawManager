@@ -73,6 +73,8 @@ pod_uid=$(kubectl --context "$ctx" -n "$ns" get pod "$pod" -o jsonpath='{.metada
 kexec bash -c 'command -v mysqldump >/dev/null && command -v mysql >/dev/null && test -w /tmp'
 server=$(kexec sh -c 'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; mysql -uroot -N -B -e "SELECT @@server_uuid"')
 [[ "$server" == "$expected_server" ]] || { echo 'SOURCE_SERVER_MISMATCH' >&2; exit 1; }
+source_shape=$(kexec sh -c 'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; mysql -uroot -N -B -e "SELECT (SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=0x636c61776d616e61676572 AND TABLE_TYPE=0x42415345205441424c45 AND ENGINE=0x496e6e6f4442),(SELECT COUNT(DISTINCT TABLE_NAME) FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=0x636c61776d616e61676572 AND INDEX_NAME=0x5052494d415259)"')
+[[ "$source_shape" == $'99\t99' ]] || { echo 'SOURCE_NOT_ALL_INNODB_WITH_PRIMARY_KEYS' >&2; exit 1; }
 
 # The estimate is advisory; abort before CREATE if free space is too small.
 estimated_mib=$(kexec sh -c 'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; mysql -uroot -N -B -D clawmanager -e "SELECT CEIL(COALESCE(SUM(DATA_LENGTH+INDEX_LENGTH),0)/1024/1024) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE()"')
@@ -104,7 +106,30 @@ kexec bash -euo pipefail -c '
   export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"
   actual=$(mysql -uroot -N -B -e "SELECT @@server_uuid")
   [[ "$actual" == "$2" ]] || exit 3
-  mysqldump -uroot --single-transaction --quick --skip-lock-tables --set-gtid-purged=OFF --no-tablespaces clawmanager | mysql -uroot "$1"
+  mysqldump -uroot --no-data --single-transaction --quick --skip-lock-tables --set-gtid-purged=OFF --no-tablespaces clawmanager | mysql -uroot "$1"
+
+  # Stream the source snapshot straight into the copy and a SHA256 reader.
+  # No plaintext SQL dump is stored on the host or in the Pod filesystem.
+  umask 077
+  fifo="/tmp/sbk-d-copy-proof-$1.fifo"
+  source_hash_file="/tmp/sbk-d-copy-proof-$1.sha"
+  trap '\''rm -f "$fifo" "$source_hash_file"'\'' EXIT
+  mkfifo "$fifo"
+  sha256sum < "$fifo" > "$source_hash_file" &
+  hash_pid=$!
+  data_options=(-uroot --single-transaction --quick --skip-lock-tables --skip-add-locks
+    --set-gtid-purged=OFF --no-tablespaces --no-create-info --skip-triggers
+    --order-by-primary --skip-extended-insert --hex-blob --skip-comments --skip-dump-date)
+  if ! mysqldump "${data_options[@]}" clawmanager | tee "$fifo" | mysql -uroot "$1"; then
+    kill "$hash_pid" 2>/dev/null || true
+    wait "$hash_pid" 2>/dev/null || true
+    exit 4
+  fi
+  wait "$hash_pid"
+  source_sha=$(cut -d" " -f1 "$source_hash_file")
+  copy_sha=$(mysqldump "${data_options[@]}" "$1" | sha256sum | cut -d" " -f1)
+  [[ "$source_sha" =~ ^[0-9a-f]{64}$ && "$source_sha" == "$copy_sha" ]] || exit 5
+  printf "DATA_STREAM_ROUNDTRIP_SHA256=%s\n" "$source_sha"
 ' bash "$copy_db" "$expected_server"
 echo 'COPY_LOADED'
 

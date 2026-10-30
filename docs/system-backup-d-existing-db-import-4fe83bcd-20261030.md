@@ -259,8 +259,20 @@ Pod 上的临时副本也不是独立故障域备份。脚本在退出时执行�
 现场运行后又补入每次操作前的 namespace UID、Pod UID、MySQL server UUID
 复查；执行 CREATE、dump/load 与 DROP 的 Pod shell 在同一次 exec 内再次
 检查 MySQL server UUID，身份变化时拒绝继续写入并留下待人工核查的副本名。
-这个脚本修订通过本地 Bash 语法检查，尚未在远侧重跑；现场结果对应上面的
-原脚本 SHA。
+第一轮现场结果对应上面的原脚本 SHA；身份复查修订在第二轮运行中验证。
+
+第二次现场隔离副本运行使用脚本 SHA256
+`4e72a5c511b28bfdf632f2ed3d37474f9946cf917834f8d41d1e072eeeb9c7c9`。
+脚本在实际 CREATE/dump/load/DROP 的 Pod shell 内复核 server UUID；先验证
+现库 99 表均为 InnoDB 且各有主键，再将按主键排序的数据流直接送入隔离库
+和 SHA256 读取器，不落盘明文 SQL。副本重导出的数据流 SHA256 与导入流
+同为 `a9f9383a2c0752f52199151ef4168033d51953945b20b05b6e5948f6d5405d8e`。
+副本 `cm_import_68881873d47b40759473a6c9091a2249` 的只读预检仍通过，
+99 表、97 项 ledger、35 张空旧控制表的指纹未变；核心行数仍为
+8/4/9/3/97。独立收尾返回 `COPY_ABSENT` 与 `POD_TEMP_ABSENT`。
+这证明此次 MySQL 8.4.8 SQL 序列化数据流的副本往返一致；源库继续运行，
+因此不把它等同于停止写入后的完整备份或升级授权。预检 JSON 仍报告
+`data_preservation_verified=false`、`migration_authorized=false`。
 
 ## 本 profile 的交付出口
 
