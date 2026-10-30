@@ -1,6 +1,6 @@
 # D native Runtime 现场核验（2026-10-30）
 
-状态：**Agent 镜像字节已核对；现场停止、恢复和 SQL 正向证明未通过，`backup_ready=false`。** 本记录不把 KEK Store 的独立交付混入 Runtime 验收。
+状态：**隔离测试 Pod 的 Agent 正向停止与恢复已通过；生产控制器、SQL 证明表及完整备份仍未现场验证，`backup_ready=false`。** 本记录不把 KEK Store 的独立交付混入 Runtime 验收。
 
 ## 固定输入与本地回归
 
@@ -32,6 +32,8 @@
 节点为 Ubuntu 24.04.3，AppArmor parser 4.0.1；现场 `/etc/apparmor.d/bwrap-userns-restrict`、`/usr/share/apparmor/extra-profiles/bwrap-userns-restrict` 和 `/etc/apparmor.d/bwrap` 均不存在。根据 [AppArmor 上游 4.0 profile](https://gitlab.com/apparmor/apparmor/-/raw/apparmor-4.0/profiles/apparmor/profiles/extras/bwrap-userns-restrict) 准备了[临时测试 policy](../scripts/system-backup-d-bwrap-apparmor-4.profile)，本地 SHA-256 `e7b571fce332e968b75e14cad8b1b26d7ead3e34cb32f53f138a5d262aa67f2a` 与远端 `/tmp` 一致；远端 `apparmor_parser -Q -K` 退出 0。只在独立 Pod 测试期间装载、确认 Pod 删除后卸载和删除 `/tmp` 输入的[受控脚本](../scripts/system-backup-d-native-profile-probe.sh)已通过现场 `bash -n`。该 profile 暂时作用于节点上的所有 `/usr/bin/bwrap` 调用，不作为生产持久配置。
 
 第六次受控脚本的远端三份输入与本地哈希一致、`bash -n` 退出 0；它临时装载 `bwrap` 和 `unpriv_bwrap` 两个 profile 后创建 Pod `d-native-probe-4ed4d969` UID `340d863b-214b-4c94-a34c-771f13ad938f`。两容器就绪，实际 imageID 为 `d57b751e…`，能力 GET 为 HTTP 200，`agent_epoch=f79e4721002f1a22ee94eba444380303`。bwrap 已越过此前的 UID map 阻断；新错误是测试命令 `python3 -m http.server` 不接受 Agent 自动补上的 `--auth trusted-proxy`。没有停止/恢复回执。Pod 与两个 Secret 删除退出码均为 0；受控脚本退出 2，随后 `aa-status | grep -i bwrap` 退出 1，证实临时 profile 已卸载。探针现将一次性 HTTP server 改为 Python `-c` 参数模式，待复测。
+
+第七次使用已提交的 Python `-c` 测试命令和同一精确镜像 digest。受控脚本加载临时 profile 后，独立 Pod `d-native-probe-eb455701` UID `bd23c220-cb3d-445b-9f36-ef3d486d5226` 的 pool/slot 均就绪，实际 imageID 均为 `d57b751e…`。TLS 1.3 能力 GET 返回 HTTP 200；Agent epoch 为 `8af4e2bd935bb37e018c5572b3e95da8`，namespace、Pod UID、端口和确认范围均与请求匹配。一次性测试 Gateway 原 PID 为 **78**，Agent 返回 `state=stopped`、`confirmation_scope=instance_pid_namespaces_and_mounts` 的正向停止回执；恢复后返回 `state=resumed`、新 PID **87**，complete 回执与恢复回执 SHA 一致。探针比较回执内完整 request 与发送值、原 generation 1、恢复 generation 2 的 restart SHA，并保留原回执字节的 base64 与 SHA-256：stop `0da22dadb8bfa9f4705befb24e32db73afe9af1313875c6ab39013d6a16bdafb`，resume 和 complete 均为 `42c12aa12c424f5a8dd942471e4ae020fbd33153c66c2097ecb3ee591671fcc7`；restart JSON SHA-256 `8344b2ac0964fc3f198aa5d6f8899ef783a7789f98a0923e08ca4b168f654f26`。现场 JSON 状态为 `synthetic_lifecycle_passed`，`D_NATIVE_PROFILE_PROBE_EXIT=0`、`D_NATIVE_PROFILE_RUN_EXIT=0`；Pod 与两个 Secret 删除退出码均为 0，独立 `aa-status | grep -i bwrap` 退出 1，临时 profile 已卸载。该测试没有控制器 task/attempt、SQL 写入、真实用户实例或跨节点存储，因此不能替代 SQL proof/CAS 与完整备份验收。
 
 客户端修复 `16815597` 固定 pool CA/TLS 1.3 并拒绝明文 locator；`7c1951de` 进一步使备份专用 HTTP 调用在发送控制 token 前拒绝非 HTTPS，定向测试退出 0。原生 Dockerfile 完整镜像本地构建因 Docker Hub 匿名令牌连接超时而失败，未产生目标镜像；已使用本地私有仓库中精确旧基础镜像叠加的测试镜像进行隔离探针，不将其当作已验收的完整原生 Lite 镜像。
 
