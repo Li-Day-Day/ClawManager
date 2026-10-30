@@ -116,7 +116,7 @@ func RuntimeBackupRestartDigest(r RuntimeAgentCreateGatewayRequest) (string, err
 }
 
 func (c *runtimeAgentHTTPClient) backupHTTP(ctx context.Context, endpoint, method, path string, body any) ([]byte, int, error) {
-	if ctx == nil || c.httpClient == nil || c.controlToken == "" {
+	if ctx == nil || c.upgradeHTTPClient == nil || c.controlToken == "" {
 		return nil, 0, ErrRuntimeStopUnconfirmed
 	}
 	u, err := url.Parse(endpoint)
@@ -137,7 +137,7 @@ func (c *runtimeAgentHTTPClient) backupHTTP(ctx context.Context, endpoint, metho
 	}
 	req.Header.Set("X-ClawManager-Control-Token", c.controlToken)
 	req.Header.Set("Content-Type", "application/json")
-	client := *c.httpClient
+	client := *c.upgradeHTTPClient
 	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	resp, err := client.Do(req)
 	if err != nil {

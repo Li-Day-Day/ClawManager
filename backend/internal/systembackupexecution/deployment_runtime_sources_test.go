@@ -9,6 +9,7 @@ import (
 	"k8s.io/client-go/kubernetes/fake"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"slices"
 	"testing"
 )
@@ -18,6 +19,24 @@ func runtimeDeploymentFixture(t *testing.T) DeploymentConfig {
 	cfg.CaptureScope = "runtime-workspace"
 	cfg.RuntimeSources = &RuntimeSourceConfig{Supported: []b.AgentKind{{Type: "openclaw", Mode: "pro", Variant: "linux", OS: "linux"}}, Namespaces: []string{cfg.Namespace}, LeaseParticipants: []string{"application-mutations"}, WorkspaceRoot: "/workspaces"}
 	return cfg
+}
+
+func TestNativeRuntimeRequiresPinnedAgentCA(t *testing.T) {
+	cfg := runtimeDeploymentFixture(t)
+	cfg.RuntimeSources.Supported = []b.AgentKind{{Type: "openclaw", Mode: "lite", Variant: "linux", OS: "linux"}}
+	cfg.RuntimeSources.AgentTokenFile = filepath.Join(t.TempDir(), "agent-token")
+	if cfg.RuntimeSources.validate() == nil {
+		t.Fatal("native runtime admitted without a pinned Agent CA")
+	}
+	cfg.RuntimeSources.AgentCAFile = filepath.Join(t.TempDir(), "agent-ca.pem")
+	cfg.RuntimeSources.AgentCASHA256 = "abcdef"
+	if cfg.RuntimeSources.validate() == nil {
+		t.Fatal("native runtime admitted an unpinned Agent CA")
+	}
+	cfg.RuntimeSources.AgentCASHA256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+	if err := cfg.RuntimeSources.validate(); err != nil {
+		t.Fatal(err)
+	}
 }
 func TestDeploymentRuntimeScopeAndRBACAreExplicit(t *testing.T) {
 	cfg := runtimeDeploymentFixture(t)

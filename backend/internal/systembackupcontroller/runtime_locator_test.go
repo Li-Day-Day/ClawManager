@@ -64,10 +64,10 @@ func (*locatorAgent) CreateGateway(context.Context, string, services.RuntimeAgen
 }
 
 func TestRuntimeLocatorPreservesNullSourceAndChecksIndependentIdentity(t *testing.T) {
-	for _, fault := range []string{"", "registered-uid", "source-namespace", "binding-namespace", "source-pod", "workspace", "generation", "pid", "port", "endpoint", "not-ready", "owner", "agent-uid", "agent-epoch", "no-durable-reservation", "probe"} {
+	for _, fault := range []string{"", "registered-uid", "source-namespace", "binding-namespace", "source-pod", "workspace", "generation", "pid", "port", "endpoint", "cleartext-endpoint", "not-ready", "owner", "agent-uid", "agent-epoch", "no-durable-reservation", "probe"} {
 		t.Run(fault, func(t *testing.T) {
 			source := b.InstanceIdentity{ID: 7, UserID: 1, Generation: 3, Mode: "lite", Status: "running", Workspace: "/workspaces/user-1/instance-7"}
-			row := gatewayBindingRow{ID: 6, Pod: "runtime-pod", Namespace: "backup", Endpoint: "http://10.1.2.3:8080", Port: 20000, Workspace: source.Workspace, Generation: 3, State: "running", Gateway: "gw-7-3", Deployment: "runtime", PID: 123}
+			row := gatewayBindingRow{ID: 6, Pod: "runtime-pod", Namespace: "backup", Endpoint: "https://10.1.2.3:8080", Port: 20000, Workspace: source.Workspace, Generation: 3, State: "running", Gateway: "gw-7-3", Deployment: "runtime", PID: 123}
 			controller := true
 			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: row.Pod, Namespace: row.Namespace, UID: "actual-pod-uid", OwnerReferences: []metav1.OwnerReference{{Kind: "ReplicaSet", Name: "runtime-rs", UID: "rs-uid", Controller: &controller}}}, Spec: corev1.PodSpec{NodeName: "node"}, Status: corev1.PodStatus{Phase: corev1.PodRunning, PodIP: "10.1.2.3", Conditions: []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionTrue}}}}
 			rs := &appsv1.ReplicaSet{ObjectMeta: metav1.ObjectMeta{Name: "runtime-rs", Namespace: "backup", UID: "rs-uid", OwnerReferences: []metav1.OwnerReference{{Kind: "Deployment", Name: "runtime", UID: "dep-uid", Controller: &controller}}}}
@@ -91,7 +91,9 @@ func TestRuntimeLocatorPreservesNullSourceAndChecksIndependentIdentity(t *testin
 			case "port":
 				row.Port = 0
 			case "endpoint":
-				row.Endpoint = "http://10.1.2.4:8080"
+				row.Endpoint = "https://10.1.2.4:8080"
+			case "cleartext-endpoint":
+				row.Endpoint = "http://10.1.2.3:8080"
 			case "not-ready":
 				pod.Status.Conditions = nil
 			case "owner":

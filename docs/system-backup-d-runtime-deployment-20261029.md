@@ -13,7 +13,7 @@
 | participant probe | `runtimeLeaseProbe` 查询当前 application gate 和未释放 mutation leases。仅适用于所有写入均受该 lease 约束的已审查 participant；外部写入者不能冒充这一类型。 |
 | Deployment probe | 固定 namespace/name/UID，检查 HPA、实际 Pod 节点 UID/Linux；恢复仍使用原 resume fence 与实际新 Pod 的绑定 CAS。 |
 | Pro stop proof | `StopProofForTask(a, namespace)` 构造原 `PublicJobOwner.StopWitnessIn`；停止前建立 kubelet watch，原 Pod UID、Node UID、container IDs 的 terminated ACK 写入 `SQLStopProofs`。缺失、断流、强删均不生成证明。 |
-| Lite stop/restart | D 提供 `ClaimRestart/CompleteRestart` 及原绑定 CAS。重新核对发现原 `BackupGatewayWriter` 仍以 DELETE 后 state absent/stopped 判断停止，没有调用进程停止收据接口，更没有 cgroup 证明；这一部分仍需实现，不能宣称完整停止屏障已交付。Agent token 只从固定私有文件读取。 |
+| Lite stop/restart | D 现由 `GatewayControl` 调用 native Agent 正向停止/恢复接口，核对绑定请求和原字节回执并写入 gateway proofs；`ClaimRestart/CompleteRestart` 处理原绑定 PID/generation CAS。Agent token 只从固定私有文件读取。现场旧共享 Agent 没有该路由，真实停止/恢复和 SQL 回执尚未通过。 |
 | TLS server → `/relay` | `DeploymentService.controlHandler` 实际注册 B `NewAuthenticatedRelayHandler`。先通过原 `WorkloadIdentity` 的 TLS + TokenReview，再匹配已登记原 Job process、原 immutable IdentitySecret、原证书 pin；每请求关闭 authenticator。 |
 | relay SQL | `SQLAuthenticatedRelayAcceptor` 锁原 authority/Job，事务内 A Bind → receipt INSERT → A Recheck → 最终 authority/SQL clock → COMMIT。没有新增控制授权。 |
 
@@ -31,7 +31,10 @@ relay 游标改为在原 Job 行锁下读取 `system_backup_v2_relay_receipts` �
 - `lease_participants`：全部经审查的 application mutation lease participant ID；不是“所有未知 participant 都返回成功”。
 - `deployments`：Runtime 所属 Deployment 的 namespace/name/UID，用于真实 HPA/节点及恢复探针。
 - `agent_token_file`：Lite 必需，私有文件，内容不进入计划/日志。
+- `agent_ca_file`、`agent_ca_sha256`：Lite 必需，固定 pool Agent 证书的 CA PEM 原字节及 SHA256。D 只接受与运行 Pod IP 相符的 `https` 端点，TLS 1.3 校验 `lite-agent.clawmanager.internal`；证书或端点不匹配时拒绝发现和停止。
 - `gateway_originals`：逐来源 `Source` 完整身份、`file` 加密收据路径、`cipher_sha256`、`plain_sha256`、`key_ref`。旧 generation 与当前 SQL/原 binding 必须相等。
+
+同一 CA 也必须挂载到主应用，并设置 `RUNTIME_AGENT_CA_FILE` 与 `RUNTIME_AGENT_CA_SHA256`。主应用保留旧 Pod 的 HTTP 生命周期调用；新 pool 的 HTTPS 调用使用固定 CA、TLS 1.3 和内部证书名。只配置路径或只配置摘要会使主应用启动失败，防止新实例在证书未配齐时被调度。
 
 source 只读连接和控制连接必须指向同一 database/server UUID；账号仍分离。SQL 授权由 `system-backup-controller-grants -runtime-control` 输出；Kubernetes 授权仍用 `-kubernetes-config` 和固定 SHA 输出，新增权限仅在显式 runtime namespaces。生成工具只输出待审查授权，不自行应用。
 

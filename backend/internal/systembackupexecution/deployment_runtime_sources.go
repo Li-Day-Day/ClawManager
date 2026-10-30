@@ -35,6 +35,8 @@ type RuntimeSourceConfig struct {
 	Supported         []b.AgentKind              `json:"supported"`
 	Namespaces        []string                   `json:"namespaces"`
 	AgentTokenFile    string                     `json:"agent_token_file,omitempty"`
+	AgentCAFile       string                     `json:"agent_ca_file,omitempty"`
+	AgentCASHA256     string                     `json:"agent_ca_sha256,omitempty"`
 	Originals         []GatewayOriginalReference `json:"gateway_originals"`
 	LeaseParticipants []string                   `json:"lease_participants"`
 	Deployments       []PlatformDeployment       `json:"deployments"`
@@ -77,7 +79,7 @@ func (r RuntimeSourceConfig) validate() error {
 			return d.ErrNotReady
 		}
 		kinds[kind] = true
-		if kind.Mode == "lite" && !filepath.IsAbs(r.AgentTokenFile) {
+		if kind.Mode == "lite" && (!filepath.IsAbs(r.AgentTokenFile) || !filepath.IsAbs(r.AgentCAFile) || filepath.Clean(r.AgentCAFile) != r.AgentCAFile || len(r.AgentCASHA256) != 64) {
 			return d.ErrNotReady
 		}
 	}
@@ -156,6 +158,31 @@ type runtimeDeploymentProbe struct {
 func (p runtimeDeploymentProbe) Check(ctx context.Context) error {
 	return p.s.checkAutoscalers(ctx, p.ref)
 }
+
+func nativeBackupAgent(cfg RuntimeSourceConfig) (services.BackupGatewayAgent, error) {
+	token, e := readPrivate(cfg.AgentTokenFile, 16384)
+	if e != nil {
+		return nil, e
+	}
+	defer clear(token)
+	if len(bytes.TrimSpace(token)) == 0 {
+		return nil, c.ErrExecutionAuthority
+	}
+	caPEM, e := pinnedDeploymentFile(cfg.AgentCAFile, cfg.AgentCASHA256, 1<<20)
+	if e != nil {
+		return nil, e
+	}
+	client, err := services.NewRuntimeAgentClientWithPinnedCA(string(bytes.TrimSpace(token)), caPEM)
+	if err != nil {
+		return nil, c.ErrExecutionAuthority
+	}
+	agent, ok := client.(services.BackupGatewayAgent)
+	if !ok {
+		return nil, d.ErrNotReady
+	}
+	return agent, nil
+}
+
 func (s *DeploymentService) attachRuntimeSources(o *PublicJobOwner, profile b.LinuxProfileConfig) (b.LinuxProfileConfig, error) {
 	cfg := s.Config.RuntimeSources
 	if cfg == nil {
@@ -179,17 +206,11 @@ func (s *DeploymentService) attachRuntimeSources(o *PublicJobOwner, profile b.Li
 		controls.AdditionalWriterIDs = append(controls.AdditionalWriterIDs, id)
 	}
 	if cfg.AgentTokenFile != "" {
-		token, e := readPrivate(cfg.AgentTokenFile, 16384)
+		agent, e := nativeBackupAgent(*cfg)
 		if e != nil {
 			return profile, e
 		}
-		agent := services.NewRuntimeAgentClient(string(bytes.TrimSpace(token)))
-		clear(token)
-		var ok bool
-		controls.Agent, ok = agent.(services.BackupGatewayAgent)
-		if !ok {
-			return profile, d.ErrNotReady
-		}
+		controls.Agent = agent
 	}
 	runtime, e := c.NewSQLRuntimeControl(controls)
 	if e != nil {

@@ -248,6 +248,8 @@ type RuntimePoolConfig struct {
 	WorkspaceNFSServer        string        `yaml:"workspaceNfsServer"`
 	WorkspaceNFSPath          string        `yaml:"workspaceNfsPath"`
 	AgentControlToken         string        `yaml:"agentControlToken"`
+	AgentCAFile               string        `yaml:"agentCaFile"`
+	AgentCASHA256             string        `yaml:"agentCaSha256"`
 	AgentReportToken          string        `yaml:"agentReportToken"`
 	BackendReplicaID          string        `yaml:"backendReplicaId"`
 	RedisURL                  string        `yaml:"redisUrl"`
@@ -424,6 +426,8 @@ func Load() (*Config, error) {
 			WorkspaceNFSServer:        getEnv("RUNTIME_WORKSPACE_NFS_SERVER", ""),
 			WorkspaceNFSPath:          getEnv("RUNTIME_WORKSPACE_NFS_PATH", "/"),
 			AgentControlToken:         getEnv("RUNTIME_AGENT_CONTROL_TOKEN", ""),
+			AgentCAFile:               getEnv("RUNTIME_AGENT_CA_FILE", ""),
+			AgentCASHA256:             getEnv("RUNTIME_AGENT_CA_SHA256", ""),
 			AgentReportToken:          getEnv("RUNTIME_AGENT_REPORT_TOKEN", ""),
 			BackendReplicaID:          getEnv("HOSTNAME", "clawmanager-backend-local"),
 			RedisURL:                  getEnv("PLATFORM_REDIS_URL", getEnv("TEAM_REDIS_URL", "")),
@@ -710,6 +714,8 @@ func applyEnvOverrides(config *Config) {
 		config.Runtime.WorkspaceNFSPath = "/"
 	}
 	config.Runtime.AgentControlToken = getEnv("RUNTIME_AGENT_CONTROL_TOKEN", config.Runtime.AgentControlToken)
+	config.Runtime.AgentCAFile = getEnv("RUNTIME_AGENT_CA_FILE", config.Runtime.AgentCAFile)
+	config.Runtime.AgentCASHA256 = getEnv("RUNTIME_AGENT_CA_SHA256", config.Runtime.AgentCASHA256)
 	config.Runtime.AgentReportToken = getEnv("RUNTIME_AGENT_REPORT_TOKEN", config.Runtime.AgentReportToken)
 	config.Runtime.BackendReplicaID = getEnv("HOSTNAME", config.Runtime.BackendReplicaID)
 	config.Runtime.RedisURL = getEnv("PLATFORM_REDIS_URL", getEnv("TEAM_REDIS_URL", config.Runtime.RedisURL))

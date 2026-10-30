@@ -162,7 +162,10 @@ func main() {
 	clusterResourceService := services.NewClusterResourceService(instanceRepo)
 	services.SetRuntimeImageSettingsProvider(systemImageSettingService)
 	services.SetOpenClawTransferRuntimeRepositories(instanceRepo, bindingRepo, runtimePodRepo)
-	runtimeAgentClient := services.NewRuntimeAgentClient(cfg.Runtime.AgentControlToken)
+	runtimeAgentClient, err := newRuntimeAgentClient(cfg.Runtime)
+	if err != nil {
+		log.Fatalf("Failed to initialize runtime Agent TLS trust: %v", err)
+	}
 	runtimeUpgradeService := services.NewRuntimeUpgradeService(database, rolloutRepo, runtimePodRepo, bindingRepo, runtimeAgentClient, cfg.Runtime.WorkspaceRoot, cfg.Runtime.RedisURL)
 	browserWorkerService := services.NewBrowserWorkerService(browserWorkerRepo, instanceRepo, k8s.GetClient())
 	instanceService := services.NewInstanceService(

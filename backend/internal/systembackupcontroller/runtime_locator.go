@@ -43,7 +43,7 @@ func gatewayEndpointMatchesPod(endpoint string, pod *corev1.Pod) bool {
 		return false
 	}
 	u, e := url.Parse(endpoint)
-	if e != nil || (u.Scheme != "http" && u.Scheme != "https") || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") {
+	if e != nil || u.Scheme != "https" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") {
 		return false
 	}
 	ip := net.ParseIP(u.Hostname())

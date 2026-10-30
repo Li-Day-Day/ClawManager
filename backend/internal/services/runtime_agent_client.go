@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"clawreef/internal/runtimecustody"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -220,6 +222,24 @@ const (
 
 func NewRuntimeAgentClient(controlToken string) RuntimeAgentClient {
 	client := NewRuntimeAgentClientWithHTTPClient(controlToken, nil).(*runtimeAgentHTTPClient)
+	return runtimeAgentWithOriginalCustody(client)
+}
+
+// NewRuntimeAgentClientWithPinnedCA verifies native Lite pool certificates by
+// their fixed internal DNS identity while continuing to serve legacy HTTP pods.
+// The caller must pin the CA file's bytes before passing them here.
+func NewRuntimeAgentClientWithPinnedCA(controlToken string, caPEM []byte) (RuntimeAgentClient, error) {
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(caPEM) {
+		return nil, errors.New("invalid runtime agent CA")
+	}
+	transport := &http.Transport{TLSClientConfig: &tls.Config{RootCAs: roots, ServerName: "lite-agent.clawmanager.internal", MinVersion: tls.VersionTLS13}}
+	client := NewRuntimeAgentClientWithHTTPClient(controlToken, &http.Client{Transport: transport, Timeout: runtimeAgentControlTimeout}).(*runtimeAgentHTTPClient)
+	client.upgradeHTTPClient.Timeout = runtimeAgentUpgradeTimeout
+	return runtimeAgentWithOriginalCustody(client), nil
+}
+
+func runtimeAgentWithOriginalCustody(client *runtimeAgentHTTPClient) RuntimeAgentClient {
 	dir, key, installation := os.Getenv("RUNTIME_CREATE_RECEIPT_DIR"), os.Getenv("RUNTIME_CREATE_RECEIPT_KEY_FILE"), os.Getenv("RUNTIME_CREATE_RECEIPT_INSTALLATION_ID")
 	if dir != "" || key != "" || installation != "" {
 		client.originalRequests = &runtimecustody.Store{Directory: dir, KeyFile: key, Installation: installation}
