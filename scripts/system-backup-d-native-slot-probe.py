@@ -213,11 +213,18 @@ def main():
                                      secret_env("RUNTIME_AGENT_REPORT_TOKEN", token_name, "report")],
                     "volumeMounts": common_mounts + [{"name": "pool-data", "mountPath": "/var/lib/clawmanager-agent"},
                                                       {"name": "tls", "mountPath": "/tls", "readOnly": True}]}
+            # Python -c treats the appended OpenClaw --auth arguments as
+            # script argv. The encoded source keeps strings.Fields from
+            # splitting the disposable server command before Agent dispatch.
+            synthetic_server = (b"from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler\n"
+                                b"ThreadingHTTPServer(('127.0.0.1', 20000), SimpleHTTPRequestHandler).serve_forever()\n")
+            synthetic_command = ("python3 -c exec(__import__('base64').b64decode('"
+                                 + base64.b64encode(synthetic_server).decode() + "'))")
             slot = {"name": "slot", "image": OPT.image, "imagePullPolicy": "IfNotPresent",
                     "command": ["/usr/local/bin/clawmanager-agent"],
                     "env": common + [env("RUNTIME_AGENT_ROLE", "slot"), env("RUNTIME_SLOT_INDEX", "0"),
                                      env("RUNTIME_SLOT_SOCKET", "/run/clawmanager-slots/slot-0.sock")]
-                           + ([env("RUNTIME_GATEWAY_COMMAND", "python3 -m http.server 20000 --bind 127.0.0.1"),
+                           + ([env("RUNTIME_GATEWAY_COMMAND", synthetic_command),
                                env("RUNTIME_GATEWAY_STARTUP_HEALTH_TIMEOUT", "45s")] if OPT.synthetic_lifecycle else []),
                     "volumeMounts": common_mounts + [{"name": "slot-data", "mountPath": "/var/lib/clawmanager-agent"}]}
             if OPT.privileged_slot:
