@@ -18,6 +18,10 @@
 | B/D/C 签名 | `NewOriginalSigningResolver` 仅在测试中实例化；三个 `OriginalSigningAuthority.AuthorizeSigning` 原业务 reader 和生产 signer caller 均未发现。 | B 从冻结 capture 正文和完成证据调用 `capture_certificate`；D 在原发布事务事实下调用 `acceptance_record`；C/D 从不可变 catalog action/引用调用 `catalog_record`。各自重建 C 的原始 signing input 并比对 SHA，认证当前用途、安装、key/version、工作身份、期限及撤销；从独立历史 reader 取公钥，配置三个独立 JWT role/policy 和当前 source Recheck。 |
 | D/B 运行与撤销 | functional staging key 的本地授权顺序已收紧；真实并发行为未测。 | 用包含本提交的新镜像验证原 Job 行锁与并发 Revoke 的顺序，以及已准入调用的 `StopJob/Stopped` 证明。forward 关闭时独立 recovery 必须仍可按旧 ref/version 读取历史日记；不能借失效 forward 恢复。 |
 
+### recovery-only 启动复审发现（待 D 修正）
+
+`NewDeploymentService` 在 forward grant 缺失/失效时会令 `Forward=Recovery` 且关闭 forward，但随后无条件调用 `checkControlGrants`。该 probe 以 `Forward.DeploymentBinding()` 的数据库账号核对完整 capture/runtime-control 表权限；恢复账号若仅有恢复权限，服务可能在原 recovery authority 有效时仍启动失败。D 当前负责的 `deployment_service.go` 有在途修改，A 已交其共享文件 owner 处理，未覆盖。验收应证明：缺失或撤销 forward grant 时，精确恢复账号可建立 recovery-only 服务、不能公布 forward readiness 或签发 worker；恢复仍使用独立签名 grant 与当前任务/历史 ref 检查，缺恢复必要权限则拒绝。不能通过给恢复账号补全 capture 权限来掩盖此问题。
+
 ## 材料与测试口径
 
 复用已固定的 OpenBao v2.6.2、JWT trust readback SHA `595ab8034b889490a055b56094ffdd1d71ace5a188d10fa77eab19d3deb89244`、backup KEK v1 profile SHA `fd5c182837152d128d00ece72520a90baa924d07cc76311f151f4f2ab05d4e9f`。这些公开回执证明配置/属性，不证明 role、policy、permit、任务授权或真实 generate/unwrap；不重复昨日采集。
