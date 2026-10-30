@@ -28,7 +28,11 @@ func main() {
 	path := flag.String("root", "", "probe-only mounted staging root")
 	id := flag.String("run-id", "", "unique probe ID")
 	flag.Parse()
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	limit := 2 * time.Minute
+	if strings.HasPrefix(*mode, "probe-") {
+		limit = 3 * time.Minute
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), limit)
 	defer cancel()
 	if err := run(ctx, *mode, *config, *digest, *dsn, *apply, *age, *path, *id); err != nil {
 		if strings.HasPrefix(*mode, "probe-") {

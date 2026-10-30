@@ -81,6 +81,31 @@ func ProbeSealInit(parent *os.Root, id string) error {
 	return syncDirectory(parent)
 }
 
+func waitProbeMarker(ctx context.Context, root *os.Root, name, id string) error {
+	for {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		data, err := root.ReadFile(name)
+		if err == nil {
+			if string(data) != id {
+				return ErrFile
+			}
+			return nil
+		}
+		if !errors.Is(err, os.ErrNotExist) {
+			return err
+		}
+		timer := time.NewTimer(100 * time.Millisecond)
+		select {
+		case <-ctx.Done():
+			timer.Stop()
+			return ctx.Err()
+		case <-timer.C:
+		}
+	}
+}
+
 func ProbeSealHold(ctx context.Context, parent *os.Root, id string) error {
 	if !probeID.MatchString(id) {
 		return ErrFile
@@ -98,14 +123,9 @@ func ProbeSealHold(ctx context.Context, parent *os.Root, id string) error {
 		if e := exactCustodyJSON(root, ".lock-ready", []byte(id)); e != nil {
 			return e
 		}
-		timer := time.NewTimer(10 * time.Second)
-		defer timer.Stop()
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case <-timer.C:
-			return nil
-		}
+		// Do not infer that the other node has observed readiness after a fixed
+		// sleep: shared filesystem negative lookup caching can outlast it.
+		return waitProbeMarker(ctx, root, ".lock-observed", id)
 	})
 	if err != nil {
 		return err
@@ -156,29 +176,8 @@ func ProbeSealWorker(ctx context.Context, path, id string) (result error) {
 	if _, err = os.ReadFile(filepath.Join(path, ".escape")); !errors.Is(err, os.ErrNotExist) && !errors.Is(err, os.ErrPermission) {
 		return ErrFile
 	}
-	wait := func(name string) error {
-		for {
-			data, e := root.ReadFile(name)
-			if e == nil {
-				if string(data) != id {
-					return ErrFile
-				}
-				return nil
-			}
-			if !errors.Is(e, os.ErrNotExist) {
-				return e
-			}
-			timer := time.NewTimer(100 * time.Millisecond)
-			select {
-			case <-ctx.Done():
-				timer.Stop()
-				return ctx.Err()
-			case <-timer.C:
-			}
-		}
-	}
 	step = "wait-lock-ready"
-	if err = wait(".lock-ready"); err != nil {
+	if err = waitProbeMarker(ctx, root, ".lock-ready", id); err != nil {
 		return err
 	}
 	step = "lock-must-block"
@@ -186,11 +185,17 @@ func ProbeSealWorker(ctx context.Context, path, id string) (result error) {
 	defer cancel()
 	acquired := false
 	err = WithCustodyLock(blocked, root, func() error { acquired = true; return nil })
+	// Acknowledge completion even on a failed contention check, so the holder
+	// can release. This acknowledgement is NOT a successful worker receipt.
+	if ackErr := exactCustodyJSON(root, ".lock-observed", []byte(id)); ackErr != nil {
+		step = "acknowledge-lock-observation"
+		return ackErr
+	}
 	if acquired || !errors.Is(err, context.DeadlineExceeded) {
 		return fmt.Errorf("acquired=%t lock_error=%v: %w", acquired, err, ErrFile)
 	}
 	step = "wait-lock-release"
-	if err = wait(".lock-release"); err != nil {
+	if err = waitProbeMarker(ctx, root, ".lock-release", id); err != nil {
 		return err
 	}
 	step = "lock-after-release"
@@ -229,7 +234,7 @@ func ProbeSealClean(parent *os.Root, id string) error {
 		}
 	}
 	// Caller has already stopped and deleted the exact probe Pod by UID.
-	for _, name := range []string{"source", "link", ".lock-ready", ".lock-release", ".custody.lock", ".escape", ".probe-public"} {
+	for _, name := range []string{"source", "link", ".lock-ready", ".lock-observed", ".lock-release", ".custody.lock", ".escape", ".probe-public"} {
 		info, e := root.Lstat(name)
 		if errors.Is(e, os.ErrNotExist) {
 			continue

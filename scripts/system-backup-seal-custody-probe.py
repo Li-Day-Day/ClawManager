@@ -18,7 +18,7 @@ def manifest(cfg, run_id, node):
         "metadata": {"name": "seal-probe-" + run_id[4:20], "namespace": cfg["namespace"],
                      "labels": {"backup-seal-probe": run_id}},
         "spec": {
-            "restartPolicy": "Never", "activeDeadlineSeconds": 120,
+            "restartPolicy": "Never", "activeDeadlineSeconds": 240,
             "nodeName": node, "serviceAccountName": security["ServiceAccountName"],
             "automountServiceAccountToken": False,
             "securityContext": {"seccompProfile": {"type": "RuntimeDefault"}},
@@ -181,7 +181,7 @@ def run(args):
             time.sleep(1)
         hold = subprocess.Popen(base + control_args("probe-hold"), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         stage = "wait-worker-result"
-        end = time.monotonic() + 65
+        end = time.monotonic() + 200
         while True:
             pod = get("pod", wanted["metadata"]["name"])
             verify_probe(pod, wanted, uid)

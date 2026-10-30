@@ -1,0 +1,163 @@
+{
+  "source": "user-supplied remote command output",
+  "exit_code": 1,
+  "root_cause_status": "contention check acquired lock; fixed-duration holder makes overlap unproven",
+  "reports": [
+    {
+      "started": {
+        "namespace": "seal-capability-aac3445643cb414e",
+        "scope": "disposable-storage-capability",
+        "production_accepted": false,
+        "passed": false,
+        "cleaned": false,
+        "storage_class_uid": "a7e3a85f-6ecf-4b40-bfb7-98892f9b3076"
+      }
+    },
+    {
+      "probe_started": {
+        "run_id": "sbk_3f7cb575-dfe4-4e05-a36a-714f64430a56",
+        "namespace_uid": "c09f4df7-362b-417c-a68a-b6a124177247",
+        "pv_uid": "e196c70d-643d-43a2-b6c1-f7c7668b5272",
+        "controller_uid": "188f2283-3c64-462d-916b-889c514e07f2",
+        "controller_image_id": "10.130.14.23:5000/backup-seal-probe@sha256:fbd2fe4a84256354a3a142cb42f64cefe458f137e3af528379bee89f47efdcd6",
+        "worker_image": "10.130.14.23:5000/backup-seal-probe@sha256:fbd2fe4a84256354a3a142cb42f64cefe458f137e3af528379bee89f47efdcd6",
+        "worker_node_uid": "fe1cc275-6fa1-484e-8bf6-7b21193daffd",
+        "cross_node": true,
+        "passed": false,
+        "cleaned": false
+      }
+    },
+    {
+      "run_id": "sbk_3f7cb575-dfe4-4e05-a36a-714f64430a56",
+      "namespace_uid": "c09f4df7-362b-417c-a68a-b6a124177247",
+      "pv_uid": "e196c70d-643d-43a2-b6c1-f7c7668b5272",
+      "controller_uid": "188f2283-3c64-462d-916b-889c514e07f2",
+      "controller_image_id": "10.130.14.23:5000/backup-seal-probe@sha256:fbd2fe4a84256354a3a142cb42f64cefe458f137e3af528379bee89f47efdcd6",
+      "worker_image": "10.130.14.23:5000/backup-seal-probe@sha256:fbd2fe4a84256354a3a142cb42f64cefe458f137e3af528379bee89f47efdcd6",
+      "worker_node_uid": "fe1cc275-6fa1-484e-8bf6-7b21193daffd",
+      "cross_node": true,
+      "passed": false,
+      "cleaned": true,
+      "worker_pod_uid": "79cdeb4b-5bc2-4fe0-8275-65f5e07fe28f",
+      "failure_stage": "wait-worker-result",
+      "failure": "worker isolation/locking probe failed",
+      "worker_status": {
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-30T06:43:59Z",
+            "status": "False",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-30T06:43:23Z",
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-30T06:43:58Z",
+            "reason": "PodFailed",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-30T06:43:58Z",
+            "reason": "PodFailed",
+            "status": "False",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-30T06:43:23Z",
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "containerStatuses": [
+          {
+            "containerID": "containerd://0d40229d28e2547290f27f869c344ab3f55a875d95aaa990919b84576086bc5b",
+            "image": "sha256:8115c1eca67de6c841bd6a01742cc05db2f2768923cc11f3316e24d63aa35778",
+            "imageID": "10.130.14.23:5000/backup-seal-probe@sha256:fbd2fe4a84256354a3a142cb42f64cefe458f137e3af528379bee89f47efdcd6",
+            "lastState": {},
+            "name": "probe",
+            "ready": false,
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://0d40229d28e2547290f27f869c344ab3f55a875d95aaa990919b84576086bc5b",
+                "exitCode": 1,
+                "finishedAt": "2026-10-30T06:43:57Z",
+                "reason": "Error",
+                "startedAt": "2026-10-30T06:43:27Z"
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/staging",
+                "name": "staging"
+              },
+              {
+                "mountPath": "/workspace",
+                "name": "workspace",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/tmp",
+                "name": "memory"
+              }
+            ]
+          }
+        ],
+        "hostIP": "10.130.35.23",
+        "hostIPs": [
+          {
+            "ip": "10.130.35.23"
+          }
+        ],
+        "phase": "Failed",
+        "podIP": "10.244.166.252",
+        "podIPs": [
+          {
+            "ip": "10.244.166.252"
+          }
+        ],
+        "qosClass": "Burstable",
+        "startTime": "2026-10-30T06:43:23Z"
+      },
+      "worker_log_tail": "probe diagnostic: seal probe worker step=lock-must-block: acquired=true lock_error=<nil>: staging file identity, ownership or seal is invalid\nseal custody operation rejected; retain probe output and inspect deployment pins/ownership\n",
+      "holder_stdout": "{\"mode\":\"probe-hold\",\"ok\":true,\"run_id\":\"sbk_3f7cb575-dfe4-4e05-a36a-714f64430a56\"}\n",
+      "holder_stderr": "",
+      "holder_exit": 0
+    },
+    {
+      "namespace": "seal-capability-aac3445643cb414e",
+      "scope": "disposable-storage-capability",
+      "production_accepted": false,
+      "passed": false,
+      "cleaned": true,
+      "storage_class_uid": "a7e3a85f-6ecf-4b40-bfb7-98892f9b3076",
+      "namespace_uid": "c09f4df7-362b-417c-a68a-b6a124177247",
+      "volumes": [
+        {
+          "Kind": "PersistentVolumeClaim",
+          "Name": "staging",
+          "UID": "f2c18ed8-3a80-4d5f-adf9-889166847145",
+          "PVName": "pvc-f2c18ed8-3a80-4d5f-adf9-889166847145",
+          "PVUID": "e196c70d-643d-43a2-b6c1-f7c7668b5272"
+        },
+        {
+          "Kind": "PersistentVolumeClaim",
+          "Name": "source",
+          "UID": "7a5b57ba-58e2-4304-9f88-668dd32f60f8",
+          "PVName": "pvc-7a5b57ba-58e2-4304-9f88-668dd32f60f8",
+          "PVUID": "a60f66dc-6fbc-47a9-823e-d0cb8597e404"
+        }
+      ]
+    }
+  ]
+}
