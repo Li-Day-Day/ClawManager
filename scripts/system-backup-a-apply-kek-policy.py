@@ -52,6 +52,8 @@ def policies(plan):
     require(set(context) == {"origin_installation_id", "backup_public_id", "attempt_no", "phase", "part", "part_index", "envelope_id", "capture_context_hash"})
     require(all(isinstance(v, str) and 0 < len(v.encode("utf-8")) <= 256 for v in [*key.values(), *context.values()]))
     require(key["provider"] == "external-kms" and re.fullmatch(r"[0-9a-f]{64}", key["identity_hash"]) and re.fullmatch(r"[0-9a-f]{64}", context["capture_context_hash"]))
+    registry_version = key["registry_version"]
+    require(re.fullmatch(r"[A-Za-z0-9._:-]{1,128}", registry_version) and registry_version not in ("latest", "current", "default"))
     version = key["provider_version"]
     require(re.fullmatch(r"[1-9][0-9]*", version) and int(version) <= 4294967295)
     require(re.fullmatch(r"[1-9][0-9]*", context["attempt_no"]) and re.fullmatch(r"0|[1-9][0-9]*", context["part_index"]) and re.fullmatch(r"sbk_[A-Za-z0-9_-]+", context["backup_public_id"]))

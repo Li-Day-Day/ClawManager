@@ -31,3 +31,5 @@ KEK generate/unwrap 的精确 policy/role 工具仍为 `scripts/system-backup-a-
 ## 本地验证（2026-10-30）
 
 `go vet -p 1 ./internal/systembackupsecurity` 退出码 0；`go test -p 1 -run '^Test(OriginalSigningResolver|SigningJWT)' ./internal/systembackupsecurity` 退出码 0。KEK policy/role 工具的 11 个 Python 测试与 C plan builder 的 18 个 Node 测试均为 0。A 专用 Go 缓存及临时构建目录已删除。以上仅覆盖本地构造、拒绝和计划校验；没有生产 original signing authority、已准入三用途 signer key/role、现场 generate/unwrap 或撤销读回。
+
+后续 A 增量：KEK policy 编译前按 Go KMS 同一固定 registry version 规则拒绝 `latest`、`current`、`default`、空白和路径字符。新增回归将 KeyBinding 摘要、context base64、generate/unwrap ACL 的 context 一并重算后仍要求拒绝，避免靠旧 hash 不匹配掩盖可变别名。`py -3 -B scripts/system-backup-a-apply-kek-policy.test.py` 共 12 项退出 0；这是本地计划/策略检查，未下发现场 policy 或完成真实 generate/unwrap。

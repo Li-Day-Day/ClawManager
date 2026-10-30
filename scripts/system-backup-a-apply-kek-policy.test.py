@@ -1,5 +1,6 @@
 """Local contract/side-effect tests; no provider access or credentials."""
 import copy
+import base64
 import importlib.util
 import json
 import hashlib
@@ -69,6 +70,25 @@ console.log(JSON.stringify(backupTransitPlan({installation:context.origin_instal
                 elif mode == "latest": key["provider_version"] = "0"
                 elif mode == "extra-field": context["allow_all"] = "true"
                 with self.assertRaises(subject.Rejected): subject.policies(plan)
+
+    def test_reject_coherent_mutable_registry_version(self):
+        # Recompute every context-bearing field so this exercises the exact
+        # registry-version rule, not an incidental stale hash or broader ACL.
+        for version in ("latest", "current", "default", "v 1", "../v1"):
+            with self.subTest(version=version):
+                plan = copy.deepcopy(self.plan)
+                key = plan["request"]["key"]
+                key["registry_version"] = version
+                context = plan["request"]["context"]
+                binding_hash = hashlib.sha256(subject.canonical(key)).hexdigest()
+                encoded = base64.b64encode(subject.canonical({**context, "kek_binding_sha256": binding_hash})).decode()
+                plan["context_base64"] = encoded
+                plan["generate_request"]["body"]["context"] = encoded
+                for policy in ("generate_policy", "unwrap_policy"):
+                    parameters = next(iter(plan[policy]["path"].values()))["allowed_parameters"]
+                    parameters["context"] = [encoded]
+                with self.assertRaises(subject.Rejected):
+                    subject.policies(plan)
 
     def test_apply_and_idempotent_readback(self):
         provider = Provider()
