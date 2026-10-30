@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | 7、8 | Lite gateway / running / generation 1 | NFS `/workspaces/openclaw/user-1/instance-7`、`instance-8`；无实例 PVC |
 | 11 | Lite gateway / running / generation 5 | NFS `/workspaces/openclaw/user-1/instance-11`；无实例 PVC |
-| 12 | Pro desktop / stopped / generation 0 | `instances.pvc_name=clawreef-12-pvc`，workspace 路径为空；该 PVC 不在当前 namespace 清单，`persistent_volumes` 没有登记行。不能仅凭 generation 0 宣称数据不存在。 |
+| 12 | Pro desktop / stopped / generation 0 | `instances.pvc_name=clawreef-12-pvc`，workspace 路径为空；该 PVC 不在根 namespace，后续确认它在子 namespace `clawmanager-zhanghui08-system-user-1`，已绑定且不能因实例停止而排除。 |
 
 当前 namespace PVC：`mysql-data`、`minio-data`、`redis-data`、`clawmanager-workspaces`、`system-backup-capacity-report` 均为 Bound。当前运行 MySQL Pod 挂 `mysql-data`，MinIO Pod 挂 `minio-data`，`workspace-store` Pod 挂 `clawmanager-workspaces`。运行中的 `clawmanager-team-redis` 没有 PVC 挂载；`redis-data` 虽 Bound，初次观察没有任何当前 Pod 挂载。app、Hermes、OpenClaw Pod 也没有 PVC 挂载；其直接 NFS `/workspaces` 挂载见 [NFS 归属观察](system-backup-a-nfs-ownership-20261030.md)。
 
@@ -16,6 +16,10 @@
 
 第三次只读观察用 `scripts/system-backup-a-redis-live-observe.py` 固定 namespace UID 和 Redis Pod UID，查询 Redis `INFO keyspace` / `INFO persistence` 的筛选数字与状态。操作者回传 `SSH_EXIT=0`：`db0` 有 **6 个键**、其中 0 个设到期；`loading=0`、`aof_enabled=1`、`aof_last_write_status=ok`、`rdb_last_bgsave_status=ok`。工具不读取键名、键值或密码，结果不证明 6 个键在备份时刻仍不变。AOF 当前写在 `emptyDir`，因此启用 AOF 也不使 Pod 更换后保留现有数据。首次探针因旧解析器不接受 Redis 返回的额外 keyspace 数字字段而退出 1；修复并通过本地解析检查后重跑取得以上回执。
 
-这些是不同数据域：完整备份必须在一致性窗口覆盖现库、真实 Redis 状态、MinIO 对象及三个运行实例的 NFS 子树，并明确已停止实例 12 的旧 PVC/孤儿数据边界。Redis 的当前 `/data` 是 `emptyDir`：删除或替换 Pod 会丢失该卷，不能在捕获 Redis 前把它缩容/删除，也不能从未使用的 `redis-data` PVC 读取旧快照冒充现状。运行 Runtime 的 NFS 和本 namespace `workspace-store` 使用的 PVC 不是同一已证明的数据源。`system-backup-capacity-report` 的用途及保留边界也需按原业务事实判断。直接采整个共享 NFS export 或只采这三个目录都不能自动证明“当前 namespace 所有数据”。
+第四次只读 PV/子 namespace 查询均退出 0。`clawmanager-zhanghui08-system-user-1` UID 为 `b49d2b4a-9a9a-43be-a0fb-e486649b9681`；其中 `clawreef-12-pvc` UID `35c3e1db-fdd2-43e4-8a4d-5af2a6c39e37`，Bound 到 `pvc-35c3e1db-fdd2-43e4-8a4d-5af2a6c39e37`，PV reclaim policy 为 Delete，100Gi Longhorn CSI `driver.longhorn.io`。该子 namespace 还有 `clawreef-team-3-shared` UID `a263c53c-c284-4a8d-bada-889413799310`，Bound 到 `clawreef-pv-clawmanager-zhanghui08-system-user-1-team-3-shared`，PV reclaim policy 为 Retain，10Gi NFS `10.107.165.245:/teams/user-1/team-3-shared`。后端类型查询也退出 0。当前查询没有返回该子 namespace 的运行 Pod 行，不能因此断定卷内容为空。两块卷均属于当前 installation 的全量数据范围候选；其业务归属需按原实例/团队关系确定，不能遗漏或跨租户采集。团队 NFS 路径与直接挂载的 export 根和三个实例目录可能共用后端，不能重复计入或因为路径不在三个实例目录中而漏掉。
+
+同轮只读 MinIO 查询先核对 Pod UID `2b674b10-0360-4164-8055-022c46991d17`，再 `ls -1 /data` 与 `ls -la /data`，均退出 0。普通列表没有顶层项；包含隐藏项的列表只见 `.minio.sys`，没有可见桶目录。这是当前挂载点的目录观察，不是对象 API 的全量桶/版本证明；`minio-data` PVC 和服务配置仍在备份范围判断内。
+
+这些是不同数据域：完整备份必须在一致性窗口覆盖现库、真实 Redis 状态、MinIO 对象及三个运行实例的 NFS 子树，并包含已确认的实例 12 子 namespace PVC 与团队共享 PVC 的业务数据边界。团队目录 `/workspaces/teams/user-1/team-3-shared` 已在实际根 export 挂载中只读确认存在，见 [NFS 归属观察](system-backup-a-nfs-ownership-20261030.md)。Redis 的当前 `/data` 是 `emptyDir`：删除或替换 Pod 会丢失该卷，不能在捕获 Redis 前把它缩容/删除，也不能从未使用的 `redis-data` PVC 读取旧快照冒充现状。运行 Runtime 的 NFS 和本 namespace `workspace-store` 使用的 PVC 不是同一已证明的数据源。`system-backup-capacity-report` 的用途及保留边界也需按原业务事实判断。直接采整个共享 NFS export 或只采这四个目录都不能自动证明“当前 namespace 所有数据”。
 
 工具本地四项离线测试 `py -3 -B scripts/system-backup-a-namespace-footprint.test.py` 退出 0，覆盖已停止实例与 PVC、重复/异常 SQL 行拒绝、Pod/PVC 输出不含环境值和非法身份拒绝。没有构建产物。该工具只观察，`ready_for_backup=false`；正式采集仍依赖 B/C 冻结 context、D 现库升级及全域 writer/停止证明、A KEK 准入与凭据接线。

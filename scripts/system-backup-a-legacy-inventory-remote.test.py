@@ -63,6 +63,18 @@ class InventoryAcceptance(unittest.TestCase):
                 with self.assertRaises(RuntimeError):
                     runner["resumed_cache"]()
 
+    def test_stale_resume_cache_has_clear_failure(self):
+        with tempfile.TemporaryDirectory(prefix="sbk-a-legacy-inventory-") as scratch:
+            missing = Path(scratch) / "gocache"
+            with mock.patch.dict(os.environ, {"SBK_A_RESUME_GOCACHE": str(missing)}):
+                with self.assertRaisesRegex(RuntimeError, "resume cache no longer exists"):
+                    runner["resumed_cache"]()
+
+    def test_verified_d_direct_evidence_retires_remote_runner(self):
+        with mock.patch.dict(os.environ, {"SBK_A_RESUME_GOCACHE": "stale"}):
+            with self.assertRaisesRegex(RuntimeError, "verified D direct site evidence already exists"):
+                runner["main"]()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -13,6 +13,7 @@ PATHS = (
     "/workspaces/openclaw/user-1/instance-7",
     "/workspaces/openclaw/user-1/instance-8",
     "/workspaces/openclaw/user-1/instance-11",
+    "/workspaces/teams/user-1/team-3-shared",
 )
 SCRIPT = r'''set -eu
 for p do

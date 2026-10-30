@@ -30,6 +30,8 @@ SERVER_UUID = "f1f5f76a-95f5-11f1-b08e-366835b4a029"
 DATABASE = "clawmanager"
 LEDGER_SHA256 = "5d303453289c28d0b8abf7abab8b3abe15ad605079feb01e599d919b53068903"
 OUTPUT = ROOT / "docs/evidence/a-site-legacy-inventory-direct-20261030.json"
+DIRECT_EVIDENCE = ROOT / "docs/evidence/d-existing-db-live-inventory-direct-20261030.json"
+DIRECT_EVIDENCE_SHA256 = "71b22c009b3ad9bdeef324d2cafd2aa4c1a646110f2080d1b6f42746f8f7013f"
 MARKER = "A_LEGACY_INVENTORY_REMOTE_CLEANED"
 
 
@@ -116,7 +118,10 @@ def resumed_cache():
     value = os.environ.get("SBK_A_RESUME_GOCACHE", "")
     if not value:
         return None
-    cache = Path(value).resolve(strict=True)
+    try:
+        cache = Path(value).resolve(strict=True)
+    except OSError as error:
+        raise RuntimeError("A resume cache no longer exists; do not retry the retired site inventory") from error
     temporary_root = Path(tempfile.gettempdir()).resolve(strict=True)
     if cache.name != "gocache" or cache.parent.parent != temporary_root or \
             not cache.parent.name.startswith("sbk-a-legacy-inventory-") or not cache.is_dir():
@@ -125,6 +130,10 @@ def resumed_cache():
 
 
 def main():
+    if DIRECT_EVIDENCE.is_file():
+        if hashlib.sha256(DIRECT_EVIDENCE.read_bytes()).hexdigest() != DIRECT_EVIDENCE_SHA256:
+            raise RuntimeError("D direct site inventory changed; refuse duplicate A site run")
+        raise RuntimeError("A site inventory retired: verified D direct site evidence already exists; do not rerun")
     if OUTPUT.exists():
         raise RuntimeError("evidence output already exists; preserve prior result")
     check_identity()
