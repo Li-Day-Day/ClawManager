@@ -16,6 +16,20 @@
 
 ## 本次验证与部署变化
 
+### 后续补齐：原 Job 的独立 staging 封存观察
+
+A 的复审核实了另一个缺口：原 complete 分支把 worker 提供的文件名/SHA 直接装成 `SealedPart`。现在由 `staging.ObserveFile` 将原密文复制到 controller 专用 `.controller-seals`，核对复制后的完整 SHA、长度、原绑定 AEAD 和 final frame，再 fsync、create-only 发布。结果引用是 `controller-staging-seal.v1/seal-<绑定摘要>.enc`，不再是 worker 文件名。
+
+绑定摘要覆盖 installation、task、attempt、phase、unit、namespace、Job name/UID/generation、config version/hash、冻结 invocation hash、原 staging AAD 以及原 receipt。回执通过只有校验成功才能构造的 `staging.Observation` 返回。D 把它转换给 B，随后仍由原 Job/authority 事务登记结果；失败或撤权不会因为文件已复制就返回 completed。重试和进程重启核对原私有副本，不覆盖它，也不依赖已经删除或改写的 worker 文件。
+
+隔离依据是现有 `publicadapter/job_factory.go`：worker 的 staging PVC 只挂载准确 task subPath；`.controller-seals` 是 task 目录的同级目录，不在 worker 挂载内。实际 Pod 继续经过原 spec/挂载身份检查。该目录应仅由 controller 和已有受信任存储管理者写入；0400 不是对存储管理员的 WORM 保证。不得另行将 staging 卷根目录或该目录挂载给 worker。
+
+`ReadResult` 在返回报告前从原冻结 invocation 重建封存绑定，重新读取并校验副本的 SHA/长度和 checkpoint 引用；不存在、被篡改、错 Job/attempt/config/invocation 均拒绝，不回退到原文件。原版本仅登记文件名的结果不会自动升级为新封存回执，需要重新发起任务。
+
+这是现有 `functional_test/workspace` 的本地 staging 版本固定，不是 C 的最终 artifact envelope、对象存储 immutable version、capture certificate 或 catalog 发布。保留密文副本供该任务后续读取；失败 SQL 提交留下的确定版本可用于当前授权重试，不能仅因一次请求失败就删除。进程崩溃留下的 `.partial` 不被接纳，存储生命周期清理由原任务 owner 核实后处理，不做目录批量清扫。
+
+封存改动验证：staging、execution、publicadapter 全包通过（9.021s、33.247s、23.459s）。随后补充关闭/重开 custody 模拟进程重启以及 D 的读取组合用例，最终 staging 与 execution 专项通过（12.345s、10.449s）。覆盖源改写/删除、错误密钥与 AAD、摘要正确但 AEAD 错误、篡改副本、超限、取消、跨 Job/attempt/config/invocation、旧文件名和长度漂移。两轮独占构建目录均已删除。这些为本机 Windows 测试；Linux directory fsync、实际 PVC 隔离和真实 MySQL/K8s 整链未在本轮现场执行。
+
 - `systembackupexecution` 的 InlineResult、RegisterInline、WorkerRelay 专项通过（6.516s）；`systembackupcontroller` 的认证 relay SQL、结果权限、原 capture/runtime 权限专项通过（10.802s）。包含精确重放、不匹配 owner/body、过期、容量/登记失败以及不可用 evidence 不推进游标。
 - worker 全包通过（14.380s），publicadapter 全包通过（17.617s）。worker mTLS 测试覆盖 completed/3 收到 503 后重新授权并发送完全相同字节。
 - execution 全包曾在其他窗口正在修改的 `TestNativeRuntimeRequiresPinnedAgentCA` 失败；本次未修改其文件，不宣称共享工作树全包通过。早期模板测试暴露旧 `sev_+SHA` 格式被 B 宽松校验接受，本次已加严格 UUID 检查并重跑通过。

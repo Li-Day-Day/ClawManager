@@ -617,17 +617,8 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 		lease.DEK = bytes.Clone(captureKey)
 		return lease, nil
 	case "complete":
-		root, e := o.Staging.OpenRoot(a.TaskPublicID)
+		seal, e := o.observeWorkerSeal(ctx, a, binding, req.Invocation, *req.Result, captureKey)
 		if e != nil {
-			return worker.Lease{}, worker.ErrExecution
-		}
-		defer root.Close()
-		file, e := staging.OpenFile(ctx, root, req.Result.Receipt)
-		if e != nil {
-			return worker.Lease{}, worker.ErrExecution
-		}
-		defer file.Close()
-		if e = staging.Open(ctx, file, io.Discard, captureKey, req.Invocation.Request.Binding, req.Invocation.Request.MaxCompressedBytes); e != nil {
 			return worker.Lease{}, worker.ErrExecution
 		}
 		inner, e := d.UnwrapTaskPlan(in, plan, b.PlanVersion)
@@ -635,7 +626,7 @@ func (o *PublicJobOwner) Authorize(ctx context.Context, peer string, req worker.
 			return worker.Lease{}, worker.ErrExecution
 		}
 		defer clear(inner.CanonicalJSON)
-		result, e := b.BuildPartResult(in, inner, part.Intent.JobUnitKey, binding, *req.Result, b.SealedPart{Reference: req.Result.Receipt.Name, ContentSHA256: req.Result.Receipt.SHA256, EvidenceIDs: []string{}})
+		result, e := b.BuildPartResult(in, inner, part.Intent.JobUnitKey, binding, *req.Result, seal)
 		if e != nil {
 			return worker.Lease{}, worker.ErrExecution
 		}
@@ -752,7 +743,7 @@ func (o *PublicJobOwner) ReadResult(ctx context.Context, a d.Authority, binding 
 	}
 	// A valid envelope/hash proves byte integrity, not the report's frozen
 	// part/Job/config binding. Check those before exposing the original bytes.
-	in, plan, _, e := o.input(ctx, a, false)
+	in, plan, desc, e := o.input(ctx, a, false)
 	if e != nil {
 		return nil, e
 	}
@@ -763,6 +754,9 @@ func (o *PublicJobOwner) ReadResult(ctx context.Context, a d.Authority, binding 
 	defer clear(inner.CanonicalJSON)
 	if b.ValidatePartResult(in, inner, binding, plain.Bytes()) != nil {
 		return nil, c.ErrExecutionRecord
+	}
+	if e = o.checkWorkerSeal(ctx, a, binding, desc, plain.Bytes()); e != nil {
+		return nil, e
 	}
 	var registered []byte
 	if e = o.Gate.Authority.DB.QueryRowContext(ctx, `SELECT inline_payload FROM system_backup_v2_evidence WHERE public_id=? AND owner_target_type='backup' AND owner_target_public_id=? AND evidence_type='diagnostic' AND storage_state='inline' AND evidence_failure_code='none' AND observed_health='healthy' AND content_checksum=? AND content_size_bytes=? AND media_type='application/json' AND encryption='none' AND redaction_classification='internal' AND expires_at>UTC_TIMESTAMP(6)`, ref.PublicID, a.TaskPublicID, digest, len(plain.Bytes())).Scan(&registered); e != nil || !bytes.Equal(registered, plain.Bytes()) {
