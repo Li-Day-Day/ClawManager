@@ -31,15 +31,8 @@ func runConfiguredPublic(ctx context.Context, cfg *config.Config) error {
 	if e := c.ValidateControllerDatabaseCredentials(os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), cfg.Database.User); e != nil {
 		return e
 	}
-	deployment, e := execution.LoadDeploymentConfig(os.Getenv("SYSTEM_BACKUP_PUBLIC_CONFIG_FILE"), os.Getenv("SYSTEM_BACKUP_PUBLIC_CONFIG_SHA256"))
-	if e != nil {
-		return errors.New("public pinned deployment config unavailable")
-	}
 	session, e := db.ConnectPublicBackupMetadata(cfg.Database, func(ctx context.Context, pool *sql.DB) error {
-		if deployment.RuntimeSources != nil {
-			return (c.SQLRuntimeControlGrantProbe{DB: pool, Schema: cfg.Database.Database, User: cfg.Database.User}).Check(ctx)
-		}
-		return (c.SQLPublicCaptureGrantProbe{DB: pool, Schema: cfg.Database.Database, User: cfg.Database.User}).Check(ctx)
+		return execution.CheckDeploymentDatabase(ctx, pool, os.Getenv("SYSTEM_BACKUP_PUBLIC_CONFIG_FILE"), os.Getenv("SYSTEM_BACKUP_PUBLIC_CONFIG_SHA256"), os.Getenv("SYSTEM_BACKUP_FORWARD_GRANT_SHA256"), os.Getenv("SYSTEM_BACKUP_RECOVERY_GRANT_SHA256"), os.Getenv("SYSTEM_BACKUP_ENABLED") == "true")
 	})
 	if e != nil {
 		return errors.New("public control database unavailable")
@@ -97,7 +90,7 @@ func runConfiguredPublic(ctx context.Context, cfg *config.Config) error {
 	if health == "" {
 		health = defaultHealthAddress
 	}
-	status.setReady(c.BootstrapSnapshot{ConfigEnabled: true, EffectiveEnabled: true, ConfigVersion: service.Forward.DeploymentBinding().ConfigVersion})
+	status.setPublicReady(service.ForwardEnabled, service.Forward.DeploymentBinding().ConfigVersion)
 	status.setDependencyFailure("standby")
 	_ = startHealthServer(active, health, control, status)
 	lease := leader.Config{Namespace: service.Config.Namespace, LeaseName: "clawmanager-public-backup-controller", Identity: service.PublisherOwner, LeaseDuration: time.Duration(cfg.LeaderElection.LeaseDuration) * time.Second, RenewDeadline: time.Duration(cfg.LeaderElection.RenewDeadline) * time.Second, RetryPeriod: time.Duration(cfg.LeaderElection.RetryPeriod) * time.Second}
@@ -156,4 +149,9 @@ func runConfiguredPublic(ctx context.Context, cfg *config.Config) error {
 	default:
 		return nil
 	}
+}
+
+// Health denotes a live recovery controller, not permission to start capture.
+func (s *controllerStatus) setPublicReady(forward bool, version uint64) {
+	s.setReady(c.BootstrapSnapshot{ConfigEnabled: forward, EffectiveEnabled: forward, ConfigVersion: version})
 }

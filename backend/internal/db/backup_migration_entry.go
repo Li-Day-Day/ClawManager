@@ -28,7 +28,9 @@ func ConnectSystemBackupController(cfg config.DatabaseConfig) (upper.Session, er
 
 // Recovery metadata must remain writable while the business gate is held.
 // This connection never migrates/initializes services or sets global Session.
-// A non-nil exact-grant admission is mandatory before returning its pool.
+// A non-nil admission is mandatory before returning its pool. Production uses
+// the pinned recovery identity in recovery-only mode and additionally checks
+// exact capture grants when forward execution is enabled.
 func ConnectPublicBackupMetadata(cfg config.DatabaseConfig, admit func(context.Context, *sql.DB) error) (upper.Session, error) {
 	if admit == nil || cfg.User == "" || strings.EqualFold(cfg.User, "root") {
 		return nil, errors.New("dedicated public metadata admission required")

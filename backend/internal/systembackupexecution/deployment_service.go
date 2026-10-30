@@ -92,27 +92,8 @@ func NewDeploymentService(ctx context.Context, db *sql.DB, client kubernetes.Int
 			s.Close()
 		}
 	}()
-	s.Recovery, e = deploymentIdentity(cfg.RecoveryGrant, recoveryDigest, cfg.KeyDirectory)
-	if e != nil {
+	if e = s.loadDeploymentIdentities(ctx, db, forwardDigest, recoveryDigest); e != nil {
 		return nil, e
-	}
-	if e = s.Recovery.CheckDeployment(ctx, db); e != nil {
-		return nil, e
-	}
-	recoveryActions := s.Recovery.DeploymentBinding().Actions
-	if len(recoveryActions) != 1 || recoveryActions[0] != "recover" {
-		return nil, c.ErrExecutionAuthority
-	}
-	s.Forward, e = deploymentIdentity(cfg.ForwardGrant, forwardDigest, cfg.KeyDirectory)
-	if e != nil {
-		// Only the independent, currently signed recovery grant may reconstruct
-		// metadata/key references. It never gains prepare/capture/issuer rights.
-		s.Forward = s.Recovery
-		s.ForwardEnabled = false
-	} else {
-		if e = s.Forward.CheckDeployment(ctx, db); e != nil || !forwardCaptureActions(s.Forward.DeploymentBinding()) {
-			s.ForwardEnabled = false
-		}
 	}
 	stage = "profile"
 	s.profile, e = api.LoadExecutionProfile(cfg.ProfileFile)
