@@ -12,3 +12,11 @@
 4. 用原 SQL evidence 行及 completed relay 读回验证同 Job、错 part/attempt、过期、撤销、容量不足、提交未知和重启收敛。测试替身与正式 SQL/现场回执分开报告。
 
 在上述合同和授权未固定前，候选代码不应被计作 A 正式 KEK/签名/Provider 接线完成，也不应把 completed relay 当成正式成品已发布。该风险不影响既有 ready/running 的原身份 relay。
+
+## 2026-10-30 合并后复核
+
+`b1274ee4` 已将小型结果的 inline 登记和 completed relay 合入共享分支。D 的 [实施记录](system-backup-d-b-result-registration-gap-20261030.md)把它限定为不超过 8192 字节、五项数值统计、空 warnings/evidence IDs 的内部 `diagnostic` 结果；源码在 `saveResult` 的原 authority/Job 锁事务中写加密 runtime 结果、预留容量、登记 inline evidence，并以稳定 ID 和逐字节对比处理同一结果重试。此范围可作为原 Job 的结构化完成观察，仍不能作为正式备份成品或 KEK/签名接入成功证明。真实 MySQL、worker 镜像和现场撤销/恢复链尚未验收。
+
+剩余接线事实更具体：`backend/internal/systembackupexecution/public_jobs.go` 的 complete 分支在 `staging.Open` 校验后，以 `req.Result.Receipt.Name` 和 `SHA256` 直接构造 `publicadapter.SealedPart`；`backend/internal/systembackup/publicadapter/results.go` 对该类型的合同要求来自 C 的 immutable seal observer，明确说文件名或 worker 自报成功不能铸造它。当前文件校验能证明读取当时的密文与绑定一致，尚未在此调用点证明不可变版本/最终 seal 观察回执。B/C 最终 writer 接入时须给出该回执及与同一 Job、原字节、冻结 part 的绑定；此前 completed relay 只能按上述内部结果范围使用。
+
+原明文可见性问题缩小为这份 closed checkpoint/统计 JSON 对持有 evidence 表读取权限者的范围：数据库 `inline_payload` 是未加密的 `internal`，而 runtime 结果另有加密副本。部署 owner 仍须核对实际 SQL grant 与访问路径；本次源码/合成测试不能证明现场 reader 范围。已将 seal 观察者要求交给 D，不修改 D 的共享文件。
