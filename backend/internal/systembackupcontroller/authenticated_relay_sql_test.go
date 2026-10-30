@@ -57,6 +57,7 @@ type relaySQLModel struct {
 	unknown     bool
 	failInsert  bool
 	oldEvidence bool
+	resultFault string
 }
 type relaySQLDriver struct{ m *relaySQLModel }
 type relaySQLConn struct {
@@ -115,6 +116,20 @@ func (c *relaySQLConn) QueryContext(ctx context.Context, q string, args []driver
 			created = created.Add(-time.Hour)
 		}
 		return row("system-backup-evidence.v1", "backup", c.m.base.a.TaskPublicID, strings.Repeat("d", 64), created)
+	case strings.HasPrefix(q, "SELECT result_sha256 FROM system_backup_v2_runtime_resources"):
+		if len(args) != 5 || args[0].Value != c.m.base.a.TaskPublicID || args[1].Value != j.Namespace || args[2].Value != j.Name || args[3].Value != j.UID || args[4].Value != int64(c.m.base.a.AttemptNo) {
+			return nil, errors.New("result lookup escaped original Job")
+		}
+		if c.m.resultFault == "missing" {
+			return row(nil)
+		}
+		if c.m.resultFault == "foreign" {
+			return row(strings.Repeat("e", 64))
+		}
+		if c.m.resultFault == "sql" {
+			return nil, errors.New("result unavailable")
+		}
+		return row(strings.Repeat("d", 64))
 	case strings.HasPrefix(q, "SELECT started_at FROM system_backup_v2_attempts"):
 		return row(c.m.base.now.Add(-time.Second))
 	}
@@ -242,6 +257,14 @@ func TestRuntimeControlAuthenticatedRelaySQLCommitReplayAndRollback(t *testing.T
 				t.Fatal("previous attempt evidence accepted")
 			}
 			m.oldEvidence = false
+			for _, resultFault := range []string{"missing", "foreign", "sql"} {
+				m.resultFault = resultFault
+				commits := base.commits
+				if send(message) == 200 || m.cursor.Sequence != 2 || base.commits != commits {
+					t.Fatal("completion accepted without exact Job result", resultFault)
+				}
+			}
+			m.resultFault = ""
 			if send(message) != 200 || m.cursor.Sequence != 3 {
 				t.Fatal("current completion evidence rejected")
 			}

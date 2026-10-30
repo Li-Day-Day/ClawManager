@@ -85,6 +85,12 @@ func (s SQLAuthenticatedRelayAcceptor) AcceptAuthenticatedRelay(ctx context.Cont
 		return "", e
 	}
 	if m.ResultEvidence != nil {
+		// The Job row is already locked. A same-task evidence from another part
+		// is not proof of this worker's result, even if created in this attempt.
+		var resultDigest sql.NullString
+		if tx.QueryRowContext(ctx, `SELECT result_sha256 FROM system_backup_v2_runtime_resources WHERE task_public_id=? AND resource_kind='Job' AND namespace_name=? AND resource_name=? AND observed_uid=? AND attempt_no=? AND revoked=FALSE FOR SHARE`, a.TaskPublicID, job.Namespace, job.Name, job.UID, a.AttemptNo).Scan(&resultDigest) != nil || !resultDigest.Valid || resultDigest.String != m.ResultEvidence.SHA256 {
+			return "", ErrExecutionRecord
+		}
 		var schema, kind, owner, hash string
 		var created, attemptStarted time.Time
 		if tx.QueryRowContext(ctx, `SELECT schema_version,owner_target_type,owner_target_public_id,content_checksum,created_at FROM system_backup_v2_evidence WHERE public_id=? FOR SHARE`, m.ResultEvidence.PublicID).Scan(&schema, &kind, &owner, &hash, &created) != nil || schema != "system-backup-evidence.v1" || kind != a.TaskType || owner != a.TaskPublicID || hash != m.ResultEvidence.SHA256 {
