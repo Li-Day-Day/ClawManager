@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -164,5 +165,40 @@ func TestProviderInvocationCannotBorrowFunctionalOrRecoveryCalls(t *testing.T) {
 	raw, _ := json.Marshal(i)
 	if strings.Contains(string(raw), "provider_key") {
 		t.Fatal("legacy invocation bytes changed")
+	}
+}
+
+func TestCaptureKeyJobRejectsWrongMappingBeforeOriginalReserve(t *testing.T) {
+	base := keyInvocation(t)
+	config := k.Config{Endpoint: base.ProviderKey.Endpoint, KeyName: base.ProviderKey.KeyName, Key: base.ProviderKey.Request.Key, InstallationID: base.ProviderKey.Request.Context.InstallationID}
+	var calls atomic.Int32
+	h := ControlHandler{Authorizer: authorizeFunc(func(context.Context, string, ControlRequest) (Lease, error) {
+		calls.Add(1)
+		return Lease{}, ErrExecution
+	})}
+	client, _ := mutualTLSFixture(t, h)
+	for _, tc := range []struct {
+		name   string
+		change func(*Invocation, *k.Config)
+	}{
+		{"purpose", func(i *Invocation, _ *k.Config) { i.ProviderKey.Operation = k.Unwrap }},
+		{"installation", func(_ *Invocation, c *k.Config) { c.InstallationID = "another_installation" }},
+		{"provider key", func(_ *Invocation, c *k.Config) { c.KeyName = "another-key" }},
+		{"provider version", func(_ *Invocation, c *k.Config) { c.Key.ProviderVersion = "2" }},
+		{"registry version", func(_ *Invocation, c *k.Config) { c.Key.RegistryVersion = "r2" }},
+		{"endpoint", func(_ *Invocation, c *k.Config) { c.Endpoint = "https://other.example.invalid:8200" }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			i, c := base, config
+			access := *base.ProviderKey
+			i.ProviderKey = &access
+			tc.change(&i, &c)
+			if _, err := NewCaptureKeyJob(context.Background(), client, i, c, k.PermitMount{}); !errors.Is(err, ErrExecution) {
+				t.Fatalf("mismatched mapping admitted: %v", err)
+			}
+			if calls.Load() != 0 {
+				t.Fatal("mismatched mapping consumed original Job reservation")
+			}
+		})
 	}
 }

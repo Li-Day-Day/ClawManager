@@ -189,7 +189,12 @@ func (a *OriginalKeyAuthority) WithUse(ctx context.Context, access k.Access, use
 // NewCaptureKeyJob is B's production constructor on the existing mTLS control
 // client. Missing frozen C metadata is rejected; it never derives staging keys.
 func NewCaptureKeyJob(ctx context.Context, client *ControlClient, invocation Invocation, config k.Config, permit k.PermitMount) (*CaptureKeyJob, error) {
-	if invocation.ProviderKey == nil {
+	access := invocation.ProviderKey
+	// Reject an incompatible admitted mapping before reserving the original
+	// Job's single-use key window. NewCaptureJob repeats the binding check at
+	// provider use; this early check avoids consuming the original reservation
+	// for a wrong installation, key or exact version.
+	if access == nil || access.Operation != k.Generate || access.Endpoint != config.Endpoint || access.KeyName != config.KeyName || access.Request.Key != config.Key || access.Request.Context.InstallationID != config.InstallationID {
 		return nil, ErrExecution
 	}
 	a, e := NewOriginalKeyAuthority(ctx, client, invocation)
