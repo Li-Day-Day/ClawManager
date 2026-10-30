@@ -81,3 +81,9 @@ Agent 上游仓库对当前账号返回 403；已将基线后的首补丁和完�
 保存在 ClawManager 的 `docs/patches/agentsruntime/`。两份补丁还需要镜像构建、当前 namespace 部署
 和真实 MySQL、Agent、Kubernetes、NFS 联调。`4fe83bcd` 现库导入 profile
 及现场 080→目标 schema 升级仍由 D 单独交付，不能只改 source SHA。
+
+2026-10-30 现场只读探测使用已认证的 Runtime 容器本机 GET，
+`openclaw-runtime` 和 `hermes-runtime` 对新路径
+`/v1/backup/capabilities?gateway_port=20000` 都返回 HTTP 404；
+证据见 `docs/evidence/d-native-backup-capabilities-20261030.json`。
+因此当前部署不能准入 native 停止/恢复，尚未发送任何 mutation。

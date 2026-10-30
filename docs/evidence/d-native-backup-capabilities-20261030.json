@@ -1,0 +1,24 @@
+{
+  "observed_date": "2026-10-30",
+  "source": "operator-supplied output from read-only kubectl exec and curl capability GET",
+  "context": "kubernetes-admin@kubernetes",
+  "namespace": "clawmanager-zhanghui08-system",
+  "path": "/v1/backup/capabilities?gateway_port=20000",
+  "runtimes": [
+    {
+      "deployment": "openclaw-runtime",
+      "deployment_image": "ghcr.io/yuan-lab-llm/agentsruntime/openclaw-lite:latest",
+      "observed_pod_image_id": "10.130.14.23:5000/openclaw-lite@sha256:37c43ba05ff7fd4f0949f274fc67c3e9825f6d3d0f9124b5fc45dc8366c39cee",
+      "http_status": 404
+    },
+    {
+      "deployment": "hermes-runtime",
+      "deployment_image": "10.130.14.23:5000/hermes-lite:2026.7.1",
+      "observed_pod_image_id": "10.130.14.23:5000/hermes-lite@sha256:6688834a944161d8dada995cdffd90781533b24ab1e75bb2182c46eaee3fb52c",
+      "http_status": 404
+    }
+  ],
+  "mutation_sent": false,
+  "native_backup_ready": false,
+  "interpretation": "Both deployed runtimes lack the native capability route at the observed time; this is not a stop or restore proof. Image IDs were collected separately and do not establish a source commit."
+}
