@@ -96,6 +96,18 @@ bash scripts/system-backup-d-runtime-discover.sh clawmanager-zhanghui08-system
 前述另一 installation 的 `workspace-store` Service，不能把本 namespace
 的 hostPath PVC 或整条共享 NFS export 当成本 installation 的独占备份源。
 
+同日对现库三个运行实例的已登记 workspace 子目录只做 `stat`：
+
+| instance | device | inode | UID | GID | mode |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 7 | 86 | 105775331 | 200007 | 1000 | 750 |
+| 8 | 86 | 105775467 | 200008 | 1000 | 750 |
+| 11 | 86 | 105775316 | 200011 | 200011 | 750 |
+
+三目录均存在且位于同一 NFS 挂载，属主和组并不完全相同。恢复验收须保留
+各目录实际 UID/GID/mode，并逐实例核对目标路径；这些元数据尚不能证明
+目录由本 installation 独占，也不能将整条 export 视为备份范围。
+
 现库只有 user 1 的三个运行 Lite 实例，原 `instances.pod_name/pod_namespace` 为 NULL；实际位置来自 `instance_runtime_bindings → runtime_pods`，后者 `pod_uid` 也为 NULL。另有 generation 0 的未启动 Pro 实例。因此当前运行证据既不能证明多用户隔离，也不能通过 D 现有要求非空原 Pod 身份的控制链。后续需保持原 source projection/hash 不变，另行冻结实际 Runtime locator，交叉验证 Kubernetes UID、Agent 身份及原绑定，并在执行/恢复时复查；不得靠回填 Pod 名或虚构 generation 修复。
 
 数据库为 MySQL 8.4.8，迁移 ledger 到 080，仅发现旧 `system_maintenance_participants`。它不是新版完整 participant registry。`4fe83bcd` 导入 profile 仍由 D 独立负责：需覆盖现场 080 的真实 schema 差异，并与仓库已审查导入基线区分。在独立数据库副本上验证保留用户/实例主键和关系、迁移 journal、导入结果及重跑边界，再形成现库升级步骤；新环境继续使用当前 reviewed migration runner。不能只修改 source SHA，也不能直接向旧库执行全部新增 SQL。
