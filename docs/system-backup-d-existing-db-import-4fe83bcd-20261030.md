@@ -257,8 +257,10 @@ Pod 上的临时副本也不是独立故障域备份。脚本在退出时执行�
 清理；远侧独立只读核验返回 `COPY_ABSENT`、`POD_TEMP_ABSENT`。
 本地测试构建二进制和 Go 缓存也已删除。
 现场运行后又补入每次操作前的 namespace UID、Pod UID、MySQL server UUID
-复查，身份变化时拒绝继续写入并留下待人工核查的副本名。这个脚本修订
-通过本地 Bash 语法检查，尚未在远侧重跑；现场结果对应上面的原脚本 SHA。
+复查；执行 CREATE、dump/load 与 DROP 的 Pod shell 在同一次 exec 内再次
+检查 MySQL server UUID，身份变化时拒绝继续写入并留下待人工核查的副本名。
+这个脚本修订通过本地 Bash 语法检查，尚未在远侧重跑；现场结果对应上面的
+原脚本 SHA。
 
 ## 本 profile 的交付出口
 

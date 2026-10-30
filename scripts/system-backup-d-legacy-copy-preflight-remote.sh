@@ -38,7 +38,12 @@ cleanup() {
     if ! verify_identity; then
       echo "CLEANUP_IDENTITY_CHANGED: inspect isolated database $copy_db on original server $expected_server" >&2
       result=1
-    elif ! kexec_raw sh -c 'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; mysql -uroot -e "DROP DATABASE IF EXISTS \`$1\`"' sh "$copy_db" >/dev/null; then
+    elif ! kexec_raw sh -eu -c '
+      export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"
+      actual=$(mysql -uroot -N -B -e "SELECT @@server_uuid")
+      [ "$actual" = "$2" ] || exit 3
+      mysql -uroot -e "DROP DATABASE IF EXISTS \`$1\`"
+    ' sh "$copy_db" "$expected_server" >/dev/null; then
       echo "CLEANUP_FAILED: inspect isolated database $copy_db on server $expected_server" >&2
       result=1
     fi
@@ -88,12 +93,19 @@ kexec chmod 700 "$pod_bin"
 [[ "$(kexec sha256sum "$pod_bin" | cut -d' ' -f1)" == "$expected_bin" ]] || { echo 'POD_BINARY_HASH_MISMATCH' >&2; exit 1; }
 [[ "$(kexec sha256sum "$pod_inventory" | cut -d' ' -f1)" == "$expected_inventory" ]] || { echo 'POD_INVENTORY_HASH_MISMATCH' >&2; exit 1; }
 
-kexec sh -c 'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; mysql -uroot -e "CREATE DATABASE \`$1\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"' sh "$copy_db"
+kexec sh -eu -c '
+  export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"
+  actual=$(mysql -uroot -N -B -e "SELECT @@server_uuid")
+  [ "$actual" = "$2" ] || exit 3
+  mysql -uroot -e "CREATE DATABASE \`$1\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+' sh "$copy_db" "$expected_server"
 echo "COPY_CREATED: $copy_db"
 kexec bash -euo pipefail -c '
   export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"
+  actual=$(mysql -uroot -N -B -e "SELECT @@server_uuid")
+  [[ "$actual" == "$2" ]] || exit 3
   mysqldump -uroot --single-transaction --quick --skip-lock-tables --set-gtid-purged=OFF --no-tablespaces clawmanager | mysql -uroot "$1"
-' bash "$copy_db"
+' bash "$copy_db" "$expected_server"
 echo 'COPY_LOADED'
 
 kexec sh -c '
