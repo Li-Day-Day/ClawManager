@@ -7,6 +7,32 @@ import (
 	d "clawreef/internal/systembackupdispatch"
 )
 
+// ValidatePartResult checks original report bytes against the original frozen
+// plan and observed Job. It grants no content, publication or evidence authority.
+// Callers must independently authenticate the source and exact content digest.
+func ValidatePartResult(in d.Input, plan d.Plan, job d.JobBinding, raw []byte) error {
+	if len(raw) == 0 || len(raw) > 1<<20 || in.Authority.TaskType != "backup" {
+		return d.ErrNotReady
+	}
+	f, err := loadPlan(in, plan)
+	if err != nil {
+		return err
+	}
+	var result d.ModuleResult
+	if decodeRequiredObject(raw, &result) != nil || validateResult(result) != nil {
+		return d.ErrNotReady
+	}
+	for _, part := range f.Discovery.Parts {
+		if part.Intent.JobUnitKey == job.JobUnitKey {
+			if !matchesIntent(job, part.Intent) || result.Part != part.Part || result.Category != part.Category {
+				return d.ErrNotReady
+			}
+			return validateCheckpoint(result.Checkpoint, in, part, job, f.Discovery.SourceSHA256)
+		}
+	}
+	return d.ErrNotReady
+}
+
 // SealedPart comes from C's immutable seal observer AFTER A authenticated the
 // worker result. A filename, Job success or worker self-report cannot mint it.
 // This value is data only; BuildPartResult itself does NOT authenticate/approve.

@@ -727,6 +727,20 @@ func (o *PublicJobOwner) ReadResult(ctx context.Context, a d.Authority, binding 
 	if staging.Open(ctx, bytes.NewReader(cipher), &plain, key, staging.Binding{BackupID: a.TaskPublicID, Attempt: "1", Path: "worker-result/" + binding.JobUnitKey, CaptureContextHash: a.ConfigSHA256, EnvelopeID: digest}, 1<<20) != nil || hash(plain.Bytes()) != digest {
 		return nil, c.ErrExecutionRecord
 	}
+	// A valid envelope/hash proves byte integrity, not the report's frozen
+	// part/Job/config binding. Check those before exposing the original bytes.
+	in, plan, _, e := o.input(ctx, a, false)
+	if e != nil {
+		return nil, e
+	}
+	inner, e := d.UnwrapTaskPlan(in, plan, b.PlanVersion)
+	if e != nil {
+		return nil, e
+	}
+	defer clear(inner.CanonicalJSON)
+	if b.ValidatePartResult(in, inner, binding, plain.Bytes()) != nil {
+		return nil, c.ErrExecutionRecord
+	}
 	if e = o.Gate.Check(ctx, a); e != nil {
 		return nil, e
 	}
